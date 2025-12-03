@@ -1,1 +1,346 @@
-<!DOCTYPE html><html lang="pt-BR"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Akasha - Mentor de Poder Energético | Yan Simón Experience</title>    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">    <style>        * {            margin: 0;            padding: 0;            box-sizing: border-box;        }        :root {            --primary: #1a0033;            --secondary: #d4af37;            --accent: #8b0080;            --light: #f5f5f5;            --dark: #0a0a0a;        }        body {            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;            background: linear-gradient(135deg, #0a0a0a 0%, #1a0033 100%);            color: #f5f5f5;            min-height: 100vh;        }        /* ANIMAÇÕES */        @keyframes glow {            0%, 100% { text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }            50% { text-shadow: 0 0 20px rgba(212, 175, 55, 0.8); }        }        @keyframes float {            0%, 100% { transform: translateY(0px); }            50% { transform: translateY(-10px); }        }        @keyframes slideIn {            from { opacity: 0; transform: translateX(-20px); }            to { opacity: 1; transform: translateX(0); }        }        .glow-text {            animation: glow 2s ease-in-out infinite;        }        .float {            animation: float 3s ease-in-out infinite;        }        .slide-in {            animation: slideIn 0.5s ease-out;        }        /* HEADER */        header {            background: rgba(10, 10, 10, 0.95);            backdrop-filter: blur(10px);            border-bottom: 2px solid var(--secondary);            padding: 1rem 2rem;            position: sticky;            top: 0;            z-index: 1000;        }        .header-container {            max-width: 1400px;            margin: 0 auto;            display: flex;            justify-content: space-between;            align-items: center;        }        .logo {            font-size: 1.8rem;            font-weight: bold;            color: var(--secondary);            text-decoration: none;            display: flex;            align-items: center;            gap: 0.5rem;        }        .nav-toggle {            display: none;            background: none;            border: none;            color: var(--secondary);            font-size: 1.5rem;            cursor: pointer;        }        nav ul {            display: flex;            gap: 2rem;            list-style: none;        }        nav a {            color: #f5f5f5;            text-decoration: none;            transition: color 0.3s;            font-weight: 500;        }        nav a:hover {            color: var(--secondary);        }        .auth-buttons {            display: flex;            gap: 1rem;        }        .btn-login, .btn-signup {            padding: 0.6rem 1.5rem;            border: none;            border-radius: 25px;            cursor: pointer;            font-weight: 600;            transition: all 0.3s;            text-decoration: none;        }        .btn-login {            background: transparent;            border: 2px solid var(--secondary);            color: var(--secondary);        }        .btn-login:hover {            background: var(--secondary);            color: var(--dark);        }        .btn-signup {            background: linear-gradient(135deg, var(--secondary), #c9a227);            color: var(--dark);        }        .btn-signup:hover {            transform: translateY(-2px);            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);        }        /* MAIN CONTAINER */        .container {            max-width: 1400px;            margin: 0 auto;            padding: 2rem;        }        /* HERO SECTION */        .hero {            text-align: center;            padding: 4rem 2rem;            margin-bottom: 3rem;        }        .hero h1 {            font-size: 3.5rem;            margin-bottom: 1rem;            color: var(--secondary);            text-transform: uppercase;            letter-spacing: 2px;            animation: glow 2s ease-in-out infinite;        }        .hero p {            font-size: 1.2rem;            color: #e0e0e0;            margin-bottom: 2rem;            max-width: 600px;            margin-left: auto;            margin-right: auto;        }        .cta-button {            display: inline-block;            padding: 1rem 3rem;            background: linear-gradient(135deg, var(--accent), #d4af37);            color: white;            text-decoration: none;            border-radius: 50px;            font-weight: 700;            font-size: 1.1rem;            transition: all 0.3s;            box-shadow: 0 10px 40px rgba(139, 0, 128, 0.4);        }        .cta-button:hover {            transform: translateY(-5px);            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.5);        }        /* TABS */        .tabs {            display: flex;            gap: 1rem;            margin-bottom: 2rem;            flex-wrap: wrap;            border-bottom: 2px solid var(--secondary);            padding-bottom: 1rem;        }        .tab-btn {            padding: 0.8rem 1.5rem;            background: transparent;            border: 2px solid transparent;            color: #a0a0a0;            cursor: pointer;            border-radius: 5px;            font-weight: 600;            transition: all 0.3s;        }        .tab-btn.active {            color: var(--secondary);            border-bottom: 3px solid var(--secondary);            background: rgba(212, 175, 55, 0.1);        }        .tab-btn:hover {            color: var(--secondary);        }        .tab-content {            display: none;        }        .tab-content.active {            display: block;            animation: slideIn 0.3s ease-out;        }        /* GRID CARDS */        .grid-container {            display: grid;            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));            gap: 2rem;            margin-bottom: 3rem;        }        .card {            background: linear-gradient(135deg, rgba(26, 0, 51, 0.8), rgba(139, 0, 128, 0.2));            border: 1px solid var(--secondary);            border-radius: 15px;            padding: 2rem;            transition: all 0.3s;            cursor: pointer;            position: relative;            overflow: hidden;        }        .card::before {            content: '';            position: absolute;            top: 0;            left: -100%;            width: 100%;            height: 100%;            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);            transition: left 0.5s;        }        .card:hover::before {            left: 100%;        }        .card:hover {            transform: translateY(-10px);            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);            border-color: var(--secondary);        }        .card-icon {            font-size: 3rem;            color: var(--secondary);            margin-bottom: 1rem;        }        .card-title {            font-size: 1.5rem;            font-weight: 700;            margin-bottom: 0.5rem;            color: var(--secondary);        }        .card-description {            font-size: 0.95rem;            color: #d0d0d0;            margin-bottom: 1rem;            line-height: 1.6;        }        .card-price {            font-size: 1.8rem;            font-weight: bold;            color: var(--secondary);            margin-bottom: 1rem;        }        .card-btn {            display: inline-block;            padding: 0.7rem 1.5rem;            background: linear-gradient(135deg, var(--secondary), #c9a227);            color: var(--dark);            border: none;            border-radius: 25px;            cursor: pointer;            font-weight: 600;            transition: all 0.3s;            width: 100%;            text-align: center;        }        .card-btn:hover {            transform: scale(1.05);        }        /* MODAL */        .modal {            display: none;            position: fixed;            z-index: 2000;            left: 0;            top: 0;            width: 100%;            height: 100%;            background: rgba(0, 0, 0, 0.8);            backdrop-filter: blur(5px);        }        .modal.active {            display: flex;            justify-content: center;            align-items: center;        }        .modal-content {            background: linear-gradient(135deg, #1a0033, #2d0052);            border: 2px solid var(--secondary);            border-radius: 15px;            padding: 2rem;            max-width: 600px;            width: 90%;            max-height: 80vh;            overflow-y: auto;            position: relative;            animation: slideIn 0.3s ease-out;        }        .close-modal {            position: absolute;            top: 1rem;            right: 1rem;            background: none;            border: none;            color: var(--secondary);            font-size: 2rem;            cursor: pointer;        }        .form-group {            margin-bottom: 1.5rem;        }        .form-group label {            display: block;            margin-bottom: 0.5rem;            color: var(--secondary);            font-weight: 600;        }        .form-group input,        .form-group textarea,        .form-group select {            width: 100%;            padding: 0.8rem;            background: rgba(255, 255, 255, 0.1);            border: 1px solid var(--secondary);            border-radius: 5px;            color: #f5f5f5;            font-family: inherit;        }        .form-group input:focus,        .form-group textarea:focus,        .form-group select:focus {            outline: none;            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);            border-color: var(--secondary);        }        .form-group textarea {            resize: vertical;            min-height: 100px;        }        /* DASHBOARD */        .dashboard {            display: grid;            grid-template-columns: 250px 1fr;            gap: 2rem;            margin-top: 2rem;        }        .sidebar {            background: rgba(10, 10, 10, 0.6);            border: 1px solid var(--secondary);            border-radius: 10px;            padding: 1.5rem;            height: fit-content;            position: sticky;            top: 100px;        }        .sidebar-menu {            list-style: none;        }        .sidebar-menu li {            margin-bottom: 1rem;        }        .sidebar-menu a {            display: block;            padding: 0.8rem 1rem;            color: #a0a0a0;            text-decoration: none;            border-radius: 5px;            transition: all 0.3s;            border-left: 3px solid transparent;        }        .sidebar-menu a:hover,        .sidebar-menu a.active {            color: var(--secondary);            background: rgba(212, 175, 55, 0.1);            border-left-color: var(--secondary);        }        .main-content {            background: rgba(10, 10, 10, 0.6);            border: 1px solid var(--secondary);            border-radius: 10px;            padding: 2rem;        }        /* AUDIO PLAYER */        .audio-item {            background: rgba(26, 0, 51, 0.5);            border: 1px solid var(--secondary);            border-radius: 10px;            padding: 1.5rem;            margin-bottom: 1.5rem;            display: flex;            justify-content: space-between;            align-items: center;            gap: 1rem;        }        .audio-info {            flex: 1;        }        .audio-title {            font-size: 1.1rem;            font-weight: 700;            color: var(--secondary);            margin-bottom: 0.3rem;        }        .audio-duration {            font-size: 0.9rem;            color: #a0a0a0;        }        .audio-controls {            display: flex;            gap: 1rem;        }        .play-btn {            width: 50px;            height: 50px;            border-radius: 50%;            background: linear-gradient(135deg, var(--secondary), #c9a227);            border: none;            color: var(--dark);            cursor: pointer;            font-size: 1.2rem;            transition: all 0.3s;            display: flex;            align-items: center;            justify-content: center;        }        .play-btn:hover {            transform: scale(1.1);        }        /* EVENTOS */        .event-card {            background: linear-gradient(135deg, rgba(26, 0, 51, 0.8), rgba(139, 0, 128, 0.2));            border: 1px solid var(--secondary);            border-radius: 15px;            overflow: hidden;            transition: all 0.3s;        }        .event-card:hover {            transform: translateY(-5px);            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);        }        .event-image {            width: 100%;            height: 200px;            background: linear-gradient(135deg, #1a0033, #8b0080);            display: flex;            align-items: center;            justify-content: center;            font-size: 4rem;        }        .event-details {            padding: 1.5rem;        }        .event-title {            font-size: 1.3rem;            font-weight: 700;            color: var(--secondary);            margin-bottom: 0.5rem;        }        .event-meta {            display: flex;            flex-direction: column;            gap: 0.5rem;            color: #d0d0d0;            font-size: 0.9rem;            margin-bottom: 1rem;        }        .event-type {            display: inline-block;            padding: 0.3rem 0.8rem;            background: rgba(212, 175, 55, 0.2);            color: var(--secondary);            border-radius: 20px;            font-size: 0.8rem;            font-weight: 600;            margin-bottom: 1rem;        }        /* COMMUNITY */        .post {            background: rgba(26, 0, 51, 0.5);            border: 1px solid var(--secondary);            border-radius: 10px;            padding: 1.5rem;            margin-bottom: 1.5rem;        }        .post-header {            display: flex;            align-items: center;            gap: 1rem;            margin-bottom: 1rem;        }        .avatar {            width: 50px;            height: 50px;            border-radius: 50%;            background: linear-gradient(135deg, var(--secondary), #c9a227);            display: flex;            align-items: center;            justify-content: center;            color: var(--dark);            font-weight: bold;        }        .post-meta {            flex: 1;        }        .post-author {            font-weight: 700;            color: var(--secondary);        }        .post-time {            font-size: 0.8rem;            color: #a0a0a0;        }        .post-content {            color: #d0d0d0;            line-height: 1.6;            margin-bottom: 1rem;        }        .post-actions {            display: flex;            gap: 1rem;            border-top: 1px solid var(--secondary);            padding-top: 1rem;        }        .post-action {            flex: 1;            background: none;            border: none;            color: var(--secondary);            cursor: pointer;            padding: 0.5rem;            transition: all 0.3s;            border-radius: 5px;        }        .post-action:hover {            background: rgba(212, 175, 55, 0.1);        }        /* FOOTER */        footer {            background: rgba(10, 10, 10, 0.95);            border-top: 2px solid var(--secondary);            padding: 3rem 2rem;            margin-top: 4rem;        }        .footer-content {            max-width: 1400px;            margin: 0 auto;            display: grid;            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));            gap: 2rem;            margin-bottom: 2rem;        }        .footer-section h3 {            color: var(--secondary);            margin-bottom: 1rem;            font-size: 1.1rem;        }        .footer-section ul {            list-style: none;        }        .footer-section ul li {            margin-bottom: 0.5rem;        }        .footer-section ul a {            color: #d0d0d0;            text-decoration: none;            transition: color 0.3s;        }        .footer-section ul a:hover {            color: var(--secondary);        }        .footer-bottom {            text-align: center;            padding-top: 2rem;            border-top: 1px solid var(--secondary);            color: #a0a0a0;        }        .social-links {            display: flex;            gap: 1rem;            justify-content: center;            margin-bottom: 1rem;        }        .social-links a {            width: 40px;            height: 40px;            border-radius: 50%;            background: rgba(212, 175, 55, 0.1);            border: 1px solid var(--secondary);            display: flex;            align-items: center;            justify-content: center;            color: var(--secondary);            text-decoration: none;            transition: all 0.3s;        }        .social-links a:hover {            background: var(--secondary);            color: var(--dark);        }        /* RESPONSIVO */        @media (max-width: 768px) {            .hero h1 {                font-size: 2.5rem;            }            nav ul {                display: none;            }            .nav-toggle {                display: block;            }            .dashboard {                grid-template-columns: 1fr;            }            .sidebar {                position: static;            }            .auth-buttons {                flex-direction: column;                gap: 0.5rem;            }            .btn-login, .btn-signup {                padding: 0.5rem 1rem;                font-size: 0.9rem;            }        }        /* NOTIFICAÇÃO */        .notification {            position: fixed;            bottom: 2rem;            right: 2rem;            background: linear-gradient(135deg, var(--secondary), #c9a227);            color: var(--dark);            padding: 1.5rem 2rem;            border-radius: 10px;            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3);            animation: slideIn 0.3s ease-out;            max-width: 300px;        }        .notification.hidden {            display: none;        }        /* PREMIUM BADGE */        .premium-badge {            display: inline-block;            background: linear-gradient(135deg, var(--secondary), #c9a227);            color: var(--dark);            padding: 0.3rem 0.8rem;            border-radius: 20px;            font-size: 0.75rem;            font-weight: 700;            text-transform: uppercase;        }    </style></head><body><!-- HEADER --><header>    <div class="header-container">        <a href="#" class="logo">            <i class="fas fa-infinity"></i> AKASHA        </a>        <nav>            <ul>                <li><a href="#sessoes">Sessões</a></li>                <li><a href="#eventos">Eventos</a></li>                <li><a href="#comunidade">Comunidade</a></li>                <li><a href="#mentoria">Mentoria</a></li>                <li><a href="#biblioteca">Biblioteca</a></li>            </ul>        </nav>        <div class="auth-buttons">            <button class="btn-login" onclick="openModal('loginModal')">Entrar</button>            <button class="btn-signup" onclick="openModal('signupModal')">Começar Agora</button>        </div>        <button class="nav-toggle" onclick="toggleNav()">            <i class="fas fa-bars"></i>        </button>    </div></header><!-- HERO SECTION --><section class="hero">    <h1 class="glow-text">Bem-vindo ao AKASHA</h1>    <p>A Comunidade Energética mais Magnética do Brasil • Transformação • Prosperidade • Poder</p>    <button class="cta-button" onclick="openModal('sessionModal')">Agende Sua Sessão</button></section><!-- MAIN CONTAINER --><div class="container">    <!-- TABS PRINCIPAIS -->    <div class="tabs">        <button class="tab-btn active" onclick="switchTab('sessoes')">            <i class="fas fa-star"></i> Sessões        </button>        <button class="tab-btn" onclick="switchTab('eventos')">            <i class="fas fa-calendar"></i> Eventos        </button>        <button class="tab-btn" onclick="switchTab('mentoria')">            <i class="fas fa-crown"></i> Mentoria        </button>        <button class="tab-btn" onclick="switchTab('biblioteca')">            <i class="fas fa-book"></i> Biblioteca        </button>        <button class="tab-btn" onclick="switchTab('comunidade')">            <i class="fas fa-users"></i> Comunidade        </button>    </div>    <!-- TAB: SESSÕES -->    <div id="sessoes" class="tab-content active">        <h2 style="color: var(--secondary); margin-bottom: 2rem; font-size: 2rem;">✨ Sessões de Alinhamento Energético</h2>        <div class="grid-container">            <div class="card">                <div class="card-icon"><i class="fas fa-circle-half-stroke"></i></div>                <div class="card-title">Alinhamento Básico</div>                <div class="card-description">Sessão de 45-60 minutos de reequilíbrio energético, fascinação e magnetismo pessoal.</div>                <div class="card-price">R$ 150</div>                <button class="card-btn" onclick="openModal('sessionModal')">Agendar Sessão</button>            </div>            <div class="card">                <div class="card-icon"><i class="fas fa-gem"></i></div>                <div class="card-title">Chakra Therapy <span class="premium-badge">Premium</span></div>                <div class="card-description">Alinhamento dos 7 chakras + constelação vibracional de prosperidade + invocação.</div>                <div class="card-price">R$ 250</div>                <button class="card-btn" onclick="openModal('sessionModal')">Agendar Sessão</button>            </div>            <div class="card">                <div class="card-icon"><i class="fas fa-fire"></i></div>                <div class="card-title">Chama Violeta</div>                <div class="card-description">Limpeza energética profunda com invocação da Chama Violeta + reprogramação vibracional.</div>                <div class="card-price">R$ 300</div>                <button class="card-btn" onclick="openModal('sessionModal')">Agendar Sessão</button>            </div>        </div>        <h2 style="color: var(--secondary); margin-bottom: 2rem; margin-top: 3rem; font-size: 2rem;">🏛️ Sessões VIP Presenciais</h2>        <div class="grid-container">            <div class="card">                <div class="card-icon"><i class="fas fa-home"></i></div>                <div class="card-title">Sessão Padrão Akáshica</div>                <div class="card-description">Alinhamento quântico + fascinação + magnetismo + massagem tântrica a domicílio.</div>                <div class="card-price">R$ 800</div>                <button class="card-btn" onclick="openModal('vipModal')">Solicitar VIP</button>            </div>            <div class="card">                <div class="card-icon"><i class="fas fa-wand-magic-sparkles"></i></div>                <div class="card-title">Experiência Personalizada</div>                <div class="card-description">Ritual extra + intenção específica + personalização completa para suas necessidades.</div>                <div class="card-price">R$ 1.000</div>                <button class="card-btn" onclick="openModal('vipModal')">Solicitar VIP</button>            </div>            <div class="card">                <div class="card-icon"><i class="fas fa-spa"></i></div>                <div class="card-title">Imersão Transformadora</div>                <div class="card-description">Sessão longa de 3h+ profunda e transformadora com rituais exclusivos.</div>                <div class="card-price">R$ 1.200</div>                <button class="card-btn" onclick="openModal('vipModal')">Solicitar VIP</button>            </div>        </div>    </div>    <!-- TAB: EVENTOS -->    <div id="eventos" class="tab-content">        <h2 style="color: var(--secondary); margin-bottom: 2rem; font-size: 2rem;">📅 Próximos Eventos & Retiros</h2>        <div class="grid-container">            <div class="event-card">                <div class="event-image">                    <i class="fas fa-expand"></i>                </div>                <div class="event-details">                    <div class="event-type">PRESENCIAL</div>                    <div class="event-title">Ritual de Prosperidade</div>                    <div class="event-meta">                        <div><i class="fas fa-calendar-alt"></i> 15 de Dezembro, 2024</div>                        <div><i class="fas fa-map-marker-alt"></i> São Paulo, SP</div>                        <div><i class="fas fa-users"></i> 20 pessoas disponíveis</div>                    </div>                    <div class="card-price">R$ 300</div>                    <button class="card-btn" onclick="openModal('eventModal')">Inscrever-se</button>                </div>            </div>            <div class="event-card">                <div class="event-image">                    <i class="fas fa-video"></i>                </div>                <div class="event-details">                    <div class="event-type">ONLINE + PRESENCIAL</div>                    <div class="event-title">Live Meditativa Mágica</div>                    <div class="event-meta">                        <div><i class="fas fa-calendar-alt"></i> 22 de Dezembro, 2024</div>                        <div><i class="fas fa-clock"></i> 20h às 22h30</div>                        <div><i class="fas fa-users"></i> Vagas Ilimitadas</div>                    </div>                    <div class="card-price">R$ 200</div>                    <button class="card-btn" onclick="openModal('eventModal')">Participar</button>                </div>            </div>            <div class="event-card">                <div class="event-image">                    <i class="fas fa-theater-masks"></i>                </div>                <div class="event-details">                    <div class="event-type">VIP LUXURY</div>                    <div class="event-title">Gala Energética Exclusiva</div>                    <div class="event-meta">                        <div><i class="fas fa-calendar-alt"></i> 28 de Dezembro, 2024</div>                        <div><i class="fas fa-map-marker-alt"></i> Hotel Premium SP</div>                        <div><i class="fas fa-users"></i> 15 vagas VIP</div>                    </div>                    <div class="card-price">R$ 800</div>                    <button class="card-btn" onclick="openModal('eventModal')">Reservar VIP</button>                </div>            </div>            <div class="event-card">                <div class="event-image">                    <i class="fas fa-mountain"></i>                </div>                <div class="event-details">                    <div class="event-type">RETIRO</div>                    <div class="event-title">Retiro Transformador 3 Dias</div>                    <div class="event-meta">                        <div><i class="fas fa-calendar-alt"></i> 02 a 04 de Janeiro, 2025</div>                        <div><i class="fas fa-map-marker-alt"></i> Casa Divina, Montanhas</div>                        <div><i class="fas fa-users"></i> 30 vagas</div>                    </div>                    <div class="card-price">R$ 1.500</div>                    <button class="card-btn" onclick="openModal('eventModal')">Reservar Vaga</button>                </div>            </div>        </div>    </div>    <!-- TAB: MENTORIA -->    <div id="mentoria" class="tab-content">        <h2 style="color: var(--secondary); margin-bottom: 2rem; font-size: 2rem;">👑 Mentoria 1:1 • Transformação Completa</h2>        <div class="grid-container">            <div class="card">                <div class="card-icon"><i class="fas fa-rocket"></i></div>                <div class="card-title">Mentoria 90 Dias <span class="premium-badge">Starter</span></div>                <div class="card-description">                    ✓ 1 sessão semanal<br>                    ✓ Reprogramações personalizadas<br>                    ✓ Acesso biblioteca completa<br>                    ✓ Ritual de abertura e encerramento                </div>                <div class="card-price">R$ 3.000</div>                <button class="card-btn" onclick="openModal('mentoriaModal')">Quero Transformar</button>            </div>            <div class="card">                <div class="card-icon"><i class="fas fa-crown"></i></div>                <div class="card-title">Mentoria 180 Dias <span class="premium-badge">Deluxe</span></div>                <div class="card-description">                    ✓ 2 sessões semanais<br>                    ✓ Sessão presencial incluída<br>                    ✓ Protocolo exclusivo personalizado<br>                    ✓ Suporte via chat 24/7                </div>                <div class="card-price">R$ 6.500</div>                <button class="card-btn" onclick="openModal('mentoriaModal')">Quero Transformar</button>            </div>            <div class="card">                <div class="card-icon"><i class="fas fa-infinity"></i></div>                <div class="card-title">Mentoria VIP Premium</div>                <div class="card-description">                    ✓ Mentoria ilimitada<br>                    ✓ Sessão mensal presencial VIP<br>                    ✓ Acesso privado a todos os produtos<br>                    ✓ Convite eventos exclusivos                </div>                <div class="card-price">R$ 10.000</div>                <button class="card-btn" onclick="openModal('mentoriaModal')">Quero Transformar</button>            </div>        </div>    </div>    <!-- TAB: BIBLIOTECA -->    <div id="biblioteca" class="tab-content">        <h2 style="color: var(--secondary); margin-bottom: 2rem; font-size: 2rem;">🎧 Biblioteca de Áudio-Meditações & E-books</h2>                <div style="margin-bottom: 3rem;">            <h3 style="color: var(--secondary); margin-bottom: 1.5rem;">📻 Áudio-Meditações Exclusivas</h3>                        <div class="audio-item">                <div class="audio-info">                    <div class="audio-title">Prosperidade Quântica</div>                    <div class="audio-duration"><i class="fas fa-music"></i> 45 minutos • Categoria: Abundância</div>                </div>                <div class="audio-controls">                    <button class="play-btn" onclick="playAudio('audio1')"><i class="fas fa-play"></i></button>                </div>            </div>            <div class="audio-item">                <div class="audio-info">                    <div class="audio-title">Magnetismo Pessoal Despertado</div>                    <div class="audio-duration"><i class="fas fa-music"></i> 38 minutos • Categoria: Fascinação</div>                </div>                <div class="audio-controls">                    <button class="play-btn" onclick="playAudio('audio2')"><i class="fas fa-play"></i></button>                </div>            </div>            <div class="audio-item">                <div class="audio-info">                    <div class="audio-title">Alinhamento dos 7 Chakras</div>                    <div class="audio-duration"><i class="fas fa-music"></i> 60 minutos • Categoria: Energia</div>                </div>                <div class="audio-controls">                    <button class="play-btn" onclick="playAudio('audio3')"><i class="fas fa-play"></i></button>                </div>            </div>            <div class="audio-item">                <div class="audio-info">                    <div class="audio-title">Chama Violeta - Limpeza Profunda</div>                    <div class="audio-duration"><i class="fas fa-music"></i> 52 minutos • Categoria: Transmutação</div>                </div>                <div class="audio-controls">                    <button class="play-btn" onclick="playAudio('audio4')"><i class="fas fa-play"></i></button>                </div>            </div>            <div class="audio-item">                <div class="audio-info">                    <div class="audio-title">Sagrado Feminino Despertado</div>                    <div class="audio-duration"><i class="fas fa-music"></i> 48 minutos • Categoria: Potência</div>                </div>                <div class="audio-controls">                    <button class="play-btn" onclick="playAudio('audio5')"><i class="fas fa-play"></i></button>                </div>            </div>        </div>        <div style="margin-bottom: 3rem;">            <h3 style="color: var(--secondary); margin-bottom: 1.5rem;">📚 E-books & Audiobooks</h3>            <div class="grid-container">                <div class="card">                    <div class="card-icon"><i class="fas fa-book"></i></div>                    <div class="card-title">Tantra Quântico</div>                    <div class="card-description">Guia completo sobre a fusão entre tantra sagrado e física quântica para transformação pessoal.</div>                    <div class="card-price">R$ 79</div>                    <button class="card-btn" onclick="openModal('ebookModal')">Acessar</button>                </div>                <div class="card">                    <div class="card-icon"><i class="fas fa-book"></i></div>                    <div class="card-title">O Código da Fascinação</div>                    <div class="card-description">Desvende os segredos do magnetismo pessoal e da atração energética irresistível.</div>                    <div class="card-price">R$ 89</div>                    <button class="card-btn" onclick="openModal('ebookModal')">Acessar</button>                </div>                <div class="card">                    <div class="card-icon"><i class="fas fa-book"></i></div>                    <div class="card-title">Manual de Magnetismo Pessoal</div>                    <div class="card-description">Técnicas práticas e meditações para desenvolver seu magnetismo e presença.</div>                    <div class="card-price">R$ 69</div>                    <button class="card-btn" onclick="openModal('ebookModal')">Acessar</button>                </div>                <div class="card">                    <div class="card-icon"><i class="fas fa-book"></i></div>                    <div class="card-title">A Arte da Prosperidade Energética</div>                    <div class="card-description">Caminhos para alinhar seus chakras à vibração de abundância e sucesso ilimitado.</div>                    <div class="card-price">R$ 99</div>                    <button class="card-btn" onclick="openModal('ebookModal')">Acessar</button>                </div>            </div>        </div>    </div>    <!-- TAB: COMUNIDADE -->    <div id="comunidade" class="tab-content">        <h2 style="color: var(--secondary); margin-bottom: 2rem; font-size: 2rem;">🌍 Comunidade Akasha • Rede Social Energética</h2>                <div style="display: grid; grid-template-columns: 1fr 300px; gap: 2rem; margin-bottom: 3rem;">            <div>                <div style="background: rgba(26, 0, 51, 0.5); border: 1px solid var(--secondary); border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem;">                    <textarea placeholder="Compartilhe sua experiência com a comunidade..." style="width: 100%; height: 80px; background: rgba(255,255,255,0.1); border: 1px solid var(--secondary); border-radius: 5px; color: #f5f5f5; padding: 0.8rem;"></textarea>                    <button class="card-btn" style="width: auto; margin-top: 0.5rem;" onclick="showNotification('Seu post foi publicado com sucesso!')">Publicar</button>                </div>                <div class="post">                    <div class="post-header">                        <div class="avatar">MC</div>                        <div class="post-meta">                            <div class="post-author">Maria Clara</div>                            <div class="post-time">Há 2 horas</div>                        </div>                    </div>                    <div class="post-content">Depois de participar da sessão com Yan, meu magnetismo pessoal expandiu exponencialmente! Já perdi a conta de quantas pessoas me abordaram com interesse. Sinto uma presença diferente em mim. ✨🔥</div>                    <div class="post-actions">                        <button class="post-action"><i class="fas fa-heart"></i> 234 curtidas</button>                        <button class="post-action"><i class="fas fa-comment"></i> 45 comentários</button>                        <button class="post-action"><i class="fas fa-share"></i> Compartilhar</button>                    </div>                </div>                <div class="post">                    <div class="post-header">                        <div class="avatar">RV</div>                        <div class="post-meta">                            <div class="post-author">Roberto Vieira</div>                            <div class="post-time">Há 5 horas</div>                        </div>                    </div>                    <div class="post-content">A mentoria transformou completamente minha vida. Desbloqueei traumas antigos, reconectei com meu poder e já consegui aquele cliente que imaginava ser impossível! Gratidão infinita! 🙏💎</div>                    <div class="post-actions">                        <button class="post-action"><i class="fas fa-heart"></i> 189 curtidas</button>                        <button class="post-action"><i class="fas fa-comment"></i> 32 comentários</button>                        <button class="post-action"><i class="fas fa-share"></i> Compartilhar</button>                    </div>                </div>                <div class="post">                    <div class="post-header">                        <div class="avatar">YS</div>                        <div class="post-meta">                            <div class="post-author">Yan Simón</div>                            <div class="post-time">Há 8 horas</div>                        </div>                    </div>                    <div class="post-content">A Chama Violeta não é apenas uma técnica. É um portal. Uma oportunidade de se reconectar com seu poder original. Se você sente que algo em você está dormindo, convido a despertar. 🜂✨</div>                    <div class="post-actions">                        <button class="post-action"><i class="fas fa-heart"></i> 567 curtidas</button>                        <button class="post-action"><i class="fas fa-comment"></i> 128 comentários</button>                        <button class="post-action"><i class="fas fa-share"></i> Compartilhar</button>                    </div>                </div>            </div>            <div>                <div style="background: rgba(26, 0, 51, 0.5); border: 1px solid var(--secondary); border-radius: 10px; padding: 1.5rem;">                    <h3 style="color: var(--secondary); margin-bottom: 1rem;">🌟 Membros Online</h3>                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--secondary);">                        <div class="avatar" style="width: 40px; height: 40px; font-size: 0.8rem;">AL</div>                        <div style="flex: 1;">                            <div style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">Ana Luiza</div>                            <div style="color: #00ff00; font-size: 0.8rem;">🟢 Online agora</div>                        </div>                    </div>                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--secondary);">                        <div class="avatar" style="width: 40px; height: 40px; font-size: 0.8rem;">PH</div>                        <div style="flex: 1;">                            <div style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">Paulo Henrique</div>                            <div style="color: #00ff00; font-size: 0.8rem;">🟢 Online agora</div>                        </div>                    </div>                    <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--secondary);">                        <div class="avatar" style="width: 40px; height: 40px; font-size: 0.8rem;">IS</div>                        <div style="flex: 1;">                            <div style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">Isabela Silva</div>                            <div style="color: #ffff00; font-size: 0.8rem;">🟡 Ativa hoje</div>                        </div>                    </div>                    <h3 style="color: var(--secondary); margin-top: 1.5rem; margin-bottom: 1rem;">📊 Estatísticas</h3>                    <div style="color: #d0d0d0; font-size: 0.9rem; line-height: 1.8;">                        <div>👥 Membros: <strong style="color: var(--secondary);">2.347</strong></div>                        <div>📝 Posts: <strong style="color: var(--secondary);">12.564</strong></div>                        <div>💬 Comentários: <strong style="color: var(--secondary);">45.891</strong></div>                        <div>🤝 Conexões: <strong style="color: var(--secondary);">Infinitas</strong></div>                    </div>                </div>            </div>        </div>    </div></div><!-- MODAIS --><!-- Modal Login --><div id="loginModal" class="modal">    <div class="modal-content">        <button class="close-modal" onclick="closeModal('loginModal')">×</button>        <h2 style="color: var(--secondary); margin-bottom: 1.5rem;">Bem-vindo de Volta</h2>        <form onsubmit="handleLogin(event)">            <div class="form-group">                <label>Email</label>                <input type="email" required placeholder="seu@email.com">            </div>            <div class="form-group">                <label>Senha</label>                <input type="password" required placeholder="Sua senha">            </div>            <button type="submit" class="card-btn">Entrar</button>        </form>        <p style="text-align: center; margin-top: 1rem; color: #d0d0d0;">            Não tem conta? <a href="#" onclick="openModal('signupModal')" style="color: var(--secondary);">Crie uma agora</a>        </p>    </div></div><!-- Modal Signup --><div id="signupModal" class="modal">    <div class="modal-content">        <button class="close-modal" onclick="closeModal('signupModal')">×</button>        <h2 style="color: var(--secondary); margin-bottom: 1.5rem;">Comece Sua Transformação</h2>        <form onsubmit="handleSignup(event)">            <div class="form-group">                <label>Nome Completo</label>                <input type="text" required placeholder="Seu nome">            </div>            <div class="form-group">                <label>Email</label>                <input type="email" required placeholder="seu@email.com">            </div>            <div class="form-group">                <label>Senha</label>                <input type="password" required placeholder="Crie uma senha forte">            </div>            <div class="form-group">                <label>                    <input type="checkbox" required>                    Concordo com os Termos de Serviço e Política de Privacidade                </label>            </div>            <button type="submit" class="card-btn">Criar Conta</button>        </form>    </div></div><!-- Modal Session --><div id="sessionModal" class="modal">    <div class="modal-content">        <button class="close-modal" onclick="closeModal('sessionModal')">×</button>        <h2 style="color: var(--secondary); margin-bottom: 1.5rem;">Agende Sua Sessão</h2>        <form onsubmit="handleSession(event)">            <div class="form-group">                <label>Tipo de Sessão</label>                <select required>                    <option>Alinhamento Básico - R$ 150</option>                    <option>Chakra Therapy - R$ 250</option>                    <option>Chama Violeta - R$ 300</option>                </select>            </div>            <div class="form-group">                <label>Data Preferida</label>                <input type="date" required>            </div>            <div class="form-group">                <label>Horário</label>                <input type="time" required>            </div>            <div class="form-group">                <label>Suas Intenções para a Sessão</label>                <textarea placeholder="O que você deseja transformar?"></textarea>            </div>            <button type="submit" class="card-btn">Confirmar Agendamento</button>        </form>    </div></div><!-- Modal VIP --><div id="vipModal" class="modal">    <div class="modal-content">        <button class="close-modal" onclick="closeModal('vipModal')">×</button>        <h2 style="color: var(--secondary); margin-bottom: 1.5rem;">Sessão VIP Presencial</h2>        <form onsubmit="handleVIP(event)">            <div class="form-group">                <label>Tipo de Sessão</label>                <select required>                    <option>Sessão Padrão Akáshica - R$ 800</option>                    <option>Experiência Personalizada - R$ 1.000</option>                    <option>Imersão 3h+ - R$ 1.200</option>                </select>            </div>            <div class="form-group">                <label>Endereço (Domicílio)</label>                <input type="text" required placeholder="Rua, número, complemento">            </div>            <div class="form-group">                <label>Data Preferida</label>                <input type="date" required>            </div>            <div class="form-group">                <label>Descreva Sua Intenção e Transformação Desejada</label>                <textarea placeholder="O que você quer transformar nesta sessão?"></textarea>            </div>            <button type="submit" class="card-btn">Solicitar Sessão VIP</button>        </form>    </div></div><!-- Modal Event --><div id="eventModal" class="modal">    <div class="modal-content">        <button class="close-modal" onclick="closeModal('eventModal')">×</button>        <h2 style="color: var(--secondary); margin-bottom: 1.5rem;">Inscrição no Evento</h2>        <form onsubmit="handleEvent(event)">            <div class="form-group">                <label>Quantidade de Ingressos</label>                <input type="number" required min="1" max="10" value="1">            </div>            <div class="form-group">                <label>Sua Forma de Participação</label>                <select required>                    <option>Presencial</option>                    <option>Online</option>                    <option>Híbrido (se disponível)</option>                </select>            </div>            <div class="form-group">                <label>Telefone para Confirmação</label>                <input type="tel" required placeholder="(11) 99999-9999">            </div>            <div class="form-group">                <label>Algo que você gostaria de comunicar?</label>                <textarea placeholder="Necessidades especiais, dúvidas, etc."></textarea>            </div>            <button type="submit" class="card-btn">Confirmar Inscrição</button>        </form>    </div></div><!-- Modal Mentoria --><div id="mentoriaModal" class="modal">    <div class="modal-content">        <button class="close-modal" onclick="closeModal('mentoriaModal')">×</button>        <h2 style="color: var(--secondary); margin-bottom: 1.5rem;">Inicie Sua Mentoria Transformadora</h2>        <form onsubmit="handleMentoria(event)">            <div class="form-group">                <label>Plano de Mentoria</label>                <select required>                    <option>90 Dias (3 meses) - R$ 3.000</option>                    <option>180 Dias (6 meses) - R$ 6.500</option>                    <option>VIP Premium Ilimitado - R$ 10.000</option>                </select>            </div>            <div class="form-group">                <label>Qual é seu maior desafio?</label>                <textarea required placeholder="Descreva o que você quer transformar nesta mentoria..."></textarea>            </div>            <div class="form-group">                <label>Experiência Anterior com Terapias</label>                <select required>                    <option>Sou iniciante</option>                    <option>Tenho experiência prévia</option>                    <option>Sou praticante avançado</option>                </select>            </div>            <button type="submit" class="card-btn">Iniciar Transformação</button>        </form>    </div></div><!-- Modal E-book --><div id="ebookModal" class="modal">    <div class="modal-content">        <button class="close-modal" onclick="closeModal('ebookModal')">×</button>        <h2 style="color: var(--secondary); margin-bottom: 1.5rem;">Acesse Seu E-book</h2>        <div style="text-align: center; margin-bottom: 2rem;">            <div style="font-size: 4rem; color: var(--secondary); margin-bottom: 1rem;">📚</div>            <p style="color: #d0d0d0;">Você está prestes a acessar conteúdo exclusivo com técnicas e conhecimentos elevados.</p>        </div>        <form onsubmit="handleEbook(event)">            <div class="form-group">                <label>Confirme seu Email</label>                <input type="email" required placeholder="seu@email.com">            </div>            <button type="submit" class="card-btn">Acessar E-book Agora</button>        </form>    </div></div><!-- FOOTER --><footer>    <div class="footer-content">        <div class="footer-section">            <h3><i class="fas fa-infinity"></i> AKASHA</h3>            <p style="color: #a0a0a0; margin-bottom: 1rem;">A Plataforma de Transformação Energética mais Magnética do Brasil.</p>            <div class="social-links">                <a href="#"><i class="fab fa-instagram"></i></a>                <a href="#"><i class="fab fa-youtube"></i></a>                <a href="#"><i class="fab fa-tiktok"></i></a>                <a href="#"><i class="fab fa-facebook"></i></a>            </div>        </div>        <div class="footer-section">            <h3>Serviços</h3>            <ul>                <li><a href="#">Sessões Online</a></li>                <li><a href="#">Sessões VIP</a></li>                <li><a href="#">Eventos</a></li>                <li><a href="#">Mentoria</a></li>                <li><a href="#">Biblioteca</a></li>            </ul>        </div>        <div class="footer-section">            <h3>Sobre</h3>            <ul>                <li><a href="#">Quem é Yan Simón</a></li>                <li><a href="#">Metodologia</a></li>                <li><a href="#">Blog</a></li>                <li><a href="#">Contato</a></li>            </ul>        </div>        <div class="footer-section">            <h3>Legal</h3>            <ul>                <li><a href="#">Termos de Serviço</a></li>                <li><a href="#">Política de Privacidade</a></li>                <li><a href="#">Cookies</a></li>                <li><a href="#">LGPD</a></li>            </ul>        </div>    </div>    <div class="footer-bottom">        <p>© 2024 Akasha • Yan Simón Experience. Todos os direitos reservados. 🜂</p>    </div></footer><!-- NOTIFICAÇÃO --><div id="notification" class="notification hidden"></div><!-- SCRIPTS --><script>    // FUNÇÕES DE MODAL    function openModal(modalId) {        const modal = document.getElementById(modalId);        modal.classList.add('active');    }    function closeModal(modalId) {        const modal = document.getElementById(modalId);        modal.classList.remove('active');    }    // FUNÇÕES DE TABS    function switchTab(tabName) {        // Hide all tabs        const tabs = document.querySelectorAll('.tab-content');        tabs.forEach(tab => tab.classList.remove('active'));                // Remove active class from all buttons        const buttons = document.querySelectorAll('.tab-btn');        buttons.forEach(btn => btn.classList.remove('active'));                // Show selected tab        document.getElementById(tabName).classList.add('active');                // Add active class to clicked button        event.target.classList.add('active');    }    // FUNÇÕES DE FORMULÁRIO    function handleLogin(e) {        e.preventDefault();        showNotification('Login realizado com sucesso! Bem-vindo de volta! 🎆');        closeModal('loginModal');    }    function handleSignup(e) {        e.preventDefault();        showNotification('Conta criada com sucesso! Bem-vindo à Comunidade Akasha! ✨');        closeModal('signupModal');    }    function handleSession(e) {        e.preventDefault();        showNotification('Sessão agendada com sucesso! Confira seu email para confirmar. 🔮');        closeModal('sessionModal');    }    function handleVIP(e) {        e.preventDefault();        showNotification('Solicitação de Sessão VIP recebida! Entraremos em contato em breve. 👑');        closeModal('vipModal');    }    function handleEvent(e) {        e.preventDefault();        showNotification('Inscrição confirmada! Você receberá todos os detalhes em breve. 🎉');        closeModal('eventModal');    }    function handleMentoria(e) {        e.preventDefault();        showNotification('Parabéns! Sua jornada de transformação começa agora! 🌟');        closeModal('mentoriaModal');    }    function handleEbook(e) {        e.preventDefault();        showNotification('E-book enviado para seu email! Abra e mergulhe no conhecimento. 📖');        closeModal('ebookModal');    }    // FUNÇÕES DE ÁUDIO    function playAudio(audioId) {        showNotification('🎧 Áudio iniciado. Qualidade 320kbps em streaming seguro.');    }    // NOTIFICAÇÃO    function showNotification(message) {        const notification = document.getElementById('notification');        notification.textContent = message;        notification.classList.remove('hidden');                setTimeout(() => {            notification.classList.add('hidden');        }, 4000);    }    // TOGGLE NAV MOBILE    function toggleNav() {        const nav = document.querySelector('nav ul');        if (nav.style.display === 'flex') {            nav.style.display = 'none';        } else {            nav.style.display = 'flex';        }    }    // Close modal when clicking outside    window.onclick = function(event) {        if (event.target.classList.contains('modal')) {            event.target.classList.remove('active');        }    }</script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Akasha - Comunidade Energética Premium: Sessões Online, Presenciais VIP e Mentorias Exclusivas.">
+<title>Akasha - Luxo Supremacia | Transformação • Prosperidade • Poder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary:#0b0016;
+  --secondary:#d4af37;
+  --accent:#b889ff;
+  --lux:#f5e6c8;
+  --dark:#000;
+  --glass:rgba(255,255,255,0.05);
+}
+body {
+  background:radial-gradient(circle at top,#1a002f,#000);
+  font-family:"Cormorant Garamond", serif;
+  color:#eee;
+  margin:0;
+  line-height:1.6;
+}
+header {
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--secondary);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.header-container {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:1.2rem 2rem;
+  max-width:1400px;
+  margin:0 auto;
+}
+.logo {
+  letter-spacing:2px;
+  font-weight:700;
+  font-size:2rem;
+  color:var(--secondary);
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+nav ul {
+  display:flex;
+  list-style:none;
+  gap:2rem;
+  margin:0;
+  padding:0;
+}
+nav a {
+  color:var(--lux);
+  text-decoration:none;
+  transition:color 0.3s;
+}
+nav a:hover {
+  color:var(--secondary);
+}
+.auth-buttons {
+  display:flex;
+  gap:1rem;
+}
+.btn-login, .btn-signup {
+  padding:0.7rem 1.5rem;
+  border-radius:30px;
+  cursor:pointer;
+  transition:all 0.3s;
+}
+.btn-login {
+  background:transparent;
+  border:1px solid var(--secondary);
+  color:var(--secondary);
+}
+.btn-signup {
+  background:linear-gradient(135deg,var(--secondary),#b9972e);
+  border:none;
+  color:#000;
+}
+.hero {
+  padding:7rem 2rem;
+  text-align:center;
+  background:linear-gradient(180deg,rgba(0,0,0,0.6),transparent);
+}
+.hero h1 {
+  font-size:4rem;
+  color:var(--lux);
+  text-shadow:0 0 25px rgba(212,175,55,0.6);
+  margin-bottom:1.5rem;
+}
+.cta-button {
+  background:linear-gradient(135deg,var(--secondary),#b9972e);
+  color:#000;
+  border-radius:40px;
+  padding:1rem 3rem;
+  font-weight:700;
+  border:none;
+  cursor:pointer;
+  transition:transform 0.3s;
+}
+.cta-button:hover {
+  transform:translateY(-3px);
+}
+.container {
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 2rem;
+}
+.tabs {
+  display:flex;
+  justify-content:center;
+  gap:1rem;
+  margin:3rem 0;
+  flex-wrap:wrap;
+}
+.tab-btn {
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(212,175,55,0.2);
+  color:var(--lux);
+  padding:1rem 2rem;
+  border-radius:8px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.tab-btn.active {
+  background:rgba(212,175,55,0.15) !important;
+  border-bottom:3px solid var(--secondary);
+  color:var(--secondary);
+}
+.tab-content {
+  display:none;
+}
+.tab-content.active {
+  display:block;
+}
+.grid-container {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:2rem;
+  margin:2rem 0;
+}
+.card {
+  background:linear-gradient(145deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));
+  border:1px solid rgba(212,175,55,0.3);
+  backdrop-filter:blur(8px);
+  border-radius:12px;
+  padding:2rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  transition:0.3s;
+}
+.card:hover {
+  transform:translateY(-8px);
+  box-shadow:0 0 40px rgba(212,175,55,0.3);
+}
+.card-icon {
+  margin-bottom:1.5rem;
+  font-size:3rem;
+  color:var(--secondary);
+}
+.card-title {
+  color:var(--lux);
+  font-size:1.8rem;
+  margin-bottom:1rem;
+}
+.card-description {
+  color:rgba(245,230,200,0.8);
+  margin-bottom:1.5rem;
+  text-align:center;
+}
+.card-price {
+  color:var(--secondary);
+  font-size:2.2rem;
+  font-weight:700;
+  margin-bottom:1.5rem;
+}
+.card-btn {
+  background:linear-gradient(135deg,var(--secondary),#b9972e);
+  color:#000;
+  border:none;
+  padding:0.8rem 2rem;
+  border-radius:30px;
+  cursor:pointer;
+  width:100%;
+  font-weight:600;
+}
+.card-btn:hover {
+  transform:translateY(-3px);
+}
+footer {
+  padding:3rem 2rem;
+  border-top:1px solid var(--secondary);
+  text-align:center;
+  color:var(--lux);
+}
+.premium-section {
+  margin-top:4rem;
+  padding:2rem;
+  border:1px solid rgba(212,175,55,0.3);
+  border-radius:12px;
+  background:rgba(255,255,255,0.03);
+}
+.premium-section h2 {
+  color:var(--lux);
+  font-size:2.2rem;
+  margin-bottom:2rem;
+  text-align:center;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-container">
+    <a href="#" class="logo"><i class="fas fa-infinity"></i> AKASHA</a>
+    <nav>
+      <ul>
+        <li><a href="#sessoes">Sessões</a></li>
+        <li><a href="#eventos">Eventos</a></li>
+        <li><a href="#comunidade">Comunidade</a></li>
+        <li><a href="https://hubcomplier.github.io/MENTORIA1-1/" target="_blank">Mentoria</a></li>
+        <li><a href="https://hubcomplier.github.io/bibliotecadeaudios" target="_blank">Biblioteca</a></li>
+      </ul>
+    </nav>
+    <div class="auth-buttons">
+      <button class="btn-login">Entrar</button>
+      <button class="btn-signup">Começar Agora</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Bem-vindo ao AKASHA</h1>
+  <p>A Comunidade Energética mais Magnética do Brasil • Transformação • Prosperidade • Poder</p>
+  <button class="cta-button">Agende Sua Sessão</button>
+</section>
+
+<!-- MAIN -->
+<div class="container">
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('sessoes')"><i class="fas fa-star"></i> Sessões</button>
+  <button class="tab-btn" onclick="switchTab('eventos')"><i class="fas fa-calendar"></i> Eventos</button>
+  <button class="tab-btn" onclick="switchTab('comunidade')"><i class="fas fa-users"></i> Comunidade</button>
+</div>
+
+<!-- SESSÕES -->
+<section id="sessoes" class="tab-content active">
+  <h2 style="color:var(--lux);font-size:2.6rem;margin-bottom:2rem;">Sessões Online com Consultas</h2>
+  
+  <div class="grid-container">
+    <div class="card">
+      <div class="card-icon"><i class="fas fa-female"></i></div>
+      <div class="card-title">Sagrado Feminino</div>
+      <div class="card-description">1 sessão de alinhamento energético + 2 calls de consulta personalizadas</div>
+      <div class="card-price">R$ 150</div>
+      <button class="card-btn">Agendar</button>
+    </div>
+    
+    <div class="card">
+      <div class="card-icon"><i class="fas fa-male"></i></div>
+      <div class="card-title">Sagrado Masculino</div>
+      <div class="card-description">1 sessão de alinhamento energético + 2 calls de consulta personalizadas</div>
+      <div class="card-price">R$ 150</div>
+      <button class="card-btn">Agendar</button>
+    </div>
+  </div>
+
+  <!-- SESSÕES PRESENCIAIS VIP -->
+  <div class="premium-section">
+    <h2>✨ Sessões Presenciais VIP</h2>
+    <div class="grid-container">
+      <div class="card">
+        <div class="card-icon"><i class="fas fa-crown"></i></div>
+        <div class="card-title">VIP Gold</div>
+        <div class="card-description">Sessão presencial exclusiva com protocolos avançados</div>
+        <div class="card-price">R$ 800</div>
+        <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/PRESENCIAPVIP2/', '_blank')">Reservar</button>
+      </div>
+      
+      <div class="card">
+        <div class="card-icon"><i class="fas fa-gem"></i></div>
+        <div class="card-title">VIP Diamond</div>
+        <div class="card-description">Sessão presencial com rituais sagrados e cristais</div>
+        <div class="card-price">R$ 1.200</div>
+        <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/PRESENCIAPVIP2/', '_blank')">Reservar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTRAS SESSÕES (mantidas para estrutura) -->
+<section id="eventos" class="tab-content">
+  <!-- Conteúdo mantido para exemplo -->
+  <h2 style="color:var(--lux);font-size:2.6rem;margin:2rem 0;">📅 Eventos</h2>
+  <div class="grid-container">
+    <div class="card">
+      <div class="card-icon"><i class="fas fa-calendar-day"></i></div>
+      <div class="card-title">Ritual de Prosperidade</div>
+      <div class="card-price">R$ 300</div>
+      <button class="card-btn">Inscrever</button>
+    </div>
+  </div>
+</section>
+
+<section id="comunidade" class="tab-content">
+  <h2 style="color:var(--lux);font-size:2.6rem;margin:2rem 0;">🌍 Comunidade</h2>
+  <div class="card">
+    <div class="card-description">Espaço de compartilhamento e apoio mútuo</div>
+  </div>
+</section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>© 2024 Akasha • Versão Luxo Supremacia</div>
+  <div style="margin-top:1rem;">
+    <a href="https://hubcomplier.github.io/MENTORIA1-1/" target="_blank" style="color:var(--secondary);text-decoration:none;margin:0 10px;">Mentoria Exclusiva</a>
+    <a href="https://hubcomplier.github.io/bibliotecadeaudios" target="_blank" style="color:var(--secondary);text-decoration:none;margin:0 10px;">Biblioteca de Áudios</a>
+    <a href="https://hubcomplier.github.io/PRESENCIAPVIP2/" target="_blank" style="color:var(--secondary);text-decoration:none;margin:0 10px;">Presencial VIP</a>
+  </div>
+</footer>
+
+<script>
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(tabName).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
