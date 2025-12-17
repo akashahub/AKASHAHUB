@@ -44,7 +44,7 @@
       backdrop-filter:blur(12px) saturate(180%);
       border-bottom:1px solid var(--secondary);
       position:fixed;top:0;left:0;right:0;z-index:1000;
-      height: 70px; /* Definindo altura fixa para cálculos */
+      height: 70px;
     }
     header.scrolled{box-shadow:0 4px 20px rgba(212,175,55,0.15);background:rgba(0,0,0,0.95)}
     .header-container{
@@ -57,6 +57,8 @@
     .logo{
       display:flex;align-items:center;text-decoration:none;
       transition:all .3s;
+      z-index: 1100; /* Garante que o logo fique acima do menu mobile */
+      position: relative;
     }
     .logo img {
       height: 55px;
@@ -93,6 +95,11 @@
     nav a:hover{color:var(--secondary);text-shadow: 0 0 10px rgba(212,175,55,0.4)}
     nav a:hover::after{width:100%}
     
+    /* Botão Home Mobile (Escondido no Desktop) */
+    .mobile-home-link {
+      display: none;
+    }
+
     .auth-buttons{display:flex;gap:1rem;align-items:center}
     .btn-login,.btn-signup{
       padding:.7rem 1.5rem;border-radius:30px;font-weight:600;cursor:pointer;
@@ -104,7 +111,16 @@
     .btn-signup{background:linear-gradient(135deg,var(--secondary),#b9972e);color:#000;box-shadow:0 4px 15px rgba(212,175,55,.3)}
     .btn-signup:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(212,175,55,.4)}
     
-    .nav-toggle{display:none;background:none;border:none;color:var(--lux);font-size:1.8rem;cursor:pointer}
+    .nav-toggle{
+      display:none;
+      background:none;
+      border:none;
+      color:var(--lux);
+      font-size:1.8rem;
+      cursor:pointer;
+      z-index: 1100; /* CRUCIAL: Fica acima do menu aberto */
+      position: relative;
+    }
     
     /* ========== HERO COM VÍDEO DE FUNDO ========== */
     .hero{
@@ -905,26 +921,44 @@
       nav ul{
         display:none;
         flex-direction:column;
-        position:fixed; /* Mudado para fixed para cobrir melhor a tela */
-        top:70px; /* Abaixo do header */
+        position:fixed;
+        top:70px;
         left:0;
         width:100%;
-        height: calc(100vh - 70px); /* Ocupa altura restante */
+        height: calc(100vh - 70px);
         background:rgba(0,0,0,.98);
         padding:2rem;
         gap:2rem;
         border-bottom:1px solid var(--secondary);
         overflow-y: auto;
+        z-index: 1050; /* Z-index menor que o botão Toggle */
       }
       nav ul.active{display:flex}
       
+      /* Estilo para o item de HOME no mobile */
+      .mobile-home-link {
+        display: block;
+        border-bottom: 1px solid rgba(212,175,55,0.3);
+        margin-bottom: 10px;
+        padding-bottom: 15px;
+      }
+      
+      .mobile-home-link a {
+        color: var(--secondary) !important;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
       .auth-buttons{display:none}
       .auth-buttons.mobile-show{
         display:flex;
-        flex-direction:row; /* Botões lado a lado */
+        flex-direction:row;
         justify-content: center;
         position:fixed;
-        bottom:0; /* Fixado no fundo da tela */
+        bottom:0;
         left: 0;
         width: 100%;
         background:rgba(11, 0, 22, 0.98);
@@ -987,7 +1021,7 @@
         height: 45px;
       }
       nav a {
-        font-size: 1.1rem; /* Aumentado para mobile */
+        font-size: 1.1rem;
         letter-spacing: 2px;
         display: block;
         text-align: center;
@@ -998,7 +1032,7 @@
         letter-spacing: 0.8px;
       }
       .audio-control {
-        bottom: 80px; /* Ajuste para não ficar em cima dos botões de auth se abertos */
+        bottom: 80px;
         right: 20px;
         padding: 10px 15px;
       }
@@ -1121,6 +1155,13 @@
       </a>
       <nav>
         <ul id="navList">
+          <!-- BOTÃO HOME APENAS NO MOBILE -->
+          <li class="mobile-home-link">
+            <a href="#" onclick="toggleNav(); window.scrollTo(0,0);">
+              <i class="fas fa-home"></i> Home AkashaHub
+            </a>
+          </li>
+          <!-- DEMAIS ITENS -->
           <li><a href="#audios" onclick="toggleNav()">Biblioteca</a></li>
           <li><a href="#sessoes" onclick="switchTab('sessoes'); toggleNav()">Sessões Online</a></li>
           <li><a href="https://hubcomplier.github.io/akashastore/" target="_blank" rel="noopener noreferrer">Loja</a></li>
@@ -1136,6 +1177,7 @@
           <i class="fas fa-user-plus"></i> Cadastrar
         </a>
       </div>
+      <!-- O ícone deste botão muda para um "X" quando clicado -->
       <button class="nav-toggle" onclick="toggleNav()" aria-label="Abrir menu de navegação" aria-expanded="false">
         <i class="fas fa-bars"></i>
       </button>
@@ -1597,8 +1639,7 @@
         selectedContent.classList.add('active');
       }
 
-      // Ativar botão (encontrar o botão que chama esta função ou usar event delegation)
-      // Simulação simples: procurar pelo onclick que contem o ID
+      // Ativar botão
       const btns = document.querySelectorAll('.tab-btn');
       btns.forEach(btn => {
         if(btn.getAttribute('onclick').includes(tabId)) {
@@ -1644,7 +1685,6 @@
 
     function playFreeAudio(element, title) {
       alert("Tocando preview de: " + title + "\n(Funcionalidade de exemplo)");
-      // Aqui você implementaria a lógica real para trocar o src do audio e tocar
     }
 
     // Header scroll effect
