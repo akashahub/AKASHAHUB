@@ -44,11 +44,13 @@
       backdrop-filter:blur(12px) saturate(180%);
       border-bottom:1px solid var(--secondary);
       position:fixed;top:0;left:0;right:0;z-index:1000;
+      height: 70px; /* Definindo altura fixa para cálculos */
     }
     header.scrolled{box-shadow:0 4px 20px rgba(212,175,55,0.15);background:rgba(0,0,0,0.95)}
     .header-container{
       display:flex;justify-content:space-between;align-items:center;
-      padding:1rem clamp(1rem,5vw,2rem);max-width:1400px;margin:0 auto;
+      padding:0 clamp(1rem,5vw,2rem);max-width:1400px;margin:0 auto;
+      height: 100%;
     }
     
     /* LOGO COM IMAGEM */
@@ -900,21 +902,37 @@
 
     @media (max-width:768px){
       .nav-toggle{display:block}
-      nav ul{display:none;flex-direction:column;position:absolute;top:100%;left:0;width:100%;
-        background:rgba(0,0,0,.95);padding:2rem;gap:1.5rem;border-bottom:1px solid var(--secondary)}
+      nav ul{
+        display:none;
+        flex-direction:column;
+        position:fixed; /* Mudado para fixed para cobrir melhor a tela */
+        top:70px; /* Abaixo do header */
+        left:0;
+        width:100%;
+        height: calc(100vh - 70px); /* Ocupa altura restante */
+        background:rgba(0,0,0,.98);
+        padding:2rem;
+        gap:2rem;
+        border-bottom:1px solid var(--secondary);
+        overflow-y: auto;
+      }
       nav ul.active{display:flex}
+      
       .auth-buttons{display:none}
       .auth-buttons.mobile-show{
         display:flex;
-        flex-direction:column;
-        position:absolute;
-        top:100%;
-        right:0;
-        background:rgba(0,0,0,.95);
+        flex-direction:row; /* Botões lado a lado */
+        justify-content: center;
+        position:fixed;
+        bottom:0; /* Fixado no fundo da tela */
+        left: 0;
+        width: 100%;
+        background:rgba(11, 0, 22, 0.98);
         padding:1rem;
-        border-bottom:1px solid var(--secondary);
-        gap:0.5rem;
+        border-top:1px solid var(--secondary);
+        z-index: 1001;
       }
+      
       .hero{
         padding: 7rem 1.5rem 4rem;
         min-height: 90vh;
@@ -969,8 +987,10 @@
         height: 45px;
       }
       nav a {
-        font-size: 0.85rem;
-        letter-spacing: 1px;
+        font-size: 1.1rem; /* Aumentado para mobile */
+        letter-spacing: 2px;
+        display: block;
+        text-align: center;
       }
       .tab-btn {
         font-size: 0.8rem;
@@ -978,7 +998,7 @@
         letter-spacing: 0.8px;
       }
       .audio-control {
-        bottom: 20px;
+        bottom: 80px; /* Ajuste para não ficar em cima dos botões de auth se abertos */
         right: 20px;
         padding: 10px 15px;
       }
@@ -1054,7 +1074,7 @@
 
     @media (max-width: 400px) {
       .audio-control {
-        bottom: 15px;
+        bottom: 80px;
         right: 15px;
         left: 15px;
         justify-content: center;
@@ -1101,8 +1121,8 @@
       </a>
       <nav>
         <ul id="navList">
-          <li><a href="#audios">Biblioteca</a></li>
-          <li><a href="#sessoes">Sessões Online</a></li>
+          <li><a href="#audios" onclick="toggleNav()">Biblioteca</a></li>
+          <li><a href="#sessoes" onclick="switchTab('sessoes'); toggleNav()">Sessões Online</a></li>
           <li><a href="https://hubcomplier.github.io/akashastore/" target="_blank" rel="noopener noreferrer">Loja</a></li>
           <li><a href="https://hubcomplier.github.io/Doutrina/" target="_blank" rel="noopener noreferrer">Doutrina Akáshica</a></li>
           <li><a href="https://hubcomplier.github.io/MENTORIA1-1/" target="_blank" rel="noopener noreferrer">Mentoria 1:1</a></li>
@@ -1529,4 +1549,120 @@
   <footer>
     <div class="container">
       <p style="font-size:1.4rem;margin-bottom:1rem;">© 2024 Akasha Hub • Portal de Transformação Quântica</p>
-      <p>Todas as experi
+      <p>Todas as experiências são estritamente confidenciais e profissionais.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ======= MENU MOBILE LOGIC =======
+    function toggleNav() {
+      const navList = document.getElementById('navList');
+      const authButtons = document.querySelector('.auth-buttons');
+      const navToggle = document.querySelector('.nav-toggle');
+
+      // Alternar classes
+      navList.classList.toggle('active');
+      authButtons.classList.toggle('mobile-show');
+
+      // Acessibilidade
+      const expanded = navList.classList.contains('active');
+      navToggle.setAttribute('aria-expanded', expanded);
+      
+      // Mudar ícone
+      const icon = navToggle.querySelector('i');
+      if(expanded) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+      } else {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    }
+
+    // ======= TAB LOGIC =======
+    function switchTab(tabId) {
+      // Esconder todos os conteúdos
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // Desativar todos os botões
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Ativar conteúdo selecionado
+      const selectedContent = document.getElementById(tabId);
+      if(selectedContent) {
+        selectedContent.classList.add('active');
+      }
+
+      // Ativar botão (encontrar o botão que chama esta função ou usar event delegation)
+      // Simulação simples: procurar pelo onclick que contem o ID
+      const btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(btn => {
+        if(btn.getAttribute('onclick').includes(tabId)) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    function goToAudios() {
+      // Rolar suavemente para a seção de audios
+      document.getElementById('audios').scrollIntoView({behavior: 'smooth'});
+      
+      // Remover active dos botões de tabs
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Ativar visualmente o botão biblioteca
+      const libBtn = document.querySelector('.tab-btn[onclick*="goToAudios"]');
+      if(libBtn) libBtn.classList.add('active');
+    }
+
+    // ======= AUDIO PLAYER LOGIC =======
+    const audio = document.getElementById('backgroundAudio');
+    const audioVisualizer = document.getElementById('audioVisualizer');
+    const audioIcon = document.getElementById('audioIcon');
+    let isPlaying = false;
+
+    function toggleBackgroundAudio() {
+      if (isPlaying) {
+        audio.pause();
+        audioVisualizer.classList.add('paused');
+        audioIcon.classList.remove('fa-pause');
+        audioIcon.classList.add('fa-play');
+      } else {
+        audio.play().catch(e => console.log("Interação necessária para tocar áudio"));
+        audioVisualizer.classList.remove('paused');
+        audioIcon.classList.remove('fa-play');
+        audioIcon.classList.add('fa-pause');
+      }
+      isPlaying = !isPlaying;
+    }
+
+    function playFreeAudio(element, title) {
+      alert("Tocando preview de: " + title + "\n(Funcionalidade de exemplo)");
+      // Aqui você implementaria a lógica real para trocar o src do audio e tocar
+    }
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+
+      // Scroll Progress Bar
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.querySelector(".scroll-progress").style.width = scrolled + "%";
+    });
+
+  </script>
+</body>
+</html>
