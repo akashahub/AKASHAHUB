@@ -576,6 +576,169 @@
     .pitch-section li{font-size:1.1rem;color:rgba(245,230,200,0.8);margin-bottom:0.8rem;position:relative}
     .pitch-section li:before{content:"✦";color:var(--secondary);position:absolute;left:-1.5rem}
     
+    /* ========== ESTEIRA DE LIVROS (VITRINE) ========== */
+    .books-showcase {
+      padding: 3rem 0 5rem;
+      border-bottom: 1px solid rgba(212,175,55,0.1);
+      position: relative;
+    }
+    
+    /* Indicador de scroll para mobile */
+    .scroll-hint {
+      text-align: center;
+      color: var(--secondary);
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+      animation: pulse 2s infinite;
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .scroll-hint { display: block; }
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: translateX(-5px); }
+      50% { opacity: 1; transform: translateX(5px); }
+      100% { opacity: 0.4; transform: translateX(-5px); }
+    }
+
+    .books-track {
+      display: flex;
+      overflow-x: auto;
+      gap: 3rem;
+      padding: 2rem clamp(1rem, 3vw, 2rem) 4rem; /* Padding bottom extra para as sombras e hover */
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      
+      /* Estilização da barra de rolagem */
+      scrollbar-width: thin;
+      scrollbar-color: var(--secondary) rgba(0,0,0,0.3);
+    }
+    
+    .books-track::-webkit-scrollbar {
+      height: 8px;
+    }
+    .books-track::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.3);
+      border-radius: 4px;
+    }
+    .books-track::-webkit-scrollbar-thumb {
+      background: var(--secondary);
+      border-radius: 4px;
+    }
+
+    .book-item {
+      flex: 0 0 240px; /* Largura fixa do livro */
+      scroll-snap-align: center;
+      perspective: 1000px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    
+    /* Design do Livro 3D */
+    .book-cover {
+      width: 100%;
+      aspect-ratio: 2/3;
+      position: relative;
+      background: #1a002f;
+      border-radius: 2px 6px 6px 2px;
+      box-shadow: 
+        5px 5px 15px rgba(0,0,0,0.5),
+        inset 3px 0 10px rgba(0,0,0,0.8); /* Lombada escura */
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      cursor: pointer;
+      border: 1px solid rgba(212,175,55,0.3);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .book-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.9;
+    }
+    
+    /* Efeito de páginas na lateral */
+    .book-cover::before {
+      content: '';
+      position: absolute;
+      right: 2px;
+      top: 1%;
+      height: 98%;
+      width: 4px;
+      background: linear-gradient(to right, #ccc, #eee 30%, #ddd);
+      z-index: 2;
+      box-shadow: -1px 0 2px rgba(0,0,0,0.2);
+    }
+
+    /* Brilho Dourado na Capa */
+    .book-cover::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .book-item:hover .book-cover {
+      transform: translateY(-15px) rotateY(-5deg);
+      box-shadow: 
+        15px 25px 30px rgba(0,0,0,0.6),
+        0 0 15px rgba(212,175,55,0.3);
+      border-color: var(--secondary);
+    }
+
+    .book-info {
+      text-align: center;
+      margin-top: 1.5rem;
+      width: 100%;
+    }
+    
+    .book-title {
+      font-family: 'Cinzel', serif;
+      color: var(--lux);
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+    
+    .book-price {
+      color: var(--secondary);
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    
+    .book-btn {
+      display: inline-block;
+      padding: 0.5rem 1.2rem;
+      border: 1px solid var(--secondary);
+      color: var(--secondary);
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      background: transparent;
+    }
+    
+    .book-btn:hover {
+      background: var(--secondary);
+      color: #000;
+      box-shadow: 0 0 15px rgba(212,175,55,0.4);
+    }
+    
+    /* ========== FOOTER & RESTO ========== */
+    
     footer{
       background:#000;padding:4rem 2rem 3rem;border-top:1px solid var(--secondary);text-align:center;
       color:var(--lux);margin-top:6rem;
@@ -593,6 +756,7 @@
       background-position: center;
       border-top: 1px solid rgba(212,175,55,0.2);
       border-bottom: 1px solid rgba(212,175,55,0.2);
+      margin-top: 0; /* Removido margem pois agora temos os livros antes */
     }
     
     .section-subtitle {
@@ -1222,7 +1386,277 @@
     </div>
   </section>
 
-  <!-- BIBLIOTECA DE ÁUDIOS - PRIMEIRA SEÇÃO -->
+  <!-- SESSÕES E SERVIÇOS (MAIN) -->
+  <main class="container">
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn" onclick="goToAudios()"><i class="fas fa-headphones"></i> Biblioteca</button>
+      <button class="tab-btn active" onclick="switchTab('sessoes')"><i class="fas fa-video"></i> Sessões Online</button>
+      <button class="tab-btn" onclick="switchTab('vip')"><i class="fas fa-star"></i> Sessões VIP</button>
+      <button class="tab-btn" onclick="window.open('https://hubcomplier.github.io/Doutrina/', '_blank')"><i class="fas fa-book-open"></i> Doutrina Akáshica</button>
+      <button class="tab-btn" onclick="switchTab('mentoria')"><i class="fas fa-user-graduate"></i> Mentoria 1:1</button>
+    </div>
+
+    <!-- SESSÕES ONLINE -->
+    <section id="sessoes" class="tab-content active">
+      <div class="section-title">
+        <h2><i class="fas fa-sparkles"></i> Sessões de Alinhamento Online</h2>
+      </div>
+      <div class="grid-container">
+        
+        <!-- CARD SAGRADO FEMININO COM VÍDEO -->
+        <div class="card">
+          <div class="card-video">
+            <video autoplay muted loop playsinline>
+              <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764818914/processando_tudo_vlx324.mp4" type="video/mp4">
+            </video>
+            <div class="card-video-overlay"></div>
+          </div>
+          <div class="card-icon"><i class="fas fa-venus"></i></div>
+          <div class="card-title">Sagrado Feminino</div>
+          <div class="card-description">
+            1 Sessão de Alinhamento Energético Online<br>
+            + 2 Calls de Consulta Profunda (60min)<br><br>
+            Reconexão com sua essência divina, cura do útero energético, liberação de padrões ancestrais.
+          </div>
+          <div class="card-price">R$ 150</div>
+          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/alinhamentofeminino/', '_blank')">
+            <i class="fas fa-calendar-check"></i> Agendar Sagrado Feminino
+          </button>
+        </div>
+
+        <!-- CARD SAGRADO MASCULINO COM VÍDEO -->
+        <div class="card">
+          <div class="card-video">
+            <video autoplay muted loop playsinline>
+              <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764818914/eu_sou_magnetico_poder_fluidez_e_for%C3%A7a_gcvdqg.mp4" type="video/mp4">
+            </video>
+            <div class="card-video-overlay"></div>
+          </div>
+          <div class="card-icon"><i class="fas fa-mars"></i></div>
+          <div class="card-title">Sagrado Masculino</div>
+          <div class="card-description">
+            1 Sessão de Alinhamento Energético Online<br>
+            + 2 Calls de Consulta Profunda (60min cada)<br><br>
+            Reconexão com o masculino sagrado, força interior, liderança consciente, cura da linhagem paterna.
+          </div>
+          <div class="card-price">R$ 150</div>
+          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/alinhamentomasculino/', '_blank')">
+            <i class="fas fa-calendar-check"></i> Agendar Sagrado Masculino
+          </button>
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- SESSÕES VIP -->
+    <section id="vip" class="tab-content">
+      <div class="section-title">
+        <h2>
+          <a href="https://hubcomplier.github.io/PRESENCIAPVIP2/" target="_blank" rel="noopener noreferrer">
+            <i class="fas fa-crown"></i> Sessões VIP Presenciais
+          </a>
+        </h2>
+      </div>
+      <div class="grid-container">
+        <div class="card">
+          <div class="card-icon"><i class="fas fa-star"></i></div>
+          <div class="card-title">Sessão Padrão Akáshica</div>
+          <div class="card-description">
+            Alinhamento quântico + fascinação + magnetismo + massagem tântrica.<br><br>
+            Duração média: 60–90 min
+          </div>
+          <div class="card-price">R$ 800</div>
+          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/formularioPRESENCIALVIP/', '_blank')">
+            Solicitar esta Sessão
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-icon"><i class="fas fa-gem"></i></div>
+          <div class="card-title">Experiência Personalizada</div>
+          <div class="card-description">
+            Ritual extra, intenção específica e personalização completa do ambiente.<br><br>
+            Duração média: 90–120 min
+          </div>
+          <div class="card-price">R$ 1.000</div>
+          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/formularioPRESENCIALVIP/', '_blank')">
+            Quero Personalização
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-icon"><i class="fas fa-infinity"></i></div>
+          <div class="card-title">Imersão 3h+</div>
+          <div class="card-description">
+            Sessão longa, profunda e transformadora; estado expandido e recalibração total.<br><br>
+            Duração média: 3h+
+          </div>
+          <div class="card-price">R$ 1.200</div>
+          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/formularioPRESENCIALVIP/', '_blank')">
+            Reservar Imersão
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-icon"><i class="fas fa-crown"></i></div>
+          <div class="card-title">Presença VIP em Eventos</div>
+          <div class="card-description">
+            Sua presença magnética + demonstração do Akasha (sem tantra).<br><br>
+            Até 2 horas • Eventos selecionados
+          </div>
+          <div class="card-price">R$ 500</div>
+          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/formularioPRESENCIALVIP/', '_blank')">
+            Solicitar Presença VIP
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENTORIA 1:1 -->
+    <section id="mentoria" class="tab-content">
+      <div class="section-title">
+        <h2>Mentoria 1:1 • Transformação Quântica</h2>
+      </div>
+
+      <!-- VÍDEO DA MENTORIA -->
+      <div class="section-video">
+        <video autoplay muted loop playsinline>
+          <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764820271/grok-video-791937b9-3747-452f-9c96-50515b854acf_6_rjd6xj.mp4" type="video/mp4">
+        </video>
+        <div class="section-video-overlay"></div>
+      </div>
+
+      <div class="pitch-section">
+        <h3>
+          <a href="https://hubcomplier.github.io/formularioMENTORIA1-1/" target="_blank" rel="noopener noreferrer">
+            ACOMPANHAMENTO INDIVIDUAL DE ALTA FREQUÊNCIA
+          </a>
+        </h3>
+        
+        <h4>PARA QUEM É?</h4>
+        <p>Para quem já fez cursos, terapias, mas busca:</p>
+        <ul>
+          <li>Protocolo exclusivo para seu DNA energético</li>
+          <li>Destravamento financeiro acelerado</li>
+          <li>Despertar espiritual guiado</li>
+          <li>Construção de legado energético</li>
+          <li>Resultados mensuráveis em 90 dias</li>
+        </ul>
+        
+        <h4>O QUE VOCÊ RECEBE?</h4>
+        <ul>
+          <li>Sessões semanais 1:1 com Yan Simon</li>
+          <li>Ativações de DNA Cristalino personalizadas</li>
+          <li>Protocolo exclusivo de magnetismo pessoal</li>
+          <li>Suporte diário via comunidade Anúbis</li>
+          <li>Acesso a técnicas avançadas do Akasha</li>
+          <li>Revisão e ajuste do seu campo quântico</li>
+        </ul>
+        
+        <h4>RESULTADOS ESPERADOS</h4>
+        <ul>
+          <li>Multiplicação de renda em 3-6 meses</li>
+          <li>Clareza de propósito e missão</li>
+          <li>Relacionamentos em nova frequência</li>
+          <li>Saúde energética otimizada</li>
+          <li>Autonomia na gestão do seu campo</li>
+          <li>Presença magnética natural</li>
+        </ul>
+        
+        <h4>FORMATO EXCLUSIVO</h4>
+        <p>Apenas 5 vagas por trimestre • 3 ou 6 meses de acompanhamento</p>
+        <p>Sessões gravadas • Materiais exclusivos • Comunidade VIP</p>
+        
+        <div style="text-align:center;margin:3rem 0">
+          <button class="cta-button" onclick="window.open('https://hubcomplier.github.io/MENTORIA1-1/', '_blank')">
+            Quero Entrar na Mentoria
+          </button>
+        </div>
+        
+        <p style="text-align:center;color:var(--lux);font-size:1.2rem">
+          Investimento: A partir de R$ 2.500<br>
+          <small style="color:rgba(245,230,200,0.6)">(Menos que 1 ano de terapia tradicional, resultados para vida)</small>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- NOVA SESSÃO: VITRINE DE LIVROS (ESTEIRA) -->
+  <section id="livros" class="books-showcase">
+    <div class="container">
+      <div class="section-title">
+        <h2><i class="fas fa-book"></i> Vitrine Literária Akáshica</h2>
+        <p class="section-subtitle">Conhecimento profundo ao seu alcance</p>
+      </div>
+      
+      <p class="scroll-hint"><i class="fas fa-chevron-left"></i> Deslize para ver mais <i class="fas fa-chevron-right"></i></p>
+
+      <div class="books-track">
+        <!-- LIVRO 1 -->
+        <div class="book-item">
+          <a href="https://hubcomplier.github.io/akashastore/" target="_blank" class="book-cover">
+            <img src="https://placehold.co/300x450/1a002f/d4af37?text=O+Despertar+Akashico&font=playfair-display" alt="Capa Livro O Despertar">
+          </a>
+          <div class="book-info">
+            <h4 class="book-title">O Despertar Akáshico</h4>
+            <span class="book-price">R$ 49,90</span>
+            <a href="https://hubcomplier.github.io/akashastore/" target="_blank" class="book-btn">Comprar</a>
+          </div>
+        </div>
+
+        <!-- LIVRO 2 -->
+        <div class="book-item">
+          <a href="https://hubcomplier.github.io/akashastore/" target="_blank" class="book-cover">
+            <img src="https://placehold.co/300x450/2a001f/b889ff?text=Codigo+da+Riqueza&font=playfair-display" alt="Capa Livro Código da Riqueza">
+          </a>
+          <div class="book-info">
+            <h4 class="book-title">Código da Riqueza</h4>
+            <span class="book-price">R$ 59,90</span>
+            <a href="https://hubcomplier.github.io/akashastore/" target="_blank" class="book-btn">Comprar</a>
+          </div>
+        </div>
+
+        <!-- LIVRO 3 -->
+        <div class="book-item">
+          <a href="https://hubcomplier.github.io/akashastore/" target="_blank" class="book-cover">
+            <img src="https://placehold.co/300x450/001a2f/4CAF50?text=Cura+Ancestral&font=playfair-display" alt="Capa Livro Cura Ancestral">
+          </a>
+          <div class="book-info">
+            <h4 class="book-title">Cura Ancestral</h4>
+            <span class="book-price">R$ 39,90</span>
+            <a href="https://hubcomplier.github.io/akashastore/" target="_blank" class="book-btn">Comprar</a>
+          </div>
+        </div>
+
+        <!-- LIVRO 4 -->
+        <div class="book-item">
+          <a href="https://hubcomplier.github.io/akashastore/" target="_blank" class="book-cover">
+            <img src="https://placehold.co/300x450/333/d4af37?text=Manual+da+Sessao&font=playfair-display" alt="Capa Manual da Sessão">
+          </a>
+          <div class="book-info">
+            <h4 class="book-title">Manual do Alinhamento</h4>
+            <span class="book-price">R$ 29,90</span>
+            <a href="https://hubcomplier.github.io/akashastore/" target="_blank" class="book-btn">Comprar</a>
+          </div>
+        </div>
+
+        <!-- LIVRO 5 -->
+        <div class="book-item">
+          <a href="https://hubcomplier.github.io/akashastore/" target="_blank" class="book-cover">
+            <img src="https://placehold.co/300x450/4a0000/fff?text=Tantra+e+Energia&font=playfair-display" alt="Capa Tantra e Energia">
+          </a>
+          <div class="book-info">
+            <h4 class="book-title">Tantra e Energia</h4>
+            <span class="book-price">R$ 69,90</span>
+            <a href="https://hubcomplier.github.io/akashastore/" target="_blank" class="book-btn">Comprar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BIBLIOTECA DE ÁUDIOS -->
   <section id="audios" class="audio-library-section">
     <div class="container">
       <div class="section-title">
@@ -1394,202 +1828,6 @@
 
     </div>
   </section>
-
-  <main class="container">
-    <!-- TABS -->
-    <div class="tabs">
-      <button class="tab-btn" onclick="goToAudios()"><i class="fas fa-headphones"></i> Biblioteca</button>
-      <button class="tab-btn active" onclick="switchTab('sessoes')"><i class="fas fa-video"></i> Sessões Online</button>
-      <button class="tab-btn" onclick="switchTab('vip')"><i class="fas fa-star"></i> Sessões VIP</button>
-      <button class="tab-btn" onclick="window.open('https://hubcomplier.github.io/Doutrina/', '_blank')"><i class="fas fa-book-open"></i> Doutrina Akáshica</button>
-      <button class="tab-btn" onclick="switchTab('mentoria')"><i class="fas fa-user-graduate"></i> Mentoria 1:1</button>
-    </div>
-
-    <!-- SESSÕES ONLINE -->
-    <section id="sessoes" class="tab-content active">
-      <div class="section-title">
-        <h2><i class="fas fa-sparkles"></i> Sessões de Alinhamento Online</h2>
-      </div>
-      <div class="grid-container">
-        
-        <!-- CARD SAGRADO FEMININO COM VÍDEO -->
-        <div class="card">
-          <div class="card-video">
-            <video autoplay muted loop playsinline>
-              <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764818914/processando_tudo_vlx324.mp4" type="video/mp4">
-            </video>
-            <div class="card-video-overlay"></div>
-          </div>
-          <div class="card-icon"><i class="fas fa-venus"></i></div>
-          <div class="card-title">Sagrado Feminino</div>
-          <div class="card-description">
-            1 Sessão de Alinhamento Energético Online<br>
-            + 2 Calls de Consulta Profunda (60min cada)<br><br>
-            Reconexão com sua essência divina, cura do útero energético, liberação de padrões ancestrais.
-          </div>
-          <div class="card-price">R$ 150</div>
-          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/alinhamentofeminino/', '_blank')">
-            <i class="fas fa-calendar-check"></i> Agendar Sagrado Feminino
-          </button>
-        </div>
-
-        <!-- CARD SAGRADO MASCULINO COM VÍDEO -->
-        <div class="card">
-          <div class="card-video">
-            <video autoplay muted loop playsinline>
-              <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764818914/eu_sou_magnetico_poder_fluidez_e_for%C3%A7a_gcvdqg.mp4" type="video/mp4">
-            </video>
-            <div class="card-video-overlay"></div>
-          </div>
-          <div class="card-icon"><i class="fas fa-mars"></i></div>
-          <div class="card-title">Sagrado Masculino</div>
-          <div class="card-description">
-            1 Sessão de Alinhamento Energético Online<br>
-            + 2 Calls de Consulta Profunda (60min cada)<br><br>
-            Reconexão com o masculino sagrado, força interior, liderança consciente, cura da linhagem paterna.
-          </div>
-          <div class="card-price">R$ 150</div>
-          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/alinhamentomasculino/', '_blank')">
-            <i class="fas fa-calendar-check"></i> Agendar Sagrado Masculino
-          </button>
-        </div>
-        
-      </div>
-    </section>
-
-    <!-- SESSÕES VIP -->
-    <section id="vip" class="tab-content">
-      <div class="section-title">
-        <h2>
-          <a href="https://hubcomplier.github.io/PRESENCIAPVIP2/" target="_blank" rel="noopener noreferrer">
-            <i class="fas fa-crown"></i> Sessões VIP Presenciais
-          </a>
-        </h2>
-      </div>
-      <div class="grid-container">
-        <div class="card">
-          <div class="card-icon"><i class="fas fa-star"></i></div>
-          <div class="card-title">Sessão Padrão Akáshica</div>
-          <div class="card-description">
-            Alinhamento quântico + fascinação + magnetismo + massagem tântrica.<br><br>
-            Duração média: 60–90 min
-          </div>
-          <div class="card-price">R$ 800</div>
-          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/formularioPRESENCIALVIP/', '_blank')">
-            Solicitar esta Sessão
-          </button>
-        </div>
-
-        <div class="card">
-          <div class="card-icon"><i class="fas fa-gem"></i></div>
-          <div class="card-title">Experiência Personalizada</div>
-          <div class="card-description">
-            Ritual extra, intenção específica e personalização completa do ambiente.<br><br>
-            Duração média: 90–120 min
-          </div>
-          <div class="card-price">R$ 1.000</div>
-          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/formularioPRESENCIALVIP/', '_blank')">
-            Quero Personalização
-          </button>
-        </div>
-
-        <div class="card">
-          <div class="card-icon"><i class="fas fa-infinity"></i></div>
-          <div class="card-title">Imersão 3h+</div>
-          <div class="card-description">
-            Sessão longa, profunda e transformadora; estado expandido e recalibração total.<br><br>
-            Duração média: 3h+
-          </div>
-          <div class="card-price">R$ 1.200</div>
-          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/formularioPRESENCIALVIP/', '_blank')">
-            Reservar Imersão
-          </button>
-        </div>
-
-        <div class="card">
-          <div class="card-icon"><i class="fas fa-crown"></i></div>
-          <div class="card-title">Presença VIP em Eventos</div>
-          <div class="card-description">
-            Sua presença magnética + demonstração do Akasha (sem tantra).<br><br>
-            Até 2 horas • Eventos selecionados
-          </div>
-          <div class="card-price">R$ 500</div>
-          <button class="card-btn" onclick="window.open('https://hubcomplier.github.io/formularioPRESENCIALVIP/', '_blank')">
-            Solicitar Presença VIP
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- MENTORIA 1:1 -->
-    <section id="mentoria" class="tab-content">
-      <div class="section-title">
-        <h2>Mentoria 1:1 • Transformação Quântica</h2>
-      </div>
-
-      <!-- VÍDEO DA MENTORIA -->
-      <div class="section-video">
-        <video autoplay muted loop playsinline>
-          <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764820271/grok-video-791937b9-3747-452f-9c96-50515b854acf_6_rjd6xj.mp4" type="video/mp4">
-        </video>
-        <div class="section-video-overlay"></div>
-      </div>
-
-      <div class="pitch-section">
-        <h3>
-          <a href="https://hubcomplier.github.io/formularioMENTORIA1-1/" target="_blank" rel="noopener noreferrer">
-            ACOMPANHAMENTO INDIVIDUAL DE ALTA FREQUÊNCIA
-          </a>
-        </h3>
-        
-        <h4>PARA QUEM É?</h4>
-        <p>Para quem já fez cursos, terapias, mas busca:</p>
-        <ul>
-          <li>Protocolo exclusivo para seu DNA energético</li>
-          <li>Destravamento financeiro acelerado</li>
-          <li>Despertar espiritual guiado</li>
-          <li>Construção de legado energético</li>
-          <li>Resultados mensuráveis em 90 dias</li>
-        </ul>
-        
-        <h4>O QUE VOCÊ RECEBE?</h4>
-        <ul>
-          <li>Sessões semanais 1:1 com Yan Simon</li>
-          <li>Ativações de DNA Cristalino personalizadas</li>
-          <li>Protocolo exclusivo de magnetismo pessoal</li>
-          <li>Suporte diário via comunidade Anúbis</li>
-          <li>Acesso a técnicas avançadas do Akasha</li>
-          <li>Revisão e ajuste do seu campo quântico</li>
-        </ul>
-        
-        <h4>RESULTADOS ESPERADOS</h4>
-        <ul>
-          <li>Multiplicação de renda em 3-6 meses</li>
-          <li>Clareza de propósito e missão</li>
-          <li>Relacionamentos em nova frequência</li>
-          <li>Saúde energética otimizada</li>
-          <li>Autonomia na gestão do seu campo</li>
-          <li>Presença magnética natural</li>
-        </ul>
-        
-        <h4>FORMATO EXCLUSIVO</h4>
-        <p>Apenas 5 vagas por trimestre • 3 ou 6 meses de acompanhamento</p>
-        <p>Sessões gravadas • Materiais exclusivos • Comunidade VIP</p>
-        
-        <div style="text-align:center;margin:3rem 0">
-          <button class="cta-button" onclick="window.open('https://hubcomplier.github.io/MENTORIA1-1/', '_blank')">
-            Quero Entrar na Mentoria
-          </button>
-        </div>
-        
-        <p style="text-align:center;color:var(--lux);font-size:1.2rem">
-          Investimento: A partir de R$ 2.500<br>
-          <small style="color:rgba(245,230,200,0.6)">(Menos que 1 ano de terapia tradicional, resultados para vida)</small>
-        </p>
-      </div>
-    </section>
-
-  </main>
 
   <!-- FOOTER -->
   <footer>
