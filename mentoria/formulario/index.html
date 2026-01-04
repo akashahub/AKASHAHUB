@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Seleção Akáshica Paladins | Aplicação Oficial</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet"/>
+
+<style>
+  :root{
+    --bg:#000;
+    --panel:#0b0b0b;
+    --smoke:#111;
+    --gold:#d4af37;
+    --gold-grad:linear-gradient(45deg,#bf953f,#fcf6ba,#b38728,#fbf5b7,#aa771c);
+    --text:#eaeaea;
+    --muted:#bfbfbf;
+    --line:rgba(255,255,255,.08);
+    --glow:0 0 60px rgba(212,175,55,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background: radial-gradient(1200px 800px at 50% -10%, rgba(120,80,255,.06), transparent 40%), var(--bg);
+    color:var(--text);
+    font-family:'Montserrat',sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,label{font-family:'Cinzel',serif; letter-spacing:.6px}
+  a{text-decoration:none;color:inherit}
+
+  /* HERO - ALTERADO AQUI */
+  .hero{
+    text-align:center;
+    padding:120px 20px 80px; /* Aumentei um pouco o padding para mostrar mais da imagem */
+    
+    /* Nova configuração de fundo com a imagem solicitada */
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), #000), 
+                url('https://res.cloudinary.com/dlueoyrhe/image/upload/v1766093535/download_-_2025-12-17T033350.403_z6v1lo.jpg');
+    
+    background-size: cover;
+    background-position: center 25%; /* Ajusta o foco da imagem */
+    background-repeat: no-repeat;
+    border-bottom:1px solid var(--line);
+  }
+
+  .badge{
+    display:inline-block;
+    padding:8px 18px;
+    background: rgba(0,0,0,0.6); /* Fundo escuro leve para leitura sobre a imagem */
+    border:1px solid var(--gold);
+    color:var(--gold);
+    backdrop-filter: blur(4px);
+    border-radius: 4px;
+    letter-spacing:3px;
+    font-size:.8rem;
+    margin-bottom:16px;
+  }
+  .hero h1{
+    font-size:2.6rem;
+    color:transparent;
+    background:var(--gold-grad);
+    -webkit-background-clip:text;
+    background-clip:text;
+    text-transform:uppercase;
+    margin-bottom:12px;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.8); /* Sombra para destacar texto da imagem */
+  }
+  .hero p{
+    max-width:780px;
+    margin:0 auto;
+    color: #e0e0e0; /* Texto um pouco mais claro para contraste */
+    font-size:1.06rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+  }
+
+  /* WRAP */
+  .wrap{max-width:860px;margin:40px auto 70px;padding:20px}
+  .card{
+    background:linear-gradient(180deg,rgba(255,255,255,.04), rgba(255,255,255,.02));
+    border:1px solid rgba(212,175,55,.35);
+    border-radius:14px;
+    backdrop-filter:blur(6px);
+    padding:28px;
+    box-shadow:var(--glow);
+  }
+
+  /* FORM */
+  form{margin-top:6px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .row-1{grid-template-columns:1fr}
+  label{display:block;margin:16px 0 6px;color:var(--gold);font-weight:600}
+  input, select, textarea{
+    width:100%;padding:14px;border-radius:10px;border:1px solid #242424;
+    background:rgba(255,255,255,.07);color:#fff;font-size:1rem;transition:.25s;outline:none
+  }
+  textarea{min-height:120px; resize:vertical}
+  input::placeholder, textarea::placeholder{color:#a6a6a6}
+  input:focus, textarea:focus, select:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(212,175,55,.12);
+  }
+
+  .consent{display:flex; gap:10px; align-items:flex-start; margin-top:12px; font-size:.95rem; color:#d6d6d6}
+  .consent input{width:auto; margin-top:4px}
+
+  /* BUTTON */
+  .btn{
+    width:100%;margin-top:22px;padding:18px;font-size:1.06rem;
+    background:var(--gold-grad);color:#000;border:none;border-radius:12px;
+    font-weight:800;letter-spacing:1px;cursor:pointer;transition:.3s;
+    font-family:'Cinzel',serif;text-transform:uppercase;box-shadow:0 10px 30px rgba(212,175,55,.25)
+  }
+  .btn:hover{filter:brightness(1.08); transform:translateY(-1px)}
+  .btn[disabled]{opacity:.6; cursor:not-allowed}
+
+  .note{margin-top:10px;font-size:.85rem;color:#8d8d8d;text-align:center}
+
+  /* FOOTER */
+  .footer{
+    text-align:center;padding:40px 20px 60px;color:#7a7a7a;font-size:.9rem;border-top:1px solid var(--line);margin-top:40px
+  }
+
+  /* SUCCESS OVERLAY */
+  .overlay{
+    position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.88); z-index:9999; padding:20px;
+  }
+  .overlay .modal{
+    max-width:620px; width:100%;
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border:1px solid rgba(212,175,55,.35);
+    border-radius:16px;
+    padding:30px 26px;
+    text-align:center;
+    box-shadow:var(--glow);
+  }
+  .ok{font-size:46px; line-height:1; margin-bottom:8px; color:var(--gold)}
+  .modal h2{font-size:1.6rem; margin-bottom:10px}
+  .modal p{color:#d6d6d6; margin-bottom:16px}
+  .modal .close{
+    margin-top:6px; display:inline-block; padding:12px 20px; border:1px solid var(--gold);
+    color:var(--gold); border-radius:10px; font-family:'Cinzel',serif; text-transform:uppercase; letter-spacing:.5px;
+  }
+  .modal .close:hover{background:rgba(212,175,55,.12)}
+
+  @media (max-width:800px){
+    .row{grid-template-columns:1fr}
+    .hero h1{font-size:2.2rem}
+  }
+</style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge">Seleção Oficial • Mentoria Akáshica Paladins</div>
+    <h1>Aplicação de Mentorandos Paladins</h1>
+    <p>Akasha • Kaula Tantra • Expansão de Consciência • Realidade Quântica<br/><br/>
+    Preencha com presença. Nem todos serão aceitos. A seleção é criteriosa e confidencial.</p>
+  </section>
+
+  <!-- FORM -->
+  <div class="wrap">
+    <div class="card">
+      <form id="paladinsForm">
+        <div class="row">
+          <div>
+            <label for="nome">Nome completo</label>
+            <input id="nome" name="Nome" type="text" placeholder="Seu nome e sobrenome" required />
+          </div>
+          <div>
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email" placeholder="voce@exemplo.com" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="whatsapp">Telefone / WhatsApp</label>
+            <input id="whatsapp" name="WhatsApp" type="tel" inputmode="tel" placeholder="(DDD) 9 0000-0000" required />
+          </div>
+          <div>
+            <label for="alinhamento">Área que mais precisa de alinhamento</label>
+            <select id="alinhamento" name="Área prioritária" required>
+              <option value="" disabled selected>Selecione...</option>
+              <option>Energia / Espiritualidade</option>
+              <option>Propósito / Clareza</option>
+              <option>Emoções / Traumas / Autoestima</option>
+              <option>Poder Pessoal / Expansão</option>
+              <option>Prosperidade / Vida Material</option>
+              <option>Relacionamentos / Amor / Sexualidade Sagrada</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row row-1">
+          <div>
+            <label for="motivo">O que te chama para o Caminho Akáshico Paladins neste momento?</label>
+            <textarea id="motivo" name="Motivo" placeholder="Escreva com verdade. Seja direto(a) e específico(a)." required></textarea>
+          </div>
+        </div>
+
+        <div class="row row-1">
+          <div class="consent">
+            <input type="checkbox" id="consent" required />
+            <label for="consent" style="margin:0; color:#cfcfcf;">Concordo em ser contatado(a) pela equipe para a próxima etapa da seleção.</label>
+          </div>
+        </div>
+
+        <!-- Honeypot anti-bot -->
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+        <!-- Hidden config for FormSubmit -->
+        <input type="hidden" name="_subject" value="mentoria">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_autoresponse" id="autoMsg" value="">
+
+        <button id="submitBtn" class="btn" type="submit">Enviar Aplicação</button>
+        <div class="note"</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SUCCESS OVERLAY -->
+  <div class="overlay" id="okOverlay" role="dialog" aria-modal="true" aria-labelledby="okTitle">
+    <div class="modal">
+      <div class="ok">✔</div>
+      <h2 id="okTitle">Aplicação recebida</h2>
+      <p>Guardião(a), seus dados foram enviados com sucesso. Em breve você será chamado(a) para a Iniciação.</p>
+      <a href="#" class="close" id="closeOverlay">Fechar</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    © 2025 Akasha Paladins • Sistema Yan Klehn • Todos os direitos reservados
+  </div>
+
+<script>
+  // Endpoint do FormSubmit (envio para o Gmail)
+  const FORM_ENDPOINT = "https://formsubmit.co/ajax/akashaguardia@gmail.com";
+
+  // Autoresposta que o candidato recebe por e-mail
+  const AUTO_MESSAGE = `Guardião(a),
+
+Recebemos sua aplicação para a Mentoria Akáshica Paladins.
+
+Em breve você será chamado(a) para a Iniciação (Rito de Abertura). Nossa equipe entrará em contato por e-mail/WhatsApp com os próximos passos.
+
+Enquanto isso:
+• Beba água em abundância
+• Respiração quadrada 4-4-4-4 por 7 minutos
+• Intenção clara para os próximos 90 dias
+
+Energia. Presença. Poder.
+— Equipe Akasha Paladins`;
+
+  // Preenche o campo hidden de autoresposta
+  document.getElementById('autoMsg').value = AUTO_MESSAGE;
+
+  const form = document.getElementById('paladinsForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const overlay = document.getElementById('okOverlay');
+  const closeOverlay = document.getElementById('closeOverlay');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Bloqueia múltiplos envios
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Enviando...";
+
+    // Monta payload (FormSubmit aceita JSON via /ajax)
+    const fd = new FormData(form);
+
+    // Campos de controle do FormSubmit
+    fd.set("_subject", "mentoria");
+    fd.set("_template", "table");
+    fd.set("_captcha", "false");
+    fd.set("_autoresponse", AUTO_MESSAGE);
+
+    const payload = {};
+    fd.forEach((v,k) => payload[k] = v);
+
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error("Falha no envio");
+
+      // Sucesso: mostra overlay e limpa form
+      form.reset();
+      overlay.style.display = "flex";
+    } catch (err) {
+      alert("Ocorreu um erro ao enviar sua aplicação. Tente novamente em instantes.");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Enviar Aplicação";
+    }
+  });
+
+  // Fecha overlay
+  closeOverlay.addEventListener('click', (e) => {
+    e.preventDefault();
+    overlay.style.display = "none";
+  });
+</script>
+</body>
+</html>
