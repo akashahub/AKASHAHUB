@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Akasha Hub • Sagrado Feminino & Masculino • Sessões VIP • Curso Quântico</title>
-  <meta name="description" content="Akasha Hub: Sessões VIP Presenciais, Curso de Alinhamento Quântico, Mentorias 1:1 e Ritual para Casal. Transformação energética profunda.">
+  <title>Akasha Hub • Plataforma Quântica & Store</title>
+  <meta name="description" content="Akasha Hub: Sessões VIP, Mentorias, Loja e Área de Membros.">
 
   <!-- PWA / APP -->
   <link rel="manifest" href="/manifest.json">
@@ -13,77 +13,11 @@
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/service-worker.js");
     }
-    // ======= SISTEMA DE LOGIN E DASHBOARD =======
-    
-    function openLogin() {
-      document.getElementById('loginModal').classList.add('active');
-    }
-
-    function closeLogin() {
-      document.getElementById('loginModal').classList.remove('active');
-    }
-
-    function handleLogin(e) {
-      e.preventDefault();
-      // SIMULAÇÃO DE LOGIN BEM SUCEDIDO
-      // Aqui entraria a lógica real de conexão com o Banco de Dados
-      
-      closeLogin();
-      
-      // Esconder site público (Hero, Sections, etc)
-      document.querySelector('.hero').style.display = 'none';
-      document.querySelector('.books-showcase').style.display = 'none';
-      document.querySelector('main').style.display = 'none';
-      document.querySelector('.communities-section').style.display = 'none';
-      document.getElementById('audios').style.display = 'none';
-      
-      // Mostrar Área de Membros
-      document.getElementById('memberArea').classList.add('active');
-      
-      // Rolar para o topo
-      window.scrollTo(0,0);
-      
-      alert("Bem-vindo(a) ao Portal Akasha Hub. Acesso concedido.");
-    }
-
-    function logout() {
-      // Esconder Área de Membros
-      document.getElementById('memberArea').classList.remove('active');
-      
-      // Mostrar site público
-      document.querySelector('.hero').style.display = 'flex'; // Hero usa flex
-      document.querySelector('.books-showcase').style.display = 'block';
-      document.querySelector('main').style.display = 'block';
-      document.querySelector('.communities-section').style.display = 'block';
-      document.getElementById('audios').style.display = 'block';
-      
-      window.scrollTo(0,0);
-    }
-
-    function switchDash(dashId) {
-      // Remove active de todos os conteúdos
-      document.querySelectorAll('.dash-tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      // Remove active de todos os botões
-      document.querySelectorAll('.dash-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      
-      // Ativa o selecionado
-      document.getElementById(dashId).classList.add('active');
-      
-      // Ativa o botão clicado (busca pelo onclick no texto)
-      const clickedBtn = document.querySelector(`button[onclick="switchDash('${dashId}')"]`);
-      if(clickedBtn) clickedBtn.classList.add('active');
-    }
   </script>
 
     <!-- Open Graph -->
   <meta property="og:title" content="Akasha Hub • Alinhamento Quântico">
-  <meta property="og:description" content="Sessões VIP, Curso de Alinhamento Quântico, Mentorias 1:1">
   <meta property="og:image" content="https://i.ibb.co/Fbxk6mQ3/Design-sem-nome-2.png">
-  <meta property="og:type" content="website">
   <meta name="theme-color" content="#0b0016">
   
   <!-- Favicon -->
@@ -121,1559 +55,7 @@
       min-height:100vh;
       line-height:1.6;
     }
-    header{
-      background:rgba(0,0,0,0.85);
-      backdrop-filter:blur(12px) saturate(180%);
-      border-bottom:1px solid var(--secondary);
-      position:fixed;top:0;left:0;right:0;z-index:1000;
-      height: 70px;
-    }
-    header.scrolled{box-shadow:0 4px 20px rgba(212,175,55,0.15);background:rgba(0,0,0,0.95)}
-    .header-container{
-      display:flex;justify-content:space-between;align-items:center;
-      padding:0 clamp(1rem,5vw,2rem);max-width:1400px;margin:0 auto;
-      height: 100%;
-    }
     
-    /* LOGO COM IMAGEM */
-    .logo{
-      display:flex;align-items:center;text-decoration:none;
-      transition:all .3s;
-      z-index: 1100;
-      position: relative;
-    }
-    .logo img {
-      height: 55px;
-      width: auto;
-      transition: all 0.3s;
-    }
-    .logo:hover{transform:scale(1.05)}
-    .logo:hover img{filter: drop-shadow(0 0 15px rgba(212,175,55,.6))}
-    
-    /* NAVEGAÇÃO COM FONTE ELEGANTE */
-    nav ul{display:flex;list-style:none;gap:clamp(1rem,2vw,2rem);flex-wrap:wrap}
-    nav a{
-      font-family: 'Cinzel', serif;
-      color:var(--lux);
-      text-decoration:none;
-      font-weight:500;
-      font-size: 0.95rem;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      position:relative;
-      padding-bottom:2px;
-      transition:all .3s;
-    }
-    nav a::after{
-      content:'';
-      position:absolute;
-      bottom:-2px;
-      left:0;
-      width:0;
-      height:1px;
-      background:linear-gradient(90deg, var(--secondary), var(--accent));
-      transition:width .3s;
-    }
-    nav a:hover{color:var(--secondary);text-shadow: 0 0 10px rgba(212,175,55,0.4)}
-    nav a:hover::after{width:100%}
-    
-    /* Botão Home Mobile (Escondido no Desktop) */
-    .mobile-home-link {
-      display: none;
-    }
-    
-    .nav-toggle{
-      display:none;
-      background:none;
-      border:none;
-      color:var(--lux);
-      font-size:1.8rem;
-      cursor:pointer;
-      z-index: 1100;
-      position: relative;
-    }
-    
-    /* ========== HERO COM VÍDEO DE FUNDO ========== */
-    .hero{
-      position: relative;
-      padding:9rem 2rem 5rem;
-      text-align:center;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    
-    .hero-video-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -2;
-      overflow: hidden;
-    }
-    
-    .hero-video-bg video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .hero-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0.6) 0%,
-        rgba(26, 0, 47, 0.7) 50%,
-        rgba(0, 0, 0, 0.85) 100%
-      );
-      z-index: -1;
-    }
-    
-    .hero-content {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ========== BADGE PORTAL ========== */
-    .hero-badge {
-      display: inline-block;
-      border: 1px solid var(--secondary);
-      padding: 12px 30px;
-      margin-bottom: 2rem;
-      font-family: 'Cinzel', serif;
-      font-size: clamp(0.65rem, 1.5vw, 0.85rem);
-      letter-spacing: clamp(2px, 0.5vw, 4px);
-      text-transform: uppercase;
-      color: var(--secondary);
-      background: rgba(212, 175, 55, 0.05);
-      backdrop-filter: blur(10px);
-      position: relative;
-    }
-
-    .hero-badge::before,
-    .hero-badge::after {
-      content: '◆';
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--secondary);
-      font-size: 0.5rem;
-      opacity: 0.7;
-    }
-
-    .hero-badge::before {
-      left: 10px;
-    }
-
-    .hero-badge::after {
-      right: 10px;
-    }
-
-    /* ========== TÍTULO PREMIUM MAGNÉTICO ========== */
-    .hero-title {
-      font-family: 'Cinzel', serif;
-      font-weight: 800;
-      font-size: clamp(2.8rem, 12vw, 8rem);
-      letter-spacing: clamp(6px, 2.5vw, 35px);
-      text-transform: uppercase;
-      line-height: 1.1;
-      
-      /* Gradiente Magnético Dourado */
-      background: linear-gradient(
-        135deg,
-        #bf953f 0%,
-        #fcf6ba 18%,
-        #d4af37 35%,
-        #fcf6ba 50%,
-        #d4af37 65%,
-        #fcf6ba 82%,
-        #aa771c 100%
-      );
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      
-      /* Brilho Premium */
-      filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.5))
-              drop-shadow(0 0 80px rgba(212, 175, 55, 0.25));
-      
-      /* Animação de brilho */
-      animation: shimmer 5s ease-in-out infinite;
-      
-      margin-bottom: 1.5rem;
-      position: relative;
-    }
-
-    /* Linha decorativa abaixo do título */
-    .hero-title::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: clamp(100px, 30vw, 300px);
-      height: 2px;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(212, 175, 55, 0.3) 15%,
-        var(--secondary) 50%,
-        rgba(212, 175, 55, 0.3) 85%,
-        transparent 100%
-      );
-    }
-
-    /* Animação Shimmer */
-    @keyframes shimmer {
-      0%, 100% {
-        background-position: 0% 50%;
-        filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.5))
-                drop-shadow(0 0 80px rgba(212, 175, 55, 0.25));
-      }
-      50% {
-        background-position: 100% 50%;
-        filter: drop-shadow(0 0 60px rgba(212, 175, 55, 0.7))
-                drop-shadow(0 0 100px rgba(212, 175, 55, 0.4));
-      }
-    }
-
-    /* Hover no título */
-    .hero-title:hover {
-      animation-play-state: paused;
-      filter: drop-shadow(0 0 70px rgba(212, 175, 55, 0.9))
-              drop-shadow(0 0 140px rgba(212, 175, 55, 0.5));
-    }
-
-    /* Subtítulo Elegante */
-    .hero-subtitle {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1rem, 3vw, 1.6rem);
-      color: var(--lux);
-      opacity: 0.9;
-      letter-spacing: clamp(2px, 0.5vw, 5px);
-      margin: 2.5rem 0 1.5rem;
-      font-weight: 400;
-      font-style: italic;
-    }
-
-    .hero-subtitle span {
-      color: var(--secondary);
-      font-weight: 600;
-      font-style: normal;
-    }
-
-    .hero-description {
-      max-width: 700px;
-      margin: 0 auto 2.5rem;
-      font-size: clamp(1rem, 2.5vw, 1.3rem);
-      color: rgba(245, 230, 200, 0.85);
-      font-weight: 300;
-    }
-
-    /* ========== BOTÃO PRESENCIAL VIP - ULTRA PREMIUM ========== */
-    .btn-vip-premium {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      padding: 22px 55px;
-      font-family: 'Cinzel', serif;
-      font-size: clamp(0.9rem, 2vw, 1.15rem);
-      font-weight: 700;
-      letter-spacing: clamp(2px, 0.5vw, 4px);
-      text-transform: uppercase;
-      text-decoration: none;
-      color: #000;
-      background: linear-gradient(
-        135deg,
-        #bf953f 0%,
-        #fcf6ba 25%,
-        #d4af37 50%,
-        #fcf6ba 75%,
-        #aa771c 100%
-      );
-      background-size: 200% 200%;
-      border: none;
-      border-radius: 0;
-      cursor: pointer;
-      overflow: hidden;
-      transition: all 0.4s ease;
-      box-shadow: 
-        0 0 0 1px rgba(212, 175, 55, 0.3),
-        0 10px 40px rgba(212, 175, 55, 0.3),
-        0 0 80px rgba(212, 175, 55, 0.15);
-      animation: btnShimmer 4s ease-in-out infinite;
-    }
-
-    /* Borda interna premium */
-    .btn-vip-premium::before {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      right: 3px;
-      bottom: 3px;
-      border: 1px solid rgba(0, 0, 0, 0.2);
-      pointer-events: none;
-    }
-
-    /* Brilho diagonal */
-    .btn-vip-premium::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(
-        45deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.3) 50%,
-        transparent 70%
-      );
-      transform: rotate(45deg) translateX(-100%);
-      transition: transform 0.6s ease;
-    }
-
-    .btn-vip-premium:hover::after {
-      transform: rotate(45deg) translateX(100%);
-    }
-
-    .btn-vip-premium:hover {
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 
-        0 0 0 2px var(--secondary),
-        0 20px 60px rgba(212, 175, 55, 0.4),
-        0 0 100px rgba(212, 175, 55, 0.25);
-      background-position: 100% 50%;
-    }
-
-    .btn-vip-premium:active {
-      transform: translateY(-2px) scale(1.01);
-    }
-
-    /* Ícone do botão */
-    .btn-vip-premium i {
-      font-size: 1.1em;
-      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
-    }
-
-    /* Texto do botão */
-    .btn-vip-premium span {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Animação do gradiente do botão */
-    @keyframes btnShimmer {
-      0%, 100% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-    }
-    
-    .cta-button{
-      background:linear-gradient(135deg,var(--secondary),#b9972e);
-      color:#000;
-      border:none;
-      border-radius:50px;
-      padding:1.1rem 3rem;
-      font-family:'Cinzel', serif;
-      font-weight:700;
-      font-size:clamp(0.9rem, 2vw, 1.2rem);
-      letter-spacing: 2px;
-      cursor:pointer;
-      box-shadow:0 10px 40px rgba(212,175,55,.4);
-      transition:all .4s;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      gap:12px;
-      text-transform: uppercase;
-    }
-    .cta-button:hover{
-      transform:translateY(-5px) scale(1.02);
-      box-shadow:0 20px 60px rgba(212,175,55,.5);
-    }
-    
-    .container{max-width:1400px;margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
-    .section-title{text-align:center;margin:4rem 0 3rem}
-    .section-title h2{font-size:clamp(2rem,5vw,2.8rem);color:var(--lux);display:flex;align-items:center;justify-content:center;gap:15px}
-    .section-title h2 a{color:var(--lux);text-decoration:none;transition:all .3s}
-    .section-title h2 a:hover{color:var(--secondary);text-shadow:0 0 20px rgba(212,175,55,.5)}
-    
-    /* TABS COM FONTE ELEGANTE */
-    .tabs{
-      display:flex;justify-content:center;gap:1rem;margin:3rem 0 4rem;flex-wrap:wrap;
-    }
-    .tab-btn{
-      font-family: 'Cinzel', serif;
-      background:var(--glass-bg);
-      backdrop-filter:blur(10px);
-      border:1px solid rgba(212,175,55,.2);
-      color:var(--lux);
-      padding:.9rem 2rem;
-      border-radius:10px;
-      cursor:pointer;
-      font-size:0.95rem;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      transition:all .3s;
-    }
-    .tab-btn.active,.tab-btn:hover{
-      background:rgba(212,175,55,.15);
-      border-bottom:3px solid var(--secondary);
-      color:var(--secondary);
-      text-shadow: 0 0 10px rgba(212,175,55,0.3);
-    }
-    .tab-content{display:none;animation:fadeIn .6s}
-    .tab-content.active{display:block}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-    
-    .grid-container{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:2.5rem;
-    }
-    .card{
-      background:linear-gradient(145deg,var(--card-bg),var(--glass-bg));
-      border:1px solid rgba(212,175,55,.3);border-radius:16px;padding:2.5rem;
-      text-align:center;transition:all .4s;box-shadow:0 10px 30px rgba(0,0,0,.3);
-    }
-    .card:hover{
-      transform:translateY(-12px) scale(1.03);box-shadow:0 20px 50px rgba(212,175,55,.3);
-      border-color:var(--secondary);
-    }
-    .card-icon{font-size:3.5rem;color:var(--secondary);margin-bottom:1.5rem}
-    .card-title{font-size:1.9rem;color:var(--lux);font-weight:600;margin:1rem 0}
-    .card-description{font-size:1.1rem;color:rgba(245,230,200,.9);line-height:1.7;margin-bottom:1.5rem}
-    .card-price{font-size:2.4rem;color:var(--secondary);font-weight:700;margin:1.5rem 0}
-    .card-btn{
-      background:linear-gradient(135deg,var(--secondary),#b9972e);color:#000;border:none;
-      padding:1rem 2.5rem;border-radius:30px;font-weight:700;width:100%;cursor:pointer;
-      transition:all .3s;box-shadow:0 5px 20px rgba(212,175,55,.3);
-      font-family: 'Cinzel', serif;
-      font-size: 0.95rem;
-      letter-spacing: 1px;
-    }
-    .card-btn:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(212,175,55,.4)}
-    
-    /* CARD COM VÍDEO */
-    .card-video {
-      width: 100%;
-      height: 220px;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 1.5rem;
-      position: relative;
-    }
-    
-    .card-video video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform .4s;
-    }
-    
-    .card:hover .card-video video {
-      transform: scale(1.05);
-    }
-    
-    .card-video-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.3) 100%);
-      pointer-events: none;
-    }
-    
-    /* VÍDEO DE SEÇÃO */
-    .section-video {
-      width: 100%;
-      max-width: 700px;
-      margin: 0 auto 3rem;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 20px 50px rgba(212,175,55,0.2);
-      border: 2px solid rgba(212,175,55,0.3);
-      position: relative;
-    }
-    
-    .section-video video {
-      width: 100%;
-      height: auto;
-      display: block;
-      transition: transform 0.4s;
-    }
-    
-    .section-video:hover video {
-      transform: scale(1.02);
-    }
-    
-    .section-video-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.4) 100%);
-      pointer-events: none;
-    }
-    
-    .pitch-section{
-      background:rgba(0,0,0,0.5);border-radius:20px;padding:3rem;margin:4rem 0;
-      border:1px solid rgba(212,175,55,0.2);
-    }
-    .pitch-section h3{font-size:2.5rem;color:var(--secondary);text-align:center;margin-bottom:2rem}
-    .pitch-section h3 a{color:var(--secondary);text-decoration:none;transition:all .3s}
-    .pitch-section h3 a:hover{text-shadow:0 0 20px rgba(212,175,55,.6)}
-    .pitch-section h4{font-size:1.8rem;color:var(--lux);margin:2rem 0 1rem}
-    .pitch-section p{font-size:1.2rem;color:rgba(245,230,200,0.9);margin-bottom:1.5rem;line-height:1.8}
-    .pitch-section ul{list-style:none;padding-left:1.5rem}
-    .pitch-section li{font-size:1.1rem;color:rgba(245,230,200,0.8);margin-bottom:0.8rem;position:relative}
-    .pitch-section li:before{content:"✦";color:var(--secondary);position:absolute;left:-1.5rem}
-    
-    /* ========== ESTEIRA DE LIVROS (VITRINE) ========== */
-    .books-showcase {
-      padding: 3rem 0 5rem;
-      border-bottom: 1px solid rgba(212,175,55,0.1);
-      position: relative;
-    }
-    
-    /* Indicador de scroll para mobile */
-    .scroll-hint {
-      text-align: center;
-      color: var(--secondary);
-      font-size: 0.8rem;
-      margin-bottom: 1rem;
-      opacity: 0.7;
-      animation: pulse 2s infinite;
-      display: none;
-    }
-    
-    @media (max-width: 768px) {
-      .scroll-hint { display: block; }
-    }
-    
-    @keyframes pulse {
-      0% { opacity: 0.4; transform: translateX(-5px); }
-      50% { opacity: 1; transform: translateX(5px); }
-      100% { opacity: 0.4; transform: translateX(-5px); }
-    }
-
-    .books-track {
-      display: flex;
-      overflow-x: auto;
-      gap: 3rem;
-      padding: 2rem clamp(1rem, 3vw, 2rem) 4rem;
-      scroll-behavior: smooth;
-      scroll-snap-type: x mandatory;
-      
-      /* Estilização da barra de rolagem */
-      scrollbar-width: thin;
-      scrollbar-color: var(--secondary) rgba(0,0,0,0.3);
-    }
-    
-    .books-track::-webkit-scrollbar {
-      height: 8px;
-    }
-    .books-track::-webkit-scrollbar-track {
-      background: rgba(0,0,0,0.3);
-      border-radius: 4px;
-    }
-    .books-track::-webkit-scrollbar-thumb {
-      background: var(--secondary);
-      border-radius: 4px;
-    }
-
-    .book-item {
-      flex: 0 0 240px;
-      scroll-snap-align: center;
-      perspective: 1000px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-    }
-    
-    /* Design do Livro 3D */
-    .book-cover {
-      width: 100%;
-      aspect-ratio: 2/3;
-      position: relative;
-      background: #1a002f;
-      border-radius: 2px 6px 6px 2px;
-      box-shadow: 
-        5px 5px 15px rgba(0,0,0,0.5),
-        inset 3px 0 10px rgba(0,0,0,0.8);
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-      cursor: pointer;
-      border: 1px solid rgba(212,175,55,0.3);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .book-cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.9;
-    }
-    
-    /* Efeito de páginas na lateral */
-    .book-cover::before {
-      content: '';
-      position: absolute;
-      right: 2px;
-      top: 1%;
-      height: 98%;
-      width: 4px;
-      background: linear-gradient(to right, #ccc, #eee 30%, #ddd);
-      z-index: 2;
-      box-shadow: -1px 0 2px rgba(0,0,0,0.2);
-    }
-
-    /* Brilho Dourado na Capa */
-    .book-cover::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    .book-item:hover .book-cover {
-      transform: translateY(-15px) rotateY(-5deg);
-      box-shadow: 
-        15px 25px 30px rgba(0,0,0,0.6),
-        0 0 15px rgba(212,175,55,0.3);
-      border-color: var(--secondary);
-    }
-
-    .book-info {
-      text-align: center;
-      margin-top: 1.5rem;
-      width: 100%;
-    }
-    
-    .book-title {
-      font-family: 'Cinzel', serif;
-      color: var(--lux);
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-      line-height: 1.3;
-    }
-    
-    .book-price {
-      color: var(--secondary);
-      font-weight: 700;
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
-    
-    .book-btn {
-      display: inline-block;
-      padding: 0.5rem 1.2rem;
-      border: 1px solid var(--secondary);
-      color: var(--secondary);
-      border-radius: 20px;
-      text-decoration: none;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: all 0.3s;
-      background: transparent;
-    }
-    
-    .book-btn:hover {
-      background: var(--secondary);
-      color: #000;
-      box-shadow: 0 0 15px rgba(212,175,55,0.4);
-    }
-    
-    /* ========== BIBLIOTECA DE ÁUDIOS - FUNDO ATUALIZADO ========== */
-    .audio-library-section {
-      padding: 4rem 0 5rem;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(11,0,22,0.9)), 
-                  url('https://res.cloudinary.com/dlueoyrhe/image/upload/v1767468126/download_-_2026-01-03T161948.583_eip8xz.jpg');
-      background-size: cover;
-      background-position: center;
-      border-top: 1px solid rgba(212,175,55,0.2);
-      border-bottom: 1px solid rgba(212,175,55,0.2);
-      margin-top: 0;
-    }
-    
-    .section-subtitle {
-      color: rgba(245,230,200,0.7);
-      font-size: 1.2rem;
-      margin-top: 0.5rem;
-    }
-    
-    .audio-category {
-      margin: 3rem 0;
-    }
-    
-    .category-title {
-      font-size: 1.8rem;
-      color: var(--lux);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 0.5rem;
-    }
-    
-    .category-title i {
-      color: var(--secondary);
-    }
-    
-    .category-title.premium-title {
-      color: var(--secondary);
-    }
-    
-    .category-description {
-      color: rgba(245,230,200,0.6);
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-    }
-    
-    .audio-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
-    }
-    
-    .audio-card {
-      background: linear-gradient(145deg, var(--card-bg), var(--glass-bg));
-      border: 1px solid rgba(212,175,55,0.25);
-      border-radius: 16px;
-      padding: 1.8rem;
-      text-align: center;
-      position: relative;
-      transition: all 0.4s ease;
-      overflow: hidden;
-    }
-    
-    .audio-card.free:hover {
-      transform: translateY(-8px);
-      border-color: var(--secondary);
-      box-shadow: 0 15px 40px rgba(212,175,55,0.2);
-    }
-    
-    .audio-card .audio-icon {
-      font-size: 2.5rem;
-      color: var(--secondary);
-      margin-bottom: 1rem;
-    }
-    
-    .audio-badge {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-    
-    .free-badge {
-      background: linear-gradient(135deg, #4CAF50, #2E7D32);
-      color: white;
-    }
-    
-    .premium-badge {
-      background: linear-gradient(135deg, var(--secondary), #b9972e);
-      color: #000;
-    }
-    
-    .audio-card h4 {
-      font-size: 1.3rem;
-      color: var(--lux);
-      margin-bottom: 0.5rem;
-    }
-    
-    .audio-card p {
-      color: rgba(245,230,200,0.7);
-      font-size: 0.95rem;
-    }
-    
-    .audio-preview {
-      margin-top: 1.2rem;
-      padding: 0.8rem;
-      background: rgba(76, 175, 80, 0.15);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      color: #4CAF50;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .audio-preview:hover {
-      background: rgba(76, 175, 80, 0.25);
-    }
-    
-    .audio-preview i {
-      font-size: 1.2rem;
-    }
-    
-    /* PREMIUM/LOCKED STYLES */
-    .audio-card.locked {
-      position: relative;
-    }
-    
-    .audio-card.locked::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(3px);
-      border-radius: 16px;
-      z-index: 1;
-      pointer-events: none;
-    }
-    
-    .lock-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-      text-align: center;
-      color: var(--secondary);
-      pointer-events: none;
-    }
-    
-    .lock-overlay i {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      display: block;
-      text-shadow: 0 0 20px rgba(212,175,55,0.5);
-    }
-    
-    .lock-overlay span {
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .locked-preview {
-      background: rgba(212,175,55,0.1) !important;
-      color: rgba(212,175,55,0.6) !important;
-      cursor: not-allowed;
-    }
-    
-    .premium-section {
-      background: rgba(212,175,55,0.03);
-      border: 1px solid rgba(212,175,55,0.15);
-      border-radius: 20px;
-      padding: 2rem;
-      margin-top: 3rem;
-    }
-    
-    /* BOTÕES DE AÇÃO */
-    .audio-actions {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin-top: 3rem;
-      flex-wrap: wrap;
-    }
-    
-    .audio-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 1.2rem 2.5rem;
-      border-radius: 50px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: none;
-      font-family: inherit;
-    }
-
-    .buy-btn {
-      background: linear-gradient(135deg, var(--secondary), #b9972e);
-      color: #000;
-      box-shadow: 0 8px 25px rgba(212,175,55,0.3);
-    }
-    
-    .buy-btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 35px rgba(212,175,55,0.4);
-    }
-
-    /* ========== COMUNIDADES AKÁSHICAS (NÍVEIS DE PROGRESSÃO) ========== */
-    .communities-section {
-      padding: 5rem 0;
-      background: linear-gradient(to bottom, rgba(11,0,22,0.95), rgba(0,0,0,0.98));
-      position: relative;
-      overflow: hidden;
-    }
-
-    .communities-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--secondary), transparent);
-    }
-
-    .communities-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2.5rem;
-      margin-top: 3rem;
-    }
-
-    .community-card {
-      background: linear-gradient(145deg, var(--card-bg), rgba(0,0,0,0.4));
-      border-radius: 20px;
-      padding: 2.5rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 2px solid;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* PREMIUM COMMUNITY BUTTON STYLES */
-    .community-btn {
-      margin-top: auto;
-      display: inline-block;
-      padding: 1rem 1.5rem;
-      border: none;
-      border-radius: 50px;
-      text-decoration: none;
-      font-family: 'Cinzel', serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      transition: all 0.4s;
-      position: relative;
-      z-index: 2;
-      color: #fff;
-      overflow: hidden;
-    }
-
-    .community-btn:hover {
-      transform: translateY(-4px) scale(1.02);
-      filter: brightness(1.2);
-    }
-
-    /* ========== ESTILOS ESPECÍFICOS POR CARD ========== */
-
-    /* 1. ANÚBIS - AZUL (INICIAÇÃO) */
-    .community-anubis {
-      border-color: var(--anubis-blue);
-      color: var(--anubis-blue);
-      box-shadow: 0 10px 30px rgba(41, 128, 185, 0.15);
-    }
-    .community-anubis:hover {
-      box-shadow: 0 25px 60px rgba(41, 128, 185, 0.4);
-    }
-    .community-anubis .community-icon { color: var(--anubis-blue); }
-    
-    /* Botão Anúbis - Azul */
-    .community-anubis .community-btn {
-      background: linear-gradient(135deg, #154360, #2980B9);
-      box-shadow: 0 5px 20px rgba(41, 128, 185, 0.4);
-    }
-
-    /* 2. HÓRUS - ROXO (IDENTIDADE) */
-    .community-horus {
-      border-color: var(--horus-purple);
-      color: var(--horus-purple);
-      box-shadow: 0 10px 30px rgba(142, 68, 173, 0.15);
-    }
-    .community-horus:hover {
-      box-shadow: 0 25px 60px rgba(142, 68, 173, 0.4);
-    }
-    .community-horus .community-icon { color: var(--horus-purple); }
-
-    /* Botão Hórus - Roxo */
-    .community-horus .community-btn {
-      background: linear-gradient(135deg, #4A235A, #8E44AD);
-      box-shadow: 0 5px 20px rgba(142, 68, 173, 0.4);
-    }
-
-    /* 3. ÍSIS - MARROM E OURO (CAMINHO DO MESTRE) */
-    .community-isis {
-      background: linear-gradient(160deg, var(--isis-brown-dark), var(--isis-brown-light));
-      border-color: var(--isis-gold);
-      color: var(--isis-gold);
-      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
-    }
-    .community-isis:hover {
-      box-shadow: 0 25px 60px rgba(212, 175, 55, 0.35);
-      border-color: #fff;
-    }
-    .community-isis .community-icon { 
-      color: var(--isis-gold);
-      filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
-    }
-    .community-isis .community-description, 
-    .community-isis .community-features li {
-      color: rgba(255, 245, 230, 0.9);
-    }
-
-    /* Botão Ísis - Dourado */
-    .community-isis .community-btn {
-      background: linear-gradient(135deg, #B78727, #F1C40F);
-      color: #1a0f0a;
-      box-shadow: 0 5px 25px rgba(212, 175, 55, 0.5);
-    }
-
-    /* 4. TRONO DE RÁ - PRETO E VERMELHO (RENASCIMENTO) */
-    .community-ra {
-      background: linear-gradient(180deg, #000000, #110000);
-      border-color: var(--ra-red);
-      color: var(--ra-red);
-      box-shadow: 0 10px 30px rgba(192, 57, 43, 0.2);
-    }
-    .community-ra:hover {
-      box-shadow: 0 25px 70px rgba(192, 57, 43, 0.5);
-    }
-    .community-ra .community-icon { 
-      color: var(--ra-red);
-      filter: drop-shadow(0 0 20px rgba(231, 76, 60, 0.7));
-    }
-    .community-ra .community-description, 
-    .community-ra .community-features li {
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    /* Botão Rá - Vermelho Intenso */
-    .community-ra .community-btn {
-      background: linear-gradient(135deg, #641E16, #C0392B);
-      color: #fff;
-      box-shadow: 0 5px 25px rgba(192, 57, 43, 0.5);
-    }
-
-    .community-icon {
-      font-size: 4rem;
-      margin-bottom: 1.5rem;
-      display: inline-block;
-      transition: all 0.4s;
-    }
-
-    .community-card:hover .community-icon {
-      transform: scale(1.15) rotate(5deg);
-    }
-
-    .community-level {
-      font-family: 'Cinzel', serif;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.8;
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-    }
-
-    .community-name {
-      font-family: 'Cinzel', serif;
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-    }
-
-    .community-description {
-      font-size: 1.05rem;
-      line-height: 1.7;
-      margin-bottom: 1.5rem;
-      opacity: 0.9;
-    }
-
-    .community-features {
-      list-style: none;
-      padding: 0;
-      margin: 2rem 0;
-      text-align: left;
-    }
-
-    .community-features li {
-      padding: 0.6rem 0;
-      padding-left: 2rem;
-      position: relative;
-      font-size: 0.95rem;
-    }
-
-    .community-features li::before {
-      content: '◆';
-      position: absolute;
-      left: 0;
-      font-size: 0.8rem;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0.7;
-    }
-    
-    /* ========== CONTROLE DE ÁUDIO DE FUNDO COM VOLUME - CANTO INFERIOR ESQUERDO ========== */
-    .audio-control {
-      position: fixed;
-      bottom: 30px;
-      left: 30px; /* ✅ MUDADO DE right PARA left */
-      z-index: 999;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      border-radius: 20px;
-      padding: 15px 20px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-      transition: all 0.3s;
-      min-width: 200px;
-    }
-    
-    .audio-control:hover {
-      border-color: var(--secondary);
-      box-shadow: 0 15px 50px rgba(212, 175, 55, 0.3);
-    }
-    
-    .audio-control-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .audio-control-btn {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--secondary), #b9972e);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-      box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
-      flex-shrink: 0;
-    }
-    
-    .audio-control-btn:hover {
-      transform: scale(1.1);
-    }
-    
-    .audio-control-btn i {
-      font-size: 1.2rem;
-      color: #000;
-    }
-    
-    .audio-info {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-    
-    .audio-info span {
-      color: var(--lux);
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-    
-    .audio-info small {
-      color: var(--secondary);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .audio-visualizer {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      height: 25px;
-    }
-    
-    .audio-visualizer span {
-      width: 3px;
-      background: var(--secondary);
-      border-radius: 3px;
-      animation: visualizer 0.5s ease-in-out infinite alternate;
-    }
-    
-    .audio-visualizer span:nth-child(1) { height: 10px; animation-delay: 0s; }
-    .audio-visualizer span:nth-child(2) { height: 18px; animation-delay: 0.1s; }
-    .audio-visualizer span:nth-child(3) { height: 12px; animation-delay: 0.2s; }
-    .audio-visualizer span:nth-child(4) { height: 20px; animation-delay: 0.3s; }
-    .audio-visualizer span:nth-child(5) { height: 8px; animation-delay: 0.4s; }
-    
-    .audio-visualizer.paused span {
-      animation: none;
-      height: 5px !important;
-    }
-    
-    @keyframes visualizer {
-      0% { transform: scaleY(1); }
-      100% { transform: scaleY(1.8); }
-    }
-    
-    /* CONTROLE DE VOLUME */
-    .volume-control {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(212, 175, 55, 0.2);
-    }
-    
-    .volume-icon {
-      color: var(--secondary);
-      font-size: 1rem;
-      width: 20px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-    
-    .volume-slider {
-      flex: 1;
-      height: 5px;
-      border-radius: 5px;
-      background: rgba(212, 175, 55, 0.2);
-      outline: none;
-      -webkit-appearance: none;
-      cursor: pointer;
-    }
-    
-    .volume-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      background: var(--secondary);
-      cursor: pointer;
-      box-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
-      transition: all 0.2s;
-    }
-    
-    .volume-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
-      box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
-    }
-    
-    .volume-slider::-moz-range-thumb {
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      background: var(--secondary);
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
-      transition: all 0.2s;
-    }
-    
-    .volume-slider::-moz-range-thumb:hover {
-      transform: scale(1.2);
-      box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
-    }
-    
-    .volume-value {
-      color: var(--lux);
-      font-size: 0.75rem;
-      min-width: 35px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-    
-    /* ========== BOTÃO WHATSAPP FLUTUANTE - PERMANECE À DIREITA ========== */
-    .whatsapp-float {
-      position: fixed;
-      bottom: 100px;
-      right: 30px; /* ✅ WhatsApp permanece à direita */
-      z-index: 998;
-    }
-    
-    .whatsapp-btn {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #25D366, #128C7E);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      animation: whatsappPulse 2s ease-in-out infinite;
-    }
-    
-    .whatsapp-btn:hover {
-      transform: scale(1.1) translateY(-5px);
-      box-shadow: 0 12px 35px rgba(37, 211, 102, 0.6);
-      animation: none;
-    }
-    
-    .whatsapp-btn i {
-      font-size: 2rem;
-      color: #fff;
-    }
-    
-    @keyframes whatsappPulse {
-      0%, 100% {
-        box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
-      }
-      50% {
-        box-shadow: 0 8px 35px rgba(37, 211, 102, 0.7);
-        transform: scale(1.05);
-      }
-    }
-    
-    .scroll-progress{position:fixed;top:0;left:0;width:0;height:4px;background:var(--secondary);z-index:1001;transition:width .2s}
-    
-    /* ========== RESPONSIVO ========== */
-    @media (max-width: 992px) {
-      .hero-title {
-        font-size: clamp(2.2rem, 10vw, 5rem);
-        letter-spacing: clamp(4px, 1.5vw, 18px);
-      }
-    }
-
-    @media (max-width:768px){
-      .nav-toggle{display:block}
-      nav ul{
-        display:none;
-        flex-direction:column;
-        position:fixed;
-        top:70px;
-        left:0;
-        width:100%;
-        height: calc(100vh - 70px);
-        background:rgba(0,0,0,.98);
-        padding:2rem;
-        gap:2rem;
-        border-bottom:1px solid var(--secondary);
-        overflow-y: auto;
-        z-index: 1050;
-      }
-      nav ul.active{display:flex}
-      
-      /* Estilo para o item de HOME no mobile */
-      .mobile-home-link {
-        display: block;
-        border-bottom: 1px solid rgba(212,175,55,0.3);
-        margin-bottom: 10px;
-        padding-bottom: 15px;
-      }
-      
-      .mobile-home-link a {
-        color: var(--secondary) !important;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-      }
-
-      .hero{
-        padding: 7rem 1.5rem 4rem;
-        min-height: 90vh;
-      }
-      .hero-title {
-        font-size: clamp(1.8rem, 11vw, 3.2rem);
-        letter-spacing: clamp(3px, 1.2vw, 10px);
-      }
-      .hero-title::after {
-        bottom: -12px;
-        width: clamp(80px, 40vw, 180px);
-      }
-      .hero-subtitle {
-        margin: 2rem 0 1rem;
-      }
-      .btn-vip-premium {
-        padding: 18px 40px;
-        font-size: 0.85rem;
-        letter-spacing: 2px;
-        width: 90%;
-        max-width: 320px;
-      }
-      .hero-badge {
-        padding: 10px 25px;
-        font-size: 0.6rem;
-        letter-spacing: 2px;
-      }
-      .pitch-section{padding:2rem 1.5rem}
-      .audio-grid {
-        grid-template-columns: 1fr;
-      }
-      .audio-actions {
-        flex-direction: column;
-        align-items: center;
-      }
-      .audio-btn {
-        width: 100%;
-        max-width: 320px;
-        justify-content: center;
-      }
-      .premium-section {
-        padding: 1.5rem 1rem;
-      }
-      .section-video {
-        max-width: 100%;
-        margin: 0 1rem 2rem;
-      }
-      .card-video {
-        height: 180px;
-      }
-      .logo img {
-        height: 45px;
-      }
-      nav a {
-        font-size: 1.1rem;
-        letter-spacing: 2px;
-        display: block;
-        text-align: center;
-      }
-      .tab-btn {
-        font-size: 0.8rem;
-        padding: 0.7rem 1.2rem;
-        letter-spacing: 0.8px;
-      }
-      
-      /* ✅ MOBILE: Controle de Áudio no Canto Inferior Esquerdo */
-      .audio-control {
-        bottom: 20px;
-        left: 20px; /* ✅ Esquerda no mobile também */
-        right: auto;
-        min-width: auto;
-        max-width: calc(100vw - 100px); /* Deixa espaço pro WhatsApp */
-      }
-      
-      .communities-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      /* ✅ WhatsApp permanece à direita no mobile */
-      .whatsapp-float {
-        bottom: 20px;
-        right: 20px;
-      }
-      .whatsapp-btn {
-        width: 55px;
-        height: 55px;
-      }
-      .whatsapp-btn i {
-        font-size: 1.7rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero {
-        padding: 6rem 1rem 3rem;
-        min-height: 85vh;
-      }
-      .hero-title {
-        font-size: clamp(1.5rem, 12vw, 2rem);
-        letter-spacing: clamp(2px, 1vw, 5px);
-      }
-      .hero-title::after {
-        bottom: -8px;
-        width: clamp(60px, 45vw, 100px);
-        height: 1px;
-      }
-      .hero-subtitle {
-        font-size: clamp(0.8rem, 3.5vw, 1rem);
-        letter-spacing: 1px;
-        padding: 0 0.5rem;
-      }
-      .hero-description {
-        font-size: 0.9rem;
-        padding: 0 0.5rem;
-      }
-      .btn-vip-premium {
-        padding: 16px 30px;
-        font-size: 0.75rem;
-        letter-spacing: 1.5px;
-        gap: 10px;
-      }
-      .hero-badge {
-        padding: 8px 20px;
-        font-size: 0.55rem;
-      }
-      .hero-badge::before,
-      .hero-badge::after {
-        display: none;
-      }
-      .card {
-        padding: 1.5rem;
-      }
-      .card-title {
-        font-size: 1.5rem;
-      }
-      .card-price {
-        font-size: 2rem;
-      }
-      .section-title h2 {
-        font-size: 1.4rem;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .pitch-section {
-        padding: 1.5rem 1rem;
-      }
-      .pitch-section h3 {
-        font-size: 1.5rem;
-      }
-      .pitch-section h4 {
-        font-size: 1.2rem;
-      }
-      footer {
-        padding: 2rem 1rem;
-      }
-      
-      /* ✅ MOBILE PEQUENO: Áudio compacto e à esquerda */
-      .audio-control {
-        padding: 12px 15px;
-        bottom: 15px;
-        left: 15px;
-        max-width: calc(100vw - 90px);
-      }
-      
-      .whatsapp-float {
-        bottom: 15px;
-        right: 15px;
-      }
-    }
-
     /* ========== LOGIN & ÁREA DE MEMBROS ========== */
     
     /* Botão de Login no Menu */
@@ -1794,6 +176,8 @@
       margin-bottom: 3rem;
       border-bottom: 1px solid rgba(212,175,55,0.3);
       padding-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 20px;
     }
     .user-info h2 {
       font-family: 'Cinzel', serif;
@@ -1905,13 +289,577 @@
       margin-bottom: 1rem;
       animation: pulse 1.5s infinite;
     }
-    
+
+    /* ========== ESTILO E-COMMERCE / PEDIDOS ========== */
+    .order-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      transition: all 0.3s;
+    }
+    .order-card:hover {
+      border-color: var(--secondary);
+      background: rgba(255,255,255,0.08);
+    }
+    .order-header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;
+      margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;
+    }
+    .order-id { font-family: 'Cinzel', serif; color: var(--secondary); font-weight: bold; }
+    .order-date { font-size: 0.85rem; color: #999; }
+    .order-status {
+      padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .status-sent { background: rgba(52, 152, 219, 0.2); color: #3498db; }
+    .status-delivered { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+    .status-processing { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
+    .product-row { display: flex; gap: 15px; margin-bottom: 1.5rem; }
+    .product-img {
+      width: 80px; height: 80px; background: #000; border-radius: 8px;
+      object-fit: cover; border: 1px solid rgba(212,175,55,0.1);
+    }
+    .product-details h4 { color: var(--lux); font-size: 1rem; margin-bottom: 5px; }
+    .product-details p { color: #888; font-size: 0.9rem; }
+    .product-price { color: var(--secondary); font-weight: bold; margin-top: 5px; display: block; }
+
+    /* Rastreamento Visual */
+    .track-steps { display: flex; justify-content: space-between; position: relative; margin: 2rem 0; }
+    .track-steps::before {
+      content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px;
+      background: rgba(255,255,255,0.1); z-index: 0; transform: translateY(-50%);
+    }
+    .step { position: relative; z-index: 1; text-align: center; background: #1a002f; padding: 0 10px; }
+    .step-icon {
+      width: 30px; height: 30px; background: #333; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 5px;
+      font-size: 0.8rem; color: #777; transition: all 0.3s;
+    }
+    .step.completed .step-icon { background: var(--secondary); color: #000; box-shadow: 0 0 10px rgba(212,175,55,0.5); }
+    .step-label { font-size: 0.7rem; color: #777; text-transform: uppercase; }
+    .step.completed .step-label { color: var(--secondary); }
+
+    .order-actions { display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; }
+    .btn-action {
+      background: transparent; border: 1px solid rgba(255,255,255,0.3); color: var(--lux);
+      padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s;
+    }
+    .btn-action:hover { border-color: var(--secondary); color: var(--secondary); }
+    .btn-primary-action { background: var(--secondary); color: #000; border: none; font-weight: bold; }
+
     @media (max-width: 900px) {
       .dash-grid { grid-template-columns: 1fr; }
       .dash-menu ul { flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
       .dash-menu li button { white-space: nowrap; }
+      .track-steps { font-size: 0.8rem; }
+      .step-label { display: none; }
+      .order-header { flex-direction: column; align-items: flex-start; }
+      .order-actions { flex-direction: column; }
+      .btn-action { width: 100%; text-align: center; }
     }
 
+    /* Original Styles */
+    header{
+      background:rgba(0,0,0,0.85);
+      backdrop-filter:blur(12px) saturate(180%);
+      border-bottom:1px solid var(--secondary);
+      position:fixed;top:0;left:0;right:0;z-index:1000;
+      height: 70px;
+    }
+    header.scrolled{box-shadow:0 4px 20px rgba(212,175,55,0.15);background:rgba(0,0,0,0.95)}
+    .header-container{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:0 clamp(1rem,5vw,2rem);max-width:1400px;margin:0 auto;
+      height: 100%;
+    }
+    
+    /* LOGO: Pointer + Hover */
+    .logo{
+      display:flex;align-items:center;text-decoration:none;
+      transition:all .3s;
+      z-index: 1100;
+      position: relative;
+    }
+    .logo img {
+      height: 55px;
+      width: auto;
+      transition: all 0.3s;
+    }
+    .logo:hover{transform:scale(1.05)}
+    .logo:hover img{filter: drop-shadow(0 0 15px rgba(212,175,55,.6))}
+    
+    nav ul{display:flex;list-style:none;gap:clamp(1rem,2vw,2rem);flex-wrap:wrap;align-items:center;}
+    nav a{
+      font-family: 'Cinzel', serif;
+      color:var(--lux);
+      text-decoration:none;
+      font-weight:500;
+      font-size: 0.95rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      position:relative;
+      padding-bottom:2px;
+      transition:all .3s;
+    }
+    nav a::after{
+      content:'';
+      position:absolute;
+      bottom:-2px;
+      left:0;
+      width:0;
+      height:1px;
+      background:linear-gradient(90deg, var(--secondary), var(--accent));
+      transition:width .3s;
+    }
+    nav a:hover{color:var(--secondary);text-shadow: 0 0 10px rgba(212,175,55,0.4)}
+    nav a:hover::after{width:100%}
+    
+    .mobile-home-link { display: none; }
+    
+    .nav-toggle{
+      display:none;
+      background:none;
+      border:none;
+      color:var(--lux);
+      font-size:1.8rem;
+      cursor:pointer;
+      z-index: 1100;
+      position: relative;
+    }
+    
+    /* ========== HERO ========== */
+    .hero{
+      position: relative;
+      padding:9rem 2rem 5rem;
+      text-align:center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .hero-video-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden;
+    }
+    .hero-video-bg video { width: 100%; height: 100%; object-fit: cover; }
+    
+    .hero-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(26, 0, 47, 0.7) 50%, rgba(0, 0, 0, 0.85) 100%);
+      z-index: -1;
+    }
+    
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-badge {
+      display: inline-block; border: 1px solid var(--secondary); padding: 12px 30px;
+      margin-bottom: 2rem; font-family: 'Cinzel', serif; font-size: clamp(0.65rem, 1.5vw, 0.85rem);
+      letter-spacing: clamp(2px, 0.5vw, 4px); text-transform: uppercase; color: var(--secondary);
+      background: rgba(212, 175, 55, 0.05); backdrop-filter: blur(10px); position: relative;
+    }
+    .hero-badge::before, .hero-badge::after {
+      content: '◆'; position: absolute; top: 50%; transform: translateY(-50%);
+      color: var(--secondary); font-size: 0.5rem; opacity: 0.7;
+    }
+    .hero-badge::before { left: 10px; }
+    .hero-badge::after { right: 10px; }
+
+    .hero-title {
+      font-family: 'Cinzel', serif; font-weight: 800; font-size: clamp(2.8rem, 12vw, 8rem);
+      letter-spacing: clamp(6px, 2.5vw, 35px); text-transform: uppercase; line-height: 1.1;
+      background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 18%, #d4af37 35%, #fcf6ba 50%, #d4af37 65%, #fcf6ba 82%, #aa771c 100%);
+      background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.5)); animation: shimmer 5s ease-in-out infinite;
+      margin-bottom: 1.5rem; position: relative;
+    }
+
+    .hero-title::after {
+      content: ''; position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+      width: clamp(100px, 30vw, 300px); height: 2px;
+      background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.3) 15%, var(--secondary) 50%, rgba(212, 175, 55, 0.3) 85%, transparent 100%);
+    }
+
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% 50%; filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.5)); }
+      50% { background-position: 100% 50%; filter: drop-shadow(0 0 60px rgba(212, 175, 55, 0.7)); }
+    }
+
+    .hero-subtitle {
+      font-family: 'Cormorant Garamond', serif; font-size: clamp(1rem, 3vw, 1.6rem);
+      color: var(--lux); opacity: 0.9; letter-spacing: clamp(2px, 0.5vw, 5px);
+      margin: 2.5rem 0 1.5rem; font-weight: 400; font-style: italic;
+    }
+    .hero-subtitle span { color: var(--secondary); font-weight: 600; font-style: normal; }
+
+    .hero-description {
+      max-width: 700px; margin: 0 auto 2.5rem; font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: rgba(245, 230, 200, 0.85); font-weight: 300;
+    }
+
+    .btn-vip-premium {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      gap: 15px; padding: 22px 55px; font-family: 'Cinzel', serif; font-size: clamp(0.9rem, 2vw, 1.15rem);
+      font-weight: 700; letter-spacing: clamp(2px, 0.5vw, 4px); text-transform: uppercase;
+      text-decoration: none; color: #000;
+      background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #d4af37 50%, #fcf6ba 75%, #aa771c 100%);
+      background-size: 200% 200%; border: none; cursor: pointer; overflow: hidden;
+      transition: all 0.4s ease; box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.3), 0 10px 40px rgba(212, 175, 55, 0.3);
+      animation: btnShimmer 4s ease-in-out infinite;
+    }
+    .btn-vip-premium::before {
+      content: ''; position: absolute; top: 3px; left: 3px; right: 3px; bottom: 3px;
+      border: 1px solid rgba(0, 0, 0, 0.2); pointer-events: none;
+    }
+    .btn-vip-premium::after {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+      transform: rotate(45deg) translateX(-100%); transition: transform 0.6s ease;
+    }
+    .btn-vip-premium:hover::after { transform: rotate(45deg) translateX(100%); }
+    .btn-vip-premium:hover {
+      transform: translateY(-5px) scale(1.02); box-shadow: 0 0 0 2px var(--secondary), 0 20px 60px rgba(212, 175, 55, 0.4);
+      background-position: 100% 50%;
+    }
+    @keyframes btnShimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    .cta-button{
+      background:linear-gradient(135deg,var(--secondary),#b9972e); color:#000; border:none;
+      border-radius:50px; padding:1.1rem 3rem; font-family:'Cinzel', serif; font-weight:700;
+      font-size:clamp(0.9rem, 2vw, 1.2rem); letter-spacing: 2px; cursor:pointer;
+      box-shadow:0 10px 40px rgba(212,175,55,.4); transition:all .4s; text-decoration:none;
+      display:inline-flex; align-items:center; gap:12px; text-transform: uppercase;
+    }
+    .cta-button:hover{ transform:translateY(-5px) scale(1.02); box-shadow:0 20px 60px rgba(212,175,55,.5); }
+    
+    .container{max-width:1400px;margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
+    .section-title{text-align:center;margin:4rem 0 3rem}
+    .section-title h2{font-size:clamp(2rem,5vw,2.8rem);color:var(--lux);display:flex;align-items:center;justify-content:center;gap:15px}
+    .section-title h2 a{color:var(--lux);text-decoration:none;transition:all .3s}
+    .section-title h2 a:hover{color:var(--secondary);text-shadow:0 0 20px rgba(212,175,55,.5)}
+    
+    .tabs{ display:flex;justify-content:center;gap:1rem;margin:3rem 0 4rem;flex-wrap:wrap; }
+    .tab-btn{
+      font-family: 'Cinzel', serif; background:var(--glass-bg); backdrop-filter:blur(10px);
+      border:1px solid rgba(212,175,55,.2); color:var(--lux); padding:.9rem 2rem;
+      border-radius:10px; cursor:pointer; font-size:0.95rem; letter-spacing: 1.2px;
+      text-transform: uppercase; display:flex; align-items:center; gap:10px; transition:all .3s;
+    }
+    .tab-btn.active,.tab-btn:hover{
+      background:rgba(212,175,55,.15); border-bottom:3px solid var(--secondary);
+      color:var(--secondary); text-shadow: 0 0 10px rgba(212,175,55,0.3);
+    }
+    .tab-content{display:none;animation:fadeIn .6s}
+    .tab-content.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    
+    .grid-container{ display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:2.5rem; }
+    .card{
+      background:linear-gradient(145deg,var(--card-bg),var(--glass-bg));
+      border:1px solid rgba(212,175,55,.3);border-radius:16px;padding:2.5rem;
+      text-align:center;transition:all .4s;box-shadow:0 10px 30px rgba(0,0,0,.3);
+    }
+    .card:hover{
+      transform:translateY(-12px) scale(1.03);box-shadow:0 20px 50px rgba(212,175,55,.3);
+      border-color:var(--secondary);
+    }
+    .card-icon{font-size:3.5rem;color:var(--secondary);margin-bottom:1.5rem}
+    .card-title{font-size:1.9rem;color:var(--lux);font-weight:600;margin:1rem 0}
+    .card-description{font-size:1.1rem;color:rgba(245,230,200,.9);line-height:1.7;margin-bottom:1.5rem}
+    .card-price{font-size:2.4rem;color:var(--secondary);font-weight:700;margin:1.5rem 0}
+    .card-btn{
+      background:linear-gradient(135deg,var(--secondary),#b9972e);color:#000;border:none;
+      padding:1rem 2.5rem;border-radius:30px;font-weight:700;width:100%;cursor:pointer;
+      transition:all .3s;box-shadow:0 5px 20px rgba(212,175,55,.3);
+      font-family: 'Cinzel', serif; font-size: 0.95rem; letter-spacing: 1px;
+    }
+    .card-btn:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(212,175,55,.4)}
+    
+    .card-video {
+      width: 100%; height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem; position: relative;
+    }
+    .card-video video { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+    .card:hover .card-video video { transform: scale(1.05); }
+    .card-video-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.3) 100%); pointer-events: none;
+    }
+    
+    .section-video {
+      width: 100%; max-width: 700px; margin: 0 auto 3rem; border-radius: 20px; overflow: hidden;
+      box-shadow: 0 20px 50px rgba(212,175,55,0.2); border: 2px solid rgba(212,175,55,0.3); position: relative;
+    }
+    .section-video video { width: 100%; height: auto; display: block; transition: transform 0.4s; }
+    .section-video:hover video { transform: scale(1.02); }
+    .section-video-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.4) 100%); pointer-events: none;
+    }
+    
+    .pitch-section{
+      background:rgba(0,0,0,0.5);border-radius:20px;padding:3rem;margin:4rem 0;
+      border:1px solid rgba(212,175,55,0.2);
+    }
+    .pitch-section h3{font-size:2.5rem;color:var(--secondary);text-align:center;margin-bottom:2rem}
+    .pitch-section h3 a{color:var(--secondary);text-decoration:none;transition:all .3s}
+    .pitch-section h3 a:hover{text-shadow:0 0 20px rgba(212,175,55,.6)}
+    .pitch-section h4{font-size:1.8rem;color:var(--lux);margin:2rem 0 1rem}
+    .pitch-section p{font-size:1.2rem;color:rgba(245,230,200,0.9);margin-bottom:1.5rem;line-height:1.8}
+    .pitch-section ul{list-style:none;padding-left:1.5rem}
+    .pitch-section li{font-size:1.1rem;color:rgba(245,230,200,0.8);margin-bottom:0.8rem;position:relative}
+    .pitch-section li:before{content:"✦";color:var(--secondary);position:absolute;left:-1.5rem}
+    
+    /* Vitrine Livros */
+    .books-showcase { padding: 3rem 0 5rem; border-bottom: 1px solid rgba(212,175,55,0.1); position: relative; }
+    .scroll-hint { text-align: center; color: var(--secondary); font-size: 0.8rem; margin-bottom: 1rem; opacity: 0.7; animation: pulse 2s infinite; display: none; }
+    @media (max-width: 768px) { .scroll-hint { display: block; } }
+    @keyframes pulse { 0% { opacity: 0.4; transform: translateX(-5px); } 50% { opacity: 1; transform: translateX(5px); } 100% { opacity: 0.4; transform: translateX(-5px); } }
+    .books-track {
+      display: flex; overflow-x: auto; gap: 3rem; padding: 2rem clamp(1rem, 3vw, 2rem) 4rem;
+      scroll-behavior: smooth; scroll-snap-type: x mandatory;
+      scrollbar-width: thin; scrollbar-color: var(--secondary) rgba(0,0,0,0.3);
+    }
+    .books-track::-webkit-scrollbar { height: 8px; }
+    .books-track::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 4px; }
+    .books-track::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 4px; }
+    .book-item { flex: 0 0 240px; scroll-snap-align: center; perspective: 1000px; display: flex; flex-direction: column; align-items: center; position: relative; }
+    .book-cover {
+      width: 100%; aspect-ratio: 2/3; position: relative; background: #1a002f;
+      border-radius: 2px 6px 6px 2px; box-shadow: 5px 5px 15px rgba(0,0,0,0.5), inset 3px 0 10px rgba(0,0,0,0.8);
+      transition: transform 0.4s ease, box-shadow 0.4s ease; cursor: pointer;
+      border: 1px solid rgba(212,175,55,0.3); overflow: hidden; display: flex; align-items: center; justify-content: center;
+    }
+    .book-cover img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+    .book-cover::before { content: ''; position: absolute; right: 2px; top: 1%; height: 98%; width: 4px; background: linear-gradient(to right, #ccc, #eee 30%, #ddd); z-index: 2; box-shadow: -1px 0 2px rgba(0,0,0,0.2); }
+    .book-cover::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%); pointer-events: none; }
+    .book-item:hover .book-cover { transform: translateY(-15px) rotateY(-5deg); box-shadow: 15px 25px 30px rgba(0,0,0,0.6), 0 0 15px rgba(212,175,55,0.3); border-color: var(--secondary); }
+    .book-info { text-align: center; margin-top: 1.5rem; width: 100%; }
+    .book-title { font-family: 'Cinzel', serif; color: var(--lux); font-size: 1.1rem; margin-bottom: 0.5rem; line-height: 1.3; }
+    .book-price { color: var(--secondary); font-weight: 700; font-size: 1.2rem; margin-bottom: 1rem; display: block; }
+    .book-btn {
+      display: inline-block; padding: 0.5rem 1.2rem; border: 1px solid var(--secondary); color: var(--secondary);
+      border-radius: 20px; text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
+      transition: all 0.3s; background: transparent;
+    }
+    .book-btn:hover { background: var(--secondary); color: #000; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
+    
+    /* Áudios */
+    .audio-library-section {
+      padding: 4rem 0 5rem;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(11,0,22,0.9)), url('https://res.cloudinary.com/dlueoyrhe/image/upload/v1767468126/download_-_2026-01-03T161948.583_eip8xz.jpg');
+      background-size: cover; background-position: center; border-top: 1px solid rgba(212,175,55,0.2); border-bottom: 1px solid rgba(212,175,55,0.2); margin-top: 0;
+    }
+    .section-subtitle { color: rgba(245,230,200,0.7); font-size: 1.2rem; margin-top: 0.5rem; }
+    .audio-category { margin: 3rem 0; }
+    .category-title { font-size: 1.8rem; color: var(--lux); display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem; }
+    .category-title i { color: var(--secondary); }
+    .category-title.premium-title { color: var(--secondary); }
+    .category-description { color: rgba(245,230,200,0.6); font-size: 1.1rem; margin-bottom: 2rem; }
+    .audio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .audio-card {
+      background: linear-gradient(145deg, var(--card-bg), var(--glass-bg)); border: 1px solid rgba(212,175,55,0.25);
+      border-radius: 16px; padding: 1.8rem; text-align: center; position: relative; transition: all 0.4s ease; overflow: hidden;
+    }
+    .audio-card.free:hover { transform: translateY(-8px); border-color: var(--secondary); box-shadow: 0 15px 40px rgba(212,175,55,0.2); }
+    .audio-card .audio-icon { font-size: 2.5rem; color: var(--secondary); margin-bottom: 1rem; }
+    .audio-badge { position: absolute; top: 15px; right: 15px; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; }
+    .free-badge { background: linear-gradient(135deg, #4CAF50, #2E7D32); color: white; }
+    .premium-badge { background: linear-gradient(135deg, var(--secondary), #b9972e); color: #000; }
+    .audio-card h4 { font-size: 1.3rem; color: var(--lux); margin-bottom: 0.5rem; }
+    .audio-card p { color: rgba(245,230,200,0.7); font-size: 0.95rem; }
+    .audio-preview {
+      margin-top: 1.2rem; padding: 0.8rem; background: rgba(76, 175, 80, 0.15); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; gap: 8px; color: #4CAF50; font-size: 0.9rem;
+      cursor: pointer; transition: all 0.3s;
+    }
+    .audio-preview:hover { background: rgba(76, 175, 80, 0.25); }
+    .audio-preview i { font-size: 1.2rem; }
+    
+    .audio-card.locked { position: relative; }
+    .audio-card.locked::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4); backdrop-filter: blur(3px); border-radius: 16px; z-index: 1; pointer-events: none;
+    }
+    .lock-overlay {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;
+      text-align: center; color: var(--secondary); pointer-events: none;
+    }
+    .lock-overlay i { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; text-shadow: 0 0 20px rgba(212,175,55,0.5); }
+    .lock-overlay span { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .locked-preview { background: rgba(212,175,55,0.1) !important; color: rgba(212,175,55,0.6) !important; cursor: not-allowed; }
+    .premium-section { background: rgba(212,175,55,0.03); border: 1px solid rgba(212,175,55,0.15); border-radius: 20px; padding: 2rem; margin-top: 3rem; }
+    .audio-actions { display: flex; justify-content: center; gap: 2rem; margin-top: 3rem; flex-wrap: wrap; }
+    .audio-btn {
+      display: inline-flex; align-items: center; gap: 12px; padding: 1.2rem 2.5rem; border-radius: 50px;
+      font-size: 1.1rem; font-weight: 700; text-decoration: none; transition: all 0.3s ease; cursor: pointer; border: none; font-family: inherit;
+    }
+    .buy-btn { background: linear-gradient(135deg, var(--secondary), #b9972e); color: #000; box-shadow: 0 8px 25px rgba(212,175,55,0.3); }
+    .buy-btn:hover { transform: translateY(-5px); box-shadow: 0 12px 35px rgba(212,175,55,0.4); }
+    .audio-player { width: 100%; margin: 15px 0; border-radius: 25px; outline: none; }
+    .audio-info-player { display: flex; align-items: center; justify-content: center; gap: 8px; color: #666; font-size: 14px; margin-top: 10px; }
+    .audio-info-player i { color: #8b5cf6; font-size: 18px; }
+
+    /* Comunidades */
+    .communities-section { padding: 5rem 0; background: linear-gradient(to bottom, rgba(11,0,22,0.95), rgba(0,0,0,0.98)); position: relative; overflow: hidden; }
+    .communities-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--secondary), transparent); }
+    .communities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; margin-top: 3rem; }
+    .community-card {
+      background: linear-gradient(145deg, var(--card-bg), rgba(0,0,0,0.4)); border-radius: 20px; padding: 2.5rem;
+      text-align: center; position: relative; overflow: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid; display: flex; flex-direction: column;
+    }
+    .community-btn {
+      margin-top: auto; display: inline-block; padding: 1rem 1.5rem; border: none; border-radius: 50px;
+      text-decoration: none; font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.95rem;
+      letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.4s; position: relative; z-index: 2; color: #fff; overflow: hidden;
+    }
+    .community-btn:hover { transform: translateY(-4px) scale(1.02); filter: brightness(1.2); }
+    
+    .community-anubis { border-color: var(--anubis-blue); color: var(--anubis-blue); box-shadow: 0 10px 30px rgba(41, 128, 185, 0.15); }
+    .community-anubis:hover { box-shadow: 0 25px 60px rgba(41, 128, 185, 0.4); }
+    .community-anubis .community-icon { color: var(--anubis-blue); }
+    .community-anubis .community-btn { background: linear-gradient(135deg, #154360, #2980B9); box-shadow: 0 5px 20px rgba(41, 128, 185, 0.4); }
+
+    .community-horus { border-color: var(--horus-purple); color: var(--horus-purple); box-shadow: 0 10px 30px rgba(142, 68, 173, 0.15); }
+    .community-horus:hover { box-shadow: 0 25px 60px rgba(142, 68, 173, 0.4); }
+    .community-horus .community-icon { color: var(--horus-purple); }
+    .community-horus .community-btn { background: linear-gradient(135deg, #4A235A, #8E44AD); box-shadow: 0 5px 20px rgba(142, 68, 173, 0.4); }
+
+    .community-isis {
+      background: linear-gradient(160deg, var(--isis-brown-dark), var(--isis-brown-light)); border-color: var(--isis-gold); color: var(--isis-gold);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+    }
+    .community-isis:hover { box-shadow: 0 25px 60px rgba(212, 175, 55, 0.35); border-color: #fff; }
+    .community-isis .community-icon { color: var(--isis-gold); filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5)); }
+    .community-isis .community-description, .community-isis .community-features li { color: rgba(255, 245, 230, 0.9); }
+    .community-isis .community-btn { background: linear-gradient(135deg, #B78727, #F1C40F); color: #1a0f0a; box-shadow: 0 5px 25px rgba(212, 175, 55, 0.5); }
+
+    .community-ra {
+      background: linear-gradient(180deg, #000000, #110000); border-color: var(--ra-red); color: var(--ra-red); box-shadow: 0 10px 30px rgba(192, 57, 43, 0.2);
+    }
+    .community-ra:hover { box-shadow: 0 25px 70px rgba(192, 57, 43, 0.5); }
+    .community-ra .community-icon { color: var(--ra-red); filter: drop-shadow(0 0 20px rgba(231, 76, 60, 0.7)); }
+    .community-ra .community-description, .community-ra .community-features li { color: rgba(255, 255, 255, 0.85); }
+    .community-ra .community-btn { background: linear-gradient(135deg, #641E16, #C0392B); color: #fff; box-shadow: 0 5px 25px rgba(192, 57, 43, 0.5); }
+
+    .community-icon { font-size: 4rem; margin-bottom: 1.5rem; display: inline-block; transition: all 0.4s; }
+    .community-card:hover .community-icon { transform: scale(1.15) rotate(5deg); }
+    .community-level { font-family: 'Cinzel', serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; margin-bottom: 0.5rem; font-weight: 700; }
+    .community-name { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 3px; }
+    .community-description { font-size: 1.05rem; line-height: 1.7; margin-bottom: 1.5rem; opacity: 0.9; }
+    .community-features { list-style: none; padding: 0; margin: 2rem 0; text-align: left; }
+    .community-features li { padding: 0.6rem 0; padding-left: 2rem; position: relative; font-size: 0.95rem; }
+    .community-features li::before { content: '◆'; position: absolute; left: 0; font-size: 0.8rem; top: 50%; transform: translateY(-50%); opacity: 0.7; }
+    
+    .audio-control {
+      position: fixed; bottom: 30px; left: 30px; z-index: 999; display: flex; flex-direction: column; gap: 12px;
+      background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 20px; padding: 15px 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); transition: all 0.3s; min-width: 200px;
+    }
+    .audio-control:hover { border-color: var(--secondary); box-shadow: 0 15px 50px rgba(212, 175, 55, 0.3); }
+    .audio-control-top { display: flex; align-items: center; gap: 12px; }
+    .audio-control-btn {
+      width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, var(--secondary), #b9972e);
+      border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+      box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4); flex-shrink: 0;
+    }
+    .audio-control-btn:hover { transform: scale(1.1); }
+    .audio-control-btn i { font-size: 1.2rem; color: #000; }
+    .audio-info { display: flex; flex-direction: column; flex: 1; }
+    .audio-info span { color: var(--lux); font-size: 0.85rem; font-weight: 600; }
+    .audio-info small { color: var(--secondary); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+    .audio-visualizer { display: flex; align-items: center; gap: 3px; height: 25px; }
+    .audio-visualizer span { width: 3px; background: var(--secondary); border-radius: 3px; animation: visualizer 0.5s ease-in-out infinite alternate; }
+    .audio-visualizer span:nth-child(1) { height: 10px; animation-delay: 0s; }
+    .audio-visualizer span:nth-child(2) { height: 18px; animation-delay: 0.1s; }
+    .audio-visualizer span:nth-child(3) { height: 12px; animation-delay: 0.2s; }
+    .audio-visualizer span:nth-child(4) { height: 20px; animation-delay: 0.3s; }
+    .audio-visualizer span:nth-child(5) { height: 8px; animation-delay: 0.4s; }
+    .audio-visualizer.paused span { animation: none; height: 5px !important; }
+    @keyframes visualizer { 0% { transform: scaleY(1); } 100% { transform: scaleY(1.8); } }
+    .volume-control { display: flex; align-items: center; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(212, 175, 55, 0.2); }
+    .volume-icon { color: var(--secondary); font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+    .volume-slider { flex: 1; height: 5px; border-radius: 5px; background: rgba(212, 175, 55, 0.2); outline: none; -webkit-appearance: none; cursor: pointer; }
+    .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 15px; height: 15px; border-radius: 50%; background: var(--secondary); cursor: pointer; box-shadow: 0 0 5px rgba(212, 175, 55, 0.5); transition: all 0.2s; }
+    .volume-slider::-webkit-slider-thumb:hover { transform: scale(1.2); box-shadow: 0 0 10px rgba(212, 175, 55, 0.8); }
+    .volume-slider::-moz-range-thumb { width: 15px; height: 15px; border-radius: 50%; background: var(--secondary); cursor: pointer; border: none; box-shadow: 0 0 5px rgba(212, 175, 55, 0.5); transition: all 0.2s; }
+    .volume-slider::-moz-range-thumb:hover { transform: scale(1.2); box-shadow: 0 0 10px rgba(212, 175, 55, 0.8); }
+    .volume-value { color: var(--lux); font-size: 0.75rem; min-width: 35px; text-align: right; flex-shrink: 0; }
+    
+    .whatsapp-float { position: fixed; bottom: 100px; right: 30px; z-index: 998; }
+    .whatsapp-btn {
+      width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #25D366, #128C7E);
+      display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+      cursor: pointer; transition: all 0.3s ease; text-decoration: none; animation: whatsappPulse 2s ease-in-out infinite;
+    }
+    .whatsapp-btn:hover { transform: scale(1.1) translateY(-5px); box-shadow: 0 12px 35px rgba(37, 211, 102, 0.6); animation: none; }
+    .whatsapp-btn i { font-size: 2rem; color: #fff; }
+    @keyframes whatsappPulse { 0%, 100% { box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); } 50% { box-shadow: 0 8px 35px rgba(37, 211, 102, 0.7); transform: scale(1.05); } }
+    
+    .scroll-progress{position:fixed;top:0;left:0;width:0;height:4px;background:var(--secondary);z-index:1001;transition:width .2s}
+    
+    @media (max-width: 992px) {
+      .hero-title { font-size: clamp(2.2rem, 10vw, 5rem); letter-spacing: clamp(4px, 1.5vw, 18px); }
+    }
+    @media (max-width:768px){
+      .nav-toggle{display:block}
+      nav ul{
+        display:none; flex-direction:column; position:fixed; top:70px; left:0; width:100%;
+        height: calc(100vh - 70px); background:rgba(0,0,0,.98); padding:2rem; gap:2rem;
+        border-bottom:1px solid var(--secondary); overflow-y: auto; z-index: 1050;
+      }
+      nav ul.active{display:flex}
+      .mobile-home-link { display: block; border-bottom: 1px solid rgba(212,175,55,0.3); margin-bottom: 10px; padding-bottom: 15px; }
+      .mobile-home-link a { color: var(--secondary) !important; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
+      .hero{ padding: 7rem 1.5rem 4rem; min-height: 90vh; }
+      .hero-title { font-size: clamp(1.8rem, 11vw, 3.2rem); letter-spacing: clamp(3px, 1.2vw, 10px); }
+      .hero-title::after { bottom: -12px; width: clamp(80px, 40vw, 180px); }
+      .hero-subtitle { margin: 2rem 0 1rem; }
+      .btn-vip-premium { padding: 18px 40px; font-size: 0.85rem; letter-spacing: 2px; width: 90%; max-width: 320px; }
+      .hero-badge { padding: 10px 25px; font-size: 0.6rem; letter-spacing: 2px; }
+      .pitch-section{padding:2rem 1.5rem}
+      .audio-grid { grid-template-columns: 1fr; }
+      .audio-actions { flex-direction: column; align-items: center; }
+      .audio-btn { width: 100%; max-width: 320px; justify-content: center; }
+      .premium-section { padding: 1.5rem 1rem; }
+      .section-video { max-width: 100%; margin: 0 1rem 2rem; }
+      .card-video { height: 180px; }
+      .logo img { height: 45px; }
+      nav a { font-size: 1.1rem; letter-spacing: 2px; display: block; text-align: center; }
+      .tab-btn { font-size: 0.8rem; padding: 0.7rem 1.2rem; letter-spacing: 0.8px; }
+      .audio-control { bottom: 20px; left: 20px; right: auto; min-width: auto; max-width: calc(100vw - 100px); }
+      .communities-grid { grid-template-columns: 1fr; }
+      .whatsapp-float { bottom: 20px; right: 20px; }
+      .whatsapp-btn { width: 55px; height: 55px; }
+      .whatsapp-btn i { font-size: 1.7rem; }
+    }
+    @media (max-width: 480px) {
+      .hero { padding: 6rem 1rem 3rem; min-height: 85vh; }
+      .hero-title { font-size: clamp(1.5rem, 12vw, 2rem); letter-spacing: clamp(2px, 1vw, 5px); }
+      .hero-title::after { bottom: -8px; width: clamp(60px, 45vw, 100px); height: 1px; }
+      .hero-subtitle { font-size: clamp(0.8rem, 3.5vw, 1rem); letter-spacing: 1px; padding: 0 0.5rem; }
+      .hero-description { font-size: 0.9rem; padding: 0 0.5rem; }
+      .btn-vip-premium { padding: 16px 30px; font-size: 0.75rem; letter-spacing: 1.5px; gap: 10px; }
+      .hero-badge { padding: 8px 20px; font-size: 0.55rem; }
+      .hero-badge::before, .hero-badge::after { display: none; }
+      .card { padding: 1.5rem; }
+      .card-title { font-size: 1.5rem; }
+      .card-price { font-size: 2rem; }
+      .section-title h2 { font-size: 1.4rem; flex-direction: column; gap: 8px; }
+      .pitch-section { padding: 1.5rem 1rem; }
+      .pitch-section h3 { font-size: 1.5rem; }
+      .pitch-section h4 { font-size: 1.2rem; }
+      footer { padding: 2rem 1rem; }
+      .audio-control { padding: 12px 15px; bottom: 15px; left: 15px; max-width: calc(100vw - 90px); }
+      .whatsapp-float { bottom: 15px; right: 15px; }
+    }
   </style>
 </head>
 <body>
@@ -1921,7 +869,7 @@
     <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764878192/COMBO_RIQUEZA_ABSOLUTA____%C3%81UDIO_EXTREMAMENTE_PODEROSO_zqaN57FBnUo_1_u9on2b.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- ✅ CONTROLE DE ÁUDIO FLUTUANTE NO CANTO INFERIOR ESQUERDO -->
+  <!-- CONTROLE DE ÁUDIO FLUTUANTE -->
   <div class="audio-control" id="audioControl">
     <div class="audio-control-top">
       <div class="audio-visualizer paused" id="audioVisualizer">
@@ -1946,7 +894,7 @@
     </div>
   </div>
 
-  <!-- BOTÃO WHATSAPP FLUTUANTE (PERMANECE À DIREITA) -->
+  <!-- BOTÃO WHATSAPP FLUTUANTE -->
   <div class="whatsapp-float">
     <a href="https://wa.me/5571983448621?text=Olá!%20Vim%20do%20site%20Akasha%20Hub" target="_blank" class="whatsapp-btn" title="Fale conosco no WhatsApp">
       <i class="fab fa-whatsapp"></i>
@@ -1957,11 +905,12 @@
   
   <header id="header">
     <div class="header-container">
-      <a href="#" class="logo">
+      <!-- LOGO COM LINK PARA SITE EXTERNO EM NOVA GUIA -->
+      <a href="https://akashahub.com.br" target="_blank" class="logo">
         <img src="https://i.ibb.co/Fbxk6mQ3/Design-sem-nome-2.png" alt="Akasha Hub Logo">
       </a>
       <nav>
-               <ul id="navList">
+        <ul id="navList">
           <li class="mobile-home-link">
             <a href="#" onclick="toggleNav(); window.scrollTo(0,0);">
               <i class="fas fa-home"></i> Home AkashaHub
@@ -1985,7 +934,7 @@
     </div>
   </header>
 
-<!-- MODAL DE LOGIN -->
+  <!-- MODAL DE LOGIN -->
   <div class="login-overlay" id="loginModal">
     <div class="login-box">
       <span class="close-login" onclick="closeLogin()">&times;</span>
@@ -1997,7 +946,7 @@
         </div>
         <div class="input-group">
           <label>Chave de Acesso (Senha)</label>
-          <input type="password" class="input-field" placeholder="••••••" required>
+          <input type="password" class="input-field" placeholder="••••••••" required>
         </div>
         <button type="submit" class="btn-submit-login">Entrar no Portal</button>
       </form>
@@ -2014,10 +963,19 @@
         <h2>Olá, Iniciado(a)</h2>
         <p style="color:var(--lux)">Seu campo energético está ativo.</p>
       </div>
-      <div class="user-avatar">
-        <i class="fas fa-user"></i>
+      
+      <!-- BOTÃO DE VOLTAR AO SITE E LOGOUT -->
+      <div style="display:flex; align-items:center; gap:15px;">
+        <button onclick="logout()" class="btn-action" style="display:flex; align-items:center; gap:8px; border-color:var(--secondary); color:var(--secondary);">
+          <i class="fas fa-arrow-left"></i> Voltar ao Hub
+        </button>
+        <button onclick="logout()" style="background:none; border:1px solid #666; color:#999; padding:5px 15px; border-radius:15px; cursor:pointer;">
+          Sair
+        </button>
+        <div class="user-avatar">
+          <i class="fas fa-user"></i>
+        </div>
       </div>
-      <button onclick="logout()" style="background:none; border:1px solid #666; color:#999; padding:5px 15px; border-radius:15px; cursor:pointer;">Sair</button>
     </div>
 
     <div class="dash-grid">
@@ -2026,6 +984,7 @@
         <ul>
           <li><button class="dash-btn active" onclick="switchDash('dash-gravacoes')"><i class="fas fa-video"></i> Minhas Gravações</button></li>
           <li><button class="dash-btn" onclick="switchDash('dash-live')"><i class="fas fa-broadcast-tower"></i> Sala Ao Vivo</button></li>
+          <li><button class="dash-btn" onclick="switchDash('dash-compras')"><i class="fas fa-shopping-bag"></i> Minhas Compras</button></li>
           <li><button class="dash-btn" onclick="switchDash('dash-eventos')"><i class="fas fa-calendar-alt"></i> Meus Eventos</button></li>
           <li><button class="dash-btn" onclick="switchDash('dash-audios')"><i class="fas fa-headphones"></i> Pack Áudios VIP</button></li>
         </ul>
@@ -2043,8 +1002,7 @@
               <h4>Alinhamento Chakra Cardíaco</h4>
               <span class="rec-date">Realizada em 02/01/2026 • Duração: 1h 12m</span>
             </div>
-            <!-- Exemplo de como abriria o vídeo -->
-            <button class="btn-watch" onclick="alert('Aqui abrirá o player de vídeo seguro (Vimeo/Youtube Privado).')"><i class="fas fa-play"></i> Assistir</button>
+            <button class="btn-watch" onclick="alert('Aqui abrirá o player de vídeo seguro.')"><i class="fas fa-play"></i> Assistir</button>
           </div>
 
           <div class="recording-item">
@@ -2068,7 +1026,6 @@
             </p>
             
             <div style="display:flex; gap:15px; justify-content:center; flex-wrap:wrap;">
-               <!-- Botão para entrar no Zoom/Meet -->
                <a href="#" class="cta-button" style="background: #2D8CFF; color:white;">
                  <i class="fas fa-video"></i> Entrar via Zoom
                </a>
@@ -2080,11 +1037,79 @@
           </div>
         </div>
 
+        <!-- ABA: MINHAS COMPRAS (E-COMMERCE) -->
+        <div id="dash-compras" class="dash-tab">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <h3 style="color:var(--secondary);">Meus Pedidos Físicos</h3>
+            <a href="https://akashahub.com.br/store" target="_blank" class="btn-action" style="text-decoration:none">
+              <i class="fas fa-external-link-alt"></i> Ir para Loja
+            </a>
+          </div>
+
+          <!-- PEDIDO 1 -->
+          <div class="order-card">
+            <div class="order-header">
+              <div>
+                <span class="order-id">PEDIDO #AK9283</span>
+                <div class="order-date">Realizado em 20 Dez, 2024</div>
+              </div>
+              <span class="order-status status-delivered">Entregue</span>
+            </div>
+            <div class="product-row">
+              <img src="https://i.ibb.co/Fbxk6mQ3/Design-sem-nome-2.png" class="product-img" alt="Camiseta Akasha">
+              <div class="product-details">
+                <h4>Camiseta Sagrada Geometria (Preta)</h4>
+                <p>Tamanho: G • Quantidade: 1</p>
+                <span class="product-price">R$ 129,90</span>
+              </div>
+            </div>
+            <div class="track-steps">
+              <div class="step completed"><div class="step-icon"><i class="fas fa-check"></i></div><div class="step-label">Pago</div></div>
+              <div class="step completed"><div class="step-icon"><i class="fas fa-box"></i></div><div class="step-label">Preparado</div></div>
+              <div class="step completed"><div class="step-icon"><i class="fas fa-truck"></i></div><div class="step-label">Enviado</div></div>
+              <div class="step completed"><div class="step-icon"><i class="fas fa-home"></i></div><div class="step-label">Entregue</div></div>
+            </div>
+            <div class="order-actions">
+              <button class="btn-action">Ver Nota Fiscal</button>
+              <button class="btn-action btn-primary-action">Comprar Novamente</button>
+            </div>
+          </div>
+
+          <!-- PEDIDO 2 -->
+          <div class="order-card">
+            <div class="order-header">
+              <div>
+                <span class="order-id">PEDIDO #AK9921</span>
+                <div class="order-date">Realizado em 02 Jan, 2026</div>
+              </div>
+              <span class="order-status status-sent">Em Trânsito</span>
+            </div>
+            <div class="product-row">
+              <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766938667/download_5_zmyagf.jpg" class="product-img" alt="Kit Livros">
+              <div class="product-details">
+                <h4>Kit Akasha Premium (Livro + Incenso)</h4>
+                <p>Edição Especial • Quantidade: 1</p>
+                <span class="product-price">R$ 250,00</span>
+              </div>
+            </div>
+            <div class="track-steps">
+              <div class="step completed"><div class="step-icon"><i class="fas fa-check"></i></div><div class="step-label">Pago</div></div>
+              <div class="step completed"><div class="step-icon"><i class="fas fa-box"></i></div><div class="step-label">Preparado</div></div>
+              <div class="step completed"><div class="step-icon"><i class="fas fa-truck"></i></div><div class="step-label">Enviado</div></div>
+              <div class="step"><div class="step-icon"><i class="fas fa-home"></i></div><div class="step-label">Entregue</div></div>
+            </div>
+            <div class="order-actions">
+              <button class="btn-action">Detalhes</button>
+              <button class="btn-action" style="color:#e74c3c; border-color:#e74c3c;">Solicitar Reembolso</button>
+              <button class="btn-action btn-primary-action"><i class="fas fa-map-marker-alt"></i> Rastrear</button>
+            </div>
+          </div>
+        </div>
+
         <!-- ABA: EVENTOS -->
         <div id="dash-eventos" class="dash-tab">
            <h3 style="color:var(--secondary); margin-bottom:1.5rem">Eventos Adquiridos</h3>
            <p style="color:var(--lux)">Você possui acesso aos seguintes portais:</p>
-           
            <div class="grid-container" style="margin-top:20px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
              <div class="card" style="padding:1.5rem">
                <div class="card-title" style="font-size:1.2rem">Imersão Renascimento</div>
@@ -2093,24 +1118,17 @@
            </div>
         </div>
 
-        <!-- ABA: ÁUDIOS VIP (Integração com o que já existe) -->
+        <!-- ABA: ÁUDIOS VIP -->
         <div id="dash-audios" class="dash-tab">
           <h3 style="color:var(--secondary); margin-bottom:1.5rem">Seu Pack de Áudios Premium</h3>
           <p style="margin-bottom:20px; color:var(--lux)">Como membro, seus áudios estão desbloqueados.</p>
-          
-          <!-- Exemplo de Áudio Desbloqueado -->
           <div class="audio-card premium" style="border-color:var(--secondary); background: rgba(212,175,55,0.05);">
             <div class="audio-icon"><i class="fas fa-dna"></i></div>
             <div class="audio-badge premium-badge">LIBERADO</div>
             <h4>Ativação DNA Cristalino</h4>
             <p>Reprogramação celular • 45 min</p>
-            
-            <audio controls class="audio-player" style="margin-top:15px; width:100%">
-               <source src="#" type="audio/mpeg">
-               Erro ao carregar.
-            </audio>
+            <audio controls class="audio-player" style="margin-top:15px; width:100%"><source src="#" type="audio/mpeg">Erro ao carregar.</audio>
           </div>
-          
         </div>
 
       </div>
@@ -2292,6 +1310,7 @@
             Alinhamento quântico + fascinação + magnetismo + massagem tântrica.<br><br>
             Duração média: 60–90 min
           </div>
+          <div class="card-price">R$ 800</div>
           <button class="card-btn" onclick="window.open('https://akashahub.com.br/vip/form/', '_blank')">
             Solicitar esta Sessão
           </button>
@@ -2304,6 +1323,7 @@
             Ritual extra, intenção específica e personalização completa do ambiente.<br><br>
             Duração média: 90–120 min
           </div>
+          <div class="card-price">R$ 1.000</div>
           <button class="card-btn" onclick="window.open('https://akashahub.com.br/vip/form/', '_blank')">
             Quero Personalização
           </button>
@@ -2316,6 +1336,7 @@
             Sessão longa, profunda e transformadora; estado expandido e recalibração total.<br><br>
             Duração média: 3h+
           </div>
+          <div class="card-price">R$ 1.200</div>
           <button class="card-btn" onclick="window.open('https://akashahub.com.br/vip/form/', '_blank')">
             Reservar Imersão
           </button>
@@ -2328,6 +1349,7 @@
             Sua presença magnética + demonstração do Akasha (sem tantra).<br><br>
             Até 2 horas • Eventos selecionados
           </div>
+          <div class="card-price">R$ 500</div>
           <button class="card-btn" onclick="window.open('https://akashahub.com.br/vip/form/', '_blank')">
             Solicitar Presença VIP
           </button>
@@ -2414,74 +1436,38 @@
       <div class="communities-grid">
         
         <div class="community-card community-anubis">
-          <div class="community-icon">
-            <i class="fas fa-paw"></i>
-          </div>
+          <div class="community-icon"><i class="fas fa-paw"></i></div>
           <div class="community-level">Nível 1 • Faixa Azul</div>
           <h3 class="community-name">Anúbis</h3>
-          <p class="community-description">
-            O guardião da iniciação. Aqui você cruza o portal e inicia sua jornada de transformação quântica.
-          </p>
-          <ul class="community-features">
-            <li>Primeiros passos no alinhamento</li>
-            <li>Fundamentos do Akasha</li>
-            <li>Suporte de iniciantes</li>
-            <li>Meditações guiadas básicas</li>
-          </ul>
+          <p class="community-description">O guardião da iniciação. Aqui você cruza o portal e inicia sua jornada de transformação quântica.</p>
+          <ul class="community-features"><li>Primeiros passos no alinhamento</li><li>Fundamentos do Akasha</li><li>Suporte de iniciantes</li><li>Meditações guiadas básicas</li></ul>
           <a href="https://hotmart.com/pt-br/club/portaldeanubis" target="_blank" class="community-btn">Começar Jornada</a>
         </div>
 
         <div class="community-card community-horus">
-          <div class="community-icon">
-            <i class="fas fa-dove"></i>
-          </div>
+          <div class="community-icon"><i class="fas fa-dove"></i></div>
           <div class="community-level">Nível 2 • Faixa Roxa</div>
           <h3 class="community-name">Hórus</h3>
-          <p class="community-description">
-            Visão clara e poder pessoal. Você passou da iniciação e agora forja sua identidade espiritual.
-          </p>
-          <ul class="community-features">
-            <li>Domínio das técnicas básicas</li>
-            <li>Formação de identidade akáshica</li>
-            <li>Práticas intermediárias</li>
-            <li>Comunidade de apoio mútuo</li>
-          </ul>
+          <p class="community-description">Visão clara e poder pessoal. Você passou da iniciação e agora forja sua identidade espiritual.</p>
+          <ul class="community-features"><li>Domínio das técnicas básicas</li><li>Formação de identidade akáshica</li><li>Práticas intermediárias</li><li>Comunidade de apoio mútuo</li></ul>
           <a href="https://hotmart.com/pt-br/club/caminhodehorus" target="_blank" class="community-btn">Evoluir Consciência</a>
         </div>
 
         <div class="community-card community-isis">
-          <div class="community-icon">
-            <i class="fas fa-crown"></i>
-          </div>
+          <div class="community-icon"><i class="fas fa-crown"></i></div>
           <div class="community-level">Nível 3 • Caminho Dourado</div>
           <h3 class="community-name">Ísis</h3>
-          <p class="community-description">
-            A grande mãe iniciadora. Com identidade formada e experiência consolidada, você caminha rumo à maestria.
-          </p>
-          <ul class="community-features">
-            <li>Domínio energético avançado</li>
-            <li>Experiência profunda</li>
-            <li>Identidade espiritual consolidada</li>
-            <li>Iniciação ao caminho de mestre</li>
-          </ul>
+          <p class="community-description">A grande mãe iniciadora. Com identidade formada e experiência consolidada, você caminha rumo à maestria.</p>
+          <ul class="community-features"><li>Domínio energético avançado</li><li>Experiência profunda</li><li>Identidade espiritual consolidada</li><li>Iniciação ao caminho de mestre</li></ul>
           <a href="https://hotmart.com/pt-br/club/templodeisis" target="_blank" class="community-btn">Caminho da Maestria</a>
         </div>
 
         <div class="community-card community-ra">
-          <div class="community-icon">
-            <i class="fas fa-sun"></i>
-          </div>
+          <div class="community-icon"><i class="fas fa-sun"></i></div>
           <div class="community-level">Nível 4 • Renascimento Solar</div>
           <h3 class="community-name">Trono de Rá</h3>
-          <p class="community-description">
-            O renascer na luz. Mestre/Mestra com visão elevada, você vê tudo com novos olhos iluminados.
-          </p>
-          <ul class="community-features">
-            <li>Visão de mestre elevado</li>
-            <li>Consciência expandida permanente</li>
-            <li>Integração total do conhecimento</li>
-            <li>Renascimento espiritual completo</li>
-          </ul>
+          <p class="community-description">O renascer na luz. Mestre/Mestra com visão elevada, você vê tudo com novos olhos iluminados.</p>
+          <ul class="community-features"><li>Visão de mestre elevado</li><li>Consciência expandida permanente</li><li>Integração total do conhecimento</li><li>Renascimento espiritual completo</li></ul>
           <a href="https://hotmart.com/pt-br/club/tronodera" target="_blank" class="community-btn">Ascender ao Trono</a>
         </div>
 
@@ -2508,116 +1494,40 @@
           <div class="audio-badge free-badge">GRATUITO</div>
           <h4>O Código Secreto do Universo</h4>
           <p>Áudio Hipnose • 6 min</p>
-          
-          <!-- Player de Áudio -->
           <audio id="audio-1" controls class="audio-player">
             <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1767485136/codigo_odp7ky.mp3">
-            Seu navegador não suporta áudio.
           </audio>
-          
-          <div class="audio-info">
-            <i class="fas fa-play-circle"></i>
-            <span>Clique para reproduzir</span>
-          </div>
+          <div class="audio-info-player"><i class="fas fa-play-circle"></i><span>Clique para reproduzir</span></div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- CSS -->
-<style>
-.audio-player {
-  width: 100%;
-  margin: 15px 0;
-  border-radius: 25px;
-  outline: none;
-}
-
-.audio-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #666;
-  font-size: 14px;
-  margin-top: 10px;
-}
-
-.audio-info i {
-  color: #8b5cf6;
-  font-size: 18px;
-}
-</style>
-<div class="audio-card free">
-  <div class="audio-icon"><i class="fas fa-moon"></i></div>
-  <div class="audio-badge free-badge">GRATUITO</div>
-  <h4>A Mente Silenciosa</h4>
-  <p>Audio prévia • 1:50 min</p>
-  
-  <!-- Player de Áudio -->
-  <audio id="audio-2" controls class="audio-player">
-    <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1767493413/WhatsApp_Audio_2026-01-03_at_23.20.59_isyv64.mp3" type="audio/mpeg">
-    Seu navegador não suporta áudio.
-  </audio>
-  
-  <div class="audio-info">
-    <i class="fas fa-play-circle"></i>
-    <span>Clique para reproduzir</span>
-</div>
-   </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CSS -->
-<style>
-.audio-player {
-  width: 100%;
-  margin: 15px 0;
-  border-radius: 25px;
-  outline: none;
-}
-
-.audio-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #666;
-  font-size: 14px;
-  margin-top: 10px;
-}
-
-.audio-info i {
-  color: #8b5cf6;
-  font-size: 18px;
-}
-</style>
-          <div class="audio-card free">
+        <div class="audio-card free">
+          <div class="audio-icon"><i class="fas fa-moon"></i></div>
+          <div class="audio-badge free-badge">GRATUITO</div>
+          <h4>A Mente Silenciosa</h4>
+          <p>Audio prévia • 1:50 min</p>
+          <audio id="audio-2" controls class="audio-player">
+            <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1767493413/WhatsApp_Audio_2026-01-03_at_23.20.59_isyv64.mp3" type="audio/mpeg">
+          </audio>
+          <div class="audio-info-player"><i class="fas fa-play-circle"></i><span>Clique para reproduzir</span></div>
+        </div>
+        
+        <div class="audio-card free">
             <div class="audio-icon"><i class="fas fa-heart"></i></div>
             <div class="audio-badge free-badge">GRATUITO</div>
             <h4>Ativação do Coração</h4>
             <p>Abertura do chakra cardíaco • 12 min</p>
-            <div class="audio-preview" onclick="playFreeAudio(this, 'Ativação do Coração')">
-              <i class="fas fa-play-circle"></i>
-              <span>Preview disponível</span>
-            </div>
-          </div>
-
-          <div class="audio-card free">
+            <div class="audio-preview" onclick="alert('Funcionalidade de exemplo')"><i class="fas fa-play-circle"></i><span>Preview disponível</span></div>
+        </div>
+        
+        <div class="audio-card free">
             <div class="audio-icon"><i class="fas fa-sun"></i></div>
             <div class="audio-badge free-badge">GRATUITO</div>
             <h4>Despertar Matinal</h4>
             <p>Energia para o dia • 10 min</p>
-            <div class="audio-preview" onclick="playFreeAudio(this, 'Despertar Matinal')">
-              <i class="fas fa-play-circle"></i>
-              <span>Preview disponível</span>
-            </div>
-          </div>
+            <div class="audio-preview" onclick="alert('Funcionalidade de exemplo')"><i class="fas fa-play-circle"></i><span>Preview disponível</span></div>
         </div>
       </div>
+    </div>
 
       <!-- ÁUDIOS PREMIUM -->
       <div class="audio-category premium-section">
@@ -2626,101 +1536,27 @@
         
         <div class="audio-grid">
           <div class="audio-card premium locked">
-            <div class="lock-overlay">
-              <i class="fas fa-lock"></i>
-              <span>Conteúdo Exclusivo</span>
-            </div>
+            <div class="lock-overlay"><i class="fas fa-lock"></i><span>Conteúdo Exclusivo</span></div>
             <div class="audio-icon"><i class="fas fa-dna"></i></div>
             <div class="audio-badge premium-badge">PREMIUM</div>
             <h4>Ativação DNA Cristalino</h4>
             <p>Reprogramação celular • 45 min</p>
-            <div class="audio-preview locked-preview">
-              <i class="fas fa-lock"></i>
-              <span>Bloqueado</span>
-            </div>
+            <div class="audio-preview locked-preview"><i class="fas fa-lock"></i><span>Bloqueado</span></div>
           </div>
-
           <div class="audio-card premium locked">
-            <div class="lock-overlay">
-              <i class="fas fa-lock"></i>
-              <span>Conteúdo Exclusivo</span>
-            </div>
-            <div class="audio-icon"><i class="fas fa-infinity"></i></div>
-            <div class="audio-badge premium-badge">PREMIUM</div>
-            <h4>Acesso Akáshico Profundo</h4>
-            <p>Registros da alma • 60 min</p>
-            <div class="audio-preview locked-preview">
-              <i class="fas fa-lock"></i>
-              <span>Bloqueado</span>
-            </div>
-          </div>
-
-          <div class="audio-card premium locked">
-            <div class="lock-overlay">
-              <i class="fas fa-lock"></i>
-              <span>Conteúdo Exclusivo</span>
-            </div>
+            <div class="lock-overlay"><i class="fas fa-lock"></i><span>Conteúdo Exclusivo</span></div>
             <div class="audio-icon"><i class="fas fa-gem"></i></div>
             <div class="audio-badge premium-badge">PREMIUM</div>
             <h4>Magnetismo Pessoal</h4>
             <p>Ativação do campo magnético • 35 min</p>
-            <div class="audio-preview locked-preview">
-              <i class="fas fa-lock"></i>
-              <span>Bloqueado</span>
-            </div>
-          </div>
-
-          <div class="audio-card premium locked">
-            <div class="lock-overlay">
-              <i class="fas fa-lock"></i>
-              <span>Conteúdo Exclusivo</span>
-            </div>
-            <div class="audio-icon"><i class="fas fa-fire"></i></div>
-            <div class="audio-badge premium-badge">PREMIUM</div>
-            <h4>Kundalini Rising</h4>
-            <p>Despertar da energia serpente • 50 min</p>
-            <div class="audio-preview locked-preview">
-              <i class="fas fa-lock"></i>
-              <span>Bloqueado</span>
-            </div>
-          </div>
-
-          <div class="audio-card premium locked">
-            <div class="lock-overlay">
-              <i class="fas fa-lock"></i>
-              <span>Conteúdo Exclusivo</span>
-            </div>
-            <div class="audio-icon"><i class="fas fa-coins"></i></div>
-            <div class="audio-badge premium-badge">PREMIUM</div>
-            <h4>Abundância Quântica</h4>
-            <p>Reprogramação financeira • 40 min</p>
-            <div class="audio-preview locked-preview">
-              <i class="fas fa-lock"></i>
-              <span>Bloqueado</span>
-            </div>
-          </div>
-
-          <div class="audio-card premium locked">
-            <div class="lock-overlay">
-              <i class="fas fa-lock"></i>
-              <span>Conteúdo Exclusivo</span>
-            </div>
-            <div class="audio-icon"><i class="fas fa-venus-mars"></i></div>
-            <div class="audio-badge premium-badge">PREMIUM</div>
-            <h4>União Sagrada</h4>
-            <p>Harmonização masculino/feminino • 55 min</p>
-            <div class="audio-preview locked-preview">
-              <i class="fas fa-lock"></i>
-              <span>Bloqueado</span>
-            </div>
+            <div class="audio-preview locked-preview"><i class="fas fa-lock"></i><span>Bloqueado</span></div>
           </div>
         </div>
       </div>
 
       <div class="audio-actions">
         <a href="https://akashahub.com.br/vault/" target="_blank" rel="noopener noreferrer" class="audio-btn buy-btn">
-          <i class="fas fa-shopping-cart"></i>
-          Comprar Pack de Áudios
+          <i class="fas fa-shopping-cart"></i> Comprar Pack de Áudios
         </a>
       </div>
 
@@ -2761,16 +1597,13 @@
       document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
       });
-      
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
       });
-
       const selectedContent = document.getElementById(tabId);
       if(selectedContent) {
         selectedContent.classList.add('active');
       }
-
       const btns = document.querySelectorAll('.tab-btn');
       btns.forEach(btn => {
         if(btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)) {
@@ -2781,11 +1614,9 @@
 
     function goToAudios() {
       document.getElementById('audios').scrollIntoView({behavior: 'smooth'});
-      
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
       });
-      
       const libBtn = document.querySelector('.tab-btn[onclick*="goToAudios"]');
       if(libBtn) libBtn.classList.add('active');
     }
@@ -2820,8 +1651,6 @@
     function changeVolume(value) {
       audio.volume = value / 100;
       volumeValue.textContent = value + '%';
-      
-      // Mudar ícone baseado no volume
       if (value == 0) {
         volumeIcon.className = 'fas fa-volume-mute volume-icon';
       } else if (value < 50) {
@@ -2831,18 +1660,11 @@
       }
     }
 
-    function playFreeAudio(element, title) {
-      alert("Tocando preview de: " + title + "\n(Funcionalidade de exemplo)");
-    }
-
     // Header scroll effect
     window.addEventListener('scroll', () => {
       const header = document.querySelector('header');
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
+      if (window.scrollY > 50) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
 
       // Scroll Progress Bar
       const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
@@ -2850,6 +1672,52 @@
       const scrolled = (winScroll / height) * 100;
       document.querySelector(".scroll-progress").style.width = scrolled + "%";
     });
+
+    // ======= SISTEMA DE LOGIN E DASHBOARD =======
+    function openLogin() {
+      document.getElementById('loginModal').classList.add('active');
+    }
+    function closeLogin() {
+      document.getElementById('loginModal').classList.remove('active');
+    }
+    function handleLogin(e) {
+      e.preventDefault();
+      // SIMULAÇÃO DE LOGIN BEM SUCEDIDO
+      closeLogin();
+      
+      // Esconder site público
+      document.querySelector('.hero').style.display = 'none';
+      document.querySelector('.books-showcase').style.display = 'none';
+      document.querySelector('main').style.display = 'none';
+      document.querySelector('.communities-section').style.display = 'none';
+      document.getElementById('audios').style.display = 'none';
+      
+      // Mostrar Área de Membros
+      document.getElementById('memberArea').classList.add('active');
+      window.scrollTo(0,0);
+      alert("Bem-vindo(a) ao Portal Akasha Hub. Acesso concedido.");
+    }
+
+    function logout() {
+      // Esconder Área de Membros
+      document.getElementById('memberArea').classList.remove('active');
+      
+      // Mostrar site público
+      document.querySelector('.hero').style.display = 'flex';
+      document.querySelector('.books-showcase').style.display = 'block';
+      document.querySelector('main').style.display = 'block';
+      document.querySelector('.communities-section').style.display = 'block';
+      document.getElementById('audios').style.display = 'block';
+      window.scrollTo(0,0);
+    }
+
+    function switchDash(dashId) {
+      document.querySelectorAll('.dash-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.dash-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(dashId).classList.add('active');
+      const clickedBtn = document.querySelector(`button[onclick="switchDash('${dashId}')"]`);
+      if(clickedBtn) clickedBtn.classList.add('active');
+    }
 
   </script>
 </body>
