@@ -13,6 +13,70 @@
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/service-worker.js");
     }
+    // ======= SISTEMA DE LOGIN E DASHBOARD =======
+    
+    function openLogin() {
+      document.getElementById('loginModal').classList.add('active');
+    }
+
+    function closeLogin() {
+      document.getElementById('loginModal').classList.remove('active');
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      // SIMULAÇÃO DE LOGIN BEM SUCEDIDO
+      // Aqui entraria a lógica real de conexão com o Banco de Dados
+      
+      closeLogin();
+      
+      // Esconder site público (Hero, Sections, etc)
+      document.querySelector('.hero').style.display = 'none';
+      document.querySelector('.books-showcase').style.display = 'none';
+      document.querySelector('main').style.display = 'none';
+      document.querySelector('.communities-section').style.display = 'none';
+      document.getElementById('audios').style.display = 'none';
+      
+      // Mostrar Área de Membros
+      document.getElementById('memberArea').classList.add('active');
+      
+      // Rolar para o topo
+      window.scrollTo(0,0);
+      
+      alert("Bem-vindo(a) ao Portal Akasha Hub. Acesso concedido.");
+    }
+
+    function logout() {
+      // Esconder Área de Membros
+      document.getElementById('memberArea').classList.remove('active');
+      
+      // Mostrar site público
+      document.querySelector('.hero').style.display = 'flex'; // Hero usa flex
+      document.querySelector('.books-showcase').style.display = 'block';
+      document.querySelector('main').style.display = 'block';
+      document.querySelector('.communities-section').style.display = 'block';
+      document.getElementById('audios').style.display = 'block';
+      
+      window.scrollTo(0,0);
+    }
+
+    function switchDash(dashId) {
+      // Remove active de todos os conteúdos
+      document.querySelectorAll('.dash-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      // Remove active de todos os botões
+      document.querySelectorAll('.dash-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Ativa o selecionado
+      document.getElementById(dashId).classList.add('active');
+      
+      // Ativa o botão clicado (busca pelo onclick no texto)
+      const clickedBtn = document.querySelector(`button[onclick="switchDash('${dashId}')"]`);
+      if(clickedBtn) clickedBtn.classList.add('active');
+    }
   </script>
 
     <!-- Open Graph -->
@@ -1609,6 +1673,245 @@
         right: 15px;
       }
     }
+
+    /* ========== LOGIN & ÁREA DE MEMBROS ========== */
+    
+    /* Botão de Login no Menu */
+    .btn-login-menu {
+      border: 1px solid var(--secondary);
+      padding: 5px 20px;
+      border-radius: 20px;
+      background: rgba(212,175,55,0.1);
+      transition: all 0.3s;
+    }
+    .btn-login-menu:hover {
+      background: var(--secondary);
+      color: #000 !important;
+      text-shadow: none;
+    }
+
+    /* Modal de Login (Overlay) */
+    .login-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .login-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .login-box {
+      background: linear-gradient(145deg, #1a002f, #000);
+      border: 1px solid var(--secondary);
+      padding: 3rem;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 50px rgba(212,175,55,0.2);
+    }
+
+    .close-login {
+      position: absolute;
+      top: 15px; right: 20px;
+      color: var(--lux);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .login-title {
+      font-family: 'Cinzel', serif;
+      color: var(--secondary);
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      color: var(--lux);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 10px rgba(212,175,55,0.3);
+    }
+
+    .btn-submit-login {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--secondary), #b9972e);
+      border: none;
+      border-radius: 8px;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+
+    /* DASHBOARD (ÁREA DO ALUNO) */
+    .dashboard-section {
+      display: none; /* Oculto por padrão */
+      padding: 8rem 0 4rem;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #240046, #000);
+    }
+    .dashboard-section.active {
+      display: block;
+    }
+
+    .user-welcome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+      border-bottom: 1px solid rgba(212,175,55,0.3);
+      padding-bottom: 1rem;
+    }
+    .user-info h2 {
+      font-family: 'Cinzel', serif;
+      color: var(--secondary);
+    }
+    .user-avatar {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--secondary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      color: var(--secondary);
+      background: rgba(0,0,0,0.5);
+    }
+
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 2rem;
+    }
+
+    .dash-menu {
+      background: rgba(255,255,255,0.03);
+      border-radius: 15px;
+      padding: 1.5rem;
+      height: fit-content;
+      border: 1px solid rgba(212,175,55,0.1);
+    }
+
+    .dash-menu ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dash-menu li button {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      color: var(--lux);
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .dash-menu li button:hover, .dash-menu li button.active {
+      background: var(--secondary);
+      color: #000;
+    }
+
+    .dash-content-area {
+      background: rgba(0,0,0,0.6);
+      border-radius: 15px;
+      padding: 2rem;
+      border: 1px solid rgba(212,175,55,0.1);
+      min-height: 500px;
+    }
+    
+    .dash-tab { display: none; animation: fadeIn 0.5s; }
+    .dash-tab.active { display: block; }
+
+    /* Estilo da Lista de Gravações */
+    .recording-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.05);
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border-left: 3px solid var(--secondary);
+    }
+    .rec-info h4 { color: var(--lux); margin-bottom: 5px; }
+    .rec-date { color: rgba(255,255,255,0.5); font-size: 0.9rem; }
+    .btn-watch {
+      background: transparent;
+      border: 1px solid var(--secondary);
+      color: var(--secondary);
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-watch:hover { background: var(--secondary); color: #000; }
+
+    /* Sala de Live */
+    .live-room {
+      text-align: center;
+      padding: 3rem;
+      background: linear-gradient(135deg, rgba(40,0,0,0.5), rgba(0,0,0,0.8));
+      border: 1px solid var(--ra-red);
+      border-radius: 15px;
+    }
+    .live-status {
+      display: inline-block;
+      background: red;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @media (max-width: 900px) {
+      .dash-grid { grid-template-columns: 1fr; }
+      .dash-menu ul { flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
+      .dash-menu li button { white-space: nowrap; }
+    }
+
   </style>
 </head>
 <body>
@@ -1658,19 +1961,21 @@
         <img src="https://i.ibb.co/Fbxk6mQ3/Design-sem-nome-2.png" alt="Akasha Hub Logo">
       </a>
       <nav>
-        <ul id="navList">
+               <ul id="navList">
           <li class="mobile-home-link">
             <a href="#" onclick="toggleNav(); window.scrollTo(0,0);">
               <i class="fas fa-home"></i> Home AkashaHub
             </a>
           </li>
           <li><a href="#sessoes" onclick="switchTab('sessoes'); toggleNav()">Sessões Online</a></li>
-          <li><a href="https://akashahub.com.br/eventos/" target="_blank" rel="noopener noreferrer">Eventos</a></li>
-          <li><a href="https://akashahub.com.br/partners/" target="_blank" rel="noopener noreferrer">Patrocinio</a></li>
-          <li><a href="https://akashahub.com.br/store/" target="_blank" rel="noopener noreferrer">Loja</a></li>
-          <li><a href="https://akashahub.com.br/doutrina/" target="_blank" rel="noopener noreferrer">Doutrina Akáshica</a></li>
-          <li><a href="https://akashahub.com.br/mentoria/" target="_blank" rel="noopener noreferrer">Mentoria 1:1</a></li>
-          <li><a href="https://akashahub.com.br/livre" target="_blank" rel="noopener noreferrer">Sessão Gratuita</a></li>
+          <li><a href="https://akashahub.com.br/mentoria/" target="_blank">Mentoria 1:1</a></li>
+          <li><a href="https://akashahub.com.br/livre" target="_blank">Sessão Gratuita</a></li>
+          <!-- BOTÃO LOGIN -->
+          <li>
+            <a href="#" onclick="openLogin(); toggleNav()" class="btn-login-menu">
+              <i class="fas fa-user-circle"></i> Área do Membro
+            </a>
+          </li>
         </ul>
       </nav>
       
@@ -1679,6 +1984,138 @@
       </button>
     </div>
   </header>
+
+<!-- MODAL DE LOGIN -->
+  <div class="login-overlay" id="loginModal">
+    <div class="login-box">
+      <span class="close-login" onclick="closeLogin()">&times;</span>
+      <h2 class="login-title">Portal Akasha</h2>
+      <form onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <label>E-mail Akáshico</label>
+          <input type="email" class="input-field" placeholder="seu@email.com" required>
+        </div>
+        <div class="input-group">
+          <label>Chave de Acesso (Senha)</label>
+          <input type="password" class="input-field" placeholder="••••••" required>
+        </div>
+        <button type="submit" class="btn-submit-login">Entrar no Portal</button>
+      </form>
+      <p style="margin-top:1rem; font-size:0.8rem; color:rgba(255,255,255,0.5)">
+        Esqueceu a senha? Contate o suporte.
+      </p>
+    </div>
+  </div>
+
+  <!-- ÁREA DE MEMBROS (DASHBOARD) -->
+  <section id="memberArea" class="dashboard-section container">
+    <div class="user-welcome">
+      <div class="user-info">
+        <h2>Olá, Iniciado(a)</h2>
+        <p style="color:var(--lux)">Seu campo energético está ativo.</p>
+      </div>
+      <div class="user-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <button onclick="logout()" style="background:none; border:1px solid #666; color:#999; padding:5px 15px; border-radius:15px; cursor:pointer;">Sair</button>
+    </div>
+
+    <div class="dash-grid">
+      <!-- Menu Lateral -->
+      <aside class="dash-menu">
+        <ul>
+          <li><button class="dash-btn active" onclick="switchDash('dash-gravacoes')"><i class="fas fa-video"></i> Minhas Gravações</button></li>
+          <li><button class="dash-btn" onclick="switchDash('dash-live')"><i class="fas fa-broadcast-tower"></i> Sala Ao Vivo</button></li>
+          <li><button class="dash-btn" onclick="switchDash('dash-eventos')"><i class="fas fa-calendar-alt"></i> Meus Eventos</button></li>
+          <li><button class="dash-btn" onclick="switchDash('dash-audios')"><i class="fas fa-headphones"></i> Pack Áudios VIP</button></li>
+        </ul>
+      </aside>
+
+      <!-- Conteúdo Dinâmico -->
+      <div class="dash-content-area">
+        
+        <!-- ABA: GRAVAÇÕES -->
+        <div id="dash-gravacoes" class="dash-tab active">
+          <h3 style="color:var(--secondary); margin-bottom:1.5rem">Suas Sessões de Alinhamento (1:1)</h3>
+          
+          <div class="recording-item">
+            <div class="rec-info">
+              <h4>Alinhamento Chakra Cardíaco</h4>
+              <span class="rec-date">Realizada em 02/01/2026 • Duração: 1h 12m</span>
+            </div>
+            <!-- Exemplo de como abriria o vídeo -->
+            <button class="btn-watch" onclick="alert('Aqui abrirá o player de vídeo seguro (Vimeo/Youtube Privado).')"><i class="fas fa-play"></i> Assistir</button>
+          </div>
+
+          <div class="recording-item">
+            <div class="rec-info">
+              <h4>Limpeza Energética Inicial</h4>
+              <span class="rec-date">Realizada em 15/12/2025 • Duração: 58m</span>
+            </div>
+            <button class="btn-watch"><i class="fas fa-play"></i> Assistir</button>
+          </div>
+        </div>
+
+        <!-- ABA: SALA AO VIVO -->
+        <div id="dash-live" class="dash-tab">
+          <h3 style="color:var(--ra-red); margin-bottom:1.5rem">Sala de Transmissão Quântica</h3>
+          
+          <div class="live-room">
+            <div class="live-status">OFFLINE</div>
+            <h2>Próxima Sessão Ao Vivo</h2>
+            <p style="color:var(--lux); margin:1rem 0 2rem;">
+              Quinta-feira, 20:00h • Mentoria em Grupo
+            </p>
+            
+            <div style="display:flex; gap:15px; justify-content:center; flex-wrap:wrap;">
+               <!-- Botão para entrar no Zoom/Meet -->
+               <a href="#" class="cta-button" style="background: #2D8CFF; color:white;">
+                 <i class="fas fa-video"></i> Entrar via Zoom
+               </a>
+               <a href="#" class="cta-button" style="background: #00AC47; color:white;">
+                 <i class="fas fa-video"></i> Entrar via Meet
+               </a>
+            </div>
+            <p style="margin-top:20px; font-size:0.9rem; opacity:0.7;">O link ficará ativo 10 min antes do início.</p>
+          </div>
+        </div>
+
+        <!-- ABA: EVENTOS -->
+        <div id="dash-eventos" class="dash-tab">
+           <h3 style="color:var(--secondary); margin-bottom:1.5rem">Eventos Adquiridos</h3>
+           <p style="color:var(--lux)">Você possui acesso aos seguintes portais:</p>
+           
+           <div class="grid-container" style="margin-top:20px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+             <div class="card" style="padding:1.5rem">
+               <div class="card-title" style="font-size:1.2rem">Imersão Renascimento</div>
+               <button class="card-btn" style="margin-top:10px; font-size:0.8rem">Acessar Conteúdo</button>
+             </div>
+           </div>
+        </div>
+
+        <!-- ABA: ÁUDIOS VIP (Integração com o que já existe) -->
+        <div id="dash-audios" class="dash-tab">
+          <h3 style="color:var(--secondary); margin-bottom:1.5rem">Seu Pack de Áudios Premium</h3>
+          <p style="margin-bottom:20px; color:var(--lux)">Como membro, seus áudios estão desbloqueados.</p>
+          
+          <!-- Exemplo de Áudio Desbloqueado -->
+          <div class="audio-card premium" style="border-color:var(--secondary); background: rgba(212,175,55,0.05);">
+            <div class="audio-icon"><i class="fas fa-dna"></i></div>
+            <div class="audio-badge premium-badge">LIBERADO</div>
+            <h4>Ativação DNA Cristalino</h4>
+            <p>Reprogramação celular • 45 min</p>
+            
+            <audio controls class="audio-player" style="margin-top:15px; width:100%">
+               <source src="#" type="audio/mpeg">
+               Erro ao carregar.
+            </audio>
+          </div>
+          
+        </div>
+
+      </div>
+    </div>
+  </section>
 
   <!-- HERO COM VÍDEO DE FUNDO -->
   <section class="hero">
