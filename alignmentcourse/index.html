@@ -5,170 +5,247 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AKASHA | Iniciação Essencial • Yan Simon</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
 
     <style>
+        /* --- CONFIGURAÇÕES ATMOSFÉRICAS --- */
         :root {
-            --bg: #080808;
-            --gold: #C5A059;
-            --gold-primary: #C5A059;
-            --gold-light: #E8D5A3;
-            --gold-grad: linear-gradient(90deg, #bf953f, #aa771c);
-            --text: #EAEAEA;
-            --muted: #999;
+            --bg-void: #020103;
+            --gold-primary: #D4AF37;
+            --gold-light: #F9E69D;
+            --cyan-quantum: #00F0FF;
+            --violet-mystic: #7825FF;
+            --glass-panel: rgba(10, 5, 20, 0.6);
+            --border-tech: rgba(0, 240, 255, 0.3);
+            --border-gold: rgba(212, 175, 55, 0.4);
         }
+
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:var(--bg); color:var(--text); font-family:'Montserrat',sans-serif; line-height:1.6; }
-        h1,h2,h3 { font-family:'Cinzel',serif; text-transform:uppercase; letter-spacing:2px; }
-        .gold { background:var(--gold-grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:700; }
-        .container { max-width:1100px; margin:0 auto; padding:0 20px; }
+        
+        body { 
+            background-color: var(--bg-void); 
+            color: #EAEAEA; 
+            font-family: 'Montserrat', sans-serif; 
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
+        /* Tipografia */
+        h1,h2,h3 { 
+            font-family: 'Cinzel', serif; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-weight: 400;
+        }
+
+        /* Efeitos de Texto */
+        .gold { 
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), #96701b); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            font-weight: 700;
+            filter: drop-shadow(0 0 10px rgba(212,175,55,0.4));
+        }
+
+        .cyan-glow {
+            color: var(--cyan-quantum);
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+        }
+
+        .container { max-width:1100px; margin:0 auto; padding:0 20px; position: relative; z-index: 2; }
+
+        /* --- BACKGROUND FX (MATRIX COLLAPSE) --- */
+        .bg-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(120, 37, 255, 0.15), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.08), transparent 40%),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+            mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+        }
+
+        /* --- BOTÃO QUANTUM --- */
         .btn-akasha {
-            display:inline-block;
-            background:var(--gold-grad);
-            color:#000 !important;
-            padding:26px 80px;
-            font-family:'Cinzel',serif;
-            font-size:1.4rem;
-            font-weight:700;
-            text-transform:uppercase;
-            text-decoration:none;
-            border-radius:3px;
-            box-shadow:0 0 40px rgba(197,160,89,0.6);
-            transition:all .4s;
-            cursor:pointer;
-        }
-        .btn-akasha:hover { transform:scale(1.05); box-shadow:0 0 70px rgba(197,160,89,0.95); }
-        .pulse { animation:pulse 2s infinite; }
-        @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(197,160,89,0.7)} 70%{box-shadow:0 0 0 30px rgba(197,160,89,0)} 100%{box-shadow:0 0 0 0 rgba(197,160,89,0)} }
-
-        /* HERO COM VÍDEO DE FUNDO */
-        .hero { 
-            min-height:100vh; 
-            display:flex; 
-            align-items:center; 
-            justify-content:center; 
-            text-align:center; 
-            padding:40px 0;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
             position: relative;
+            background: transparent;
+            color: var(--gold-primary) !important;
+            padding: 26px 60px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-decoration: none;
             overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid var(--gold-primary);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2), inset 0 0 20px rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(5px);
         }
 
-        /* Vídeo de fundo */
+        .btn-akasha::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-akasha:hover {
+            color: #000 !important;
+            background: var(--gold-primary);
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.8), 0 0 20px var(--cyan-quantum);
+            border-color: var(--cyan-quantum);
+            transform: scale(1.02);
+        }
+        .btn-akasha:hover::before { left: 100%; }
+
+        .pulse { animation: pulse-quantum 3s infinite; }
+        @keyframes pulse-quantum {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+
+        /* --- HERO SECTION --- */
+        .hero { 
+            min-height:100vh; display:flex; align-items:center; justify-content:center; 
+            text-align:center; padding:40px 0; position: relative; overflow: hidden;
+            border-bottom: 1px solid rgba(120, 37, 255, 0.3);
+        }
+
         .hero-video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            transform: translate(-50%, -50%);
-            z-index: -2;
-            object-fit: cover;
+            position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%;
+            width: auto; height: auto; transform: translate(-50%, -50%); z-index: -2;
+            object-fit: cover; filter: grayscale(40%) contrast(1.2) hue-rotate(260deg); /* Tom mais violeta/alien */
+            opacity: 0.6;
         }
 
-        /* Overlay escuro sobre o vídeo */
         .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle, transparent 0%, var(--bg-void) 90%);
             z-index: -1;
         }
 
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* TÍTULO PRINCIPAL COM NOVO ESTILO */
+        /* Efeito Glitch no Título */
         .hero-title {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(2rem, 8vw, 4.5rem);
-            line-height: 1.1;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-family: 'Cinzel', serif; font-size: clamp(2.5rem, 9vw, 5.5rem); line-height: 1;
+            margin-bottom: 20px; color: #fff; text-transform: uppercase; letter-spacing: 5px;
+            text-shadow: 3px 0 var(--violet-mystic), -3px 0 var(--cyan-quantum);
+            position: relative; animation: glitch-skew 3s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-skew {
+            0% { text-shadow: 3px 0 var(--violet-mystic), -3px 0 var(--cyan-quantum); transform: skew(0deg); }
+            20% { text-shadow: 3px 0 var(--violet-mystic), -3px 0 var(--cyan-quantum); transform: skew(0deg); }
+            21% { text-shadow: -2px 0 var(--gold-primary), 2px 0 var(--violet-mystic); transform: skew(10deg); }
+            22% { text-shadow: 3px 0 var(--violet-mystic), -3px 0 var(--cyan-quantum); transform: skew(0deg); }
+            100% { text-shadow: 3px 0 var(--violet-mystic), -3px 0 var(--cyan-quantum); transform: skew(0deg); }
         }
 
-        .hero-badge { border:1px solid var(--gold); padding:10px 25px; font-size:0.85rem; color:var(--gold); letter-spacing:4px; display:inline-block; margin-bottom:30px; }
-        .section { padding:120px 0; }
+        .hero-badge { 
+            border: 1px solid var(--cyan-quantum); color: var(--cyan-quantum); 
+            padding: 8px 20px; font-size: 0.8rem; letter-spacing: 4px; display: inline-block; margin-bottom: 30px;
+            background: rgba(0, 240, 255, 0.05); box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            font-family: 'Montserrat', sans-serif;
+        }
 
-        /* SEÇÃO YAN SIMON */
+        /* --- YAN SIMON SECTION --- */
         .yan-section {
-            padding:140px 0;
-            background:#0b0b0b;
-            position:relative;
-            overflow:hidden;
+            padding:140px 0; position:relative; overflow:hidden;
+            background: linear-gradient(to bottom, var(--bg-void), #0a0510);
         }
-        .yan-section::before {
-            content:'';
-            position:absolute;
-            top:0; left:0; width:100%; height:100%;
-            background:radial-gradient(circle at 20% 50%, rgba(120,80,255,0.08), transparent 70%);
-            pointer-events:none;
+        
+        .yan-container { display:flex; align-items:center; gap:80px; flex-wrap:wrap; justify-content:center; }
+        
+        .yan-photo-wrapper {
+            position: relative; padding: 10px;
+            background: linear-gradient(45deg, var(--gold-primary), var(--violet-mystic), var(--cyan-quantum));
+            border-radius: 2px;
         }
-        .yan-container {
-            display:flex;
-            align-items:center;
-            gap:80px;
-            flex-wrap:wrap;
-            justify-content:center;
-        }
+        
         .yan-photo {
-            width:420px;
-            height:580px;
-            object-fit:cover;
-            border:2px solid var(--gold);
-            box-shadow:0 0 60px rgba(197,160,89,0.4);
-            transition:0.6s;
+            width:400px; height:580px; object-fit:cover;
+            filter: contrast(1.1) sepia(20%); position: relative; z-index: 2;
         }
-        .yan-photo:hover {
-            box-shadow:0 0 90px rgba(197,160,89,0.7);
-            transform:scale(1.02);
+
+        .yan-text h2 { font-size:3rem; margin-bottom:20px; color: #fff; text-shadow: 0 0 20px var(--violet-mystic); }
+        .yan-text p { font-size:1.1rem; margin-bottom:20px; color:rgba(255,255,255,0.7); border-left: 1px solid var(--gold-primary); padding-left: 20px; }
+        .yan-signature { font-family:'Cormorant Garamond',serif; font-size:2.5rem; color:var(--gold-primary); margin-top:30px; }
+
+        /* --- CARDS (PILLARS) --- */
+        .holo-grid {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:30px; 
+            max-width:1200px; margin:0 auto; perspective: 1000px;
         }
-        .yan-text {
-            max-width:500px;
-            text-align:left;
+
+        .holo-card {
+            background: linear-gradient(135deg, rgba(20, 10, 30, 0.4), rgba(0, 0, 0, 0.8));
+            padding:45px; border:1px solid rgba(120, 37, 255, 0.2);
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(10px); position: relative; overflow: hidden;
         }
-        .yan-text h2 {
-            font-size:3rem;
-            margin-bottom:20px;
-            color:var(--gold);
+
+        .holo-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%;
+            background: linear-gradient(to bottom, var(--gold-primary), var(--violet-mystic));
+            opacity: 0.5;
         }
-        .yan-text p {
-            font-size:1.15rem;
-            margin-bottom:20px;
-            color:#ddd;
+
+        .holo-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--cyan-quantum);
+            box-shadow: 0 10px 40px rgba(0, 240, 255, 0.1), inset 0 0 20px rgba(120, 37, 255, 0.1);
         }
-        .yan-signature {
-            font-family:'Cormorant Garamond',serif;
-            font-size:2.2rem;
-            font-style:italic;
-            color:var(--gold);
-            margin-top:30px;
+
+        .holo-card h3 { color: #fff; font-size: 1.4rem; margin-bottom: 15px; }
+        .holo-card h3 span { color: var(--gold-primary); font-size: 0.9rem; display: block; margin-bottom: 5px; letter-spacing: 2px; }
+
+        /* --- OFFER SECTION --- */
+        .monolith-card {
+            background: linear-gradient(180deg, rgba(10,5,15,0.9), rgba(0,0,0,1));
+            border: 1px solid var(--gold-primary);
+            padding: 80px 40px; position: relative;
+            box-shadow: 0 0 60px rgba(120, 37, 255, 0.15);
+        }
+
+        .monolith-card::after {
+            content: ''; position: absolute; inset: -1px; z-index: -1;
+            background: linear-gradient(45deg, var(--gold-primary), var(--violet-mystic), var(--cyan-quantum));
+            opacity: 0.3; filter: blur(20px);
+        }
+
+        .price-display {
+            font-size: 4rem; font-family: 'Cinzel', serif; color: #fff;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            margin: 20px 0;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 80px 20px; text-align: center; color: #666;
+            background: #020103; position: relative; z-index: 2;
         }
 
         @media (max-width:968px) {
+            .hero-title { font-size: 2.8rem; }
             .yan-container { flex-direction:column; text-align:center; gap:50px; }
-            .yan-photo { width:340px; height:500px; }
-            .yan-text { text-align:center; }
+            .yan-photo { width:100%; max-width: 350px; height: auto; }
+            .yan-text p { border-left: none; padding-left: 0; }
         }
     </style>
 </head>
 <body>
 
+    
+    <!-- Background Matrix/Quantum -->
+    <div class="bg-grid"></div>
+
     <!-- HERO COM VÍDEO DE FUNDO -->
     <section class="hero">
-        <!-- Vídeo de fundo -->
         <video class="hero-video" autoplay muted loop playsinline>
             <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1766082891/generated_video_-_2025-12-18T153324.917_bmqoo2.mp4" type="video/mp4">
         </video>
@@ -176,108 +253,125 @@
         <div class="container hero-content">
             <div class="hero-badge">A Iniciação • Yan Simon</div>
             
-            <!-- TÍTULO COM NOVO ESTILO -->
             <h1 class="hero-title">AKASHA</h1>
             
-            <h2 style="font-size:2.4rem; margin:20px 0;">Domine sua <span class="gold">Assinatura Energética</span></h2>
-            <p style="font-size:1.35rem; max-width:780px; margin:35px auto; color:#ccc;">
-                Videoaulas práticas e essenciais. A iniciação direta ao método Akáshico que desperta fascinação, magnetismo e prosperidade.
+            <h2 style="font-size:clamp(1.2rem, 4vw, 2.2rem); margin:20px 0; color: #fff;">
+                Domine sua <span class="cyan-glow">Assinatura Energética</span>
+            </h2>
+            <p style="font-size:1.2rem; max-width:700px; margin:35px auto; color:#aaa; font-weight: 300;">
+                Videoaulas práticas. A iniciação direta ao método Akáshico que desperta fascinação, magnetismo e prosperidade quântica.
             </p>
 
             <a href="https://pay.hotmart.com/D100728801L" target="_blank" class="btn-akasha pulse">
-                QUERO MINHA INICIAÇÃO AGORA
+                INICIAR PROTOCOLO AGORA
             </a>
 
-            <p style="margin-top:25px; opacity:0.7; font-size:0.95rem;">
-                Acesso imediato • Vitalício • Garantia de 7 dias
+            <p style="margin-top:25px; opacity:0.6; font-size:0.8rem; letter-spacing: 1px; color: var(--cyan-quantum);">
+                ACESSO VITALÍCIO • GARANTIA BLINDADA 7 DIAS
             </p>
         </div>
     </section>
 
-    <!-- YAN SIMON - SEÇÃO COM FOTO CORRIGIDA -->
+    <!-- YAN SIMON -->
     <section class="yan-section">
         <div class="container yan-container">
-            <!-- FOTO ATUALIZADA -->
-            <img src="https://i.imgur.com/RiilCud.jpeg" alt="Yan Simon" class="yan-photo">
+            <div class="yan-photo-wrapper">
+                <img src="https://i.imgur.com/RiilCud.jpeg" alt="Yan Simon" class="yan-photo">
+            </div>
 
             <div class="yan-text">
                 <h2>Yan Simon</h2>
-                <p>Mais do que um mentor, um guardião de frequências.</p>
-                <p>Decodifiquei a linguagem oculta da energia e a transformei em um protocolo prático, direto e extremamente poderoso para o homem moderno que já sabe quem é e só precisa ativar.</p>
-                <p>Minha assinatura une o sagrado ao luxo, o invisível ao tangível, o tantra quântico à prosperidade real.</p>
-                <p>Não ensino teoria. Eu transmito códigos.</p>
+                <h4 style="color: var(--cyan-quantum); margin-bottom: 20px; letter-spacing: 3px; font-weight: 300;">GUARDIÃO DE FREQUÊNCIAS</h4>
+                <p>Decodifiquei a linguagem oculta da energia e a transformei em um protocolo prático, direto e extremamente poderoso para o homem moderno.</p>
+                <p>Minha assinatura une o sagrado ao luxo, o invisível ao tangível, o tantra quântico à prosperidade real em um mundo em colapso.</p>
+                <p>Não ensino teoria. Eu transmito códigos de ativação.</p>
                 <div class="yan-signature">— Yan Simon</div>
             </div>
         </div>
     </section>
 
     <!-- PILARES -->
-    <section class="section" style="background:#111;">
+    <section class="section" style="position: relative;">
         <div class="container">
-            <h2 style="text-align:center; margin-bottom:70px;"><span class="gold">Os 6 Pilares da Iniciação Akáshica</span></h2>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:35px; max-width:1200px; margin:0 auto;">
-                <div style="background:rgba(255,255,255,0.03); padding:45px; border:1px solid rgba(197,160,89,0.2); transition:.5s;" onmouseover="this.style.borderColor='#C5A059'; this.style.transform='translateY(-8px)'" onmouseout="this.style.borderColor='rgba(197,160,89,0.2)'; this.style.transform='translateY(0)'">
-                    <h3 style="color:var(--gold); margin-bottom:15px; font-size:1.35rem;">01 • Alinhamento de Chakras</h3>
-                    <p>Técnica prática para desbloquear os 7 centros de poder.</p>
+            <h2 style="text-align:center; margin-bottom:20px; font-size: 2.5rem;">
+                Os 6 Pilares <span class="gold">Akáshicos</span>
+            </h2>
+            <p style="text-align: center; color: var(--violet-mystic); margin-bottom: 70px; letter-spacing: 2px;">ARQUÉTIPOS DE RIQUEZA E OPORTUNIDADE</p>
+            
+            <div class="holo-grid">
+                <div class="holo-card">
+                    <h3><span>01 • ENERGIA</span>Alinhamento de Chakras</h3>
+                    <p style="color: #aaa;">Técnica prática para desbloquear os 7 centros de poder e fluir na matrix.</p>
                 </div>
-                <div style="background:rgba(255,255,255,0.03); padding:45px; border:1px solid rgba(197,160,89,0.2); transition:.5s;" onmouseover="this.style.borderColor='#C5A059'; this.style.transform='translateY(-8px)'" onmouseout="this.style.borderColor='rgba(197,160,89,0.2)'; this.style.transform='translateY(0)'">
-                    <h3 style="color:var(--gold); margin-bottom:15px; font-size:1.35rem;">02 • Chama Violeta</h3>
-                    <p>Invocação instantânea para transmutar densidades.</p>
+                <div class="holo-card">
+                    <h3><span>02 • TRANSMUTAÇÃO</span>Chama Violeta</h3>
+                    <p style="color: #aaa;">Invocação quântica instantânea para transmutar densidades e caos.</p>
                 </div>
-                <div style="background:rgba(255,255,255,0.03); padding:45px; border:1px solid rgba(197,160,89,0.2); transition:.5s;" onmouseover="this.style.borderColor='#C5A059'; this.style.transform='translateY(-8px)'" onmouseout="this.style.borderColor='rgba(197,160,89,0.2)'; this.style.transform='translateY(0)'">
-                    <h3 style="color:var(--gold); margin-bottom:15px; font-size:1.35rem;">03 • Fascinação & Magnetismo</h3>
-                    <p>O olhar e a presença que tornam você inesquecível.</p>
+                <div class="holo-card">
+                    <h3><span>03 • ATRAÇÃO</span>Fascinação & Magnetismo</h3>
+                    <p style="color: #aaa;">O olhar e a presença que tornam você inesquecível e abrem portas.</p>
                 </div>
-                <div style="background:rgba(255,255,255,0.03); padding:45px; border:1px solid rgba(197,160,89,0.2); transition:.5s;" onmouseover="this.style.borderColor='#C5A059'; this.style.transform='translateY(-8px)'" onmouseout="this.style.borderColor='rgba(197,160,89,0.2)'; this.style.transform='translateY(0)'">
-                    <h3 style="color:var(--gold); margin-bottom:15px; font-size:1.35rem;">04 • Constelação Vibracional</h3>
-                    <p>Cura de lealdades invisíveis que bloqueiam prosperidade.</p>
+                <div class="holo-card">
+                    <h3><span>04 • ANCESTRALIDADE</span>Constelação Vibracional</h3>
+                    <p style="color: #aaa;">Cura de lealdades invisíveis que bloqueiam a prosperidade material.</p>
                 </div>
-                <div style="background:rgba(255,255,255,0.03); padding:45px; border:1px solid rgba(197,160,89,0.2); transition:.5s;" onmouseover="this.style.borderColor='#C5A059'; this.style.transform='translateY(-8px)'" onmouseout="this.style.borderColor='rgba(197,160,89,0.2)'; this.style.transform='translateY(0)'">
-                    <h3 style="color:var(--gold); margin-bottom:15px; font-size:1.35rem;">05 • Tantra Energético</h3>
-                    <p>Ativação da Kundalini sem toque físico.</p>
+                <div class="holo-card">
+                    <h3><span>05 • POTÊNCIA</span>Tantra Energético</h3>
+                    <p style="color: #aaa;">Ativação da Kundalini sem toque físico. Poder bruto direcionado.</p>
                 </div>
-                <div style="background:rgba(255,255,255,0.03); padding:45px; border:1px solid rgba(197,160,89,0.2); transition:.5s;" onmouseover="this.style.borderColor='#C5A059'; this.style.transform='translateY(-8px)'" onmouseout="this.style.borderColor='rgba(197,160,89,0.2)'; this.style.transform='translateY(0)'">
-                    <h3 style="color:var(--gold); margin-bottom:15px; font-size:1.35rem;">06 • Reprogramação Akáshica</h3>
-                    <p>Induções guiadas para instalar códigos de império.</p>
+                <div class="holo-card">
+                    <h3><span>06 • CÓDIGOS</span>Reprogramação Akáshica</h3>
+                    <p style="color: #aaa;">Induções guiadas para instalar códigos de império na sua mente.</p>
                 </div>
             </div>
 
             <div style="text-align:center; margin-top:90px;">
-                <a href="https://pay.hotmart.com/D100728801L" target="_blank" class="btn-akasha pulse" style="font-size:1.6rem; padding:30px 100px;">
-                    QUERO RECEBER MINHA INICIAÇÃO AGORA
+                <a href="https://pay.hotmart.com/D100728801L" target="_blank" class="btn-akasha pulse">
+                    RECEBER CÓDIGOS AGORA
                 </a>
             </div>
         </div>
     </section>
 
     <!-- OFERTA FINAL -->
-    <section class="section" style="background:radial-gradient(circle at center,#2a1d0e,#000); padding:150px 0;">
+    <section class="section" style="padding:150px 0; background: linear-gradient(to top, #000, #08040c);">
         <div class="container" style="max-width:700px;">
-            <div style="background:rgba(0,0,0,0.8); border:3px solid var(--gold); padding:90px 50px; position:relative;">
-                <div style="position:absolute; top:-22px; left:50%; transform:translateX(-50%); background:#080808; padding:0 40px; color:var(--gold); font-family:'Cinzel',serif; font-size:1.4rem; letter-spacing:8px;">AKASHA</div>
+            <div class="monolith-card">
+                <div style="position:absolute; top:-15px; left:50%; transform:translateX(-50%); background:#000; border: 1px solid var(--gold-primary); padding:5px 30px; color:var(--gold-primary); font-family:'Cinzel',serif; letter-spacing:5px; font-size: 0.8rem;">AKASHA PRIME</div>
                 
-                <h2 style="font-size:2.8rem; text-align:center; margin-bottom:30px;">Acesso Vitalício</h2>
-                <div style="text-align:center; color:#ccc; font-size:1.5rem; margin:40px 0;">
-                    <div style="text-decoration:line-through; color:#666; margin-bottom:15px;">De R$ 997,00</div>
-                    <div style="font-size:4.5rem; font-family:'Cinzel',serif; color:var(--text);">12x de R$ 49,90</div>
-                    <div style="margin:15px 0; font-size:1.3rem;">ou R$ 497 à vista</div>
+                <h2 style="font-size:2rem; text-align:center; margin-bottom:10px; color: #fff;">Acesso Vitalício</h2>
+                <p style="text-align: center; color: var(--cyan-quantum); letter-spacing: 2px; font-size: 0.9rem;">OPORTUNIDADE DE COLAPSO TEMPORAL</p>
+                
+                <div style="text-align:center; margin:40px 0;">
+                    <div style="text-decoration:line-through; color:#555; margin-bottom:10px; font-size: 1.2rem;">De R$ 997,00</div>
+                    <div class="price-display">12x R$ 49,90</div>
+                    <div style="margin:15px 0; font-size:1.1rem; color: var(--gold-light);">ou R$ 497 à vista</div>
                 </div>
 
-                <a href="https://pay.hotmart.com/D100728801L" target="_blank" class="btn-akasha pulse" style="width:100%; font-size:1.9rem; padding:38px;">
-                    SIM, EU QUERO MINHA INICIAÇÃO AGORA
+                <a href="https://pay.hotmart.com/D100728801L" target="_blank" class="btn-akasha pulse" style="width:100%; text-align: center;">
+                    SIM, EU QUERO MINHA INICIAÇÃO
                 </a>
 
-                <p style="text-align:center; margin-top:35px; font-size:0.95rem; opacity:0.8;">
-                    Compra 100% segura • Garantia incondicional de 7 dias • Acesso em menos de 2 minutos
+                <div style="text-align:center; margin-top:35px; display: flex; justify-content: center; gap: 20px; font-size: 1.5rem; color: var(--violet-mystic);">
+                    <i class="fas fa-lock"></i>
+                    <i class="fas fa-shield-alt"></i>
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <p style="text-align:center; margin-top:10px; font-size:0.8rem; color: #555;">
+                    Compra Segura • Garantia 7 Dias • Acesso Imediato
                 </p>
             </div>
         </div>
     </section>
 
-    <footer style="text-align:center; padding:80px 20px; color:#555;">
-        <h3 style="color:#C5A059; letter-spacing:5px; margin-bottom:15px; font-size:1.8rem;">YAN SIMON EXPERIENCE</h3>
-        <p>© 2024-2025 • Todos os direitos reservados</p>
+    <!-- Footer -->
+    <footer>
+        <h3 style="color:var(--gold-primary); letter-spacing:5px; margin-bottom:15px; font-size:1.5rem; text-shadow: 0 0 10px rgba(212,175,55,0.3);">YAN SIMON EXPERIENCE</h3>
+        <p style="font-size: 0.8rem;">© 2024-2025 • Todos os direitos reservados</p>
+        <p style="font-size: 0.7rem; color: #333; margin-top: 10px;">CODIFICADO PARA ALTA PERFORMANCE</p>
     </footer>
 
+    <!-- Ícones FontAwesome (Script necessário para ícones funcionarem se não estiverem cacheados) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 </body>
 </html>
