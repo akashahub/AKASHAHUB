@@ -11,322 +11,908 @@
     <!-- Fontes de Luxo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. CORE VARIABLES & THEME CONFIG --- */
+        /* --- 1. CORE VARIABLES & RESET --- */
         :root {
-            --bg-void: #020005; /* Preto quase absoluto */
-            --bg-deep-violet: #120524;
-            --accent-gold: #D4AF37; 
-            --accent-cyan: #00F0FF; /* O toque Sci-Fi/Matrix */
-            --accent-violet: #9D00FF;
-            
+            --bg-void: #050508;
+            --bg-glass: rgba(15, 10, 25, 0.7);
+            --border-subtle: rgba(138, 43, 226, 0.15);
+            --gold-primary: #D4AF37; 
             --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 40%, #b38728 80%, #fbf5b7 100%);
-            --tech-gradient: linear-gradient(90deg, var(--accent-gold), var(--accent-cyan));
-            --mystic-gradient: linear-gradient(180deg, rgba(157, 0, 255, 0.1), transparent);
-            
-            --glass-bg: rgba(10, 5, 20, 0.5);
-            --glass-border: rgba(212, 175, 55, 0.15);
-            
-            --text-main: #F0F0F0;
-            --text-muted: #A0A0B0;
-            --spacing-section: 140px;
+            --violet-primary: #8B5CF6;
+            --violet-dark: #4C1D95;
+            --blue-light: #7DD3FC;
+            --blue-accent: #38BDF8;
+            --text-main: #Eaeaea;
+            --text-muted: #888888;
+            --spacing-section: 120px;
+            --mystic-gradient: linear-gradient(135deg, #1a0a2e 0%, #0a0a0f 50%, #0f1a2a 100%);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        
         body {
-            background-color: var(--bg-void);
+            background: var(--bg-void);
             color: var(--text-main);
             font-family: 'Montserrat', sans-serif;
             font-weight: 300;
             line-height: 1.8;
             overflow-x: hidden;
-            position: relative;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- BACKGROUND FX: A MATRIX MÍSTICA --- */
-        /* Cria a grade de "construção de realidade" no fundo */
-        .bg-matrix {
+        /* --- ANIMATED BACKGROUND --- */
+        .cosmic-bg {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-                radial-gradient(circle at 50% 10%, rgba(80, 0, 150, 0.25), transparent 60%);
-            background-size: 60px 60px, 60px 60px, 100% 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: var(--mystic-gradient);
+        }
+
+        .cosmic-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(212, 175, 55, 0.08) 0%, transparent 60%);
+            animation: cosmicPulse 15s ease-in-out infinite;
+        }
+
+        @keyframes cosmicPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        /* Particle Canvas */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1;
-            perspective: 1000px;
             pointer-events: none;
         }
-        
-        /* Brilhos etéreos flutuantes */
-        .orb-glow {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: -1;
-            opacity: 0.4;
-            animation: floatOrb 15s infinite ease-in-out;
-        }
-        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--accent-violet); }
-        .orb-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(0, 240, 255, 0.15); animation-delay: -5s; }
 
-        @keyframes floatOrb {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(30px, 50px); }
+        /* Sacred Geometry Overlay */
+        .sacred-geometry {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%23D4AF37' stroke-width='0.5'%3E%3Ccircle cx='200' cy='200' r='150'/%3E%3Ccircle cx='200' cy='200' r='100'/%3E%3Ccircle cx='200' cy='200' r='50'/%3E%3Cpolygon points='200,50 350,200 200,350 50,200'/%3E%3Cpolygon points='200,80 320,200 200,320 80,200'/%3E%3Cline x1='200' y1='50' x2='200' y2='350'/%3E%3Cline x1='50' y1='200' x2='350' y2='200'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 400px 400px;
+            animation: geometryFloat 60s linear infinite;
+        }
+
+        @keyframes geometryFloat {
+            0% { background-position: 0 0; }
+            100% { background-position: 400px 400px; }
+        }
+
+        /* Egyptian Hieroglyphics Floating */
+        .hieroglyphics {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .hieroglyph {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.04;
+            color: var(--gold-primary);
+            animation: floatHiero 20s ease-in-out infinite;
+        }
+
+        @keyframes floatHiero {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.04; }
+            50% { transform: translateY(-30px) rotate(5deg); opacity: 0.08; }
         }
 
         /* --- 2. TYPOGRAPHY --- */
         h1, h2, h3, h4 {
             font-family: 'Cinzel', serif;
             text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            color: #fff;
+            font-weight: 400;
+            letter-spacing: 0.15em;
         }
-        
-        h1 { letter-spacing: 0.05em; }
-
         .text-gold {
             background: var(--gold-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0px 0px 20px rgba(212, 175, 55, 0.3);
+            font-weight: 600;
+            animation: shimmer 3s ease-in-out infinite;
         }
-        
-        .text-cyan {
-            color: var(--accent-cyan);
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-            font-family: 'Montserrat', sans-serif;
-            letter-spacing: 0.2em;
-            font-size: 0.9em;
-            font-weight: 500;
+
+        @keyframes shimmer {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 10px rgba(212, 175, 55, 0.3)); }
+            50% { filter: brightness(1.2) drop-shadow(0 0 20px rgba(212, 175, 55, 0.6)); }
+        }
+
+        .text-violet {
+            background: linear-gradient(135deg, var(--violet-primary), var(--blue-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .serif-italic {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            font-size: 1.8rem;
-            color: var(--accent-gold);
-            line-height: 1.3;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+            font-size: 1.6rem;
+            color: var(--gold-primary);
+            line-height: 1.4;
         }
 
         /* --- 3. UTILITIES & ANIMATIONS --- */
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; position: relative; z-index: 2; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
         
         .fade-in-up { 
-            animation: fadeInUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
-            opacity: 0; transform: translateY(40px); 
+            animation: fadeInUp 1.2s ease-out forwards; 
+            opacity: 0; 
+            transform: translateY(30px); 
         }
-        
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        @keyframes fadeInUp { 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        .glow-text {
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 10px rgba(139, 92, 246, 0.3), 0 0 20px rgba(212, 175, 55, 0.2); }
+            50% { text-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(212, 175, 55, 0.4); }
+        }
+
+        .float-animation {
+            animation: gentleFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
 
         .divider {
-            width: 1px; height: 100px; 
-            background: linear-gradient(to bottom, transparent, var(--accent-cyan), var(--accent-gold), transparent); 
-            margin: 0 auto 60px;
-            box-shadow: 0 0 15px var(--accent-cyan);
+            width: 1px; 
+            height: 80px; 
+            background: linear-gradient(to bottom, transparent, var(--violet-primary), var(--gold-primary), transparent); 
+            margin: 0 auto 40px;
+            animation: dividerGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes dividerGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(139, 92, 246, 0.6), 0 0 35px rgba(212, 175, 55, 0.4); }
+        }
+
+        /* Eye of Horus Decoration */
+        .eye-decoration {
+            position: relative;
+        }
+
+        .eye-decoration::before {
+            content: '𓂀';
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.1;
+            color: var(--gold-primary);
+            animation: eyePulse 4s ease-in-out infinite;
+        }
+
+        @keyframes eyePulse {
+            0%, 100% { opacity: 0.1; transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(1.1); }
         }
 
         /* --- 4. COMPONENTS --- */
         .btn-gold {
             display: inline-block; 
-            padding: 24px 60px; 
-            border: 1px solid var(--accent-gold);
-            background: rgba(5, 5, 10, 0.9);
-            color: var(--accent-gold); 
+            padding: 22px 55px; 
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: linear-gradient(180deg, rgba(20,10,30,0.9), rgba(0,0,0,1));
+            color: var(--gold-primary); 
             font-family: 'Cinzel', serif; 
-            font-size: 1rem;
-            letter-spacing: 0.25em; 
+            font-size: 0.9rem;
+            letter-spacing: 0.2em; 
             text-decoration: none; 
             text-transform: uppercase;
-            transition: all 0.4s ease; 
+            transition: all 0.5s ease; 
             position: relative; 
-            overflow: hidden;
             backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+            overflow: hidden;
         }
-        
+
         .btn-gold::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
-            transition: 0.6s;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .btn-gold:hover::before {
+            left: 100%;
         }
 
         .btn-gold:hover { 
-            border-color: var(--accent-cyan); 
-            color: var(--accent-cyan);
-            box-shadow: 0 0 40px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(0,0,0,0.8);
-            letter-spacing: 0.35em;
+            border-color: var(--gold-primary); 
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.3), 0 0 60px rgba(139, 92, 246, 0.2); 
+            letter-spacing: 0.25em;
+            transform: translateY(-3px);
         }
-        
-        .btn-gold:hover::before { left: 100%; }
         
         .glass-card {
-            background: linear-gradient(135deg, rgba(20,20,30,0.6), rgba(5,5,10,0.8));
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
-            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
-            padding: 50px;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            background: linear-gradient(135deg, rgba(20, 10, 35, 0.8), rgba(10, 15, 30, 0.7));
+            border: 1px solid var(--border-subtle);
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            transition: all 0.5s ease;
             position: relative;
+            overflow: hidden;
         }
-        
-        /* Tech corners decoration */
-        .glass-card::after {
-            content: ''; position: absolute; top: -1px; right: -1px; width: 20px; height: 20px;
-            border-top: 2px solid var(--accent-gold); border-right: 2px solid var(--accent-gold);
-        }
+
         .glass-card::before {
-            content: ''; position: absolute; bottom: -1px; left: -1px; width: 20px; height: 20px;
-            border-bottom: 2px solid var(--accent-cyan); border-left: 2px solid var(--accent-cyan);
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--violet-primary), var(--gold-primary), transparent);
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         .glass-card:hover { 
-            transform: translateY(-8px); 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(157, 0, 255, 0.1);
+            border-color: rgba(139, 92, 246, 0.4); 
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15), 0 10px 30px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Animated Corner Ornaments */
+        .ornate-corners {
+            position: relative;
+        }
+
+        .ornate-corners::before,
+        .ornate-corners::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--gold-primary);
+            opacity: 0.5;
+            transition: all 0.4s ease;
+        }
+
+        .ornate-corners::before {
+            top: -5px;
+            left: -5px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .ornate-corners::after {
+            bottom: -5px;
+            right: -5px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .ornate-corners:hover::before,
+        .ornate-corners:hover::after {
+            width: 60px;
+            height: 60px;
+            opacity: 1;
         }
 
         /* --- 5. SECTIONS --- */
         .hero {
-            height: 100vh; display: flex; align-items: center; justify-content: center; 
-            position: relative; overflow: hidden; text-align: center;
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            overflow: hidden; 
+            text-align: center;
         }
-        
-        /* Video Overlay Gradients */
+
+        .hero-video {
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover;
+            opacity: 0.25; 
+            z-index: 0; 
+            filter: grayscale(40%) contrast(1.1) hue-rotate(20deg);
+        }
+
         .hero::after { 
-            content: ''; position: absolute; inset: 0; 
-            background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, var(--bg-void) 90%),
-                        linear-gradient(to bottom, rgba(5,1,10,0.3) 0%, var(--bg-void) 100%);
+            content: ''; 
+            position: absolute; 
+            inset: 0; 
+            background: radial-gradient(ellipse at center, rgba(26, 10, 46, 0.4) 0%, rgba(5, 5, 8, 0.95) 85%); 
             z-index: 1; 
         }
-        
-        .hero-video {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
-            opacity: 0.5; z-index: 0; 
-            filter: saturate(1.2) hue-rotate(270deg) contrast(1.1); /* Trazendo pro tom roxo/azul */
-            mix-blend-mode: overlay;
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 30% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 70% 30%, rgba(56, 189, 248, 0.08) 0%, transparent 40%);
+            z-index: 2;
+            animation: auraMove 10s ease-in-out infinite;
         }
 
-        .hero-content { position: relative; z-index: 3; max-width: 900px; }
-        .hero-logo { width: 100px; margin-bottom: 30px; filter: drop-shadow(0 0 20px var(--accent-gold)); }
-        
+        @keyframes auraMove {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .hero-content { 
+            position: relative; 
+            z-index: 3; 
+            max-width: 900px; 
+        }
+
+        .hero-logo { 
+            width: 90px; 
+            margin-bottom: 40px; 
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5)) drop-shadow(0 0 40px rgba(139, 92, 246, 0.3));
+            animation: logoFloat 4s ease-in-out infinite, logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5)) drop-shadow(0 0 40px rgba(139, 92, 246, 0.3)); }
+            50% { filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.8)) drop-shadow(0 0 60px rgba(139, 92, 246, 0.5)); }
+        }
+
         .hero h1 { 
-            font-size: 4rem; line-height: 1.1; margin-bottom: 20px; 
-            text-shadow: 0 10px 50px rgba(0,0,0,0.9); 
+            font-size: 3.5rem; 
+            line-height: 1.2; 
+            margin-bottom: 25px; 
+            text-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 60px rgba(139, 92, 246, 0.3);
+            animation: titleReveal 1.5s ease-out forwards;
         }
 
-        /* --- NARRATIVE GRID --- */
+        @keyframes titleReveal {
+            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .hero h2 { 
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 0.85rem; 
+            letter-spacing: 0.5em; 
+            color: var(--blue-light); 
+            margin-bottom: 40px; 
+            opacity: 0.9;
+            animation: subtitleGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes subtitleGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(125, 211, 252, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(125, 211, 252, 0.6); }
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            animation: scrollBounce 2s ease-in-out infinite;
+        }
+
+        .scroll-indicator span {
+            display: block;
+            width: 20px;
+            height: 30px;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .scroll-indicator span::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 8px;
+            background: var(--gold-primary);
+            border-radius: 2px;
+            animation: scrollDot 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        @keyframes scrollDot {
+            0%, 100% { opacity: 1; top: 6px; }
+            50% { opacity: 0.3; top: 14px; }
+        }
+
+        /* --- NEW SECTION STYLE: NARRATIVE GRID --- */
         .narrative-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-bottom: 120px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            margin-bottom: 100px;
         }
 
         .media-collage {
-            position: relative; height: 650px; width: 100%; perspective: 1000px;
+            position: relative;
+            height: 600px;
+            width: 100%;
         }
 
+        /* Foto de fundo */
         .collage-img {
-            position: absolute; top: 0; left: 0; width: 80%; height: 70%; object-fit: cover;
-            border: 1px solid rgba(157, 0, 255, 0.3);
-            filter: grayscale(20%) contrast(1.2);
-            z-index: 1; transform: rotateY(5deg);
-            box-shadow: 0 0 50px rgba(157, 0, 255, 0.1);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 75%;
+            height: 70%;
+            object-fit: cover;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            filter: grayscale(30%) saturate(1.2);
+            z-index: 1;
+            transition: all 0.5s ease;
         }
 
+        .collage-img:hover {
+            filter: grayscale(0%) saturate(1.3);
+            border-color: var(--violet-primary);
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Vídeo sobreposto */
         .collage-video {
-            position: absolute; bottom: 0; right: 0; width: 65%; height: 60%; object-fit: cover;
-            border: 1px solid var(--accent-gold);
-            box-shadow: -20px -20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(212, 175, 55, 0.2);
-            z-index: 2; transform: translateZ(50px);
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 60%;
+            height: 65%;
+            object-fit: cover;
+            border: 1px solid var(--gold-primary);
+            box-shadow: -20px -20px 60px rgba(0,0,0,0.9), 0 0 30px rgba(212, 175, 55, 0.2);
+            z-index: 2;
+            transition: all 0.5s ease;
+        }
+
+        .collage-video:hover {
+            box-shadow: -20px -20px 60px rgba(0,0,0,0.9), 0 0 50px rgba(212, 175, 55, 0.4);
+        }
+
+        .narrative-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #fff;
+            position: relative;
+            display: inline-block;
+        }
+
+        .narrative-text h3::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--violet-primary), var(--gold-primary));
+        }
+        
+        .narrative-text p {
+            font-size: 1rem;
+            color: #ccc;
+            margin-bottom: 25px;
+            text-align: justify;
         }
 
         .highlight-box {
-            border-left: 2px solid var(--accent-cyan);
-            background: linear-gradient(90deg, rgba(0, 240, 255, 0.05), transparent);
-            padding: 30px; margin: 40px 0;
+            border-left: 3px solid transparent;
+            border-image: linear-gradient(to bottom, var(--violet-primary), var(--gold-primary)) 1;
+            padding-left: 20px;
+            margin: 30px 0;
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.08), transparent);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .highlight-box:hover {
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), transparent);
+            transform: translateX(5px);
+        }
+
+        /* Animated Ankh Symbol */
+        .ankh-float {
+            position: absolute;
+            font-size: 4rem;
+            color: var(--gold-primary);
+            opacity: 0.05;
+            animation: ankhFloat 8s ease-in-out infinite;
+        }
+
+        @keyframes ankhFloat {
+            0%, 100% { transform: translateY(0) rotate(-5deg); opacity: 0.05; }
+            50% { transform: translateY(-20px) rotate(5deg); opacity: 0.1; }
+        }
+
+        /* --- REST OF SECTIONS --- */
+        .section-std { 
+            padding: var(--spacing-section) 0; 
             position: relative;
         }
-        .highlight-box::before { content: 'SYSTEM_UPGRADE'; position: absolute; top: -10px; left: 0; font-size: 0.6rem; color: var(--accent-cyan); background: var(--bg-void); padding: 0 5px; letter-spacing: 2px; }
 
-        /* --- FILTER LIST --- */
-        .filter-container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
-        .filter-list li { list-style: none; margin-bottom: 20px; padding-left: 35px; position: relative; color: var(--text-muted); }
-        .check-list li::before { content: '✦'; color: var(--accent-gold); position: absolute; left: 0; top: 2px; font-size: 1.2rem; text-shadow: 0 0 10px var(--accent-gold); }
-        .cross-list li::before { content: '×'; color: #666; position: absolute; left: 0; top: -2px; font-size: 1.5rem; }
+        .intro-text { 
+            text-align: center; 
+            max-width: 750px; 
+            margin: 0 auto 80px; 
+        }
 
-        /* --- METHODOLOGY --- */
+        .filter-container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 60px; 
+        }
+
+        .filter-list li { 
+            list-style: none; 
+            margin-bottom: 20px; 
+            padding-left: 35px; 
+            position: relative; 
+            color: #ccc;
+            transition: all 0.3s ease;
+        }
+
+        .filter-list li:hover {
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .check-list li::before { 
+            content: '✦'; 
+            color: var(--gold-primary); 
+            position: absolute; 
+            left: 0; 
+            top: 2px; 
+            font-size: 1.2rem;
+            animation: starPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes starPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        .cross-list li::before { 
+            content: '—'; 
+            color: var(--violet-dark); 
+            position: absolute; 
+            left: 0; 
+        }
+
         .methodology { 
-            background: radial-gradient(circle at 50% 50%, #0e051a 0%, #000 100%); 
-            border-top: 1px solid rgba(255,255,255,0.05); 
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: linear-gradient(to bottom, rgba(10, 5, 20, 0.9), rgba(15, 10, 30, 0.95), rgba(10, 5, 20, 0.9)); 
+            border-top: 1px solid var(--border-subtle); 
+            border-bottom: 1px solid var(--border-subtle);
             position: relative;
+            overflow: hidden;
         }
-        
-        .dual-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-        
+
+        .methodology::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%);
+            animation: methodologyGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes methodologyGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .dual-columns { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 0; 
+        }
+
         .method-card { 
-            padding: 100px 60px; 
-            border-right: 1px solid rgba(255,255,255,0.05); 
-            text-align: center; transition: 0.5s; 
-            position: relative; overflow: hidden;
+            padding: 80px 50px; 
+            border-right: 1px solid var(--border-subtle); 
+            text-align: center; 
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
         }
-        
-        /* Subtle glow on hover for methods */
+
         .method-card::before {
-            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 0; height: 0; background: radial-gradient(circle, rgba(157, 0, 255, 0.2), transparent 70%);
-            transition: 0.6s;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
-        .method-card:hover::before { width: 150%; height: 150%; }
-        
-        .method-icon { font-size: 4rem; margin-bottom: 30px; display: inline-block; background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(212,175,55,0.5)); }
 
-        /* --- AKASHA LAB (TECH FOCUS) --- */
-        .akasha-lab { padding: var(--spacing-section) 0; position: relative; }
-        
+        .method-card:hover::before {
+            opacity: 1;
+        }
+
+        .method-card:last-child { border-right: none; }
+        .method-card:hover { 
+            background: rgba(139, 92, 246, 0.05); 
+        }
+
+        .method-icon { 
+            font-size: 3rem; 
+            margin-bottom: 30px; 
+            display: inline-block; 
+            background: linear-gradient(135deg, var(--violet-primary), var(--gold-primary));
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .akasha-lab { 
+            position: relative; 
+            padding: var(--spacing-section) 0; 
+            background: radial-gradient(ellipse at 50% 50%, rgba(26, 10, 46, 0.6) 0%, rgba(5, 5, 8, 1) 100%);
+            overflow: hidden;
+        }
+
+        .akasha-lab::before {
+            content: '𓂋';
+            position: absolute;
+            top: 10%;
+            right: 10%;
+            font-size: 15rem;
+            opacity: 0.02;
+            color: var(--gold-primary);
+            animation: symbolFloat 15s ease-in-out infinite;
+        }
+
+        @keyframes symbolFloat {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(5deg) scale(1.05); }
+        }
+
         .lab-highlight { 
-            border: 1px solid rgba(0, 240, 255, 0.2); 
-            padding: 80px 60px; text-align: center; 
-            background: rgba(0, 10, 20, 0.6);
-            box-shadow: 0 0 50px rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.25); 
+            padding: 60px; 
+            text-align: center; 
+            position: relative; 
+            background: linear-gradient(135deg, rgba(20, 10, 35, 0.6), rgba(10, 15, 30, 0.4));
         }
-        /* Efeito de cantos Tech */
-        .lab-highlight::before { content: ''; position: absolute; top: -1px; left: -1px; width: 30px; height: 30px; border-top: 2px solid var(--accent-cyan); border-left: 2px solid var(--accent-cyan); }
-        .lab-highlight::after { content: ''; position: absolute; bottom: -1px; right: -1px; width: 30px; height: 30px; border-bottom: 2px solid var(--accent-cyan); border-right: 2px solid var(--accent-cyan); }
 
-        /* --- PRICING --- */
-        .pricing-section { text-align: center; padding: 120px 0; }
-        .price-tag { font-family: 'Cinzel', serif; font-size: 4rem; margin: 20px 0 50px; color: #fff; text-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
-        .price-sub { font-size: 0.9rem; color: var(--accent-cyan); display: block; margin-bottom: 10px; letter-spacing: 0.3em; text-transform: uppercase; }
+        .lab-highlight::before, 
+        .lab-highlight::after { 
+            content: ''; 
+            position: absolute; 
+            width: 30px; 
+            height: 30px; 
+            border: 2px solid var(--gold-primary); 
+            transition: all 0.4s ease; 
+        }
+        .lab-highlight::before { 
+            top: -2px; 
+            left: -2px; 
+            border-bottom: 0; 
+            border-right: 0; 
+        }
+        .lab-highlight::after { 
+            bottom: -2px; 
+            right: -2px; 
+            border-top: 0; 
+            border-left: 0; 
+        }
 
-        .legal-footer { padding: 80px 0; border-top: 1px solid #111; text-align: center; font-size: 0.75rem; color: #444; background: #010101; }
-        .legal-footer p { max-width: 600px; margin: 0 auto 10px; line-height: 1.6; }
+        .lab-highlight:hover::before,
+        .lab-highlight:hover::after {
+            width: 50px;
+            height: 50px;
+        }
+
+        .pricing-section { 
+            text-align: center; 
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+            animation: pricingGlow 6s ease-in-out infinite;
+        }
+
+        @keyframes pricingGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.5; }
+        }
+
+        .price-tag { 
+            font-family: 'Cinzel', serif; 
+            font-size: 3rem; 
+            margin: 20px 0 50px; 
+            color: #fff;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            animation: priceGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes priceGlow {
+            0%, 100% { text-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+            50% { text-shadow: 0 0 50px rgba(212, 175, 55, 0.5), 0 0 80px rgba(139, 92, 246, 0.3); }
+        }
+
+        .price-sub { 
+            font-size: 1rem; 
+            color: var(--violet-primary); 
+            display: block; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.1em; 
+        }
+
+        /* Format Icons Animation */
+        .format-icon {
+            transition: all 0.4s ease;
+        }
+
+        .format-icon:hover {
+            transform: scale(1.1);
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+        }
+
+        .legal-footer { 
+            padding: 60px 0; 
+            border-top: 1px solid rgba(139, 92, 246, 0.1); 
+            text-align: center; 
+            font-size: 0.75rem; 
+            color: #444;
+            background: linear-gradient(to bottom, transparent, rgba(10, 5, 20, 0.5));
+        }
+        .legal-footer p { 
+            max-width: 600px; 
+            margin: 0 auto 10px; 
+            line-height: 1.6; 
+        }
+
+        /* Intersection Observer Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 1s ease-out;
+        }
+
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 1s ease-out;
+        }
+
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
 
         /* --- 6. RESPONSIVE --- */
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.5rem; }
-            .filter-container, .dual-columns, .narrative-grid { grid-template-columns: 1fr; gap: 40px; }
-            .media-collage { height: 450px; margin-bottom: 40px; } 
-            .collage-img { width: 90%; }
-            .collage-video { width: 80%; }
-            .method-card { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 60px 20px; }
+            .hero h2 { letter-spacing: 0.2em; }
+            .filter-container, .dual-columns, .narrative-grid { grid-template-columns: 1fr; }
+            .media-collage { height: 400px; margin-bottom: 40px; }
+            .collage-img { width: 80%; }
+            .collage-video { width: 70%; }
+            .method-card { border-right: none; border-bottom: 1px solid var(--border-subtle); padding: 50px 20px; }
             .container { padding: 0 25px; }
-            .btn-gold { padding: 20px 30px; width: 100%; font-size: 0.9rem; }
-            .akasha-lab .lab-highlight { padding: 50px 20px; }
+            .btn-gold { padding: 18px 40px; width: 100%; text-align: center; }
+            .akasha-lab .lab-highlight { padding: 40px 20px; }
+            .hieroglyph { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- FUNDO DINÂMICO -->
-    <div class="bg-matrix"></div>
-    <div class="orb-glow orb-1"></div>
-    <div class="orb-glow orb-2"></div>
+    <!-- COSMIC BACKGROUND -->
+    <div class="cosmic-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+    <div class="sacred-geometry"></div>
+    
+    <!-- HIEROGLYPHICS FLOATING -->
+    <div class="hieroglyphics">
+        <span class="hieroglyph" style="top: 10%; left: 5%; animation-delay: 0s;">𓂀</span>
+        <span class="hieroglyph" style="top: 30%; left: 90%; animation-delay: 2s;">𓃀</span>
+        <span class="hieroglyph" style="top: 50%; left: 3%; animation-delay: 4s;">𓆣</span>
+        <span class="hieroglyph" style="top: 70%; left: 95%; animation-delay: 6s;">𓇳</span>
+        <span class="hieroglyph" style="top: 85%; left: 8%; animation-delay: 8s;">𓊹</span>
+        <span class="hieroglyph" style="top: 20%; left: 85%; animation-delay: 1s;">𓋹</span>
+        <span class="hieroglyph" style="top: 60%; left: 92%; animation-delay: 3s;">𓏲</span>
+        <span class="hieroglyph" style="top: 40%; left: 2%; animation-delay: 5s;">☥</span>
+        <span class="hieroglyph" style="top: 90%; left: 88%; animation-delay: 7s;">𓂋</span>
+        <span class="hieroglyph" style="top: 5%; left: 50%; animation-delay: 9s;">◊</span>
+    </div>
 
     <!-- HERO -->
     <header class="hero">
@@ -337,21 +923,26 @@
         <div class="hero-content container fade-in-up">
             <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1765962348/Sem_nome_70_x_70_px_la5nyl.png" alt="Akasha Logo" class="hero-logo">
             
-            <h2 class="text-cyan">MENTORIA AKÁSHICA 1:1</h2>
+            <h2 class="glow-text">MENTORIA AKÁSHICA 1:1</h2>
             <h1>Arquitetura de <br><span class="text-gold">Essência & Poder</span></h1>
             
-            <p style="color: var(--text-muted); max-width: 600px; margin: 30px auto 50px; font-size: 1.1rem; text-shadow: 0 2px 4px #000;">
-                Não basta se alinhar internamente. É preciso ter um corpo digital coerente para governar seu espaço no mundo e sair da Matrix da mediocridade.
+            <p style="opacity: 0.8; max-width: 600px; margin: 30px auto 50px; font-size: 1.1rem;">
+                Não basta se alinhar internamente. É preciso ter um corpo digital coerente para governar seu espaço no mundo.
             </p>
 
             <a href="https://pay.hotmart.com/I103627853C?bid=1767381877056" class="btn-gold">
-                Iniciar Protocolo
+                Iniciar Agora
             </a>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <span></span>
         </div>
     </header>
 
     <!-- INTRODUÇÃO & NARRATIVA -->
-    <section class="section-std" style="padding: var(--spacing-section) 0;">
+    <section class="section-std">
         <div class="container">
             <div class="divider"></div>
 
@@ -359,29 +950,29 @@
             <div class="narrative-grid">
                 
                 <!-- Coluna da Esquerda: Textos -->
-                <div class="narrative-text fade-in-up">
+                <div class="narrative-text reveal-left">
                     <p class="serif-italic" style="margin-bottom: 30px;">
-                        "Sua experiência de vida é o código fonte do seu sucesso."
+                        "Sua experiência de vida é o seu maior diferencial."
                     </p>
                     
                     <h3>O Branding da Alma</h3>
-                    <p style="color: var(--text-muted); margin-bottom: 20px;">
+                    <p>
                         Seja você um vendedor, servidor público, empresário ou terapeuta: <strong>o que você viveu é a sua marca</strong>. Ninguém possui a sua combinação exata de histórias, dores e vitórias.
                     </p>
-                    <p style="color: var(--text-muted);">
-                        No Akasha, não criamos personagens. Nós fazemos uma escavação profunda, desde a sua constelação familiar, a história dos seus ancestrais (Egito, Atlântida, Linhagens), até registros de vidas passadas. Identificamos os padrões que precisam ser reconfigurados.
+                    <p>
+                        No Akasha, não criamos personagens. Nós fazemos uma escavação profunda, desde a sua constelação familiar, a história dos seus ancestrais, até registros de vidas passadas. Identificamos os padrões que precisam ser reconfigurados e trazemos à tona o "Storytelling" que sua alma veio contar.
                     </p>
 
-                    <div class="highlight-box glass-card">
-                        <h4 style="color: var(--accent-gold); font-size: 0.9rem; margin-bottom: 15px;">A PONTE MATERIAL (90 DIAS)</h4>
-                        <p style="font-size: 0.95rem; margin-bottom: 0; color: #fff;">
-                            Transformamos sua descoberta em um plano de execução de <strong>Ponto A ao Ponto B</strong>. Estruturamos seu corpo digital para que sua estadia no mundo seja próspera e magnética.
+                    <div class="highlight-box">
+                        <h4 style="color: var(--gold-primary); font-size: 0.9rem; margin-bottom: 10px;">A PONTE MATERIAL (90 DIAS)</h4>
+                        <p style="font-size: 0.9rem; margin-bottom: 0;">
+                            Não ficamos apenas no etéreo. Transformamos sua descoberta em um plano de execução de <strong>Ponto A ao Ponto B</strong>. Com nossa equipe de designers, criadores de sites e experts, estruturamos seu corpo digital para que sua estadia no mundo seja próspera e magnética.
                         </p>
                     </div>
                 </div>
 
                 <!-- Coluna da Direita: Mídia Collage -->
-                <div class="media-collage fade-in-up" style="animation-delay: 0.3s;">
+                <div class="media-collage reveal-right" style="animation-delay: 0.3s;">
                     <!-- Imagem de fundo -->
                     <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1767394267/Whats-App-Image-2025-11-26-at-13-20-51_bqjt33.jpg" alt="Essência Akáshica" class="collage-img">
                     
@@ -389,36 +980,39 @@
                     <video class="collage-video" autoplay muted loop playsinline>
                         <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1767394267/WhatsApp_Video_2025-12-28_at_01.12.05_a6lbdx_z2powv.mp4" type="video/mp4">
                     </video>
+
+                    <!-- Ankh Floating Symbol -->
+                    <span class="ankh-float" style="top: -10%; right: 10%;">☥</span>
                 </div>
 
             </div>
 
             <!-- BLOCO 2: BÔNUS & ACESSO -->
-            <div style="text-align: center; margin-bottom: 80px;">
-                <p class="text-cyan">ACESSO CODIFICADO</p>
-                <p style="max-width: 700px; margin: 20px auto; font-size: 1.1rem; color: #fff;">
+            <div style="text-align: center; margin-bottom: 80px;" class="reveal">
+                <p style="color: var(--violet-primary); font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase;">Acesso Exclusivo</p>
+                <p style="max-width: 700px; margin: 20px auto; font-size: 1rem;">
                     Durante a jornada, você terá acesso à minha <strong>Área de Membros Exclusiva</strong>. <br>
-                    Cursos, workshops, áudios akáshicos e conteúdos de reconfiguração de padrão como bônus.
+                    Cursos, workshops, áudios akáshicos e conteúdos de reconfiguração de padrão como bônus para enriquecer seu processo.
                 </p>
             </div>
 
             <!-- BLOCO 3: FILTRO -->
-            <div class="glass-card filter-container fade-in-up">
+            <div class="glass-card filter-container reveal ornate-corners">
                 <div class="check-list">
-                    <h3 style="color: var(--accent-gold); font-size: 1rem; margin-bottom: 25px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px; display:inline-block;">Para o Escolhido:</h3>
+                    <h3 style="color: var(--gold-primary); font-size: 1rem; margin-bottom: 25px;">Para quem é este Círculo:</h3>
                     <ul class="filter-list">
                         <li>Possui profundidade, mas trava na exposição.</li>
-                        <li>Busca coerência entre o Ser e o Parecer.</li>
+                        <li>Busca coerência entre o ser e o parecer.</li>
                         <li>Deseja soberania digital (site próprio e estrutura).</li>
-                        <li>Valoriza o tempo orgânico e a sabedoria ancestral.</li>
+                        <li>Valoriza o tempo orgânico das coisas.</li>
                     </ul>
                 </div>
                 <div class="cross-list">
-                    <h3 style="color: #666; font-size: 1rem; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 10px; display:inline-block;">Não é para:</h3>
+                    <h3 style="color: var(--violet-dark); font-size: 1rem; margin-bottom: 25px;">Não é para quem busca:</h3>
                     <ul class="filter-list">
-                        <li>Quem busca fórmulas mágicas sem trabalho interno.</li>
-                        <li>Quem busca atalhos que ferem a integridade.</li>
-                        <li>Quem deseja terceirizar a própria responsabilidade.</li>
+                        <li>Fórmulas mágicas de enriquecimento.</li>
+                        <li>Atalhos que ferem a integridade.</li>
+                        <li>Terceirização da própria responsabilidade.</li>
                     </ul>
                 </div>
             </div>
@@ -428,26 +1022,26 @@
     <!-- METODOLOGIA DUAL -->
     <section class="methodology">
         <div class="container" style="text-align: center; padding-top: 100px; padding-bottom: 60px;">
-            <h2 class="text-gold">A Metodologia Dual</h2>
-            <p class="text-cyan" style="margin-top: 15px;">INTEGRAÇÃO TOTAL: MÍSTICO E DIGITAL</p>
+            <h2><span class="text-gold">A Metodologia</span> <span class="text-violet">Dual</span></h2>
+            <p style="color: var(--blue-light); font-size: 0.9rem; letter-spacing: 0.1em; margin-top: 10px;">INTEGRAÇÃO TOTAL</p>
         </div>
         
         <div class="container">
             <div class="dual-columns">
-                <div class="method-card">
-                    <div class="method-icon">𓂀</div>
+                <div class="method-card reveal-left">
+                    <div class="method-icon float-animation">✦</div>
                     <h3>A Bússola Interna</h3>
-                    <p style="margin-top: 20px; color: #A0A0B0;">
+                    <p style="margin-top: 20px; color: #aaa;">
                         Mapeamento de bloqueios criativos e emocionais. Leitura de padrões ocultos. 
-                        Definição da sua <strong>Assinatura Energética</strong>: como você deve vibrar para atrair abundância sem esforço.
+                        Definição da sua <strong>Assinatura Energética</strong>: como você deve vibrar para atrair sem esforço.
                     </p>
                 </div>
-                <div class="method-card">
-                    <div class="method-icon">❖</div>
+                <div class="method-card reveal-right">
+                    <div class="method-icon float-animation" style="animation-delay: 0.5s;">❖</div>
                     <h3>O Corpo Digital</h3>
-                    <p style="margin-top: 20px; color: #A0A0B0;">
+                    <p style="margin-top: 20px; color: #aaa;">
                         Tradução da essência em estrutura. Identidade visual, narrativa e tecnologia.
-                        Transformamos o abstrato em <strong>presença real e navegável</strong> fora da Matrix comum.
+                        Transformamos o abstrato em <strong>presença real e navegável</strong>.
                     </p>
                 </div>
             </div>
@@ -458,19 +1052,19 @@
     <!-- AKASHA LAB -->
     <section class="akasha-lab">
         <div class="container">
-            <div class="lab-highlight glass-card">
-                <p class="text-cyan" style="margin-bottom: 20px;">DIFERENCIAL EXCLUSIVO</p>
+            <div class="lab-highlight glass-card reveal">
+                <p style="font-size: 0.8rem; letter-spacing: 0.3em; color: var(--blue-light); margin-bottom: 20px;">DIFERENCIAL EXCLUSIVO</p>
                 <h2 style="font-size: 2.5rem; margin-bottom: 30px;">Akasha Hub <span class="text-gold">Digital Lab</span></h2>
                 
                 <p style="max-width: 700px; margin: 0 auto 40px; color: #ccc;">
                     Diferente de mentorias que entregam apenas teoria, aqui nós materializamos. 
-                    Você terá acesso à nossa <strong>incubadora tecnológica</strong> para colocar sua estrutura digital no ar durante o processo.
+                    Você terá acesso à nossa incubadora tecnológica para colocar sua <strong>estrutura digital no ar</strong> durante o processo.
                 </p>
 
-                <ul style="text-align: center; margin-bottom: 50px; color: #aaa; font-size: 0.95rem;">
-                    <li style="display: inline-block; margin: 0 20px;">✓ Site Estruturado</li>
-                    <li style="display: inline-block; margin: 0 20px;">✓ Tecnologia Inclusa</li>
-                    <li style="display: inline-block; margin: 0 20px;">✓ Laboratório Seguro</li>
+                <ul style="text-align: center; margin-bottom: 50px; color: #888; font-size: 0.9rem;">
+                    <li style="display: inline-block; margin: 0 15px;">✓ Site Estruturado</li>
+                    <li style="display: inline-block; margin: 0 15px;">✓ Sem Custo Extra</li>
+                    <li style="display: inline-block; margin: 0 15px;">✓ Laboratório Seguro</li>
                 </ul>
 
                 <a href="https://pay.hotmart.com/I103627853C?bid=1767381877056" class="btn-gold">
@@ -484,48 +1078,202 @@
     <section class="pricing-section">
         <div class="container">
             <div class="divider"></div>
-            <h2 style="font-size: 1.5rem; margin-bottom: 50px; color: #888;">Protocolo de Ativação</h2>
+            <h2 style="font-size: 1.5rem; margin-bottom: 40px; color: var(--violet-primary);" class="reveal">Formato da Jornada</h2>
 
-            <div style="display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; margin-bottom: 70px;">
-                <div>
-                    <span style="font-family: 'Cinzel'; font-size: 2.5rem; color: var(--accent-gold); text-shadow: 0 0 15px var(--accent-gold);">1:1</span>
-                    <p class="text-cyan" style="font-size: 0.75rem; margin-top: 10px;">SESSÕES ONLINE</p>
+            <div style="display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; margin-bottom: 60px;" class="reveal">
+                <div class="format-icon">
+                    <span style="font-family: 'Cinzel'; font-size: 2rem; color: var(--gold-primary);">1:1</span>
+                    <p style="font-size: 0.8rem; text-transform: uppercase; margin-top: 10px;">Sessões Online</p>
                 </div>
-                <div>
-                    <span style="font-family: 'Cinzel'; font-size: 2.5rem; color: var(--accent-gold); text-shadow: 0 0 15px var(--accent-gold);">∞</span>
-                    <p class="text-cyan" style="font-size: 0.75rem; margin-top: 10px;">ACESSO VITALÍCIO</p>
+                <div class="format-icon">
+                    <span style="font-family: 'Cinzel'; font-size: 2rem; color: var(--gold-primary);">∞</span>
+                    <p style="font-size: 0.8rem; text-transform: uppercase; margin-top: 10px;">Acesso Vitalício</p>
                 </div>
-                <div>
-                    <span style="font-family: 'Cinzel'; font-size: 2.5rem; color: var(--accent-gold); text-shadow: 0 0 15px var(--accent-gold);">VIP</span>
-                    <p class="text-cyan" style="font-size: 0.75rem; margin-top: 10px;">SUPORTE DIRETO</p>
+                <div class="format-icon">
+                    <span style="font-family: 'Cinzel'; font-size: 2rem; color: var(--gold-primary);">VIP</span>
+                    <p style="font-size: 0.8rem; text-transform: uppercase; margin-top: 10px;">Suporte Direto</p>
                 </div>
             </div>
 
-            <div class="price-box glass-card" style="display: inline-block; padding: 40px 80px; border-color: var(--accent-gold);">
-                <span class="price-sub">INVESTIMENTO EM VOCÊ</span>
-                <h3 class="price-tag" style="margin: 20px 0;">
-                    <span style="font-size: 1.5rem; vertical-align: middle; color: #888;">R$</span> 
+            <div class="price-box reveal">
+                <span class="price-sub">INVESTIMENTO INICIAL</span>
+                <h3 class="price-tag">
+                    <span style="font-size: 1.5rem; vertical-align: middle;">R$</span> 
                     2.500
                 </h3>
-                <a href="https://pay.hotmart.com/I103627853C?bid=1767381877056" class="btn-gold" style="width: 100%;">
-                    Reivindicar Poder
-                </a>
             </div>
-            
-            <p style="margin-top: 30px; font-size: 0.75rem; color: #555;">Processo seletivo necessário. Vagas limitadas pela energia disponível.</p>
+
+            <a href="https://pay.hotmart.com/I103627853C?bid=1767381877056" class="btn-gold">
+                Garantir Minha Vaga
+            </a>
+            <p style="margin-top: 20px; font-size: 0.75rem; opacity: 0.5;">Processo seletivo necessário. Vagas limitadas.</p>
         </div>
     </section>
 
     <!-- RODAPÉ LEGAL -->
     <footer class="legal-footer">
         <div class="container">
-            <p style="color: var(--accent-gold); letter-spacing: 0.2em; margin-bottom: 20px;">ACORDO DE INTEGRIDADE</p>
+            <p><strong style="color: var(--gold-primary);">ACORDO DE INTEGRIDADE</strong></p>
             <p>Este programa foca em desenvolvimento pessoal e arquitetura estratégica. Não substitui acompanhamento clínico médico ou psicológico.</p>
             <p>O sucesso comercial depende da execução contínua do participante. A Akasha Hub fornece a estrutura tecnológica, mas a propriedade intelectual e manutenção futura são do mentorado.</p>
             <br>
-            <p style="opacity: 0.3;">YAN SIMON EXPERIENCE &copy; 2024 | ALL RIGHTS RESERVED</p>
+            <p style="opacity: 0.3;">YAN SIMON EXPERIENCE &copy; 2024</p>
         </div>
     </footer>
+
+    <!-- PARTICLES & ANIMATION SCRIPTS -->
+    <script>
+        // Particle System
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 80;
+
+        const colors = [
+            'rgba(139, 92, 246, 0.6)',   // Violet
+            'rgba(212, 175, 55, 0.6)',    // Gold
+            'rgba(125, 211, 252, 0.5)',   // Light Blue
+            'rgba(255, 255, 255, 0.3)'    // White
+        ];
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.alpha = Math.random() * 0.5 + 0.2;
+                this.pulse = Math.random() * Math.PI * 2;
+                this.pulseSpeed = Math.random() * 0.02 + 0.01;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.pulse += this.pulseSpeed;
+
+                // Wrap around
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+
+            draw() {
+                const currentAlpha = this.alpha * (0.5 + Math.sin(this.pulse) * 0.5);
+                ctx.save();
+                ctx.globalAlpha = currentAlpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Glow effect
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Create particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        // Connect particles
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.save();
+                        ctx.globalAlpha = 0.1 * (1 - distance / 150);
+                        ctx.strokeStyle = 'rgba(139, 92, 246, 0.5)';
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            connectParticles();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Intersection Observer for Reveal Animations
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Parallax effect for hieroglyphics
+        document.addEventListener('mousemove', (e) => {
+            const hieroglyphs = document.querySelectorAll('.hieroglyph');
+            const mouseX = e.clientX / window.innerWidth - 0.5;
+            const mouseY = e.clientY / window.innerHeight - 0.5;
+
+            hieroglyphs.forEach((h, index) => {
+                const speed = (index + 1) * 0.5;
+                const x = mouseX * speed * 20;
+                const y = mouseY * speed * 20;
+                h.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>
