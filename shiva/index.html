@@ -5,587 +5,444 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alinhamento do Sagrado Masculino | Yan Simon</title>
     
-    <!-- Fontes de Poder -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Old+Standard+TT:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Adicionado FontAwesome para o ícone do WhatsApp -->
+    <!-- Fontes Premium -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        /* --- VARIÁVEIS DO COSMOS (SHIVA/AZUL/VIOLETA) --- */
         :root {
-            --bg: #000000;
-            --obsidian: #0a0a0a;
-            --gold: #B8860B;
-            --bronze: #CD7F32;
-            --blood: #8B0000;
-            --steel: #2C2C2C;
-            --ember: #FF3800;
-            --text: #E8E8E8;
-            --accent-grad: linear-gradient(135deg, #B8860B, #FFD700, #8B6508, #FFA500, #B8860B);
+            --bg-void: #020205;
+            --neon-blue: #00f3ff;
+            --deep-violet: #7b2cbf;
+            --silver: #e0e0e0;
+            --glass-dark: rgba(5, 5, 10, 0.8);
+            --border-energy: rgba(0, 243, 255, 0.3);
+            --gradient-cosmic: linear-gradient(135deg, #00f3ff, #7b2cbf);
+            --text-main: #f0f0f0;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
         
+        html { scroll-behavior: smooth; }
+
         body { 
-            background: #000;
-            color: var(--text); 
+            background-color: var(--bg-void);
+            color: var(--text-main); 
             font-family: 'Montserrat', sans-serif; 
-            line-height: 1.6;
-            overflow-x: hidden;
+            line-height: 1.6; 
+            overflow-x: hidden; 
         }
 
+        /* --- PARTICULAS DE ENERGIA (BACKGROUND) --- */
+        .energy-field {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(123, 44, 191, 0.15), transparent 70%);
+        }
+
+        .particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;
+        }
+        
+        .particle {
+            position: absolute; width: 2px; height: 2px; background: var(--neon-blue); border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-blue);
+            animation: floatUp 15s infinite linear; opacity: 0;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* --- TIPOGRAFIA --- */
         h1, h2, h3 { 
-            font-family: 'Cinzel', serif; 
-            text-transform: uppercase; 
-            letter-spacing: 3px; 
-            font-weight: 900;
+            font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 3px; font-weight: 700; color: #fff;
         }
         
-        .gold-text { 
-            background: var(--accent-grad); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            font-weight: 900;
+        .cosmic-text { 
+            background: linear-gradient(to right, #fff, var(--neon-blue), var(--deep-violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            text-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
         }
         
-        .italic {
-            font-family: 'Old Standard TT', serif;
-            font-style: italic;
-            color: var(--bronze);
-            font-size: 1.4rem;
-            letter-spacing: 1px;
+        .italic-serif {
+            font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--neon-blue); font-size: 1.5rem; margin-bottom: 10px; display: block;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 30px; position: relative; z-index: 2; }
 
-        /* BOTÃO DE GUERREIRO */
-        .btn-warrior {
-            display: inline-block;
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: var(--gold);
-            padding: 22px 70px;
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-decoration: none;
-            transition: all .5s;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(184, 134, 11, 0.3);
+        /* --- BOTÃO CÓSMICO --- */
+        .btn-cosmic {
+            position: relative; display: inline-flex; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.3); border: 1px solid var(--neon-blue); color: var(--neon-blue);
+            padding: 24px 60px; font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 4px;
+            text-decoration: none; text-transform: uppercase; overflow: hidden; transition: 0.4s;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1); backdrop-filter: blur(5px);
         }
         
-        .btn-warrior::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: var(--accent-grad);
-            transition: all .6s;
-            z-index: -1;
+        .btn-cosmic::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 0%;
+            background: linear-gradient(180deg, var(--deep-violet), var(--neon-blue)); 
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: -1;
         }
 
-        .btn-warrior:hover {
-            color: #000;
-            border-color: var(--gold);
-            box-shadow: 0 0 50px rgba(184, 134, 11, 0.8);
-            transform: scale(1.05);
+        .btn-cosmic:hover {
+            color: #fff; border-color: transparent; box-shadow: 0 0 50px rgba(123, 44, 191, 0.6); 
+            transform: translateY(-2px);
         }
+        .btn-cosmic:hover::after { height: 100%; }
 
-        .btn-warrior:hover::before { left: 0; }
-
-        /* HERO MASCULINO - COM IMAGEM DE FUNDO */
+        /* --- HERO SECTION --- */
         .hero { 
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            text-align: center; 
-            position: relative;
-            padding: 80px 0;
-            overflow: hidden;
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; 
+            position: relative; overflow: hidden; padding: 80px 0;
         }
 
-        /* Imagem de fundo do Hero */
-        .hero-bg-image {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://res.cloudinary.com/dlueoyrhe/image/upload/v1765948603/download_-_2025-12-11T012929.076_kehjfg.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            z-index: 0;
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(2,2,5,0.4), rgba(2,2,5,1)),
+                        url('https://res.cloudinary.com/dlueoyrhe/image/upload/v1765948603/download_-_2025-12-11T012929.076_kehjfg.jpg');
+            background-size: cover; background-position: center; z-index: -2;
+            /* TRANSFORMANDO A IMAGEM ORIGINAL (Dourada/Fogo) em AZUL/VIOLETA */
+            filter: grayscale(100%) sepia(100%) hue-rotate(190deg) saturate(300%) contrast(1.2);
+            transform: scale(1.05); animation: breathe 20s infinite alternate;
         }
+        @keyframes breathe { from { transform: scale(1.05); } to { transform: scale(1.1); } }
 
-        /* Overlay escuro sobre a imagem */
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1;
-        }
-
-        /* Conteúdo do hero acima da imagem */
-        .hero .container {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero::before {
-            content: 'ᛉ';
-            position: absolute;
-            top: 15%;
-            left: 8%;
-            font-size: 4rem;
-            color: var(--gold);
-            opacity: 0.2;
-            animation: pulse 8s infinite;
-            z-index: 2;
-        }
-
-        .hero::after {
-            content: 'ᚦ';
-            position: absolute;
-            bottom: 10%;
-            right: 10%;
-            font-size: 5rem;
-            color: var(--ember);
-            opacity: 0.15;
-            animation: pulse 10s infinite;
-            z-index: 2;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.08; transform: scale(1); }
-            50% { opacity: 0.2; transform: scale(1.1); }
+        .hero-badge {
+            border: 1px solid var(--deep-violet); color: var(--neon-blue); padding: 8px 25px;
+            font-size: 0.75rem; letter-spacing: 5px; display: inline-block; margin-bottom: 30px;
+            background: rgba(123, 44, 191, 0.1); backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(123, 44, 191, 0.2);
         }
 
         .hero h1 { 
-            font-size: 4rem; 
-            margin: 30px 0; 
-            line-height: 1.1; 
-            font-weight: 900;
-        }
-
-        .hero p { 
-            max-width: 700px; 
-            margin: 0 auto 50px; 
-            color: #ddd; 
-            font-size: 1.2rem; 
-            font-weight: 400;
-        }
-
-        .status-badge {
-            background: rgba(184,134,11,0.25);
-            border: 1px solid var(--gold);
-            padding: 10px 30px;
-            font-size: 0.85rem;
-            letter-spacing: 6px;
-            color: var(--gold);
-            display: inline-block;
-            font-weight: 600;
-        }
-
-        /* STEPS MASCULINOS */
-        .steps-section { 
-            padding: 120px 0; 
-            background: var(--obsidian);
-            border-top: 1px solid #1a1a1a;
+            font-size: clamp(3rem, 7vw, 5.5rem); line-height: 1; margin-bottom: 25px; 
+            text-shadow: 0 0 40px rgba(0, 243, 255, 0.4); 
         }
         
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 50px;
-            margin-top: 80px;
+        .hero p { 
+            max-width: 700px; margin: 0 auto 50px; font-size: 1.2rem; color: #ccc; font-weight: 300; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }
 
-        .step-card {
-            border-left: 4px solid var(--gold);
-            padding-left: 35px;
-            position: relative;
+        /* Divisor de Energia (Substituindo Símbolos) */
+        .energy-divider {
+            width: 2px; height: 60px; background: linear-gradient(to bottom, transparent, var(--neon-blue), transparent);
+            margin: 20px auto; opacity: 0.7;
         }
 
-        .step-card::before {
-            content: '';
-            position: absolute;
-            left: -12px;
-            top: 0;
-            width: 20px;
-            height: 20px;
-            background: var(--gold);
-            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-            transform: rotate(45deg);
+        /* --- STEPS / INICIAÇÃO --- */
+        .section { padding: 120px 0; position: relative; border-top: 1px solid rgba(255,255,255,0.03); }
+        
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 70px; }
+
+        .void-card {
+            background: var(--glass-dark); border: 1px solid rgba(255,255,255,0.05); padding: 40px;
+            position: relative; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
         }
+        
+        /* Brilho na borda ao passar o mouse */
+        .void-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(123, 44, 191, 0.15), transparent 40%);
+            opacity: 0; transition: opacity 0.5s; pointer-events: none;
+        }
+        
+        .void-card:hover { 
+            transform: translateY(-10px); 
+            border-color: var(--deep-violet); 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(123, 44, 191, 0.15); 
+        }
+        .void-card:hover::before { opacity: 1; }
 
         .step-num { 
-            font-family: 'Cinzel', serif; 
-            font-size: 2.8rem; 
-            color: var(--gold); 
-            margin-bottom: 15px; 
-            font-weight: 900;
+            font-family: 'Cinzel', serif; font-size: 3rem; color: transparent; margin-bottom: 15px; font-weight: 900; 
+            -webkit-text-stroke: 1px var(--neon-blue); opacity: 0.3;
         }
+        .void-card h3 { font-size: 1.4rem; margin-bottom: 15px; color: #fff; }
+        .void-card p { font-size: 0.95rem; color: #bbb; border-left: 1px solid var(--deep-violet); padding-left: 15px; }
 
-        .step-card h3 { 
-            color: var(--text); 
-            margin-bottom: 15px; 
-            font-size: 1.4rem;
-        }
-
-        .step-card p { 
-            font-size: 1rem; 
-            color: #999; 
-            line-height: 1.8;
-        }
-
-        /* Yan Simon Section */
-        .kael-section {
-            padding: 140px 0;
-            background: linear-gradient(180deg, #000 0%, #0a0000 100%);
-            border-top: 2px solid var(--gold);
-            border-bottom: 2px solid var(--gold);
-        }
+        /* --- YAN SIMON (O GUARDIÃO) --- */
+        .kael-section { background: radial-gradient(circle at center, #0a0510 0%, var(--bg-void) 70%); }
         
-        .kael-layout {
-            display: flex;
-            align-items: center;
-            gap: 60px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        /* MEDIA CONTAINER (IMAGEM + VÍDEO) */
-        .media-container {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .kael-img {
-            width: 300px;
-            height: 420px;
-            object-fit: cover;
-            filter: grayscale(80%) contrast(1.3) brightness(0.9);
-            transition: 0.7s;
-            border: 3px solid var(--gold);
-            box-shadow: 0 0 40px rgba(184,134,11,0.4);
-        }
+        .kael-layout { display: flex; align-items: center; justify-content: center; gap: 80px; flex-wrap: wrap; }
         
-        .kael-img:hover {
-            filter: grayscale(0%) contrast(1.2);
-            box-shadow: 0 0 80px rgba(184,134,11,0.8);
-            transform: scale(1.02);
-        }
-
-        /* VÍDEO ESTILIZADO */
-        .kael-video-container {
-            position: relative;
-        }
-
-        .kael-video {
-            width: 300px;
-            height: 420px;
-            object-fit: cover;
-            border: 3px solid var(--gold);
-            box-shadow: 0 0 40px rgba(184,134,11,0.4);
-            transition: 0.7s;
-            background: #000;
-        }
-
-        .kael-video:hover {
-            box-shadow: 0 0 80px rgba(184,134,11,0.8);
-            transform: scale(1.02);
-        }
-
-        .video-label {
-            text-align: center;
-            margin-top: 15px;
-            font-family: 'Cinzel', serif;
-            font-weight: 600;
-            color: var(--gold);
-            font-size: 0.85rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-
-        /* PREÇO MASCULINO - COM VÍDEO DE FUNDO */
-        .price-section { 
-            padding: 140px 0; 
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Vídeo de fundo da seção de preço */
-        .price-bg-video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            transform: translate(-50%, -50%);
-            z-index: 0;
-            object-fit: cover;
-        }
-
-        /* Overlay escuro sobre o vídeo */
-        .price-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            z-index: 1;
-        }
-
-        /* Conteúdo acima do vídeo */
-        .price-section .container {
-            position: relative;
-            z-index: 2;
-        }
+        .media-wrapper { display: flex; gap: 20px; position: relative; }
         
+        /* Moldura de Energia */
+        .media-border {
+            position: absolute; inset: -10px; border: 1px solid var(--neon-blue); opacity: 0.3;
+            transform: skew(-5deg); transition: 0.5s; z-index: 0;
+        }
+        .media-wrapper:hover .media-border { inset: -20px; opacity: 0.8; border-color: var(--deep-violet); box-shadow: 0 0 30px rgba(123, 44, 191, 0.3); }
+
+        .kael-img, .kael-video {
+            width: 280px; height: 400px; object-fit: cover; 
+            /* Filtro para adequar a mídia original à paleta */
+            filter: grayscale(100%) contrast(1.2) brightness(0.9);
+            position: relative; z-index: 1; transition: 0.7s; box-shadow: 0 0 50px rgba(0,0,0,0.9);
+        }
+        .kael-img:hover, .kael-video:hover { filter: grayscale(0%); transform: scale(1.03); }
+
+        .kael-content { max-width: 500px; text-align: left; }
+        .kael-content h2 { font-size: 3rem; margin-bottom: 20px; color: #fff; text-shadow: 0 0 30px rgba(123, 44, 191, 0.5); }
+        .kael-content p { color: rgba(255,255,255,0.7); margin-bottom: 20px; font-size: 1.05rem; }
+
+        /* --- PREÇO (INVESTIDURA) --- */
+        .price-section { position: relative; padding: 150px 0; overflow: hidden; }
+        
+        .price-video-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.2; z-index: -1;
+            /* Filtro Matrix/Cyberpunk */
+            filter: hue-rotate(240deg) contrast(1.5) saturate(1.2);
+        }
+
         .price-box {
-            border: 3px double var(--gold);
-            padding: 80px 50px;
-            max-width: 650px;
-            margin: 0 auto;
-            background: rgba(10, 10, 10, 0.6);
-            backdrop-filter: blur(10px);
-            position: relative;
+            max-width: 700px; margin: 0 auto; background: rgba(2, 2, 5, 0.9);
+            border: 1px solid var(--deep-violet); padding: 80px 40px; position: relative;
+            box-shadow: 0 0 100px rgba(123, 44, 191, 0.15); backdrop-filter: blur(20px);
         }
+        
+        /* Luzes de Canto Minimalistas */
+        .corner { position: absolute; width: 10px; height: 10px; background: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue); transition: 0.5s; }
+        .tl { top: -1px; left: -1px; }
+        .tr { top: -1px; right: -1px; }
+        .bl { bottom: -1px; left: -1px; }
+        .br { bottom: -1px; right: -1px; }
+        
+        .price-box:hover .corner { background: var(--deep-violet); box-shadow: 0 0 20px var(--deep-violet); }
 
-        .price-box::before, .price-box::after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--gold);
+        .price-title { font-size: 2.2rem; margin-bottom: 10px; }
+        .price-subtitle { color: var(--neon-blue); letter-spacing: 3px; font-size: 0.9rem; margin-bottom: 40px; display: block; }
+
+        /* --- FOOTER --- */
+        footer {
+            border-top: 1px solid rgba(255,255,255,0.05); padding: 80px 20px; text-align: center;
+            background: #010102; color: #666; font-size: 0.85rem;
         }
+        .footer-logo { font-family: 'Cinzel', serif; color: var(--silver); font-size: 1.8rem; margin-bottom: 15px; display: block; letter-spacing: 5px; }
 
-        .price-box::before { top: -15px; left: -15px; border-right: none; border-bottom: none; }
-        .price-box::after { bottom: -15px; right: -15px; border-left: none; border-top: none; }
-
-        /* ESTILO BOTÃO WHATSAPP */
+        /* --- WHATSAPP --- */
         .whatsapp-float {
-            position: fixed;
-            width: 60px;
-            height: 60px;
-            bottom: 25px;
-            right: 25px;
-            background-color: #25d366;
-            color: #FFF;
-            border-radius: 50px;
-            text-align: center;
-            font-size: 30px;
-            box-shadow: 0px 5px 20px rgba(0,0,0,0.5);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            background: #25d366; color: #fff; border-radius: 50%; font-size: 30px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); z-index: 100; text-decoration: none;
+            transition: 0.3s;
         }
-        .whatsapp-float:hover {
-            background-color: #1ebe57;
-            transform: scale(1.1);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(37, 211, 102, 0.6);
-        }
+        .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(37, 211, 102, 0.4); }
 
-        /* RESPONSIVO */
-        @media (max-width: 992px) {
-            .kael-layout {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .media-container {
-                flex-direction: column;
-            }
-        }
+        /* --- ANIMAÇÕES SCROLL --- */
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
 
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.8rem; }
-            .kael-img, .kael-video { 
-                width: 280px; 
-                height: 380px; 
-            }
-            .media-container {
-                gap: 20px;
-            }
-            
-            /* Ocultar vídeo de fundo em mobile para economizar dados */
-            .price-bg-video {
-                display: none;
-            }
-            
-            .price-section {
-                background: #000;
-            }
-            
-            .hero-bg-image {
-                background-attachment: scroll;
-            }
-
-            .whatsapp-float { width: 50px; height: 50px; font-size: 26px; bottom: 20px; right: 20px; }
-        }
-
-        @media (max-width: 480px) {
-            .kael-img, .kael-video { 
-                width: 250px; 
-                height: 340px; 
-            }
+        @media (max-width: 900px) {
+            .kael-layout { flex-direction: column; text-align: center; }
+            .media-wrapper { flex-direction: column; }
+            .hero h1 { font-size: 3rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- HERO DO GUERREIRO -->
+    <!-- Fundo de Energia -->
+    <div class="energy-field"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- HERO SECTION -->
     <section class="hero">
-        <div class="hero-bg-image"></div>
-        <div class="hero-overlay"></div>
-        
-        <div class="container">
-            <div class="status-badge">ÚLTIMAS VAGAS</div>
+        <div class="hero-bg"></div>
+        <div class="container reveal">
+            <div class="hero-badge">ÚLTIMAS VAGAS</div>
             
-            <h1>Retorno do <br><span class="gold-text">Guardião Rei</span></h1>
+            <h1>Retorno do <br><span class="cosmic-text">Guardião Rei</span></h1>
+            
+            <div class="energy-divider"></div>
             
             <p>
                 Um confronto direto com seu campo de força. 
-                Corte os bloqueios, reacenda o fogo interior e receba a iniciação de presença com Yan Simon.
+                Corte os bloqueios, reacenda a chama interior e receba a iniciação de presença com Yan Simon.
             </p>
 
-            <a href=" https://go.hotmart.com/Q103262214D?dp=1" target="_blank" class="btn-warrior">
+            <a href=" https://go.hotmart.com/Q103262214D?dp=1" target="_blank" class="btn-cosmic">
                 Reivindicar Meu Poder
             </a>
         </div>
     </section>
 
-    <!-- TRILHA DO GUARDIÃO -->
-    <section class="steps-section">
-        <div class="container">
-            <h2 style="text-align: center; margin-bottom: 30px; font-size: 2.5rem;">A Iniciação</h2>
-            <p style="text-align: center; color: #888; max-width: 700px; margin: 0 auto 60px; font-size: 1.1rem;">
-                Em 60 minutos de confronto energético, você será levado ao limite do seu campo para emergir renovado:
-            </p>
+    <!-- TRILHA DO GUARDIÃO (STEPS) -->
+    <section class="section">
+        <div class="container" id="card-container">
+            <div style="text-align: center; margin-bottom: 60px;" class="reveal">
+                <span class="italic-serif">O Processo</span>
+                <h2 style="font-size: 2.5rem; text-shadow: 0 0 20px rgba(123, 44, 191, 0.4);">A Iniciação</h2>
+                <p style="color: #bbb; max-width: 600px; margin: 15px auto;">
+                    Em 60 minutos de confronto energético, você será levado ao limite do seu campo para emergir renovado e coroado.
+                </p>
+            </div>
 
             <div class="steps-grid">
-                <div class="step-card">
+                <div class="void-card reveal">
                     <div class="step-num">01</div>
                     <h3>Diagnóstico do Campo</h3>
-                    <p>Identificação precisa dos bloqueios que drenam sua força, autoridade e capacidade de conquista.</p>
+                    <p>Identificação precisa e implacável dos bloqueios que drenam sua força, autoridade e capacidade de conquista no mundo real.</p>
                 </div>
-                <div class="step-card">
+                <div class="void-card reveal delay-100">
                     <div class="step-num">02</div>
                     <h3>Corte & Queima</h3>
-                    <p>Limpeza profunda com a espada energética akáshica. Queima de padrões de medo, escassez e submissão.</p>
+                    <p>Limpeza profunda com a lâmina energética akáshica. Dissolução de padrões de medo, escassez e submissão ancestral.</p>
                 </div>
-                <div class="step-card">
+                <div class="void-card reveal delay-200">
                     <div class="step-num">03</div>
                     <h3>Coroação do Rei</h3>
-                    <p>Ativação do seu centro de poder (3º chakra), presença magnética e direção inabalável. Você sai como soberano do seu reino.</p>
+                    <p>Ativação do centro de poder, presença magnética e direção inabalável. Você sai da sessão como soberano do seu reino.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Yan Simon -->
-    <section class="kael-section">
+    <!-- YAN SIMON (KAEL SECTION) -->
+    <section class="kael-section section">
         <div class="container kael-layout">
             
-            <!-- CONTAINER COM IMAGEM E VÍDEO LADO A LADO -->
-            <div class="media-container">
-                <!-- Imagem do Yan Simon -->
-                <div>
-                    <img class="kael-img" src="https://i.ibb.co/r23S97Zw/Whats-App-Image-2025-11-26-at-13-20-51.jpg" alt="Yan Simon - O Guardião do Fogo">
-                </div>
-                
-                <!-- Vídeo ao lado -->
-                <div class="kael-video-container">
-                    <video 
-                        class="kael-video" 
-                        autoplay 
-                        loop 
-                        muted 
-                        playsinline
-                        poster="https://i.ibb.co/r23S97Zw/Whats-App-Image-2025-11-26-at-13-20-51.jpg"
-                    >
-                        <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764808918/generated_video_4_bd2ivx.mp4" type="video/mp4">
-                        Seu navegador não suporta vídeos.
-                    </video>
-                    <p class="video-label">⚔ A Convocação ⚔</p>
-                </div>
+            <div class="media-wrapper reveal">
+                <div class="media-border"></div>
+                <!-- Filtros aplicados via CSS para mudar a cor da imagem original -->
+                <img class="kael-img" src="https://i.ibb.co/r23S97Zw/Whats-App-Image-2025-11-26-at-13-20-51.jpg" alt="Yan Simon">
+                <video class="kael-video" autoplay loop muted playsinline>
+                    <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764808918/generated_video_4_bd2ivx.mp4">
+                </video>
             </div>
             
-            <!-- Texto sobre Yan Simon -->
-            <div style="max-width: 450px;">
-                <div class="italic">O Guardião do Fogo</div>
-                <h2 style="font-size: 2.8rem; margin: 15px 0; color: var(--gold);">Yan Simon</h2>
-                <p style="color: #ccc; margin-bottom: 25px; font-size: 1.1rem; line-height: 1.9;">
-                    Mestre de iniciações masculinas e portador da linhagem do fogo sagrado. Yan forjou uma metodologia implacável que une o poder ancestral das ordens guerreiras com a precisão da engenharia quântica.
-                </p>
-                <p style="color: #bbb; line-height: 1.9;">
-                    Sua sessão não é conversa. É um rito de passagem para homens que decidiram parar de sobreviver e começar a dominar.
-                </p>
+            <div class="kael-content reveal">
+                <span class="italic-serif">O Guardião</span>
+                <h2>Yan Simon</h2>
+                <p>Mestre de iniciações masculinas e portador da linhagem de poder. Yan forjou uma metodologia implacável que une a sabedoria ancestral das ordens guerreiras com a precisão da engenharia quântica.</p>
+                <p>Sua sessão não é conversa terapêutica. É um rito de passagem para homens que decidiram parar de sobreviver e começar a dominar sua própria realidade.</p>
+                
+                <div style="margin-top: 30px; font-size: 1.2rem; color: var(--neon-blue); letter-spacing: 2px;">
+                    ✦ A Convocação ✦
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- INVESTIDURA (PREÇO REMOVIDO) -->
+    <!-- PREÇO (MONOLITH) -->
     <section class="price-section">
-        <video class="price-bg-video" autoplay muted loop playsinline>
-            <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1765949811/generated_video_-_2025-12-17T023404.117_bkruxe.mp4" type="video/mp4">
+        <video class="price-video-bg" autoplay loop muted playsinline>
+            <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1765949811/generated_video_-_2025-12-17T023404.117_bkruxe.mp4">
         </video>
-        <div class="price-overlay"></div>
-        
+
         <div class="container">
-            <div class="price-box">
-                <h2 style="font-size: 2.2rem; margin-bottom: 15px;">Sessão Individual do Sagrado Masculino</h2>
-                <p style="color: #888; font-size: 0.95rem; margin-bottom: 50px;">Online via Zoom • 60 minutos de confronto direto</p>
+            <div class="price-box reveal">
+                <!-- Luzes de Canto -->
+                <div class="corner tl"></div><div class="corner tr"></div>
+                <div class="corner bl"></div><div class="corner br"></div>
 
-                <!-- PREÇO REMOVIDO AQUI -->
+                <span class="price-subtitle">CHAMADO PARA O TRONO</span>
+                <h2 class="price-title">Sessão Individual <br><span class="cosmic-text">Sagrado Masculino</span></h2>
+                
+                <p style="color: #bbb; margin-bottom: 50px; font-size: 1.1rem;">
+                    Online via Zoom • 60 minutos de confronto direto
+                </p>
 
-                <a href=" https://go.hotmart.com/Q103262214D?dp=1" target="_blank" class="btn-warrior" style="width: 100%; text-align: center; font-size: 1.2rem;">
+                <a href=" https://go.hotmart.com/Q103262214D?dp=1" target="_blank" class="btn-cosmic" style="width: 100%; text-align: center;">
                     Assumir Meu Trono
                 </a>
 
-                <p style="margin-top: 30px; font-size: 0.9rem; color: var(--bronze);">
-                    *Horário marcado após confirmação, apenas para quem está pronto.
+                <div style="margin-top: 40px; display: flex; justify-content: center; gap: 30px; color: var(--deep-violet); opacity: 0.9; font-size: 1.5rem;">
+                    <span><i class="fas fa-bolt"></i></span>
+                    <span><i class="fas fa-shield-alt"></i></span>
+                    <span><i class="fas fa-crown"></i></span>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.85rem; color: #666;">
+                    *Horário marcado após confirmação. Apenas para quem está pronto.
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- RODAPÉ DO REINO -->
-    <footer style="text-align: center; padding: 80px 20px; color: #555; border-top: 2px solid var(--gold); background: #000;">
-        <p style="font-size: 1.8rem; color: var(--gold); margin-bottom: 10px; letter-spacing: 5px;">YAN SIMON</p>
-        <p style="font-size: 0.9rem; color: #888;">© 2024 • Irmandade do Fogo Sagrado</p>
-        <p style="margin-top: 20px; font-style: italic; color: var(--bronze);">
+    <!-- FOOTER -->
+    <footer>
+        <span class="footer-logo">YAN SIMON</span>
+        <p>© 2024 • Irmandade</p>
+        <p style="margin-top: 15px; font-style: italic; color: var(--silver); opacity: 0.5;">
             "O homem não nasce rei. Ele se torna."
         </p>
     </footer>
 
-    <!-- BOTÃO WHATSAPP ADICIONADO -->
-    <a href="https://wa.me/557183448621?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20Alinhamento%20do%20Sagrado%20Masculino." class="whatsapp-float" target="_blank" title="Fale Conosco">
+    <!-- WHATSAPP -->
+    <a href="https://wa.me/557183448621?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20Alinhamento%20do%20Sagrado%20Masculino." class="whatsapp-float" target="_blank">
         <i class="fab fa-whatsapp"></i>
     </a>
 
+    <!-- SCRIPTS -->
+    <script>
+        // --- Partículas de Energia Azul/Violeta ---
+        function createEnergyParticles() {
+            const container = document.getElementById('particles');
+            const count = 40; 
+
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const x = Math.random() * 100;
+                const delay = Math.random() * 5;
+                const duration = 10 + Math.random() * 10;
+                const size = Math.random() * 3;
+                
+                particle.style.left = `${x}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Variação de cor entre azul e violeta
+                if(Math.random() > 0.5) {
+                    particle.style.background = 'var(--deep-violet)';
+                    particle.style.boxShadow = '0 0 10px var(--deep-violet)';
+                }
+
+                container.appendChild(particle);
+            }
+        }
+        createEnergyParticles();
+
+        // --- Mouse Glow Effect nos Cards ---
+        const cardsContainer = document.getElementById('card-container');
+        const cards = document.querySelectorAll('.void-card');
+
+        cardsContainer.addEventListener('mousemove', e => {
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // --- Scroll Reveal Logic ---
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Trigger on load
+    </script>
 </body>
 </html>
