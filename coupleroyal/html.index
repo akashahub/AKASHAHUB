@@ -6,310 +6,452 @@
     <title>O RITUAL REAL | Alquimia para Casais • Yan Simon</title>
     
     <!-- Fontes de Luxo -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
 
     <style>
         /* --- DNA VISUAL: IMPÉRIO & PAIXÃO --- */
         :root {
-            --bg: #050000;
-            --gold: #C5A059;
-            --gold-grad: linear-gradient(90deg, #bf953f, #fcf6ba, #aa771c);
-            --crimson-glow: rgba(100, 0, 20, 0.3);
-            --text: #EAEAEA;
-            --muted: #999;
+            --bg: #030000;
+            --surface: #0a0505;
+            --gold-start: #bf953f;
+            --gold-mid: #fcf6ba;
+            --gold-end: #aa771c;
+            /* Gradiente Ouro Animado */
+            --gold-grad: linear-gradient(135deg, #bf953f 0%, #fcf6ba 40%, #b38728 60%, #fbf5b7 100%);
+            --crimson-glow: rgba(120, 0, 20, 0.4);
+            --text-main: #F0F0F0;
+            --text-muted: #A0A0A0;
+            
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* --- RESET & BASE --- */
         * { margin:0; padding:0; box-sizing:border-box; }
         
         body { 
             background: var(--bg); 
-            color: var(--text); 
+            color: var(--text-main); 
             font-family: 'Montserrat', sans-serif; 
-            line-height: 1.6; 
-            overflow-x: hidden; 
+            line-height: 1.7; 
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3 { font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 2px; }
+        /* Textura de Ruído (Noise) para aspecto cinematográfico */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+        }
+
+        h1, h2, h3 { 
+            font-family: 'Cinzel', serif; 
+            text-transform: uppercase; 
+            letter-spacing: 0.1em;
+            font-weight: 400;
+        }
         
-        .gold { 
+        p { font-weight: 300; letter-spacing: 0.02em; }
+
+        /* --- CLASSES UTILITÁRIAS DE LUXO --- */
+        .gold-text { 
             background: var(--gold-grad); 
+            background-size: 200% auto;
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent; 
-            font-weight: 700; 
+            animation: shine 4s linear infinite;
+            font-weight: 600;
         }
         
         .italic-serif {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            color: var(--gold);
+            color: var(--gold-start);
+            letter-spacing: 0.05em;
         }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 30px; position: relative; z-index: 2; }
 
-        /* --- BOTÃO PULSANTE --- */
+        /* --- ANIMAÇÕES GERAIS --- */
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* --- SCROLL REVEAL (JS Triggered) --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1.2s var(--ease-out-expo);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+
+        /* --- BOTÃO ROYAL --- */
         .btn-royal {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background: var(--gold-grad);
-            color: #050000 !important;
-            padding: 26px 70px;
+            background-size: 200% auto;
+            color: #1a0505 !important;
+            padding: 24px 60px;
             font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
-            font-weight: 800;
+            font-size: 1.1rem;
+            font-weight: 700;
             text-transform: uppercase;
             text-decoration: none;
-            border-radius: 2px;
-            box-shadow: 0 0 30px rgba(197,160,89,0.4), 0 0 60px var(--crimson-glow);
-            transition: all .4s;
+            letter-spacing: 2px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.5s var(--ease-out-expo);
             cursor: pointer;
             position: relative;
-            z-index: 10;
-        }
-        .btn-royal:hover { 
-            transform: scale(1.03); 
-            box-shadow: 0 0 50px rgba(197,160,89,0.8), 0 0 80px rgba(255, 0, 50, 0.2); 
-        }
-        
-        .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 
-            0% { box-shadow: 0 0 0 0 rgba(197,160,89,0.6); } 
-            70% { box-shadow: 0 0 0 20px rgba(197,160,89,0); } 
-            100% { box-shadow: 0 0 0 0 rgba(197,160,89,0); } 
+            overflow: hidden;
+            box-shadow: 0 10px 40px -10px rgba(191, 149, 63, 0.4);
         }
 
-        /* --- HERO SECTION COM VÍDEO --- */
+        .btn-royal:hover { 
+            transform: translateY(-3px) scale(1.02); 
+            box-shadow: 0 20px 50px -10px rgba(191, 149, 63, 0.6); 
+            background-position: right center;
+        }
+
+        /* Efeito de brilho passando pelo botão */
+        .btn-royal::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg);
+            transition: 0s;
+        }
+        .btn-royal:hover::after {
+            left: 150%;
+            transition: 0.7s;
+        }
+
+        /* --- HERO SECTION --- */
         .hero { 
-            min-height: 100vh; 
+            height: 100vh; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             text-align: center; 
             position: relative;
-            padding: 40px 0;
             overflow: hidden;
         }
 
-        /* Vídeo de Fundo */
         .hero-video {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            transform: translate(-50%, -50%);
+            top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            transform: translate(-50%, -50%) scale(1.1); /* Scale for slow zoom effect */
             z-index: -2;
             object-fit: cover;
+            filter: saturate(0.8) contrast(1.1);
         }
 
-        /* Overlay escuro */
         .hero-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                rgba(0, 0, 0, 0.5) 0%,
-                rgba(5, 0, 0, 0.7) 50%,
-                rgba(0, 0, 0, 0.85) 100%
-            );
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, #030000 90%);
             z-index: -1;
         }
 
-        .hero-overlay::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.08;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
         .hero-badge { 
-            border-top: 1px solid var(--gold); 
-            border-bottom: 1px solid var(--gold); 
-            padding: 10px 30px; 
-            font-size: 0.9rem; 
-            color: var(--gold); 
-            letter-spacing: 5px; 
+            border: 1px solid rgba(191, 149, 63, 0.5);
+            padding: 12px 35px; 
+            font-size: 0.8rem; 
+            color: var(--gold-mid); 
+            letter-spacing: 0.3em; 
             display: inline-block; 
-            margin-bottom: 30px; 
+            margin-bottom: 35px; 
+            text-transform: uppercase;
+            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.4);
         }
 
-        .section { padding: 120px 0; }
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 1.1;
+            margin-bottom: 25px;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
 
-        /* --- CARDS DOS ELEMENTOS --- */
+        .hero-desc {
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto 50px;
+            color: rgba(255,255,255,0.85);
+            font-weight: 300;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.3);
+            font-size: 2rem;
+            animation: float 2s infinite ease-in-out;
+        }
+
+        /* --- SECTIONS --- */
+        .section { padding: 140px 0; position: relative; }
+        .bg-dark { background: var(--surface); }
+
+        .section-header { text-align: center; margin-bottom: 80px; }
+        .section-header h2 { font-size: 2.5rem; margin-top: 15px; }
+
+        /* --- CARDS (GLASSMORPHISM) --- */
         .elements-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
+            gap: 30px;
         }
-        .element-card {
-            background: linear-gradient(145deg, rgba(20,20,20,0.8), rgba(5,5,5,0.9));
-            border: 1px solid rgba(197,160,89,0.15);
-            padding: 50px 30px;
-            text-align: center;
-            transition: 0.5s;
-        }
-        .element-card:hover {
-            border-color: var(--gold);
-            transform: translateY(-10px);
-            box-shadow: 0 10px 40px var(--crimson-glow);
-        }
-        .icon-display { font-size: 2.5rem; margin-bottom: 20px; display: block; }
 
-        /* --- YAN SECTION --- */
-        .yan-section {
-            padding: 140px 0;
-            background: #080808;
+        .element-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 60px 40px;
+            text-align: center;
+            transition: all 0.6s var(--ease-out-expo);
             position: relative;
             overflow: hidden;
         }
+
+        .element-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top, rgba(191, 149, 63, 0.15), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+
+        .element-card:hover {
+            transform: translateY(-15px);
+            border-color: rgba(191, 149, 63, 0.4);
+            box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8);
+        }
+        .element-card:hover::before { opacity: 1; }
+
+        .element-card > * { position: relative; z-index: 2; }
+
+        .icon-display { 
+            font-size: 3rem; 
+            margin-bottom: 30px; 
+            display: inline-block;
+            filter: drop-shadow(0 0 15px rgba(191, 149, 63, 0.3));
+        }
+
+        /* --- YAN SECTION --- */
         .yan-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 80px;
-            flex-wrap: wrap;
+            align-items: center;
         }
+
+        .photo-frame {
+            position: relative;
+            padding: 20px;
+        }
+        
+        .photo-frame::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: 1px solid rgba(191, 149, 63, 0.3);
+            transform: translate(-20px, -20px);
+            transition: transform 0.8s var(--ease-out-expo);
+        }
+        
+        .photo-frame:hover::before {
+            transform: translate(-10px, -10px);
+        }
+
         .yan-photo {
-            width: 400px;
-            height: 550px;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 3/4;
             object-fit: cover;
-            border: 2px solid var(--gold);
-            box-shadow: 0 0 60px rgba(197,160,89,0.2); 
-            filter: contrast(1.1) sepia(0.1);
+            filter: grayscale(20%) sepia(10%) contrast(1.1);
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        .yan-text { max-width: 520px; }
 
         /* --- OFFER SECTION --- */
-        .offer-box {
-            background: rgba(10, 5, 5, 0.9);
-            border: 2px solid var(--gold);
-            padding: 80px 40px;
-            text-align: center;
-            position: relative;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        .offer-box::after {
-            content: '∞';
-            position: absolute;
-            top: -40px; left: 50%; transform: translateX(-50%);
-            font-size: 5rem; color: var(--gold);
-            background: var(--bg); padding: 0 20px;
-            line-height: 0.5;
+        .offer-section {
+            background: linear-gradient(to bottom, #030000, #140808);
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
+        .offer-box {
+            position: relative;
+            background: rgba(10, 5, 5, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(191, 149, 63, 0.3);
+            padding: 100px 50px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 0 100px rgba(120, 0, 20, 0.15);
+        }
+
+        .price-tag {
+            margin: 40px 0;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .price-old { text-decoration: line-through; opacity: 0.5; font-size: 1.1rem; }
+        .price-new { font-size: 4rem; font-family: 'Cinzel', serif; line-height: 1; margin: 10px 0; }
+
+        .feature-list {
+            list-style: none;
+            text-align: left;
+            display: inline-block;
+            margin-bottom: 40px;
+        }
+        .feature-list li {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #ddd;
+            display: flex;
+            align-items: center;
+        }
+        .feature-list li span { color: var(--gold-mid); margin-right: 15px; font-size: 1.3rem; }
+
         /* --- RESPONSIVO --- */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.2rem !important;
-            }
-            
-            .btn-royal {
-                padding: 20px 40px;
-                font-size: 1rem;
-            }
-            
-            .yan-photo {
-                width: 100%;
-                height: 400px;
-            }
-            
-            .yan-container {
-                flex-direction: column;
-                text-align: center;
-            }
+        @media (max-width: 900px) {
+            .yan-container { grid-template-columns: 1fr; text-align: center; }
+            .photo-frame { max-width: 400px; margin: 0 auto; }
+            .photo-frame::before { transform: translate(10px, 10px); }
+            .section { padding: 80px 0; }
+        }
+
+        @media (max-width: 600px) {
+            .btn-royal { padding: 20px 30px; font-size: 1rem; width: 100%; }
+            .price-new { font-size: 3rem; }
+            .hero-badge { letter-spacing: 0.15em; padding: 10px 20px; }
+            .container { padding: 0 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- HERO: A PROMESSA DE UNIÃO REAL -->
+    <!-- TEXTURA CINEMATOGRÁFICA -->
+    <div class="noise-overlay"></div>
+
+    <!-- HERO SECTION -->
     <section class="hero">
-        <!-- VÍDEO DE FUNDO -->
-        <video class="hero-video" autoplay muted loop playsinline>
-            <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1765825042/Design_sem_nome_4_rlqe1v.mp4">
+        <video class="hero-video" autoplay muted loop playsinline poster="https://i.imgur.com/RiilCud.jpeg">
+            <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1765825042/Design_sem_nome_4_rlqe1v.mp4" type="video/mp4">
         </video>
         
-        <!-- OVERLAY -->
         <div class="hero-overlay"></div>
         
-        <!-- CONTEÚDO -->
-        <div class="container hero-content">
-            <div class="hero-badge">Protocolo para Casais</div>
-            <h1 style="font-size: 3.8rem; line-height: 1.2; margin: 20px 0;">
-                Transforme seu Relacionamento em um <br>
-                <span class="gold">Império de Êxtase</span>
-            </h1>
-            <p style="font-size: 1.2rem; max-width: 700px; margin: 30px auto; color: #ccc; font-weight: 300;">
-                O ritual secreto que une Fascinação, Polaridade e Tantra para reacender o desejo brutal e conectar as almas em um nível sagrado.
-            </p>
+        <div class="container">
+            <div class="reveal">
+                <div class="hero-badge">Protocolo de Elite</div>
+            </div>
             
-            <a href="https://pay.hotmart.com/N102081368G" target="_blank" class="btn-royal pulse">
-                Acessar o Ritual Real
-            </a>
+            <div class="reveal delay-100">
+                <h1>
+                    Transforme seu Relacionamento<br>
+                    em um <span class="gold-text">Império de Êxtase</span>
+                </h1>
+            </div>
+
+            <div class="reveal delay-200">
+                <p class="hero-desc">
+                    O ritual secreto que une Fascinação, Polaridade e Tantra para reacender o desejo brutal e conectar as almas em um nível sagrado.
+                </p>
+            </div>
             
-            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.6;">Discreto • Online • Transformação Imediata</p>
+            <div class="reveal delay-300">
+                <a href="https://pay.hotmart.com/N102081368G" target="_blank" class="btn-royal">
+                    Acessar o Ritual Real
+                </a>
+            </div>
         </div>
+
+        <div class="scroll-indicator">⌄</div>
     </section>
 
-    <!-- A DOR: ROOMMATES OU AMANTES? -->
-    <section class="section" style="background: #0a0a0a;">
+    <!-- SECTION: A DOR -->
+    <section class="section bg-dark">
         <div class="container">
-            <div class="italic-serif" style="text-align: center; font-size: 1.8rem; margin-bottom: 20px;">O fim da "fase de colegas de quarto"</div>
-            <h2 style="text-align: center; margin-bottom: 50px;">Vocês são sócios ou <span class="gold">Amantes?</span></h2>
+            <div class="section-header reveal">
+                <p class="italic-serif" style="font-size: 1.8rem; margin-bottom: 10px;">O fim da mediocridade</p>
+                <h2>Vocês são sócios ou <span class="gold-text">Amantes?</span></h2>
+            </div>
             
-            <div style="max-width: 800px; margin: 0 auto; text-align: center; font-size: 1.1rem; color: #bbb;">
-                <p style="margin-bottom: 20px;">
-                    A rotina é o veneno silencioso. Ela transforma paixão em hábito, desejo em obrigação e mistério em tédio.
+            <div class="reveal delay-100" style="max-width: 800px; margin: 0 auto; text-align: center; font-size: 1.15rem; color: #ccc;">
+                <p style="margin-bottom: 25px;">
+                    A rotina é o veneno silencioso dos impérios. Ela transforma paixão em hábito, desejo em obrigação e mistério em tédio.
                     Muitos casais se amam, mas perderam a <strong>eletricidade</strong>.
                 </p>
                 <p>
-                    Para construir um relacionamento de alto nível, o amor não basta. É preciso <strong>Polaridade</strong>. É preciso saber gerar tensão, fascinação e entrega. O <strong>Ritual Real</strong> não é terapia. É uma ativação energética para casais que desejam mais do que apenas "conviver".
+                    Para construir um legado a dois, o amor não basta. É preciso <strong>Polaridade</strong>. É preciso saber gerar tensão, fascinação e entrega. O <strong>Ritual Real</strong> não é terapia. É uma ativação energética.
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- A SOLUÇÃO: OS 3 PILARES -->
+    <!-- SECTION: PILARES -->
     <section class="section">
         <div class="container">
-            <h2 style="text-align: center;">A Tríade da <span class="gold">União Eterna</span></h2>
-            <p style="text-align: center; opacity: 0.7; margin-bottom: 50px;">O que vocês vão desbloquear juntos.</p>
+            <div class="section-header reveal">
+                <h2>A Tríade da <span class="gold-text">União Eterna</span></h2>
+                <p style="opacity: 0.7; margin-top: 10px;">O que vocês vão desbloquear juntos.</p>
+            </div>
 
             <div class="elements-grid">
-                <div class="element-card">
+                <!-- Card 1 -->
+                <div class="element-card reveal delay-100">
                     <span class="icon-display">👁️</span>
-                    <h3 style="color: var(--gold); margin-bottom: 15px;">Fascinação Mútua</h3>
-                    <p>Aprenda a técnica do "Olhar Magnético" para criar uma bolha de intimidade onde só existem vocês dois, mesmo em uma sala lotada. Recupere a admiração.</p>
+                    <h3 style="color: var(--gold-mid); margin-bottom: 15px;">Fascinação Mútua</h3>
+                    <p style="color: var(--text-muted);">Aprenda a técnica do "Olhar Magnético" para criar uma bolha de intimidade absoluta. Recupere a admiração de quando se viram pela primeira vez.</p>
                 </div>
 
-                <div class="element-card">
+                <!-- Card 2 -->
+                <div class="element-card reveal delay-200">
                     <span class="icon-display">🔥</span>
-                    <h3 style="color: var(--gold); margin-bottom: 15px;">Polaridade & Desejo</h3>
-                    <p>Restarure a tensão sexual. O masculino direciona, o feminino flui. Quando os polos se afastam e se reencontram, a faísca vira incêndio.</p>
+                    <h3 style="color: var(--gold-mid); margin-bottom: 15px;">Polaridade & Desejo</h3>
+                    <p style="color: var(--text-muted);">Restaure a tensão sexual. O masculino direciona, o feminino flui. Quando os polos se realinham, a faísca se torna um incêndio incontrolável.</p>
                 </div>
 
-                <div class="element-card">
+                <!-- Card 3 -->
+                <div class="element-card reveal delay-300">
                     <span class="icon-display">🐍</span>
-                    <h3 style="color: var(--gold); margin-bottom: 15px;">Tantra & Conexão</h3>
-                    <p>Rituais práticos (sem nudez explícita no curso) para trocar energia vital, prolongar o prazer e transformar o toque em uma experiência espiritual.</p>
+                    <h3 style="color: var(--gold-mid); margin-bottom: 15px;">Tantra & Conexão</h3>
+                    <p style="color: var(--text-muted);">Rituais práticos para trocar energia vital, prolongar o prazer e transformar o toque físico em uma experiência espiritual profunda.</p>
                 </div>
             </div>
 
-            <div style="text-align: center; margin-top: 70px;">
+            <div class="reveal delay-200" style="text-align: center; margin-top: 80px;">
                 <a href="https://pay.hotmart.com/N102081368G" target="_blank" class="btn-royal">
                     Quero Ativar Nosso Ritual
                 </a>
@@ -317,63 +459,93 @@
         </div>
     </section>
 
-    <!-- O MENTOR - YAN SIMON -->
-    <section class="yan-section">
+    <!-- SECTION: MENTOR -->
+    <section class="section bg-dark">
         <div class="container yan-container">
-            <img src="https://i.imgur.com/RiilCud.jpeg" alt="Yan Simon - Mentor e especialista em relacionamentos" class="yan-photo">
+            <div class="photo-frame reveal">
+                <img src="https://i.imgur.com/RiilCud.jpeg" alt="Yan Simon" class="yan-photo">
+            </div>
 
-            <div class="yan-text">
-                <div class="italic-serif" style="font-size: 1.5rem;">Seu Guia</div>
-                <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: var(--gold);">Yan Simon</h2>
-                <p style="margin-bottom: 20px; font-size: 1.1rem; color: #ddd;">
+            <div class="yan-text reveal delay-100">
+                <div class="italic-serif" style="font-size: 2rem;">Seu Guia</div>
+                <h2 style="font-size: 3rem; margin-bottom: 25px;" class="gold-text">Yan Simon</h2>
+                <p style="margin-bottom: 25px; font-size: 1.1rem; color: #ddd;">
                     Eu não ensino apenas sobre energia individual. Eu ensino sobre a <strong>Alquimia da União</strong>.
                 </p>
-                <p style="margin-bottom: 20px; color: #bbb;">
-                    Muitos homens e mulheres poderosos falham em seus relacionamentos porque tentam usar a lógica onde deveria reinar a energia. O <em>Ritual Real</em> é a compilação de conhecimentos milenares sobre magnetismo e tantra, adaptados para casais modernos que querem construir um legado juntos.
+                <p style="margin-bottom: 30px; color: var(--text-muted);">
+                    Muitos homens e mulheres poderosos falham em seus relacionamentos porque tentam usar a lógica onde deveria reinar a energia. O <em>Ritual Real</em> é a compilação de conhecimentos milenares, adaptados para casais modernos que querem construir um legado.
                 </p>
-                <p style="color: var(--gold); font-weight: 600;">
-                    "Um casal alinhado energeticamente é imparável."
-                </p>
+                <div style="border-left: 3px solid var(--gold-start); padding-left: 20px;">
+                    <p style="color: #fff; font-style: italic;">
+                        "Um casal alinhado energeticamente é imparável."
+                    </p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- OFERTA FINAL -->
-    <section class="section" style="background: radial-gradient(circle at center, #1a0505, #000);">
+    <!-- SECTION: OFERTA -->
+    <section class="section offer-section">
         <div class="container">
-            <div class="offer-box">
-                <h2 style="font-size: 2.5rem; margin-bottom: 20px;">O Ritual Real</h2>
-                <p style="color: #aaa; margin-bottom: 40px;">Acesso Vitalício ao Protocolo de Casais</p>
+            <div class="offer-box reveal">
+                <div class="italic-serif" style="font-size: 1.5rem; margin-bottom: 10px;">O Convite Final</div>
+                <h2 style="font-size: 2.5rem; margin-bottom: 10px;">O Ritual Real</h2>
+                <p style="color: #aaa; letter-spacing: 2px; font-size: 0.9rem;">ACESSO VITALÍCIO</p>
 
-                <ul style="text-align: left; max-width: 400px; margin: 0 auto 40px; list-style: none; color: #ccc;">
-                    <li style="margin-bottom: 15px;">✓ <strong>Videoaulas Práticas:</strong> Direto ao ponto.</li>
-                    <li style="margin-bottom: 15px;">✓ <strong>Exercícios de Conexão:</strong> Para fazer a dois.</li>
-                    <li style="margin-bottom: 15px;">✓ <strong>Áudios de Harmonização:</strong> Limpeza de conflitos.</li>
-                    <li style="margin-bottom: 15px;">✓ <strong>Bônus Secreto:</strong> Massagem Sensorial.</li>
+                <div class="price-tag">
+                    <span class="price-old">De R$ 497,00</span><br>
+                    <div class="price-new gold-text">R$ 97,00</div>
+                    <span style="font-size: 0.9rem; color: #888;">(Condição Exclusiva de Lançamento)</span>
+                </div>
+
+                <ul class="feature-list">
+                    <li><span>✓</span> Protocolo Completo em Vídeo</li>
+                    <li><span>✓</span> Exercícios de Conexão a Dois</li>
+                    <li><span>✓</span> Áudios de Harmonização</li>
+                    <li><span>✓</span> Bônus: Massagem Sensorial</li>
                 </ul>
 
-                <div style="font-size: 1.2rem; margin-bottom: 30px;">
-                    <span style="text-decoration: line-through; opacity: 0.5;">De R$ 497,00</span><br>
-                    <span style="font-size: 3rem; color: var(--gold); font-family: 'Cinzel', serif;">R$ 97,00</span><br>
-                    <span style="font-size: 1rem;">(Oferta de Lançamento)</span>
-                </div>
-
-                <a href="https://pay.hotmart.com/N102081368G" target="_blank" class="btn-royal pulse" style="width: 100%;">
-                    COMPRAR AGORA
+                <br>
+                <a href="https://pay.hotmart.com/N102081368G" target="_blank" class="btn-royal" style="width: 100%; max-width: 400px;">
+                    GARANTIR ACESSO AGORA
                 </a>
                 
-                <div style="margin-top: 30px; font-size: 0.85rem; color: #666;">
-                    🔒 Pagamento Seguro Hotmart • Acesso Imediato
-                </div>
+                <p style="margin-top: 30px; font-size: 0.8rem; color: #555;">
+                    🔒 Compra Segura Hotmart • Satisfação Garantida
+                </p>
             </div>
         </div>
     </section>
 
     <!-- FOOTER -->
-    <footer style="text-align: center; padding: 60px 20px; border-top: 1px solid #222; color: #444;">
-        <h3 style="color: #886622; font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 10px;">YAN SIMON EXPERIENCE</h3>
-        <p>© 2024 • Todos os direitos reservados</p>
+    <footer style="background: #000; text-align: center; padding: 60px 20px; border-top: 1px solid #111; color: #444;">
+        <h3 style="color: var(--gold-end); font-size: 1rem; letter-spacing: 4px; margin-bottom: 15px; opacity: 0.6;">YAN SIMON EXPERIENCE</h3>
+        <p style="font-size: 0.8rem;">© 2024 • Todos os direitos reservados</p>
     </footer>
+
+    <!-- SCRIPT DE SCROLL REVEAL -->
+    <script>
+        // Lógica simples e eficiente para revelar elementos ao rolar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15 // Elemento precisa estar 15% visível
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); // Para de observar após animar uma vez
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
 
 </body>
 </html>
