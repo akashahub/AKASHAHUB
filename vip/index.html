@@ -3,733 +3,1577 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modalidades | Yan Simon</title>
+    <title>Sessões Presenciais | Akasha Hub</title>
     
-    <!-- Fontes Premium -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Fontes de Alta Classe -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* --- LUXURY CORE --- */
+        /* --- 1. LUXURY & SCI-FI VARIABLES --- */
         :root {
-            --bg-deep: #030303;
-            --bg-card: rgba(20, 20, 20, 0.6);
-            --gold-main: #C8AA6E;
-            --gold-bright: #F4D079;
-            --gold-gradient: linear-gradient(90deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
-            --text-light: #f0f0f0;
-            --text-dim: #888888;
-            --line: rgba(255,255,255,0.08);
-            --violet: rgba(120,80,255,.12);
+            --bg-void: #020103;
+            --bg-panel: rgba(12, 12, 18, 0.7);
+            
+            /* Paleta Mística / Sci-Fi / Riqueza */
+            --gold-primary: #D4AF37;
+            --gold-light: #F9E69D;
+            --cyan-accent: #00F0FF;
+            --violet-accent: #7825FF;
+            --magenta-accent: #FF00FF;
+            
+            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 40%, #b38728 80%, #fbf5b7 100%);
+            --cosmic-gradient: linear-gradient(135deg, var(--violet-accent), var(--cyan-accent));
+            
+            --border-faint: rgba(255, 255, 255, 0.08);
+            --border-gold: rgba(212, 175, 55, 0.3);
+            
+            --text-main: #ECECEC;
+            --text-muted: #989898;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-light);
+            background-color: var(--bg-void);
+            color: var(--text-main);
             font-family: 'Montserrat', sans-serif;
-            line-height: 1.6;
+            font-weight: 300;
+            line-height: 1.7;
             overflow-x: hidden;
+            position: relative;
+            cursor: none;
         }
 
+        /* --- CUSTOM CURSOR --- */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--gold-primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                        background 0.2s ease,
+                        border-color 0.2s ease,
+                        width 0.2s ease,
+                        height 0.2s ease;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+        }
+
+        .cursor-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--gold-primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px var(--gold-primary), 0 0 20px var(--gold-primary);
+        }
+
+        .cursor.hover {
+            width: 50px;
+            height: 50px;
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold-light);
+        }
+
+        .cursor.click {
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        @media (max-width: 768px) {
+            .cursor, .cursor-dot { display: none; }
+            body { cursor: auto; }
+        }
+
+        /* --- SCROLL PROGRESS --- */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--gold-gradient);
+            z-index: 99999;
+            width: 0%;
+            box-shadow: 0 0 10px var(--gold-primary), 0 0 20px var(--gold-primary);
+        }
+
+        /* --- LOADER PREMIUM --- */
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-void);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-symbol {
+            font-size: 4rem;
+            color: var(--gold-primary);
+            animation: loaderPulse 2s ease-in-out infinite, loaderRotate 8s linear infinite;
+            filter: drop-shadow(0 0 30px var(--gold-primary));
+        }
+
+        @keyframes loaderPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        @keyframes loaderRotate {
+            from { filter: drop-shadow(0 0 30px var(--gold-primary)) hue-rotate(0deg); }
+            to { filter: drop-shadow(0 0 30px var(--gold-primary)) hue-rotate(360deg); }
+        }
+
+        .loader-text {
+            margin-top: 30px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.4em;
+            color: var(--gold-primary);
+            overflow: hidden;
+        }
+
+        .loader-text span {
+            display: inline-block;
+            animation: letterReveal 0.5s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes letterReveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-bar::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--gold-gradient);
+            animation: loaderProgress 2.5s ease-in-out forwards;
+            box-shadow: 0 0 20px var(--gold-primary);
+        }
+
+        @keyframes loaderProgress {
+            to { width: 100%; }
+        }
+
+        /* Scrollbar Personalizada */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-void); }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--gold-gradient); 
+            border-radius: 3px;
+        }
+
+        /* --- 2. BACKGROUND FX (Matrix Mística Avançada) --- */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: 
+                radial-gradient(circle at 15% 50%, rgba(120, 37, 255, 0.12), transparent 45%),
+                radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.06), transparent 45%),
+                radial-gradient(circle at 50% 80%, rgba(212, 175, 55, 0.05), transparent 50%);
+            pointer-events: none;
+            animation: ambientShift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes ambientShift {
+            0% { 
+                background: 
+                    radial-gradient(circle at 15% 50%, rgba(120, 37, 255, 0.12), transparent 45%),
+                    radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.06), transparent 45%),
+                    radial-gradient(circle at 50% 80%, rgba(212, 175, 55, 0.05), transparent 50%);
+            }
+            100% { 
+                background: 
+                    radial-gradient(circle at 85% 50%, rgba(120, 37, 255, 0.12), transparent 45%),
+                    radial-gradient(circle at 15% 70%, rgba(0, 240, 255, 0.06), transparent 45%),
+                    radial-gradient(circle at 50% 20%, rgba(212, 175, 55, 0.05), transparent 50%);
+            }
+        }
+        
+        .grid-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+            opacity: 0.6;
+            animation: gridPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.7; }
+        }
+
+        /* --- PARTICLES CONTAINER --- */
+        .particles-container {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 15s infinite ease-in-out;
+        }
+
+        .particle-gold {
+            background: radial-gradient(circle, var(--gold-primary), transparent);
+            box-shadow: 0 0 20px var(--gold-primary);
+        }
+
+        .particle-cyan {
+            background: radial-gradient(circle, var(--cyan-accent), transparent);
+            box-shadow: 0 0 15px var(--cyan-accent);
+        }
+
+        .particle-violet {
+            background: radial-gradient(circle, var(--violet-accent), transparent);
+            box-shadow: 0 0 15px var(--violet-accent);
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { 
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% { opacity: 1; transform: translateY(80vh) translateX(10px) scale(1); }
+            90% { opacity: 1; transform: translateY(-10vh) translateX(-10px) scale(1); }
+            100% { 
+                transform: translateY(-20vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* --- SACRED GEOMETRY OVERLAY --- */
+        .sacred-geometry {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.03;
+            animation: sacredRotate 120s linear infinite;
+        }
+
+        .sacred-geometry::before,
+        .sacred-geometry::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid var(--gold-primary);
+            border-radius: 50%;
+        }
+
+        .sacred-geometry::before {
+            transform: scale(0.6);
+            animation: sacredPulse 8s ease-in-out infinite;
+        }
+
+        .sacred-geometry::after {
+            transform: scale(0.8);
+            animation: sacredPulse 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes sacredRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes sacredPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* --- NOISE TEXTURE --- */
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0.015;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* --- 3. TYPOGRAPHY --- */
         h1, h2, h3, h4 {
             font-family: 'Cinzel', serif;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 500;
+            font-weight: 400;
+            color: #fff;
+            letter-spacing: 0.1em;
         }
 
-        .gold-text {
+        .text-gold {
             background: var(--gold-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 700;
+            font-weight: 600;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4));
+            animation: goldShimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes goldShimmer {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4)); }
+            50% { filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.6)); }
+        }
+
+        .text-cyan {
+            color: var(--cyan-accent);
+            letter-spacing: 0.3em;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+            font-family: 'Montserrat', sans-serif;
+            animation: cyanGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes cyanGlow {
+            from { text-shadow: 0 0 10px rgba(0, 240, 255, 0.6); }
+            to { text-shadow: 0 0 20px rgba(0, 240, 255, 0.8), 0 0 40px rgba(0, 240, 255, 0.4); }
         }
 
         .serif-italic {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            color: var(--gold-main);
-            font-size: 1.3rem;
+            font-size: 1.5rem;
+            color: var(--gold-primary);
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
         }
 
-        .container { 
-            max-width: 1120px; 
-            margin: 0 auto; 
-            padding: 0 25px; 
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 30px; position: relative; }
+
+        /* --- REVEAL ANIMATIONS --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* --- BOTÃO DE ELITE --- */
-        .btn-vip {
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-80px);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(80px);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Stagger delays */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+        .delay-5 { transition-delay: 0.5s; }
+        .delay-6 { transition-delay: 0.6s; }
+
+        /* --- SPLIT TEXT ANIMATION --- */
+        .split-text .char {
             display: inline-block;
-            background: transparent;
-            border: 1px solid var(--gold-main);
-            color: var(--gold-main);
-            padding: 20px 50px;
+            opacity: 0;
+            transform: translateY(100%) rotateX(90deg);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .split-text.active .char {
+            opacity: 1;
+            transform: translateY(0) rotateX(0);
+        }
+
+        /* --- 4. COMPONENTS & CARDS --- */
+        .btn-elite {
+            display: inline-flex; 
+            justify-content: center; 
+            align-items: center;
+            padding: 18px 45px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
             font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            letter-spacing: 2px;
-            text-decoration: none;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            transition: all 0.5s ease;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
-            cursor: pointer;
+            backdrop-filter: blur(10px);
         }
-
-        .btn-vip::before {
-            content: '';
-            position: absolute;
+        
+        .btn-elite::before {
+            content: ''; 
+            position: absolute; 
             top: 0; 
             left: -100%; 
             width: 100%; 
             height: 100%;
             background: var(--gold-gradient);
-            transition: all 0.5s ease;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: -1;
         }
 
-        .btn-vip:hover {
-            color: #000;
-            border-color: transparent;
-            box-shadow: 0 0 30px rgba(200, 170, 110, 0.3);
-        }
-        .btn-vip:hover::before { left: 0; }
-
-        /* --- HERO --- */
-        .hero {
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
-            border-bottom: 1px solid rgba(200, 170, 110, 0.1);
-            padding: 60px 0;
-            position: relative;
-        }
-
-        .hero:before {
+        .btn-elite::after {
             content: '';
             position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.8s;
+        }
+        
+        .btn-elite:hover { 
+            color: #000; 
+            border-color: transparent; 
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.5),
+                        0 0 80px rgba(212, 175, 55, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .btn-elite:hover::before { left: 0; }
+        .btn-elite:hover::after { left: 150%; }
+
+        /* --- MAGNETIC BUTTON WRAPPER --- */
+        .magnetic-wrap {
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- CARD DESIGN --- */
+        .card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-faint);
+            padding: 40px 30px;
+            position: relative;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(15px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Holographic shine effect */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 40%,
+                rgba(212, 175, 55, 0.03) 50%,
+                transparent 60%
+            );
+            transform: rotate(45deg) translateY(-100%);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .card:hover::before {
+            transform: rotate(45deg) translateY(100%);
+        }
+
+        /* Glowing border effect */
+        .card::after {
+            content: ''; 
+            position: absolute; 
             inset: 0;
-            background: radial-gradient(600px 600px at 50% -10%, var(--violet), transparent);
+            border: 1px solid transparent;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+        }
+        
+        .card:hover { 
+            transform: translateY(-12px) scale(1.02); 
+            box-shadow: 0 30px 80px rgba(0,0,0,0.9),
+                        0 0 40px rgba(212, 175, 55, 0.1);
+        }
+
+        .card:hover::after { 
+            border-color: rgba(212, 175, 55, 0.5); 
+            box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.05);
+            opacity: 1;
+        }
+
+        /* Card glow effect on mouse move */
+        .card-glow {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
             z-index: 0;
         }
 
-        .hero-logo {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            letter-spacing: 5px;
-            margin-bottom: 40px;
-            color: var(--gold-main);
-            opacity: 0.8;
-            position: relative;
-            z-index: 1;
+        .card:hover .card-glow {
+            opacity: 1;
         }
 
-        .hero h1 { 
-            font-size: 3.5rem; 
-            line-height: 1.2; 
-            margin-bottom: 20px;
+        /* Detalhes Tech nos cantos - Enhanced */
+        .tech-corner {
+            position: absolute; 
+            width: 12px; 
+            height: 12px;
+            opacity: 0.3; 
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tech-corner::before,
+        .tech-corner::after {
+            content: '';
+            position: absolute;
+            background: rgba(255,255,255,0.3);
+            transition: all 0.6s ease;
+        }
+
+        .tc-tl::before { top: 0; left: 0; width: 100%; height: 1px; }
+        .tc-tl::after { top: 0; left: 0; width: 1px; height: 100%; }
+        
+        .tc-br::before { bottom: 0; right: 0; width: 100%; height: 1px; }
+        .tc-br::after { bottom: 0; right: 0; width: 1px; height: 100%; }
+
+        .tc-tl { top: 8px; left: 8px; }
+        .tc-br { bottom: 8px; right: 8px; }
+        
+        .card:hover .tech-corner { 
+            opacity: 1; 
+            width: 20px;
+            height: 20px;
+        }
+
+        .card:hover .tech-corner::before,
+        .card:hover .tech-corner::after {
+            background: var(--gold-primary);
+            box-shadow: 0 0 10px var(--gold-primary);
+        }
+
+        /* Card Content Animation */
+        .card-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
+        }
+
+        .card-tag { 
+            font-size: 0.65rem; 
+            color: #666; 
+            letter-spacing: 0.3em; 
+            text-transform: uppercase; 
+            margin-bottom: 15px; 
+            display: inline-block; 
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .card-tag::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 1px;
+            background: currentColor;
+            transition: width 0.4s ease;
+        }
+
+        .card:hover .card-tag::after {
+            width: 60px;
+        }
+
+        .card-title { 
+            font-family: 'Cinzel', serif; 
+            font-size: 1.5rem; 
+            color: #fff; 
+            margin-bottom: 15px; 
+            line-height: 1.2;
+            transition: all 0.4s ease;
+        }
+
+        .card:hover .card-title {
+            text-shadow: 0 0 30px rgba(255,255,255,0.3);
+        }
+
+        .card-desc { 
+            font-size: 0.9rem; 
+            color: #999; 
+            margin-bottom: 30px; 
+            line-height: 1.7;
+            transition: color 0.4s ease;
+        }
+
+        .card:hover .card-desc {
+            color: #bbb;
         }
         
-        .hero p {
-            max-width: 600px;
-            margin: 0 auto 40px;
-            color: var(--text-dim);
-            font-size: 1.1rem;
-            font-weight: 300;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* --- MENTOR SECTION --- */
-        .mentor {
-            padding: 100px 0;
-            border-top: 1px solid var(--line);
-            position: relative;
-        }
-        .mentor-wrap {
-            display: flex;
-            align-items: center;
-            gap: 64px;
-            flex-wrap: wrap;
-            justify-content: center;
-            max-width: 1120px;
-            margin: 0 auto;
-            padding: 0 25px;
-        }
-        .mentor img {
-            width: 380px;
-            height: 520px;
-            object-fit: cover;
-            border: 1px solid var(--gold-main);
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.25);
-        }
-        .mentor .txt {
-            max-width: 520px;
-        }
-        .mentor .txt h3 {
-            color: var(--gold-main);
-            margin-bottom: 10px;
-            font-size: 1.8rem;
-        }
-        .mentor .txt h2 {
-            margin-bottom: 10px;
-            font-size: 2.2rem;
-        }
-        .mentor .txt p {
-            color: #dcdcdc;
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
-        /* --- MODALIDADES (PRICING) --- */
-        .plans {
-            padding: 100px 0;
-            background: linear-gradient(180deg, #030303 0%, #0a0a0a 100%);
-        }
-        .plans h2 {
-            text-align: center;
-            margin-bottom: 14px;
-            font-size: 2.2rem;
-        }
-        .plans p.sub {
-            color: var(--text-dim);
-            text-align: center;
-            margin-bottom: 48px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 28px;
-            max-width: 1120px;
-            margin: 0 auto;
-            padding: 0 25px;
-        }
-        .card {
-            background: rgba(255,255,255,.02);
-            border: 1px solid rgba(212,175,55,.12);
-            padding: 28px 24px;
-            transition: .35s;
+        .card-price { 
+            font-family: 'Cinzel', serif; 
+            font-size: 1.1rem; 
+            color: #fff; 
+            margin-bottom: 20px; 
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            letter-spacing: 0.15em;
             position: relative;
             overflow: hidden;
         }
-        .card:hover {
-            border-color: var(--gold-main);
-            transform: translateY(-6px);
-            box-shadow: 0 10px 30px rgba(212,175,55,.12);
+
+        .card-price::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 1px;
+            background: var(--gold-gradient);
+            transition: width 0.8s ease;
         }
-        .tag {
-            color: var(--gold-main);
-            letter-spacing: 3px;
-            font-size: .75rem;
-            margin-bottom: 8px;
-            display: block;
-        }
-        .title {
-            font-size: 1.15rem;
-            margin-bottom: 6px;
-            font-weight: 600;
-        }
-        .desc {
-            color: var(--text-dim);
-            font-size: .95rem;
-            margin-bottom: 18px;
-            min-height: 48px;
-        }
-        .price {
-            font-family: 'Cinzel', serif;
-            color: #e9e9e9;
-            font-size: 1.6rem;
-            margin: 10px 0 18px;
-        }
-        .mini {
-            font-size: .78rem;
-            color: #7d7d7d;
-        }
-        .card .btn-vip {
+
+        .card:hover .card-price::before {
             width: 100%;
-            text-align: center;
-            margin-top: 8px;
         }
 
-        /* --- METODOLOGIA (Assinatura Akáshica) --- */
-        .method {
-            padding: 100px 0;
+        /* --- CARD VARIANTS --- */
+        
+        /* Akasha Prime (Gold/Signature) - Enhanced */
+        .card-prime { 
+            border: 1px solid rgba(212, 175, 55, 0.25); 
+            background: linear-gradient(180deg, rgba(212,175,55,0.05), rgba(0,0,0,0.9));
         }
-        .method h2 {
-            text-align: center;
-            margin-bottom: 14px;
-            font-size: 2.2rem;
+
+        .card-prime::after {
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                                        rgba(212, 175, 55, 0.15), 
+                                        transparent 50%);
         }
-        .method p.sub {
-            color: var(--text-dim);
-            text-align: center;
-            margin-bottom: 42px;
+
+        .card-prime .card-tag { color: var(--gold-primary); }
+        .card-prime .card-price { color: var(--gold-primary); }
+
+        .card-prime:hover {
+            box-shadow: 0 30px 80px rgba(0,0,0,0.9),
+                        0 0 60px rgba(212, 175, 55, 0.15);
         }
-        .pillars {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 22px;
-            max-width: 1120px;
-            margin: 0 auto;
-            padding: 0 25px;
+
+        /* Entry Level (Cyan) - Enhanced */
+        .card-entry { 
+            border-bottom: 2px solid var(--cyan-accent);
+            position: relative;
         }
-        .pillar {
-            border: 1px solid rgba(255,255,255,.08);
-            padding: 22px;
-            background: rgba(255,255,255,.02);
-            transition: .3s;
+
+        .card-entry::after {
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                                        rgba(0, 240, 255, 0.1), 
+                                        transparent 50%);
         }
-        .pillar:hover {
-            border-color: var(--gold-main);
+
+        .card-entry .card-tag { color: var(--cyan-accent); }
+        .card-entry .card-price { color: #fff; font-size: 1.5rem; }
+
+        .card-entry:hover { 
+            box-shadow: 0 30px 80px rgba(0, 240, 255, 0.15),
+                        0 0 40px rgba(0, 240, 255, 0.1); 
         }
-        .pillar h4 {
-            color: var(--gold-main);
-            margin-bottom: 8px;
+
+        .card-entry:hover .tech-corner::before,
+        .card-entry:hover .tech-corner::after {
+            background: var(--cyan-accent);
+            box-shadow: 0 0 10px var(--cyan-accent);
+        }
+
+        /* Course (Violet) - Enhanced */
+        .card-course { 
+            border-top: 2px solid var(--violet-accent);
+        }
+
+        .card-course::after {
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                                        rgba(120, 37, 255, 0.1), 
+                                        transparent 50%);
+        }
+
+        .card-course .card-tag { color: var(--violet-accent); }
+
+        .card-course:hover {
+            box-shadow: 0 30px 80px rgba(120, 37, 255, 0.15),
+                        0 0 40px rgba(120, 37, 255, 0.1);
+        }
+
+        .card-course:hover .tech-corner::before,
+        .card-course:hover .tech-corner::after {
+            background: var(--violet-accent);
+            box-shadow: 0 0 10px var(--violet-accent);
+        }
+
+        /* --- 5. SECTIONS --- */
+        
+        /* HERO - Enhanced */
+        .hero {
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            text-align: center; 
+            position: relative; 
+            border-bottom: 1px solid var(--border-faint);
+            overflow: hidden;
+        }
+
+        .hero-bg-glow {
+            position: absolute; 
+            width: 800px; 
+            height: 800px; 
+            background: radial-gradient(circle, rgba(120,80,255,0.15) 0%, transparent 60%);
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            filter: blur(100px); 
+            animation: heroGlowPulse 8s infinite alternate;
+        }
+
+        .hero-bg-glow-2 {
+            position: absolute; 
+            width: 600px; 
+            height: 600px; 
+            background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 60%);
+            top: 60%; 
+            left: 30%; 
+            transform: translate(-50%, -50%); 
+            filter: blur(80px); 
+            animation: heroGlowPulse 10s infinite alternate-reverse;
+        }
+
+        @keyframes heroGlowPulse { 
+            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); } 
+            100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); } 
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-logo { 
+            font-size: 0.85rem; 
+            letter-spacing: 0.5em; 
+            color: var(--gold-primary); 
+            margin-bottom: 40px; 
+            text-transform: uppercase;
+            opacity: 0;
+            animation: heroFadeIn 1s ease forwards 0.5s;
+        }
+
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 { 
+            font-size: 4rem; 
+            margin-bottom: 25px; 
+            text-shadow: 0 10px 40px rgba(0,0,0,0.9);
+            opacity: 0;
+            animation: heroTitleReveal 1.2s ease forwards 0.8s;
+            line-height: 1.1;
+        }
+
+        @keyframes heroTitleReveal {
+            from { 
+                opacity: 0; 
+                transform: translateY(60px);
+                letter-spacing: 0.3em;
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+                letter-spacing: 0.1em;
+            }
+        }
+
+        .hero .serif-italic {
+            opacity: 0;
+            animation: heroFadeIn 1s ease forwards 1.2s;
+        }
+
+        .hero p:not(.serif-italic) { 
+            max-width: 650px; 
+            margin: 0 auto 40px; 
+            color: var(--text-muted); 
             font-size: 1.1rem;
-        }
-        .disclaimer {
-            color: #9d9d9d;
-            text-align: center;
-            margin-top: 26px;
-            font-size: .9rem;
+            opacity: 0;
+            animation: heroFadeIn 1s ease forwards 1.4s;
         }
 
-        /* --- COMO FUNCIONA --- */
-        .how {
-            padding: 100px 0;
-            border-top: 1px solid var(--line);
-            border-bottom: 1px solid var(--line);
+        .hero .btn-elite {
+            opacity: 0;
+            animation: heroFadeIn 1s ease forwards 1.6s;
         }
-        .how h2 {
-            text-align: center;
+
+        .hero-symbol {
+            margin-top: 50px;
+            font-size: 2rem;
+            color: var(--gold-primary);
+            opacity: 0;
+            animation: heroSymbolReveal 1s ease forwards 1.8s, symbolFloat 4s ease-in-out infinite 2.8s;
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
+        }
+
+        @keyframes heroSymbolReveal {
+            from { opacity: 0; transform: scale(0.5) rotate(-180deg); }
+            to { opacity: 0.7; transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes symbolFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: heroFadeIn 1s ease forwards 2s, scrollBounce 2s ease-in-out infinite 3s;
+        }
+
+        .scroll-indicator span {
+            display: block;
+            font-size: 0.65rem;
+            letter-spacing: 0.3em;
+            color: var(--gold-primary);
             margin-bottom: 10px;
-            font-size: 2.2rem;
+            text-transform: uppercase;
         }
-        .how p.sub {
-            color: var(--text-dim);
-            text-align: center;
-            margin-bottom: 48px;
-        }
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 30px;
-            max-width: 1120px;
+
+        .scroll-line {
+            width: 1px;
+            height: 50px;
+            background: linear-gradient(to bottom, var(--gold-primary), transparent);
             margin: 0 auto;
-            padding: 0 25px;
+            position: relative;
+            overflow: hidden;
         }
-        .step {
-            border-left: 2px solid var(--gold-main);
-            padding-left: 20px;
-            background: rgba(255,255,255,.02);
-            padding: 22px;
-            border-radius: 2px;
+
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: white;
+            animation: scrollLineAnim 2s infinite;
         }
-        .num {
+
+        @keyframes scrollLineAnim {
+            0% { top: -100%; }
+            100% { top: 200%; }
+        }
+
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* SESSÕES PRESENCIAIS - Enhanced */
+        .sessions-sec { 
+            padding: 150px 0; 
+            background: linear-gradient(to bottom, var(--bg-void), #080810, var(--bg-void));
+            position: relative;
+        }
+
+        .sessions-sec::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            opacity: 0.3;
+        }
+
+        .sec-header { 
+            text-align: center; 
+            margin-bottom: 100px;
+        }
+
+        .sec-header h2 { 
+            font-size: 3rem;
+            line-height: 1.2;
+        }
+
+        .sec-divider {
+            width: 80px;
+            height: 1px;
+            background: var(--gold-gradient);
+            margin: 30px auto;
+            position: relative;
+        }
+
+        .sec-divider::before {
+            content: '◆';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--gold-primary);
+            font-size: 0.6rem;
+            background: var(--bg-void);
+            padding: 0 15px;
+        }
+
+        .sec-subtitle {
+            color: #666;
+            letter-spacing: 0.2em;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        
+        .grid-cards { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 35px;
+        }
+
+        /* --- BOTTOM MESSAGE --- */
+        .bottom-message {
+            text-align: center;
+            margin-top: 100px;
+            font-size: 0.75rem;
+            color: #444;
+            letter-spacing: 0.25em;
+            position: relative;
+            padding-top: 50px;
+        }
+
+        .bottom-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        }
+
+        /* FOOTER - Enhanced */
+        footer { 
+            border-top: 1px solid var(--border-faint); 
+            padding: 80px 0; 
+            text-align: center; 
+            font-size: 0.75rem; 
+            color: #444; 
+            background: linear-gradient(to bottom, #010101, #000);
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            opacity: 0.2;
+        }
+
+        .footer-logo {
             font-family: 'Cinzel', serif;
-            color: #6f6f6f;
-            font-size: 2.2rem;
-            line-height: 1;
-        }
-        .step h3 {
-            margin: 6px 0 10px;
             font-size: 1.2rem;
-        }
-        .step p {
-            color: #bcbcbc;
-            font-size: .98rem;
-        }
-
-        /* --- FAQ --- */
-        .faq {
-            padding: 90px 0;
-            border-top: 1px solid var(--line);
-        }
-        .faq h2 {
-            text-align: center;
-            margin-bottom: 36px;
-            font-size: 2.2rem;
-        }
-        .q {
-            border-bottom: 1px solid var(--line);
-            padding: 18px 0;
-            max-width: 1120px;
-            margin: 0 auto;
-            padding-left: 25px;
-            padding-right: 25px;
-        }
-        .q h3 {
-            font-size: 1.05rem;
-            margin-bottom: 6px;
-        }
-        .q p {
-            color: #bdbdbd;
-            font-size: .95rem;
-        }
-
-        /* --- FINAL CTA --- */
-        .final {
-            padding: 110px 0;
-            background: radial-gradient(600px 600px at 50% -10%, var(--violet), transparent);
-            text-align: center;
-        }
-        .final .box {
-            max-width: 780px;
-            margin: 0 auto;
-            border: 1px solid var(--gold-main);
-            padding: 56px 34px;
-            background: linear-gradient(180deg, rgba(212,175,55,.06), rgba(0,0,0,0) 70%);
-        }
-        .kicker {
-            color: var(--gold-main);
-            letter-spacing: 4px;
-            margin-bottom: 10px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.3em;
+            margin-bottom: 20px;
             display: inline-block;
         }
-        .final p {
-            color: var(--text-dim);
-            max-width: 620px;
-            margin: 10px auto 0;
-        }
 
-        /* Ribbon & Footer */
-        .ribbon {
-            padding: 14px 0;
-            text-align: center;
-            border-top: 1px solid var(--line);
-            color: #cfcfcf;
-            font-size: .92rem;
-        }
-        .ribbon span {
-            color: var(--gold-main);
-        }
-        .foot {
-            padding: 50px 0;
-            text-align: center;
-            color: #777;
-            border-top: 1px solid var(--line);
-            font-size: .85rem;
-        }
-
-        /* Floating CTA */
+        /* --- FLOATING ELEMENTS --- */
         .float {
-            position: fixed;
-            bottom: 22px;
-            right: 22px;
-            z-index: 9999;
-            background: var(--gold-gradient);
-            color: #000;
-            font-family: 'Cinzel', serif;
-            font-weight: 700;
-            padding: 14px 20px;
-            text-decoration: none;
-            border: 0;
-            box-shadow: 0 10px 30px rgba(212,175,55,.35);
+            animation: float 6s ease-in-out infinite;
         }
 
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* RESPONSIVE - Enhanced */
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.5rem; }
-            .mentor-wrap { flex-direction: column; align-items: center; }
-            .mentor img { width: 100%; max-width: 380px; height: auto; }
-            .step, .pillar, .card { padding: 20px; }
+            .hero { padding: 120px 20px; }
+            .grid-cards { grid-template-columns: 1fr; }
+            .card { min-height: auto; }
+            .sec-header h2 { font-size: 2rem; }
+            .sessions-sec { padding: 100px 0; }
+            .scroll-indicator { display: none; }
+        }
+
+        /* --- GLITCH EFFECT (for special text) --- */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+        }
+
+        .glitch:hover::before {
+            animation: glitch-1 0.3s linear infinite;
+            color: var(--cyan-accent);
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        .glitch:hover::after {
+            animation: glitch-2 0.3s linear infinite;
+            color: var(--violet-accent);
+            z-index: -2;
+            opacity: 0.8;
+        }
+
+        @keyframes glitch-1 {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes glitch-2 {
+            0% { transform: translate(0); }
+            20% { transform: translate(2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* --- TILT EFFECT FOR CARDS --- */
+        .tilt-effect {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        /* --- BUTTON RIPPLE EFFECT --- */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- LOADER -->
+    <div class="loader" id="loader">
+        <div class="loader-symbol">𓂀</div>
+        <div class="loader-text" id="loaderText">
+            <!-- Letters will be injected by JS -->
+        </div>
+        <div class="loader-bar"></div>
+    </div>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <!-- SCROLL PROGRESS -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- NOISE TEXTURE -->
+    <div class="noise"></div>
+
+    <!-- BACKGROUND EFFECTS -->
+    <div class="ambient-bg"></div>
+    <div class="grid-overlay"></div>
+    <div class="sacred-geometry"></div>
+
+    <!-- PARTICLES -->
+    <div class="particles-container" id="particles"></div>
+
     <!-- HERO SECTION -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-logo">YAN SIMON EXPERIENCE</div>
+    <header class="hero">
+        <div class="hero-bg-glow"></div>
+        <div class="hero-bg-glow-2"></div>
+        
+        <div class="container hero-content">
+            <div class="hero-logo">✧ AKASHA HUB ✧</div>
             
-            <h1>A Presença <br><span class="gold-text">Akáshica</span></h1>
+            <h1>Presencial <br><span class="text-gold glitch" data-text="Akasha & Tantra">Akasha & Tantra</span></h1>
             
-            <p class="serif-italic" style="margin-bottom: 10px;">Privado. Presencial. Irrepetível.</p>
+            <p class="serif-italic">"Onde a tecnologia ancestral encontra a arquitetura e o fluxo de poder."</p>
             
             <p>
                 A metodologia sai do campo digital e entra na sua realidade física.
-                Uma experiência sensorial desenhada para quem busca a excelência vibracional no conforto do seu império.
+                Uma experiência sensorial desenhada para quem busca a excelência vibracional.
             </p>
-
-            <!-- BOTÃO PREMIUM (WHATSAPP) -->
-            <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20gostaria%20de%20saber%20mais%20sobre%20o%20agendamento%20exclusivo." 
-               target="_blank" 
-               class="btn-vip"
-               style="margin-top: 30px;">
-                Falar com Concierge Valentina
-            </a>
             
-            <div style="margin-top: 30px;">
-                <span style="font-size: 2rem; color: var(--gold-main);">🜂</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- SEU CONDUCTOR (MENTOR) -->
-    <section class="mentor">
-        <div class="mentor-wrap">
-            <img src="https://i.imgur.com/RiilCud.jpeg" alt="Yan Simon – Presença e Autoridade" loading="lazy">
-            <div class="txt">
-                <h3>Seu Conductor</h3>
-                <h2>Yan Simon</h2>
-                <p>Presença, magnetismo e elegância energética. Mais que um mentor, um guardião de frequências que conduz experiências presenciais sob medida, sem exposição, sem amadorismo, sem pressa.</p>
-                <p>Cada encontro é desenhado para um objetivo específico: limpeza, ativação, fascinação, prosperidade ou poder pessoal. Os protocolos são proprietários. O efeito, inconfundível.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- MODALIDADES -->
-    <section class="plans">
-        <div class="container">
-            <!-- TITULO ALTERADO -->
-            <h2><span class="gold-text">Modalidades</span></h2>
-            <p class="sub">Selecione a experiência que melhor atende sua intenção.</p>
-
-            <div class="grid">
-                <!-- CARD 1 -->
-                <div class="card">
-                    <span class="tag">Produto Premium</span>
-                    <div class="title">Sessão Padrão Akáshica</div>
-                    <div class="desc">Alinhamento quântico + fascinação + magnetismo + massagem tântrica.</div>
-                    <!-- PREÇO REMOVIDO -->
-                    <div class="mini">Duração média: 60–90 min</div>
-                    <!-- BOTÃO WHATSAPP -->
-                    <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20tenho%20interesse%20na%20Sess%C3%A3o%20Padr%C3%A3o%20Ak%C3%A1shica." 
-                       target="_blank" 
-                       class="btn-vip">
-                        Falar com Valentina
-                    </a>
-                </div>
-
-                <!-- CARD 2 -->
-                <div class="card">
-                    <span class="tag">Sob Medida</span>
-                    <div class="title">Experiência Personalizada</div>
-                    <div class="desc">Ritual extra, intenção específica e personalização completa do ambiente.</div>
-                    <!-- PREÇO REMOVIDO -->
-                    <div class="mini">Duração média: 90–120 min</div>
-                    <!-- BOTÃO WHATSAPP -->
-                    <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20gostaria%20de%20saber%20sobre%20a%20Experi%C3%AAncia%20Personalizada." 
-                       target="_blank" 
-                       class="btn-vip">
-                        Falar com Valentina
-                    </a>
-                </div>
-
-                <!-- CARD 3 -->
-                <div class="card">
-                    <span class="tag">Imersão</span>
-                    <div class="title">Imersão 3h+</div>
-                    <div class="desc">Sessão longa, profunda e transformadora; estado expandido e recalibração total.</div>
-                    <!-- PREÇO REMOVIDO -->
-                    <div class="mini">Duração média: 3h+</div>
-                    <!-- BOTÃO WHATSAPP -->
-                    <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20tenho%20interesse%20na%20Imers%C3%A3o%20de%203h." 
-                       target="_blank" 
-                       class="btn-vip">
-                        Falar com Valentina
-                    </a>
-                </div>
-
-                <!-- CARD 4 -->
-                <div class="card">
-                    <span class="tag">Presença Magnética</span>
-                    <div class="title">Presença VIP em Eventos</div>
-                    <div class="desc">Sua presença magnética + demonstração do Akasha (sem tantra).</div>
-                    <!-- PREÇO REMOVIDO -->
-                    <div class="mini">Até 2 horas • Eventos selecionados</div>
-                    <!-- BOTÃO WHATSAPP -->
-                    <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20gostaria%20de%20contratar%20a%20Presen%C3%A7a%20VIP%20em%20Eventos." 
-                       target="_blank" 
-                       class="btn-vip">
-                        Falar com Valentina
-                    </a>
-                </div>
-
-                <!-- CARD 5: WORKSHOP -->
-                <div class="card">
-                    <span class="tag">WORKSHOP</span>
-                    <div class="title">Tantra é Diferente de Sexo</div>
-                    <div class="desc">Workshop esclarecedor que desvenda os verdadeiros princípios do Tantra além dos mitos e equívocos comuns.</div>
-                    <div class="price">Disponível</div>
-                    <a href="https://pay.hotmart.com/D101794475T" 
-                       target="_blank" 
-                       class="btn-vip">
-                        ACESSAR
-                    </a>
-                </div>
-
-                <!-- CARD 6: CURSO -->
-                <div class="card">
-                    <span class="tag">CURSO</span>
-                    <div class="title">Akasha Fascinação, Tantra e Magnetismo</div>
-                    <div class="desc">O curso completo para despertar seu magnetismo pessoal e dominar a arte da fascinação através dos princípios tântricos.</div>
-                    <div class="price">Disponível</div>
-                    <a href="https://akashahub.github.io/CURSOAKASHA/" 
-                       target="_blank" 
-                       class="btn-vip">
-                        ACESSAR
-                    </a>
-                </div>
-            </div>
-
-            <p class="disclaimer" style="margin-top: 28px;">
-                🜁 Deslocamento incluso • Atendimento mediante aprovação • Agendamento via concierge
-            </p>
-        </div>
-    </section>
-
-    <!-- ASSINATURA AKÁSHICA -->
-    <section class="method">
-        <div class="container">
-            <h2>A <span class="gold-text">Assinatura</span> Akáshica</h2>
-            <p class="sub">O núcleo do trabalho 𓂀 o suficiente para entender o nível, não para copiar os segredos.</p>
-
-            <div class="pillars">
-                <div class="pillar">
-                    <h4>Fascinação</h4>
-                    <p>Presença que captura. O restante, flui.</p>
-                </div>
-                <div class="pillar">
-                    <h4>Magnetismo Energético</h4>
-                    <p>Vórtice de atração para oportunidades e pessoas certas.</p>
-                </div>
-                <div class="pillar">
-                    <h4>Chama Violeta</h4>
-                    <p>Invocação e limpeza de densidades. Leveza imediata.</p>
-                </div>
-                <div class="pillar">
-                    <h4>Alinhamento dos 7 Chakras</h4>
-                    <p>Fluxo vital desbloqueado. Corpo e mente em coesão.</p>
-                </div>
-                <div class="pillar">
-                    <h4>Constelação Vibracional</h4>
-                    <p>Harmonia sistêmica para a prosperidade entrar.</p>
-                </div>
-                <div class="pillar">
-                    <h4>Tantra Energético</h4>
-                    <p>Vitalidade e poder criativo. Sob absoluto respeito e consentimento.</p>
-                </div>
-                <div class="pillar">
-                    <h4>Reprogramação Vibracional</h4>
-                    <p>Códigos de merecimento e comando interno.</p>
-                </div>
-                <div class="pillar">
-                    <h4>Induções de Presença e Poder</h4>
-                    <p>Estabilidade, direção e clareza no agora.</p>
-                </div>
-            </div>
-
-            <p class="disclaimer">Protocolos proprietários. O método completo é revelado apenas na experiência.</p>
-        </div>
-    </section>
-
-    <!-- COMO FUNCIONA -->
-    <section class="how">
-        <div class="container">
-            <h2>Como Funciona</h2>
-            <p class="sub">Processo simples, confidencial e sob medida.</p>
-
-            <div class="steps">
-                <div class="step">
-                    <div class="num">01</div>
-                    <h3>Aplicação</h3>
-                    <p>Você entra em contato com a Concierge para verificar disponibilidade.</p>
-                </div>
-                <div class="step">
-                    <div class="num">02</div>
-                    <h3>Triagem Energética</h3>
-                    <p>Análise discreta do seu campo e definição do melhor formato de ritual.</p>
-                </div>
-                <div class="step">
-                    <div class="num">03</div>
-                    <h3>Preparação do Espaço</h3>
-                    <p>Orientações para ambientação: aromas, luz, som e elementos de ancoragem.</p>
-                </div>
-                <div class="step">
-                    <div class="num">04</div>
-                    <h3>O Ritual</h3>
-                    <p>Condução presencial com protocolos proprietários. Sem pressa. Sem distrações.</p>
-                </div>
-                <div class="step">
-                    <div class="num">05</div>
-                    <h3>Integração</h3>
-                    <p>Direcionamentos práticos para manter a frequência e potencializar resultados.</p>
-                </div>
-                <div class="step">
-                    <div class="num">06</div>
-                    <h3>Comemorar e Brindar a Iniciação</h3>
-                    <p>Colhendo os benefícios dos frutos da nova aura, frequência elevada e reconhecer a mudança.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="faq">
-        <div class="container">
-            <h2>Perguntas Frequentes</h2>
-            <div class="q">
-                <h3>Atende quais cidades?</h3>
-                <p>Atendimento prioritário em capitais e regiões metropolitanas. Viagens para outras regiões sob consulta.</p>
-            </div>
-            <div class="q">
-                <h3>Privacidade e confidencialidade</h3>
-                <p>Sigilo absoluto. Sem registros, sem exposição. Você no controle dos limites.</p>
-            </div>
-            <div class="q">
-                <h3>O que preciso preparar no local?</h3>
-                <p>Ambiente silencioso, superfície confortável, toalhas limpas e tomadas próximas. Orientações completas são enviadas após a aprovação.</p>
-            </div>
-            <div class="q">
-                <h3>Há contato físico?</h3>
-                <p>De acordo com a modalidade escolhida e sempre com consentimento explícito. No formato “Presença VIP em Eventos” não há tantra.</p>
-            </div>
-            <div class="q">
-                <h3>Como reservo?</h3>
-                <p>Clique em qualquer botão desta página para falar com a Concierge.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- FINAL CTA -->
-    <section class="final">
-        <div class="container">
-            <div class="box">
-                <span class="kicker">Aplicação Necessária</span>
-                <h2>Concierge <span class="gold-text">Valentina</span></h2>
-                <p>Fale diretamente com nossa concierge para aprovação e agendamento. Se aprovado, você receberá as próximas datas e instruções.</p>
-                <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20gostaria%20de%20iniciar%20meu%20atendimento." 
-                   target="_blank" 
-                   class="btn-vip"
-                   style="margin-top: 22px;">
-                    Falar com Concierge
+            <div class="magnetic-wrap">
+                <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20desejo%20acesso%20ao%20agendamento%20VIP%20Presencial%20com%20o%20profissional%20do%20Akasha%20Hub." class="btn-elite" id="heroBtn">
+                    Falar com Concierge Valentina
                 </a>
             </div>
+            
+            <div class="hero-symbol">𓂀</div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </header>
+
+    <!-- SESSÕES PRESENCIAIS -->
+    <section class="sessions-sec">
+        <div class="container">
+            <div class="sec-header reveal">
+                <span class="text-cyan">MENU DE ATIVAÇÃO</span>
+                <h2>Sessões <span class="text-gold">Presenciais</span></h2>
+                <div class="sec-divider"></div>
+                <p class="sec-subtitle">SELECIONE A FREQUÊNCIA</p>
+            </div>
+
+            <div class="grid-cards">
+                
+                <!-- 1. TANTRA ALCHEMY -->
+                <div class="card tilt-effect reveal delay-1">
+                    <div class="card-glow"></div>
+                    <div class="tech-corner tc-tl"></div>
+                    <div class="tech-corner tc-br"></div>
+                    <div class="card-content">
+                        <span class="card-tag">ALQUIMIA & PODER</span>
+                        <h3 class="card-title">Tantra Alchemy</h3>
+                        <p class="card-desc">
+                            A fusão perfeita entre alinhamento quântico, fascinação e massagem tântrica terapêutica. Reconstrução do magnetismo pessoal.
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-price">HIGH TICKET</div>
+                        <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20tenho%20interesse%20em%20agendar%20o%20Tantra%20Alchemy." class="btn-elite" style="width: 100%">AGENDAR</a>
+                    </div>
+                </div>
+
+                <!-- 2. AKASHA PRIME (Signature) -->
+                <div class="card card-prime tilt-effect reveal delay-2">
+                    <div class="card-glow"></div>
+                    <div class="tech-corner tc-tl"></div>
+                    <div class="tech-corner tc-br"></div>
+                    <div class="card-content">
+                        <span class="card-tag">SIGNATURE EXPERIENCE</span>
+                        <h3 class="card-title text-gold">Akasha Prime</h3>
+                        <p class="card-desc">
+                            Experiência sob medida. Assinatura Mensal e Trimestral, Ritual extra, intenção específica e personalização completa do ambiente para demandas de alta complexidade.
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-price">SOB MEDIDA</div>
+                        <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20tenho%20demanda%20para%20o%20Akasha%20Prime." class="btn-elite" style="width: 100%">AGENDAR</a>
+                    </div>
+                </div>
+
+                <!-- 3. DEEP DIVE (Imersão) -->
+                <div class="card tilt-effect reveal delay-3">
+                    <div class="card-glow"></div>
+                    <div class="tech-corner tc-tl"></div>
+                    <div class="tech-corner tc-br"></div>
+                    <div class="card-content">
+                        <span class="card-tag">DEEP DIVE</span>
+                        <h3 class="card-title">Imersão 3h+</h3>
+                        <p class="card-desc">
+                            Para quem busca transmutação total. Uma jornada longa em estado expandido de consciência. Recalibração absoluta. Duração média: 3h+
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-price">PREMIUM</div>
+                        <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20tenho%20interesse%20na%20Imers%C3%A3o%203h+." class="btn-elite" style="width: 100%">AGENDAR</a>
+                    </div>
+                </div>
+
+                <!-- 4. PRESENÇA VIP -->
+                <div class="card tilt-effect reveal delay-4">
+                    <div class="card-glow"></div>
+                    <div class="tech-corner tc-tl"></div>
+                    <div class="tech-corner tc-br"></div>
+                    <div class="card-content">
+                        <span class="card-tag">CORPORATE / SOCIAL</span>
+                        <h3 class="card-title">Presença VIP em Eventos</h3>
+                        <p class="card-desc">
+                            Sua presença magnética + demonstração do Akasha (sem práticas tântricas).
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-price">CONSULTAR</div>
+                        <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20gostaria%20de%20consultar%20sobre%20Presen%C3%A7a%20VIP." class="btn-elite" style="width: 100%">CONSULTAR</a>
+                    </div>
+                </div>
+
+                <!-- 5. JORNADA SENSORIAL (Entry Level) -->
+                <div class="card card-entry tilt-effect reveal delay-5">
+                    <div class="card-glow"></div>
+                    <div class="tech-corner tc-tl"></div>
+                    <div class="tech-corner tc-br"></div>
+                    <div class="card-content">
+                        <span class="card-tag">ENTRY LEVEL • ATIVAÇÃO</span>
+                        <h3 class="card-title">Jornada Sensorial Exclusiva</h3>
+                        <p class="card-desc">
+                            Uma sessão focada e direta de ativação tântrica. Ideal para conhecer o método e desbloquear a vitalidade imediata.
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-price">R$ 500</div>
+                        <a href="https://wa.me/5571983448621?text=Ol%C3%A1,%20quero%20iniciar%20a%20Jornada%20Sensorial%20de%20500." class="btn-elite" style="width: 100%; color: var(--cyan-accent); border-color: var(--cyan-accent);">INICIAR</a>
+                    </div>
+                </div>
+
+                <!-- 6. CURSO ONLINE (Certification) -->
+                <div class="card card-course tilt-effect reveal delay-6">
+                    <div class="card-glow"></div>
+                    <div class="tech-corner tc-tl"></div>
+                    <div class="tech-corner tc-br"></div>
+                    <div class="card-content">
+                        <span class="card-tag">ONLINE CERTIFICATION</span>
+                        <h3 class="card-title">Curso: Código Akasha</h3>
+                        <p class="card-desc">
+                            Domine a Fascinação, o Tantra e o Magnetismo. O treinamento digital completo para despertar seu avatar de poder.
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-price">ACESSO DIGITAL</div>
+                        <a href="https://akashahub.github.io/CURSOAKASHA/" target="_blank" class="btn-elite" style="width: 100%; border-color: var(--violet-accent); color: #fff;">ACESSAR PORTAL</a>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="bottom-message reveal">
+                🜁 ATENDIMENTO MEDIANTE APROVAÇÃO • SIGILO ABSOLUTO
+            </div>
         </div>
     </section>
 
-    <!-- RIBBON -->
-    <div class="ribbon">
-        🜁 <span>Deslocamento incluso</span> • Atendimento exclusivo • Vagas limitadas • Luxo discreto
-    </div>
-
     <!-- FOOTER -->
-    <footer class="foot">
-        YAN SIMON • © 2025 • Energia. Presença. Poder.
+    <footer>
+        <div class="container reveal">
+            <div class="footer-logo">AKASHA HUB EXPERIENCE</div>
+            <p style="margin-top: 15px;">© 2025 • TODOS OS DIREITOS RESERVADOS</p>
+        </div>
     </footer>
 
-    <!-- Floating CTA -->
-    <a href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20tenho%20interesse%20nas%20modalidades." 
-       target="_blank" 
-       class="float">
-        Falar com Valentina
-    </a>
+    <!-- SCRIPTS -->
+    <script>
+        // ========== LOADER ==========
+        const loaderText = "AKASHA HUB";
+        const loaderTextEl = document.getElementById('loaderText');
+        
+        loaderText.split('').forEach((char, i) => {
+            const span = document.createElement('span');
+            span.textContent = char === ' ' ? '\u00A0' : char;
+            span.style.animationDelay = `${0.5 + i * 0.08}s`;
+            loaderTextEl.appendChild(span);
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 3000);
+        });
+
+        // ========== CUSTOM CURSOR ==========
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursorDot');
+        
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Cursor hover effects
+        const hoverElements = document.querySelectorAll('a, button, .card, .btn-elite');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        document.addEventListener('mousedown', () => cursor.classList.add('click'));
+        document.addEventListener('mouseup', () => cursor.classList.remove('click'));
+
+        // ========== SCROLL PROGRESS ==========
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+            scrollProgress.style.width = progress + '%';
+        });
+
+        // ========== PARTICLES ==========
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const colors = ['particle-gold', 'particle-cyan', 'particle-violet'];
+            
+            for (let i = 0; i < 25; i++) {
+                const particle = document.createElement('div');
+                particle.className = `particle ${colors[Math.floor(Math.random() * colors.length)]}`;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = (Math.random() * 4 + 2) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // ========== REVEAL ON SCROLL ==========
+        function revealOnScroll() {
+            const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+            
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const revealPoint = 100;
+                
+                if (elementTop < windowHeight - revealPoint) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('load', revealOnScroll);
+
+        // ========== TILT EFFECT FOR CARDS ==========
+        const cards = document.querySelectorAll('.tilt-effect');
+        
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-12px) scale(1.02)`;
+                
+                // Update glow position
+                const glow = card.querySelector('.card-glow');
+                if (glow) {
+                    const xPercent = (x / rect.width) * 100;
+                    const yPercent = (y / rect.height) * 100;
+                    glow.style.background = `radial-gradient(circle at ${xPercent}% ${yPercent}%, rgba(212, 175, 55, 0.15), transparent 50%)`;
+                }
+
+                // Update CSS variable for glow effect
+                card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+                card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0) scale(1)';
+            });
+        });
+
+        // ========== MAGNETIC BUTTON EFFECT ==========
+        const magneticBtns = document.querySelectorAll('.magnetic-wrap');
+        
+        magneticBtns.forEach(wrap => {
+            const btn = wrap.querySelector('.btn-elite');
+            
+            wrap.addEventListener('mousemove', (e) => {
+                const rect = wrap.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            
+            wrap.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // ========== BUTTON RIPPLE EFFECT ==========
+        const buttons = document.querySelectorAll('.btn-elite');
+        
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // ========== SMOOTH SCROLL ==========
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ========== PARALLAX FOR HERO GLOWS ==========
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroGlows = document.querySelectorAll('.hero-bg-glow, .hero-bg-glow-2');
+            
+            heroGlows.forEach((glow, index) => {
+                const speed = 0.3 + (index * 0.1);
+                glow.style.transform = `translate(-50%, calc(-50% + ${scrolled * speed}px))`;
+            });
+        });
+
+        // ========== INTERSECTION OBSERVER FOR BETTER PERFORMANCE ==========
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+
 </body>
+</html>
