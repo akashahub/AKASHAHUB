@@ -13,7 +13,7 @@
         /* --- 0. CONFIGURAÇÕES GERAIS E VARIÁVEIS --- */
         :root {
             --gold-primary: #d4af37;
-            --gold-light: #f9e69d; /* Mais brilho */
+            --gold-light: #f9e69d;
             --gold-dark: #8a5a0f;
             --dark-bg: #050505;
             --dark-panel: rgba(10, 10, 15, 0.6);
@@ -21,7 +21,7 @@
             --transition-smooth: cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; /* Cursor customizado assume */ }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
 
         html { scroll-behavior: smooth; overflow-x: hidden; }
 
@@ -46,13 +46,13 @@
         }
         body.hovering .cursor-circle { width: 60px; height: 60px; background-color: rgba(212, 175, 55, 0.05); border-color: var(--gold-light); backdrop-filter: blur(2px); }
 
-        /* Noise Texture (Granulação de Cinema) */
+        /* Noise Texture */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 900; opacity: 0.04;
             background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* Partículas Flutuantes (Poeira Dourada) */
+        /* Partículas Flutuantes */
         .particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
         .particle {
             position: absolute; width: 2px; height: 2px; background: var(--gold-primary); border-radius: 50%;
@@ -121,7 +121,6 @@
             position: relative; overflow: hidden;
             background: radial-gradient(circle at center, #1a1025 0%, #000 70%);
         }
-        /* Background Animated Pattern */
         .hero-pattern {
             position: absolute; inset: 0; opacity: 0.15;
             background-image: linear-gradient(rgba(212, 175, 55, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(212, 175, 55, 0.1) 1px, transparent 1px);
@@ -139,7 +138,7 @@
             -webkit-background-clip: text; background-clip: text;
             letter-spacing: 0.15em; margin-bottom: 20px; line-height: 1.1;
             filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.2));
-            opacity: 0; animation: fade-up 1s ease forwards 2.6s; /* Delay após loader */
+            opacity: 0; animation: fade-up 1s ease forwards 2.6s;
         }
 
         .hero-subtitle {
@@ -170,71 +169,6 @@
         }
         .tracker-dot.active { background: var(--gold-primary); border-color: var(--gold-primary); box-shadow: 0 0 10px var(--gold-primary); }
         .tracker-line { width: 1px; height: 30px; background: rgba(255,255,255,0.1); }
-        
-        /* --- 5.5 VITRINE DE LIVROS (INTEGRADA) --- */
-        .books-showcase {
-            width: 100%; padding: 80px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-            background: rgba(10, 10, 10, 0.5); position: relative; z-index: 2;
-        }
-        
-        .showcase-container { max-width: 1400px; margin: 0 auto; padding: 0 clamp(1rem, 3vw, 2rem); }
-
-        .section-header { text-align: center; margin-bottom: 3rem; }
-        .section-header h2 { font-family: 'Cinzel', serif; font-size: clamp(2rem, 5vw, 2.5rem); color: #fff; margin-bottom: 0.5rem; text-shadow: 0 0 15px rgba(0,0,0,0.5); }
-        .section-header p { color: var(--gold-primary); font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase; }
-
-        .scroll-hint { text-align: center; color: var(--gold-primary); font-size: 0.8rem; margin-bottom: 1rem; opacity: 0.7; animation: pulse 2s infinite; display: none; }
-        @media (max-width: 768px) { .scroll-hint { display: block; } }
-
-        .books-track {
-            display: flex; overflow-x: auto; gap: 3rem; padding: 2rem clamp(1rem, 3vw, 2rem) 4rem;
-            scroll-behavior: smooth; scroll-snap-type: x mandatory;
-            scrollbar-width: thin; scrollbar-color: var(--gold-primary) rgba(0, 0, 0, 0.3);
-        }
-        .books-track::-webkit-scrollbar { height: 6px; }
-        .books-track::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 4px; }
-        .books-track::-webkit-scrollbar-thumb { background: var(--gold-primary); border-radius: 4px; }
-
-        .book-item {
-            flex: 0 0 240px; scroll-snap-align: center; perspective: 1000px;
-            display: flex; flex-direction: column; align-items: center; position: relative;
-        }
-
-        .book-cover {
-            width: 100%; aspect-ratio: 2/3; position: relative; background: #1a002f;
-            border-radius: 2px 6px 6px 2px; box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5), inset 3px 0 10px rgba(0, 0, 0, 0.8);
-            transition: transform 0.4s ease, box-shadow 0.4s ease; cursor: pointer;
-            border: 1px solid rgba(212, 175, 55, 0.3); overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-        .book-cover img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
-        
-        .book-cover::before {
-            content: ''; position: absolute; right: 2px; top: 1%; height: 98%; width: 4px;
-            background: linear-gradient(to right, #ccc, #eee 30%, #ddd); z-index: 2; box-shadow: -1px 0 2px rgba(0, 0, 0, 0.2);
-        }
-        .book-cover::after {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%); pointer-events: none;
-        }
-
-        .book-item:hover .book-cover {
-            transform: translateY(-15px) rotateY(-5deg);
-            box-shadow: 15px 25px 30px rgba(0, 0, 0, 0.6), 0 0 15px var(--gold-primary);
-            border-color: var(--gold-primary);
-        }
-
-        .book-info { text-align: center; margin-top: 1.5rem; width: 100%; }
-        .book-title {
-            font-family: 'Cinzel', serif; color: #fff; font-size: 1.1rem; margin-bottom: 0.5rem; line-height: 1.3; min-height: 3rem;
-        }
-        .book-price { color: var(--gold-primary); font-weight: 700; font-size: 1.2rem; margin-bottom: 1rem; display: block; }
-        
-        .book-btn {
-            display: inline-block; padding: 0.5rem 1.2rem; border: 1px solid var(--gold-primary); color: var(--gold-primary);
-            border-radius: 20px; text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
-            transition: all 0.3s; background: transparent; font-family: 'Cinzel', serif;
-        }
-        .book-btn:hover { background: var(--gold-primary); color: #000; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
 
         /* --- 6. SEÇÕES DE NÍVEL (LEVELS) --- */
         .level-section {
@@ -252,7 +186,6 @@
             background: radial-gradient(circle at center, transparent 0%, var(--dark-bg) 90%);
         }
 
-        /* Cores específicas por nível para a aura */
         .level-1 .level-overlay { box-shadow: inset 0 0 100px rgba(107, 63, 160, 0.1); }
         .level-2 .level-overlay { box-shadow: inset 0 0 100px rgba(30, 58, 95, 0.1); }
         .level-3 .level-overlay { box-shadow: inset 0 0 100px rgba(80, 40, 80, 0.1); }
@@ -350,6 +283,121 @@
         .courses-grid.single-item { display: flex; justify-content: center; }
         .courses-grid.single-item .course-card { max-width: 500px; width: 100%; }
 
+        /* --- 7.5 VITRINES INTERNAS (LIVROS E AUDIOS POR NÍVEL) --- */
+        .level-vitrine-section {
+            margin-top: 80px;
+            padding-top: 50px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .vitrine-block {
+            margin-bottom: 50px;
+        }
+
+        .vitrine-label {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--gold-primary);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 3px solid var(--gold-primary);
+            padding-left: 20px;
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .h-scroll-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 25px;
+            padding: 15px 5px 25px 5px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .h-scroll-container::-webkit-scrollbar { height: 6px; }
+        .h-scroll-container::-webkit-scrollbar-thumb { background: var(--gold-primary); border-radius: 3px; }
+        .h-scroll-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
+
+        /* Card genérico da vitrine interna */
+        .v-card {
+            flex: 0 0 auto;
+            scroll-snap-align: start;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        .v-card:hover { transform: translateY(-8px); }
+        .v-card a { text-decoration: none; color: inherit; display: block; }
+
+        /* Estilo para Livro Interno */
+        .v-card.book-style {
+            width: 160px;
+        }
+        .v-card.book-style .v-img-wrapper {
+            width: 100%;
+            height: 230px;
+            border-radius: 3px 8px 8px 3px;
+            overflow: hidden;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.5), inset 3px 0 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+            background: #1a002f;
+        }
+        .v-card.book-style .v-img-wrapper::before {
+            content: ''; position: absolute; right: 2px; top: 1%; height: 98%; width: 4px;
+            background: linear-gradient(to right, #ccc, #eee 30%, #ddd); z-index: 2;
+        }
+        .v-card.book-style:hover .v-img-wrapper {
+            box-shadow: 10px 15px 25px rgba(0,0,0,0.6), 0 0 15px var(--gold-primary);
+            border-color: var(--gold-primary);
+        }
+        
+        /* Estilo para Áudio Interno */
+        .v-card.audio-style { 
+            width: 150px; 
+        }
+        .v-card.audio-style .v-img-wrapper {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+        .v-card.audio-style .v-img-wrapper::after {
+            content: '\f144';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 2.5rem;
+            color: #fff;
+            transition: 0.3s;
+            text-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+        .v-card.audio-style:hover .v-img-wrapper::after { transform: translate(-50%, -50%) scale(1); }
+        .v-card.audio-style:hover .v-img-wrapper img { filter: brightness(0.5); }
+        .v-card.audio-style:hover .v-img-wrapper {
+            border-color: var(--gold-primary);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .v-img-wrapper img {
+            width: 100%; height: 100%; object-fit: cover; transition: 0.3s;
+        }
+
+        .v-info { margin-top: 12px; text-align: center; }
+        .v-title {
+            font-size: 0.9rem; font-family: 'Cinzel', serif; font-weight: 600; color: #fff;
+            line-height: 1.3; margin-bottom: 5px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .v-sub { font-size: 0.75rem; color: var(--gold-primary); font-family: 'Montserrat', sans-serif; }
+
         /* --- 8. FOOTER --- */
         .footer {
             background: #020202; padding: 80px 5%; text-align: center; border-top: 1px solid rgba(212, 175, 55, 0.1); position: relative; z-index: 10;
@@ -370,11 +418,9 @@
         @keyframes bounce { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 10px); } }
         @keyframes text-flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } 70% { opacity: 0.9; } }
 
-        /* Classe de Scroll Reveal */
         .reveal { opacity: 0; transform: translateY(60px); transition: all 0.8s var(--transition-smooth); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
-        /* Delays */
         .delay-100 { transition-delay: 0.1s; }
         .delay-200 { transition-delay: 0.2s; }
         .delay-300 { transition-delay: 0.3s; }
@@ -386,21 +432,26 @@
             .nav-levels { overflow-x: auto; max-width: 100%; padding-bottom: 5px; }
             .nav-btn { font-size: 0.6rem; padding: 6px 12px; white-space: nowrap; }
             .logo-text { font-size: 1rem; }
-            .ascension-tracker { display: none; } /* Hide tracker on mobile */
-            .cursor-dot, .cursor-circle { display: none; } /* Hide cursor on touch */
+            .ascension-tracker { display: none; }
+            .cursor-dot, .cursor-circle { display: none; }
             * { cursor: auto; }
+            .courses-grid { grid-template-columns: 1fr; }
+            .v-card.book-style { width: 140px; }
+            .v-card.book-style .v-img-wrapper { height: 200px; }
+            .v-card.audio-style { width: 130px; }
+            .v-card.audio-style .v-img-wrapper { width: 130px; height: 130px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 0. Efeitos Globais -->
+    <!-- Efeitos Globais -->
     <div class="cursor-dot"></div>
     <div class="cursor-circle"></div>
     <div class="noise-overlay"></div>
     <div class="particles-container" id="particles"></div>
 
-    <!-- 1. Loader -->
+    <!-- Loader -->
     <div class="loader-overlay" id="loader">
         <div class="loader-symbol">𓂀</div>
         <div class="loader-text">ACESSANDO ARQUIVOS AKÁSHICOS...</div>
@@ -409,7 +460,7 @@
         </div>
     </div>
 
-    <!-- 2. Tracker Lateral (Progresso) -->
+    <!-- Tracker Lateral -->
     <div class="ascension-tracker">
         <div class="tracker-dot active" data-target="#hero"></div>
         <div class="tracker-line"></div>
@@ -422,7 +473,7 @@
         <div class="tracker-dot" data-target="#nivel-4"></div>
     </div>
 
-    <!-- 3. Header -->
+    <!-- Header -->
     <header class="header" id="main-header">
         <div class="logo">
             <img src="https://i.ibb.co/Fbxk6mQ3/Design-sem-nome-2.png" alt="Doutrina Akáshica">
@@ -436,7 +487,7 @@
         </nav>
     </header>
 
-    <!-- 4. Hero Section -->
+    <!-- Hero Section -->
     <section class="hero" id="hero">
         <div class="hero-pattern"></div>
         <div class="hero-content">
@@ -453,134 +504,9 @@
         </div>
     </section>
 
-    <!-- NOVA SEÇÃO INTEGRADA: VITRINE DE LIVROS -->
-    <section id="livros" class="books-showcase reveal">
-        <div class="showcase-container">
-            <div class="section-header">
-                <h2><i class="fas fa-book"></i> VITRINE LITERÁRIA</h2>
-                <p>Conhecimento profundo ao seu alcance</p>
-            </div>
-          
-            <p class="scroll-hint"><i class="fas fa-chevron-left"></i> Deslize para ver mais <i class="fas fa-chevron-right"></i></p>
-
-            <div class="books-track">
-                <!-- Livro 1 -->
-                <div class="book-item hover-trigger">
-                    <a href="https://pay.hotmart.com/P103542930V" target="_blank" class="book-cover">
-                        <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766938667/download_5_zmyagf.jpg" alt="Capa Livro Tantra Descomplicado">
-                    </a>
-                    <div class="book-info">
-                        <h4 class="book-title">Tantra Descomplicado e Prosperidade</h4>
-                        <span class="book-price">R$ 49,90</span>
-                        <a href="https://pay.hotmart.com/P103542930V" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                </div>
-
-                <!-- Livro 2 -->
-                <div class="book-item hover-trigger">
-                    <a href="https://pay.hotmart.com/C103563355K" target="_blank" class="book-cover">
-                        <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766939382/download_-_2025-12-28T132730.407_vewyei.jpg" alt="Capa Livro Autoestima Blindada">
-                    </a>
-                    <div class="book-info">
-                        <h4 class="book-title">Autoestima Blindada</h4>
-                        <span class="book-price">R$ 43,00</span>
-                        <a href="https://pay.hotmart.com/C103563355K" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                </div>
-
-                <!-- Livro 3 -->
-                <div class="book-item hover-trigger">
-                    <a href="https://pay.hotmart.com/S103543026B" target="_blank" class="book-cover">
-                        <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766938576/download_-_2025-12-28T105908.411_nvho9c.jpg" alt="Capa Coletânea Alinhamento">
-                    </a>
-                    <div class="book-info">
-                        <h4 class="book-title">Coletânea: Alinhamento Financeiro</h4>
-                        <span class="book-price">R$ 70,00</span>
-                        <a href="https://pay.hotmart.com/S103543026B" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                </div>
-
-                <!-- Livro 4 -->
-                <div class="book-item hover-trigger">
-                    <a href="https://pay.hotmart.com/K103564499T" target="_blank" class="book-cover">
-                        <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766938557/download_-_2025-12-28T123455.411_yzwpyb.jpg" alt="O Escudo Invisível">
-                    </a>
-                    <div class="book-info">
-                        <h4 class="book-title">O Escudo Invisível</h4>
-                        <span class="book-price">R$ 43,00</span>
-                        <a href="https://pay.hotmart.com/K103564499T" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                </div>
-
-                <!-- Livro 5 -->
-                <div class="book-item hover-trigger">
-                    <a href="https://pay.hotmart.com/U103564795C" target="_blank" class="book-cover">
-                        <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766938545/download_-_2025-12-28T125750.686_xtsvqc.jpg" alt="Capa Triplex Na Mente">
-                    </a>
-                    <div class="book-info">
-                        <h4 class="book-title">Triplex na Mente</h4>
-                        <span class="book-price">R$ 39,90</span>
-                        <a href="https://pay.hotmart.com/U103564795C" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                </div>
-
-                <!-- ====== NOVOS LIVROS ADICIONADOS ====== -->
-
-                <!-- Novo Livro 1 -->
-                <div class="book-item hover-trigger">
-                    <a href="https://pay.hotmart.com/F104168327C?bid=1769828592517" target="_blank" class="book-cover">
-                        <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1769828037/download_-_2026-01-24T161807.608_pgikzs.jpg" alt="Capa O Código de Conduta dos que Despertam">
-                    </a>
-                    <div class="book-info">
-                        <h4 class="book-title">O Código de Conduta dos que Despertam</h4>
-                        <span class="book-price">R$ 48,07</span> <!-- Ajuste o preço aqui -->
-                        <a href="https://pay.hotmart.com/F104168327C?bid=1769828592517" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                </div>
-
-                <!-- Novo Livro 2 -->
-                <div class="book-item hover-trigger">
-                    <a href="https://pay.hotmart.com/G104168848Y" target="_blank" class="book-cover">
-                        <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1769828023/b_nxvmcy.jpg" alt="Capa O Que é o Tantra?">
-                    </a>
-                    <div class="book-info">
-                        <h4 class="book-title">O Que é o Tantra?</h4>
-                        <span class="book-price">R$ 26,79</span> <!-- Ajuste o preço aqui -->
-                        <a href="https://pay.hotmart.com/G104168848Y" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                </div>
-
-                <!-- Novo Livro 3 -->
-                <div class="book-item hover-trigger">
-                    <a href="https://pay.hotmart.com/U104170307P" target="_blank" class="book-cover">
-                        <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1769828007/download_4_eo3tee.jpg" alt="Capa Shiva, Shakti, Shava">
-                    </a>
-                    <div class="book-info">
-                        <h4 class="book-title">Shiva, Shakti, Shava: A Senda Tântrica</h4>
-                        <span class="book-price">R$ 26,79</span> <!-- Ajuste o preço aqui -->
-                        <a href="https://pay.hotmart.com/U104170307P" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                </div>
-
-                <!-- Novo Livro 4 -->
-                <div class="book-item hover-trigger">
-                    <a href="https://pay.hotmart.com/M104187005M?bid=1769828539597" target="_blank" class="book-cover">
-                        <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1769828049/jk_xfzdn6.jpg" alt="Capa Honrar a Deusa">
-                    </a>
-                    <div class="book-info">
-                        <h4 class="book-title">Honrar a Deusa</h4>
-                        <span class="book-price">R$ 48,07</span> <!-- Ajuste o preço aqui -->
-                        <a href="https://pay.hotmart.com/M104187005M?bid=1769828539597" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                </div>
-                
-                <!-- ====== FIM DOS NOVOS LIVROS ====== -->
-
-            </div>
-        </div>
-    </section>
-
-    <!-- NÍVEL 1 -->
+    <!-- ======================================== -->
+    <!-- NÍVEL 1 - PORTAL DE ANÚBIS              -->
+    <!-- ======================================== -->
     <section class="level-section level-1" id="nivel-1">
         <video class="video-background parallax-video" autoplay muted loop playsinline>
             <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764885968/grok-video-a5b84555-b67b-4792-9fa3-1c53406bba42_rswk1k.mp4" type="video/mp4">
@@ -597,6 +523,7 @@
                 </p>
             </div>
 
+            <!-- TODOS OS CURSOS DO NÍVEL 1 -->
             <div class="courses-grid">
                 <!-- Curso Akasha -->
                 <div class="course-card reveal delay-100 hover-trigger">
@@ -646,8 +573,8 @@
                     </div>
                 </div>
 
-                 <!-- Workshop Tantra -->
-                 <div class="course-card reveal delay-100 hover-trigger">
+                <!-- Workshop Tantra -->
+                <div class="course-card reveal delay-100 hover-trigger">
                     <div class="course-thumbnail">
                         <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766005756/download_-_2025-12-17T180702.206_tafzrq.jpg" alt="Workshop Tantra">
                         <span class="course-type" style="color: #8b5cf6; border-color: #8b5cf6;">WORKSHOP</span>
@@ -662,8 +589,8 @@
                     </div>
                 </div>
                 
-                 <!-- Masterclass (Breve) -->
-                 <div class="course-card reveal delay-200 hover-trigger">
+                <!-- Masterclass (Breve) -->
+                <div class="course-card reveal delay-200 hover-trigger">
                     <div class="course-thumbnail">
                         <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766004910/download_-_2025-12-17T175350.038_rgq6wn.jpg" alt="Masterclass Fascinação">
                         <span class="course-type" style="color: #ec4899; border-color: #ec4899;">MASTERCLASS</span>
@@ -678,10 +605,121 @@
                     </div>
                 </div>
             </div>
+
+            <!-- VITRINES DO NÍVEL 1 -->
+            <div class="level-vitrine-section reveal">
+                
+                <!-- VITRINE DE LIVROS - NÍVEL 1 -->
+                <div class="vitrine-block">
+                    <h3 class="vitrine-label"><i class="fas fa-book-open"></i> Livros do Nível 1</h3>
+                    <div class="h-scroll-container">
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/2a1b3d/d4af37?text=Livro+1" alt="Livro Nível 1">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Fundamentos Akáshicos</div>
+                                    <div class="v-sub">R$ 49,90</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/2a1b3d/d4af37?text=Livro+2" alt="Livro Nível 1">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">O Despertar Interior</div>
+                                    <div class="v-sub">R$ 39,90</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/2a1b3d/d4af37?text=Livro+3" alt="Livro Nível 1">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Primeiros Passos</div>
+                                    <div class="v-sub">R$ 35,00</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/2a1b3d/d4af37?text=Livro+4" alt="Livro Nível 1">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Guia do Iniciante</div>
+                                    <div class="v-sub">R$ 29,90</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VITRINE DE ÁUDIOS - NÍVEL 1 -->
+                <div class="vitrine-block">
+                    <h3 class="vitrine-label"><i class="fas fa-headphones"></i> Áudios & Meditações do Nível 1</h3>
+                    <div class="h-scroll-container">
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/1a0a2e/d4af37?text=Audio+1" alt="Áudio Nível 1">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Meditação de Abertura</div>
+                                    <div class="v-sub">15 min</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/1a0a2e/d4af37?text=Audio+2" alt="Áudio Nível 1">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Frequência Anúbis</div>
+                                    <div class="v-sub">30 min</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/1a0a2e/d4af37?text=Audio+3" alt="Áudio Nível 1">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Limpeza Energética</div>
+                                    <div class="v-sub">20 min</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/1a0a2e/d4af37?text=Audio+4" alt="Áudio Nível 1">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Ativação Chakras</div>
+                                    <div class="v-sub">45 min</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- FIM VITRINES NIVEL 1 -->
+
         </div>
     </section>
 
-    <!-- NÍVEL 2 -->
+    <!-- ======================================== -->
+    <!-- NÍVEL 2 - CAMINHO DE HORUS              -->
+    <!-- ======================================== -->
     <section class="level-section level-2" id="nivel-2">
         <video class="video-background parallax-video" autoplay muted loop playsinline>
             <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764885777/oficial_horuss_ylm0kv.mp4" type="video/mp4">
@@ -698,6 +736,7 @@
                 </p>
             </div>
 
+            <!-- TODOS OS CURSOS DO NÍVEL 2 -->
             <div class="courses-grid">
                 <!-- A Senda Tântrica -->
                 <div class="course-card reveal delay-100 hover-trigger">
@@ -731,8 +770,8 @@
                     </div>
                 </div>
 
-                 <!-- Mentoria -->
-                 <div class="course-card reveal delay-300 hover-trigger">
+                <!-- Mentoria -->
+                <div class="course-card reveal delay-300 hover-trigger">
                     <div class="course-thumbnail">
                         <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766009473/download_-_2025-12-17T190553.191_mxpxsi.jpg" alt="Magnetismo Tântrico">
                         <span class="course-type" style="color: #3b82f6; border-color: #3b82f6;">MENTORIA</span>
@@ -747,10 +786,99 @@
                     </div>
                 </div>
             </div>
+
+            <!-- VITRINES DO NÍVEL 2 -->
+            <div class="level-vitrine-section reveal">
+                
+                <!-- VITRINE DE LIVROS - NÍVEL 2 -->
+                <div class="vitrine-block">
+                    <h3 class="vitrine-label"><i class="fas fa-book-open"></i> Livros do Nível 2</h3>
+                    <div class="h-scroll-container">
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/1e3a5f/d4af37?text=Livro+1" alt="Livro Nível 2">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Visão de Hórus</div>
+                                    <div class="v-sub">R$ 59,90</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/1e3a5f/d4af37?text=Livro+2" alt="Livro Nível 2">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">O Terceiro Olho</div>
+                                    <div class="v-sub">R$ 49,90</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/1e3a5f/d4af37?text=Livro+3" alt="Livro Nível 2">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Percepção Expandida</div>
+                                    <div class="v-sub">R$ 55,00</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VITRINE DE ÁUDIOS - NÍVEL 2 -->
+                <div class="vitrine-block">
+                    <h3 class="vitrine-label"><i class="fas fa-headphones"></i> Áudios & Frequências do Nível 2</h3>
+                    <div class="h-scroll-container">
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/0a1628/d4af37?text=Audio+1" alt="Áudio Nível 2">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Clarividência Guiada</div>
+                                    <div class="v-sub">40 min</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/0a1628/d4af37?text=Audio+2" alt="Áudio Nível 2">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Mantras de Poder</div>
+                                    <div class="v-sub">25 min</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/0a1628/d4af37?text=Audio+3" alt="Áudio Nível 2">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Frequência 432Hz</div>
+                                    <div class="v-sub">1h 00min</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- FIM VITRINES NIVEL 2 -->
+
         </div>
     </section>
 
-    <!-- NÍVEL 3 -->
+    <!-- ======================================== -->
+    <!-- NÍVEL 3 - TEMPLO DE ÍSIS                -->
+    <!-- ======================================== -->
     <section class="level-section level-3" id="nivel-3">
         <video class="video-background parallax-video" autoplay muted loop playsinline>
             <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764885796/oficialisis_zxcfhq.mp4" type="video/mp4">
@@ -767,6 +895,7 @@
                 </p>
             </div>
 
+            <!-- TODOS OS CURSOS DO NÍVEL 3 -->
             <div class="courses-grid">
                 <!-- Paladins -->
                 <div class="course-card reveal delay-100 hover-trigger">
@@ -784,8 +913,8 @@
                     </div>
                 </div>
 
-                 <!-- Jornada 90 Dias -->
-                 <div class="course-card reveal delay-200 hover-trigger">
+                <!-- Jornada 90 Dias -->
+                <div class="course-card reveal delay-200 hover-trigger">
                     <div class="course-thumbnail">
                         <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766011242/download_-_2025-12-17T193915.069_stbglt.jpg" alt="Jornada 90 Dias">
                         <span class="course-type" style="color: #6366f1; border-color: #6366f1;">JORNADA</span>
@@ -800,10 +929,99 @@
                     </div>
                 </div>
             </div>
+
+            <!-- VITRINES DO NÍVEL 3 -->
+            <div class="level-vitrine-section reveal">
+                
+                <!-- VITRINE DE LIVROS - NÍVEL 3 -->
+                <div class="vitrine-block">
+                    <h3 class="vitrine-label"><i class="fas fa-book-open"></i> Grimórios do Nível 3</h3>
+                    <div class="h-scroll-container">
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/502850/d4af37?text=Livro+1" alt="Livro Nível 3">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Segredos de Ísis</div>
+                                    <div class="v-sub">R$ 79,90</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/502850/d4af37?text=Livro+2" alt="Livro Nível 3">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Magia Avançada</div>
+                                    <div class="v-sub">R$ 89,90</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/502850/d4af37?text=Livro+3" alt="Livro Nível 3">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Alquimia Interior</div>
+                                    <div class="v-sub">R$ 69,90</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VITRINE DE ÁUDIOS - NÍVEL 3 -->
+                <div class="vitrine-block">
+                    <h3 class="vitrine-label"><i class="fas fa-headphones"></i> Rituais Sonoros do Nível 3</h3>
+                    <div class="h-scroll-container">
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/2d1a2d/d4af37?text=Audio+1" alt="Áudio Nível 3">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Invocação de Ísis</div>
+                                    <div class="v-sub">Ritual Guiado</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/2d1a2d/d4af37?text=Audio+2" alt="Áudio Nível 3">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Cura Ancestral</div>
+                                    <div class="v-sub">50 min</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/2d1a2d/d4af37?text=Audio+3" alt="Áudio Nível 3">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Transmutação</div>
+                                    <div class="v-sub">35 min</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- FIM VITRINES NIVEL 3 -->
+
         </div>
     </section>
 
-    <!-- NÍVEL 4 -->
+    <!-- ======================================== -->
+    <!-- NÍVEL 4 - TRONO DE TOTH                 -->
+    <!-- ======================================== -->
     <section class="level-section level-4" id="nivel-4">
         <video class="video-background parallax-video" autoplay muted loop playsinline>
             <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1764885835/oficialtoth_bm0iun.mp4" type="video/mp4">
@@ -820,6 +1038,7 @@
                 </p>
             </div>
 
+            <!-- CURSOS DO NÍVEL 4 -->
             <div class="courses-grid single-item">
                 <!-- Do Zero ao Zen -->
                 <div class="course-card reveal delay-100 hover-trigger" style="border-color: var(--gold-primary);">
@@ -836,6 +1055,93 @@
                     </div>
                 </div>
             </div>
+
+            <!-- VITRINES DO NÍVEL 4 -->
+            <div class="level-vitrine-section reveal">
+                
+                <!-- VITRINE DE LIVROS - NÍVEL 4 -->
+                <div class="vitrine-block">
+                    <h3 class="vitrine-label"><i class="fas fa-book-open"></i> Sabedoria Hermética do Nível 4</h3>
+                    <div class="h-scroll-container">
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/1a1a1a/d4af37?text=Livro+1" alt="Livro Nível 4">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">As Tábuas de Toth</div>
+                                    <div class="v-sub">R$ 149,90</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/1a1a1a/d4af37?text=Livro+2" alt="Livro Nível 4">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Mestria Absoluta</div>
+                                    <div class="v-sub">R$ 199,90</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/160x230/1a1a1a/d4af37?text=Livro+3" alt="Livro Nível 4">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">O Código Eterno</div>
+                                    <div class="v-sub">R$ 179,90</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VITRINE DE ÁUDIOS - NÍVEL 4 -->
+                <div class="vitrine-block">
+                    <h3 class="vitrine-label"><i class="fas fa-headphones"></i> Transcendência Sonora do Nível 4</h3>
+                    <div class="h-scroll-container">
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/0d0d0d/d4af37?text=Audio+1" alt="Áudio Nível 4">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">O Vazio Iluminado</div>
+                                    <div class="v-sub">1h 30min</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/0d0d0d/d4af37?text=Audio+2" alt="Áudio Nível 4">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Palestra Mestra</div>
+                                    <div class="v-sub">2h 00min</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="v-card audio-style hover-trigger">
+                            <a href="#" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://placehold.co/150x150/0d0d0d/d4af37?text=Audio+3" alt="Áudio Nível 4">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Frequência God-Tier</div>
+                                    <div class="v-sub">1h 00min</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- FIM VITRINES NIVEL 4 -->
+
         </div>
     </section>
 
@@ -849,40 +1155,39 @@
     </footer>
 
     <script>
-        // --- 1. LOADER LOGIC ---
+        // --- LOADER ---
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const loader = document.getElementById('loader');
                 loader.style.opacity = '0';
                 loader.style.visibility = 'hidden';
-                
-                // Iniciar observadores após o load
                 initObservers();
-            }, 2500); // 2.5s para apreciar a animação
+            }, 2500);
         });
 
-        // --- 2. CUSTOM CURSOR ---
+        // --- CURSOR CUSTOMIZADO ---
         const cursorDot = document.querySelector('.cursor-dot');
         const cursorCircle = document.querySelector('.cursor-circle');
-        const hoverTriggers = document.querySelectorAll('.hover-trigger, a, button, .course-card');
-
+        
         document.addEventListener('mousemove', (e) => {
             cursorDot.style.left = `${e.clientX}px`;
             cursorDot.style.top = `${e.clientY}px`;
             
-            // Efeito de arrasto suave para o círculo
             cursorCircle.animate({
                 left: `${e.clientX}px`,
                 top: `${e.clientY}px`
             }, { duration: 500, fill: "forwards" });
         });
 
-        hoverTriggers.forEach(item => {
-            item.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-            item.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        document.body.addEventListener('mouseover', (e) => {
+            if (e.target.closest('.hover-trigger') || e.target.closest('a') || e.target.closest('button')) {
+                document.body.classList.add('hovering');
+            } else {
+                document.body.classList.remove('hovering');
+            }
         });
 
-        // --- 3. SCROLL REVEAL & PARALLAX ---
+        // --- SCROLL REVEAL ---
         function initObservers() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -895,14 +1200,12 @@
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         }
 
-        // --- 4. SCROLL SPY (TRACKER LATERAL) ---
+        // --- SCROLL SPY ---
         window.addEventListener('scroll', () => {
-            // Header
             const header = document.getElementById('main-header');
             if(window.scrollY > 50) header.classList.add('scrolled');
             else header.classList.remove('scrolled');
 
-            // Tracker
             const sections = document.querySelectorAll('section');
             const dots = document.querySelectorAll('.tracker-dot');
 
@@ -921,19 +1224,16 @@
                 }
             });
 
-            // Parallax simples nos vídeos
             const videos = document.querySelectorAll('.parallax-video');
             videos.forEach(video => {
-                const speed = 0.5;
                 const rect = video.parentElement.getBoundingClientRect();
                 if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    // Está na tela
                     video.style.transform = `translateY(${(window.scrollY - video.parentElement.offsetTop) * 0.1}px)`;
                 }
             });
         });
 
-        // --- 5. PARTÍCULAS DOURADAS ---
+        // --- PARTÍCULAS ---
         function createParticles() {
             const container = document.getElementById('particles');
             const particleCount = 20;
@@ -942,7 +1242,6 @@
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
                 
-                // Posição aleatória
                 const x = Math.random() * 100;
                 const delay = Math.random() * 5;
                 const duration = 5 + Math.random() * 5;
@@ -955,7 +1254,6 @@
             }
         }
         createParticles();
-
     </script>
 </body>
 </html>
