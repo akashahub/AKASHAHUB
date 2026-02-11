@@ -1,1279 +1,465 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mentoria Akáshica 1:1 | Arquitetura de Essência</title>
-    
-    <!-- FAVICON -->
-    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dlueoyrhe/image/upload/v1765962348/Sem_nome_70_x_70_px_la5nyl.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AKASHA | A Deusa Digital</title>
     
     <!-- Fontes de Luxo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. CORE VARIABLES & RESET --- */
+        /* ════════ CORE ════════ */
         :root {
-            --bg-void: #050508;
-            --bg-glass: rgba(15, 10, 25, 0.7);
-            --border-subtle: rgba(138, 43, 226, 0.15);
-            --gold-primary: #D4AF37; 
-            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 40%, #b38728 80%, #fbf5b7 100%);
-            --violet-primary: #8B5CF6;
-            --violet-dark: #4C1D95;
-            --blue-light: #7DD3FC;
-            --blue-accent: #38BDF8;
-            --text-main: #Eaeaea;
-            --text-muted: #888888;
-            --spacing-section: 120px;
-            --mystic-gradient: linear-gradient(135deg, #1a0a2e 0%, #0a0a0f 50%, #0f1a2a 100%);
+            --bg: #030305;
+            --gold: #D4AF37;
+            --gold-glow: #f9eac3;
+            --ether: #8B5CF6;
+            --font-head: 'Cinzel', serif;
+            --font-body: 'Montserrat', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            background: var(--bg-void);
-            color: var(--text-main);
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 300;
-            line-height: 1.8;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* --- ANIMATED BACKGROUND --- */
-        .cosmic-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: var(--mystic-gradient);
-        }
-
-        .cosmic-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(212, 175, 55, 0.08) 0%, transparent 60%);
-            animation: cosmicPulse 15s ease-in-out infinite;
-        }
-
-        @keyframes cosmicPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.1); }
-        }
-
-        /* Particle Canvas */
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Sacred Geometry Overlay */
-        .sacred-geometry {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%23D4AF37' stroke-width='0.5'%3E%3Ccircle cx='200' cy='200' r='150'/%3E%3Ccircle cx='200' cy='200' r='100'/%3E%3Ccircle cx='200' cy='200' r='50'/%3E%3Cpolygon points='200,50 350,200 200,350 50,200'/%3E%3Cpolygon points='200,80 320,200 200,320 80,200'/%3E%3Cline x1='200' y1='50' x2='200' y2='350'/%3E%3Cline x1='50' y1='200' x2='350' y2='200'/%3E%3C/g%3E%3C/svg%3E");
-            background-size: 400px 400px;
-            animation: geometryFloat 60s linear infinite;
-        }
-
-        @keyframes geometryFloat {
-            0% { background-position: 0 0; }
-            100% { background-position: 400px 400px; }
-        }
-
-        /* Egyptian Hieroglyphics Floating */
-        .hieroglyphics {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .hieroglyph {
-            position: absolute;
-            font-size: 2rem;
-            opacity: 0.04;
-            color: var(--gold-primary);
-            animation: floatHiero 20s ease-in-out infinite;
-        }
-
-        @keyframes floatHiero {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.04; }
-            50% { transform: translateY(-30px) rotate(5deg); opacity: 0.08; }
-        }
-
-        /* --- 2. TYPOGRAPHY --- */
-        h1, h2, h3, h4 {
-            font-family: 'Cinzel', serif;
-            text-transform: uppercase;
-            font-weight: 400;
-            letter-spacing: 0.15em;
-        }
-        .text-gold {
-            background: var(--gold-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 600;
-            animation: shimmer 3s ease-in-out infinite;
-        }
-
-        @keyframes shimmer {
-            0%, 100% { filter: brightness(1) drop-shadow(0 0 10px rgba(212, 175, 55, 0.3)); }
-            50% { filter: brightness(1.2) drop-shadow(0 0 20px rgba(212, 175, 55, 0.6)); }
-        }
-
-        .text-violet {
-            background: linear-gradient(135deg, var(--violet-primary), var(--blue-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .serif-italic {
-            font-family: 'Cormorant Garamond', serif;
-            font-style: italic;
-            font-size: 1.6rem;
-            color: var(--gold-primary);
-            line-height: 1.4;
-        }
-
-        /* --- 3. UTILITIES & ANIMATIONS --- */
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
         
-        .fade-in-up { 
-            animation: fadeInUp 1.2s ease-out forwards; 
-            opacity: 0; 
-            transform: translateY(30px); 
-        }
-
-        @keyframes fadeInUp { 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-
-        .glow-text {
-            animation: glowPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes glowPulse {
-            0%, 100% { text-shadow: 0 0 10px rgba(139, 92, 246, 0.3), 0 0 20px rgba(212, 175, 55, 0.2); }
-            50% { text-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(212, 175, 55, 0.4); }
-        }
-
-        .float-animation {
-            animation: gentleFloat 6s ease-in-out infinite;
-        }
-
-        @keyframes gentleFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        .divider {
-            width: 1px; 
-            height: 80px; 
-            background: linear-gradient(to bottom, transparent, var(--violet-primary), var(--gold-primary), transparent); 
-            margin: 0 auto 40px;
-            animation: dividerGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes dividerGlow {
-            0%, 100% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
-            50% { box-shadow: 0 0 25px rgba(139, 92, 246, 0.6), 0 0 35px rgba(212, 175, 55, 0.4); }
-        }
-
-        /* Eye of Horus Decoration */
-        .eye-decoration {
-            position: relative;
-        }
-
-        .eye-decoration::before {
-            content: '𓂀';
-            position: absolute;
-            font-size: 3rem;
-            opacity: 0.1;
-            color: var(--gold-primary);
-            animation: eyePulse 4s ease-in-out infinite;
-        }
-
-        @keyframes eyePulse {
-            0%, 100% { opacity: 0.1; transform: scale(1); }
-            50% { opacity: 0.2; transform: scale(1.1); }
-        }
-
-        /* --- 4. COMPONENTS --- */
-        .btn-gold {
-            display: inline-block; 
-            padding: 22px 55px; 
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            background: linear-gradient(180deg, rgba(20,10,30,0.9), rgba(0,0,0,1));
-            color: var(--gold-primary); 
-            font-family: 'Cinzel', serif; 
-            font-size: 0.9rem;
-            letter-spacing: 0.2em; 
-            text-decoration: none; 
-            text-transform: uppercase;
-            transition: all 0.5s ease; 
-            position: relative; 
-            backdrop-filter: blur(10px);
-            overflow: hidden;
-        }
-
-        .btn-gold::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
-            transition: left 0.7s ease;
-        }
-
-        .btn-gold:hover::before {
-            left: 100%;
-        }
-
-        .btn-gold:hover { 
-            border-color: var(--gold-primary); 
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.3), 0 0 60px rgba(139, 92, 246, 0.2); 
-            letter-spacing: 0.25em;
-            transform: translateY(-3px);
-        }
-        
-        .glass-card {
-            background: linear-gradient(135deg, rgba(20, 10, 35, 0.8), rgba(10, 15, 30, 0.7));
-            border: 1px solid var(--border-subtle);
-            padding: 40px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            transition: all 0.5s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--violet-primary), var(--gold-primary), transparent);
-            animation: borderGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes borderGlow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        .glass-card:hover { 
-            border-color: rgba(139, 92, 246, 0.4); 
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15), 0 10px 30px rgba(212, 175, 55, 0.1);
-        }
-
-        /* Animated Corner Ornaments */
-        .ornate-corners {
-            position: relative;
-        }
-
-        .ornate-corners::before,
-        .ornate-corners::after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--gold-primary);
-            opacity: 0.5;
-            transition: all 0.4s ease;
-        }
-
-        .ornate-corners::before {
-            top: -5px;
-            left: -5px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .ornate-corners::after {
-            bottom: -5px;
-            right: -5px;
-            border-left: none;
-            border-top: none;
-        }
-
-        .ornate-corners:hover::before,
-        .ornate-corners:hover::after {
-            width: 60px;
-            height: 60px;
-            opacity: 1;
-        }
-
-        /* --- 5. SECTIONS --- */
-        .hero {
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            position: relative; 
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: var(--font-body); 
             overflow: hidden; 
+            width: 100vw; height: 100vh;
+            cursor: none; /* Cursor customizado */
+        }
+
+        /* ════════ CURSOR ════════ */
+        #cursor {
+            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+            border: 1px solid var(--gold); border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%); transition: transform 0.1s;
+            mix-blend-mode: difference;
+        }
+        #cursor.hover { transform: translate(-50%, -50%) scale(2.5); background: rgba(212, 175, 55, 0.2); }
+
+        /* ════════ CANVAS ════════ */
+        #webgl-stage { position: fixed; inset: 0; z-index: 1; }
+
+        /* ════════ UI ════════ */
+        .ui-layer {
+            position: fixed; inset: 0; z-index: 10; pointer-events: none;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        /* Hero Text */
+        #hero-text {
+            text-align: center; transition: opacity 1s; opacity: 1;
+        }
+        h1 {
+            font-family: var(--font-head); font-size: clamp(2rem, 5vw, 4rem);
+            color: transparent; -webkit-text-stroke: 1px rgba(212, 175, 55, 0.8);
+            letter-spacing: 0.3em; text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 0.8rem; letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase;
+        }
+        .hint {
+            margin-top: 50px; font-size: 0.7rem; color: #666; letter-spacing: 0.2em;
+            animation: pulse 2s infinite;
+        }
+
+        /* Content Quadrants */
+        .quadrant {
+            position: absolute; width: 250px; padding: 20px;
+            border-left: 2px solid var(--gold);
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+            opacity: 0; transition: all 1s ease; transform: scale(0.9);
+            pointer-events: none; /* Ativa só quando aberto */
+        }
+        .quadrant h3 { color: var(--gold); font-family: var(--font-head); margin-bottom: 10px; font-size: 1.1rem; }
+        .quadrant p { font-size: 0.8rem; line-height: 1.5; color: #ddd; }
+        .quadrant span { display: block; margin-top: 10px; font-size: 0.6rem; color: var(--ether); text-transform: uppercase; letter-spacing: 0.1em; }
+
+        .quadrant.active { opacity: 1; transform: scale(1); pointer-events: auto; }
+
+        /* Positions */
+        #q1 { top: 15%; left: 10%; }
+        #q2 { top: 15%; right: 10%; text-align: right; border-left: none; border-right: 2px solid var(--gold); }
+        #q3 { bottom: 15%; left: 10%; }
+        #q4 { bottom: 15%; right: 10%; text-align: right; border-left: none; border-right: 2px solid var(--gold); }
+
+        /* Final CTA */
+        #cta-container {
+            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
+            opacity: 0; transition: opacity 1s; pointer-events: none;
             text-align: center;
         }
-
-        .hero-video {
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover;
-            opacity: 0.25; 
-            z-index: 0; 
-            filter: grayscale(40%) contrast(1.1) hue-rotate(20deg);
-        }
-
-        .hero::after { 
-            content: ''; 
-            position: absolute; 
-            inset: 0; 
-            background: radial-gradient(ellipse at center, rgba(26, 10, 46, 0.4) 0%, rgba(5, 5, 8, 0.95) 85%); 
-            z-index: 1; 
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: 
-                radial-gradient(circle at 30% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 70% 30%, rgba(56, 189, 248, 0.08) 0%, transparent 40%);
-            z-index: 2;
-            animation: auraMove 10s ease-in-out infinite;
-        }
-
-        @keyframes auraMove {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        .hero-content { 
-            position: relative; 
-            z-index: 3; 
-            max-width: 900px; 
-        }
-
-        .hero-logo { 
-            width: 90px; 
-            margin-bottom: 40px; 
-            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5)) drop-shadow(0 0 40px rgba(139, 92, 246, 0.3));
-            animation: logoFloat 4s ease-in-out infinite, logoGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(2deg); }
-        }
-
-        @keyframes logoGlow {
-            0%, 100% { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5)) drop-shadow(0 0 40px rgba(139, 92, 246, 0.3)); }
-            50% { filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.8)) drop-shadow(0 0 60px rgba(139, 92, 246, 0.5)); }
-        }
-
-        .hero h1 { 
-            font-size: 3.5rem; 
-            line-height: 1.2; 
-            margin-bottom: 25px; 
-            text-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 60px rgba(139, 92, 246, 0.3);
-            animation: titleReveal 1.5s ease-out forwards;
-        }
-
-        @keyframes titleReveal {
-            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .hero h2 { 
-            font-family: 'Montserrat', sans-serif; 
-            font-size: 0.85rem; 
-            letter-spacing: 0.5em; 
-            color: var(--blue-light); 
-            margin-bottom: 40px; 
-            opacity: 0.9;
-            animation: subtitleGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes subtitleGlow {
-            0%, 100% { text-shadow: 0 0 10px rgba(125, 211, 252, 0.3); }
-            50% { text-shadow: 0 0 20px rgba(125, 211, 252, 0.6); }
-        }
-
-        /* Scroll Indicator */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            animation: scrollBounce 2s ease-in-out infinite;
-        }
-
-        .scroll-indicator span {
-            display: block;
-            width: 20px;
-            height: 30px;
-            border: 2px solid rgba(212, 175, 55, 0.5);
-            border-radius: 20px;
-            position: relative;
-        }
-
-        .scroll-indicator span::before {
-            content: '';
-            position: absolute;
-            top: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 8px;
-            background: var(--gold-primary);
-            border-radius: 2px;
-            animation: scrollDot 2s ease-in-out infinite;
-        }
-
-        @keyframes scrollBounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
-        }
-
-        @keyframes scrollDot {
-            0%, 100% { opacity: 1; top: 6px; }
-            50% { opacity: 0.3; top: 14px; }
-        }
-
-        /* --- NEW SECTION STYLE: NARRATIVE GRID --- */
-        .narrative-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
-            margin-bottom: 100px;
-        }
-
-        .media-collage {
-            position: relative;
-            height: 600px;
-            width: 100%;
-        }
-
-        /* Foto de fundo */
-        .collage-img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 75%;
-            height: 70%;
-            object-fit: cover;
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            filter: grayscale(30%) saturate(1.2);
-            z-index: 1;
-            transition: all 0.5s ease;
-        }
-
-        .collage-img:hover {
-            filter: grayscale(0%) saturate(1.3);
-            border-color: var(--violet-primary);
-            box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
-        }
-
-        /* Vídeo sobreposto */
-        .collage-video {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 60%;
-            height: 65%;
-            object-fit: cover;
-            border: 1px solid var(--gold-primary);
-            box-shadow: -20px -20px 60px rgba(0,0,0,0.9), 0 0 30px rgba(212, 175, 55, 0.2);
-            z-index: 2;
-            transition: all 0.5s ease;
-        }
-
-        .collage-video:hover {
-            box-shadow: -20px -20px 60px rgba(0,0,0,0.9), 0 0 50px rgba(212, 175, 55, 0.4);
-        }
-
-        .narrative-text h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #fff;
-            position: relative;
-            display: inline-block;
-        }
-
-        .narrative-text h3::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 60px;
-            height: 2px;
-            background: linear-gradient(90deg, var(--violet-primary), var(--gold-primary));
-        }
+        #cta-container.active { opacity: 1; pointer-events: auto; }
         
-        .narrative-text p {
-            font-size: 1rem;
-            color: #ccc;
-            margin-bottom: 25px;
-            text-align: justify;
+        .cta-btn {
+            background: transparent; border: 1px solid var(--gold); color: var(--gold);
+            padding: 15px 40px; font-family: var(--font-head); font-size: 1rem; letter-spacing: 0.2em;
+            cursor: pointer; transition: 0.4s; text-transform: uppercase;
         }
+        .cta-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 30px var(--gold); }
 
-        .highlight-box {
-            border-left: 3px solid transparent;
-            border-image: linear-gradient(to bottom, var(--violet-primary), var(--gold-primary)) 1;
-            padding-left: 20px;
-            margin: 30px 0;
-            background: linear-gradient(90deg, rgba(139, 92, 246, 0.08), transparent);
-            position: relative;
-            transition: all 0.4s ease;
-        }
-
-        .highlight-box:hover {
-            background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), transparent);
-            transform: translateX(5px);
-        }
-
-        /* Animated Ankh Symbol */
-        .ankh-float {
-            position: absolute;
-            font-size: 4rem;
-            color: var(--gold-primary);
-            opacity: 0.05;
-            animation: ankhFloat 8s ease-in-out infinite;
-        }
-
-        @keyframes ankhFloat {
-            0%, 100% { transform: translateY(0) rotate(-5deg); opacity: 0.05; }
-            50% { transform: translateY(-20px) rotate(5deg); opacity: 0.1; }
-        }
-
-        /* --- REST OF SECTIONS --- */
-        .section-std { 
-            padding: var(--spacing-section) 0; 
-            position: relative;
-        }
-
-        .intro-text { 
-            text-align: center; 
-            max-width: 750px; 
-            margin: 0 auto 80px; 
-        }
-
-        .filter-container { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 60px; 
-        }
-
-        .filter-list li { 
-            list-style: none; 
-            margin-bottom: 20px; 
-            padding-left: 35px; 
-            position: relative; 
-            color: #ccc;
-            transition: all 0.3s ease;
-        }
-
-        .filter-list li:hover {
-            color: #fff;
-            transform: translateX(5px);
-        }
-
-        .check-list li::before { 
-            content: '✦'; 
-            color: var(--gold-primary); 
-            position: absolute; 
-            left: 0; 
-            top: 2px; 
-            font-size: 1.2rem;
-            animation: starPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes starPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.2); }
-        }
-
-        .cross-list li::before { 
-            content: '—'; 
-            color: var(--violet-dark); 
-            position: absolute; 
-            left: 0; 
-        }
-
-        .methodology { 
-            background: linear-gradient(to bottom, rgba(10, 5, 20, 0.9), rgba(15, 10, 30, 0.95), rgba(10, 5, 20, 0.9)); 
-            border-top: 1px solid var(--border-subtle); 
-            border-bottom: 1px solid var(--border-subtle);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .methodology::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(ellipse at 20% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%);
-            animation: methodologyGlow 8s ease-in-out infinite;
-        }
-
-        @keyframes methodologyGlow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .dual-columns { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 0; 
-        }
-
-        .method-card { 
-            padding: 80px 50px; 
-            border-right: 1px solid var(--border-subtle); 
-            text-align: center; 
-            transition: all 0.5s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .method-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .method-card:hover::before {
-            opacity: 1;
-        }
-
-        .method-card:last-child { border-right: none; }
-        .method-card:hover { 
-            background: rgba(139, 92, 246, 0.05); 
-        }
-
-        .method-icon { 
-            font-size: 3rem; 
-            margin-bottom: 30px; 
-            display: inline-block; 
-            background: linear-gradient(135deg, var(--violet-primary), var(--gold-primary));
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent;
-            animation: iconFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes iconFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .akasha-lab { 
-            position: relative; 
-            padding: var(--spacing-section) 0; 
-            background: radial-gradient(ellipse at 50% 50%, rgba(26, 10, 46, 0.6) 0%, rgba(5, 5, 8, 1) 100%);
-            overflow: hidden;
-        }
-
-        .akasha-lab::before {
-            content: '𓂋';
-            position: absolute;
-            top: 10%;
-            right: 10%;
-            font-size: 15rem;
-            opacity: 0.02;
-            color: var(--gold-primary);
-            animation: symbolFloat 15s ease-in-out infinite;
-        }
-
-        @keyframes symbolFloat {
-            0%, 100% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(5deg) scale(1.05); }
-        }
-
-        .lab-highlight { 
-            border: 1px solid rgba(139, 92, 246, 0.25); 
-            padding: 60px; 
-            text-align: center; 
-            position: relative; 
-            background: linear-gradient(135deg, rgba(20, 10, 35, 0.6), rgba(10, 15, 30, 0.4));
-        }
-
-        .lab-highlight::before, 
-        .lab-highlight::after { 
-            content: ''; 
-            position: absolute; 
-            width: 30px; 
-            height: 30px; 
-            border: 2px solid var(--gold-primary); 
-            transition: all 0.4s ease; 
-        }
-        .lab-highlight::before { 
-            top: -2px; 
-            left: -2px; 
-            border-bottom: 0; 
-            border-right: 0; 
-        }
-        .lab-highlight::after { 
-            bottom: -2px; 
-            right: -2px; 
-            border-top: 0; 
-            border-left: 0; 
-        }
-
-        .lab-highlight:hover::before,
-        .lab-highlight:hover::after {
-            width: 50px;
-            height: 50px;
-        }
-
-        .pricing-section { 
-            text-align: center; 
-            padding: 100px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pricing-section::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
-            animation: pricingGlow 6s ease-in-out infinite;
-        }
-
-        @keyframes pricingGlow {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.5; }
-        }
-
-        .price-tag { 
-            font-family: 'Cinzel', serif; 
-            font-size: 3rem; 
-            margin: 20px 0 50px; 
-            color: #fff;
-            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
-            animation: priceGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes priceGlow {
-            0%, 100% { text-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
-            50% { text-shadow: 0 0 50px rgba(212, 175, 55, 0.5), 0 0 80px rgba(139, 92, 246, 0.3); }
-        }
-
-        .price-sub { 
-            font-size: 1rem; 
-            color: var(--violet-primary); 
-            display: block; 
-            margin-bottom: 10px; 
-            letter-spacing: 0.1em; 
-        }
-
-        /* Format Icons Animation */
-        .format-icon {
-            transition: all 0.4s ease;
-        }
-
-        .format-icon:hover {
-            transform: scale(1.1);
-            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
-        }
-
-        .legal-footer { 
-            padding: 60px 0; 
-            border-top: 1px solid rgba(139, 92, 246, 0.1); 
-            text-align: center; 
-            font-size: 0.75rem; 
-            color: #444;
-            background: linear-gradient(to bottom, transparent, rgba(10, 5, 20, 0.5));
-        }
-        .legal-footer p { 
-            max-width: 600px; 
-            margin: 0 auto 10px; 
-            line-height: 1.6; 
-        }
-
-        /* Intersection Observer Animation Classes */
-        .reveal {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 1s ease-out;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .reveal-left {
-            opacity: 0;
-            transform: translateX(-50px);
-            transition: all 1s ease-out;
-        }
-
-        .reveal-left.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .reveal-right {
-            opacity: 0;
-            transform: translateX(50px);
-            transition: all 1s ease-out;
-        }
-
-        .reveal-right.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        /* --- 6. RESPONSIVE --- */
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        
+        /* Mobile adjust */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .hero h2 { letter-spacing: 0.2em; }
-            .filter-container, .dual-columns, .narrative-grid { grid-template-columns: 1fr; }
-            .media-collage { height: 400px; margin-bottom: 40px; }
-            .collage-img { width: 80%; }
-            .collage-video { width: 70%; }
-            .method-card { border-right: none; border-bottom: 1px solid var(--border-subtle); padding: 50px 20px; }
-            .container { padding: 0 25px; }
-            .btn-gold { padding: 18px 40px; width: 100%; text-align: center; }
-            .akasha-lab .lab-highlight { padding: 40px 20px; }
-            .hieroglyph { font-size: 1.5rem; }
+            .quadrant { width: 160px; font-size: 0.8em; padding: 10px; }
+            #q1, #q2 { top: 5%; } #q3, #q4 { bottom: 5%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- COSMIC BACKGROUND -->
-    <div class="cosmic-bg"></div>
-    <canvas id="particles-canvas"></canvas>
-    <div class="sacred-geometry"></div>
-    
-    <!-- HIEROGLYPHICS FLOATING -->
-    <div class="hieroglyphics">
-        <span class="hieroglyph" style="top: 10%; left: 5%; animation-delay: 0s;">𓂀</span>
-        <span class="hieroglyph" style="top: 30%; left: 90%; animation-delay: 2s;">𓃀</span>
-        <span class="hieroglyph" style="top: 50%; left: 3%; animation-delay: 4s;">𓆣</span>
-        <span class="hieroglyph" style="top: 70%; left: 95%; animation-delay: 6s;">𓇳</span>
-        <span class="hieroglyph" style="top: 85%; left: 8%; animation-delay: 8s;">𓊹</span>
-        <span class="hieroglyph" style="top: 20%; left: 85%; animation-delay: 1s;">𓋹</span>
-        <span class="hieroglyph" style="top: 60%; left: 92%; animation-delay: 3s;">𓏲</span>
-        <span class="hieroglyph" style="top: 40%; left: 2%; animation-delay: 5s;">☥</span>
-        <span class="hieroglyph" style="top: 90%; left: 88%; animation-delay: 7s;">𓂋</span>
-        <span class="hieroglyph" style="top: 5%; left: 50%; animation-delay: 9s;">◊</span>
+    <div id="cursor"></div>
+
+    <canvas id="webgl-stage"></canvas>
+
+    <div class="ui-layer">
+        <div id="hero-text">
+            <h1>Akasha</h1>
+            <div class="subtitle">A Máscara da Essência</div>
+            <div class="hint">CLIQUE NA FACE PARA REVELAR</div>
+        </div>
+
+        <div id="q1" class="quadrant">
+            <h3>BRANDING DA ALMA</h3>
+            <p>Sua história é o código fonte. Escavação profunda de registros para um posicionamento único.</p>
+            <span>Setor 01</span>
+        </div>
+
+        <div id="q2" class="quadrant">
+            <h3>CORPO DIGITAL</h3>
+            <p>Construímos sua estrutura real. Site, identidade e presença navegável inclusos.</p>
+            <span>Setor 02</span>
+        </div>
+
+        <div id="q3" class="quadrant">
+            <h3>BÚSSOLA INTERNA</h3>
+            <p>Alinhamento energético para que sua imagem vibre na frequência da prosperidade.</p>
+            <span>Setor 03</span>
+        </div>
+
+        <div id="q4" class="quadrant">
+            <h3>PONTE MATERIAL</h3>
+            <p>Plano de 90 dias. Transformamos o etéreo em resultados sólidos no mundo físico.</p>
+            <span>Setor 04</span>
+        </div>
+
+        <div id="cta-container">
+            <button class="cta-btn" onclick="window.location.href='https://akashahub.com.br/mentoria'">
+                ACESSAR MENTORIA
+            </button>
+        </div>
     </div>
 
-    <!-- HERO -->
-    <header class="hero">
-        <video class="hero-video" autoplay muted loop playsinline>
-            <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1765954196/generated_video_-_2025-12-17T034853.584_rixpox.mp4" type="video/mp4">
-        </video>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-        <div class="hero-content container fade-in-up">
-            <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1765962348/Sem_nome_70_x_70_px_la5nyl.png" alt="Akasha Logo" class="hero-logo">
-            
-            <h2 class="glow-text">MENTORIA AKÁSHICA 1:1</h2>
-            <h1>Arquitetura de <br><span class="text-gold">Essência & Poder</span></h1>
-            
-            <p style="opacity: 0.8; max-width: 600px; margin: 30px auto 50px; font-size: 1.1rem;">
-                Não basta se alinhar internamente. É preciso ter um corpo digital coerente para governar seu espaço no mundo.
-            </p>
-
-            <a href="https://pay.hotmart.com/I103627853C?bid=1767381877056" class="btn-gold">
-                Iniciar Agora
-            </a>
-        </div>
-
-        <!-- Scroll Indicator -->
-        <div class="scroll-indicator">
-            <span></span>
-        </div>
-    </header>
-
-    <!-- INTRODUÇÃO & NARRATIVA -->
-    <section class="section-std">
-        <div class="container">
-            <div class="divider"></div>
-
-            <!-- BLOCO 1: NARRATIVA & MÍDIA -->
-            <div class="narrative-grid">
-                
-                <!-- Coluna da Esquerda: Textos -->
-                <div class="narrative-text reveal-left">
-                    <p class="serif-italic" style="margin-bottom: 30px;">
-                        "Sua experiência de vida é o seu maior diferencial."
-                    </p>
-                    
-                    <h3>O Branding da Alma</h3>
-                    <p>
-                        Seja você um vendedor, prestador de serviço, empresário, youtuber, criador de blog, servidor publico ou terapeuta: <strong>o que você viveu é a sua marca mais rara</strong>. Ninguém possui a sua combinação exata de histórias, dores e vitórias.
-                    </p>
-                    <p>
-                        No Akasha, não criamos personagens. Nós fazemos uma escavação profunda, desde a sua constelação familiar, a história dos seus ancestrais, até registros de vidas passadas. Identificamos os padrões que precisam ser reconfigurados e trazemos à tona o "Storytelling" ideal e raro para resplandecer no seu Brainding e te entregamos um projeto pronto operando no digital e no mundo.
-                    </p>
-
-                    <div class="highlight-box">
-                        <h4 style="color: var(--gold-primary); font-size: 0.9rem; margin-bottom: 10px;">A PONTE MATERIAL (90 DIAS)</h4>
-                        <p style="font-size: 0.9rem; margin-bottom: 0;">
-                            Não ficamos apenas no etéreo. Transformamos sua descoberta em um plano de execução de <strong>Ponto A ao Ponto B</strong>. Com nossa equipe de designers, criadores de sites e experts, estruturamos seu corpo digital para que sua estadia no mundo seja próspera e magnética.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Coluna da Direita: Mídia Collage -->
-                <div class="media-collage reveal-right" style="animation-delay: 0.3s;">
-                    <!-- Imagem de fundo -->
-                    <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1767394267/Whats-App-Image-2025-11-26-at-13-20-51_bqjt33.jpg" alt="Essência Akáshica" class="collage-img">
-                    
-                    <!-- Vídeo sobreposto -->
-                    <video class="collage-video" autoplay muted loop playsinline>
-                        <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1767394267/WhatsApp_Video_2025-12-28_at_01.12.05_a6lbdx_z2powv.mp4" type="video/mp4">
-                    </video>
-
-                    <!-- Ankh Floating Symbol -->
-                    <span class="ankh-float" style="top: -10%; right: 10%;">☥</span>
-                </div>
-
-            </div>
-
-            <!-- BLOCO 2: BÔNUS & ACESSO -->
-            <div style="text-align: center; margin-bottom: 80px;" class="reveal">
-                <p style="color: var(--violet-primary); font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase;">Acesso Exclusivo</p>
-                <p style="max-width: 700px; margin: 20px auto; font-size: 1rem;">
-                    Durante a jornada, você terá acesso à minha <strong>Área de Membros Exclusiva</strong>. <br>
-                    Cursos, workshops, áudios akáshicos e conteúdos de reconfiguração de padrão como bônus para enriquecer seu processo.
-                </p>
-            </div>
-
-            <!-- BLOCO 3: FILTRO -->
-            <div class="glass-card filter-container reveal ornate-corners">
-                <div class="check-list">
-                    <h3 style="color: var(--gold-primary); font-size: 1rem; margin-bottom: 25px;">Para quem é este Círculo:</h3>
-                    <ul class="filter-list">
-                        <li>Possui profundidade, mas trava na exposição.</li>
-                        <li>Busca coerência entre o ser e o parecer.</li>
-                        <li>Deseja soberania digital (site próprio e estrutura).</li>
-                        <li>Valoriza o tempo orgânico das coisas.</li>
-                    </ul>
-                </div>
-                <div class="cross-list">
-                    <h3 style="color: var(--violet-dark); font-size: 1rem; margin-bottom: 25px;">Não é para quem busca:</h3>
-                    <ul class="filter-list">
-                        <li>Fórmulas mágicas de enriquecimento.</li>
-                        <li>Atalhos que ferem a integridade.</li>
-                        <li>Terceirização da própria responsabilidade.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- METODOLOGIA DUAL -->
-    <section class="methodology">
-        <div class="container" style="text-align: center; padding-top: 100px; padding-bottom: 60px;">
-            <h2><span class="text-gold">A Metodologia</span> <span class="text-violet">Dual</span></h2>
-            <p style="color: var(--blue-light); font-size: 0.9rem; letter-spacing: 0.1em; margin-top: 10px;">INTEGRAÇÃO TOTAL</p>
-        </div>
-        
-        <div class="container">
-            <div class="dual-columns">
-                <div class="method-card reveal-left">
-                    <div class="method-icon float-animation">✦</div>
-                    <h3>A Bússola Interna</h3>
-                    <p style="margin-top: 20px; color: #aaa;">
-                        Mapeamento de bloqueios criativos e emocionais. Leitura de padrões ocultos. 
-                        Definição da sua <strong>Assinatura Energética</strong>: como você deve vibrar para atrair sem esforço.
-                    </p>
-                </div>
-                <div class="method-card reveal-right">
-                    <div class="method-icon float-animation" style="animation-delay: 0.5s;">❖</div>
-                    <h3>O Corpo Digital</h3>
-                    <p style="margin-top: 20px; color: #aaa;">
-                        Tradução da essência em estrutura. Identidade visual, narrativa e tecnologia.
-                        Transformamos o abstrato em <strong>presença real e navegável</strong>.
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div style="height: 100px;"></div>
-    </section>
-
-    <!-- AKASHA LAB -->
-    <section class="akasha-lab">
-        <div class="container">
-            <div class="lab-highlight glass-card reveal">
-                <p style="font-size: 0.8rem; letter-spacing: 0.3em; color: var(--blue-light); margin-bottom: 20px;">DIFERENCIAL EXCLUSIVO</p>
-                <h2 style="font-size: 2.5rem; margin-bottom: 30px;">Akasha Hub <span class="text-gold">Digital Lab</span></h2>
-                
-                <p style="max-width: 700px; margin: 0 auto 40px; color: #ccc;">
-                    Diferente de mentorias que entregam apenas teoria, aqui nós materializamos. 
-                    Você terá acesso à nossa incubadora tecnológica para colocar sua <strong>estrutura digital no ar</strong> durante o processo.
-                </p>
-
-                <ul style="text-align: center; margin-bottom: 50px; color: #888; font-size: 0.9rem;">
-                    <li style="display: inline-block; margin: 0 15px;">✓ Site Estruturado</li>
-                    <li style="display: inline-block; margin: 0 15px;">✓ Sem Custo Extra</li>
-                    <li style="display: inline-block; margin: 0 15px;">✓ Laboratório Seguro</li>
-                </ul>
-
-                <a href="https://pay.hotmart.com/I103627853C?bid=1767381877056" class="btn-gold">
-                    Garantir Vaga no Lab
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- FORMATO & PREÇO -->
-    <section class="pricing-section">
-        <div class="container">
-            <div class="divider"></div>
-            <h2 style="font-size: 1.5rem; margin-bottom: 40px; color: var(--violet-primary);" class="reveal">Formato da Jornada</h2>
-
-            <div style="display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; margin-bottom: 60px;" class="reveal">
-                <div class="format-icon">
-                    <span style="font-family: 'Cinzel'; font-size: 2rem; color: var(--gold-primary);">1:1</span>
-                    <p style="font-size: 0.8rem; text-transform: uppercase; margin-top: 10px;">Sessões Online</p>
-                </div>
-                <div class="format-icon">
-                    <span style="font-family: 'Cinzel'; font-size: 2rem; color: var(--gold-primary);">∞</span>
-                    <p style="font-size: 0.8rem; text-transform: uppercase; margin-top: 10px;">Acesso Vitalício</p>
-                </div>
-                <div class="format-icon">
-                    <span style="font-family: 'Cinzel'; font-size: 2rem; color: var(--gold-primary);">VIP</span>
-                    <p style="font-size: 0.8rem; text-transform: uppercase; margin-top: 10px;">Suporte Direto</p>
-                </div>
-            </div>
-
-            <div class="price-box reveal">
-                <span class="price-sub">INVESTIMENTO INICIAL</span>
-                <h3 class="price-tag">
-                    <span style="font-size: 1.5rem; vertical-align: middle;">R$</span> 
-                    2.500
-                </h3>
-            </div>
-
-            <a href="https://pay.hotmart.com/I103627853C?bid=1767381877056" class="btn-gold">
-                Garantir Minha Vaga
-            </a>
-            <p style="margin-top: 20px; font-size: 0.75rem; opacity: 0.5;">Processo seletivo necessário. Vagas limitadas.</p>
-        </div>
-    </section>
-
-    <!-- RODAPÉ LEGAL -->
-    <footer class="legal-footer">
-        <div class="container">
-            <p><strong style="color: var(--gold-primary);">ACORDO DE INTEGRIDADE</strong></p>
-            <p>Este programa foca em desenvolvimento pessoal e arquitetura estratégica. Não substitui acompanhamento clínico médico ou psicológico.</p>
-            <p>O sucesso comercial depende da execução contínua do participante. A Akasha Hub fornece a estrutura tecnológica, mas a propriedade intelectual e manutenção futura são do mentorado.</p>
-            <br>
-            <p style="opacity: 0.3;">YAN SIMON EXPERIENCE &copy; 2024</p>
-        </div>
-    </footer>
-
-    <!-- PARTICLES & ANIMATION SCRIPTS -->
     <script>
-        // Particle System
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
+        // ══════════════════════════════════════════════════════════════
+        //  AKASHA ENGINE: THE DIVINE FACE
+        // ══════════════════════════════════════════════════════════════
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const CONFIG = {
+            gold: 0xD4AF37,
+            skin: 0xffeebb,
+            void: 0x030305,
+            ether: 0x8B5CF6
+        };
 
-        const particles = [];
-        const particleCount = 80;
+        const state = {
+            isOpen: false,
+            mouseX: 0,
+            mouseY: 0
+        };
 
-        const colors = [
-            'rgba(139, 92, 246, 0.6)',   // Violet
-            'rgba(212, 175, 55, 0.6)',    // Gold
-            'rgba(125, 211, 252, 0.5)',   // Light Blue
-            'rgba(255, 255, 255, 0.3)'    // White
-        ];
+        // 1. SETUP
+        const canvas = document.querySelector('#webgl-stage');
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(CONFIG.void);
+        scene.fog = new THREE.FogExp2(CONFIG.void, 0.02);
 
-        class Particle {
-            constructor() {
-                this.reset();
-            }
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 12;
 
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = (Math.random() - 0.5) * 0.5;
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.alpha = Math.random() * 0.5 + 0.2;
-                this.pulse = Math.random() * Math.PI * 2;
-                this.pulseSpeed = Math.random() * 0.02 + 0.01;
-            }
+        // 2. LUZES (Cinemática)
+        const ambLight = new THREE.AmbientLight(0xffffff, 0.2);
+        scene.add(ambLight);
 
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.pulse += this.pulseSpeed;
+        const spotLight = new THREE.SpotLight(CONFIG.gold, 2);
+        spotLight.position.set(10, 10, 10);
+        spotLight.castShadow = true;
+        scene.add(spotLight);
 
-                // Wrap around
-                if (this.x < 0) this.x = canvas.width;
-                if (this.x > canvas.width) this.x = 0;
-                if (this.y < 0) this.y = canvas.height;
-                if (this.y > canvas.height) this.y = 0;
-            }
+        const rimLight = new THREE.SpotLight(CONFIG.ether, 5);
+        rimLight.position.set(-10, 5, -10);
+        scene.add(rimLight);
 
-            draw() {
-                const currentAlpha = this.alpha * (0.5 + Math.sin(this.pulse) * 0.5);
-                ctx.save();
-                ctx.globalAlpha = currentAlpha;
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+        // 3. O ROSTO (ESCULTURA PROCEDURAL)
+        const headGroup = new THREE.Group();
+        scene.add(headGroup);
+
+        // Material "Pele de Deusa/Ouro"
+        const faceMat = new THREE.MeshPhysicalMaterial({
+            color: CONFIG.gold,
+            metalness: 0.6,
+            roughness: 0.2,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1,
+            emissive: 0x221100,
+            emissiveIntensity: 0.2
+        });
+
+        const quadrants = [];
+
+        // Função para criar um pedaço do rosto deformado
+        function createFacePiece(offsetX, offsetY) {
+            // Geometria densa para deformação suave
+            const geo = new THREE.IcosahedronGeometry(2.5, 20);
+            const pos = geo.attributes.position;
+            const vector = new THREE.Vector3();
+
+            // Esculpir o rosto matematicamente (Deformação de Vértices)
+            for (let i = 0; i < pos.count; i++) {
+                vector.set(pos.getX(i), pos.getY(i), pos.getZ(i));
                 
-                // Glow effect
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-                ctx.restore();
+                // Formato de cabeça (afinar queixo, arredondar topo)
+                if(vector.y < 0) vector.x *= 0.85; // Queixo
+                if(vector.z < 0) vector.z *= 0.7;  // Crânio atrás
+
+                // Cavidade Ocular (aproximação)
+                const eyeL = new THREE.Vector3(-0.8, 0.2, 2.0);
+                const eyeR = new THREE.Vector3(0.8, 0.2, 2.0);
+                if (vector.distanceTo(eyeL) < 0.6 || vector.distanceTo(eyeR) < 0.6) {
+                    vector.z -= 0.3; // Afundar olhos
+                }
+
+                // Nariz (saliência central)
+                if (Math.abs(vector.x) < 0.3 && vector.y > -0.5 && vector.y < 0.5 && vector.z > 0) {
+                    vector.z += 0.4 * (1 - Math.abs(vector.y));
+                }
+
+                // Lábios
+                if (Math.abs(vector.x) < 0.5 && vector.y > -0.8 && vector.y < -0.4 && vector.z > 0) {
+                    vector.z += 0.1;
+                }
+
+                // Maçãs do rosto
+                if (Math.abs(vector.x) > 0.8 && vector.y > -0.2 && vector.y < 0.3 && vector.z > 0) {
+                    vector.z += 0.2;
+                }
+
+                pos.setXYZ(i, vector.x, vector.y, vector.z);
             }
+            
+            geo.computeVertexNormals();
+
+            const mesh = new THREE.Mesh(geo, faceMat);
+            
+            // Dados para animação de abertura
+            mesh.userData = {
+                closedPos: new THREE.Vector3(0, 0, 0),
+                openPos: new THREE.Vector3(offsetX * 1.5, offsetY * 1.5, 0), // Direção da explosão
+                rotAxis: new THREE.Vector3(offsetY, offsetX, 0)
+            };
+
+            // Clipping sutil (movemos a geometria para que o centro seja 0,0)
+            // Na prática, movemos a mesh inteira depois
+            
+            headGroup.add(mesh);
+            quadrants.push(mesh);
         }
 
-        // Create particles
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
+        // Criar os 4 quadrantes (TopL, TopR, BotL, BotR)
+        // Usamos máscaras de recorte visualmente simuladas pela posição
+        createFacePiece(-1, 1);
+        createFacePiece(1, 1);
+        createFacePiece(-1, -1);
+        createFacePiece(1, -1);
 
-        // Connect particles
-        function connectParticles() {
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
+        // 4. O CÉREBRO CÓSMICO (INTERIOR)
+        const innerGroup = new THREE.Group();
+        scene.add(innerGroup);
+        innerGroup.scale.set(0,0,0); // Escondido inicialmente
 
-                    if (distance < 150) {
-                        ctx.save();
-                        ctx.globalAlpha = 0.1 * (1 - distance / 150);
-                        ctx.strokeStyle = 'rgba(139, 92, 246, 0.5)';
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                        ctx.restore();
-                    }
+        // Cristal Pineal
+        const crystalGeo = new THREE.OctahedronGeometry(0.8, 0);
+        const crystalMat = new THREE.MeshPhysicalMaterial({
+            color: CONFIG.ether, emissive: CONFIG.ether, emissiveIntensity: 2,
+            transmission: 0.9, thickness: 1, roughness: 0
+        });
+        const crystal = new THREE.Mesh(crystalGeo, crystalMat);
+        innerGroup.add(crystal);
+
+        // Partículas Neurais
+        const pGeo = new THREE.BufferGeometry();
+        const pPos = [];
+        for(let i=0; i<300; i++) pPos.push((Math.random()-0.5)*3, (Math.random()-0.5)*3, (Math.random()-0.5)*3);
+        pGeo.setAttribute('position', new THREE.Float32BufferAttribute(pPos, 3));
+        const pMat = new THREE.PointsMaterial({color: CONFIG.gold, size: 0.05, transparent: true, opacity: 0.6});
+        const particles = new THREE.Points(pGeo, pMat);
+        innerGroup.add(particles);
+
+
+        // 5. LÓGICA DE ANIMAÇÃO
+        const cursor = document.getElementById('cursor');
+
+        // Mouse Move (Olhar/Rotação)
+        document.addEventListener('mousemove', (e) => {
+            // Atualiza cursor
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+
+            // Normaliza mouse -1 a 1
+            state.mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            state.mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            // Se fechado, o rosto olha para o mouse
+            if(!state.isOpen) {
+                gsap.to(headGroup.rotation, {
+                    y: state.mouseX * 0.5,
+                    x: -state.mouseY * 0.5,
+                    duration: 1
+                });
+            } else {
+                // Se aberto, movimento sutil de paralaxe
+                gsap.to(innerGroup.rotation, {
+                    y: state.mouseX * 0.2,
+                    x: -state.mouseY * 0.2,
+                    duration: 2
+                });
+            }
+        });
+
+        // Click (Abrir/Fechar)
+        document.addEventListener('click', (e) => {
+            if(!state.isOpen) {
+                // ABRIR
+                openFace();
+            } else {
+                // Verificar clique no cristal
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(new THREE.Vector2(state.mouseX, state.mouseY), camera);
+                const intersects = raycaster.intersectObject(crystal);
+                
+                if(intersects.length > 0) {
+                    // Clique no cristal -> Checkout
+                    window.location.href = 'https://akashahub.com.br/mentoria';
+                } 
+                // Se quiser fechar ao clicar fora, descomente:
+                // else { closeFace(); }
+            }
+        });
+
+        // Hover Effect
+        document.addEventListener('mousemove', (e) => {
+            if(state.isOpen) {
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(new THREE.Vector2(state.mouseX, state.mouseY), camera);
+                const intersects = raycaster.intersectObject(crystal);
+                if(intersects.length > 0) {
+                    cursor.classList.add('hover');
+                    document.body.style.cursor = 'pointer';
+                } else {
+                    cursor.classList.remove('hover');
+                    document.body.style.cursor = 'none';
                 }
             }
-        }
+        });
 
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        function openFace() {
+            state.isOpen = true;
             
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
+            // 1. Esconder Texto Hero
+            gsap.to('#hero-text', { opacity: 0, duration: 0.5 });
+
+            // 2. Explodir Quadrantes
+            quadrants.forEach(q => {
+                gsap.to(q.position, {
+                    x: q.userData.openPos.x,
+                    y: q.userData.openPos.y,
+                    duration: 1.5,
+                    ease: "power3.out"
+                });
+                gsap.to(q.rotation, {
+                    x: q.userData.rotAxis.x * 0.2,
+                    y: q.userData.rotAxis.y * 0.2,
+                    duration: 1.5
+                });
             });
 
-            connectParticles();
+            // 3. Revelar Cérebro/Cristal
+            gsap.to(innerGroup.scale, { x: 1, y: 1, z: 1, duration: 1, delay: 0.2, ease: "back.out(1.7)" });
+
+            // 4. Mostrar UI de Quadrantes e CTA
+            document.querySelectorAll('.quadrant').forEach((el, i) => {
+                setTimeout(() => el.classList.add('active'), 500 + (i * 100));
+            });
+            document.getElementById('cta-container').classList.add('active');
+        }
+
+        function closeFace() {
+            state.isOpen = false;
+            
+            // Restaurar Texto Hero
+            gsap.to('#hero-text', { opacity: 1, delay: 0.5, duration: 0.5 });
+
+            // Fechar Quadrantes
+            quadrants.forEach(q => {
+                gsap.to(q.position, { x: 0, y: 0, duration: 1.2, ease: "power3.inOut" });
+                gsap.to(q.rotation, { x: 0, y: 0, duration: 1.2 });
+            });
+
+            // Esconder Cérebro
+            gsap.to(innerGroup.scale, { x: 0, y: 0, z: 0, duration: 0.5 });
+
+            // Esconder UI
+            document.querySelectorAll('.quadrant').forEach(el => el.classList.remove('active'));
+            document.getElementById('cta-container').classList.remove('active');
+        }
+
+        // Loop de Renderização
+        function animate() {
             requestAnimationFrame(animate);
+            
+            const time = Date.now() * 0.001;
+
+            // Animação Idle do Cristal
+            crystal.rotation.y += 0.01;
+            crystal.rotation.x = Math.sin(time) * 0.1;
+            
+            // Pulso
+            if(state.isOpen) {
+                const s = 1 + Math.sin(time * 2) * 0.05;
+                crystal.scale.set(s,s,s);
+            }
+
+            // Partículas orbitando
+            particles.rotation.y = time * 0.1;
+
+            renderer.render(scene, camera);
         }
 
         animate();
 
-        // Resize handler
+        // Resize
         window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Intersection Observer for Reveal Animations
-        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
-
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        });
-
-        revealElements.forEach(el => revealObserver.observe(el));
-
-        // Parallax effect for hieroglyphics
-        document.addEventListener('mousemove', (e) => {
-            const hieroglyphs = document.querySelectorAll('.hieroglyph');
-            const mouseX = e.clientX / window.innerWidth - 0.5;
-            const mouseY = e.clientY / window.innerHeight - 0.5;
-
-            hieroglyphs.forEach((h, index) => {
-                const speed = (index + 1) * 0.5;
-                const x = mouseX * speed * 20;
-                const y = mouseY * speed * 20;
-                h.style.transform = `translate(${x}px, ${y}px)`;
-            });
-        });
-
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
     </script>
-
 </body>
 </html>
