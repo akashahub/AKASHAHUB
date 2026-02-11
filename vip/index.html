@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Akasha Hub | Fluid Experience</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,9 +24,10 @@
             background-color: var(--c-dark);
             color: #fff;
             font-family: var(--font-body);
-            overflow-x: hidden; /* Oculta a barra nativa, usaremos container */
+            overflow-x: hidden;
             width: 100vw;
             height: 100vh;
+            touch-action: pan-y; /* Permite scroll vertical no mobile */
         }
 
         /* WEBGL CANVAS (BACKGROUND) */
@@ -35,7 +36,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 0;
-            pointer-events: all; /* Para capturar o mouse */
+            pointer-events: all;
         }
 
         /* CONTENT LAYER */
@@ -44,7 +45,7 @@
             top: 0; left: 0;
             width: 100%;
             z-index: 2;
-            pointer-events: none; /* Deixa o mouse passar para o canvas onde não tem conteúdo */
+            pointer-events: none;
         }
 
         .section {
@@ -57,7 +58,7 @@
         }
 
         .interactive-area {
-            pointer-events: auto; /* Reabilita cliques em botões e cards */
+            pointer-events: auto;
         }
 
         /* TYPOGRAPHY */
@@ -71,13 +72,13 @@
 
         .hero-title {
             font-size: clamp(3rem, 8vw, 8rem);
-            mix-blend-mode: exclusion; /* Efeito vidro */
+            mix-blend-mode: exclusion;
             opacity: 0;
             transform: translateY(50px);
         }
 
         .hero-sub {
-            font-size: 1rem;
+            font-size: clamp(0.7rem, 2vw, 1rem);
             letter-spacing: 0.5em;
             color: var(--c-gold);
             margin-bottom: 2rem;
@@ -88,15 +89,15 @@
         /* CARDS */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(20px, 4vw, 40px);
             margin-top: 50px;
         }
 
         .card {
             background: rgba(0,0,0,0.3);
             border: 1px solid rgba(212, 175, 55, 0.2);
-            padding: 40px;
+            padding: clamp(20px, 4vw, 40px);
             backdrop-filter: blur(5px);
             transition: all 0.5s ease;
             position: relative;
@@ -130,6 +131,8 @@
             transition: all 0.4s ease;
             background: transparent;
             cursor: pointer;
+            font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+            text-align: center;
         }
 
         .btn:hover {
@@ -137,17 +140,164 @@
             color: #000;
         }
 
+        /* ═══════════════════════════════════════════════════════ */
+        /*  LEAD POPUP (Fullscreen Mobile-Ready)                  */
+        /* ═══════════════════════════════════════════════════════ */
+        #lead-popup {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.97);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth scroll iOS */
+        }
+
+        #lead-popup.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .popup-content {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.98), rgba(10, 10, 10, 0.99));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: clamp(2rem, 5vw, 3rem) clamp(1.5rem, 4vw, 2.5rem);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            transform: scale(0.9) translateY(30px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9),
+                        0 0 60px rgba(212, 175, 55, 0.15);
+        }
+
+        #lead-popup.active .popup-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+            padding: 0;
+            width: 40px; height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .popup-close:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+
+        .popup-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .popup-subtitle {
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            color: var(--c-gold);
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--c-gold);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--c-gold);
+            border: none;
+            color: #000;
+            font-family: var(--font-display);
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+        }
+
         /* AUDIO CONTROL */
         #sound-btn {
             position: fixed;
-            bottom: 40px;
-            right: 40px;
+            bottom: 40px; right: 40px;
             z-index: 100;
-            background: none;
+            background: rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             color: #fff;
             cursor: pointer;
             display: flex;
@@ -155,22 +305,32 @@
             justify-content: center;
             transition: all 0.3s;
             pointer-events: auto;
+            backdrop-filter: blur(10px);
         }
         
-        #sound-btn:hover { border-color: var(--c-gold); color: var(--c-gold); }
+        #sound-btn:hover { 
+            border-color: var(--c-gold); 
+            color: var(--c-gold); 
+            background: rgba(212, 175, 55, 0.1);
+        }
+        
+        .equalizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 20px;
+        }
         
         .equalizer span {
-            display: inline-block;
             width: 3px;
             background: currentColor;
-            margin: 0 1px;
             animation: eq 0s infinite;
         }
         
         #sound-btn.playing .equalizer span { animation-duration: 0.5s; }
         #sound-btn.playing .equalizer span:nth-child(1) { height: 10px; animation-name: eq1; }
-        #sound-btn.playing .equalizer span:nth-child(2) { height: 15px; animation-name: eq2; }
-        #sound-btn.playing .equalizer span:nth-child(3) { height: 8px; animation-name: eq3; }
+        #sound-btn.playing .equalizer span:nth-child(2) { height: 15px; animation-name: eq2; animation-delay: 0.1s; }
+        #sound-btn.playing .equalizer span:nth-child(3) { height: 8px; animation-name: eq3; animation-delay: 0.2s; }
 
         @keyframes eq1 { 0%,100%{height:8px} 50%{height:14px} }
         @keyframes eq2 { 0%,100%{height:15px} 50%{height:6px} }
@@ -183,8 +343,63 @@
             flex-direction: column;
             transition: opacity 1s ease;
         }
-        .loader-bar { width: 200px; height: 1px; background: #333; margin-top: 20px; overflow: hidden; }
-        .loader-fill { width: 0%; height: 100%; background: var(--c-gold); transition: width 0.1s; }
+        .loader-text {
+            letter-spacing: 0.5em; 
+            color: var(--c-gold); 
+            font-family: 'Cinzel';
+            font-size: clamp(0.8rem, 2vw, 1rem);
+        }
+        .loader-bar { 
+            width: clamp(150px, 50vw, 200px); 
+            height: 1px; 
+            background: #333; 
+            margin-top: 20px; 
+            overflow: hidden; 
+        }
+        .loader-fill { 
+            width: 0%; 
+            height: 100%; 
+            background: var(--c-gold); 
+            transition: width 0.1s; 
+        }
+
+        /* MOBILE ADJUSTMENTS */
+        @media (max-width: 768px) {
+            .hero-title {
+                letter-spacing: 0.05em;
+            }
+
+            .hero-sub {
+                letter-spacing: 0.3em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            #sound-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .popup-content {
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+        }
+
+        /* Touch feedback */
+        @media (hover: none) {
+            .btn:active {
+                transform: scale(0.95);
+            }
+
+            .card:active {
+                transform: translateY(-5px);
+            }
+        }
 
     </style>
 </head>
@@ -192,18 +407,43 @@
 
     <!-- LOADER -->
     <div id="loader">
-        <div style="letter-spacing: 0.5em; color: var(--c-gold); font-family: 'Cinzel';">INITIALIZING</div>
+        <div class="loader-text">INITIALIZING</div>
         <div class="loader-bar"><div class="loader-fill"></div></div>
     </div>
 
+    <!-- ═══ LEAD POPUP ═══ -->
+    <div id="lead-popup">
+        <div class="popup-content">
+            <button class="popup-close" onclick="closeLeadPopup()" aria-label="Fechar">&times;</button>
+            <h3 class="popup-title">Sessão VIP</h3>
+            <p class="popup-subtitle">Agendamento Exclusivo</p>
+            
+            <form id="lead-form" onsubmit="submitLead(event)">
+                <div class="form-group">
+                    <label for="lead-name">Nome Completo</label>
+                    <input type="text" id="lead-name" name="name" placeholder="Seu nome" required autocomplete="name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lead-email">E-mail</label>
+                    <input type="email" id="lead-email" name="email" placeholder="seu@email.com" required autocomplete="email">
+                </div>
+                
+                <button type="submit" class="btn-submit">
+                    Continuar no WhatsApp
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- AUDIO CONTROLLER -->
-    <button id="sound-btn">
+    <button id="sound-btn" aria-label="Controle de áudio">
         <div class="equalizer"><span></span><span></span><span></span></div>
     </button>
-    <audio id="bg-music" loop>
-        <!-- Música estilo Active Theory (Ambient Deep) -->
-        <source src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1714392231/ambient-loop_placeholder_k2s.mp3" type="audio/mp3">
-        <!-- Como não tenho URL de música direta, o código funcionará visualmente sem áudio até você colocar um link real -->
+    <audio id="bg-music" loop preload="auto">
+        <!-- Música Ambient Deep House (432Hz recomendado) -->
+        <!-- Substitua pela URL da sua música -->
+        <source src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d1718ab41b.mp3" type="audio/mpeg">
     </audio>
 
     <!-- WEBGL BACKGROUND -->
@@ -217,41 +457,41 @@
             <div class="hero-sub interactive-area">AKASHA HUB EXPERIENCE</div>
             <h1 class="hero-title interactive-area">Presencial <br>Alchemy</h1>
             <div class="interactive-area" style="margin-top: 40px;">
-                <p style="max-width: 500px; line-height: 1.6; color: #ccc;">
+                <p style="max-width: 500px; line-height: 1.6; color: #ccc; font-size: clamp(0.9rem, 1.8vw, 1rem);">
                     Onde a tecnologia ancestral encontra a arquitetura do fluxo. 
                     Uma experiência sensorial desenhada para excelência vibracional.
                 </p>
-                <a href="#sessions" class="btn">Explorar Sessoes</a>
+                <a href="#sessions" class="btn">Explorar Sessões</a>
             </div>
         </section>
 
         <!-- SESSIONS -->
         <section class="section" id="sessions">
-            <h2 class="interactive-area" style="font-size: 3rem; color: var(--c-gold);">Menu de Ativação</h2>
+            <h2 class="interactive-area" style="font-size: clamp(2rem, 5vw, 3rem); color: var(--c-gold);">Menu de Ativação</h2>
             
             <div class="grid interactive-area">
                 <!-- CARD 1 -->
                 <div class="card">
-                    <h3 style="color: #fff; margin-bottom: 10px;">Tantra Alchemy</h3>
-                    <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">HIGH TICKET • ALQUIMIA</p>
-                    <p style="font-size: 0.9rem; line-height: 1.6;">Fusão entre alinhamento quântico e massagem terapêutica. Reconstrução do magnetismo pessoal.</p>
-                    <a href="https://wa.me/5571983448621" class="btn" style="font-size: 0.7rem;">Agendar</a>
+                    <h3 style="color: #fff; margin-bottom: 10px; font-size: clamp(1.2rem, 3vw, 1.5rem);">Tantra Alchemy</h3>
+                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.1em;">HIGH TICKET • ALQUIMIA</p>
+                    <p style="font-size: clamp(0.85rem, 1.5vw, 0.9rem); line-height: 1.6;">Fusão entre alinhamento quântico e massagem terapêutica. Reconstrução do magnetismo pessoal.</p>
+                    <button class="btn" onclick="openLeadPopup('Tantra Alchemy')">Agendar Sessão</button>
                 </div>
 
                 <!-- CARD 2 -->
                 <div class="card" style="border-color: var(--c-cyan);">
-                    <h3 style="color: var(--c-cyan); margin-bottom: 10px;">Akasha Prime</h3>
-                    <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">SIGNATURE EXPERIENCE</p>
-                    <p style="font-size: 0.9rem; line-height: 1.6;">Experiência sob medida. Ritual extra, intenção específica e personalização completa.</p>
-                    <a href="https://wa.me/5571983448621" class="btn" style="border-color: var(--c-cyan); color: var(--c-cyan);">Consultar</a>
+                    <h3 style="color: var(--c-cyan); margin-bottom: 10px; font-size: clamp(1.2rem, 3vw, 1.5rem);">Akasha Prime</h3>
+                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.1em;">SIGNATURE EXPERIENCE</p>
+                    <p style="font-size: clamp(0.85rem, 1.5vw, 0.9rem); line-height: 1.6;">Experiência sob medida. Ritual extra, intenção específica e personalização completa.</p>
+                    <button class="btn" style="border-color: var(--c-cyan); color: var(--c-cyan);" onclick="openLeadPopup('Akasha Prime')">Consultar Disponibilidade</button>
                 </div>
 
                 <!-- CARD 3 -->
                 <div class="card">
-                    <h3 style="color: #fff; margin-bottom: 10px;">Imersão 3h+</h3>
-                    <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">DEEP DIVE</p>
-                    <p style="font-size: 0.9rem; line-height: 1.6;">Para quem busca transmutação total. Uma jornada longa em estado expandido.</p>
-                    <a href="https://wa.me/5571983448621" class="btn" style="font-size: 0.7rem;">Iniciar</a>
+                    <h3 style="color: #fff; margin-bottom: 10px; font-size: clamp(1.2rem, 3vw, 1.5rem);">Imersão 3h+</h3>
+                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.1em;">DEEP DIVE</p>
+                    <p style="font-size: clamp(0.85rem, 1.5vw, 0.9rem); line-height: 1.6;">Para quem busca transmutação total. Uma jornada longa em estado expandido.</p>
+                    <button class="btn" onclick="openLeadPopup('Imersão 3h+')">Iniciar Jornada</button>
                 </div>
             </div>
         </section>
@@ -259,9 +499,9 @@
         <!-- FOOTER -->
         <section class="section" style="min-height: 50vh; align-items: center; text-align: center;">
             <div class="interactive-area">
-                <h2 style="font-size: 2rem; margin-bottom: 20px;">Código Akasha</h2>
-                <a href="#" class="btn">Acessar Portal Online</a>
-                <p style="margin-top: 50px; font-size: 0.7rem; color: #555;">© 2025 AKASHA HUB • ALL RIGHTS RESERVED</p>
+                <h2 style="font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 20px;">Código Akasha</h2>
+                <a href="https://akashahub.github.io/CURSOAKASHA/" target="_blank" class="btn">Acessar Portal Online</a>
+                <p style="margin-top: 50px; font-size: clamp(0.6rem, 1.2vw, 0.7rem); color: #555;">© 2025 AKASHA HUB • ALL RIGHTS RESERVED</p>
             </div>
         </section>
 
@@ -273,24 +513,115 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
-        // --- 1. CONFIGURATION ---
-        const CONFIG = {
-            colors: {
-                bg: 0x020203,
-                gold: new THREE.Color('#D4AF37'),
-                cyan: new THREE.Color('#00F0FF')
-            },
-            audioSensitivity: 2.0
-        };
+        // ═══════════════════════════════════════════════════════
+        //  LEAD CAPTURE SYSTEM
+        // ═══════════════════════════════════════════════════════
+        
+        let selectedSession = '';
 
-        // --- 2. AUDIO SYSTEM ---
+        function openLeadPopup(sessionName) {
+            selectedSession = sessionName;
+            const popup = document.getElementById('lead-popup');
+            const subtitle = document.querySelector('.popup-subtitle');
+            
+            subtitle.textContent = `Agendamento: ${sessionName}`;
+            popup.classList.add('active');
+            
+            // Limpar campos
+            document.getElementById('lead-name').value = '';
+            document.getElementById('lead-email').value = '';
+            document.getElementById('lead-name').focus();
+            
+            // Parar música temporariamente para foco
+            if (!audioElement.paused) {
+                audioElement.volume = 0.3;
+            }
+        }
+
+        function closeLeadPopup() {
+            document.getElementById('lead-popup').classList.remove('active');
+            if (!audioElement.paused) {
+                gsap.to(audioElement, { volume: 1, duration: 1 });
+            }
+        }
+
+        function submitLead(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('lead-name').value.trim();
+            const email = document.getElementById('lead-email').value.trim();
+            
+            if (!name || !email) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            // Mensagem WhatsApp
+            const message = `🔮 *NOVO AGENDAMENTO VIP - AKASHA*\n\n` +
+                          `*Sessão:* ${selectedSession}\n` +
+                          `━━━━━━━━━━━━━━━━━━━━\n` +
+                          `👤 *Nome:* ${name}\n` +
+                          `📧 *E-mail:* ${email}\n` +
+                          `━━━━━━━━━━━━━━━━━━━━\n\n` +
+                          `_Aguardando confirmação de disponibilidade..._`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappNumber = '5571983448621';
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+            
+            // Abrir WhatsApp
+            window.open(whatsappURL, '_blank');
+            
+            // Fechar popup
+            setTimeout(() => {
+                closeLeadPopup();
+                showSuccessMessage();
+            }, 500);
+        }
+
+        function showSuccessMessage() {
+            const msg = document.createElement('div');
+            msg.style.cssText = `
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                background: rgba(212, 175, 55, 0.95); color: #000;
+                padding: 2rem 3rem; font-family: var(--font-display);
+                font-size: clamp(0.9rem, 2vw, 1.2rem); text-transform: uppercase;
+                letter-spacing: 0.2em; z-index: 10000;
+                box-shadow: 0 0 60px rgba(212, 175, 55, 0.5);
+                opacity: 0; transition: opacity 0.3s ease;
+                text-align: center; max-width: 90%;
+            `;
+            msg.textContent = 'Redirecionando...';
+            document.body.appendChild(msg);
+            
+            setTimeout(() => msg.style.opacity = '1', 100);
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 300);
+            }, 2000);
+        }
+
+        // Fechar popup ao clicar fora
+        document.getElementById('lead-popup').addEventListener('click', (e) => {
+            if (e.target.id === 'lead-popup') closeLeadPopup();
+        });
+
+        // Fechar com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLeadPopup();
+        });
+
+        // ═══════════════════════════════════════════════════════
+        //  AUDIO SYSTEM (Synchronized with animations)
+        // ═══════════════════════════════════════════════════════
+        
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const audioElement = document.getElementById('bg-music');
         const audioSource = audioCtx.createMediaElementSource(audioElement);
         const analyser = audioCtx.createAnalyser();
         analyser.fftSize = 256;
         audioSource.connect(analyser);
-        audioSource.connect(audioCtx.destination);
+        analyser.connect(audioCtx.destination);
         
         const dataArray = new Uint8Array(analyser.frequencyBinCount);
         let audioLevel = 0;
@@ -302,31 +633,46 @@
             if (audioElement.paused) {
                 audioElement.play();
                 btn.classList.add('playing');
+                gsap.to(audioElement, { volume: 1, duration: 2 });
             } else {
-                audioElement.pause();
-                btn.classList.remove('playing');
+                gsap.to(audioElement, { 
+                    volume: 0, 
+                    duration: 1,
+                    onComplete: () => {
+                        audioElement.pause();
+                        btn.classList.remove('playing');
+                    }
+                });
             }
         });
 
-        // --- 3. WEBGL FLUID SIMULATION ---
+        // Auto-play attempt (works after user interaction)
+        document.body.addEventListener('click', () => {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }, { once: true });
+
+        // ═══════════════════════════════════════════════════════
+        //  WEBGL FLUID SIMULATION (Audio-Reactive)
+        // ═══════════════════════════════════════════════════════
+        
         const canvas = document.getElementById('gl');
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
         const scene = new THREE.Scene();
         const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-        // SHADER: The Core of the "Active Theory" look
-        // Uses Simplex Noise + Mouse Interaction + Audio Distortion
         const fluidMaterial = new THREE.ShaderMaterial({
             uniforms: {
                 uTime: { value: 0 },
                 uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
                 uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-                uAudio: { value: 0 }, // Audio reactivity
-                uColor1: { value: CONFIG.colors.gold },
-                uColor2: { value: CONFIG.colors.cyan }
+                uAudio: { value: 0 },
+                uColor1: { value: new THREE.Color('#D4AF37') },
+                uColor2: { value: new THREE.Color('#00F0FF') }
             },
             vertexShader: `
                 varying vec2 vUv;
@@ -344,14 +690,12 @@
                 uniform vec3 uColor2;
                 varying vec2 vUv;
 
-                // Simplex Noise Functions
                 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
                 float snoise(vec2 v){
                     const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
                     vec2 i  = floor(v + dot(v, C.yy) );
                     vec2 x0 = v - i + dot(i, C.xx);
-                    vec2 i1;
-                    i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+                    vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
                     vec4 x12 = x0.xyxy + C.xxzz;
                     x12.xy -= i1;
                     i = mod(i, 289.0);
@@ -377,27 +721,18 @@
                     vec2 mouse = uMouse;
                     mouse.x *= aspect;
 
-                    // Mouse Interaction (Liquid Ripple)
                     float dist = distance(st, mouse);
                     float interaction = smoothstep(0.5, 0.0, dist);
                     
-                    // Wave distortion
                     float wave = snoise(vec2(st.x * 2.0 + uTime * 0.1, st.y * 2.0 - uTime * 0.15));
+                    float strength = wave + interaction * 0.5 + uAudio * 0.3;
                     
-                    // Combine audio + wave + mouse
-                    float strength = wave + interaction * 0.5 + uAudio * 0.2;
-                    
-                    // Pattern generation (Liquid Gold Smoke)
                     float n = snoise(vec2(st.x * 3.0 + strength, st.y * 3.0 + uTime * 0.2));
                     n += 0.5 * snoise(vec2(st.x * 10.0 - uTime, st.y * 10.0));
                     
-                    // Mixing colors based on noise
                     vec3 color = mix(vec3(0.01, 0.01, 0.02), uColor1, smoothstep(0.2, 0.8, n + interaction));
-                    
-                    // Add Cyan highlights based on audio hits
                     color += uColor2 * uAudio * smoothstep(0.6, 0.9, n);
 
-                    // Vignette
                     float vig = 1.0 - length(vUv - 0.5);
                     color *= vig;
 
@@ -409,14 +744,23 @@
         const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), fluidMaterial);
         scene.add(plane);
 
-        // --- 4. ANIMATION LOOP ---
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
+        // ═══ ANIMATION LOOP ═══
+        let mouseX = 0.5, mouseY = 0.5;
+        let targetX = 0.5, targetY = 0.5;
 
+        // Mouse tracking (desktop)
         window.addEventListener('mousemove', (e) => {
             mouseX = e.clientX / window.innerWidth;
             mouseY = 1.0 - e.clientY / window.innerHeight;
         });
+
+        // Touch tracking (mobile)
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                mouseX = e.touches[0].clientX / window.innerWidth;
+                mouseY = 1.0 - e.touches[0].clientY / window.innerHeight;
+            }
+        }, { passive: true });
 
         const clock = new THREE.Clock();
 
@@ -427,11 +771,10 @@
             // Audio Analysis
             if(!audioElement.paused) {
                 analyser.getByteFrequencyData(dataArray);
-                // Get average bass freq
                 let sum = 0;
-                for(let i=0; i<20; i++) sum += dataArray[i];
-                let avg = sum / 20;
-                audioLevel += (avg / 255 - audioLevel) * 0.1; // Smooth
+                for(let i=0; i<30; i++) sum += dataArray[i];
+                let avg = sum / 30;
+                audioLevel += (avg / 255 - audioLevel) * 0.15; // Smooth
             } else {
                 audioLevel += (0 - audioLevel) * 0.05;
             }
@@ -443,13 +786,16 @@
             // Update Shader
             fluidMaterial.uniforms.uTime.value = time;
             fluidMaterial.uniforms.uMouse.value.set(targetX, targetY);
-            fluidMaterial.uniforms.uAudio.value = audioLevel * CONFIG.audioSensitivity;
+            fluidMaterial.uniforms.uAudio.value = audioLevel * 2.5; // Amplify audio effect
 
             renderer.render(scene, camera);
         }
         animate();
 
-        // --- 5. GSAP SCROLL ANIMATIONS ---
+        // ═══════════════════════════════════════════════════════
+        //  GSAP SCROLL ANIMATIONS
+        // ═══════════════════════════════════════════════════════
+        
         gsap.registerPlugin(ScrollTrigger);
 
         // Loader
@@ -465,11 +811,9 @@
         });
 
         function initSiteAnimations() {
-            // Hero Reveal
             gsap.to('.hero-title', { opacity: 1, y: 0, duration: 1.5, ease: "power3.out", delay: 0.2 });
             gsap.to('.hero-sub', { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" });
 
-            // Cards Parallax & Reveal
             const cards = document.querySelectorAll('.card');
             cards.forEach((card, i) => {
                 gsap.from(card, {
@@ -486,7 +830,7 @@
             });
         }
 
-        // --- 6. RESIZE ---
+        // ═══ RESIZE ═══
         window.addEventListener('resize', () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
             fluidMaterial.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
