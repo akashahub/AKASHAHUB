@@ -1,839 +1,632 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Akasha Hub | Fluid Experience</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AKASHA | Presencial Experience</title>
     
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@200;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
 
     <style>
+        /* ════════ CORE ════════ */
         :root {
-            --c-dark: #020203;
+            --c-void: #020202;
             --c-gold: #D4AF37;
-            --c-cyan: #00F0FF;
-            --font-display: 'Cinzel', serif;
+            --c-gold-dim: rgba(212, 175, 55, 0.3);
+            --c-text: #EAEAEA;
+            --font-head: 'Cinzel', serif;
             --font-body: 'Montserrat', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            background-color: var(--c-dark);
-            color: #fff;
+            background-color: var(--c-void);
+            color: var(--c-text);
             font-family: var(--font-body);
             overflow-x: hidden;
             width: 100vw;
-            height: 100vh;
-            touch-action: pan-y; /* Permite scroll vertical no mobile */
+            -ms-overflow-style: none; 
+            scrollbar-width: none; 
+        }
+        body::-webkit-scrollbar { display: none; }
+
+        a, button { cursor: none; text-decoration: none; color: inherit; border: none; outline: none; background: none; }
+
+        /* ════════ CURSOR (Desktop Only) ════════ */
+        @media (min-width: 769px) {
+            #cursor {
+                position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+                border: 1px solid var(--c-gold); border-radius: 50%;
+                pointer-events: none; z-index: 10000;
+                transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, background 0.3s;
+                mix-blend-mode: difference;
+            }
+            #cursor-dot {
+                position: fixed; top: 0; left: 0; width: 4px; height: 4px;
+                background: var(--c-gold); border-radius: 50%;
+                pointer-events: none; z-index: 10001;
+                transform: translate(-50%, -50%);
+            }
+            body.hovering #cursor { width: 50px; height: 50px; background: rgba(212,175,55,0.1); border-color: transparent; }
+        }
+        @media (max-width: 768px) {
+            #cursor, #cursor-dot { display: none; }
+            a, button, input { cursor: pointer; }
         }
 
-        /* WEBGL CANVAS (BACKGROUND) */
-        #gl {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: all;
+        /* ════════ WEBGL STAGE ════════ */
+        #webgl-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: all; /* Allows touch interaction */
         }
 
-        /* CONTENT LAYER */
-        #scroll-container {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%;
-            z-index: 2;
-            pointer-events: none;
+        /* ════════ ENTER SCREEN ════════ */
+        #enter-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            background: var(--c-void);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s cubic-bezier(0.7, 0, 0.3, 1);
         }
-
-        .section {
-            padding: 10vh 5vw;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            pointer-events: none;
+        
+        .enter-btn {
+            font-family: var(--font-head); font-size: 1.2rem; letter-spacing: 0.3em;
+            color: var(--c-gold); padding: 20px 40px; border: 1px solid var(--c-gold-dim);
+            position: relative; overflow: hidden; transition: 0.5s;
         }
-
-        .interactive-area {
-            pointer-events: auto;
+        .enter-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: var(--c-gold); transition: 0.5s; z-index: -1;
         }
+        .enter-btn:hover { color: #000; }
+        .enter-btn:hover::before { left: 0; }
 
-        /* TYPOGRAPHY */
-        h1, h2, h3 {
-            font-family: var(--font-display);
-            text-transform: uppercase;
-            font-weight: 400;
-            letter-spacing: 0.1em;
-            line-height: 1.1;
+        /* ════════ UI LAYOUT ════════ */
+        main { position: relative; z-index: 10; width: 100%; }
+
+        .container { width: 85%; max-width: 1400px; margin: 0 auto; position: relative; }
+
+        /* Header */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; 
+            padding: 30px; display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; mix-blend-mode: exclusion;
         }
-
-        .hero-title {
-            font-size: clamp(3rem, 8vw, 8rem);
-            mix-blend-mode: exclusion;
-            opacity: 0;
-            transform: translateY(50px);
-        }
-
-        .hero-sub {
-            font-size: clamp(0.7rem, 2vw, 1rem);
-            letter-spacing: 0.5em;
+        .logo { font-family: var(--font-head); font-weight: 600; letter-spacing: 0.2em; color: var(--c-gold); }
+        
+        .audio-toggle {
+            display: flex; align-items: center; gap: 10px; font-size: 0.7rem; letter-spacing: 0.2em;
             color: var(--c-gold);
-            margin-bottom: 2rem;
-            opacity: 0;
-            transform: translateY(20px);
+        }
+        .audio-bars { display: flex; gap: 3px; height: 15px; align-items: flex-end; }
+        .bar { width: 2px; height: 100%; background: var(--c-gold); animation: sound 0s infinite; }
+        .audio-toggle.playing .bar { animation-name: sound; animation-duration: 0.5s; }
+        .bar:nth-child(1) { animation-delay: 0s; }
+        .bar:nth-child(2) { animation-delay: 0.1s; }
+        .bar:nth-child(3) { animation-delay: 0.2s; }
+        @keyframes sound { 0% { height: 20%; } 50% { height: 100%; } 100% { height: 20%; } }
+
+        /* Sections */
+        section { min-height: 100vh; position: relative; display: flex; align-items: center; }
+
+        /* HERO */
+        .hero { justify-content: center; text-align: center; height: 100vh; }
+        .hero-content { position: relative; z-index: 2; mix-blend-mode: difference; }
+        
+        h1 {
+            font-family: var(--font-head); font-size: clamp(2.5rem, 8vw, 7rem);
+            line-height: 1; text-transform: uppercase; color: #fff;
+            margin-bottom: 20px;
+        }
+        
+        .char { display: inline-block; transform: translateY(100%); opacity: 0; }
+
+        .subtitle {
+            font-size: 0.8rem; letter-spacing: 0.5em; text-transform: uppercase;
+            color: var(--c-gold); margin-bottom: 40px; opacity: 0;
         }
 
-        /* CARDS */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: clamp(20px, 4vw, 40px);
-            margin-top: 50px;
+        /* CARDS SECTION */
+        .cards-section { padding: 100px 0; }
+        .cards-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px; perspective: 1000px;
         }
 
         .card {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            padding: clamp(20px, 4vw, 40px);
-            backdrop-filter: blur(5px);
-            transition: all 0.5s ease;
-            position: relative;
-            overflow: hidden;
+            background: rgba(5, 5, 5, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            transition: transform 0.5s, border-color 0.5s;
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
+            min-height: 400px;
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 2px; height: 0%;
-            background: var(--c-gold);
-            transition: height 0.5s ease;
-        }
+        .card:hover { border-color: var(--c-gold); transform: translateY(-10px); }
 
-        .card:hover {
-            background: rgba(212, 175, 55, 0.05);
-            transform: translateY(-10px);
+        .card h3 { font-family: var(--font-head); font-size: 1.8rem; color: #fff; margin-bottom: 10px; }
+        .card p { font-size: 0.9rem; color: #aaa; line-height: 1.6; margin-bottom: 30px; }
+        .card-tag { 
+            font-size: 0.65rem; color: var(--c-gold); border: 1px solid var(--c-gold); 
+            padding: 5px 10px; width: fit-content; margin-bottom: 20px; text-transform: uppercase;
         }
-
-        .card:hover::before { height: 100%; }
-
-        .btn {
-            display: inline-block;
-            padding: 15px 40px;
-            border: 1px solid var(--c-gold);
-            color: var(--c-gold);
-            text-decoration: none;
-            font-family: var(--font-display);
-            letter-spacing: 0.2em;
-            margin-top: 20px;
-            transition: all 0.4s ease;
-            background: transparent;
-            cursor: pointer;
-            font-size: clamp(0.6rem, 1.5vw, 0.8rem);
-            text-align: center;
+        
+        .btn-card {
+            font-family: var(--font-head); color: #fff; padding: 15px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: 0.3s;
         }
+        .btn-card:hover { color: var(--c-gold); padding-left: 10px; }
 
-        .btn:hover {
-            background: var(--c-gold);
-            color: #000;
+        /* MODAL (LEAD CAPTURE) */
+        #lead-modal {
+            position: fixed; inset: 0; z-index: 20000;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(15px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
         }
+        #lead-modal.active { opacity: 1; pointer-events: auto; }
 
-        /* ═══════════════════════════════════════════════════════ */
-        /*  LEAD POPUP (Fullscreen Mobile-Ready)                  */
-        /* ═══════════════════════════════════════════════════════ */
-        #lead-popup {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.97);
-            backdrop-filter: blur(20px);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            padding: 20px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* Smooth scroll iOS */
+        .modal-content {
+            background: #050505; border: 1px solid var(--c-gold);
+            padding: 50px 40px; width: 90%; max-width: 450px;
+            text-align: center; position: relative;
+            transform: translateY(50px); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        #lead-modal.active .modal-content { transform: translateY(0); }
 
-        #lead-popup.active {
-            display: flex;
-            opacity: 1;
+        .modal-close {
+            position: absolute; top: 15px; right: 15px;
+            font-size: 1.5rem; color: #666; transition: 0.3s;
         }
+        .modal-close:hover { color: var(--c-gold); }
 
-        .popup-content {
-            background: linear-gradient(135deg, rgba(20, 20, 20, 0.98), rgba(10, 10, 10, 0.99));
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: clamp(2rem, 5vw, 3rem) clamp(1.5rem, 4vw, 2.5rem);
-            max-width: 500px;
-            width: 100%;
-            position: relative;
-            transform: scale(0.9) translateY(30px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9),
-                        0 0 60px rgba(212, 175, 55, 0.15);
-        }
+        .modal-title { font-family: var(--font-head); color: var(--c-gold); font-size: 1.2rem; margin-bottom: 5px; }
+        .modal-context { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 30px; }
 
-        #lead-popup.active .popup-content {
-            transform: scale(1) translateY(0);
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-input {
+            width: 100%; background: transparent; border: none;
+            border-bottom: 1px solid #333; padding: 10px 0;
+            color: #fff; font-family: var(--font-body); font-size: 1rem;
+            outline: none; transition: 0.3s;
         }
-
-        .popup-close {
-            position: absolute;
-            top: 1rem; right: 1rem;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 2rem;
-            cursor: pointer;
-            opacity: 0.5;
-            transition: all 0.3s ease;
-            padding: 0;
-            width: 40px; height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-        }
-
-        .popup-close:hover {
-            opacity: 1;
-            transform: rotate(90deg);
-        }
-
-        .popup-title {
-            font-family: var(--font-display);
-            font-size: clamp(1.5rem, 4vw, 1.8rem);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .popup-subtitle {
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-            color: var(--c-gold);
-            margin-bottom: 2rem;
-            opacity: 0.8;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.5rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            font-family: var(--font-body);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--c-gold);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-        }
-
-        .form-group input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
+        .form-input:focus { border-bottom-color: var(--c-gold); }
+        .form-input::placeholder { color: #444; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
 
         .btn-submit {
-            width: 100%;
-            padding: 1.2rem;
-            background: var(--c-gold);
-            border: none;
-            color: #000;
-            font-family: var(--font-display);
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
+            width: 100%; background: var(--c-gold); color: #000;
+            padding: 15px; font-family: var(--font-head); letter-spacing: 0.2em;
+            margin-top: 10px; transition: 0.3s;
+        }
+        .btn-submit:hover { background: #fff; }
+
+        /* FOOTER */
+        footer {
+            padding: 50px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.7rem; color: #666; letter-spacing: 0.2em;
         }
 
-        .btn-submit::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn-submit:hover::before {
-            left: 100%;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
-        }
-
-        /* AUDIO CONTROL */
-        #sound-btn {
-            position: fixed;
-            bottom: 40px; right: 40px;
-            z-index: 100;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            width: 50px; height: 50px;
-            color: #fff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            pointer-events: auto;
-            backdrop-filter: blur(10px);
-        }
-        
-        #sound-btn:hover { 
-            border-color: var(--c-gold); 
-            color: var(--c-gold); 
-            background: rgba(212, 175, 55, 0.1);
-        }
-        
-        .equalizer {
-            display: flex;
-            align-items: flex-end;
-            gap: 2px;
-            height: 20px;
-        }
-        
-        .equalizer span {
-            width: 3px;
-            background: currentColor;
-            animation: eq 0s infinite;
-        }
-        
-        #sound-btn.playing .equalizer span { animation-duration: 0.5s; }
-        #sound-btn.playing .equalizer span:nth-child(1) { height: 10px; animation-name: eq1; }
-        #sound-btn.playing .equalizer span:nth-child(2) { height: 15px; animation-name: eq2; animation-delay: 0.1s; }
-        #sound-btn.playing .equalizer span:nth-child(3) { height: 8px; animation-name: eq3; animation-delay: 0.2s; }
-
-        @keyframes eq1 { 0%,100%{height:8px} 50%{height:14px} }
-        @keyframes eq2 { 0%,100%{height:15px} 50%{height:6px} }
-        @keyframes eq3 { 0%,100%{height:6px} 50%{height:12px} }
-
-        /* LOADER */
-        #loader {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column;
-            transition: opacity 1s ease;
-        }
-        .loader-text {
-            letter-spacing: 0.5em; 
-            color: var(--c-gold); 
-            font-family: 'Cinzel';
-            font-size: clamp(0.8rem, 2vw, 1rem);
-        }
-        .loader-bar { 
-            width: clamp(150px, 50vw, 200px); 
-            height: 1px; 
-            background: #333; 
-            margin-top: 20px; 
-            overflow: hidden; 
-        }
-        .loader-fill { 
-            width: 0%; 
-            height: 100%; 
-            background: var(--c-gold); 
-            transition: width 0.1s; 
-        }
-
-        /* MOBILE ADJUSTMENTS */
+        /* Mobile tweaks */
         @media (max-width: 768px) {
-            .hero-title {
-                letter-spacing: 0.05em;
-            }
-
-            .hero-sub {
-                letter-spacing: 0.3em;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
-            }
-
-            #sound-btn {
-                bottom: 20px;
-                right: 20px;
-                width: 45px;
-                height: 45px;
-            }
-
-            .popup-content {
-                max-height: 90vh;
-                overflow-y: auto;
-            }
-        }
-
-        /* Touch feedback */
-        @media (hover: none) {
-            .btn:active {
-                transform: scale(0.95);
-            }
-
-            .card:active {
-                transform: translateY(-5px);
-            }
+            .hero { align-items: center; }
+            .modal-content { padding: 40px 20px; }
+            .card { min-height: auto; }
         }
 
     </style>
 </head>
 <body>
 
-    <!-- LOADER -->
-    <div id="loader">
-        <div class="loader-text">INITIALIZING</div>
-        <div class="loader-bar"><div class="loader-fill"></div></div>
+    <!-- AUDIO -->
+    <audio id="bg-audio" loop>
+        <!-- Placehoder Ambient Track -->
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=ambient-piano-amp-strings-10711.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- UI: ENTER SCREEN -->
+    <div id="enter-screen">
+        <button class="enter-btn magnetic" onclick="enterExperience()">
+            INICIAR EXPERIÊNCIA
+        </button>
     </div>
 
-    <!-- ═══ LEAD POPUP ═══ -->
-    <div id="lead-popup">
-        <div class="popup-content">
-            <button class="popup-close" onclick="closeLeadPopup()" aria-label="Fechar">&times;</button>
-            <h3 class="popup-title">Sessão VIP</h3>
-            <p class="popup-subtitle">Agendamento Exclusivo</p>
+    <!-- UI: MODAL -->
+    <div id="lead-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <h3 class="modal-title">INICIAR PROTOCOLO</h3>
+            <p class="modal-context" id="modal-context-text">Interesse Geral</p>
             
-            <form id="lead-form" onsubmit="submitLead(event)">
-                <div class="form-group">
-                    <label for="lead-name">Nome Completo</label>
-                    <input type="text" id="lead-name" name="name" placeholder="Seu nome" required autocomplete="name">
-                </div>
-                
-                <div class="form-group">
-                    <label for="lead-email">E-mail</label>
-                    <input type="email" id="lead-email" name="email" placeholder="seu@email.com" required autocomplete="email">
-                </div>
-                
-                <button type="submit" class="btn-submit">
-                    Continuar no WhatsApp
-                </button>
-            </form>
+            <div class="form-group">
+                <input type="text" id="leadName" class="form-input" placeholder="Nome Completo" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="leadEmail" class="form-input" placeholder="E-mail Principal" required>
+            </div>
+            
+            <button class="btn-submit" onclick="submitLead()">ACESSAR</button>
+            <p style="font-size: 0.5rem; color: #444; margin-top: 15px; letter-spacing: 0.1em;">DADOS PROTEGIDOS • CRIPTOGRAFIA AKÁSHICA</p>
         </div>
     </div>
 
-    <!-- AUDIO CONTROLLER -->
-    <button id="sound-btn" aria-label="Controle de áudio">
-        <div class="equalizer"><span></span><span></span><span></span></div>
-    </button>
-    <audio id="bg-music" loop preload="auto">
-        <!-- Música Ambient Deep House (432Hz recomendado) -->
-        <!-- Substitua pela URL da sua música -->
-        <source src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d1718ab41b.mp3" type="audio/mpeg">
-    </audio>
-
     <!-- WEBGL BACKGROUND -->
-    <canvas id="gl"></canvas>
+    <canvas id="webgl-canvas"></canvas>
 
-    <!-- CONTENT -->
-    <div id="scroll-container">
+    <!-- CURSOR -->
+    <div id="cursor"></div>
+    <div id="cursor-dot"></div>
+
+    <!-- UI: NAVIGATION -->
+    <nav>
+        <div class="logo">AKASHA HUB</div>
+        <button class="audio-toggle magnetic" onclick="toggleAudio()">
+            <div class="audio-bars">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <span>SOM</span>
+        </button>
+    </nav>
+
+    <!-- MAIN CONTENT (Smooth Scroll) -->
+    <main id="smooth-wrapper">
         
         <!-- HERO -->
-        <section class="section">
-            <div class="hero-sub interactive-area">AKASHA HUB EXPERIENCE</div>
-            <h1 class="hero-title interactive-area">Presencial <br>Alchemy</h1>
-            <div class="interactive-area" style="margin-top: 40px;">
-                <p style="max-width: 500px; line-height: 1.6; color: #ccc; font-size: clamp(0.9rem, 1.8vw, 1rem);">
+        <section class="hero">
+            <div class="container hero-content">
+                <div class="subtitle">Arquitetura de Essência</div>
+                <h1 id="hero-title">
+                    Presencial<br>Alchemy
+                </h1>
+                <p style="max-width: 600px; margin: 20px auto; color: #ccc;">
                     Onde a tecnologia ancestral encontra a arquitetura do fluxo. 
                     Uma experiência sensorial desenhada para excelência vibracional.
                 </p>
-                <a href="#sessions" class="btn">Explorar Sessões</a>
+                
+                <button class="enter-btn magnetic trigger-lead" style="font-size: 0.8rem; margin-top: 30px;" onclick="openModal('Explorar Sessoes (Hero)')">
+                    EXPLORAR SESSOES
+                </button>
             </div>
         </section>
 
-        <!-- SESSIONS -->
-        <section class="section" id="sessions">
-            <h2 class="interactive-area" style="font-size: clamp(2rem, 5vw, 3rem); color: var(--c-gold);">Menu de Ativação</h2>
-            
-            <div class="grid interactive-area">
-                <!-- CARD 1 -->
-                <div class="card">
-                    <h3 style="color: #fff; margin-bottom: 10px; font-size: clamp(1.2rem, 3vw, 1.5rem);">Tantra Alchemy</h3>
-                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.1em;">HIGH TICKET • ALQUIMIA</p>
-                    <p style="font-size: clamp(0.85rem, 1.5vw, 0.9rem); line-height: 1.6;">Fusão entre alinhamento quântico e massagem terapêutica. Reconstrução do magnetismo pessoal.</p>
-                    <button class="btn" onclick="openLeadPopup('Tantra Alchemy')">Agendar Sessão</button>
-                </div>
+        <!-- CARDS -->
+        <section class="cards-section">
+            <div class="container">
+                <div class="cards-grid">
+                    
+                    <!-- Card 1 -->
+                    <div class="card magnetic-card">
+                        <div>
+                            <div class="card-tag">ALQUIMIA & PODER</div>
+                            <h3>Tantra Alchemy</h3>
+                            <p>A fusão perfeita entre alinhamento quântico, fascinação e massagem tântrica terapêutica.</p>
+                        </div>
+                        <button class="btn-card" onclick="openModal('Tantra Alchemy (High Ticket)')">
+                            Agendar High Ticket <span>→</span>
+                        </button>
+                    </div>
 
-                <!-- CARD 2 -->
-                <div class="card" style="border-color: var(--c-cyan);">
-                    <h3 style="color: var(--c-cyan); margin-bottom: 10px; font-size: clamp(1.2rem, 3vw, 1.5rem);">Akasha Prime</h3>
-                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.1em;">SIGNATURE EXPERIENCE</p>
-                    <p style="font-size: clamp(0.85rem, 1.5vw, 0.9rem); line-height: 1.6;">Experiência sob medida. Ritual extra, intenção específica e personalização completa.</p>
-                    <button class="btn" style="border-color: var(--c-cyan); color: var(--c-cyan);" onclick="openLeadPopup('Akasha Prime')">Consultar Disponibilidade</button>
-                </div>
+                    <!-- Card 2 -->
+                    <div class="card magnetic-card" style="border-color: rgba(212,175,55,0.4);">
+                        <div>
+                            <div class="card-tag" style="color: #000; background: var(--c-gold); border:none;">SIGNATURE</div>
+                            <h3 style="color: var(--c-gold);">Akasha Prime</h3>
+                            <p>Assinatura Mensal e Trimestral. Ritual extra, intenção específica e personalização completa.</p>
+                        </div>
+                        <button class="btn-card" onclick="openModal('Akasha Prime (Signature)')">
+                            Solicitar VIP <span>→</span>
+                        </button>
+                    </div>
 
-                <!-- CARD 3 -->
-                <div class="card">
-                    <h3 style="color: #fff; margin-bottom: 10px; font-size: clamp(1.2rem, 3vw, 1.5rem);">Imersão 3h+</h3>
-                    <p style="font-size: 0.75rem; color: #888; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.1em;">DEEP DIVE</p>
-                    <p style="font-size: clamp(0.85rem, 1.5vw, 0.9rem); line-height: 1.6;">Para quem busca transmutação total. Uma jornada longa em estado expandido.</p>
-                    <button class="btn" onclick="openLeadPopup('Imersão 3h+')">Iniciar Jornada</button>
+                    <!-- Card 3 -->
+                    <div class="card magnetic-card">
+                        <div>
+                            <div class="card-tag">DEEP DIVE</div>
+                            <h3>Imersão 3h+</h3>
+                            <p>Jornada longa em estado expandido de consciência. Recalibração absoluta para quem busca transmutação.</p>
+                        </div>
+                        <button class="btn-card" onclick="openModal('Imersao 3h+ (Deep Dive)')">
+                            Agendar Imersão <span>→</span>
+                        </button>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="card magnetic-card">
+                        <div>
+                            <div class="card-tag">ENTRY LEVEL</div>
+                            <h3>Jornada Sensorial</h3>
+                            <p>Sessão focada de ativação tântrica. Ideal para desbloquear a vitalidade imediata.</p>
+                        </div>
+                        <button class="btn-card" onclick="openModal('Jornada Sensorial (R$ 500)')">
+                            Iniciar (R$ 500) <span>→</span>
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </section>
 
         <!-- FOOTER -->
-        <section class="section" style="min-height: 50vh; align-items: center; text-align: center;">
-            <div class="interactive-area">
-                <h2 style="font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 20px;">Código Akasha</h2>
-                <a href="https://akashahub.github.io/CURSOAKASHA/" target="_blank" class="btn">Acessar Portal Online</a>
-                <p style="margin-top: 50px; font-size: clamp(0.6rem, 1.2vw, 0.7rem); color: #555;">© 2025 AKASHA HUB • ALL RIGHTS RESERVED</p>
+        <footer>
+            <div class="container">
+                <p>AKASHA HUB © 2025 • TODOS OS DIREITOS RESERVADOS</p>
             </div>
-        </section>
+        </footer>
 
-    </div>
+    </main>
 
     <!-- LIBS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
     <script>
-        // ═══════════════════════════════════════════════════════
-        //  LEAD CAPTURE SYSTEM
-        // ═══════════════════════════════════════════════════════
-        
-        let selectedSession = '';
+        // ══════════════════════════════════════════════════
+        // 1. LEAD CAPTURE SYSTEM
+        // ══════════════════════════════════════════════════
+        const modal = document.getElementById('lead-modal');
+        const modalContext = document.getElementById('modal-context-text');
+        let currentInterest = '';
 
-        function openLeadPopup(sessionName) {
-            selectedSession = sessionName;
-            const popup = document.getElementById('lead-popup');
-            const subtitle = document.querySelector('.popup-subtitle');
-            
-            subtitle.textContent = `Agendamento: ${sessionName}`;
-            popup.classList.add('active');
-            
-            // Limpar campos
-            document.getElementById('lead-name').value = '';
-            document.getElementById('lead-email').value = '';
-            document.getElementById('lead-name').focus();
-            
-            // Parar música temporariamente para foco
-            if (!audioElement.paused) {
-                audioElement.volume = 0.3;
-            }
+        function openModal(interest) {
+            currentInterest = interest;
+            modalContext.innerText = `Interesse: ${interest}`;
+            modal.classList.add('active');
         }
 
-        function closeLeadPopup() {
-            document.getElementById('lead-popup').classList.remove('active');
-            if (!audioElement.paused) {
-                gsap.to(audioElement, { volume: 1, duration: 1 });
-            }
+        function closeModal() {
+            modal.classList.remove('active');
         }
 
-        function submitLead(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('lead-name').value.trim();
-            const email = document.getElementById('lead-email').value.trim();
-            
+        function submitLead() {
+            const name = document.getElementById('leadName').value;
+            const email = document.getElementById('leadEmail').value;
+
             if (!name || !email) {
-                alert('Por favor, preencha todos os campos.');
+                // Shake animation for error
+                gsap.to('.modal-content', { x: 10, duration: 0.1, yoyo: true, repeat: 5 });
                 return;
             }
 
-            // Mensagem WhatsApp
-            const message = `🔮 *NOVO AGENDAMENTO VIP - AKASHA*\n\n` +
-                          `*Sessão:* ${selectedSession}\n` +
-                          `━━━━━━━━━━━━━━━━━━━━\n` +
-                          `👤 *Nome:* ${name}\n` +
-                          `📧 *E-mail:* ${email}\n` +
-                          `━━━━━━━━━━━━━━━━━━━━\n\n` +
-                          `_Aguardando confirmação de disponibilidade..._`;
+            // Button Feedback
+            const btn = document.querySelector('.btn-submit');
+            btn.innerText = "CONECTANDO...";
+            
+            // Build WhatsApp Link
+            const phone = "5571983448621";
+            const message = `Ol%C3%A1%20Akasha%20Hub,%0A%0AMe%20chamo%20*${encodeURIComponent(name)}*%20(${encodeURIComponent(email)}).%0A%0ADesejo%20iniciar%20o%20atendimento%20referente%20a:%20*${encodeURIComponent(currentInterest)}*.`;
 
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappNumber = '5571983448621';
-            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-            
-            // Abrir WhatsApp
-            window.open(whatsappURL, '_blank');
-            
-            // Fechar popup
+            // Redirect
             setTimeout(() => {
-                closeLeadPopup();
-                showSuccessMessage();
-            }, 500);
+                window.location.href = `https://wa.me/${phone}?text=${message}`;
+            }, 1000);
         }
 
-        function showSuccessMessage() {
-            const msg = document.createElement('div');
-            msg.style.cssText = `
-                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                background: rgba(212, 175, 55, 0.95); color: #000;
-                padding: 2rem 3rem; font-family: var(--font-display);
-                font-size: clamp(0.9rem, 2vw, 1.2rem); text-transform: uppercase;
-                letter-spacing: 0.2em; z-index: 10000;
-                box-shadow: 0 0 60px rgba(212, 175, 55, 0.5);
-                opacity: 0; transition: opacity 0.3s ease;
-                text-align: center; max-width: 90%;
-            `;
-            msg.textContent = 'Redirecionando...';
-            document.body.appendChild(msg);
-            
-            setTimeout(() => msg.style.opacity = '1', 100);
-            setTimeout(() => {
-                msg.style.opacity = '0';
-                setTimeout(() => msg.remove(), 300);
-            }, 2000);
+        // Close on outside click
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal) closeModal();
+        });
+
+        // ══════════════════════════════════════════════════
+        // 2. SETUP & AUDIO
+        // ══════════════════════════════════════════════════
+        const audio = document.getElementById('bg-audio');
+        let audioPlaying = false;
+
+        function enterExperience() {
+            // Audio Start
+            audio.volume = 0;
+            audio.play();
+            gsap.to(audio, { volume: 0.5, duration: 2 });
+            audioPlaying = true;
+            document.querySelector('.audio-toggle').classList.add('playing');
+
+            // UI Reveal
+            gsap.to('#enter-screen', { 
+                opacity: 0, 
+                duration: 1, 
+                onComplete: () => document.getElementById('enter-screen').remove() 
+            });
+
+            // Title Animation
+            animateTitle();
         }
 
-        // Fechar popup ao clicar fora
-        document.getElementById('lead-popup').addEventListener('click', (e) => {
-            if (e.target.id === 'lead-popup') closeLeadPopup();
-        });
-
-        // Fechar com ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeLeadPopup();
-        });
-
-        // ═══════════════════════════════════════════════════════
-        //  AUDIO SYSTEM (Synchronized with animations)
-        // ═══════════════════════════════════════════════════════
-        
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const audioElement = document.getElementById('bg-music');
-        const audioSource = audioCtx.createMediaElementSource(audioElement);
-        const analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256;
-        audioSource.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-        let audioLevel = 0;
-
-        document.getElementById('sound-btn').addEventListener('click', () => {
-            const btn = document.getElementById('sound-btn');
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            if (audioElement.paused) {
-                audioElement.play();
-                btn.classList.add('playing');
-                gsap.to(audioElement, { volume: 1, duration: 2 });
+        function toggleAudio() {
+            if(audioPlaying) {
+                gsap.to(audio, { volume: 0, duration: 0.5, onComplete: () => audio.pause() });
+                document.querySelector('.audio-toggle').classList.remove('playing');
             } else {
-                gsap.to(audioElement, { 
-                    volume: 0, 
-                    duration: 1,
-                    onComplete: () => {
-                        audioElement.pause();
-                        btn.classList.remove('playing');
-                    }
-                });
+                audio.play();
+                gsap.to(audio, { volume: 0.5, duration: 0.5 });
+                document.querySelector('.audio-toggle').classList.add('playing');
             }
+            audioPlaying = !audioPlaying;
+        }
+
+        // ══════════════════════════════════════════════════
+        // 3. SMOOTH SCROLL (LENIS)
+        // ══════════════════════════════════════════════════
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smooth: true,
+            touchMultiplier: 2,
         });
 
-        // Auto-play attempt (works after user interaction)
-        document.body.addEventListener('click', () => {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }, { once: true });
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
 
-        // ═══════════════════════════════════════════════════════
-        //  WEBGL FLUID SIMULATION (Audio-Reactive)
-        // ═══════════════════════════════════════════════════════
-        
-        const canvas = document.getElementById('gl');
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false });
+        // ══════════════════════════════════════════════════
+        // 4. WEBGL FLUID SHADER (Mobile Optimized)
+        // ══════════════════════════════════════════════════
+        const canvas = document.getElementById('webgl-canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Optimized for mobile
+        
         const scene = new THREE.Scene();
         const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-        const fluidMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                uTime: { value: 0 },
-                uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-                uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-                uAudio: { value: 0 },
-                uColor1: { value: new THREE.Color('#D4AF37') },
-                uColor2: { value: new THREE.Color('#00F0FF') }
-            },
-            vertexShader: `
-                varying vec2 vUv;
-                void main() {
-                    vUv = uv;
-                    gl_Position = vec4(position, 1.0);
-                }
-            `,
-            fragmentShader: `
-                uniform float uTime;
-                uniform vec2 uResolution;
-                uniform vec2 uMouse;
-                uniform float uAudio;
-                uniform vec3 uColor1;
-                uniform vec3 uColor2;
-                varying vec2 vUv;
+        const fragmentShader = `
+            uniform float uTime;
+            uniform vec2 uMouse;
+            uniform vec2 uResolution;
+            varying vec2 vUv;
 
-                vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-                float snoise(vec2 v){
-                    const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-                    vec2 i  = floor(v + dot(v, C.yy) );
-                    vec2 x0 = v - i + dot(i, C.xx);
-                    vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-                    vec4 x12 = x0.xyxy + C.xxzz;
-                    x12.xy -= i1;
-                    i = mod(i, 289.0);
-                    vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
-                    vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-                    m = m*m ;
-                    m = m*m ;
-                    vec3 x = 2.0 * fract(p * C.www) - 1.0;
-                    vec3 h = abs(x) - 0.5;
-                    vec3 ox = floor(x + 0.5);
-                    vec3 a0 = x - ox;
-                    m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-                    vec3 g;
-                    g.x  = a0.x  * x0.x  + h.x  * x0.y;
-                    g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-                    return 130.0 * dot(m, g);
-                }
+            vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+            float snoise(vec2 v){
+                const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+                vec2 i  = floor(v + dot(v, C.yy) );
+                vec2 x0 = v - i + dot(i, C.xx);
+                vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+                vec4 x12 = x0.xyxy + C.xxzz;
+                x12.xy -= i1;
+                i = mod(i, 289.0);
+                vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
+                vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+                m = m*m ;
+                m = m*m ;
+                vec3 x = 2.0 * fract(p * C.www) - 1.0;
+                vec3 h = abs(x) - 0.5;
+                vec3 ox = floor(x + 0.5);
+                vec3 a0 = x - ox;
+                m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+                vec3 g;
+                g.x  = a0.x  * x0.x  + h.x  * x0.y;
+                g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+                return 130.0 * dot(m, g);
+            }
 
-                void main() {
-                    vec2 st = gl_FragCoord.xy / uResolution.xy;
-                    float aspect = uResolution.x / uResolution.y;
-                    st.x *= aspect;
-                    vec2 mouse = uMouse;
-                    mouse.x *= aspect;
+            void main() {
+                vec2 st = gl_FragCoord.xy / uResolution.xy;
+                st.x *= uResolution.x / uResolution.y;
 
-                    float dist = distance(st, mouse);
-                    float interaction = smoothstep(0.5, 0.0, dist);
-                    
-                    float wave = snoise(vec2(st.x * 2.0 + uTime * 0.1, st.y * 2.0 - uTime * 0.15));
-                    float strength = wave + interaction * 0.5 + uAudio * 0.3;
-                    
-                    float n = snoise(vec2(st.x * 3.0 + strength, st.y * 3.0 + uTime * 0.2));
-                    n += 0.5 * snoise(vec2(st.x * 10.0 - uTime, st.y * 10.0));
-                    
-                    vec3 color = mix(vec3(0.01, 0.01, 0.02), uColor1, smoothstep(0.2, 0.8, n + interaction));
-                    color += uColor2 * uAudio * smoothstep(0.6, 0.9, n);
+                float mouseDist = distance(st, uMouse);
+                float mouseInteraction = smoothstep(0.4, 0.0, mouseDist) * 0.5;
 
-                    float vig = 1.0 - length(vUv - 0.5);
-                    color *= vig;
+                // Smoke/Fluid Effect
+                float noise1 = snoise(st * 2.5 + uTime * 0.1 + mouseInteraction);
+                float noise2 = snoise(st * 5.0 - uTime * 0.15);
+                
+                vec3 colorBg = vec3(0.01, 0.01, 0.02);
+                vec3 colorGold = vec3(0.83, 0.68, 0.21);
+                vec3 colorViolet = vec3(0.42, 0.05, 0.68);
 
-                    gl_FragColor = vec4(color, 1.0);
-                }
-            `
+                float mixVal = smoothstep(-0.4, 0.4, noise1 + noise2 * 0.5);
+                
+                vec3 finalColor = mix(colorBg, colorViolet, mixVal * 0.3);
+                finalColor = mix(finalColor, colorGold, smoothstep(0.3, 0.8, mixVal) * 0.5);
+                finalColor += colorGold * mouseInteraction * 0.3;
+
+                gl_FragColor = vec4(finalColor, 1.0);
+            }
+        `;
+
+        const uniforms = {
+            uTime: { value: 0 },
+            uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+            uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+        };
+
+        const material = new THREE.ShaderMaterial({
+            vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position, 1.0); }`,
+            fragmentShader,
+            uniforms
         });
 
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), fluidMaterial);
-        scene.add(plane);
+        scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
 
-        // ═══ ANIMATION LOOP ═══
-        let mouseX = 0.5, mouseY = 0.5;
-        let targetX = 0.5, targetY = 0.5;
+        // ══════════════════════════════════════════════════
+        // 5. EVENTS (Mouse + Touch)
+        // ══════════════════════════════════════════════════
+        let targetMouse = new THREE.Vector2(0.5, 0.5);
+        
+        function updateMouse(x, y) {
+            // DOM Cursor
+            gsap.to('#cursor', { x: x, y: y, duration: 0.1 });
+            gsap.to('#cursor-dot', { x: x, y: y, duration: 0 });
 
-        // Mouse tracking (desktop)
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX / window.innerWidth;
-            mouseY = 1.0 - e.clientY / window.innerHeight;
-        });
+            // WebGL Mouse
+            const normX = (x / window.innerWidth) * (window.innerWidth / window.innerHeight);
+            const normY = 1.0 - (y / window.innerHeight);
+            targetMouse.set(normX, normY);
+        }
 
-        // Touch tracking (mobile)
+        window.addEventListener('mousemove', (e) => updateMouse(e.clientX, e.clientY));
+        
+        // Touch events for Mobile
         window.addEventListener('touchmove', (e) => {
-            if (e.touches.length > 0) {
-                mouseX = e.touches[0].clientX / window.innerWidth;
-                mouseY = 1.0 - e.touches[0].clientY / window.innerHeight;
-            }
-        }, { passive: true });
+            const touch = e.touches[0];
+            updateMouse(touch.clientX, touch.clientY);
+        }, {passive: false});
 
-        const clock = new THREE.Clock();
+        // Hover Logic
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
 
+        // Magnetic Effect
+        document.querySelectorAll('.magnetic').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                gsap.to(btn, { x: x * 0.3, y: y * 0.3, duration: 0.3 });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { x: 0, y: 0, duration: 0.3 });
+            });
+        });
+
+        // Animation Loop
         function animate() {
-            requestAnimationFrame(animate);
-            const time = clock.getElapsedTime();
-
-            // Audio Analysis
-            if(!audioElement.paused) {
-                analyser.getByteFrequencyData(dataArray);
-                let sum = 0;
-                for(let i=0; i<30; i++) sum += dataArray[i];
-                let avg = sum / 30;
-                audioLevel += (avg / 255 - audioLevel) * 0.15; // Smooth
-            } else {
-                audioLevel += (0 - audioLevel) * 0.05;
-            }
-
-            // Smooth Mouse
-            targetX += (mouseX - targetX) * 0.05;
-            targetY += (mouseY - targetY) * 0.05;
-
-            // Update Shader
-            fluidMaterial.uniforms.uTime.value = time;
-            fluidMaterial.uniforms.uMouse.value.set(targetX, targetY);
-            fluidMaterial.uniforms.uAudio.value = audioLevel * 2.5; // Amplify audio effect
-
+            uniforms.uTime.value += 0.005;
+            uniforms.uMouse.value.lerp(targetMouse, 0.05);
             renderer.render(scene, camera);
+            requestAnimationFrame(animate);
         }
         animate();
 
-        // ═══════════════════════════════════════════════════════
-        //  GSAP SCROLL ANIMATIONS
-        // ═══════════════════════════════════════════════════════
-        
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Loader
-        const loaderBar = document.querySelector('.loader-fill');
-        gsap.to(loaderBar, {
-            width: '100%',
-            duration: 2,
-            ease: "power2.inOut",
-            onComplete: () => {
-                gsap.to('#loader', { opacity: 0, pointerEvents: 'none', duration: 1 });
-                initSiteAnimations();
-            }
-        });
-
-        function initSiteAnimations() {
-            gsap.to('.hero-title', { opacity: 1, y: 0, duration: 1.5, ease: "power3.out", delay: 0.2 });
-            gsap.to('.hero-sub', { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" });
-
-            const cards = document.querySelectorAll('.card');
-            cards.forEach((card, i) => {
-                gsap.from(card, {
-                    scrollTrigger: {
-                        trigger: card,
-                        start: "top 85%"
-                    },
-                    y: 100,
-                    opacity: 0,
-                    duration: 1,
-                    delay: i * 0.1,
-                    ease: "power3.out"
-                });
-            });
-        }
-
-        // ═══ RESIZE ═══
         window.addEventListener('resize', () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
-            fluidMaterial.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+            uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+        });
+
+        // ══════════════════════════════════════════════════
+        // 6. GSAP REVEALS
+        // ══════════════════════════════════════════════════
+        gsap.registerPlugin(ScrollTrigger);
+
+        function animateTitle() {
+            const title = document.querySelector('#hero-title');
+            const chars = title.innerText.split('').map(c => 
+                c === ' ' ? '&nbsp;' : `<span class='char'>${c}</span>`
+            ).join('');
+            title.innerHTML = chars;
+
+            gsap.to('.char', { y: 0, opacity: 1, duration: 1, stagger: 0.03, ease: 'power3.out' });
+            gsap.to('.subtitle', { opacity: 1, duration: 1, delay: 0.5 });
+        }
+
+        gsap.utils.toArray('.card').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: { trigger: card, start: "top 85%" },
+                y: 50, opacity: 0, duration: 1, delay: i * 0.1, ease: 'power2.out'
+            });
         });
 
     </script>
