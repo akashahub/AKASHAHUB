@@ -3,435 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKASHA | Elevate Your Existence</title>
+    <title>AKASHA | SUPREMACIA</title>
     
-    <!-- Fontes Premium -->
+    <!-- Tipografia Premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Space+Grotesk:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --c-dark: #050505;
-            --c-light: #f0f0f0;
-            --c-accent: #ff4d00; /* Akasha Energy */
-            --font-display: 'Syncopate', sans-serif;
-            --font-body: 'Space Grotesk', sans-serif;
+            --c-void: #050505;
+            --c-gold: #d4af37;
+            --c-gold-dim: #5c4d18;
+            --c-violet: #8b5cf6;
+            --c-white: #eaeaea;
+            --f-display: 'Cinzel', serif;
+            --f-body: 'Space Grotesk', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        
         body {
-            background-color: var(--c-dark);
-            color: var(--c-light);
-            font-family: var(--font-body);
+            background-color: var(--c-void);
+            color: var(--c-white);
+            font-family: var(--f-body);
             overflow-x: hidden;
             overscroll-behavior: none;
         }
 
-        /* O Canvas vive no fundo, fixo */
-        #webgl-canvas {
+        /* --- CAMADA 1: WebGL (O Fundo Vivo) --- */
+        #canvas-stage {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             z-index: 1;
             pointer-events: none; /* Deixa o scroll passar */
         }
 
-        /* Interface Flutuante */
-        .ui-layer {
+        /* --- CAMADA 2: UI Fixa (HUD) --- */
+        .hud {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             z-index: 10;
             pointer-events: none;
+            padding: 40px;
             display: flex;
             justify-content: space-between;
-            padding: 2rem;
             mix-blend-mode: exclusion;
         }
 
-        .brand { font-family: var(--font-display); font-weight: 700; letter-spacing: -1px; }
-        .status { font-size: 0.8rem; text-transform: uppercase; opacity: 0.7; }
+        .brand-logo {
+            font-family: var(--f-display);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+        }
 
-        /* Estrutura de Scroll (Spacer) */
-        .scroll-container {
+        .nav-indicators {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .dot {
+            width: 6px; height: 6px;
+            background: var(--c-white);
+            border-radius: 50%;
+            opacity: 0.2;
+            transition: 0.3s;
+        }
+        .dot.active { opacity: 1; background: var(--c-gold); transform: scale(1.5); }
+
+        /* --- CAMADA 3: Conteúdo Scrollável --- */
+        .scroll-wrapper {
             position: relative;
             z-index: 5;
             width: 100%;
         }
 
         section {
-            height: 100vh;
+            min-height: 100vh;
             width: 100%;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: center; /* Centraliza ou ajusta via CSS específico */
             position: relative;
-            /* O texto é invisível por padrão e controlado pelo GSAP */
-            opacity: 0; 
-            transform: translateY(20px);
+            padding: 5%;
         }
 
-        .content-wrap {
-            text-align: center;
-            pointer-events: auto; /* Permite interação com botões */
-            max-width: 800px;
-            padding: 2rem;
+        /* Estilo Editorial */
+        .content-block {
+            max-width: 600px;
+            pointer-events: auto; /* Permite cliques */
+            opacity: 0; /* Controlado pelo GSAP */
+            transform: translateY(30px);
+        }
+
+        .content-block.left { margin-right: auto; text-align: left; }
+        .content-block.right { margin-left: auto; text-align: right; }
+        .content-block.center { margin: auto; text-align: center; }
+
+        .eyebrow {
+            font-family: var(--f-body);
+            color: var(--c-gold);
+            font-size: 0.8rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: block;
         }
 
         h1 {
-            font-family: var(--font-display);
-            font-size: clamp(3rem, 8vw, 8rem);
-            text-transform: uppercase;
+            font-family: var(--f-display);
+            font-size: clamp(3rem, 8vw, 6rem);
             line-height: 0.9;
-            margin-bottom: 1rem;
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(255,255,255,0.8);
-        }
-        
-        h1.fill {
-            -webkit-text-stroke: 0;
-            color: var(--c-light);
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #fff, var(--c-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         h2 {
-            font-family: var(--font-display);
+            font-family: var(--f-display);
             font-size: clamp(2rem, 5vw, 4rem);
             margin-bottom: 1rem;
+            color: var(--c-white);
         }
 
         p {
-            font-size: 1.2rem;
-            line-height: 1.6;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.7);
             margin-bottom: 2rem;
-            opacity: 0.8;
-            max-width: 60ch;
-            margin-inline: auto;
         }
 
-        .price-tag {
-            display: block;
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            color: var(--c-accent);
-            margin-bottom: 1rem;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 1rem 2rem;
-            border: 1px solid var(--c-light);
-            color: var(--c-light);
-            text-transform: uppercase;
+        /* Botões Premium */
+        .btn-gold {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.2rem 2.5rem;
+            border: 1px solid var(--c-gold);
+            color: var(--c-gold);
             text-decoration: none;
-            font-family: var(--font-display);
+            text-transform: uppercase;
+            font-family: var(--f-display);
+            letter-spacing: 0.2em;
             font-size: 0.8rem;
-            transition: all 0.3s cubic-bezier(0.215, 0.610, 0.355, 1.000);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
-            cursor: pointer;
+            backdrop-filter: blur(5px);
         }
 
-        .btn:hover {
-            background: var(--c-light);
-            color: var(--c-dark);
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+        .btn-gold:hover {
+            background: var(--c-gold);
+            color: var(--c-void);
+            box-shadow: 0 0 30px var(--c-gold-dim);
         }
 
-        /* ═══════════════════════════════════════════════════ */
-        /*  POPUP DE LEAD CAPTURE (Cinematográfico)           */
-        /* ═══════════════════════════════════════════════════ */
-        #lead-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(20px);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        #lead-popup.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .popup-content {
-            background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(10, 10, 10, 0.98));
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 3rem 2.5rem;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-            transform: scale(0.9) translateY(30px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9),
-                        0 0 60px rgba(255, 77, 0, 0.1);
-        }
-
-        #lead-popup.active .popup-content {
-            transform: scale(1) translateY(0);
-        }
-
-        .popup-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: var(--c-light);
-            font-size: 2rem;
-            cursor: pointer;
-            opacity: 0.5;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            line-height: 1;
-            padding: 0;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .popup-close:hover {
-            opacity: 1;
-            transform: rotate(90deg);
-        }
-
-        .popup-title {
-            font-family: var(--font-display);
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .popup-subtitle {
-            font-size: 0.9rem;
-            color: var(--c-accent);
-            margin-bottom: 2rem;
-            opacity: 0.8;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.5rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--c-light);
-            font-family: var(--font-body);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--c-accent);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 20px rgba(255, 77, 0, 0.2);
-        }
-
-        .form-group input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 1.2rem;
-            background: var(--c-accent);
-            border: none;
-            color: #fff;
-            font-family: var(--font-display);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-submit::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn-submit:hover::before {
-            left: 100%;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(255, 77, 0, 0.4),
-                        0 0 40px rgba(255, 77, 0, 0.2);
-        }
-
-        .btn-submit:active {
-            transform: translateY(-1px);
-        }
-
-        /* Loader */
+        /* Loader Cinematográfico */
         .loader {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--c-dark);
-            z-index: 100;
+            background: var(--c-void);
+            z-index: 9999;
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-family: var(--font-display);
+            align-items: center;
+            flex-direction: column;
             transition: opacity 1s ease;
         }
-
-        /* Responsivo */
-        @media (max-width: 768px) {
-            .popup-content {
-                padding: 2rem 1.5rem;
-            }
-
-            .popup-title {
-                font-size: 1.5rem;
-            }
+        
+        .loader-text {
+            font-family: var(--f-body);
+            letter-spacing: 0.5em;
+            color: var(--c-gold);
+            animation: pulse 1.5s infinite;
         }
+
+        /* Noise Filter Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
     </style>
 </head>
 <body>
 
-    <!-- Loader Cinematic -->
-    <div class="loader">INITIALIZING AKASHA PROTOCOL...</div>
+    <!-- Overlay de Textura de Filme -->
+    <div class="noise-overlay"></div>
 
-    <!-- UI Overlay (Fixo) -->
-    <div class="ui-layer">
-        <div class="brand">AKASHA</div>
-        <div class="status">System: Online</div>
+    <!-- Tela de Carregamento -->
+    <div class="loader">
+        <div class="loader-text">INITIALIZING AKASHA PROTOCOL</div>
     </div>
 
-    <!-- WebGL Render Target -->
-    <canvas id="webgl-canvas"></canvas>
-
-    <!-- ═══ POPUP DE LEAD CAPTURE ═══ -->
-    <div id="lead-popup">
-        <div class="popup-content">
-            <button class="popup-close" onclick="closeLeadPopup()">&times;</button>
-            <h3 class="popup-title">Acesso Restrito</h3>
-            <p class="popup-subtitle" id="popup-plan-name">Plano selecionado</p>
-            
-            <form id="lead-form" onsubmit="submitLead(event)">
-                <div class="form-group">
-                    <label for="lead-name">Nome Completo</label>
-                    <input type="text" id="lead-name" placeholder="Seu nome" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="lead-email">E-mail</label>
-                    <input type="email" id="lead-email" placeholder="seu@email.com" required>
-                </div>
-                
-                <button type="submit" class="btn-submit">
-                    Acessar via WhatsApp
-                </button>
-            </form>
+    <!-- Interface Fixa -->
+    <nav class="hud">
+        <div class="brand-logo">AKASHA</div>
+        <div class="nav-indicators">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
         </div>
+    </nav>
+
+    <!-- O Universo 3D -->
+    <canvas id="canvas-stage"></canvas>
+
+    <!-- Narrativa Scroll -->
+    <div class="scroll-wrapper">
+
+        <!-- INTRO / HERO -->
+        <section id="hero">
+            <div class="content-block center">
+                <span class="eyebrow">Experiências Transformadoras</span>
+                <h1>Supremacia</h1>
+                <p>Onde o físico encontra o etéreo. Bem-vindo à elite da consciência.</p>
+                <div style="margin-top: 50vh;">
+                    <span class="eyebrow">Scroll to Ascend</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- NÍVEL 1: ANÚBIS (O Portal) -->
+        <section id="lvl-anubis">
+            <div class="content-block left">
+                <span class="eyebrow">Nível 1 • O Portal</span>
+                <h2>Anúbis</h2>
+                <p>Eventos inaugurais que rasgam o véu da realidade. A iniciação começa aqui, no concreto, no presencial.</p>
+                <ul style="list-style: none; margin-bottom: 2rem; color: var(--c-white);">
+                    <li><i class="fas fa-check" style="color:var(--c-gold)"></i> O Despertar Inicial</li>
+                    <li><i class="fas fa-check" style="color:var(--c-gold)"></i> Rituais de Passagem</li>
+                </ul>
+                <a href="#" class="btn-gold">Ver Registros</a>
+            </div>
+        </section>
+
+        <!-- NÍVEL 2: HÓRUS (A Visão / Híbrido) -->
+        <section id="lvl-horus">
+            <div class="content-block right">
+                <span class="eyebrow">Nível 2 • A Visão</span>
+                <h2>Hórus</h2>
+                <p>O olho que tudo vê. Experiências Híbridas e Imersões de Tantra e Magnetismo. A matéria se torna líquida.</p>
+                <p>A onipresença digital encontra a intensidade física.</p>
+                <a href="#" class="btn-gold">Expandir Visão</a>
+            </div>
+        </section>
+
+        <!-- NÍVEL 3: ÍSIS (A Magia / Retiro) -->
+        <section id="lvl-isis">
+            <div class="content-block center" style="background: rgba(0,0,0,0.4); padding: 40px; border: 1px solid rgba(139, 92, 246, 0.3);">
+                <span class="eyebrow" style="color: var(--c-violet);">Nível 3 • A Magia</span>
+                <h2 style="text-shadow: 0 0 20px var(--c-violet);">Ísis</h2>
+                <p>Retiros Exclusivos em paraísos isolados. O ápice da alquimia pessoal.</p>
+                <p>Apenas 20 Vagas. Seleção rigorosa.</p>
+                <a href="#" class="btn-gold" style="border-color: var(--c-violet); color: var(--c-violet);">Solicitar Convite</a>
+            </div>
+        </section>
+
+        <!-- NÍVEL 4: TOTH (O Absoluto) -->
+        <section id="lvl-toth">
+            <div class="content-block center">
+                <span class="eyebrow">God Tier</span>
+                <h2>Toth</h2>
+                <p>O incognoscível. Eventos secretos para mestres do destino.</p>
+                <br>
+                <a href="https://akashahub.github.io/AKASHAHUB/" class="btn-gold">Acessar Akasha Hub</a>
+            </div>
+        </section>
+
+        <!-- Footer Spacer -->
+        <section style="height: 50vh; align-items: flex-end;">
+            <p style="font-size: 0.8rem; opacity: 0.5;">© 2025 AKASHA SUPREMACIA</p>
+        </section>
+
     </div>
 
-    <!-- Narrative Scroll Flow -->
-    <div class="scroll-container">
-        
-        <!-- Intro -->
-        <section id="s-intro">
-            <div class="content-wrap">
-                <h1>Consciência<br>Coletiva</h1>
-                <p>Onde visões se alinham e o éter se materializa.</p>
-            </div>
-        </section>
-
-        <!-- Manifesto -->
-        <section id="s-manifesto">
-            <div class="content-wrap">
-                <p style="font-size: 2rem;">Não é sobre aparecer.</p>
-                <h2 style="color: var(--c-accent);">É sobre Pertencer.</h2>
-                <p>Conectamos profissionais e marcas que compartilham a visão de elevar o nível do jogo.</p>
-            </div>
-        </section>
-
-        <!-- Tier 1: Iniciante -->
-        <section id="s-tier1" data-color="#808080">
-            <div class="content-wrap">
-                <span class="price-tag">INICIANTE • R$ 197/mês</span>
-                <h2>Quero<br>Existir</h2>
-                <p>70% reinvestido. Seu nome no grid. O início da materialização.</p>
-                <button class="btn" onclick="openLeadPopup('INICIANTE', 'R$ 197/mês', '70% reinvestido + Grid Akasha')">
-                    Iniciar Protocolo
-                </button>
-            </div>
-        </section>
-
-        <!-- Tier 2: Destaque -->
-        <section id="s-tier2" data-color="#00d4ff">
-            <div class="content-wrap">
-                <span class="price-tag">DESTAQUE • R$ 997/mês</span>
-                <h2 class="fill">Quero<br>Crescer</h2>
-                <p>Marketing exclusivo. Menções em Lives. Vídeos curtos. A energia cinética assume o controle.</p>
-                <button class="btn" onclick="openLeadPopup('DESTAQUE', 'R$ 997/mês', 'Marketing + Lives + Conteúdo')">
-                    Acelerar Frequência
-                </button>
-            </div>
-        </section>
-
-        <!-- Tier 3: Oficial -->
-        <section id="s-tier3" data-color="#ff4d00">
-            <div class="content-wrap">
-                <span class="price-tag">OFICIAL • R$ 2.497/mês</span>
-                <h1 class="fill" style="color: var(--c-accent); text-shadow: 0 0 40px rgba(255,77,0,0.6);">Dominar<br>Presença</h1>
-                <p>Selo Parceiro Oficial. Onipresença em 12 lives/mês. Estratégia personalizada. O topo da pirâmide.</p>
-                <button class="btn" onclick="openLeadPopup('OFICIAL', 'R$ 2.497/mês', 'Selo Oficial + Onipresença Total')">
-                    Reivindicar Trono
-                </button>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <section style="height: 50vh;">
-            <div class="content-wrap">
-                <p>AKASHA © 2024</p>
-            </div>
-        </section>
-    </div>
-
-    <!-- Bibliotecas (Via CDN para rodar imediato) -->
+    <!-- Bibliotecas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Post-processing -->
     <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
@@ -439,171 +300,25 @@
     <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
     
-    <!-- GSAP -->
+    <!-- GSAP Core + ScrollTrigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
-        // ═══════════════════════════════════════════════════════
-        //  SISTEMA DE LEAD CAPTURE + WHATSAPP
-        // ═══════════════════════════════════════════════════════
-        
-        let currentPlan = {
-            name: '',
-            price: '',
-            benefits: ''
-        };
-
-        function openLeadPopup(planName, price, benefits) {
-            currentPlan = { name: planName, price: price, benefits: benefits };
-            
-            const popup = document.getElementById('lead-popup');
-            const planNameEl = document.getElementById('popup-plan-name');
-            
-            planNameEl.textContent = `${planName} • ${price}`;
-            popup.classList.add('active');
-            
-            // Limpar campos
-            document.getElementById('lead-name').value = '';
-            document.getElementById('lead-email').value = '';
-            document.getElementById('lead-name').focus();
-        }
-
-        function closeLeadPopup() {
-            document.getElementById('lead-popup').classList.remove('active');
-        }
-
-        function submitLead(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('lead-name').value.trim();
-            const email = document.getElementById('lead-email').value.trim();
-            
-            if (!name || !email) {
-                alert('Por favor, preencha todos os campos.');
-                return;
-            }
-
-            // Criar mensagem para WhatsApp
-            const message = `🔥 *NOVO LEAD - AKASHA*\n\n` +
-                          `*Plano:* ${currentPlan.name}\n` +
-                          `*Investimento:* ${currentPlan.price}\n` +
-                          `*Benefícios:* ${currentPlan.benefits}\n\n` +
-                          `━━━━━━━━━━━━━━━━━━━━\n` +
-                          `👤 *Nome:* ${name}\n` +
-                          `📧 *E-mail:* ${email}\n` +
-                          `━━━━━━━━━━━━━━━━━━━━\n\n` +
-                          `_Aguardando ativação do protocolo..._`;
-
-            // Codificar para URL
-            const encodedMessage = encodeURIComponent(message);
-            
-            // Número do WhatsApp do Akasha
-            const whatsappNumber = '5571983448621';
-            
-            // URL do WhatsApp Web/App
-            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-            
-            // Abrir WhatsApp em nova aba
-            window.open(whatsappURL, '_blank');
-            
-            // Fechar popup
-            setTimeout(() => {
-                closeLeadPopup();
-                
-                // Feedback visual (opcional)
-                showSuccessMessage();
-            }, 500);
-        }
-
-        function showSuccessMessage() {
-            // Criar elemento de sucesso temporário
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0, 255, 100, 0.95);
-                color: #000;
-                padding: 2rem 3rem;
-                font-family: var(--font-display);
-                font-size: 1.2rem;
-                text-transform: uppercase;
-                letter-spacing: 0.2em;
-                z-index: 10000;
-                box-shadow: 0 0 60px rgba(0, 255, 100, 0.5);
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            `;
-            successMsg.textContent = 'Redirecionando para WhatsApp...';
-            document.body.appendChild(successMsg);
-            
-            setTimeout(() => successMsg.style.opacity = '1', 100);
-            setTimeout(() => {
-                successMsg.style.opacity = '0';
-                setTimeout(() => successMsg.remove(), 300);
-            }, 2000);
-        }
-
-        // Fechar popup ao clicar fora
-        document.getElementById('lead-popup').addEventListener('click', (e) => {
-            if (e.target.id === 'lead-popup') {
-                closeLeadPopup();
-            }
-        });
-
-        // Fechar popup com ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeLeadPopup();
-            }
-        });
-
-        // ═══════════════════════════════════════════════════════
-        //  THREE.JS SETUP (Mantido do original)
-        // ═══════════════════════════════════════════════════════
-        
-        const canvas = document.querySelector('#webgl-canvas');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x050505, 0.02);
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.z = 5;
-
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ReinhardToneMapping;
-
-        // Iluminação
-        const ambientLight = new THREE.AmbientLight(0x404040, 2);
-        scene.add(ambientLight);
-
-        const pointLight1 = new THREE.PointLight(0xffffff, 2, 50);
-        pointLight1.position.set(5, 5, 5);
-        scene.add(pointLight1);
-
-        const pointLight2 = new THREE.PointLight(0x4444ff, 5, 50);
-        pointLight2.position.set(-5, -5, 2);
-        scene.add(pointLight2);
-        
-        const accentLight = new THREE.PointLight(0xff4d00, 0, 50);
-        accentLight.position.set(0, 0, 2);
-        scene.add(accentLight);
-
-        // Shader
+        // --- 1. CONFIGURAÇÃO SHADERS (A Mágica Visual) ---
+        // Vertex Shader: Controla a deformação da geometria
         const vertexShader = `
             uniform float uTime;
-            uniform float uDistortion;
+            uniform float uScroll; // Valor de 0 a 1 vindo do scroll
             varying vec2 vUv;
             varying float vDisplacement;
-            
+            varying vec3 vNormal;
+
+            // Simplex Noise Function
             vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
             vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
             vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
             vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-            
             float snoise(vec3 v) {
                 const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
                 const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
@@ -652,146 +367,187 @@
 
             void main() {
                 vUv = uv;
-                float noise = snoise(position * 1.5 + uTime * 0.5);
+                vNormal = normal;
+                
+                // Ruído Base
+                float noise = snoise(position * (2.0 + uScroll * 3.0) + uTime * 0.3);
+                
+                // Distorção aumenta com o scroll (De pedra estática para líquido caótico)
+                float distortionStrength = 0.1 + (uScroll * 1.5); 
+                
                 vDisplacement = noise;
-                vec3 newPos = position + normal * (noise * uDistortion);
+                vec3 newPos = position + normal * (noise * distortionStrength);
+                
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
             }
         `;
 
+        // Fragment Shader: Define a textura de Ouro/Energia
         const fragmentShader = `
             uniform float uTime;
-            uniform vec3 uColor;
-            uniform float uAlpha;
+            uniform vec3 uColorA; // Cor base (Escura)
+            uniform vec3 uColorB; // Cor brilho (Ouro/Violeta)
+            uniform float uScroll;
+            
             varying float vDisplacement;
+            varying vec3 vNormal;
 
             void main() {
-                float intensity = 0.5 + vDisplacement * 2.0;
-                vec3 glow = uColor * intensity;
-                float scanline = sin(gl_FragCoord.y * 0.1 + uTime * 5.0) * 0.1;
-                gl_FragColor = vec4(glow + scanline, uAlpha);
+                // Cálculo de luz falsa (Fresnel) para dar aspecto de joia
+                vec3 viewDir = normalize(cameraPosition - vec3(0.0));
+                float fresnel = dot(viewDir, vNormal);
+                fresnel = clamp(1.0 - fresnel, 0.0, 1.0);
+                fresnel = pow(fresnel, 2.0);
+
+                // Mix de cores baseado na deformação
+                vec3 color = mix(uColorA, uColorB, vDisplacement * 1.5 + 0.5);
+                
+                // Adiciona brilho nas bordas
+                color += vec3(1.0) * fresnel * (0.5 + uScroll);
+
+                gl_FragColor = vec4(color, 1.0);
             }
         `;
 
-        const geometry = new THREE.IcosahedronGeometry(1.5, 60);
+        // --- 2. THREE.JS SETUP ---
+        const canvas = document.querySelector('#canvas-stage');
+        const scene = new THREE.Scene();
+        // Fog negro para profundidade infinita
+        scene.fog = new THREE.FogExp2(0x050505, 0.05);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 4;
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+
+        // --- 3. O ARTEFATO ---
+        const geometry = new THREE.IcosahedronGeometry(1.5, 64); // Alta resolução
         const material = new THREE.ShaderMaterial({
             vertexShader,
             fragmentShader,
             uniforms: {
                 uTime: { value: 0 },
-                uDistortion: { value: 0.1 },
-                uColor: { value: new THREE.Color('#444444') },
-                uAlpha: { value: 1.0 }
+                uScroll: { value: 0 },
+                uColorA: { value: new THREE.Color('#1a1a1a') }, // Começa como Pedra Escura
+                uColorB: { value: new THREE.Color('#333333') }
             },
-            wireframe: true,
-            transparent: true,
-            side: THREE.DoubleSide
+            // wireframe: true // Debug
         });
-
         const artifact = new THREE.Mesh(geometry, material);
         scene.add(artifact);
 
-        // Partículas
-        const particlesGeom = new THREE.BufferGeometry();
-        const particlesCount = 1000;
+        // Partículas de Atmosfera
+        const particlesCount = 500;
         const posArray = new Float32Array(particlesCount * 3);
-        
-        for(let i = 0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 15;
-        }
-        
-        particlesGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particlesMat = new THREE.PointsMaterial({
-            size: 0.02,
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.5
-        });
-        const particlesMesh = new THREE.Points(particlesGeom, particlesMat);
-        scene.add(particlesMesh);
+        for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 20;
+        const particlesMat = new THREE.PointsMaterial({ size: 0.02, color: 0xd4af37, transparent: true, opacity: 0.5 });
+        const particlesGeo = new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particleSystem = new THREE.Points(particlesGeo, particlesMat);
+        scene.add(particleSystem);
 
-        // Post-processing
+        // --- 4. POST-PROCESSING (BLOOM) ---
         const composer = new THREE.EffectComposer(renderer);
-        const renderPass = new THREE.RenderPass(scene, camera);
-        composer.addPass(renderPass);
-
-        const bloomPass = new THREE.UnrealBloomPass(
-            new THREE.Vector2(window.innerWidth, window.innerHeight),
-            1.5,
-            0.4,
-            0.85
-        );
+        composer.addPass(new THREE.RenderPass(scene, camera));
+        
+        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.strength = 0.5; // Brilho inicial
+        bloomPass.threshold = 0.2;
         composer.addPass(bloomPass);
 
-        // Animation loop
+        // --- 5. LOOP DE RENDERIZAÇÃO ---
         const clock = new THREE.Clock();
-
         function animate() {
-            const elapsedTime = clock.getElapsedTime();
-            material.uniforms.uTime.value = elapsedTime;
-            artifact.rotation.y = elapsedTime * 0.1;
-            particlesMesh.rotation.y = elapsedTime * 0.05;
+            const time = clock.getElapsedTime();
+            material.uniforms.uTime.value = time;
+            
+            // Rotação suave constante
+            artifact.rotation.y = time * 0.1;
+            particleSystem.rotation.y = time * 0.05;
+
             composer.render();
             requestAnimationFrame(animate);
         }
-
         animate();
 
-        // GSAP Scroll
+        // --- 6. INTEGRAÇÃO GSAP SCROLLTRIGGER ---
         gsap.registerPlugin(ScrollTrigger);
 
+        // Loader Exit
         window.addEventListener('load', () => {
-            gsap.to('.loader', { opacity: 0, duration: 1, pointerEvents: 'none' });
-            initScroll();
+            gsap.to('.loader', { opacity: 0, duration: 1, onComplete: () => document.querySelector('.loader').remove() });
         });
 
-        function initScroll() {
-            document.querySelectorAll('section').forEach(section => {
-                gsap.to(section, {
-                    scrollTrigger: {
-                        trigger: section,
-                        start: "top 60%",
-                        end: "top 20%",
-                        scrub: 1
-                    },
-                    opacity: 1,
-                    y: 0,
-                    duration: 1
-                });
-            });
+        // Timeline Mestra
+        // Conecta o scroll da página às variáveis do Shader e Posição da Câmera
+        let tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".scroll-wrapper",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1 // Smooth scrubbing
+            }
+        });
 
-            const tl = gsap.timeline({
+        // FASE 0 -> 1 (Hero -> Anúbis)
+        // Objeto se aproxima e gira
+        tl.to(camera.position, { z: 3.5, ease: "power1.inOut" }, 0);
+        tl.to(artifact.rotation, { x: 1, ease: "none" }, 0);
+
+        // FASE 1 -> 2 (Anúbis -> Hórus)
+        // Transmutação: Pedra para Ouro Líquido
+        tl.to(material.uniforms.uScroll, { value: 0.5 }, 0.3); // Aumenta distorção
+        tl.to(material.uniforms.uColorA.value, { r: 0.83, g: 0.68, b: 0.21 }, 0.3); // Ouro
+        tl.to(material.uniforms.uColorB.value, { r: 1.0, g: 1.0, b: 1.0 }, 0.3); // Branco
+        tl.to(bloomPass, { strength: 2.0 }, 0.3); // Muito Brilho
+        tl.to(camera.position, { x: -2, z: 3 }, 0.3); // Angulo lateral
+
+        // FASE 2 -> 3 (Hórus -> Ísis)
+        // Transmutação: Ouro para Energia Violeta (Magia)
+        tl.to(material.uniforms.uScroll, { value: 0.8 }, 0.6); // Caos total
+        tl.to(material.uniforms.uColorA.value, { r: 0.4, g: 0.1, b: 0.8 }, 0.6); // Violeta Escuro
+        tl.to(material.uniforms.uColorB.value, { r: 0.8, g: 0.5, b: 1.0 }, 0.6); // Violeta Neon
+        tl.to(camera.position, { x: 0, y: 1, z: 2.5 }, 0.6); 
+
+        // FASE 3 -> 4 (Ísis -> Toth)
+        // Transcendência: Explosão de luz
+        tl.to(material.uniforms.uScroll, { value: 1.2 }, 0.9);
+        tl.to(bloomPass, { strength: 4.0, radius: 1.0 }, 0.9); // Cega o usuário
+        tl.to(camera.position, { z: 1.0 }, 0.9); // Entra no objeto
+
+        // Animação dos Textos (Sections)
+        document.querySelectorAll('.content-block').forEach((block) => {
+            gsap.to(block, {
                 scrollTrigger: {
-                    trigger: ".scroll-container",
-                    start: "top top",
-                    end: "bottom bottom",
-                    scrub: 1.5
-                }
+                    trigger: block,
+                    start: "top 80%",
+                    end: "top 30%",
+                    scrub: 1
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1
             });
+        });
 
-            tl.to(camera.position, { z: 4, duration: 2 });
-            tl.to(material.uniforms.uDistortion, { value: 0.2 }, "<");
-            tl.to(artifact.rotation, { x: 1, z: 0.5, duration: 2 });
-            tl.to(material.uniforms.uColor.value, { 
-                onUpdate: () => material.uniforms.uColor.value.set('#808080')
-            }, "<");
-            tl.to(camera.position, { x: -2, z: 3.5, duration: 2 }, "<");
-            tl.to(material, { wireframe: false, duration: 1 });
-            tl.to(material.uniforms.uDistortion, { value: 0.6, duration: 2 }, "<");
-            tl.to(material.uniforms.uColor.value, { 
-                onUpdate: () => material.uniforms.uColor.value.set('#00d4ff')
-            }, "<");
-            tl.to(pointLight2, { intensity: 8, duration: 2 }, "<");
-            tl.to(camera.position, { x: 2, y: 1, z: 3, duration: 2 }, "<");
-            tl.to(material.uniforms.uDistortion, { value: 1.2, duration: 2 });
-            tl.to(material.uniforms.uColor.value, { 
-                onUpdate: () => material.uniforms.uColor.value.set('#ff4d00')
-            }, "<");
-            tl.to(bloomPass, { strength: 3.0, radius: 1.0, duration: 2 }, "<");
-            tl.to(accentLight, { intensity: 10, duration: 2 }, "<");
-            tl.to(camera.position, { x: 0, y: 0, z: 2.2, duration: 2 }, "<");
-            tl.to(camera.position, { z: 0.5, duration: 2 });
-            tl.to(material.uniforms.uAlpha, { value: 0, duration: 1 }, "<");
+        // Navegação de Pontos (HUD)
+        const dots = document.querySelectorAll('.dot');
+        const sections = ['hero', 'lvl-anubis', 'lvl-horus', 'lvl-isis'];
+        sections.forEach((id, index) => {
+            ScrollTrigger.create({
+                trigger: `#${id}`,
+                start: "top center",
+                end: "bottom center",
+                onEnter: () => updateDots(index),
+                onEnterBack: () => updateDots(index)
+            });
+        });
+
+        function updateDots(index) {
+            dots.forEach(d => d.classList.remove('active'));
+            if(dots[index]) dots[index].classList.add('active');
         }
 
         // Responsividade
@@ -801,7 +557,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             composer.setSize(window.innerWidth, window.innerHeight);
         });
-
     </script>
 </body>
 </html>
