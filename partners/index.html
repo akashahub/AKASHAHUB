@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKASHA | Elevate Your Existence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AKASHA | Partners Mobile</title>
     
     <!-- Fontes Premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +14,7 @@
         :root {
             --c-dark: #050505;
             --c-light: #f0f0f0;
-            --c-accent: #ff4d00; /* Akasha Energy */
+            --c-accent: #ff4d00;
             --font-display: 'Syncopate', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
         }
@@ -27,66 +27,67 @@
             font-family: var(--font-body);
             overflow-x: hidden;
             overscroll-behavior: none;
+            /* Previne seleção de texto acidental no toque */
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-        /* O Canvas vive no fundo, fixo */
         #webgl-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-            pointer-events: none; /* Deixa o scroll passar */
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1; pointer-events: none;
         }
 
-        /* Interface Flutuante */
+        /* Interface Flutuante Mobile-Friendly */
         .ui-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            pointer-events: none;
-            display: flex;
-            justify-content: space-between;
-            padding: 2rem;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; pointer-events: none;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 1.5rem;
             mix-blend-mode: exclusion;
         }
 
-        .brand { font-family: var(--font-display); font-weight: 700; letter-spacing: -1px; }
-        .status { font-size: 0.8rem; text-transform: uppercase; opacity: 0.7; }
+        .brand { 
+            font-family: var(--font-display); 
+            font-weight: 700; 
+            letter-spacing: -1px; 
+            font-size: 1.2rem; 
+        }
+        
+        .status { 
+            font-size: 0.6rem; 
+            text-transform: uppercase; 
+            opacity: 0.7; 
+            align-self: flex-end; /* Canto inferior direito */
+        }
 
-        /* Estrutura de Scroll (Spacer) */
         .scroll-container {
-            position: relative;
-            z-index: 5;
-            width: 100%;
+            position: relative; z-index: 5; width: 100%;
         }
 
         section {
-            height: 100vh;
+            /* DVH ajuda em navegadores mobile com barra de endereço dinâmica */
+            min-height: 100vh; 
+            min-height: 100dvh; 
             width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             position: relative;
-            /* O texto é invisível por padrão e controlado pelo GSAP */
-            opacity: 0; 
-            transform: translateY(20px);
+            padding: 1rem;
         }
 
         .content-wrap {
             text-align: center;
-            pointer-events: auto; /* Permite interação com botões */
-            max-width: 800px;
-            padding: 2rem;
+            pointer-events: auto;
+            width: 100%;
+            max-width: 600px;
+            /* Fundo sutil para legibilidade sobre o 3D no celular */
+            background: radial-gradient(circle at center, rgba(5,5,5,0.4) 0%, transparent 80%); 
+            padding: 2rem 1rem;
+            border-radius: 20px;
         }
 
         h1 {
             font-family: var(--font-display);
-            font-size: clamp(3rem, 8vw, 8rem);
+            font-size: clamp(2.5rem, 10vw, 6rem);
             text-transform: uppercase;
             line-height: 0.9;
             margin-bottom: 1rem;
@@ -94,281 +95,124 @@
             -webkit-text-stroke: 1px rgba(255,255,255,0.8);
         }
         
-        h1.fill {
-            -webkit-text-stroke: 0;
-            color: var(--c-light);
-        }
+        h1.fill { -webkit-text-stroke: 0; color: var(--c-light); }
 
         h2 {
             font-family: var(--font-display);
-            font-size: clamp(2rem, 5vw, 4rem);
+            font-size: clamp(2rem, 8vw, 4rem);
             margin-bottom: 1rem;
+            line-height: 1;
         }
 
         p {
-            font-size: 1.2rem;
-            line-height: 1.6;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            line-height: 1.5;
             margin-bottom: 2rem;
-            opacity: 0.8;
-            max-width: 60ch;
-            margin-inline: auto;
+            opacity: 0.9;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8); /* Sombra para leitura */
         }
 
         .price-tag {
             display: block;
             font-family: var(--font-display);
-            font-size: 1.5rem;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
             color: var(--c-accent);
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
         }
 
         .btn {
             display: inline-block;
-            padding: 1rem 2rem;
+            padding: 1.2rem 2.5rem;
             border: 1px solid var(--c-light);
             color: var(--c-light);
             text-transform: uppercase;
             text-decoration: none;
             font-family: var(--font-display);
             font-size: 0.8rem;
-            transition: all 0.3s cubic-bezier(0.215, 0.610, 0.355, 1.000);
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(10px);
+            border-radius: 50px; /* Mais amigável ao toque */
+            margin-top: 1rem;
+            letter-spacing: 1px;
             cursor: pointer;
         }
 
-        .btn:hover {
-            background: var(--c-light);
-            color: var(--c-dark);
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+        /* Ajustes específicos para telas pequenas */
+        @media (max-width: 768px) {
+            .content-wrap { padding: 1rem 0.5rem; }
+            h1 { -webkit-text-stroke: 0.5px rgba(255,255,255,0.8); }
+            section { padding-top: 4rem; padding-bottom: 4rem; }
         }
 
-        /* ═══════════════════════════════════════════════════ */
-        /*  POPUP DE LEAD CAPTURE (Cinematográfico)           */
-        /* ═══════════════════════════════════════════════════ */
+        /* ════════ POPUP LEAD CAPTURE ════════ */
         #lead-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(20px);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+            z-index: 999; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
         }
-
-        #lead-popup.active {
-            display: flex;
-            opacity: 1;
+        #lead-popup.active { display: flex; opacity: 1; }
+        
+        .popup-card {
+            background: #111; border: 1px solid var(--c-light);
+            padding: 2rem; width: 90%; max-width: 400px;
+            position: relative; text-align: left;
         }
-
-        .popup-content {
-            background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(10, 10, 10, 0.98));
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 3rem 2.5rem;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-            transform: scale(0.9) translateY(30px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9),
-                        0 0 60px rgba(255, 77, 0, 0.1);
-        }
-
-        #lead-popup.active .popup-content {
-            transform: scale(1) translateY(0);
-        }
-
         .popup-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: var(--c-light);
-            font-size: 2rem;
-            cursor: pointer;
-            opacity: 0.5;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            line-height: 1;
-            padding: 0;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; top: 1rem; right: 1rem;
+            background: none; border: none; color: #fff; font-size: 1.5rem;
         }
-
-        .popup-close:hover {
-            opacity: 1;
-            transform: rotate(90deg);
-        }
-
-        .popup-title {
-            font-family: var(--font-display);
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .popup-subtitle {
-            font-size: 0.9rem;
-            color: var(--c-accent);
-            margin-bottom: 2rem;
-            opacity: 0.8;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.5rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--c-light);
+        .popup-title { font-family: var(--font-display); margin-bottom: 0.5rem; }
+        .popup-sub { font-size: 0.8rem; color: var(--c-accent); margin-bottom: 1.5rem; }
+        
+        input {
+            width: 100%; padding: 1rem; margin-bottom: 1rem;
+            background: #222; border: 1px solid #333; color: #fff;
             font-family: var(--font-body);
-            font-size: 1rem;
-            transition: all 0.3s ease;
         }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--c-accent);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 20px rgba(255, 77, 0, 0.2);
-        }
-
-        .form-group input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
         .btn-submit {
-            width: 100%;
-            padding: 1.2rem;
-            background: var(--c-accent);
-            border: none;
-            color: #fff;
-            font-family: var(--font-display);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-submit::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn-submit:hover::before {
-            left: 100%;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(255, 77, 0, 0.4),
-                        0 0 40px rgba(255, 77, 0, 0.2);
-        }
-
-        .btn-submit:active {
-            transform: translateY(-1px);
+            width: 100%; background: var(--c-accent); border: none; padding: 1rem;
+            color: #fff; font-family: var(--font-display); text-transform: uppercase;
         }
 
         /* Loader */
         .loader {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--c-dark);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--c-dark); z-index: 100;
+            display: flex; align-items: center; justify-content: center;
             font-family: var(--font-display);
             transition: opacity 1s ease;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
         }
-
-        /* Responsivo */
-        @media (max-width: 768px) {
-            .popup-content {
-                padding: 2rem 1.5rem;
-            }
-
-            .popup-title {
-                font-size: 1.5rem;
-            }
-        }
-
     </style>
 </head>
 <body>
 
-    <!-- Loader Cinematic -->
-    <div class="loader">INITIALIZING AKASHA PROTOCOL...</div>
+    <div class="loader">INITIALIZING AKASHA<br>MOBILE PROTOCOL...</div>
 
-    <!-- UI Overlay (Fixo) -->
     <div class="ui-layer">
         <div class="brand">AKASHA</div>
         <div class="status">System: Online</div>
     </div>
 
-    <!-- WebGL Render Target -->
     <canvas id="webgl-canvas"></canvas>
 
-    <!-- ═══ POPUP DE LEAD CAPTURE ═══ -->
+    <!-- LEAD POPUP -->
     <div id="lead-popup">
-        <div class="popup-content">
-            <button class="popup-close" onclick="closeLeadPopup()">&times;</button>
+        <div class="popup-card">
+            <button class="popup-close" onclick="closePopup()">×</button>
             <h3 class="popup-title">Acesso Restrito</h3>
-            <p class="popup-subtitle" id="popup-plan-name">Plano selecionado</p>
-            
-            <form id="lead-form" onsubmit="submitLead(event)">
-                <div class="form-group">
-                    <label for="lead-name">Nome Completo</label>
-                    <input type="text" id="lead-name" placeholder="Seu nome" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="lead-email">E-mail</label>
-                    <input type="email" id="lead-email" placeholder="seu@email.com" required>
-                </div>
-                
-                <button type="submit" class="btn-submit">
-                    Acessar via WhatsApp
-                </button>
-            </form>
+            <p class="popup-sub" id="popup-detail">Plano selecionado</p>
+            <input type="text" id="lead-name" placeholder="Seu Nome">
+            <input type="email" id="lead-email" placeholder="Seu E-mail">
+            <button class="btn-submit" onclick="submitLead()">Acessar via WhatsApp</button>
         </div>
     </div>
 
-    <!-- Narrative Scroll Flow -->
     <div class="scroll-container">
-        
         <!-- Intro -->
         <section id="s-intro">
             <div class="content-wrap">
@@ -380,57 +224,51 @@
         <!-- Manifesto -->
         <section id="s-manifesto">
             <div class="content-wrap">
-                <p style="font-size: 2rem;">Não é sobre aparecer.</p>
+                <p style="font-size: clamp(1.2rem, 5vw, 2rem);">Não é sobre aparecer.</p>
                 <h2 style="color: var(--c-accent);">É sobre Pertencer.</h2>
                 <p>Conectamos profissionais e marcas que compartilham a visão de elevar o nível do jogo.</p>
             </div>
         </section>
 
-        <!-- Tier 1: Iniciante -->
+        <!-- Tier 1 -->
         <section id="s-tier1" data-color="#808080">
             <div class="content-wrap">
-                <span class="price-tag">INICIANTE • R$ 197/mês</span>
+                <span class="price-tag">INICIANTE<br>R$ 197/mês</span>
                 <h2>Quero<br>Existir</h2>
                 <p>70% reinvestido. Seu nome no grid. O início da materialização.</p>
-                <button class="btn" onclick="openLeadPopup('INICIANTE', 'R$ 197/mês', '70% reinvestido + Grid Akasha')">
-                    Iniciar Protocolo
-                </button>
+                <button class="btn" onclick="openPopup('Iniciante', 'R$ 197')">Iniciar</button>
             </div>
         </section>
 
-        <!-- Tier 2: Destaque -->
+        <!-- Tier 2 -->
         <section id="s-tier2" data-color="#00d4ff">
             <div class="content-wrap">
-                <span class="price-tag">DESTAQUE • R$ 997/mês</span>
+                <span class="price-tag">DESTAQUE<br>R$ 997/mês</span>
                 <h2 class="fill">Quero<br>Crescer</h2>
                 <p>Marketing exclusivo. Menções em Lives. Vídeos curtos. A energia cinética assume o controle.</p>
-                <button class="btn" onclick="openLeadPopup('DESTAQUE', 'R$ 997/mês', 'Marketing + Lives + Conteúdo')">
-                    Acelerar Frequência
-                </button>
+                <button class="btn" onclick="openPopup('Destaque', 'R$ 997')">Acelerar</button>
             </div>
         </section>
 
-        <!-- Tier 3: Oficial -->
+        <!-- Tier 3 -->
         <section id="s-tier3" data-color="#ff4d00">
             <div class="content-wrap">
-                <span class="price-tag">OFICIAL • R$ 2.497/mês</span>
-                <h1 class="fill" style="color: var(--c-accent); text-shadow: 0 0 40px rgba(255,77,0,0.6);">Dominar<br>Presença</h1>
-                <p>Selo Parceiro Oficial. Onipresença em 12 lives/mês. Estratégia personalizada. O topo da pirâmide.</p>
-                <button class="btn" onclick="openLeadPopup('OFICIAL', 'R$ 2.497/mês', 'Selo Oficial + Onipresença Total')">
-                    Reivindicar Trono
-                </button>
+                <span class="price-tag">OFICIAL<br>R$ 2.497/mês</span>
+                <h1 class="fill" style="color: var(--c-accent); font-size: clamp(2.5rem, 9vw, 5rem);">Dominar<br>Presença</h1>
+                <p>Selo Parceiro Oficial. Onipresença em 12 lives/mês. Estratégia personalizada.</p>
+                <button class="btn" onclick="openPopup('Oficial', 'R$ 2.497')">Reivindicar</button>
             </div>
         </section>
 
         <!-- Footer -->
-        <section style="height: 50vh;">
+        <section style="height: 30vh;">
             <div class="content-wrap">
-                <p>AKASHA © 2024</p>
+                <p style="font-size: 0.8rem; opacity: 0.5;">AKASHA © 2024</p>
             </div>
         </section>
     </div>
 
-    <!-- Bibliotecas (Via CDN para rodar imediato) -->
+    <!-- Bibliotecas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
@@ -438,145 +276,47 @@
     <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-    
-    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
-        // ═══════════════════════════════════════════════════════
-        //  SISTEMA DE LEAD CAPTURE + WHATSAPP
-        // ═══════════════════════════════════════════════════════
-        
-        let currentPlan = {
-            name: '',
-            price: '',
-            benefits: ''
-        };
-
-        function openLeadPopup(planName, price, benefits) {
-            currentPlan = { name: planName, price: price, benefits: benefits };
-            
-            const popup = document.getElementById('lead-popup');
-            const planNameEl = document.getElementById('popup-plan-name');
-            
-            planNameEl.textContent = `${planName} • ${price}`;
-            popup.classList.add('active');
-            
-            // Limpar campos
-            document.getElementById('lead-name').value = '';
-            document.getElementById('lead-email').value = '';
-            document.getElementById('lead-name').focus();
+        // --- LEAD SYSTEM ---
+        let selectedPlan = {};
+        function openPopup(plan, price) {
+            selectedPlan = { plan, price };
+            document.getElementById('popup-detail').innerText = `${plan} • ${price}`;
+            document.getElementById('lead-popup').classList.add('active');
         }
-
-        function closeLeadPopup() {
+        function closePopup() {
             document.getElementById('lead-popup').classList.remove('active');
         }
-
-        function submitLead(event) {
-            event.preventDefault();
+        function submitLead() {
+            const name = document.getElementById('lead-name').value;
+            const email = document.getElementById('lead-email').value;
+            if(!name || !email) return alert('Preencha os dados.');
             
-            const name = document.getElementById('lead-name').value.trim();
-            const email = document.getElementById('lead-email').value.trim();
-            
-            if (!name || !email) {
-                alert('Por favor, preencha todos os campos.');
-                return;
-            }
-
-            // Criar mensagem para WhatsApp
-            const message = `🔥 *NOVO LEAD - AKASHA*\n\n` +
-                          `*Plano:* ${currentPlan.name}\n` +
-                          `*Investimento:* ${currentPlan.price}\n` +
-                          `*Benefícios:* ${currentPlan.benefits}\n\n` +
-                          `━━━━━━━━━━━━━━━━━━━━\n` +
-                          `👤 *Nome:* ${name}\n` +
-                          `📧 *E-mail:* ${email}\n` +
-                          `━━━━━━━━━━━━━━━━━━━━\n\n` +
-                          `_Aguardando ativação do protocolo..._`;
-
-            // Codificar para URL
-            const encodedMessage = encodeURIComponent(message);
-            
-            // Número do WhatsApp do Akasha
-            const whatsappNumber = '5571983448621';
-            
-            // URL do WhatsApp Web/App
-            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-            
-            // Abrir WhatsApp em nova aba
-            window.open(whatsappURL, '_blank');
-            
-            // Fechar popup
-            setTimeout(() => {
-                closeLeadPopup();
-                
-                // Feedback visual (opcional)
-                showSuccessMessage();
-            }, 500);
+            const msg = `*NOVO LEAD AKASHA*\nPlano: ${selectedPlan.plan}\nValor: ${selectedPlan.price}\nNome: ${name}\nEmail: ${email}`;
+            window.open(`https://wa.me/5571983448621?text=${encodeURIComponent(msg)}`, '_blank');
+            closePopup();
         }
 
-        function showSuccessMessage() {
-            // Criar elemento de sucesso temporário
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0, 255, 100, 0.95);
-                color: #000;
-                padding: 2rem 3rem;
-                font-family: var(--font-display);
-                font-size: 1.2rem;
-                text-transform: uppercase;
-                letter-spacing: 0.2em;
-                z-index: 10000;
-                box-shadow: 0 0 60px rgba(0, 255, 100, 0.5);
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            `;
-            successMsg.textContent = 'Redirecionando para WhatsApp...';
-            document.body.appendChild(successMsg);
-            
-            setTimeout(() => successMsg.style.opacity = '1', 100);
-            setTimeout(() => {
-                successMsg.style.opacity = '0';
-                setTimeout(() => successMsg.remove(), 300);
-            }, 2000);
-        }
+        // --- DETECÇÃO MOBILE ---
+        const isMobile = window.innerWidth < 768;
 
-        // Fechar popup ao clicar fora
-        document.getElementById('lead-popup').addEventListener('click', (e) => {
-            if (e.target.id === 'lead-popup') {
-                closeLeadPopup();
-            }
-        });
-
-        // Fechar popup com ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeLeadPopup();
-            }
-        });
-
-        // ═══════════════════════════════════════════════════════
-        //  THREE.JS SETUP (Mantido do original)
-        // ═══════════════════════════════════════════════════════
-        
+        // --- 1. SETUP THREE.JS ---
         const canvas = document.querySelector('#webgl-canvas');
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x050505, 0.02);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.z = 5;
+        camera.position.z = isMobile ? 6.5 : 5; 
 
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2)); 
         renderer.toneMapping = THREE.ReinhardToneMapping;
 
-        // Iluminação
+        // --- 2. ILUMINAÇÃO ---
         const ambientLight = new THREE.AmbientLight(0x404040, 2);
         scene.add(ambientLight);
 
@@ -592,7 +332,7 @@
         accentLight.position.set(0, 0, 2);
         scene.add(accentLight);
 
-        // Shader
+        // --- 3. O ARTEFATO (Shader) ---
         const vertexShader = `
             uniform float uTime;
             uniform float uDistortion;
@@ -603,7 +343,6 @@
             vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
             vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
             vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-            
             float snoise(vec3 v) {
                 const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
                 const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
@@ -649,7 +388,6 @@
                 m = m * m;
                 return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
             }
-
             void main() {
                 vUv = uv;
                 float noise = snoise(position * 1.5 + uTime * 0.5);
@@ -664,16 +402,14 @@
             uniform vec3 uColor;
             uniform float uAlpha;
             varying float vDisplacement;
-
             void main() {
                 float intensity = 0.5 + vDisplacement * 2.0;
                 vec3 glow = uColor * intensity;
-                float scanline = sin(gl_FragCoord.y * 0.1 + uTime * 5.0) * 0.1;
-                gl_FragColor = vec4(glow + scanline, uAlpha);
+                gl_FragColor = vec4(glow, uAlpha);
             }
         `;
 
-        const geometry = new THREE.IcosahedronGeometry(1.5, 60);
+        const geometry = new THREE.IcosahedronGeometry(1.5, isMobile ? 40 : 60);
         const material = new THREE.ShaderMaterial({
             vertexShader,
             fragmentShader,
@@ -695,49 +431,32 @@
         const particlesGeom = new THREE.BufferGeometry();
         const particlesCount = 1000;
         const posArray = new Float32Array(particlesCount * 3);
-        
-        for(let i = 0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 15;
-        }
-        
+        for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 15;
         particlesGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particlesMat = new THREE.PointsMaterial({
-            size: 0.02,
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.5
-        });
+        const particlesMat = new THREE.PointsMaterial({ size: 0.02, color: 0xffffff, transparent: true, opacity: 0.5 });
         const particlesMesh = new THREE.Points(particlesGeom, particlesMat);
         scene.add(particlesMesh);
 
-        // Post-processing
+        // --- 4. POST-PROCESSING ---
         const composer = new THREE.EffectComposer(renderer);
         const renderPass = new THREE.RenderPass(scene, camera);
         composer.addPass(renderPass);
-
-        const bloomPass = new THREE.UnrealBloomPass(
-            new THREE.Vector2(window.innerWidth, window.innerHeight),
-            1.5,
-            0.4,
-            0.85
-        );
+        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), isMobile ? 1.0 : 1.5, 0.4, 0.85);
         composer.addPass(bloomPass);
 
-        // Animation loop
+        // --- 5. LOOP ---
         const clock = new THREE.Clock();
-
         function animate() {
-            const elapsedTime = clock.getElapsedTime();
-            material.uniforms.uTime.value = elapsedTime;
-            artifact.rotation.y = elapsedTime * 0.1;
-            particlesMesh.rotation.y = elapsedTime * 0.05;
+            const time = clock.getElapsedTime();
+            material.uniforms.uTime.value = time;
+            artifact.rotation.y = time * 0.1;
+            particlesMesh.rotation.y = time * 0.05;
             composer.render();
             requestAnimationFrame(animate);
         }
-
         animate();
 
-        // GSAP Scroll
+        // --- 6. SCROLL ANIMATION ---
         gsap.registerPlugin(ScrollTrigger);
 
         window.addEventListener('load', () => {
@@ -748,60 +467,55 @@
         function initScroll() {
             document.querySelectorAll('section').forEach(section => {
                 gsap.to(section, {
-                    scrollTrigger: {
-                        trigger: section,
-                        start: "top 60%",
-                        end: "top 20%",
-                        scrub: 1
-                    },
-                    opacity: 1,
-                    y: 0,
-                    duration: 1
+                    scrollTrigger: { trigger: section, start: "top 70%", end: "top 30%", scrub: 1 },
+                    opacity: 1, y: 0, duration: 1
                 });
             });
 
             const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: ".scroll-container",
-                    start: "top top",
-                    end: "bottom bottom",
-                    scrub: 1.5
-                }
+                scrollTrigger: { trigger: ".scroll-container", start: "top top", end: "bottom bottom", scrub: 1.5 }
             });
 
-            tl.to(camera.position, { z: 4, duration: 2 });
+            // 1. Intro -> Manifesto
+            tl.to(camera.position, { z: isMobile ? 5.5 : 4, duration: 2 });
             tl.to(material.uniforms.uDistortion, { value: 0.2 }, "<");
+
+            // 2. Manifesto -> Tier 1
             tl.to(artifact.rotation, { x: 1, z: 0.5, duration: 2 });
             tl.to(material.uniforms.uColor.value, { 
-                onUpdate: () => material.uniforms.uColor.value.set('#808080')
+                r: 0.5, g: 0.5, b: 0.5, onUpdate: () => material.uniforms.uColor.value.set('#808080')
             }, "<");
-            tl.to(camera.position, { x: -2, z: 3.5, duration: 2 }, "<");
+            tl.to(camera.position, { 
+                x: isMobile ? 0 : -2, y: isMobile ? 1 : 0, z: isMobile ? 5 : 3.5, duration: 2 
+            }, "<");
+
+            // 3. Tier 1 -> Tier 2
             tl.to(material, { wireframe: false, duration: 1 });
             tl.to(material.uniforms.uDistortion, { value: 0.6, duration: 2 }, "<");
-            tl.to(material.uniforms.uColor.value, { 
-                onUpdate: () => material.uniforms.uColor.value.set('#00d4ff')
-            }, "<");
+            tl.to(material.uniforms.uColor.value, { onUpdate: () => material.uniforms.uColor.value.set('#00d4ff') }, "<");
             tl.to(pointLight2, { intensity: 8, duration: 2 }, "<");
-            tl.to(camera.position, { x: 2, y: 1, z: 3, duration: 2 }, "<");
-            tl.to(material.uniforms.uDistortion, { value: 1.2, duration: 2 });
-            tl.to(material.uniforms.uColor.value, { 
-                onUpdate: () => material.uniforms.uColor.value.set('#ff4d00')
+            tl.to(camera.position, { 
+                x: isMobile ? 0 : 2, y: isMobile ? -0.5 : 1, z: 3, duration: 2 
             }, "<");
+
+            // 4. Tier 2 -> Tier 3
+            tl.to(material.uniforms.uDistortion, { value: 1.2, duration: 2 });
+            tl.to(material.uniforms.uColor.value, { onUpdate: () => material.uniforms.uColor.value.set('#ff4d00') }, "<");
             tl.to(bloomPass, { strength: 3.0, radius: 1.0, duration: 2 }, "<");
             tl.to(accentLight, { intensity: 10, duration: 2 }, "<");
-            tl.to(camera.position, { x: 0, y: 0, z: 2.2, duration: 2 }, "<");
+            tl.to(camera.position, { x: 0, y: 0, z: isMobile ? 3.5 : 2.2, duration: 2 }, "<");
+
+            // 5. Final
             tl.to(camera.position, { z: 0.5, duration: 2 });
             tl.to(material.uniforms.uAlpha, { value: 0, duration: 1 }, "<");
         }
 
-        // Responsividade
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
             composer.setSize(window.innerWidth, window.innerHeight);
         });
-
     </script>
 </body>
 </html>
