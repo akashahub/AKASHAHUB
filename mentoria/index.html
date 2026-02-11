@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AKASHA | A Deusa Digital</title>
+    <title>AKASHA | Protocolo Ativo</title>
     
-    <!-- Fontes de Luxo -->
+    <!-- Fontes Premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
 
     <style>
-        /* ════════ CORE ════════ */
+        /* ════════ CORE & VARS ════════ */
         :root {
-            --bg: #030305;
+            --bg: #050505;
             --gold: #D4AF37;
-            --gold-glow: #f9eac3;
+            --gold-dim: #5a4a1b;
             --ether: #8B5CF6;
             --font-head: 'Cinzel', serif;
             --font-body: 'Montserrat', sans-serif;
@@ -28,23 +28,15 @@
             font-family: var(--font-body); 
             overflow: hidden; 
             width: 100vw; height: 100vh;
-            cursor: none; /* Cursor customizado */
         }
-
-        /* ════════ CURSOR ════════ */
-        #cursor {
-            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
-            border: 1px solid var(--gold); border-radius: 50%;
-            pointer-events: none; z-index: 9999;
-            transform: translate(-50%, -50%); transition: transform 0.1s;
-            mix-blend-mode: difference;
-        }
-        #cursor.hover { transform: translate(-50%, -50%) scale(2.5); background: rgba(212, 175, 55, 0.2); }
 
         /* ════════ CANVAS ════════ */
-        #webgl-stage { position: fixed; inset: 0; z-index: 1; }
+        #webgl-stage { 
+            position: fixed; inset: 0; z-index: 1; 
+            outline: none;
+        }
 
-        /* ════════ UI ════════ */
+        /* ════════ UI LAYER ════════ */
         .ui-layer {
             position: fixed; inset: 0; z-index: 10; pointer-events: none;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -52,412 +44,412 @@
 
         /* Hero Text */
         #hero-text {
-            text-align: center; transition: opacity 1s; opacity: 1;
+            position: absolute; top: 15%; 
+            text-align: center; transition: all 1s ease;
+            z-index: 20; width: 100%;
         }
+        
         h1 {
-            font-family: var(--font-head); font-size: clamp(2rem, 5vw, 4rem);
-            color: transparent; -webkit-text-stroke: 1px rgba(212, 175, 55, 0.8);
-            letter-spacing: 0.3em; text-transform: uppercase;
-            margin-bottom: 20px;
+            font-family: var(--font-head); 
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            color: transparent; 
+            -webkit-text-stroke: 1px var(--gold);
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            letter-spacing: 0.2em; text-transform: uppercase;
+            margin-bottom: 10px;
         }
+        
         .subtitle {
-            font-size: 0.8rem; letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase;
+            font-size: clamp(0.7rem, 1.5vw, 1rem); 
+            letter-spacing: 0.5em; color: var(--gold); 
+            text-transform: uppercase; opacity: 0.8;
         }
+        
         .hint {
-            margin-top: 50px; font-size: 0.7rem; color: #666; letter-spacing: 0.2em;
-            animation: pulse 2s infinite;
+            margin-top: 30px; font-size: 0.7rem; color: #888; letter-spacing: 0.2em;
+            animation: pulse 2s infinite; pointer-events: auto; cursor: pointer;
         }
 
-        /* Content Quadrants */
+        /* ════════ QUADRANTES (LINKS) ════════ */
+        .info-grid {
+            position: absolute; width: 100%; height: 100%; pointer-events: none;
+        }
+
         .quadrant {
-            position: absolute; width: 250px; padding: 20px;
-            border-left: 2px solid var(--gold);
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
-            opacity: 0; transition: all 1s ease; transform: scale(0.9);
-            pointer-events: none; /* Ativa só quando aberto */
+            position: absolute; 
+            width: 280px; 
+            padding: 20px;
+            background: rgba(5, 5, 5, 0.6); 
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(8px);
+            opacity: 0; 
+            transform: scale(0.95);
+            transition: all 0.4s ease;
+            cursor: pointer; /* Indica que é clicável */
         }
-        .quadrant h3 { color: var(--gold); font-family: var(--font-head); margin-bottom: 10px; font-size: 1.1rem; }
-        .quadrant p { font-size: 0.8rem; line-height: 1.5; color: #ddd; }
-        .quadrant span { display: block; margin-top: 10px; font-size: 0.6rem; color: var(--ether); text-transform: uppercase; letter-spacing: 0.1em; }
-
+        
         .quadrant.active { opacity: 1; transform: scale(1); pointer-events: auto; }
 
-        /* Positions */
-        #q1 { top: 15%; left: 10%; }
-        #q2 { top: 15%; right: 10%; text-align: right; border-left: none; border-right: 2px solid var(--gold); }
-        #q3 { bottom: 15%; left: 10%; }
-        #q4 { bottom: 15%; right: 10%; text-align: right; border-left: none; border-right: 2px solid var(--gold); }
-
-        /* Final CTA */
-        #cta-container {
-            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
-            opacity: 0; transition: opacity 1s; pointer-events: none;
-            text-align: center;
+        /* Hover Effect nos Quadrantes */
+        .quadrant:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
-        #cta-container.active { opacity: 1; pointer-events: auto; }
+
+        .quadrant h3 { 
+            color: var(--gold); font-family: var(--font-head); 
+            margin-bottom: 8px; font-size: 1.2rem; border-bottom: 1px solid var(--gold-dim); padding-bottom: 5px;
+        }
+        .quadrant p { font-size: 0.85rem; line-height: 1.6; color: #ccc; }
+        .quadrant span { display: block; margin-top: 10px; font-size: 0.6rem; color: var(--ether); text-transform: uppercase; letter-spacing: 0.2em; }
+
+        /* Posicionamento Desktop */
+        #q1 { top: 20%; left: 10%; border-left: 3px solid var(--gold); }
+        #q2 { top: 20%; right: 10%; text-align: right; border-right: 3px solid var(--gold); }
+        #q3 { bottom: 20%; left: 10%; border-left: 3px solid var(--ether); }
+        #q4 { bottom: 20%; right: 10%; text-align: right; border-right: 3px solid var(--ether); }
+
+        /* Botão CTA */
+        #cta-container {
+            position: absolute; bottom: 8%; 
+            opacity: 0; transform: translateY(20px); transition: all 1s;
+            pointer-events: none;
+        }
+        #cta-container.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
         
         .cta-btn {
-            background: transparent; border: 1px solid var(--gold); color: var(--gold);
-            padding: 15px 40px; font-family: var(--font-head); font-size: 1rem; letter-spacing: 0.2em;
+            background: rgba(212, 175, 55, 0.1); 
+            border: 1px solid var(--gold); color: var(--gold);
+            padding: 15px 40px; 
+            font-family: var(--font-head); font-size: 1rem; letter-spacing: 0.2em;
             cursor: pointer; transition: 0.4s; text-transform: uppercase;
         }
-        .cta-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 30px var(--gold); }
+        .cta-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 40px var(--gold-dim); }
 
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-        
-        /* Mobile adjust */
+        /* ════════ MOBILE ════════ */
         @media (max-width: 768px) {
-            .quadrant { width: 160px; font-size: 0.8em; padding: 10px; }
-            #q1, #q2 { top: 5%; } #q3, #q4 { bottom: 5%; }
+            h1 { margin-top: 20px; }
+            #hero-text { top: 10%; pointer-events: none; }
+            
+            .info-grid {
+                display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+                padding-bottom: 100px; gap: 10px;
+            }
+
+            .quadrant {
+                position: relative; width: 90%;
+                top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
+                text-align: left !important;
+                border: 1px solid rgba(212, 175, 55, 0.3);
+                border-left: 3px solid var(--gold) !important;
+                background: rgba(0,0,0,0.85);
+                display: none; 
+            }
+            .quadrant.active { display: block; animation: slideUp 0.5s ease forwards; }
+            #cta-container { bottom: 5%; width: 90%; text-align: center; }
+            .cta-btn { width: 100%; padding: 12px; font-size: 0.9rem; }
         }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
     </style>
 </head>
 <body>
 
-    <div id="cursor"></div>
-
+    <!-- 3D -->
     <canvas id="webgl-stage"></canvas>
 
+    <!-- UI -->
     <div class="ui-layer">
+        
         <div id="hero-text">
             <h1>Akasha</h1>
-            <div class="subtitle">A Máscara da Essência</div>
-            <div class="hint">CLIQUE NA FACE PARA REVELAR</div>
+            <div class="subtitle">Arquitetura de Poder</div>
+            <div class="hint" id="trigger-btn">[ TOCAR NO SISTEMA ]</div>
         </div>
 
-        <div id="q1" class="quadrant">
-            <h3>BRANDING DA ALMA</h3>
-            <p>Sua história é o código fonte. Escavação profunda de registros para um posicionamento único.</p>
-            <span>Setor 01</span>
-        </div>
+        <div class="info-grid">
+            <div id="q1" class="quadrant">
+                <h3>01. A Fundação</h3>
+                <p>Mapeamento profundo do seu código-fonte e propósito de marca.</p>
+                <span>Diagnóstico</span>
+            </div>
 
-        <div id="q2" class="quadrant">
-            <h3>CORPO DIGITAL</h3>
-            <p>Construímos sua estrutura real. Site, identidade e presença navegável inclusos.</p>
-            <span>Setor 02</span>
-        </div>
+            <div id="q2" class="quadrant">
+                <h3>02. A Estrutura</h3>
+                <p>Construção da identidade visual e presença digital imersiva.</p>
+                <span>Design & Tech</span>
+            </div>
 
-        <div id="q3" class="quadrant">
-            <h3>BÚSSOLA INTERNA</h3>
-            <p>Alinhamento energético para que sua imagem vibre na frequência da prosperidade.</p>
-            <span>Setor 03</span>
-        </div>
+            <div id="q3" class="quadrant">
+                <h3>03. A Energia</h3>
+                <p>Alinhamento de comunicação para atrair clientes de alta frequência.</p>
+                <span>Ressonância</span>
+            </div>
 
-        <div id="q4" class="quadrant">
-            <h3>PONTE MATERIAL</h3>
-            <p>Plano de 90 dias. Transformamos o etéreo em resultados sólidos no mundo físico.</p>
-            <span>Setor 04</span>
+            <div id="q4" class="quadrant">
+                <h3>04. A Materialização</h3>
+                <p>Estratégia de lançamento e consolidação de autoridade.</p>
+                <span>Escala</span>
+            </div>
         </div>
 
         <div id="cta-container">
-            <button class="cta-btn" onclick="window.location.href='https://akashahub.com.br/mentoria'">
-                ACESSAR MENTORIA
-            </button>
+            <button class="cta-btn">INICIAR PROTOCOLO</button>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- LIBs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <script>
-        // ══════════════════════════════════════════════════════════════
-        //  AKASHA ENGINE: THE DIVINE FACE
-        // ══════════════════════════════════════════════════════════════
+        /**
+         * AKASHA ENGINE v2.5 - CHECKOUT ENABLED
+         */
+
+        // 🔗 LINK DE CHECKOUT (Configure aqui)
+        const CHECKOUT_URL = "https://pay.hotmart.com/I103627853C?bid=1767381877056";
 
         const CONFIG = {
             gold: 0xD4AF37,
-            skin: 0xffeebb,
-            void: 0x030305,
-            ether: 0x8B5CF6
+            dark: 0x0a0a0a,
+            neon: 0x8B5CF6,
+            mobileBreak: 768
         };
 
         const state = {
             isOpen: false,
-            mouseX: 0,
-            mouseY: 0
+            isMobile: window.innerWidth < CONFIG.mobileBreak
         };
 
-        // 1. SETUP
+        // Função de Redirecionamento
+        function navigateToCheckout() {
+            window.location.href = CHECKOUT_URL;
+        }
+
+        // 1. CENA
         const canvas = document.querySelector('#webgl-stage');
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(CONFIG.void);
-        scene.fog = new THREE.FogExp2(CONFIG.void, 0.02);
+        scene.fog = new THREE.FogExp2(0x050505, 0.02);
 
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.z = 12;
-
-        // 2. LUZES (Cinemática)
-        const ambLight = new THREE.AmbientLight(0xffffff, 0.2);
-        scene.add(ambLight);
-
-        const spotLight = new THREE.SpotLight(CONFIG.gold, 2);
-        spotLight.position.set(10, 10, 10);
-        spotLight.castShadow = true;
-        scene.add(spotLight);
-
-        const rimLight = new THREE.SpotLight(CONFIG.ether, 5);
-        rimLight.position.set(-10, 5, -10);
-        scene.add(rimLight);
-
-        // 3. O ROSTO (ESCULTURA PROCEDURAL)
-        const headGroup = new THREE.Group();
-        scene.add(headGroup);
-
-        // Material "Pele de Deusa/Ouro"
-        const faceMat = new THREE.MeshPhysicalMaterial({
-            color: CONFIG.gold,
-            metalness: 0.6,
-            roughness: 0.2,
-            clearcoat: 1.0,
-            clearcoatRoughness: 0.1,
-            emissive: 0x221100,
-            emissiveIntensity: 0.2
-        });
-
-        const quadrants = [];
-
-        // Função para criar um pedaço do rosto deformado
-        function createFacePiece(offsetX, offsetY) {
-            // Geometria densa para deformação suave
-            const geo = new THREE.IcosahedronGeometry(2.5, 20);
-            const pos = geo.attributes.position;
-            const vector = new THREE.Vector3();
-
-            // Esculpir o rosto matematicamente (Deformação de Vértices)
-            for (let i = 0; i < pos.count; i++) {
-                vector.set(pos.getX(i), pos.getY(i), pos.getZ(i));
-                
-                // Formato de cabeça (afinar queixo, arredondar topo)
-                if(vector.y < 0) vector.x *= 0.85; // Queixo
-                if(vector.z < 0) vector.z *= 0.7;  // Crânio atrás
-
-                // Cavidade Ocular (aproximação)
-                const eyeL = new THREE.Vector3(-0.8, 0.2, 2.0);
-                const eyeR = new THREE.Vector3(0.8, 0.2, 2.0);
-                if (vector.distanceTo(eyeL) < 0.6 || vector.distanceTo(eyeR) < 0.6) {
-                    vector.z -= 0.3; // Afundar olhos
-                }
-
-                // Nariz (saliência central)
-                if (Math.abs(vector.x) < 0.3 && vector.y > -0.5 && vector.y < 0.5 && vector.z > 0) {
-                    vector.z += 0.4 * (1 - Math.abs(vector.y));
-                }
-
-                // Lábios
-                if (Math.abs(vector.x) < 0.5 && vector.y > -0.8 && vector.y < -0.4 && vector.z > 0) {
-                    vector.z += 0.1;
-                }
-
-                // Maçãs do rosto
-                if (Math.abs(vector.x) > 0.8 && vector.y > -0.2 && vector.y < 0.3 && vector.z > 0) {
-                    vector.z += 0.2;
-                }
-
-                pos.setXYZ(i, vector.x, vector.y, vector.z);
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+        
+        function updateCameraPosition() {
+            if(window.innerWidth < 768) {
+                camera.position.set(0, 2, 16);
+            } else {
+                camera.position.set(0, 1, 11);
             }
-            
-            geo.computeVertexNormals();
-
-            const mesh = new THREE.Mesh(geo, faceMat);
-            
-            // Dados para animação de abertura
-            mesh.userData = {
-                closedPos: new THREE.Vector3(0, 0, 0),
-                openPos: new THREE.Vector3(offsetX * 1.5, offsetY * 1.5, 0), // Direção da explosão
-                rotAxis: new THREE.Vector3(offsetY, offsetX, 0)
-            };
-
-            // Clipping sutil (movemos a geometria para que o centro seja 0,0)
-            // Na prática, movemos a mesh inteira depois
-            
-            headGroup.add(mesh);
-            quadrants.push(mesh);
         }
+        updateCameraPosition();
 
-        // Criar os 4 quadrantes (TopL, TopR, BotL, BotR)
-        // Usamos máscaras de recorte visualmente simuladas pela posição
-        createFacePiece(-1, 1);
-        createFacePiece(1, 1);
-        createFacePiece(-1, -1);
-        createFacePiece(1, -1);
+        // 2. LUZES
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+        scene.add(ambientLight);
 
-        // 4. O CÉREBRO CÓSMICO (INTERIOR)
-        const innerGroup = new THREE.Group();
-        scene.add(innerGroup);
-        innerGroup.scale.set(0,0,0); // Escondido inicialmente
+        const mainLight = new THREE.DirectionalLight(CONFIG.gold, 2);
+        mainLight.position.set(5, 5, 5);
+        scene.add(mainLight);
 
-        // Cristal Pineal
-        const crystalGeo = new THREE.OctahedronGeometry(0.8, 0);
-        const crystalMat = new THREE.MeshPhysicalMaterial({
-            color: CONFIG.ether, emissive: CONFIG.ether, emissiveIntensity: 2,
-            transmission: 0.9, thickness: 1, roughness: 0
+        const fillLight = new THREE.PointLight(CONFIG.neon, 1.5);
+        fillLight.position.set(-5, 0, 5);
+        scene.add(fillLight);
+
+        // 3. OBJETOS
+        const pyramidGroup = new THREE.Group();
+        scene.add(pyramidGroup);
+
+        const matCore = new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 0.1, metalness: 0.9 });
+        const matWire = new THREE.MeshBasicMaterial({ color: CONFIG.gold, wireframe: true, transparent: true, opacity: 0.15 });
+        const matGlow = new THREE.MeshBasicMaterial({ color: CONFIG.neon, wireframe: true, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending });
+
+        // Base
+        const geomBase = new THREE.ConeGeometry(3, 2, 4);
+        const baseMesh = new THREE.Mesh(geomBase, matCore);
+        const baseWire = new THREE.Mesh(geomBase, matWire);
+        baseMesh.position.y = -1.5; baseWire.position.y = -1.5; baseWire.scale.set(1.05, 1.05, 1.05);
+
+        // Meio
+        const geomMid = new THREE.ConeGeometry(2, 1.5, 4);
+        const midMesh = new THREE.Mesh(geomMid, matCore);
+        const midWire = new THREE.Mesh(geomMid, matWire);
+        midMesh.position.y = 0.25; midWire.position.y = 0.25; midWire.scale.set(1.05, 1.05, 1.05);
+
+        // Topo
+        const geomTop = new THREE.ConeGeometry(1, 1, 4);
+        const topMesh = new THREE.Mesh(geomTop, new THREE.MeshStandardMaterial({ color: CONFIG.gold, metalness: 1, roughness: 0 }));
+        const topGlow = new THREE.Mesh(geomTop, matGlow);
+        topMesh.position.y = 1.5; topGlow.position.y = 1.5; topGlow.scale.set(1.2, 1.2, 1.2);
+
+        // Núcleo de Energia (O BOTÃO SECRETO)
+        const coreGeo = new THREE.OctahedronGeometry(0.6, 0);
+        const coreMat = new THREE.MeshBasicMaterial({ color: CONFIG.neon });
+        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+        coreMesh.visible = false;
+        
+        // Halo ao redor do núcleo
+        const haloGeo = new THREE.RingGeometry(0.8, 0.9, 32);
+        const haloMat = new THREE.MeshBasicMaterial({ color: CONFIG.gold, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
+        const halo = new THREE.Mesh(haloGeo, haloMat);
+        halo.visible = false;
+        coreMesh.add(halo);
+
+        // Grupos
+        const groupBase = new THREE.Group(); groupBase.add(baseMesh, baseWire);
+        const groupMid = new THREE.Group(); groupMid.add(midMesh, midWire);
+        const groupTop = new THREE.Group(); groupTop.add(topMesh, topGlow);
+
+        pyramidGroup.add(groupBase);
+        pyramidGroup.add(groupMid);
+        pyramidGroup.add(groupTop);
+        pyramidGroup.add(coreMesh);
+
+        pyramidGroup.rotation.y = Math.PI / 4; 
+
+        // 4. INTERAÇÃO E CLIQUES
+        
+        // A) Clique nos Quadrantes HTML
+        document.querySelectorAll('.quadrant').forEach(card => {
+            card.addEventListener('click', navigateToCheckout);
         });
-        const crystal = new THREE.Mesh(crystalGeo, crystalMat);
-        innerGroup.add(crystal);
 
-        // Partículas Neurais
-        const pGeo = new THREE.BufferGeometry();
-        const pPos = [];
-        for(let i=0; i<300; i++) pPos.push((Math.random()-0.5)*3, (Math.random()-0.5)*3, (Math.random()-0.5)*3);
-        pGeo.setAttribute('position', new THREE.Float32BufferAttribute(pPos, 3));
-        const pMat = new THREE.PointsMaterial({color: CONFIG.gold, size: 0.05, transparent: true, opacity: 0.6});
-        const particles = new THREE.Points(pGeo, pMat);
-        innerGroup.add(particles);
+        // B) Clique no Botão CTA HTML
+        document.querySelector('.cta-btn').addEventListener('click', navigateToCheckout);
 
+        // C) Clique no Botão Texto Hero
+        document.getElementById('trigger-btn').addEventListener('click', toggleSystem);
 
-        // 5. LÓGICA DE ANIMAÇÃO
-        const cursor = document.getElementById('cursor');
-
-        // Mouse Move (Olhar/Rotação)
-        document.addEventListener('mousemove', (e) => {
-            // Atualiza cursor
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-
-            // Normaliza mouse -1 a 1
-            state.mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-            state.mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-
-            // Se fechado, o rosto olha para o mouse
-            if(!state.isOpen) {
-                gsap.to(headGroup.rotation, {
-                    y: state.mouseX * 0.5,
-                    x: -state.mouseY * 0.5,
-                    duration: 1
-                });
-            } else {
-                // Se aberto, movimento sutil de paralaxe
-                gsap.to(innerGroup.rotation, {
-                    y: state.mouseX * 0.2,
-                    x: -state.mouseY * 0.2,
-                    duration: 2
-                });
-            }
-        });
-
-        // Click (Abrir/Fechar)
+        // D) Lógica de Clique 3D (Raycaster)
         document.addEventListener('click', (e) => {
+            // Ignorar se clicou na UI HTML (pois a UI já tem seus eventos)
+            if(e.target.closest('.quadrant') || e.target.closest('.cta-btn')) return;
+
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            
+            raycaster.setFromCamera(mouse, camera);
+            
             if(!state.isOpen) {
-                // ABRIR
-                openFace();
+                // Se fechado, qualquer clique na pirâmide abre
+                const intersects = raycaster.intersectObjects(scene.children, true);
+                if(intersects.length > 0) toggleSystem();
             } else {
-                // Verificar clique no cristal
-                const raycaster = new THREE.Raycaster();
-                raycaster.setFromCamera(new THREE.Vector2(state.mouseX, state.mouseY), camera);
-                const intersects = raycaster.intersectObject(crystal);
-                
+                // Se aberto, verifica se clicou no NÚCLEO
+                const intersects = raycaster.intersectObject(coreMesh);
                 if(intersects.length > 0) {
-                    // Clique no cristal -> Checkout
-                    window.location.href = 'https://akashahub.com.br/mentoria';
-                } 
-                // Se quiser fechar ao clicar fora, descomente:
-                // else { closeFace(); }
+                    navigateToCheckout();
+                }
             }
         });
 
-        // Hover Effect
+        // E) Cursor Pointer no Hover do 3D
         document.addEventListener('mousemove', (e) => {
             if(state.isOpen) {
                 const raycaster = new THREE.Raycaster();
-                raycaster.setFromCamera(new THREE.Vector2(state.mouseX, state.mouseY), camera);
-                const intersects = raycaster.intersectObject(crystal);
+                const mouse = new THREE.Vector2();
+                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+
+                const intersects = raycaster.intersectObject(coreMesh);
                 if(intersects.length > 0) {
-                    cursor.classList.add('hover');
                     document.body.style.cursor = 'pointer';
+                    coreMesh.scale.set(1.2, 1.2, 1.2); // Feedback visual
                 } else {
-                    cursor.classList.remove('hover');
-                    document.body.style.cursor = 'none';
+                    document.body.style.cursor = 'default';
+                    coreMesh.scale.set(1, 1, 1);
                 }
             }
         });
 
-
-        function openFace() {
+        // 5. ANIMAÇÃO DE ABERTURA
+        function toggleSystem() {
+            if(state.isOpen) return;
             state.isOpen = true;
+
+            const tl = gsap.timeline();
+
+            // 3D Actions
+            tl.to(groupTop.position, { y: 2.5, duration: 1.5, ease: "power4.out" }, "open");
+            tl.to(groupMid.position, { y: 0.5, duration: 1.5, ease: "power4.out" }, "open");
+            tl.to(groupBase.position, { y: -2.0, duration: 1.5, ease: "power4.out" }, "open");
             
-            // 1. Esconder Texto Hero
-            gsap.to('#hero-text', { opacity: 0, duration: 0.5 });
+            coreMesh.visible = true; halo.visible = true;
+            tl.fromTo(coreMesh.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1, duration: 1, ease: "back.out(2)"}, "-=1");
 
-            // 2. Explodir Quadrantes
-            quadrants.forEach(q => {
-                gsap.to(q.position, {
-                    x: q.userData.openPos.x,
-                    y: q.userData.openPos.y,
-                    duration: 1.5,
-                    ease: "power3.out"
-                });
-                gsap.to(q.rotation, {
-                    x: q.userData.rotAxis.x * 0.2,
-                    y: q.userData.rotAxis.y * 0.2,
-                    duration: 1.5
-                });
+            tl.to(pyramidGroup.rotation, { x: 0.2, y: Math.PI / 4 + Math.PI, duration: 2 }, "open");
+
+            if(window.innerWidth < 768) {
+                tl.to(pyramidGroup.position, { y: 1.5, duration: 1 }, "open");
+            }
+
+            // UI Actions
+            gsap.to('#hero-text', { opacity: 0, y: -50, duration: 0.5 });
+            
+            const cards = document.querySelectorAll('.quadrant');
+            cards.forEach((card, i) => {
+                setTimeout(() => card.classList.add('active'), 600 + (i * 200));
             });
-
-            // 3. Revelar Cérebro/Cristal
-            gsap.to(innerGroup.scale, { x: 1, y: 1, z: 1, duration: 1, delay: 0.2, ease: "back.out(1.7)" });
-
-            // 4. Mostrar UI de Quadrantes e CTA
-            document.querySelectorAll('.quadrant').forEach((el, i) => {
-                setTimeout(() => el.classList.add('active'), 500 + (i * 100));
-            });
-            document.getElementById('cta-container').classList.add('active');
+            
+            setTimeout(() => document.getElementById('cta-container').classList.add('active'), 1500);
         }
 
-        function closeFace() {
-            state.isOpen = false;
-            
-            // Restaurar Texto Hero
-            gsap.to('#hero-text', { opacity: 1, delay: 0.5, duration: 0.5 });
+        // 6. LOOP
+        const clock = new THREE.Clock();
+        let mouseX = 0, mouseY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
+            mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
+        });
 
-            // Fechar Quadrantes
-            quadrants.forEach(q => {
-                gsap.to(q.position, { x: 0, y: 0, duration: 1.2, ease: "power3.inOut" });
-                gsap.to(q.rotation, { x: 0, y: 0, duration: 1.2 });
-            });
-
-            // Esconder Cérebro
-            gsap.to(innerGroup.scale, { x: 0, y: 0, z: 0, duration: 0.5 });
-
-            // Esconder UI
-            document.querySelectorAll('.quadrant').forEach(el => el.classList.remove('active'));
-            document.getElementById('cta-container').classList.remove('active');
-        }
-
-        // Loop de Renderização
         function animate() {
             requestAnimationFrame(animate);
-            
-            const time = Date.now() * 0.001;
+            const time = clock.getElapsedTime();
 
-            // Animação Idle do Cristal
-            crystal.rotation.y += 0.01;
-            crystal.rotation.x = Math.sin(time) * 0.1;
+            pyramidGroup.position.y += Math.sin(time) * 0.002;
             
-            // Pulso
-            if(state.isOpen) {
-                const s = 1 + Math.sin(time * 2) * 0.05;
-                crystal.scale.set(s,s,s);
+            if(!state.isOpen) {
+                pyramidGroup.rotation.y += 0.002;
+                pyramidGroup.rotation.x += (mouseY - pyramidGroup.rotation.x) * 0.05;
+                pyramidGroup.rotation.y += (mouseX - (pyramidGroup.rotation.y - (Math.PI/4 + time*0.1))) * 0.05; 
+            } else {
+                // Núcleo gira rápido para chamar atenção
+                coreMesh.rotation.y += 0.05;
+                coreMesh.rotation.z += 0.02;
+                
+                // Pulsação do núcleo
+                const scale = 1 + Math.sin(time * 3) * 0.1;
+                if(document.body.style.cursor !== 'pointer') { // Só pulsa se não estiver no hover
+                     // coreMesh.scale.set(scale, scale, scale); // Comentado para não conflitar com hover
+                }
+                
+                groupTop.rotation.y = Math.sin(time) * 0.1;
+                groupMid.rotation.y = Math.cos(time) * 0.1;
             }
-
-            // Partículas orbitando
-            particles.rotation.y = time * 0.1;
 
             renderer.render(scene, camera);
         }
-
         animate();
 
-        // Resize
+        // 7. RESIZE
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            state.isMobile = window.innerWidth < 768;
+            updateCameraPosition();
         });
 
     </script>
