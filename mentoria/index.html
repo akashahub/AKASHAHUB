@@ -2,456 +2,979 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AKASHA | Protocolo Ativo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKASHA | Estrutura ou Improviso</title>
     
-    <!-- Fontes Premium -->
+    <!-- FAVICON -->
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_1_rnj2cs.png">
+    <link rel="shortcut icon" type="image/png" href="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_1_rnj2cs.png">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome para ícone do WhatsApp -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
-        /* ════════ CORE & VARS ════════ */
         :root {
-            --bg: #050505;
+            --void: #000000;
             --gold: #D4AF37;
-            --gold-dim: #5a4a1b;
-            --ether: #8B5CF6;
-            --font-head: 'Cinzel', serif;
-            --font-body: 'Montserrat', sans-serif;
+            --gold-glow: rgba(212, 175, 55, 0.6);
+            --violet: #5B2C91;
+            --violet-deep: #1a0a2e;
+            --text: #ffffff;
+            --text-dim: #999;
+            --whatsapp: #25D366;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        body { 
-            background: var(--bg); 
-            color: #fff; 
-            font-family: var(--font-body); 
-            overflow: hidden; 
-            width: 100vw; height: 100vh;
+        body {
+            background: var(--void);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            cursor: default;
         }
 
-        /* ════════ CANVAS ════════ */
-        #webgl-stage { 
-            position: fixed; inset: 0; z-index: 1; 
-            outline: none;
+        h1, h2, h3 { font-family: 'Orbitron', sans-serif; font-weight: 900; }
+
+        /* === HEADER/LOGO === */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
         }
 
-        /* ════════ UI LAYER ════════ */
-        .ui-layer {
-            position: fixed; inset: 0; z-index: 10; pointer-events: none;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        .logo-link {
+            display: block;
+            transition: transform 0.3s ease;
         }
 
-        /* Hero Text */
-        #hero-text {
-            position: absolute; top: 15%; 
-            text-align: center; transition: all 1s ease;
-            z-index: 20; width: 100%;
-        }
-        
-        h1 {
-            font-family: var(--font-head); 
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            color: transparent; 
-            -webkit-text-stroke: 1px var(--gold);
-            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
-            letter-spacing: 0.2em; text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            font-size: clamp(0.7rem, 1.5vw, 1rem); 
-            letter-spacing: 0.5em; color: var(--gold); 
-            text-transform: uppercase; opacity: 0.8;
-        }
-        
-        .hint {
-            margin-top: 30px; font-size: 0.7rem; color: #888; letter-spacing: 0.2em;
-            animation: pulse 2s infinite; pointer-events: auto; cursor: pointer;
-        }
-
-        /* ════════ QUADRANTES (LINKS) ════════ */
-        .info-grid {
-            position: absolute; width: 100%; height: 100%; pointer-events: none;
-        }
-
-        .quadrant {
-            position: absolute; 
-            width: 280px; 
-            padding: 20px;
-            background: rgba(5, 5, 5, 0.6); 
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            backdrop-filter: blur(8px);
-            opacity: 0; 
-            transform: scale(0.95);
-            transition: all 0.4s ease;
-            cursor: pointer; /* Indica que é clicável */
-        }
-        
-        .quadrant.active { opacity: 1; transform: scale(1); pointer-events: auto; }
-
-        /* Hover Effect nos Quadrantes */
-        .quadrant:hover {
-            background: rgba(212, 175, 55, 0.1);
-            border-color: var(--gold);
+        .logo-link:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
 
-        .quadrant h3 { 
-            color: var(--gold); font-family: var(--font-head); 
-            margin-bottom: 8px; font-size: 1.2rem; border-bottom: 1px solid var(--gold-dim); padding-bottom: 5px;
+        .logo {
+            height: 60px;
+            width: auto;
+            filter: drop-shadow(0 0 20px var(--gold-glow));
+            transition: filter 0.3s ease;
         }
-        .quadrant p { font-size: 0.85rem; line-height: 1.6; color: #ccc; }
-        .quadrant span { display: block; margin-top: 10px; font-size: 0.6rem; color: var(--ether); text-transform: uppercase; letter-spacing: 0.2em; }
 
-        /* Posicionamento Desktop */
-        #q1 { top: 20%; left: 10%; border-left: 3px solid var(--gold); }
-        #q2 { top: 20%; right: 10%; text-align: right; border-right: 3px solid var(--gold); }
-        #q3 { bottom: 20%; left: 10%; border-left: 3px solid var(--ether); }
-        #q4 { bottom: 20%; right: 10%; text-align: right; border-right: 3px solid var(--ether); }
+        .logo:hover {
+            filter: drop-shadow(0 0 30px var(--gold-glow)) brightness(1.2);
+        }
 
-        /* Botão CTA */
-        #cta-container {
-            position: absolute; bottom: 8%; 
-            opacity: 0; transform: translateY(20px); transition: all 1s;
+        /* === WHATSAPP FLOATING BUTTON === */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: var(--whatsapp);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            animation: pulse-whatsapp 2s ease-in-out infinite;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
+            animation: none;
+        }
+
+        .whatsapp-float i {
+            font-size: 35px;
+            color: white;
+        }
+
+        @keyframes pulse-whatsapp {
+            0%, 100% {
+                box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 8px 40px rgba(37, 211, 102, 0.7);
+                transform: scale(1.05);
+            }
+        }
+
+        /* Tooltip do WhatsApp */
+        .whatsapp-tooltip {
+            position: absolute;
+            right: 80px;
+            background: var(--whatsapp);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
             pointer-events: none;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        #cta-container.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
-        
-        .cta-btn {
-            background: rgba(212, 175, 55, 0.1); 
-            border: 1px solid var(--gold); color: var(--gold);
-            padding: 15px 40px; 
-            font-family: var(--font-head); font-size: 1rem; letter-spacing: 0.2em;
-            cursor: pointer; transition: 0.4s; text-transform: uppercase;
-        }
-        .cta-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 40px var(--gold-dim); }
 
-        /* ════════ MOBILE ════════ */
+        .whatsapp-tooltip::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid var(--whatsapp);
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        .whatsapp-float:hover .whatsapp-tooltip {
+            opacity: 1;
+        }
+
+        /* === WEBGL CANVAS === */
+        #webgl-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            opacity: 0.85;
+        }
+
+        /* === LOADING EMPIRE === */
+        #empire-loading {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, var(--void), var(--violet-deep));
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+        }
+
+        #empire-loading.active { display: flex; }
+
+        .empire-build {
+            font-size: 2.5rem;
+            letter-spacing: 4px;
+            margin-bottom: 3rem;
+            background: linear-gradient(90deg, var(--gold), var(--violet), var(--gold));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 2s ease infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .empire-visual {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin-bottom: 2rem;
+        }
+
+        .pillar {
+            position: absolute;
+            bottom: 0;
+            width: 40px;
+            background: linear-gradient(180deg, var(--gold), transparent);
+            border: 2px solid var(--gold);
+            opacity: 0;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            box-shadow: 0 0 30px var(--gold-glow);
+        }
+
+        .p1 { left: 10px; height: 120px; animation: rise 0.5s ease forwards 0.2s; }
+        .p2 { left: 70px; height: 160px; animation: rise 0.5s ease forwards 0.4s; }
+        .p3 { left: 130px; height: 180px; animation: rise 0.5s ease forwards 0.6s; }
+        .p4 { left: 190px; height: 160px; animation: rise 0.5s ease forwards 0.8s; }
+        .p5 { left: 250px; height: 120px; animation: rise 0.5s ease forwards 1s; }
+
+        @keyframes rise {
+            to { opacity: 1; transform: scaleY(1); }
+        }
+
+        .crown {
+            position: absolute;
+            top: -30px; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 60px solid var(--gold);
+            opacity: 0;
+            animation: crownDrop 0.6s ease forwards 1.3s;
+            filter: drop-shadow(0 0 25px var(--gold-glow));
+        }
+
+        @keyframes crownDrop {
+            to { opacity: 1; }
+        }
+
+        .load-bar {
+            width: 280px;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+
+        .load-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--violet));
+            width: 0%;
+            animation: fill 3s ease forwards;
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        @keyframes fill {
+            to { width: 100%; }
+        }
+
+        .load-text {
+            font-family: 'Orbitron';
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-top: 1rem;
+        }
+
+        /* === SECTIONS === */
+        .section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 20px;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 900px;
+            text-align: center;
+        }
+
+        /* === HERO === */
+        .hero {
+            height: 100vh;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+        }
+
+        .hero .subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 300;
+            color: var(--text-dim);
+            margin-bottom: 4rem;
+            line-height: 1.6;
+        }
+
+        .cta-primary {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--text);
+            padding: 1.5rem 4rem;
+            font-family: 'Orbitron';
+            font-size: 1rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .cta-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: var(--gold);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: -1;
+        }
+
+        .cta-primary:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .cta-primary:hover {
+            color: var(--void);
+            box-shadow: 0 0 40px var(--gold-glow);
+            transform: scale(1.05);
+        }
+
+        /* === CONFRONTO === */
+        .confronto {
+            background: linear-gradient(180deg, transparent, rgba(91, 44, 145, 0.1));
+        }
+
+        .confronto h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 300;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+
+        .confronto .highlight {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* === AUTORIDADE === */
+        .autoridade h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 3rem;
+        }
+
+        .autoridade p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+
+        .grid-execucao {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .execucao-item {
+            padding: 2rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s;
+        }
+
+        .execucao-item:hover {
+            border-color: var(--gold);
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .execucao-item h4 {
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        .execucao-item p {
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        /* === TEMPO === */
+        .tempo {
+            background: linear-gradient(180deg, rgba(91, 44, 145, 0.1), transparent);
+        }
+
+        .tempo h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin-bottom: 2rem;
+            line-height: 1.4;
+        }
+
+        .tempo .days {
+            font-size: 6rem;
+            color: var(--gold);
+            font-family: 'Orbitron';
+            margin: 2rem 0;
+            text-shadow: 0 0 40px var(--gold-glow);
+        }
+
+        /* === ENTREGA === */
+        .entrega-list {
+            text-align: left;
+            max-width: 600px;
+            margin: 3rem auto;
+        }
+
+        .entrega-item {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .entrega-item::before {
+            content: '✓';
+            color: var(--gold);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* === OBJECOES === */
+        .objecoes {
+            background: rgba(0,0,0,0.6);
+        }
+
+        .objecoes h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 4rem;
+        }
+
+        .faq-grid {
+            display: grid;
+            gap: 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .faq-item {
+            padding: 2rem;
+            background: rgba(255,255,255,0.02);
+            border-left: 3px solid var(--gold);
+        }
+
+        .faq-q {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .faq-a {
+            font-size: 2rem;
+            font-family: 'Orbitron';
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* === DIFERENCIACAO === */
+        .diferenciacao h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 1.4;
+            margin-bottom: 2rem;
+        }
+
+        .diferenciacao .not {
+            color: #ff4d4d;
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .diferenciacao .is {
+            color: var(--gold);
+            font-weight: 700;
+            display: block;
+            margin-top: 1rem;
+        }
+
+        /* === FECHAMENTO === */
+        .fechamento {
+            height: 100vh;
+            background: linear-gradient(180deg, transparent, var(--void));
+        }
+
+        .fechamento h2 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            line-height: 1.2;
+            margin-bottom: 3rem;
+        }
+
+        .fechamento .choice {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .fechamento .or {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin: 2rem 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        /* === RESPONSIVE === */
         @media (max-width: 768px) {
-            h1 { margin-top: 20px; }
-            #hero-text { top: 10%; pointer-events: none; }
-            
-            .info-grid {
-                display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
-                padding-bottom: 100px; gap: 10px;
+            .header {
+                padding: 15px 20px;
             }
-
-            .quadrant {
-                position: relative; width: 90%;
-                top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
-                text-align: left !important;
-                border: 1px solid rgba(212, 175, 55, 0.3);
-                border-left: 3px solid var(--gold) !important;
-                background: rgba(0,0,0,0.85);
-                display: none; 
+            .logo {
+                height: 45px;
             }
-            .quadrant.active { display: block; animation: slideUp 0.5s ease forwards; }
-            #cta-container { bottom: 5%; width: 90%; text-align: center; }
-            .cta-btn { width: 100%; padding: 12px; font-size: 0.9rem; }
+            .section { padding: 60px 20px; }
+            .hero .subtitle { font-size: 1.1rem; }
+            .grid-execucao { grid-template-columns: 1fr; }
+            .tempo .days { font-size: 4rem; }
+            .empire-visual { transform: scale(0.8); }
+            .whatsapp-float {
+                width: 60px;
+                height: 60px;
+                bottom: 20px;
+                right: 20px;
+            }
+            .whatsapp-float i {
+                font-size: 28px;
+            }
+            .whatsapp-tooltip {
+                display: none;
+            }
         }
-
-        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
     </style>
 </head>
 <body>
 
-    <!-- 3D -->
-    <canvas id="webgl-stage"></canvas>
+    <!-- HEADER COM LOGO -->
+    <header class="header">
+        <a href="https://akashahub.com.br" class="logo-link" target="_blank">
+            <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_1_rnj2cs.png" alt="AKASHA Logo" class="logo">
+        </a>
+    </header>
 
-    <!-- UI -->
-    <div class="ui-layer">
-        
-        <div id="hero-text">
-            <h1>Akasha</h1>
-            <div class="subtitle">Arquitetura de Poder</div>
-            <div class="hint" id="trigger-btn">[ TOCAR NO SISTEMA ]</div>
+    <!-- WHATSAPP FLOATING BUTTON -->
+    <a href="https://wa.me/message/M2LRIBXDWXABM1" target="_blank" class="whatsapp-float">
+        <span class="whatsapp-tooltip">Fale Conosco</span>
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- WEBGL BACKGROUND -->
+    <canvas id="webgl-bg"></canvas>
+
+    <!-- LOADING EMPIRE -->
+    <div id="empire-loading">
+        <h2 class="empire-build">CONSTRUINDO SEU IMPÉRIO</h2>
+        <div class="empire-visual">
+            <div class="pillar p1"></div>
+            <div class="pillar p2"></div>
+            <div class="pillar p3"></div>
+            <div class="pillar p4"></div>
+            <div class="pillar p5"></div>
+            <div class="crown"></div>
         </div>
-
-        <div class="info-grid">
-            <div id="q1" class="quadrant">
-                <h3>01. A Fundação</h3>
-                <p>Mapeamento profundo do seu código-fonte e propósito de marca.</p>
-                <span>Diagnóstico</span>
-            </div>
-
-            <div id="q2" class="quadrant">
-                <h3>02. A Estrutura</h3>
-                <p>Construção da identidade visual e presença digital imersiva.</p>
-                <span>Design & Tech</span>
-            </div>
-
-            <div id="q3" class="quadrant">
-                <h3>03. A Energia</h3>
-                <p>Alinhamento de comunicação para atrair clientes de alta frequência.</p>
-                <span>Ressonância</span>
-            </div>
-
-            <div id="q4" class="quadrant">
-                <h3>04. A Materialização</h3>
-                <p>Estratégia de lançamento e consolidação de autoridade.</p>
-                <span>Escala</span>
-            </div>
-        </div>
-
-        <div id="cta-container">
-            <button class="cta-btn">INICIAR PROTOCOLO</button>
-        </div>
+        <div class="load-bar"><div class="load-progress"></div></div>
+        <div class="load-text">INICIANDO TRANSFORMAÇÃO</div>
     </div>
 
-    <!-- LIBs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- 1. HERO -->
+    <section class="section hero">
+        <div class="container">
+            <h1>Você não precisa de mais informação.<br>Precisa de <span style="color: var(--gold);">estrutura</span>.</h1>
+            <p class="subtitle">
+                90 dias para reconstruir sua identidade<br>
+                e estruturar seu império digital.
+            </p>
+            <button class="cta-primary btn-checkout">Aplicar Agora</button>
+        </div>
+    </section>
+
+    <!-- 2. CONFRONTO -->
+    <section class="section confronto">
+        <div class="container">
+            <h2>
+                Se você continuar sozinho,<br>
+                vai continuar <span class="highlight">improvisando</span>.
+            </h2>
+        </div>
+    </section>
+
+    <!-- 3. AUTORIDADE -->
+    <section class="section autoridade">
+        <div class="container">
+            <h2>Aqui você não aprende apenas.<br>Você <span style="color: var(--gold);">constrói</span>.</h2>
+            
+            <p>Equipe de design. Arquitetos digitais. Mentores estratégicos.<br><strong>Execução real.</strong></p>
+
+            <div class="grid-execucao">
+                <div class="execucao-item">
+                    <h4>DESIGN</h4>
+                    <p>Equipe visual</p>
+                </div>
+                <div class="execucao-item">
+                    <h4>ARQUITETURA</h4>
+                    <p>Estrutura técnica</p>
+                </div>
+                <div class="execucao-item">
+                    <h4>ESTRATÉGIA</h4>
+                    <p>Mentoria profunda</p>
+                </div>
+                <div class="execucao-item">
+                    <h4>EXECUÇÃO</h4>
+                    <p>Entrega real</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. TEMPO -->
+    <section class="section tempo">
+        <div class="container">
+            <h2>Você não espera 90 dias para começar.</h2>
+            <p style="font-size: 1.2rem; color: var(--text-dim); margin-bottom: 2rem;">
+                Sua presença digital começa a ser estruturada <strong>durante</strong> o processo.
+            </p>
+            
+            <div class="days">90</div>
+            
+            <p style="font-size: 1.3rem;">
+                Em 90 dias,<br>
+                sua nova identidade e seu império digital<br>
+                estarão <span style="color: var(--gold); font-weight: 700;">estruturados</span>.
+            </p>
+        </div>
+    </section>
+
+    <!-- 5. ENTREGA -->
+    <section class="section">
+        <div class="container">
+            <h2 style="margin-bottom: 3rem;">O Que Você Recebe</h2>
+            
+            <div class="entrega-list">
+                <div class="entrega-item">Identidade estratégica</div>
+                <div class="entrega-item">Marca profissional</div>
+                <div class="entrega-item">Site estruturado</div>
+                <div class="entrega-item">Sistema de vendas</div>
+                <div class="entrega-item">Posicionamento raro</div>
+                <div class="entrega-item">Ecossistema digital completo</div>
+            </div>
+
+            <p style="margin-top: 3rem; font-size: 1.5rem; font-family: 'Orbitron'; color: var(--gold);">
+                Você sai operacional.
+            </p>
+        </div>
+    </section>
+
+    <!-- 6. OBJEÇÕES -->
+    <section class="section objecoes">
+        <div class="container">
+            <h2>Respostas Diretas</h2>
+            
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-q">Eu preciso fazer tudo sozinho?</div>
+                    <div class="faq-a">NÃO.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">É só teoria?</div>
+                    <div class="faq-a">NÃO.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">É pirâmide?</div>
+                    <div class="faq-a">NÃO.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">É espiritual?</div>
+                    <div class="faq-a">ESTRATÉGIA REAL.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">Eu realmente saio com algo pronto?</div>
+                    <div class="faq-a">SIM.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. DIFERENCIAÇÃO -->
+    <section class="section diferenciacao">
+        <div class="container">
+            <h2>
+                Isso não é <span class="not">curso</span>.<br>
+                Não é <span class="not">palestra</span>.<br>
+                Não é <span class="not">hype</span>.
+            </h2>
+            
+            <p class="is" style="font-size: 2rem; margin-top: 3rem;">
+                É reconstrução + execução.
+            </p>
+        </div>
+    </section>
+
+    <!-- 8. FECHAMENTO -->
+    <section class="section fechamento">
+        <div class="container">
+            <h2>
+                Ou você estrutura<br>
+                seu próximo nível.
+            </h2>
+            
+            <p class="or">OU</p>
+            
+            <p class="choice">Continua improvisando.</p>
+            
+            <button class="cta-primary btn-checkout" style="margin-top: 3rem; font-size: 1.2rem;">
+                Aplicar Para os 90 Dias
+            </button>
+        </div>
+    </section>
 
     <script>
-        /**
-         * AKASHA ENGINE v2.5 - CHECKOUT ENABLED
-         */
-
-        // 🔗 LINK DE CHECKOUT (Configure aqui)
-        const CHECKOUT_URL = "https://pay.hotmart.com/I103627853C?bid=1767381877056";
-
-        const CONFIG = {
-            gold: 0xD4AF37,
-            dark: 0x0a0a0a,
-            neon: 0x8B5CF6,
-            mobileBreak: 768
-        };
-
-        const state = {
-            isOpen: false,
-            isMobile: window.innerWidth < CONFIG.mobileBreak
-        };
-
-        // Função de Redirecionamento
-        function navigateToCheckout() {
-            window.location.href = CHECKOUT_URL;
-        }
-
-        // 1. CENA
-        const canvas = document.querySelector('#webgl-stage');
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ReinhardToneMapping;
-
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x050505, 0.02);
-
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-        
-        function updateCameraPosition() {
-            if(window.innerWidth < 768) {
-                camera.position.set(0, 2, 16);
-            } else {
-                camera.position.set(0, 1, 11);
-            }
-        }
-        updateCameraPosition();
-
-        // 2. LUZES
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
-        scene.add(ambientLight);
-
-        const mainLight = new THREE.DirectionalLight(CONFIG.gold, 2);
-        mainLight.position.set(5, 5, 5);
-        scene.add(mainLight);
-
-        const fillLight = new THREE.PointLight(CONFIG.neon, 1.5);
-        fillLight.position.set(-5, 0, 5);
-        scene.add(fillLight);
-
-        // 3. OBJETOS
-        const pyramidGroup = new THREE.Group();
-        scene.add(pyramidGroup);
-
-        const matCore = new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 0.1, metalness: 0.9 });
-        const matWire = new THREE.MeshBasicMaterial({ color: CONFIG.gold, wireframe: true, transparent: true, opacity: 0.15 });
-        const matGlow = new THREE.MeshBasicMaterial({ color: CONFIG.neon, wireframe: true, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending });
-
-        // Base
-        const geomBase = new THREE.ConeGeometry(3, 2, 4);
-        const baseMesh = new THREE.Mesh(geomBase, matCore);
-        const baseWire = new THREE.Mesh(geomBase, matWire);
-        baseMesh.position.y = -1.5; baseWire.position.y = -1.5; baseWire.scale.set(1.05, 1.05, 1.05);
-
-        // Meio
-        const geomMid = new THREE.ConeGeometry(2, 1.5, 4);
-        const midMesh = new THREE.Mesh(geomMid, matCore);
-        const midWire = new THREE.Mesh(geomMid, matWire);
-        midMesh.position.y = 0.25; midWire.position.y = 0.25; midWire.scale.set(1.05, 1.05, 1.05);
-
-        // Topo
-        const geomTop = new THREE.ConeGeometry(1, 1, 4);
-        const topMesh = new THREE.Mesh(geomTop, new THREE.MeshStandardMaterial({ color: CONFIG.gold, metalness: 1, roughness: 0 }));
-        const topGlow = new THREE.Mesh(geomTop, matGlow);
-        topMesh.position.y = 1.5; topGlow.position.y = 1.5; topGlow.scale.set(1.2, 1.2, 1.2);
-
-        // Núcleo de Energia (O BOTÃO SECRETO)
-        const coreGeo = new THREE.OctahedronGeometry(0.6, 0);
-        const coreMat = new THREE.MeshBasicMaterial({ color: CONFIG.neon });
-        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-        coreMesh.visible = false;
-        
-        // Halo ao redor do núcleo
-        const haloGeo = new THREE.RingGeometry(0.8, 0.9, 32);
-        const haloMat = new THREE.MeshBasicMaterial({ color: CONFIG.gold, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
-        const halo = new THREE.Mesh(haloGeo, haloMat);
-        halo.visible = false;
-        coreMesh.add(halo);
-
-        // Grupos
-        const groupBase = new THREE.Group(); groupBase.add(baseMesh, baseWire);
-        const groupMid = new THREE.Group(); groupMid.add(midMesh, midWire);
-        const groupTop = new THREE.Group(); groupTop.add(topMesh, topGlow);
-
-        pyramidGroup.add(groupBase);
-        pyramidGroup.add(groupMid);
-        pyramidGroup.add(groupTop);
-        pyramidGroup.add(coreMesh);
-
-        pyramidGroup.rotation.y = Math.PI / 4; 
-
-        // 4. INTERAÇÃO E CLIQUES
-        
-        // A) Clique nos Quadrantes HTML
-        document.querySelectorAll('.quadrant').forEach(card => {
-            card.addEventListener('click', navigateToCheckout);
-        });
-
-        // B) Clique no Botão CTA HTML
-        document.querySelector('.cta-btn').addEventListener('click', navigateToCheckout);
-
-        // C) Clique no Botão Texto Hero
-        document.getElementById('trigger-btn').addEventListener('click', toggleSystem);
-
-        // D) Lógica de Clique 3D (Raycaster)
-        document.addEventListener('click', (e) => {
-            // Ignorar se clicou na UI HTML (pois a UI já tem seus eventos)
-            if(e.target.closest('.quadrant') || e.target.closest('.cta-btn')) return;
-
-            const raycaster = new THREE.Raycaster();
-            const mouse = new THREE.Vector2();
-            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        // ===== THREE.JS WEBGL BACKGROUND =====
+        const initWebGL = () => {
+            const canvas = document.getElementById('webgl-bg');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
             
-            raycaster.setFromCamera(mouse, camera);
-            
-            if(!state.isOpen) {
-                // Se fechado, qualquer clique na pirâmide abre
-                const intersects = raycaster.intersectObjects(scene.children, true);
-                if(intersects.length > 0) toggleSystem();
-            } else {
-                // Se aberto, verifica se clicou no NÚCLEO
-                const intersects = raycaster.intersectObject(coreMesh);
-                if(intersects.length > 0) {
-                    navigateToCheckout();
-                }
-            }
-        });
-
-        // E) Cursor Pointer no Hover do 3D
-        document.addEventListener('mousemove', (e) => {
-            if(state.isOpen) {
-                const raycaster = new THREE.Raycaster();
-                const mouse = new THREE.Vector2();
-                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-                raycaster.setFromCamera(mouse, camera);
-
-                const intersects = raycaster.intersectObject(coreMesh);
-                if(intersects.length > 0) {
-                    document.body.style.cursor = 'pointer';
-                    coreMesh.scale.set(1.2, 1.2, 1.2); // Feedback visual
-                } else {
-                    document.body.style.cursor = 'default';
-                    coreMesh.scale.set(1, 1, 1);
-                }
-            }
-        });
-
-        // 5. ANIMAÇÃO DE ABERTURA
-        function toggleSystem() {
-            if(state.isOpen) return;
-            state.isOpen = true;
-
-            const tl = gsap.timeline();
-
-            // 3D Actions
-            tl.to(groupTop.position, { y: 2.5, duration: 1.5, ease: "power4.out" }, "open");
-            tl.to(groupMid.position, { y: 0.5, duration: 1.5, ease: "power4.out" }, "open");
-            tl.to(groupBase.position, { y: -2.0, duration: 1.5, ease: "power4.out" }, "open");
-            
-            coreMesh.visible = true; halo.visible = true;
-            tl.fromTo(coreMesh.scale, {x:0, y:0, z:0}, {x:1, y:1, z:1, duration: 1, ease: "back.out(2)"}, "-=1");
-
-            tl.to(pyramidGroup.rotation, { x: 0.2, y: Math.PI / 4 + Math.PI, duration: 2 }, "open");
-
-            if(window.innerWidth < 768) {
-                tl.to(pyramidGroup.position, { y: 1.5, duration: 1 }, "open");
-            }
-
-            // UI Actions
-            gsap.to('#hero-text', { opacity: 0, y: -50, duration: 0.5 });
-            
-            const cards = document.querySelectorAll('.quadrant');
-            cards.forEach((card, i) => {
-                setTimeout(() => card.classList.add('active'), 600 + (i * 200));
-            });
-            
-            setTimeout(() => document.getElementById('cta-container').classList.add('active'), 1500);
-        }
-
-        // 6. LOOP
-        const clock = new THREE.Clock();
-        let mouseX = 0, mouseY = 0;
-        
-        document.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
-            mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
-        });
-
-        function animate() {
-            requestAnimationFrame(animate);
-            const time = clock.getElapsedTime();
-
-            pyramidGroup.position.y += Math.sin(time) * 0.002;
-            
-            if(!state.isOpen) {
-                pyramidGroup.rotation.y += 0.002;
-                pyramidGroup.rotation.x += (mouseY - pyramidGroup.rotation.x) * 0.05;
-                pyramidGroup.rotation.y += (mouseX - (pyramidGroup.rotation.y - (Math.PI/4 + time*0.1))) * 0.05; 
-            } else {
-                // Núcleo gira rápido para chamar atenção
-                coreMesh.rotation.y += 0.05;
-                coreMesh.rotation.z += 0.02;
-                
-                // Pulsação do núcleo
-                const scale = 1 + Math.sin(time * 3) * 0.1;
-                if(document.body.style.cursor !== 'pointer') { // Só pulsa se não estiver no hover
-                     // coreMesh.scale.set(scale, scale, scale); // Comentado para não conflitar com hover
-                }
-                
-                groupTop.rotation.y = Math.sin(time) * 0.1;
-                groupMid.rotation.y = Math.cos(time) * 0.1;
-            }
-
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        // 7. RESIZE
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            state.isMobile = window.innerWidth < 768;
-            updateCameraPosition();
-        });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+            // === PARTÍCULAS 3D ===
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 2000;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 50;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.03,
+                color: 0xD4AF37,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending
+            });
+
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+
+            // === ESFERA DOURADA CENTRAL ===
+            const sphereGeometry = new THREE.SphereGeometry(1.5, 64, 64);
+            const sphereMaterial = new THREE.MeshStandardMaterial({
+                color: 0xD4AF37,
+                metalness: 0.9,
+                roughness: 0.1,
+                emissive: 0xD4AF37,
+                emissiveIntensity: 0.3
+            });
+            const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            scene.add(sphere);
+
+            // === LUZ AMBIENTE ===
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            scene.add(ambientLight);
+
+            // === LUZ PONTUAL (reage ao mouse) ===
+            const pointLight = new THREE.PointLight(0xD4AF37, 2, 100);
+            pointLight.position.set(0, 0, 5);
+            scene.add(pointLight);
+
+            camera.position.z = 8;
+
+            // === INTERAÇÃO COM MOUSE ===
+            let mouseX = 0, mouseY = 0;
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            // === ANIMAÇÃO ===
+            const animate = () => {
+                requestAnimationFrame(animate);
+
+                // Rotação suave das partículas
+                particlesMesh.rotation.y += 0.0005;
+                particlesMesh.rotation.x += 0.0002;
+
+                // Esfera respira
+                sphere.rotation.y += 0.003;
+                sphere.scale.x = 1 + Math.sin(Date.now() * 0.001) * 0.05;
+                sphere.scale.y = 1 + Math.sin(Date.now() * 0.001) * 0.05;
+                sphere.scale.z = 1 + Math.sin(Date.now() * 0.001) * 0.05;
+
+                // Luz segue o mouse
+                pointLight.position.x = mouseX * 3;
+                pointLight.position.y = mouseY * 3;
+
+                // Camera parallax suave
+                camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
+                camera.position.y += (mouseY * 0.5 - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+
+                renderer.render(scene, camera);
+            };
+
+            animate();
+
+            // === RESPONSIVIDADE ===
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        };
+
+        // ===== GSAP ANIMATIONS =====
+        const initAnimations = () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Hero entrance
+            gsap.from('.hero h1', {
+                opacity: 0,
+                y: 100,
+                duration: 1.5,
+                ease: 'power4.out'
+            });
+
+            gsap.from('.hero .subtitle', {
+                opacity: 0,
+                y: 50,
+                duration: 1.2,
+                delay: 0.3,
+                ease: 'power3.out'
+            });
+
+            gsap.from('.hero .cta-primary', {
+                opacity: 0,
+                scale: 0.8,
+                duration: 0.8,
+                delay: 0.6,
+                ease: 'back.out(1.7)'
+            });
+
+            // Logo entrance
+            gsap.from('.logo', {
+                opacity: 0,
+                y: -30,
+                duration: 1,
+                delay: 0.2,
+                ease: 'power3.out'
+            });
+
+            // WhatsApp entrance
+            gsap.from('.whatsapp-float', {
+                opacity: 0,
+                scale: 0,
+                duration: 0.8,
+                delay: 1.5,
+                ease: 'back.out(1.7)'
+            });
+
+            // Scroll reveals
+            gsap.utils.toArray('.section').forEach((section, i) => {
+                if(i > 0) {
+                    gsap.from(section.querySelector('.container'), {
+                        scrollTrigger: {
+                            trigger: section,
+                            start: 'top 80%',
+                            end: 'top 20%',
+                            scrub: 1
+                        },
+                        y: 100,
+                        opacity: 0
+                    });
+                }
+            });
+
+            // Execução items stagger
+            gsap.from('.execucao-item', {
+                scrollTrigger: {
+                    trigger: '.grid-execucao',
+                    start: 'top 80%'
+                },
+                y: 50,
+                opacity: 0,
+                stagger: 0.15,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+
+            // Entrega list
+            gsap.from('.entrega-item', {
+                scrollTrigger: {
+                    trigger: '.entrega-list',
+                    start: 'top 80%'
+                },
+                x: -50,
+                opacity: 0,
+                stagger: 0.1,
+                duration: 0.6
+            });
+
+            // FAQ items
+            gsap.from('.faq-item', {
+                scrollTrigger: {
+                    trigger: '.faq-grid',
+                    start: 'top 80%'
+                },
+                scale: 0.9,
+                opacity: 0,
+                stagger: 0.12,
+                duration: 0.5
+            });
+        };
+
+        // ===== CHECKOUT SYSTEM =====
+        const initCheckout = () => {
+            const buttons = document.querySelectorAll('.btn-checkout');
+            const loading = document.getElementById('empire-loading');
+            const checkoutUrl = 'https://pay.hotmart.com/I103627853C?bid=1767381877056';
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    loading.classList.add('active');
+                    gsap.to(loading, { 
+                        opacity: 1, 
+                        duration: 0.5 
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = checkoutUrl;
+                    }, 3000);
+                });
+            });
+        };
+
+        // ===== INIT =====
+        window.addEventListener('DOMContentLoaded', () => {
+            initWebGL();
+            initAnimations();
+            initCheckout();
+        });
     </script>
 </body>
 </html>
