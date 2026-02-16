@@ -3,383 +3,1166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AKASHA | Presencial Experience</title>
+    <title>AKASHA | Portal de Experiência</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500;700&family=Raleway:wght@200;400;600&display=swap" rel="stylesheet">
 
     <style>
-        /* ════════ CORE ════════ */
+        /* ════════════════════════════════════════════════════
+           NÚCLEO FUNDAMENTAL
+        ════════════════════════════════════════════════════ */
         :root {
-            --c-void: #020202;
-            --c-gold: #D4AF37;
-            --c-gold-dim: rgba(212, 175, 55, 0.3);
-            --c-text: #EAEAEA;
-            --font-head: 'Cinzel', serif;
-            --font-body: 'Montserrat', sans-serif;
+            --void: #000000;
+            --petrol: #0a1f2e;
+            --gold: #d4af37;
+            --gold-dim: rgba(212, 175, 55, 0.15);
+            --ethereal: #1a3d5c;
+            --text: #e8e8e8;
+            --text-dim: #8a8a8a;
+            
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Raleway', sans-serif;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        ::selection {
+            background: var(--gold-dim);
+            color: var(--gold);
+        }
+
         body {
-            background-color: var(--c-void);
-            color: var(--c-text);
-            font-family: var(--font-body);
+            background: var(--void);
+            color: var(--text);
+            font-family: var(--font-sans);
             overflow-x: hidden;
-            width: 100vw;
-            -ms-overflow-style: none; 
-            scrollbar-width: none; 
+            cursor: none;
+            position: relative;
         }
-        body::-webkit-scrollbar { display: none; }
 
-        a, button { cursor: none; text-decoration: none; color: inherit; border: none; outline: none; background: none; }
+        body.no-cursor {
+            cursor: default;
+        }
 
-        /* ════════ CURSOR (Desktop Only) ════════ */
-        @media (min-width: 769px) {
-            #cursor {
-                position: fixed; top: 0; left: 0; width: 20px; height: 20px;
-                border: 1px solid var(--c-gold); border-radius: 50%;
-                pointer-events: none; z-index: 10000;
-                transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, background 0.3s;
-                mix-blend-mode: difference;
+        a, button {
+            text-decoration: none;
+            color: inherit;
+            border: none;
+            background: none;
+            outline: none;
+            cursor: none;
+            font-family: inherit;
+        }
+
+        /* ════════════════════════════════════════════════════
+           CURSOR PREMIUM (Desktop Only)
+        ════════════════════════════════════════════════════ */
+        .cursor {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100000;
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transition: all 0.3s cubic-bezier(0.75, 0, 0.27, 1);
+            opacity: 0.5;
+        }
+
+        body.hovering .cursor-follower {
+            width: 80px;
+            height: 80px;
+            opacity: 0.3;
+            border-color: var(--gold);
+        }
+
+        @media (max-width: 1024px) {
+            .cursor,
+            .cursor-follower {
+                display: none;
             }
-            #cursor-dot {
-                position: fixed; top: 0; left: 0; width: 4px; height: 4px;
-                background: var(--c-gold); border-radius: 50%;
-                pointer-events: none; z-index: 10001;
-                transform: translate(-50%, -50%);
+            
+            body {
+                cursor: default;
             }
-            body.hovering #cursor { width: 50px; height: 50px; background: rgba(212,175,55,0.1); border-color: transparent; }
-        }
-        @media (max-width: 768px) {
-            #cursor, #cursor-dot { display: none; }
-            a, button, input { cursor: pointer; }
-        }
-
-        /* ════════ WEBGL STAGE ════════ */
-        #webgl-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; pointer-events: all; /* Allows touch interaction */
+            
+            a, button {
+                cursor: pointer;
+            }
         }
 
-        /* ════════ ENTER SCREEN ════════ */
-        #enter-screen {
-            position: fixed; inset: 0; z-index: 9999;
-            background: var(--c-void);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1s cubic-bezier(0.7, 0, 0.3, 1);
+        /* ════════════════════════════════════════════════════
+           WEBGL CANVAS (CAMPO AKÁSHICO)
+        ════════════════════════════════════════════════════ */
+        #akasha-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.7;
         }
-        
-        .enter-btn {
-            font-family: var(--font-head); font-size: 1.2rem; letter-spacing: 0.3em;
-            color: var(--c-gold); padding: 20px 40px; border: 1px solid var(--c-gold-dim);
-            position: relative; overflow: hidden; transition: 0.5s;
+
+        /* ════════════════════════════════════════════════════
+           TELA DE ENTRADA (O PORTAL)
+        ════════════════════════════════════════════════════ */
+        #portal-entrance {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: var(--void);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.5s cubic-bezier(0.76, 0, 0.24, 1);
         }
-        .enter-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: var(--c-gold); transition: 0.5s; z-index: -1;
+
+        #portal-entrance.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
-        .enter-btn:hover { color: #000; }
-        .enter-btn:hover::before { left: 0; }
 
-        /* ════════ UI LAYOUT ════════ */
-        main { position: relative; z-index: 10; width: 100%; }
+        .portal-sigil {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 40px;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
 
-        .container { width: 85%; max-width: 1400px; margin: 0 auto; position: relative; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
 
-        /* Header */
+        .sigil-circle {
+            position: absolute;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            animation: pulse-circle 3s ease-in-out infinite;
+        }
+
+        .sigil-circle:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            animation-delay: 0s;
+        }
+
+        .sigil-circle:nth-child(2) {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            animation-delay: 0.5s;
+        }
+
+        .sigil-circle:nth-child(3) {
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+            animation-delay: 1s;
+        }
+
+        @keyframes pulse-circle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .portal-title {
+            font-family: var(--font-serif);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            color: var(--gold);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .portal-subtitle {
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            letter-spacing: 0.2em;
+            color: var(--text-dim);
+            margin-bottom: 50px;
+            text-transform: uppercase;
+        }
+
+        .enter-portal {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            letter-spacing: 0.3em;
+            color: var(--text);
+            padding: 20px 50px;
+            border: 1px solid var(--gold-dim);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+            text-transform: uppercase;
+        }
+
+        .enter-portal::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gold);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+            z-index: -1;
+        }
+
+        .enter-portal:hover {
+            color: var(--void);
+            border-color: var(--gold);
+        }
+
+        .enter-portal:hover::before {
+            transform: scaleX(1);
+        }
+
+        /* ════════════════════════════════════════════════════
+           NAVEGAÇÃO FLUTUANTE
+        ════════════════════════════════════════════════════ */
         nav {
-            position: fixed; top: 0; left: 0; width: 100%; 
-            padding: 30px; display: flex; justify-content: space-between; align-items: center;
-            z-index: 100; mix-blend-mode: exclusion;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            mix-blend-mode: exclusion;
         }
-        .logo { font-family: var(--font-head); font-weight: 600; letter-spacing: 0.2em; color: var(--c-gold); }
-        
-        .audio-toggle {
-            display: flex; align-items: center; gap: 10px; font-size: 0.7rem; letter-spacing: 0.2em;
-            color: var(--c-gold);
+
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 0.4em;
+            color: var(--gold);
         }
-        .audio-bars { display: flex; gap: 3px; height: 15px; align-items: flex-end; }
-        .bar { width: 2px; height: 100%; background: var(--c-gold); animation: sound 0s infinite; }
-        .audio-toggle.playing .bar { animation-name: sound; animation-duration: 0.5s; }
-        .bar:nth-child(1) { animation-delay: 0s; }
-        .bar:nth-child(2) { animation-delay: 0.1s; }
-        .bar:nth-child(3) { animation-delay: 0.2s; }
-        @keyframes sound { 0% { height: 20%; } 50% { height: 100%; } 100% { height: 20%; } }
 
-        /* Sections */
-        section { min-height: 100vh; position: relative; display: flex; align-items: center; }
+        .sound-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
 
-        /* HERO */
-        .hero { justify-content: center; text-align: center; height: 100vh; }
-        .hero-content { position: relative; z-index: 2; mix-blend-mode: difference; }
-        
-        h1 {
-            font-family: var(--font-head); font-size: clamp(2.5rem, 8vw, 7rem);
-            line-height: 1; text-transform: uppercase; color: #fff;
+        .sound-visualizer {
+            display: flex;
+            gap: 3px;
+            height: 20px;
+            align-items: flex-end;
+        }
+
+        .sound-bar {
+            width: 2px;
+            background: var(--gold);
+            animation: none;
+        }
+
+        .sound-control.active .sound-bar {
+            animation: sound-pulse 0.6s ease-in-out infinite;
+        }
+
+        .sound-bar:nth-child(1) { animation-delay: 0s; }
+        .sound-bar:nth-child(2) { animation-delay: 0.15s; }
+        .sound-bar:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes sound-pulse {
+            0%, 100% { height: 30%; }
+            50% { height: 100%; }
+        }
+
+        /* ════════════════════════════════════════════════════
+           SEÇÃO HERO (VOCÊ NÃO CHEGOU AQUI POR ACASO)
+        ════════════════════════════════════════════════════ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            padding: 100px 20px;
+        }
+
+        .hero-headline {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 7vw, 5.5rem);
+            font-weight: 300;
+            line-height: 1.2;
+            color: var(--text);
+            margin-bottom: 30px;
+            opacity: 0;
+        }
+
+        .hero-headline .word {
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .hero-headline .char {
+            display: inline-block;
+            transform: translateY(120%);
+        }
+
+        .hero-subline {
+            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+            font-weight: 200;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            max-width: 700px;
+            line-height: 1.8;
+            margin-bottom: 60px;
+            opacity: 0;
+        }
+
+        .hero-cta {
+            font-family: var(--font-serif);
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            letter-spacing: 0.3em;
+            color: var(--gold);
+            padding: 18px 45px;
+            border: 1px solid var(--gold-dim);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+            text-transform: uppercase;
+            opacity: 0;
+        }
+
+        .hero-cta::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, var(--gold-dim), transparent);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .hero-cta:hover::after {
+            opacity: 1;
+        }
+
+        /* ════════════════════════════════════════════════════
+           SEÇÃO: PALÁCIO DAS MEMÓRIAS
+        ════════════════════════════════════════════════════ */
+        .palace-section {
+            min-height: 100vh;
+            padding: 150px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-marker {
+            font-size: 0.65rem;
+            letter-spacing: 0.4em;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 300;
+            color: var(--text);
+            margin-bottom: 30px;
+            line-height: 1.2;
+        }
+
+        .section-desc {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 200;
+            color: var(--text-dim);
+            max-width: 800px;
+            line-height: 1.8;
+            margin-bottom: 80px;
+        }
+
+        .palace-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .palace-door {
+            background: rgba(10, 31, 46, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            padding: 50px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+            cursor: none;
+        }
+
+        .palace-door::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+
+        .palace-door:hover::before {
+            opacity: 1;
+        }
+
+        .palace-door:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold-dim);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .door-number {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            color: var(--gold);
+            opacity: 0.3;
             margin-bottom: 20px;
         }
-        
-        .char { display: inline-block; transform: translateY(100%); opacity: 0; }
 
-        .subtitle {
-            font-size: 0.8rem; letter-spacing: 0.5em; text-transform: uppercase;
-            color: var(--c-gold); margin-bottom: 40px; opacity: 0;
+        .door-title {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            color: var(--text);
+            margin-bottom: 15px;
         }
 
-        /* CARDS SECTION */
-        .cards-section { padding: 100px 0; }
-        .cards-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px; perspective: 1000px;
+        .door-desc {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            line-height: 1.7;
+            margin-bottom: 30px;
         }
 
-        .card {
-            background: rgba(5, 5, 5, 0.6);
-            border: 1px solid rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            transition: transform 0.5s, border-color 0.5s;
-            position: relative; overflow: hidden;
-            display: flex; flex-direction: column; justify-content: space-between;
-            min-height: 400px;
+        .door-action {
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            color: var(--gold);
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: gap 0.3s;
         }
 
-        .card:hover { border-color: var(--c-gold); transform: translateY(-10px); }
+        .door-action:hover {
+            gap: 15px;
+        }
 
-        .card h3 { font-family: var(--font-head); font-size: 1.8rem; color: #fff; margin-bottom: 10px; }
-        .card p { font-size: 0.9rem; color: #aaa; line-height: 1.6; margin-bottom: 30px; }
-        .card-tag { 
-            font-size: 0.65rem; color: var(--c-gold); border: 1px solid var(--c-gold); 
-            padding: 5px 10px; width: fit-content; margin-bottom: 20px; text-transform: uppercase;
+        /* ════════════════════════════════════════════════════
+           SEÇÃO: ALQUIMIA & FASCINAÇÃO
+        ════════════════════════════════════════════════════ */
+        .alchemy-section {
+            min-height: 100vh;
+            padding: 150px 20px;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(180deg, transparent, rgba(10, 31, 46, 0.3), transparent);
         }
-        
-        .btn-card {
-            font-family: var(--font-head); color: #fff; padding: 15px 0;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: 0.3s;
-        }
-        .btn-card:hover { color: var(--c-gold); padding-left: 10px; }
 
-        /* MODAL (LEAD CAPTURE) */
-        #lead-modal {
-            position: fixed; inset: 0; z-index: 20000;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(15px);
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+        .alchemy-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+            align-items: center;
         }
-        #lead-modal.active { opacity: 1; pointer-events: auto; }
 
-        .modal-content {
-            background: #050505; border: 1px solid var(--c-gold);
-            padding: 50px 40px; width: 90%; max-width: 450px;
-            text-align: center; position: relative;
-            transform: translateY(50px); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        .alchemy-text h2 {
+            font-family: var(--font-serif);
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 300;
+            line-height: 1.3;
+            margin-bottom: 30px;
         }
-        #lead-modal.active .modal-content { transform: translateY(0); }
+
+        .alchemy-text p {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            line-height: 1.9;
+            margin-bottom: 20px;
+        }
+
+        .alchemy-visual {
+            position: relative;
+            height: 500px;
+        }
+
+        .magnetism-orb {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--gold-dim), transparent);
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; }
+        }
+
+        .magnetism-particles {
+            position: absolute;
+            inset: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 50%;
+            animation: float-particle 10s linear infinite;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty));
+                opacity: 0;
+            }
+        }
+
+        /* ════════════════════════════════════════════════════
+           SEÇÃO: AKASHA PRIME (ASSINATURA)
+        ════════════════════════════════════════════════════ */
+        .prime-section {
+            min-height: 100vh;
+            padding: 150px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .prime-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .prime-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            letter-spacing: 0.4em;
+            color: var(--void);
+            background: var(--gold);
+            padding: 8px 20px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .timeline-visual {
+            position: relative;
+            height: 200px;
+            margin: 80px 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .timeline-node {
+            position: absolute;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            background: var(--gold);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            animation: pulse-node 2s ease-in-out infinite;
+        }
+
+        .timeline-node:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .timeline-node:nth-child(2) { left: 30%; animation-delay: 0.5s; }
+        .timeline-node:nth-child(3) { left: 50%; animation-delay: 1s; }
+        .timeline-node:nth-child(4) { left: 70%; animation-delay: 1.5s; }
+        .timeline-node:nth-child(5) { left: 90%; animation-delay: 2s; }
+
+        @keyframes pulse-node {
+            0%, 100% { box-shadow: 0 0 0 0 var(--gold); }
+            50% { box-shadow: 0 0 0 10px transparent; }
+        }
+
+        /* ════════════════════════════════════════════════════
+           SEÇÃO: REGRESSÃO (VIDAS PASSADAS)
+        ════════════════════════════════════════════════════ */
+        .regression-section {
+            min-height: 100vh;
+            padding: 150px 20px;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.8));
+        }
+
+        .regression-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .memory-layers {
+            position: relative;
+            height: 400px;
+            margin: 60px 0;
+        }
+
+        .memory-layer {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, var(--ethereal), transparent);
+            opacity: 0.1;
+            animation: fade-layer 6s ease-in-out infinite;
+        }
+
+        .memory-layer:nth-child(1) { animation-delay: 0s; }
+        .memory-layer:nth-child(2) { animation-delay: 2s; }
+        .memory-layer:nth-child(3) { animation-delay: 4s; }
+
+        @keyframes fade-layer {
+            0%, 100% { opacity: 0.05; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.1); }
+        }
+
+        /* ════════════════════════════════════════════════════
+           SEÇÃO: SESSÕES PERSONALIZADAS
+        ════════════════════════════════════════════════════ */
+        .sessions-section {
+            min-height: 100vh;
+            padding: 150px 20px;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .sessions-lock {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .lock-circle {
+            position: absolute;
+            inset: 0;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            animation: rotate-lock 20s linear infinite;
+        }
+
+        @keyframes rotate-lock {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .sessions-cta {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            letter-spacing: 0.3em;
+            color: var(--text);
+            padding: 20px 50px;
+            border: 1px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s;
+            text-transform: uppercase;
+            animation: pulse-border 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 0 0 var(--gold); }
+            50% { box-shadow: 0 0 0 8px transparent; }
+        }
+
+        /* ════════════════════════════════════════════════════
+           MODAL DE CAPTURA
+        ════════════════════════════════════════════════════ */
+        #activation-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(30px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+        }
+
+        #activation-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-inner {
+            background: var(--petrol);
+            border: 1px solid var(--gold);
+            padding: 60px 50px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            transform: translateY(100px);
+            transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+        }
+
+        #activation-modal.active .modal-inner {
+            transform: translateY(0);
+        }
 
         .modal-close {
-            position: absolute; top: 15px; right: 15px;
-            font-size: 1.5rem; color: #666; transition: 0.3s;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            transition: color 0.3s;
         }
-        .modal-close:hover { color: var(--c-gold); }
 
-        .modal-title { font-family: var(--font-head); color: var(--c-gold); font-size: 1.2rem; margin-bottom: 5px; }
-        .modal-context { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 30px; }
+        .modal-close:hover {
+            color: var(--gold);
+        }
 
-        .form-group { margin-bottom: 20px; text-align: left; }
+        .modal-title {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .modal-context {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        .form-field {
+            margin-bottom: 25px;
+        }
+
         .form-input {
-            width: 100%; background: transparent; border: none;
-            border-bottom: 1px solid #333; padding: 10px 0;
-            color: #fff; font-family: var(--font-body); font-size: 1rem;
-            outline: none; transition: 0.3s;
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 0;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: var(--font-sans);
+            outline: none;
+            transition: border-color 0.3s;
         }
-        .form-input:focus { border-bottom-color: var(--c-gold); }
-        .form-input::placeholder { color: #444; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
 
-        .btn-submit {
-            width: 100%; background: var(--c-gold); color: #000;
-            padding: 15px; font-family: var(--font-head); letter-spacing: 0.2em;
-            margin-top: 10px; transition: 0.3s;
+        .form-input:focus {
+            border-bottom-color: var(--gold);
         }
-        .btn-submit:hover { background: #fff; }
 
-        /* FOOTER */
+        .form-input::placeholder {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .modal-submit {
+            width: 100%;
+            background: var(--gold);
+            color: var(--void);
+            padding: 18px;
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-top: 30px;
+            transition: all 0.3s;
+        }
+
+        .modal-submit:hover {
+            background: var(--text);
+        }
+
+        /* ════════════════════════════════════════════════════
+           RODAPÉ
+        ════════════════════════════════════════════════════ */
         footer {
-            padding: 50px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1);
-            font-size: 0.7rem; color: #666; letter-spacing: 0.2em;
+            padding: 80px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            z-index: 10;
         }
 
-        /* Mobile tweaks */
+        .footer-text {
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        /* ════════════════════════════════════════════════════
+           RESPONSIVE
+        ════════════════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            nav {
+                padding: 20px 30px;
+            }
+
+            .alchemy-content {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .alchemy-visual {
+                height: 300px;
+            }
+
+            .magnetism-orb {
+                width: 200px;
+                height: 200px;
+            }
+
+            .palace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
-            .hero { align-items: center; }
-            .modal-content { padding: 40px 20px; }
-            .card { min-height: auto; }
+            nav {
+                padding: 20px;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .hero {
+                padding: 80px 20px;
+            }
+
+            .palace-section,
+            .alchemy-section,
+            .prime-section,
+            .regression-section,
+            .sessions-section {
+                padding: 100px 20px;
+            }
+
+            .modal-inner {
+                padding: 40px 30px;
+            }
         }
 
     </style>
 </head>
-<body>
+<body class="no-cursor">
 
-    <!-- AUDIO -->
-    <audio id="bg-audio" loop>
-        <!-- Placehoder Ambient Track -->
+    <!-- AUDIO AMBIENTE -->
+    <audio id="ambient-audio" loop>
         <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=ambient-piano-amp-strings-10711.mp3" type="audio/mp3">
     </audio>
 
-    <!-- UI: ENTER SCREEN -->
-    <div id="enter-screen">
-        <button class="enter-btn magnetic" onclick="enterExperience()">
-            INICIAR EXPERIÊNCIA
+    <!-- CURSOR CUSTOMIZADO -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- WEBGL CAMPO AKÁSHICO -->
+    <canvas id="akasha-field"></canvas>
+
+    <!-- PORTAL DE ENTRADA -->
+    <div id="portal-entrance">
+        <div class="portal-sigil">
+            <div class="sigil-circle"></div>
+            <div class="sigil-circle"></div>
+            <div class="sigil-circle"></div>
+        </div>
+        <h1 class="portal-title">AKASHA</h1>
+        <p class="portal-subtitle">Portal de Experiência</p>
+        <button class="enter-portal" onclick="enterPortal()">
+            ACESSAR O CAMPO
         </button>
     </div>
 
-    <!-- UI: MODAL -->
-    <div id="lead-modal">
-        <div class="modal-content">
+    <!-- MODAL DE ATIVAÇÃO -->
+    <div id="activation-modal">
+        <div class="modal-inner">
             <button class="modal-close" onclick="closeModal()">×</button>
-            <h3 class="modal-title">INICIAR PROTOCOLO</h3>
-            <p class="modal-context" id="modal-context-text">Interesse Geral</p>
+            <h2 class="modal-title">ATIVAÇÃO</h2>
+            <p class="modal-context" id="modal-interest">Interesse Geral</p>
             
-            <div class="form-group">
-                <input type="text" id="leadName" class="form-input" placeholder="Nome Completo" required>
+            <div class="form-field">
+                <input type="text" class="form-input" id="userName" placeholder="Nome Completo" required>
             </div>
-            <div class="form-group">
-                <input type="email" id="leadEmail" class="form-input" placeholder="E-mail Principal" required>
+            <div class="form-field">
+                <input type="email" class="form-input" id="userEmail" placeholder="E-mail Principal" required>
             </div>
             
-            <button class="btn-submit" onclick="submitLead()">ACESSAR</button>
-            <p style="font-size: 0.5rem; color: #444; margin-top: 15px; letter-spacing: 0.1em;">DADOS PROTEGIDOS • CRIPTOGRAFIA AKÁSHICA</p>
+            <button class="modal-submit" onclick="submitActivation()">
+                INICIAR PROTOCOLO
+            </button>
         </div>
     </div>
 
-    <!-- WEBGL BACKGROUND -->
-    <canvas id="webgl-canvas"></canvas>
-
-    <!-- CURSOR -->
-    <div id="cursor"></div>
-    <div id="cursor-dot"></div>
-
-    <!-- UI: NAVIGATION -->
+    <!-- NAVEGAÇÃO -->
     <nav>
         <div class="logo">AKASHA HUB</div>
-        <button class="audio-toggle magnetic" onclick="toggleAudio()">
-            <div class="audio-bars">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
+        <button class="sound-control" onclick="toggleSound()">
+            <div class="sound-visualizer">
+                <div class="sound-bar"></div>
+                <div class="sound-bar"></div>
+                <div class="sound-bar"></div>
             </div>
-            <span>SOM</span>
+            <span>CAMPO SONORO</span>
         </button>
     </nav>
 
-    <!-- MAIN CONTENT (Smooth Scroll) -->
-    <main id="smooth-wrapper">
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main>
         
-        <!-- HERO -->
+        <!-- HERO: VOCÊ NÃO CHEGOU AQUI POR ACASO -->
         <section class="hero">
-            <div class="container hero-content">
-                <div class="subtitle">Arquitetura de Essência</div>
-                <h1 id="hero-title">
-                    Presencial     | <br> |      Alchemy
-                </h1>
-                <p style="max-width: 600px; margin: 20px auto; color: #ccc;">
-                    Onde a tecnologia ancestral encontra a arquitetura do fluxo. 
-                    Uma experiência sensorial desenhada para excelência vibracional.
-                </p>
-                
-                <button class="enter-btn magnetic trigger-lead" style="font-size: 0.8rem; margin-top: 30px;" onclick="openModal('Explorar Sessoes (Hero)')">
-                    EXPLORAR SESSOES
-                </button>
-            </div>
+            <h1 class="hero-headline">
+                <span class="word">Você</span>
+                <span class="word">não</span>
+                <span class="word">chegou</span>
+                <span class="word">aqui</span>
+                <span class="word">por</span>
+                <span class="word">acaso.</span>
+            </h1>
+            <p class="hero-subline">
+                Alguns acessam conhecimento. Outros ativam poder.
+                Este é um portal para quem escolheu expandir.
+            </p>
+            <button class="hero-cta" onclick="openModal('Exploração Inicial')">
+                EXPLORAR O CAMPO
+            </button>
         </section>
 
-        <!-- CARDS -->
-        <section class="cards-section">
-            <div class="container">
-                <div class="cards-grid">
-                    
-                    <!-- Card 1 -->
-                    <div class="card magnetic-card">
-                        <div>
-                            <div class="card-tag">ALQUIMIA & PODER</div>
-                            <h3>Tantra Alchemy</h3>
-                            <p>A fusão perfeita entre alinhamento quântico, fascinação e massagem tântrica terapêutica.</p>
-                        </div>
-                        <button class="btn-card" onclick="openModal('Tantra Alchemy (High Ticket)')">
-                            Agendar High Ticket <span>→</span>
+        <!-- PALÁCIO DAS MEMÓRIAS -->
+        <section class="palace-section">
+            <div class="container" style="max-width: 1400px; margin: 0 auto;">
+                <p class="section-marker">Campo Terapêutico</p>
+                <h2 class="section-title">O Palácio das Memórias</h2>
+                <p class="section-desc">
+                    Não é apenas técnica de memorização. É abertura de campo mental terapêutico.
+                    Um espaço direcionado onde você acessa memórias, recursos internos e ativações específicas.
+                </p>
+
+                <div class="palace-grid">
+                    <div class="palace-door">
+                        <div class="door-number">01</div>
+                        <h3 class="door-title">Abertura de Campo</h3>
+                        <p class="door-desc">
+                            Primeira porta. Reconhecimento do espaço interno e ativação da percepção expandida.
+                        </p>
+                        <button class="door-action" onclick="openModal('Palácio - Abertura de Campo')">
+                            Abrir Portal <span>→</span>
                         </button>
                     </div>
 
-                    <!-- Card 2 -->
-                    <div class="card magnetic-card" style="border-color: rgba(212,175,55,0.4);">
-                        <div>
-                            <div class="card-tag" style="color: #000; background: var(--c-gold); border:none;">SIGNATURE</div>
-                            <h3 style="color: var(--c-gold);">Akasha Prime</h3>
-                            <p>Assinatura Mensal e Trimestral. Ritual extra, intenção específica e personalização completa.</p>
-                        </div>
-                        <button class="btn-card" onclick="openModal('Akasha Prime (Signature)')">
-                            Solicitar VIP <span>→</span>
+                    <div class="palace-door">
+                        <div class="door-number">02</div>
+                        <h3 class="door-title">Recursos Internos</h3>
+                        <p class="door-desc">
+                            Acesso profundo às suas memórias de excelência, poder e clareza.
+                        </p>
+                        <button class="door-action" onclick="openModal('Palácio - Recursos Internos')">
+                            Abrir Portal <span>→</span>
                         </button>
                     </div>
 
-                    <!-- Card 3 -->
-                    <div class="card magnetic-card">
-                        <div>
-                            <div class="card-tag">DEEP DIVE</div>
-                            <h3>Imersão 3h+</h3>
-                            <p>Jornada longa em estado expandido de consciência. Recalibração absoluta para quem busca transmutação.</p>
-                        </div>
-                        <button class="btn-card" onclick="openModal('Imersao 3h+ (Deep Dive)')">
-                            Agendar Imersão <span>→</span>
+                    <div class="palace-door">
+                        <div class="door-number">03</div>
+                        <h3 class="door-title">Ativações Específicas</h3>
+                        <p class="door-desc">
+                            Direcionamentos precisos para expansão de habilidades e percepções.
+                        </p>
+                        <button class="door-action" onclick="openModal('Palácio - Ativações Específicas')">
+                            Abrir Portal <span>→</span>
                         </button>
                     </div>
-
-                    <!-- Card 4 -->
-                    <div class="card magnetic-card">
-                        <div>
-                            <div class="card-tag">ENTRY LEVEL</div>
-                            <h3>Jornada Sensorial</h3>
-                            <p>Sessão focada de ativação tântrica. Ideal para desbloquear a vitalidade imediata.</p>
-                        </div>
-                        <button class="btn-card" onclick="openModal('Jornada Sensorial (R$ 500)')">
-                            Iniciar (R$ 500) <span>→</span>
-                        </button>
-                    </div>
-
                 </div>
             </div>
         </section>
 
-        <!-- FOOTER -->
-        <footer>
-            <div class="container">
-                <p>AKASHA HUB © 2025 • TODOS OS DIREITOS RESERVADOS</p>
+        <!-- ALQUIMIA & FASCINAÇÃO -->
+        <section class="alchemy-section">
+            <div class="alchemy-content">
+                <div class="alchemy-text">
+                    <p class="section-marker">Presença Magnética</p>
+                    <h2>Alquimia, Fascinação & Magnetismo</h2>
+                    <p>
+                        Existe uma força invisível que atrai oportunidades, conexões e experiências.
+                        Não é sorte. É campo.
+                    </p>
+                    <p>
+                        Trabalhamos com magnetismo pessoal, presença ampliada e influência energética.
+                        Para quem entende que a realidade responde à vibração.
+                    </p>
+                    <button class="hero-cta" onclick="openModal('Alquimia & Magnetismo')" style="margin-top: 30px;">
+                        Ativar Magnetismo
+                    </button>
+                </div>
+
+                <div class="alchemy-visual">
+                    <div class="magnetism-orb"></div>
+                    <div class="magnetism-particles" id="particles-container"></div>
+                </div>
             </div>
+        </section>
+
+        <!-- AKASHA PRIME -->
+        <section class="prime-section">
+            <div class="prime-container">
+                <span class="prime-badge">Campo Contínuo</span>
+                <h2 class="section-title">Akasha Prime</h2>
+                <p class="section-desc">
+                    Não é conteúdo. É campo contínuo. Acesso mensal a ativações, 
+                    direcionamentos, aprofundamentos e expansão progressiva.
+                </p>
+
+                <div class="timeline-visual">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-node"></div>
+                    <div class="timeline-node"></div>
+                    <div class="timeline-node"></div>
+                    <div class="timeline-node"></div>
+                    <div class="timeline-node"></div>
+                </div>
+
+                <button class="hero-cta" onclick="openModal('Akasha Prime - Assinatura')">
+                    Acessar o Campo Contínuo
+                </button>
+            </div>
+        </section>
+
+        <!-- REGRESSÃO -->
+        <section class="regression-section">
+            <div class="regression-content">
+                <p class="section-marker">Memória Ancestral</p>
+                <h2 class="section-title">Akasha Regressão</h2>
+                <p class="section-desc">
+                    Vidas passadas não são crença. São camadas de memória.
+                    Acesse padrões, dons esquecidos e compreensões que transcendem esta existência.
+                </p>
+
+                <div class="memory-layers">
+                    <div class="memory-layer"></div>
+                    <div class="memory-layer"></div>
+                    <div class="memory-layer"></div>
+                </div>
+
+                <button class="hero-cta" onclick="openModal('Regressão - Vidas Passadas')">
+                    Acessar Memória Profunda
+                </button>
+            </div>
+        </section>
+
+        <!-- SESSÕES PERSONALIZADAS -->
+        <section class="sessions-section">
+            <div class="sessions-lock">
+                <div class="lock-circle"></div>
+            </div>
+            
+            <h2 class="section-title" style="margin-bottom: 20px;">
+                Algumas sessões não são para todos.
+            </h2>
+            
+            <p class="section-desc" style="margin-bottom: 50px;">
+                Seleção por ressonância. Agenda limitada. Experiência personalizada de alto valor.
+            </p>
+
+            <button class="sessions-cta" onclick="openModal('Sessão Personalizada - Seleção')">
+                SOLICITAR SELEÇÃO
+            </button>
+        </section>
+
+        <!-- RODAPÉ -->
+        <footer>
+            <p class="footer-text">AKASHA HUB © 2025 • TODOS OS DIREITOS RESERVADOS</p>
         </footer>
 
     </main>
 
-    <!-- LIBS -->
+    <!-- SCRIPTS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
     <script>
-        // ══════════════════════════════════════════════════
-        // 1. LEAD CAPTURE SYSTEM
-        // ══════════════════════════════════════════════════
-        const modal = document.getElementById('lead-modal');
-        const modalContext = document.getElementById('modal-context-text');
+        // ════════════════════════════════════════════════════
+        // SISTEMA DE CAPTURA DE LEADS
+        // ════════════════════════════════════════════════════
+        const modal = document.getElementById('activation-modal');
+        const modalInterest = document.getElementById('modal-interest');
         let currentInterest = '';
 
         function openModal(interest) {
             currentInterest = interest;
-            modalContext.innerText = `Interesse: ${interest}`;
+            modalInterest.textContent = `Interesse: ${interest}`;
             modal.classList.add('active');
         }
 
@@ -387,77 +1170,79 @@
             modal.classList.remove('active');
         }
 
-        function submitLead() {
-            const name = document.getElementById('leadName').value;
-            const email = document.getElementById('leadEmail').value;
+        function submitActivation() {
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
 
             if (!name || !email) {
-                // Shake animation for error
-                gsap.to('.modal-content', { x: 10, duration: 0.1, yoyo: true, repeat: 5 });
+                gsap.to('.modal-inner', { x: 10, duration: 0.1, yoyo: true, repeat: 5 });
                 return;
             }
 
-            // Button Feedback
-            const btn = document.querySelector('.btn-submit');
-            btn.innerText = "CONECTANDO...";
-            
-            // Build WhatsApp Link
-            const phone = "5571983448621";
-            const message = `Ol%C3%A1%20Akasha%20Hub,%0A%0AMe%20chamo%20*${encodeURIComponent(name)}*%20(${encodeURIComponent(email)}).%0A%0ADesejo%20iniciar%20o%20atendimento%20referente%20a:%20*${encodeURIComponent(currentInterest)}*.`;
+            const btn = document.querySelector('.modal-submit');
+            btn.textContent = "CONECTANDO...";
 
-            // Redirect
+            const phone = "5571983448621";
+            const message = `Olá Akasha Hub,%0A%0AMe chamo *${encodeURIComponent(name)}* (${encodeURIComponent(email)}).%0A%0ADesejo iniciar o protocolo referente a: *${encodeURIComponent(currentInterest)}*.`;
+
             setTimeout(() => {
                 window.location.href = `https://wa.me/${phone}?text=${message}`;
             }, 1000);
         }
 
-        // Close on outside click
         modal.addEventListener('click', (e) => {
-            if(e.target === modal) closeModal();
+            if (e.target === modal) closeModal();
         });
 
-        // ══════════════════════════════════════════════════
-        // 2. SETUP & AUDIO
-        // ══════════════════════════════════════════════════
-        const audio = document.getElementById('bg-audio');
+        // ════════════════════════════════════════════════════
+        // ÁUDIO AMBIENTE
+        // ════════════════════════════════════════════════════
+        const audio = document.getElementById('ambient-audio');
         let audioPlaying = false;
 
-        function enterExperience() {
-            // Audio Start
+        function enterPortal() {
+            // Iniciar áudio
             audio.volume = 0;
             audio.play();
-            gsap.to(audio, { volume: 0.5, duration: 2 });
+            gsap.to(audio, { volume: 0.3, duration: 2 });
             audioPlaying = true;
-            document.querySelector('.audio-toggle').classList.add('playing');
+            document.querySelector('.sound-control').classList.add('active');
 
-            // UI Reveal
-            gsap.to('#enter-screen', { 
-                opacity: 0, 
-                duration: 1, 
-                onComplete: () => document.getElementById('enter-screen').remove() 
+            // Ocultar tela de entrada
+            gsap.to('#portal-entrance', {
+                opacity: 0,
+                duration: 1.5,
+                ease: 'power3.inOut',
+                onComplete: () => {
+                    document.getElementById('portal-entrance').classList.add('hidden');
+                    animateHero();
+                }
             });
-
-            // Title Animation
-            animateTitle();
         }
 
-        function toggleAudio() {
-            if(audioPlaying) {
-                gsap.to(audio, { volume: 0, duration: 0.5, onComplete: () => audio.pause() });
-                document.querySelector('.audio-toggle').classList.remove('playing');
+        function toggleSound() {
+            const control = document.querySelector('.sound-control');
+            
+            if (audioPlaying) {
+                gsap.to(audio, { 
+                    volume: 0, 
+                    duration: 0.5, 
+                    onComplete: () => audio.pause() 
+                });
+                control.classList.remove('active');
             } else {
                 audio.play();
-                gsap.to(audio, { volume: 0.5, duration: 0.5 });
-                document.querySelector('.audio-toggle').classList.add('playing');
+                gsap.to(audio, { volume: 0.3, duration: 0.5 });
+                control.classList.add('active');
             }
             audioPlaying = !audioPlaying;
         }
 
-        // ══════════════════════════════════════════════════
-        // 3. SMOOTH SCROLL (LENIS)
-        // ══════════════════════════════════════════════════
+        // ════════════════════════════════════════════════════
+        // SMOOTH SCROLL (LENIS)
+        // ════════════════════════════════════════════════════
         const lenis = new Lenis({
-            duration: 1.2,
+            duration: 1.4,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             smooth: true,
             touchMultiplier: 2,
@@ -469,14 +1254,14 @@
         }
         requestAnimationFrame(raf);
 
-        // ══════════════════════════════════════════════════
-        // 4. WEBGL FLUID SHADER (Mobile Optimized)
-        // ══════════════════════════════════════════════════
-        const canvas = document.getElementById('webgl-canvas');
+        // ════════════════════════════════════════════════════
+        // WEBGL CAMPO AKÁSHICO
+        // ════════════════════════════════════════════════════
+        const canvas = document.getElementById('akasha-field');
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Optimized for mobile
-        
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
         const scene = new THREE.Scene();
         const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
@@ -484,28 +1269,28 @@
             uniform float uTime;
             uniform vec2 uMouse;
             uniform vec2 uResolution;
-            varying vec2 vUv;
 
             vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-            float snoise(vec2 v){
+
+            float snoise(vec2 v) {
                 const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-                vec2 i  = floor(v + dot(v, C.yy) );
+                vec2 i = floor(v + dot(v, C.yy));
                 vec2 x0 = v - i + dot(i, C.xx);
                 vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
                 vec4 x12 = x0.xyxy + C.xxzz;
                 x12.xy -= i1;
                 i = mod(i, 289.0);
-                vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
+                vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
                 vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-                m = m*m ;
-                m = m*m ;
+                m = m*m;
+                m = m*m;
                 vec3 x = 2.0 * fract(p * C.www) - 1.0;
                 vec3 h = abs(x) - 0.5;
                 vec3 ox = floor(x + 0.5);
                 vec3 a0 = x - ox;
-                m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+                m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
                 vec3 g;
-                g.x  = a0.x  * x0.x  + h.x  * x0.y;
+                g.x = a0.x * x0.x + h.x * x0.y;
                 g.yz = a0.yz * x12.xz + h.yz * x12.yw;
                 return 130.0 * dot(m, g);
             }
@@ -515,21 +1300,20 @@
                 st.x *= uResolution.x / uResolution.y;
 
                 float mouseDist = distance(st, uMouse);
-                float mouseInteraction = smoothstep(0.4, 0.0, mouseDist) * 0.5;
+                float mouseEffect = smoothstep(0.5, 0.0, mouseDist) * 0.4;
 
-                // Smoke/Fluid Effect
-                float noise1 = snoise(st * 2.5 + uTime * 0.1 + mouseInteraction);
-                float noise2 = snoise(st * 5.0 - uTime * 0.15);
-                
-                vec3 colorBg = vec3(0.01, 0.01, 0.02);
-                vec3 colorGold = vec3(0.83, 0.68, 0.21);
-                vec3 colorViolet = vec3(0.42, 0.05, 0.68);
+                float noise1 = snoise(st * 2.0 + uTime * 0.08);
+                float noise2 = snoise(st * 4.0 - uTime * 0.12);
 
-                float mixVal = smoothstep(-0.4, 0.4, noise1 + noise2 * 0.5);
+                vec3 colorVoid = vec3(0.0, 0.0, 0.0);
+                vec3 colorPetrol = vec3(0.04, 0.12, 0.18);
+                vec3 colorGold = vec3(0.83, 0.69, 0.22);
+
+                float mixVal = smoothstep(-0.5, 0.5, noise1 + noise2 * 0.5);
                 
-                vec3 finalColor = mix(colorBg, colorViolet, mixVal * 0.3);
-                finalColor = mix(finalColor, colorGold, smoothstep(0.3, 0.8, mixVal) * 0.5);
-                finalColor += colorGold * mouseInteraction * 0.3;
+                vec3 finalColor = mix(colorVoid, colorPetrol, mixVal * 0.2);
+                finalColor = mix(finalColor, colorGold, smoothstep(0.4, 0.9, mixVal) * 0.15);
+                finalColor += colorGold * mouseEffect * 0.2;
 
                 gl_FragColor = vec4(finalColor, 1.0);
             }
@@ -549,50 +1333,32 @@
 
         scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
 
-        // ══════════════════════════════════════════════════
-        // 5. EVENTS (Mouse + Touch)
-        // ══════════════════════════════════════════════════
         let targetMouse = new THREE.Vector2(0.5, 0.5);
-        
-        function updateMouse(x, y) {
-            // DOM Cursor
-            gsap.to('#cursor', { x: x, y: y, duration: 0.1 });
-            gsap.to('#cursor-dot', { x: x, y: y, duration: 0 });
 
-            // WebGL Mouse
+        function updateMouse(x, y) {
             const normX = (x / window.innerWidth) * (window.innerWidth / window.innerHeight);
             const normY = 1.0 - (y / window.innerHeight);
             targetMouse.set(normX, normY);
+
+            // Cursor DOM
+            if (window.innerWidth > 1024) {
+                gsap.to('.cursor', { x, y, duration: 0.1 });
+                gsap.to('.cursor-follower', { x, y, duration: 0.3 });
+            }
         }
 
         window.addEventListener('mousemove', (e) => updateMouse(e.clientX, e.clientY));
-        
-        // Touch events for Mobile
         window.addEventListener('touchmove', (e) => {
             const touch = e.touches[0];
             updateMouse(touch.clientX, touch.clientY);
-        }, {passive: false});
+        });
 
-        // Hover Logic
+        // Hover states
         document.querySelectorAll('a, button').forEach(el => {
             el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
             el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
         });
 
-        // Magnetic Effect
-        document.querySelectorAll('.magnetic').forEach(btn => {
-            btn.addEventListener('mousemove', (e) => {
-                const rect = btn.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                gsap.to(btn, { x: x * 0.3, y: y * 0.3, duration: 0.3 });
-            });
-            btn.addEventListener('mouseleave', () => {
-                gsap.to(btn, { x: 0, y: 0, duration: 0.3 });
-            });
-        });
-
-        // Animation Loop
         function animate() {
             uniforms.uTime.value += 0.005;
             uniforms.uMouse.value.lerp(targetMouse, 0.05);
@@ -606,28 +1372,83 @@
             uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
         });
 
-        // ══════════════════════════════════════════════════
-        // 6. GSAP REVEALS
-        // ══════════════════════════════════════════════════
+        // ════════════════════════════════════════════════════
+        // GSAP ANIMATIONS
+        // ════════════════════════════════════════════════════
         gsap.registerPlugin(ScrollTrigger);
 
-        function animateTitle() {
-            const title = document.querySelector('#hero-title');
-            const chars = title.innerText.split('').map(c => 
-                c === ' ' ? '&nbsp;' : `<span class='char'>${c}</span>`
-            ).join('');
-            title.innerHTML = chars;
+        function animateHero() {
+            const headline = document.querySelector('.hero-headline');
+            const words = headline.querySelectorAll('.word');
+            
+            words.forEach(word => {
+                const chars = word.textContent.split('').map(c => 
+                    `<span class='char'>${c}</span>`
+                ).join('');
+                word.innerHTML = chars;
+            });
 
-            gsap.to('.char', { y: 0, opacity: 1, duration: 1, stagger: 0.03, ease: 'power3.out' });
-            gsap.to('.subtitle', { opacity: 1, duration: 1, delay: 0.5 });
+            gsap.to('.char', {
+                y: 0,
+                opacity: 1,
+                duration: 0.8,
+                stagger: 0.02,
+                ease: 'power3.out'
+            });
+
+            gsap.to('.hero-subline', {
+                opacity: 1,
+                duration: 1,
+                delay: 0.8,
+                ease: 'power2.out'
+            });
+
+            gsap.to('.hero-cta', {
+                opacity: 1,
+                duration: 1,
+                delay: 1.2,
+                ease: 'power2.out'
+            });
         }
 
-        gsap.utils.toArray('.card').forEach((card, i) => {
-            gsap.from(card, {
-                scrollTrigger: { trigger: card, start: "top 85%" },
-                y: 50, opacity: 0, duration: 1, delay: i * 0.1, ease: 'power2.out'
+        // Scroll triggers
+        gsap.utils.toArray('.palace-door').forEach((door, i) => {
+            gsap.from(door, {
+                scrollTrigger: {
+                    trigger: door,
+                    start: 'top 80%'
+                },
+                y: 60,
+                opacity: 0,
+                duration: 1,
+                delay: i * 0.15,
+                ease: 'power3.out'
             });
         });
+
+        // Partículas de magnetismo
+        const particlesContainer = document.getElementById('particles-container');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const angle = (Math.PI * 2 * i) / 20;
+            const distance = 150;
+            particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+            particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+            particle.style.left = '50%';
+            particle.style.top = '50%';
+            particle.style.animationDelay = (i * 0.5) + 's';
+            
+            particlesContainer.appendChild(particle);
+        }
+
+        // ════════════════════════════════════════════════════
+        // DETECÇÃO MOBILE
+        // ════════════════════════════════════════════════════
+        if (window.innerWidth <= 1024) {
+            document.body.classList.add('no-cursor');
+        }
 
     </script>
 </body>
