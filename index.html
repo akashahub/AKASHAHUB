@@ -2,39 +2,440 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="description" content="AkashaHub — Portal de Despertar. Saia da Matrix. Governe sua Realidade.">
-    <title>AKASHA HUB | Portal de Despertar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="AkashaHub — Portal de Despertar.">
+    <title>AKASHA HUB | Mobile Harmony</title>
 
-    <!-- ✅ OPT 1: preconnect antes de tudo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- ✅ OPT 2: Fontes não-bloqueantes (media trick) — evita render-blocking -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600&family=Rajdhani:wght@300;400;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600&family=Rajdhani:wght@300;400;600&display=swap"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --void:       #06060F;
-            --deep:       #0A0A18;
             --gold:       #C9A84C;
             --gold-bright:#FFD700;
             --gold-dim:   #8A6E2A;
             --matrix:     #00FF41;
-            --matrix-dim: #003B0F;
-            --cosmic:     #4A90E2;
-            --cosmic-dim: #1A3A6A;
-            --white-e:    rgba(255,255,255,0.85);
             --font-deco:  'Cinzel Decorative', serif;
             --font-title: 'Cinzel', serif;
             --font-body:  'Rajdhani', sans-serif;
         }
 
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
         html, body {
             width: 100%; height: 100%;
-            overflow: hidden;
+            overflow: hidden; /* Impede scroll no stage principal */
+            background: var(--void);
+            color: #fff;
+            font-family: var(--font-body);
+        }
+
+        /* ── CURSOR (Apenas Desktop) ───────────────────── */
+        @media (pointer: fine) {
+            #cursor, #cursor-ring { display: block; }
+            body { cursor: none; }
+        }
+        @media (pointer: coarse) {
+            #cursor, #cursor-ring { display: none; }
+            body { cursor: auto; }
+        }
+
+        #cursor {
+            position: fixed; width: 10px; height: 10px;
+            border-radius: 50%; background: var(--gold);
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%,-50%);
+            mix-blend-mode: screen;
+        }
+        #cursor-ring {
+            position: fixed; width: 40px; height: 40px;
+            border: 1px solid rgba(201,168,76,0.5);
+            border-radius: 50%; pointer-events: none; z-index: 9998;
+            transform: translate(-50%,-50%); transition: 0.1s;
+        }
+
+        /* ── BACKGROUNDS ───────────────────────────────── */
+        canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+        #stage { z-index: 1; }
+        #matrix-canvas { z-index: 0; opacity: 0.06; }
+        .vignette {
+            position: fixed; inset: 0; z-index: 2; pointer-events: none;
+            background: radial-gradient(circle at center, transparent 30%, var(--void) 90%);
+        }
+        .stars-svg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5; }
+
+        /* ── UI CONTAINER ──────────────────────────────── */
+        #ui {
+            position: fixed; inset: 0; z-index: 10;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            pointer-events: none;
+            padding: 20px;
+        }
+
+        /* ── HEADER ────────────────────────────────────── */
+        .header {
+            position: absolute; top: 0; left: 0; right: 0;
+            padding: 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo-mark {
+            font-family: var(--font-deco);
+            font-size: 1rem; letter-spacing: 0.2em;
+            color: var(--gold); text-shadow: 0 0 20px rgba(201,168,76,0.4);
+            pointer-events: auto;
+        }
+        .nav-desktop { display: none; } /* Oculto no mobile */
+
+        /* ── HERO TEXT ─────────────────────────────────── */
+        .hero-block {
+            text-align: center; position: relative; z-index: 2; margin-bottom: 2vh;
+        }
+        .hero-eyebrow {
+            font-size: 0.6rem; letter-spacing: 0.4em; color: var(--matrix);
+            text-transform: uppercase; margin-bottom: 10px; opacity: 0;
+        }
+        .hero-title {
+            font-family: var(--font-deco);
+            font-size: clamp(2.5rem, 9vw, 5rem); /* Ajuste responsivo */
+            color: var(--gold); letter-spacing: 0.1em; line-height: 1;
+            text-shadow: 0 0 30px rgba(201,168,76,0.4); opacity: 0;
+        }
+        .hero-sub {
+            font-family: var(--font-title); font-size: 0.7rem; letter-spacing: 0.4em;
+            color: rgba(255,255,255,0.4); margin-top: 10px; opacity: 0;
+        }
+
+        /* ── SPHERE & DEITIES ──────────────────────────── */
+        .sphere-area {
+            position: relative;
+            width: 75vw; height: 75vw; /* Quadrado responsivo */
+            max-width: 360px; max-height: 360px;
+            margin: 2vh auto;
+        }
+
+        .deity {
+            position: absolute;
+            display: flex; flex-direction: column; align-items: center;
+            pointer-events: auto; cursor: pointer; opacity: 0;
+            transition: transform 0.3s;
+        }
+        .deity:active { transform: scale(0.9); } /* Feedback de toque */
+        
+        .deity-orb {
+            width: 44px; height: 44px; /* Tamanho bom para toque */
+            border-radius: 50%; border: 1px solid var(--gold-dim);
+            background: rgba(6,6,15,0.8);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(201,168,76,0.15);
+            backdrop-filter: blur(4px);
+        }
+        .deity-name {
+            font-family: var(--font-title); font-size: 0.55rem;
+            letter-spacing: 0.2em; color: var(--gold); margin-top: 6px;
+            text-transform: uppercase; text-shadow: 0 0 5px #000;
+        }
+        /* Posições Ajustadas para Mobile */
+        .deity-anubis { bottom: -10px; left: 50%; transform: translateX(-50%); }
+        .deity-horus  { top: -10px; left: 50%; transform: translateX(-50%); }
+        .deity-isis   { top: 50%; left: -10px; transform: translateY(-50%); }
+        .deity-ra     { top: 50%; right: -10px; transform: translateY(-50%); }
+
+        /* ── BOTTOM AREA ───────────────────────────────── */
+        .manifesto {
+            position: absolute; bottom: 5vh; left: 0; right: 0;
+            text-align: center; opacity: 0; pointer-events: none;
+            padding: 0 20px;
+        }
+        .manifesto p {
+            font-size: 0.7rem; color: rgba(255,255,255,0.4);
+            line-height: 1.6; margin-bottom: 20px;
+        }
+        .cta-btn {
+            display: inline-block; pointer-events: auto;
+            border: 1px solid var(--gold); color: var(--gold);
+            padding: 12px 28px; font-size: 0.7rem; letter-spacing: 0.2em;
+            text-decoration: none; text-transform: uppercase;
+            background: rgba(6,6,15,0.8); backdrop-filter: blur(5px);
+        }
+
+        /* ── MENU HAMBURGUER ───────────────────────────── */
+        #menu-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 200;
+            background: none; border: none; cursor: pointer; pointer-events: auto;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        /* Mobile Nav Panel */
+        #nav-panel {
+            position: fixed; top: 0; right: 0; width: 85%; max-width: 300px; height: 100%;
+            background: rgba(10,10,20,0.98); border-left: 1px solid var(--gold-dim);
+            z-index: 190; transform: translateX(100%); transition: transform 0.4s ease;
+            display: flex; flex-direction: column; padding: 80px 30px;
+            backdrop-filter: blur(15px); pointer-events: auto;
+        }
+        #nav-panel.open { transform: translateX(0); }
+        .nav-item {
+            color: #fff; text-decoration: none; padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem; display: flex; align-items: center; gap: 10px;
+        }
+        .nav-item span { color: var(--gold); font-size: 1.2rem; }
+        
+        /* Botões de Auth no Menu Mobile */
+        .mobile-auth {
+            margin-top: auto; display: flex; gap: 10px; flex-direction: column;
+        }
+        .auth-btn {
+            text-align: center; padding: 12px; border-radius: 4px;
+            text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.2em;
+            text-decoration: none; font-weight: 600;
+        }
+        .btn-login { border: 1px solid var(--gold-dim); color: var(--gold); }
+        .btn-reg { background: var(--gold); color: #000; }
+
+        /* ── LOADER ────────────────────────────────────── */
+        #loader {
+            position: fixed; inset: 0; z-index: 1000; background: var(--void);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s;
+        }
+        .loader-icon { font-size: 3rem; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 50% { opacity: 0.5; transform: scale(0.9); } }
+
+        /* ── DESKTOP TWEAKS ────────────────────────────── */
+        @media (min-width: 769px) {
+            .nav-desktop { display: flex; gap: 30px; pointer-events: auto; }
+            .nav-desktop a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.7rem; letter-spacing: 0.2em; transition: 0.3s; }
+            .nav-desktop a:hover { color: var(--gold); }
+            .sphere-area { width: 450px; height: 450px; }
+            .deity-anubis { bottom: -30px; } .deity-horus { top: -30px; }
+            .deity-isis { left: -50px; } .deity-ra { right: -50px; }
+            #menu-btn { display: none; } /* Esconde hamburguer no desktop se quiser usar menu topo */
+            /* Se preferir manter o menu lateral sempre, remova o display:none acima */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader">
+    <div class="loader-icon">𓂀</div>
+    <div style="margin-top:15px; font-size:0.6rem; letter-spacing:0.4em; color:var(--gold);">CARREGANDO</div>
+</div>
+
+<!-- Backgrounds -->
+<canvas id="stage"></canvas>
+<canvas id="matrix-canvas"></canvas>
+<svg class="stars-svg" id="stars-svg"></svg>
+<div class="vignette"></div>
+
+<!-- Custom Cursor (Desktop Only via CSS) -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Header -->
+<div class="header" id="header" style="opacity:0;">
+    <div class="logo-mark">AKASHA</div>
+    <nav class="nav-desktop">
+        <a href="https://akashahub.com.br/login">LOGIN</a>
+        <a href="https://akashahub.com.br/cadastro" style="color:var(--gold);">CADASTRO</a>
+    </nav>
+    <button id="menu-btn" aria-label="Menu">
+        <svg width="24" height="16" viewBox="0 0 24 16" stroke="var(--gold)" stroke-width="2">
+            <line x1="0" y1="1" x2="24" y2="1"/>
+            <line x1="8" y1="8" x2="24" y2="8"/>
+            <line x1="0" y1="15" x2="24" y2="15"/>
+        </svg>
+    </button>
+</div>
+
+<!-- Mobile Navigation Panel -->
+<div id="nav-panel">
+    <div style="margin-bottom:30px; font-family:var(--font-deco); color:var(--gold); font-size:1.2rem;">NAVEGAÇÃO</div>
+    <a href="https://akashahub.com.br/mentoria" class="nav-item"><span>𓁹</span> Mentoria</a>
+    <a href="https://akashahub.com.br/vip" class="nav-item"><span>𓇳</span> Presencial</a>
+    <a href="https://akashahub.com.br/livre" class="nav-item"><span>𓂀</span> Grátis</a>
+    
+    <div class="mobile-auth">
+        <a href="https://akashahub.com.br/login" class="auth-btn btn-login">Entrar</a>
+        <a href="https://akashahub.com.br/cadastro" class="auth-btn btn-reg">Cadastrar</a>
+    </div>
+</div>
+
+<!-- Main UI -->
+<div id="ui">
+    <div class="hero-block">
+        <div class="hero-eyebrow" id="eyebrow">PORTAL ONLINE</div>
+        <h1 class="hero-title" id="title">AKASHA</h1>
+        <div class="hero-sub" id="sub">BIBLIOTECA UNIVERSAL</div>
+    </div>
+
+    <div class="sphere-area" id="sphere-area">
+        <!-- Deuses injetados via JS -->
+    </div>
+
+    <div class="manifesto" id="manifesto">
+        <p>A Matrix não pode te prender se você souber como sair.</p>
+        <a href="https://akashahub.com.br/cadastro" class="cta-btn">INICIAR</a>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<script>
+    // ── CONFIGURAÇÃO ──────────────────────────────
+    const DEITIES = [
+        { id:'anubis', name:'Anúbis', icon:'𓃣', url:'https://pay.hotmart.com/N104491126Y', cls:'deity-anubis' },
+        { id:'horus',  name:'Hórus',  icon:'𓁹', url:'https://pay.hotmart.com/O104491171B', cls:'deity-horus'  },
+        { id:'isis',   name:'Ísis',   icon:'𓋹', url:'https://pay.hotmart.com/F104491235U', cls:'deity-isis'   },
+        { id:'ra',     name:'Rá',     icon:'𓇳', url:'https://pay.hotmart.com/L104491291E', cls:'deity-ra'     }
+    ];
+
+    // ── UI LOGIC ──────────────────────────────────
+    const menuBtn = document.getElementById('menu-btn');
+    const navPanel = document.getElementById('nav-panel');
+    let isMenuOpen = false;
+
+    menuBtn.addEventListener('click', () => {
+        isMenuOpen = !isMenuOpen;
+        if(isMenuOpen) navPanel.classList.add('open');
+        else navPanel.classList.remove('open');
+    });
+
+    // Fechar menu ao clicar fora (simples)
+    document.addEventListener('click', (e) => {
+        if(isMenuOpen && !navPanel.contains(e.target) && !menuBtn.contains(e.target)) {
+            isMenuOpen = false;
+            navPanel.classList.remove('open');
+        }
+    });
+
+    // ── CURSOR (Desktop) ──────────────────────────
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    window.addEventListener('mousemove', (e) => {
+        gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+        gsap.to(ring, { x: e.clientX, y: e.clientY, duration: 0.3 });
+    });
+
+    // ── BUILD DEITIES ─────────────────────────────
+    const sphereArea = document.getElementById('sphere-area');
+    DEITIES.forEach(d => {
+        const el = document.createElement('div');
+        el.className = `deity ${d.cls}`;
+        el.id = d.id;
+        el.innerHTML = `
+            <div class="deity-orb">${d.icon}</div>
+            <div class="deity-name">${d.name}</div>
+        `;
+        el.addEventListener('click', () => window.location.href = d.url);
+        sphereArea.appendChild(el);
+    });
+
+    // ── ANIMATION INTRO ───────────────────────────
+    window.onload = () => {
+        // Remover Loader
+        const loader = document.getElementById('loader');
+        gsap.to(loader, { opacity: 0, duration: 1, onComplete: () => loader.remove() });
+
+        const tl = gsap.timeline({ delay: 0.5 });
+        tl.to('#header', { opacity: 1, duration: 1 })
+          .to('#eyebrow', { opacity: 1, y: 0, duration: 1 }, '-=0.5')
+          .to('#title', { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.7)' }, '-=0.7')
+          .to('#sub', { opacity: 1, y: 0, duration: 1 }, '-=0.8')
+          .to('.deity', { opacity: 1, scale: 1, duration: 0.5, stagger: 0.2 }, '-=0.5')
+          .to('#manifesto', { opacity: 1, y: 0, duration: 1 }, '-=0.5');
+    };
+
+    // ── THREE.JS (Lightweight) ────────────────────
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 100);
+    camera.position.z = 6;
+
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('stage'), alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Save battery
+
+    // Esfera Externa
+    const geo = new THREE.IcosahedronGeometry(1.8, 1);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xC9A84C, wireframe: true, transparent: true, opacity: 0.15 });
+    const sphere = new THREE.Mesh(geo, mat);
+    scene.add(sphere);
+
+    // Núcleo
+    const coreGeo = new THREE.IcosahedronGeometry(1.2, 0);
+    const coreMat = new THREE.MeshBasicMaterial({ color: 0x0A0A18 });
+    const core = new THREE.Mesh(coreGeo, coreMat);
+    scene.add(core);
+
+    // Partículas (Menos para mobile)
+    const pCount = window.innerWidth < 768 ? 200 : 500;
+    const pGeo = new THREE.BufferGeometry();
+    const pPos = new Float32Array(pCount * 3);
+    for(let i=0; i<pCount*3; i++) pPos[i] = (Math.random()-0.5) * 10;
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({ color: 0xC9A84C, size: 0.04, transparent: true, opacity: 0.4 });
+    const particles = new THREE.Points(pGeo, pMat);
+    scene.add(particles);
+
+    // Luzes
+    const light = new THREE.PointLight(0xC9A84C, 2, 10);
+    light.position.set(2,2,2);
+    scene.add(light);
+
+    // Animation Loop
+    const clock = new THREE.Clock();
+    function animate() {
+        requestAnimationFrame(animate);
+        const t = clock.getElapsedTime();
+        
+        sphere.rotation.y = t * 0.1;
+        sphere.rotation.x = Math.sin(t * 0.2) * 0.1;
+        
+        core.rotation.y = -t * 0.2;
+        
+        particles.rotation.y = t * 0.05;
+        
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // Resize Handler
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Matrix Rain (Simplificado)
+    const c2 = document.getElementById('matrix-canvas');
+    const ctx = c2.getContext('2d');
+    c2.width = window.innerWidth; c2.height = window.innerHeight;
+    const chars = '01';
+    const cols = Math.floor(c2.width/20);
+    const drops = Array(cols).fill(1);
+    
+    setInterval(() => {
+        ctx.fillStyle = 'rgba(6,6,15,0.1)';
+        ctx.fillRect(0,0,c2.width, c2.height);
+        ctx.fillStyle = '#0F0';
+        ctx.font = '12px monospace';
+        drops.forEach((y,i) => {
+            const char = chars[Math.floor(Math.random()*chars.length)];
+            ctx.fillText(char, i*20, y*20);
+            if(y*20 > c2.height && Math.random() > 0.98) drops[i] = 0;
+            drops[i]++;
+        });
+    }, 80);
+
+</script>
+</body>
+</html>            overflow: hidden;
             background: var(--void);
             color: #fff;
             font-family: var(--font-body);
