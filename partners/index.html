@@ -27,7 +27,6 @@
             font-family: var(--font-body);
             overflow-x: hidden;
             overscroll-behavior: none;
-            /* Previne seleção de texto acidental no toque */
             -webkit-user-select: none;
             user-select: none;
         }
@@ -35,6 +34,503 @@
         #webgl-canvas {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 1; pointer-events: none;
+        }
+
+        /* Interface Flutuante Mobile-Friendly */
+        .ui-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; pointer-events: none; /* Importante: deixa passar o scroll/toque no fundo */
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 1.5rem;
+            mix-blend-mode: exclusion;
+        }
+
+        /* --- AJUSTE DA LOGO --- */
+        .brand { 
+            pointer-events: auto; /* Permite o clique no link */
+            display: block;
+            width: fit-content;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .brand:active {
+            opacity: 0.6; /* Efeito visual ao tocar */
+        }
+
+        .brand img {
+            height: 45px; /* Altura ideal para mobile header */
+            width: auto;
+            display: block;
+            object-fit: contain;
+        }
+        /* ---------------------- */
+        
+        .status { 
+            font-size: 0.6rem; 
+            text-transform: uppercase; 
+            opacity: 0.7; 
+            align-self: flex-end; 
+        }
+
+        .scroll-container {
+            position: relative; z-index: 5; width: 100%;
+        }
+
+        section {
+            min-height: 100vh; 
+            min-height: 100dvh; 
+            width: 100%;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            padding: 1rem;
+        }
+
+        .content-wrap {
+            text-align: center;
+            pointer-events: auto;
+            width: 100%;
+            max-width: 600px;
+            background: radial-gradient(circle at center, rgba(5,5,5,0.4) 0%, transparent 80%); 
+            padding: 2rem 1rem;
+            border-radius: 20px;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 10vw, 6rem);
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-bottom: 1rem;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.8);
+        }
+        
+        h1.fill { -webkit-text-stroke: 0; color: var(--c-light); }
+
+        h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 8vw, 4rem);
+            margin-bottom: 1rem;
+            line-height: 1;
+        }
+
+        p {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            line-height: 1.5;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+
+        .price-tag {
+            display: block;
+            font-family: var(--font-display);
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            color: var(--c-accent);
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1.2rem 2.5rem;
+            border: 1px solid var(--c-light);
+            color: var(--c-light);
+            text-transform: uppercase;
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            margin-top: 1rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrap { padding: 1rem 0.5rem; }
+            h1 { -webkit-text-stroke: 0.5px rgba(255,255,255,0.8); }
+            section { padding-top: 4rem; padding-bottom: 4rem; }
+        }
+
+        /* POPUP LEAD CAPTURE */
+        #lead-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+            z-index: 999; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        #lead-popup.active { display: flex; opacity: 1; }
+        
+        .popup-card {
+            background: #111; border: 1px solid var(--c-light);
+            padding: 2rem; width: 90%; max-width: 400px;
+            position: relative; text-align: left;
+        }
+        .popup-close {
+            position: absolute; top: 1rem; right: 1rem;
+            background: none; border: none; color: #fff; font-size: 1.5rem;
+        }
+        .popup-title { font-family: var(--font-display); margin-bottom: 0.5rem; }
+        .popup-sub { font-size: 0.8rem; color: var(--c-accent); margin-bottom: 1.5rem; }
+        
+        input {
+            width: 100%; padding: 1rem; margin-bottom: 1rem;
+            background: #222; border: 1px solid #333; color: #fff;
+            font-family: var(--font-body);
+        }
+        .btn-submit {
+            width: 100%; background: var(--c-accent); border: none; padding: 1rem;
+            color: #fff; font-family: var(--font-display); text-transform: uppercase;
+        }
+
+        .loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--c-dark); z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-display);
+            transition: opacity 1s ease;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loader">INITIALIZING AKASHA<br>MOBILE PROTOCOL...</div>
+
+    <div class="ui-layer">
+        <!-- LOGO ATUALIZADA AQUI -->
+        <a href="https://akashahub.com.br" class="brand">
+            <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_1_rnj2cs.png" alt="Akasha Logo">
+        </a>
+        <div class="status">System: Online</div>
+    </div>
+
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- LEAD POPUP -->
+    <div id="lead-popup">
+        <div class="popup-card">
+            <button class="popup-close" onclick="closePopup()">×</button>
+            <h3 class="popup-title">Acesso Restrito</h3>
+            <p class="popup-sub" id="popup-detail">Plano selecionado</p>
+            <input type="text" id="lead-name" placeholder="Seu Nome">
+            <input type="email" id="lead-email" placeholder="Seu E-mail">
+            <button class="btn-submit" onclick="submitLead()">Acessar via WhatsApp</button>
+        </div>
+    </div>
+
+    <div class="scroll-container">
+        <!-- Intro -->
+        <section id="s-intro">
+            <div class="content-wrap">
+                <h1>Consciência<br>Coletiva</h1>
+                <p>Onde visões se alinham e o éter se materializa.</p>
+            </div>
+        </section>
+
+        <!-- Manifesto -->
+        <section id="s-manifesto">
+            <div class="content-wrap">
+                <p style="font-size: clamp(1.2rem, 5vw, 2rem);">Não é sobre aparecer.</p>
+                <h2 style="color: var(--c-accent);">É sobre Pertencer.</h2>
+                <p>Conectamos profissionais e marcas que compartilham a visão de elevar o nível do jogo.</p>
+            </div>
+        </section>
+
+        <!-- Tier 1 -->
+        <section id="s-tier1" data-color="#808080">
+            <div class="content-wrap">
+                <span class="price-tag">INICIANTE<br>R$ 197/mês</span>
+                <h2>Quero<br>Existir</h2>
+                <p>70% reinvestido. Seu nome no grid. O início da materialização.</p>
+                <button class="btn" onclick="openPopup('Iniciante', 'R$ 197')">Iniciar</button>
+            </div>
+        </section>
+
+        <!-- Tier 2 -->
+        <section id="s-tier2" data-color="#00d4ff">
+            <div class="content-wrap">
+                <span class="price-tag">DESTAQUE<br>R$ 997/mês</span>
+                <h2 class="fill">Quero<br>Crescer</h2>
+                <p>Marketing exclusivo. Menções em Lives. Vídeos curtos. A energia cinética assume o controle.</p>
+                <button class="btn" onclick="openPopup('Destaque', 'R$ 997')">Acelerar</button>
+            </div>
+        </section>
+
+        <!-- Tier 3 -->
+        <section id="s-tier3" data-color="#ff4d00">
+            <div class="content-wrap">
+                <span class="price-tag">OFICIAL<br>R$ 2.497/mês</span>
+                <h1 class="fill" style="color: var(--c-accent); font-size: clamp(2.5rem, 9vw, 5rem);">Dominar<br>Presença</h1>
+                <p>Selo Parceiro Oficial. Onipresença em 12 lives/mês. Estratégia personalizada.</p>
+                <button class="btn" onclick="openPopup('Oficial', 'R$ 2.497')">Reivindicar</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <section style="height: 30vh;">
+            <div class="content-wrap">
+                <p style="font-size: 0.8rem; opacity: 0.5;">AKASHA © 2024</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bibliotecas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        // --- LEAD SYSTEM ---
+        let selectedPlan = {};
+        function openPopup(plan, price) {
+            selectedPlan = { plan, price };
+            document.getElementById('popup-detail').innerText = `${plan} • ${price}`;
+            document.getElementById('lead-popup').classList.add('active');
+        }
+        function closePopup() {
+            document.getElementById('lead-popup').classList.remove('active');
+        }
+        function submitLead() {
+            const name = document.getElementById('lead-name').value;
+            const email = document.getElementById('lead-email').value;
+            if(!name || !email) return alert('Preencha os dados.');
+            
+            const msg = `*NOVO LEAD AKASHA*\nPlano: ${selectedPlan.plan}\nValor: ${selectedPlan.price}\nNome: ${name}\nEmail: ${email}`;
+            window.open(`https://wa.me/5571983448621?text=${encodeURIComponent(msg)}`, '_blank');
+            closePopup();
+        }
+
+        // --- DETECÇÃO MOBILE ---
+        const isMobile = window.innerWidth < 768;
+
+        // --- 1. SETUP THREE.JS ---
+        const canvas = document.querySelector('#webgl-canvas');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050505, 0.02);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = isMobile ? 6.5 : 5; 
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2)); 
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+
+        // --- 2. ILUMINAÇÃO ---
+        const ambientLight = new THREE.AmbientLight(0x404040, 2);
+        scene.add(ambientLight);
+
+        const pointLight1 = new THREE.PointLight(0xffffff, 2, 50);
+        pointLight1.position.set(5, 5, 5);
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0x4444ff, 5, 50);
+        pointLight2.position.set(-5, -5, 2);
+        scene.add(pointLight2);
+        
+        const accentLight = new THREE.PointLight(0xff4d00, 0, 50);
+        accentLight.position.set(0, 0, 2);
+        scene.add(accentLight);
+
+        // --- 3. O ARTEFATO (Shader) ---
+        const vertexShader = `
+            uniform float uTime;
+            uniform float uDistortion;
+            varying vec2 vUv;
+            varying float vDisplacement;
+            
+            vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+            vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+            vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+            vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+            float snoise(vec3 v) {
+                const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+                const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+                vec3 i  = floor(v + dot(v, C.yyy) );
+                vec3 x0 = v - i + dot(i, C.xxx) ;
+                vec3 g = step(x0.yzx, x0.xyz);
+                vec3 l = 1.0 - g;
+                vec3 i1 = min( g.xyz, l.zxy );
+                vec3 i2 = max( g.xyz, l.zxy );
+                vec3 x1 = x0 - i1 + C.xxx;
+                vec3 x2 = x0 - i2 + C.yyy;
+                vec3 x3 = x0 - D.yyy;
+                i = mod289(i);
+                vec4 p = permute( permute( permute(
+                            i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+                        + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
+                        + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+                float n_ = 0.142857142857;
+                vec3  ns = n_ * D.wyz - D.xzx;
+                vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+                vec4 x_ = floor(j * ns.z);
+                vec4 y_ = floor(j - 7.0 * x_ );
+                vec4 x = x_ *ns.x + ns.yyyy;
+                vec4 y = y_ *ns.x + ns.yyyy;
+                vec4 h = 1.0 - abs(x) - abs(y);
+                vec4 b0 = vec4( x.xy, y.xy );
+                vec4 b1 = vec4( x.zw, y.zw );
+                vec4 s0 = floor(b0)*2.0 + 1.0;
+                vec4 s1 = floor(b1)*2.0 + 1.0;
+                vec4 sh = -step(h, vec4(0.0));
+                vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+                vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+                vec3 p0 = vec3(a0.xy,h.x);
+                vec3 p1 = vec3(a0.zw,h.y);
+                vec3 p2 = vec3(a1.xy,h.z);
+                vec3 p3 = vec3(a1.zw,h.w);
+                vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+                p0 *= norm.x;
+                p1 *= norm.y;
+                p2 *= norm.z;
+                p3 *= norm.w;
+                vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+                m = m * m;
+                return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
+            }
+            void main() {
+                vUv = uv;
+                float noise = snoise(position * 1.5 + uTime * 0.5);
+                vDisplacement = noise;
+                vec3 newPos = position + normal * (noise * uDistortion);
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
+            }
+        `;
+
+        const fragmentShader = `
+            uniform float uTime;
+            uniform vec3 uColor;
+            uniform float uAlpha;
+            varying float vDisplacement;
+            void main() {
+                float intensity = 0.5 + vDisplacement * 2.0;
+                vec3 glow = uColor * intensity;
+                gl_FragColor = vec4(glow, uAlpha);
+            }
+        `;
+
+        const geometry = new THREE.IcosahedronGeometry(1.5, isMobile ? 40 : 60);
+        const material = new THREE.ShaderMaterial({
+            vertexShader,
+            fragmentShader,
+            uniforms: {
+                uTime: { value: 0 },
+                uDistortion: { value: 0.1 },
+                uColor: { value: new THREE.Color('#444444') },
+                uAlpha: { value: 1.0 }
+            },
+            wireframe: true,
+            transparent: true,
+            side: THREE.DoubleSide
+        });
+
+        const artifact = new THREE.Mesh(geometry, material);
+        scene.add(artifact);
+
+        // Partículas
+        const particlesGeom = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        const posArray = new Float32Array(particlesCount * 3);
+        for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 15;
+        particlesGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMat = new THREE.PointsMaterial({ size: 0.02, color: 0xffffff, transparent: true, opacity: 0.5 });
+        const particlesMesh = new THREE.Points(particlesGeom, particlesMat);
+        scene.add(particlesMesh);
+
+        // --- 4. POST-PROCESSING ---
+        const composer = new THREE.EffectComposer(renderer);
+        const renderPass = new THREE.RenderPass(scene, camera);
+        composer.addPass(renderPass);
+        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), isMobile ? 1.0 : 1.5, 0.4, 0.85);
+        composer.addPass(bloomPass);
+
+        // --- 5. LOOP ---
+        const clock = new THREE.Clock();
+        function animate() {
+            const time = clock.getElapsedTime();
+            material.uniforms.uTime.value = time;
+            artifact.rotation.y = time * 0.1;
+            particlesMesh.rotation.y = time * 0.05;
+            composer.render();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- 6. SCROLL ANIMATION ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        window.addEventListener('load', () => {
+            gsap.to('.loader', { opacity: 0, duration: 1, pointerEvents: 'none' });
+            initScroll();
+        });
+
+        function initScroll() {
+            document.querySelectorAll('section').forEach(section => {
+                gsap.to(section, {
+                    scrollTrigger: { trigger: section, start: "top 70%", end: "top 30%", scrub: 1 },
+                    opacity: 1, y: 0, duration: 1
+                });
+            });
+
+            const tl = gsap.timeline({
+                scrollTrigger: { trigger: ".scroll-container", start: "top top", end: "bottom bottom", scrub: 1.5 }
+            });
+
+            // 1. Intro -> Manifesto
+            tl.to(camera.position, { z: isMobile ? 5.5 : 4, duration: 2 });
+            tl.to(material.uniforms.uDistortion, { value: 0.2 }, "<");
+
+            // 2. Manifesto -> Tier 1
+            tl.to(artifact.rotation, { x: 1, z: 0.5, duration: 2 });
+            tl.to(material.uniforms.uColor.value, { 
+                r: 0.5, g: 0.5, b: 0.5, onUpdate: () => material.uniforms.uColor.value.set('#808080')
+            }, "<");
+            tl.to(camera.position, { 
+                x: isMobile ? 0 : -2, y: isMobile ? 1 : 0, z: isMobile ? 5 : 3.5, duration: 2 
+            }, "<");
+
+            // 3. Tier 1 -> Tier 2
+            tl.to(material, { wireframe: false, duration: 1 });
+            tl.to(material.uniforms.uDistortion, { value: 0.6, duration: 2 }, "<");
+            tl.to(material.uniforms.uColor.value, { onUpdate: () => material.uniforms.uColor.value.set('#00d4ff') }, "<");
+            tl.to(pointLight2, { intensity: 8, duration: 2 }, "<");
+            tl.to(camera.position, { 
+                x: isMobile ? 0 : 2, y: isMobile ? -0.5 : 1, z: 3, duration: 2 
+            }, "<");
+
+            // 4. Tier 2 -> Tier 3
+            tl.to(material.uniforms.uDistortion, { value: 1.2, duration: 2 });
+            tl.to(material.uniforms.uColor.value, { onUpdate: () => material.uniforms.uColor.value.set('#ff4d00') }, "<");
+            tl.to(bloomPass, { strength: 3.0, radius: 1.0, duration: 2 }, "<");
+            tl.to(accentLight, { intensity: 10, duration: 2 }, "<");
+            tl.to(camera.position, { x: 0, y: 0, z: isMobile ? 3.5 : 2.2, duration: 2 }, "<");
+
+            // 5. Final
+            tl.to(camera.position, { z: 0.5, duration: 2 });
+            tl.to(material.uniforms.uAlpha, { value: 0, duration: 1 }, "<");
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>            z-index: 1; pointer-events: none;
         }
 
         /* Interface Flutuante Mobile-Friendly */
