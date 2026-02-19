@@ -2,440 +2,34 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="AkashaHub — Portal de Despertar.">
-    <title>AKASHA HUB | Mobile Harmony</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="AkashaHub — Portal de Despertar. Saia da Matrix. Governe sua Realidade.">
+    <title>AKASHA HUB | Portal de Despertar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --void:       #06060F;
+            --deep:       #0A0A18;
             --gold:       #C9A84C;
             --gold-bright:#FFD700;
             --gold-dim:   #8A6E2A;
             --matrix:     #00FF41;
+            --matrix-dim: #003B0F;
+            --cosmic:     #4A90E2;
+            --cosmic-dim: #1A3A6A;
+            --white-e:    rgba(255,255,255,0.85);
             --font-deco:  'Cinzel Decorative', serif;
             --font-title: 'Cinzel', serif;
             --font-body:  'Rajdhani', sans-serif;
         }
 
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
         html, body {
             width: 100%; height: 100%;
-            overflow: hidden; /* Impede scroll no stage principal */
-            background: var(--void);
-            color: #fff;
-            font-family: var(--font-body);
-        }
-
-        /* ── CURSOR (Apenas Desktop) ───────────────────── */
-        @media (pointer: fine) {
-            #cursor, #cursor-ring { display: block; }
-            body { cursor: none; }
-        }
-        @media (pointer: coarse) {
-            #cursor, #cursor-ring { display: none; }
-            body { cursor: auto; }
-        }
-
-        #cursor {
-            position: fixed; width: 10px; height: 10px;
-            border-radius: 50%; background: var(--gold);
-            pointer-events: none; z-index: 9999;
-            transform: translate(-50%,-50%);
-            mix-blend-mode: screen;
-        }
-        #cursor-ring {
-            position: fixed; width: 40px; height: 40px;
-            border: 1px solid rgba(201,168,76,0.5);
-            border-radius: 50%; pointer-events: none; z-index: 9998;
-            transform: translate(-50%,-50%); transition: 0.1s;
-        }
-
-        /* ── BACKGROUNDS ───────────────────────────────── */
-        canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
-        #stage { z-index: 1; }
-        #matrix-canvas { z-index: 0; opacity: 0.06; }
-        .vignette {
-            position: fixed; inset: 0; z-index: 2; pointer-events: none;
-            background: radial-gradient(circle at center, transparent 30%, var(--void) 90%);
-        }
-        .stars-svg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5; }
-
-        /* ── UI CONTAINER ──────────────────────────────── */
-        #ui {
-            position: fixed; inset: 0; z-index: 10;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            pointer-events: none;
-            padding: 20px;
-        }
-
-        /* ── HEADER ────────────────────────────────────── */
-        .header {
-            position: absolute; top: 0; left: 0; right: 0;
-            padding: 24px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo-mark {
-            font-family: var(--font-deco);
-            font-size: 1rem; letter-spacing: 0.2em;
-            color: var(--gold); text-shadow: 0 0 20px rgba(201,168,76,0.4);
-            pointer-events: auto;
-        }
-        .nav-desktop { display: none; } /* Oculto no mobile */
-
-        /* ── HERO TEXT ─────────────────────────────────── */
-        .hero-block {
-            text-align: center; position: relative; z-index: 2; margin-bottom: 2vh;
-        }
-        .hero-eyebrow {
-            font-size: 0.6rem; letter-spacing: 0.4em; color: var(--matrix);
-            text-transform: uppercase; margin-bottom: 10px; opacity: 0;
-        }
-        .hero-title {
-            font-family: var(--font-deco);
-            font-size: clamp(2.5rem, 9vw, 5rem); /* Ajuste responsivo */
-            color: var(--gold); letter-spacing: 0.1em; line-height: 1;
-            text-shadow: 0 0 30px rgba(201,168,76,0.4); opacity: 0;
-        }
-        .hero-sub {
-            font-family: var(--font-title); font-size: 0.7rem; letter-spacing: 0.4em;
-            color: rgba(255,255,255,0.4); margin-top: 10px; opacity: 0;
-        }
-
-        /* ── SPHERE & DEITIES ──────────────────────────── */
-        .sphere-area {
-            position: relative;
-            width: 75vw; height: 75vw; /* Quadrado responsivo */
-            max-width: 360px; max-height: 360px;
-            margin: 2vh auto;
-        }
-
-        .deity {
-            position: absolute;
-            display: flex; flex-direction: column; align-items: center;
-            pointer-events: auto; cursor: pointer; opacity: 0;
-            transition: transform 0.3s;
-        }
-        .deity:active { transform: scale(0.9); } /* Feedback de toque */
-        
-        .deity-orb {
-            width: 44px; height: 44px; /* Tamanho bom para toque */
-            border-radius: 50%; border: 1px solid var(--gold-dim);
-            background: rgba(6,6,15,0.8);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: 0 0 15px rgba(201,168,76,0.15);
-            backdrop-filter: blur(4px);
-        }
-        .deity-name {
-            font-family: var(--font-title); font-size: 0.55rem;
-            letter-spacing: 0.2em; color: var(--gold); margin-top: 6px;
-            text-transform: uppercase; text-shadow: 0 0 5px #000;
-        }
-        /* Posições Ajustadas para Mobile */
-        .deity-anubis { bottom: -10px; left: 50%; transform: translateX(-50%); }
-        .deity-horus  { top: -10px; left: 50%; transform: translateX(-50%); }
-        .deity-isis   { top: 50%; left: -10px; transform: translateY(-50%); }
-        .deity-ra     { top: 50%; right: -10px; transform: translateY(-50%); }
-
-        /* ── BOTTOM AREA ───────────────────────────────── */
-        .manifesto {
-            position: absolute; bottom: 5vh; left: 0; right: 0;
-            text-align: center; opacity: 0; pointer-events: none;
-            padding: 0 20px;
-        }
-        .manifesto p {
-            font-size: 0.7rem; color: rgba(255,255,255,0.4);
-            line-height: 1.6; margin-bottom: 20px;
-        }
-        .cta-btn {
-            display: inline-block; pointer-events: auto;
-            border: 1px solid var(--gold); color: var(--gold);
-            padding: 12px 28px; font-size: 0.7rem; letter-spacing: 0.2em;
-            text-decoration: none; text-transform: uppercase;
-            background: rgba(6,6,15,0.8); backdrop-filter: blur(5px);
-        }
-
-        /* ── MENU HAMBURGUER ───────────────────────────── */
-        #menu-btn {
-            position: fixed; top: 20px; right: 20px; z-index: 200;
-            background: none; border: none; cursor: pointer; pointer-events: auto;
-            width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        /* Mobile Nav Panel */
-        #nav-panel {
-            position: fixed; top: 0; right: 0; width: 85%; max-width: 300px; height: 100%;
-            background: rgba(10,10,20,0.98); border-left: 1px solid var(--gold-dim);
-            z-index: 190; transform: translateX(100%); transition: transform 0.4s ease;
-            display: flex; flex-direction: column; padding: 80px 30px;
-            backdrop-filter: blur(15px); pointer-events: auto;
-        }
-        #nav-panel.open { transform: translateX(0); }
-        .nav-item {
-            color: #fff; text-decoration: none; padding: 15px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.9rem; display: flex; align-items: center; gap: 10px;
-        }
-        .nav-item span { color: var(--gold); font-size: 1.2rem; }
-        
-        /* Botões de Auth no Menu Mobile */
-        .mobile-auth {
-            margin-top: auto; display: flex; gap: 10px; flex-direction: column;
-        }
-        .auth-btn {
-            text-align: center; padding: 12px; border-radius: 4px;
-            text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.2em;
-            text-decoration: none; font-weight: 600;
-        }
-        .btn-login { border: 1px solid var(--gold-dim); color: var(--gold); }
-        .btn-reg { background: var(--gold); color: #000; }
-
-        /* ── LOADER ────────────────────────────────────── */
-        #loader {
-            position: fixed; inset: 0; z-index: 1000; background: var(--void);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.8s;
-        }
-        .loader-icon { font-size: 3rem; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 50% { opacity: 0.5; transform: scale(0.9); } }
-
-        /* ── DESKTOP TWEAKS ────────────────────────────── */
-        @media (min-width: 769px) {
-            .nav-desktop { display: flex; gap: 30px; pointer-events: auto; }
-            .nav-desktop a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.7rem; letter-spacing: 0.2em; transition: 0.3s; }
-            .nav-desktop a:hover { color: var(--gold); }
-            .sphere-area { width: 450px; height: 450px; }
-            .deity-anubis { bottom: -30px; } .deity-horus { top: -30px; }
-            .deity-isis { left: -50px; } .deity-ra { right: -50px; }
-            #menu-btn { display: none; } /* Esconde hamburguer no desktop se quiser usar menu topo */
-            /* Se preferir manter o menu lateral sempre, remova o display:none acima */
-        }
-    </style>
-</head>
-<body>
-
-<!-- Loader -->
-<div id="loader">
-    <div class="loader-icon">𓂀</div>
-    <div style="margin-top:15px; font-size:0.6rem; letter-spacing:0.4em; color:var(--gold);">CARREGANDO</div>
-</div>
-
-<!-- Backgrounds -->
-<canvas id="stage"></canvas>
-<canvas id="matrix-canvas"></canvas>
-<svg class="stars-svg" id="stars-svg"></svg>
-<div class="vignette"></div>
-
-<!-- Custom Cursor (Desktop Only via CSS) -->
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
-
-<!-- Header -->
-<div class="header" id="header" style="opacity:0;">
-    <div class="logo-mark">AKASHA</div>
-    <nav class="nav-desktop">
-        <a href="https://akashahub.com.br/login">LOGIN</a>
-        <a href="https://akashahub.com.br/cadastro" style="color:var(--gold);">CADASTRO</a>
-    </nav>
-    <button id="menu-btn" aria-label="Menu">
-        <svg width="24" height="16" viewBox="0 0 24 16" stroke="var(--gold)" stroke-width="2">
-            <line x1="0" y1="1" x2="24" y2="1"/>
-            <line x1="8" y1="8" x2="24" y2="8"/>
-            <line x1="0" y1="15" x2="24" y2="15"/>
-        </svg>
-    </button>
-</div>
-
-<!-- Mobile Navigation Panel -->
-<div id="nav-panel">
-    <div style="margin-bottom:30px; font-family:var(--font-deco); color:var(--gold); font-size:1.2rem;">NAVEGAÇÃO</div>
-    <a href="https://akashahub.com.br/mentoria" class="nav-item"><span>𓁹</span> Mentoria</a>
-    <a href="https://akashahub.com.br/vip" class="nav-item"><span>𓇳</span> Presencial</a>
-    <a href="https://akashahub.com.br/livre" class="nav-item"><span>𓂀</span> Grátis</a>
-    
-    <div class="mobile-auth">
-        <a href="https://akashahub.com.br/login" class="auth-btn btn-login">Entrar</a>
-        <a href="https://akashahub.com.br/cadastro" class="auth-btn btn-reg">Cadastrar</a>
-    </div>
-</div>
-
-<!-- Main UI -->
-<div id="ui">
-    <div class="hero-block">
-        <div class="hero-eyebrow" id="eyebrow">PORTAL ONLINE</div>
-        <h1 class="hero-title" id="title">AKASHA</h1>
-        <div class="hero-sub" id="sub">BIBLIOTECA UNIVERSAL</div>
-    </div>
-
-    <div class="sphere-area" id="sphere-area">
-        <!-- Deuses injetados via JS -->
-    </div>
-
-    <div class="manifesto" id="manifesto">
-        <p>A Matrix não pode te prender se você souber como sair.</p>
-        <a href="https://akashahub.com.br/cadastro" class="cta-btn">INICIAR</a>
-    </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-<script>
-    // ── CONFIGURAÇÃO ──────────────────────────────
-    const DEITIES = [
-        { id:'anubis', name:'Anúbis', icon:'𓃣', url:'https://pay.hotmart.com/N104491126Y', cls:'deity-anubis' },
-        { id:'horus',  name:'Hórus',  icon:'𓁹', url:'https://pay.hotmart.com/O104491171B', cls:'deity-horus'  },
-        { id:'isis',   name:'Ísis',   icon:'𓋹', url:'https://pay.hotmart.com/F104491235U', cls:'deity-isis'   },
-        { id:'ra',     name:'Rá',     icon:'𓇳', url:'https://pay.hotmart.com/L104491291E', cls:'deity-ra'     }
-    ];
-
-    // ── UI LOGIC ──────────────────────────────────
-    const menuBtn = document.getElementById('menu-btn');
-    const navPanel = document.getElementById('nav-panel');
-    let isMenuOpen = false;
-
-    menuBtn.addEventListener('click', () => {
-        isMenuOpen = !isMenuOpen;
-        if(isMenuOpen) navPanel.classList.add('open');
-        else navPanel.classList.remove('open');
-    });
-
-    // Fechar menu ao clicar fora (simples)
-    document.addEventListener('click', (e) => {
-        if(isMenuOpen && !navPanel.contains(e.target) && !menuBtn.contains(e.target)) {
-            isMenuOpen = false;
-            navPanel.classList.remove('open');
-        }
-    });
-
-    // ── CURSOR (Desktop) ──────────────────────────
-    const cursor = document.getElementById('cursor');
-    const ring = document.getElementById('cursor-ring');
-    window.addEventListener('mousemove', (e) => {
-        gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-        gsap.to(ring, { x: e.clientX, y: e.clientY, duration: 0.3 });
-    });
-
-    // ── BUILD DEITIES ─────────────────────────────
-    const sphereArea = document.getElementById('sphere-area');
-    DEITIES.forEach(d => {
-        const el = document.createElement('div');
-        el.className = `deity ${d.cls}`;
-        el.id = d.id;
-        el.innerHTML = `
-            <div class="deity-orb">${d.icon}</div>
-            <div class="deity-name">${d.name}</div>
-        `;
-        el.addEventListener('click', () => window.location.href = d.url);
-        sphereArea.appendChild(el);
-    });
-
-    // ── ANIMATION INTRO ───────────────────────────
-    window.onload = () => {
-        // Remover Loader
-        const loader = document.getElementById('loader');
-        gsap.to(loader, { opacity: 0, duration: 1, onComplete: () => loader.remove() });
-
-        const tl = gsap.timeline({ delay: 0.5 });
-        tl.to('#header', { opacity: 1, duration: 1 })
-          .to('#eyebrow', { opacity: 1, y: 0, duration: 1 }, '-=0.5')
-          .to('#title', { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.7)' }, '-=0.7')
-          .to('#sub', { opacity: 1, y: 0, duration: 1 }, '-=0.8')
-          .to('.deity', { opacity: 1, scale: 1, duration: 0.5, stagger: 0.2 }, '-=0.5')
-          .to('#manifesto', { opacity: 1, y: 0, duration: 1 }, '-=0.5');
-    };
-
-    // ── THREE.JS (Lightweight) ────────────────────
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 100);
-    camera.position.z = 6;
-
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('stage'), alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Save battery
-
-    // Esfera Externa
-    const geo = new THREE.IcosahedronGeometry(1.8, 1);
-    const mat = new THREE.MeshBasicMaterial({ color: 0xC9A84C, wireframe: true, transparent: true, opacity: 0.15 });
-    const sphere = new THREE.Mesh(geo, mat);
-    scene.add(sphere);
-
-    // Núcleo
-    const coreGeo = new THREE.IcosahedronGeometry(1.2, 0);
-    const coreMat = new THREE.MeshBasicMaterial({ color: 0x0A0A18 });
-    const core = new THREE.Mesh(coreGeo, coreMat);
-    scene.add(core);
-
-    // Partículas (Menos para mobile)
-    const pCount = window.innerWidth < 768 ? 200 : 500;
-    const pGeo = new THREE.BufferGeometry();
-    const pPos = new Float32Array(pCount * 3);
-    for(let i=0; i<pCount*3; i++) pPos[i] = (Math.random()-0.5) * 10;
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({ color: 0xC9A84C, size: 0.04, transparent: true, opacity: 0.4 });
-    const particles = new THREE.Points(pGeo, pMat);
-    scene.add(particles);
-
-    // Luzes
-    const light = new THREE.PointLight(0xC9A84C, 2, 10);
-    light.position.set(2,2,2);
-    scene.add(light);
-
-    // Animation Loop
-    const clock = new THREE.Clock();
-    function animate() {
-        requestAnimationFrame(animate);
-        const t = clock.getElapsedTime();
-        
-        sphere.rotation.y = t * 0.1;
-        sphere.rotation.x = Math.sin(t * 0.2) * 0.1;
-        
-        core.rotation.y = -t * 0.2;
-        
-        particles.rotation.y = t * 0.05;
-        
-        renderer.render(scene, camera);
-    }
-    animate();
-
-    // Resize Handler
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    // Matrix Rain (Simplificado)
-    const c2 = document.getElementById('matrix-canvas');
-    const ctx = c2.getContext('2d');
-    c2.width = window.innerWidth; c2.height = window.innerHeight;
-    const chars = '01';
-    const cols = Math.floor(c2.width/20);
-    const drops = Array(cols).fill(1);
-    
-    setInterval(() => {
-        ctx.fillStyle = 'rgba(6,6,15,0.1)';
-        ctx.fillRect(0,0,c2.width, c2.height);
-        ctx.fillStyle = '#0F0';
-        ctx.font = '12px monospace';
-        drops.forEach((y,i) => {
-            const char = chars[Math.floor(Math.random()*chars.length)];
-            ctx.fillText(char, i*20, y*20);
-            if(y*20 > c2.height && Math.random() > 0.98) drops[i] = 0;
-            drops[i]++;
-        });
-    }, 80);
-
-</script>
-</body>
-</html>            overflow: hidden;
+            overflow: hidden;
             background: var(--void);
             color: #fff;
             font-family: var(--font-body);
@@ -443,7 +37,6 @@
         }
 
         /* ── CUSTOM CURSOR ─────────────────────────────── */
-        /* ✅ OPT 3: will-change apenas no cursor (movimento constante) */
         #cursor {
             position: fixed;
             width: 12px; height: 12px;
@@ -455,7 +48,6 @@
             transform: translate(-50%,-50%);
             transition: width .2s, height .2s, background .2s;
             mix-blend-mode: screen;
-            will-change: left, top;
         }
         #cursor-ring {
             position: fixed;
@@ -465,18 +57,19 @@
             pointer-events: none;
             z-index: 9998;
             transform: translate(-50%,-50%);
-            transition: width .4s, height .4s;
-            will-change: left, top;
+            transition: width .4s, height .4s, transform .08s;
         }
         body.hovering #cursor { width:20px; height:20px; background: var(--gold-bright); }
         body.hovering #cursor-ring { width:60px; height:60px; border-color: var(--gold); }
 
+        /* ── WEBGL CANVAS ──────────────────────────────── */
         #stage {
             position: fixed; inset: 0;
             width: 100%; height: 100%;
             z-index: 1;
         }
 
+        /* ── MATRIX RAIN CANVAS ────────────────────────── */
         #matrix-canvas {
             position: fixed; inset: 0;
             width: 100%; height: 100%;
@@ -485,6 +78,7 @@
             pointer-events: none;
         }
 
+        /* ── VIGNETTE & OVERLAY ─────────────────────────── */
         .vignette {
             position: fixed; inset: 0; z-index: 3;
             background: radial-gradient(ellipse at center,
@@ -494,6 +88,7 @@
             pointer-events: none;
         }
 
+        /* ── SCANLINES ──────────────────────────────────── */
         .scanlines {
             position: fixed; inset: 0; z-index: 4;
             background: repeating-linear-gradient(0deg,
@@ -503,24 +98,27 @@
             opacity: 0.5;
         }
 
+        /* ── PYRAMIDS SILHOUETTE (SVG background) ───────── */
         .pyramids-bg {
             position: fixed;
             bottom: 0; left: 0; right: 0;
             height: 35vh;
             z-index: 2;
             pointer-events: none;
-            background:
+            background: 
                 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 300'%3E%3Cpolygon points='120,300 360,60 600,300' fill='%230A0A18'/%3E%3Cpolygon points='320,300 520,100 720,300' fill='%230D0D20'/%3E%3Cpolygon points='750,300 1000,30 1250,300' fill='%230A0A18'/%3E%3Cpolygon points='1000,300 1180,110 1360,300' fill='%230D0D20'/%3E%3C/svg%3E")
                 bottom/cover no-repeat;
             opacity: 0.6;
         }
 
+        /* ── STARS LAYER ────────────────────────────────── */
         .stars-svg {
             position: fixed; inset: 0; z-index: 2;
             pointer-events: none;
             opacity: 0.6;
         }
 
+        /* ── UI LAYER ────────────────────────────────────── */
         #ui {
             position: fixed; inset: 0; z-index: 10;
             display: flex; flex-direction: column;
@@ -574,6 +172,7 @@
             opacity: 0;
             transform: translateY(-20px);
         }
+
         .logo-mark {
             font-family: var(--font-deco);
             font-size: 1.1rem;
@@ -581,6 +180,7 @@
             color: var(--gold);
             text-shadow: 0 0 30px rgba(201,168,76,0.6);
         }
+
         .nav-links {
             display: flex; gap: 36px;
             pointer-events: auto;
@@ -608,6 +208,7 @@
             z-index: 2;
             margin-bottom: 10px;
         }
+
         .hero-eyebrow {
             font-family: var(--font-body);
             font-size: 0.6rem;
@@ -619,6 +220,7 @@
             margin-bottom: 16px;
             text-shadow: 0 0 20px var(--matrix);
         }
+
         .hero-title {
             font-family: var(--font-deco);
             font-size: clamp(2.8rem, 7vw, 6.5rem);
@@ -633,6 +235,7 @@
                 0 0 80px rgba(201,168,76,0.2);
             margin-bottom: 8px;
         }
+
         .hero-subtitle {
             font-family: var(--font-title);
             font-size: clamp(0.6rem, 1.5vw, 0.85rem);
@@ -664,6 +267,8 @@
             transition: opacity 0.3s;
             -webkit-tap-highlight-color: transparent;
         }
+        .deity.visible { opacity: 1; }
+
         .deity-orb {
             width: 52px; height: 52px;
             border-radius: 50%;
@@ -697,6 +302,7 @@
             from { transform: rotate(0deg); }
             to   { transform: rotate(360deg); }
         }
+
         .deity:hover .deity-orb {
             border-color: var(--gold);
             background: radial-gradient(ellipse at 35% 35%,
@@ -708,6 +314,7 @@
                 inset 0 0 30px rgba(201,168,76,0.15);
             transform: scale(1.15);
         }
+
         .deity-name {
             font-family: var(--font-title);
             font-size: 0.55rem;
@@ -726,6 +333,7 @@
         }
         .deity:hover .deity-name { color: var(--gold-bright); text-shadow: 0 0 15px var(--gold); }
         .deity:hover .deity-role { color: rgba(255,255,255,0.6); }
+
         .deity-level {
             position: absolute;
             top: -4px; right: -4px;
@@ -737,6 +345,8 @@
             border-radius: 3px;
             letter-spacing: 0.05em;
         }
+
+        /* Deity positions */
         .deity-anubis { bottom: -30px; left: 50%; transform: translateX(-50%); }
         .deity-horus  { top: -30px;   left: 50%; transform: translateX(-50%); }
         .deity-isis   { top: 50%; left: -70px;   transform: translateY(-50%); }
@@ -752,6 +362,7 @@
             opacity: 0;
             transform: translateY(15px);
         }
+
         .manifesto-lines {
             font-family: var(--font-body);
             font-size: clamp(0.6rem, 1.2vw, 0.75rem);
@@ -764,6 +375,7 @@
             color: rgba(201,168,76,0.5);
             font-style: normal;
         }
+
         .cta-btn {
             display: inline-block;
             font-family: var(--font-title);
@@ -805,8 +417,8 @@
             font-family: var(--font-body);
             opacity: 0;
         }
-        .corner-tl { top: 20px; left: 20px; }
-        .corner-tr { top: 20px; right: 20px; text-align: right; }
+        .corner-tl { top: 20px;    left: 20px; }
+        .corner-tr { top: 20px;    right: 20px; text-align: right; }
         .corner-bl { bottom: 20px; left: 20px; }
         .corner-br { bottom: 20px; right: 20px; text-align: right; }
 
@@ -822,6 +434,7 @@
         .side-line-l { left: 32px; }
         .side-line-r { right: 32px; }
 
+        /* ── ENIGMA TEXT ─────────────────────────────────── */
         #enigma {
             position: fixed;
             bottom: 80px;
@@ -838,6 +451,7 @@
             text-align: center;
         }
 
+        /* ── PORTAL TRANSITION ───────────────────────────── */
         #portal-overlay {
             position: fixed; inset: 0; z-index: 500;
             background: radial-gradient(ellipse at center, transparent 0%, rgba(6,6,15,0.98) 100%);
@@ -869,12 +483,14 @@
             position: relative; z-index: 2;
         }
 
+        /* ── FLASH ───────────────────────────────────────── */
         #flash {
             position: fixed; inset: 0; z-index: 600;
             background: radial-gradient(ellipse at center, #fff 0%, var(--gold-bright) 100%);
             opacity: 0; pointer-events: none;
         }
 
+        /* ── ENIGMA PHRASES ──────────────────────────────── */
         #phrase-display {
             position: fixed;
             top: 50%; left: 50%;
@@ -892,6 +508,7 @@
             line-height: 1.8;
         }
 
+        /* ── SOUND INDICATOR ────────────────────────────── */
         #sound-toggle {
             position: fixed;
             bottom: 32px; right: 48px;
@@ -901,7 +518,9 @@
             display: flex; align-items: center; gap: 8px;
             opacity: 0;
         }
-        .sound-bars { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+        .sound-bars {
+            display: flex; align-items: flex-end; gap: 2px; height: 14px;
+        }
         .sound-bar {
             width: 2px;
             background: var(--gold-dim);
@@ -916,17 +535,27 @@
         @keyframes bar1 { 0%,100%{height:4px} 50%{height:14px} }
         @keyframes bar2 { 0%,100%{height:8px} 50%{height:4px}  }
         @keyframes bar3 { 0%,100%{height:12px} 50%{height:6px} }
-        .sound-label { font-size: 0.5rem; letter-spacing: 0.3em; color: var(--gold-dim); }
+        .sound-label {
+            font-size: 0.5rem;
+            letter-spacing: 0.3em;
+            color: var(--gold-dim);
+        }
         #sound-toggle:hover .sound-label { color: var(--gold); }
 
-        /* ── AUTH BUTTONS ────────────────────────────────── */
+        /* ── AUTH BUTTONS (centro-superior) ─────────────── */
         .auth-bar {
-            position: fixed; top: 22px; left: 50%;
+            position: fixed;
+            top: 22px;
+            left: 50%;
             transform: translateX(-50%);
             z-index: 200;
-            display: flex; align-items: center; gap: 10px;
-            opacity: 0; pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            pointer-events: auto;
         }
+
         .auth-btn {
             font-family: var(--font-title);
             font-size: 0.58rem;
@@ -940,6 +569,7 @@
             display: inline-block;
             white-space: nowrap;
         }
+
         .auth-btn-login {
             color: var(--gold);
             border: 1px solid rgba(201,168,76,0.35);
@@ -952,6 +582,7 @@
             box-shadow: 0 0 20px rgba(201,168,76,0.25);
             color: var(--gold-bright);
         }
+
         .auth-btn-register {
             color: #000;
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
@@ -963,18 +594,26 @@
             box-shadow: 0 0 35px rgba(255,215,0,0.5), 0 0 60px rgba(201,168,76,0.2);
             transform: scale(1.04);
         }
-        .auth-divider { width: 1px; height: 18px; background: rgba(201,168,76,0.2); }
 
-        /* ── NAV MENU ────────────────────────────────────── */
+        .auth-divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(201,168,76,0.2);
+        }
+
+        /* ── NAV MENU DIREITO ────────────────────────────── */
         #menu-toggle {
-            position: fixed; top: 20px; right: 28px;
+            position: fixed;
+            top: 20px;
+            right: 28px;
             z-index: 300;
             width: 44px; height: 44px;
             background: rgba(6,6,15,0.75);
             border: 1px solid rgba(201,168,76,0.3);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            cursor: none; pointer-events: auto;
+            cursor: none;
+            pointer-events: auto;
             transition: all 0.35s ease;
             backdrop-filter: blur(12px);
             opacity: 0;
@@ -984,7 +623,12 @@
             background: rgba(201,168,76,0.1);
             box-shadow: 0 0 25px rgba(201,168,76,0.35);
         }
-        #menu-toggle svg { stroke: var(--gold); transition: stroke 0.2s; }
+        #menu-toggle svg {
+            stroke: var(--gold);
+            transition: stroke 0.2s;
+        }
+
+        /* Hamburger → X animation */
         #menu-toggle .bar-top,
         #menu-toggle .bar-mid,
         #menu-toggle .bar-bot {
@@ -995,6 +639,7 @@
         #menu-toggle.open .bar-mid { opacity: 0; transform: scaleX(0); }
         #menu-toggle.open .bar-bot { transform: rotate(-45deg) translate(4px, -4px); }
 
+        /* Overlay */
         #nav-overlay {
             position: fixed; inset: 0;
             background: rgba(6,6,15,0.5);
@@ -1006,8 +651,10 @@
         }
         #nav-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
+        /* Panel */
         #nav-panel {
-            position: fixed; top: 0; right: 0;
+            position: fixed;
+            top: 0; right: 0;
             width: 300px; height: 100vh;
             z-index: 280;
             background: linear-gradient(180deg, rgba(6,6,15,0.99) 0%, rgba(10,10,24,0.96) 100%);
@@ -1031,9 +678,13 @@
             padding-bottom: 12px;
             border-bottom: 1px solid rgba(201,168,76,0.15);
         }
+
         .nav-panel-link {
-            display: flex; align-items: center; gap: 14px;
-            padding: 13px 16px; margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 16px;
+            margin-bottom: 6px;
             text-decoration: none;
             color: rgba(255,255,255,0.6);
             border: 1px solid transparent;
@@ -1050,58 +701,101 @@
             box-shadow: 0 0 18px rgba(201,168,76,0.1);
         }
         .nav-panel-link:hover .nav-icon { color: var(--gold); }
+
         .nav-icon {
-            font-size: 1rem; color: var(--gold-dim);
+            font-size: 1rem;
+            color: var(--gold-dim);
             width: 20px; text-align: center;
-            transition: color 0.3s; flex-shrink: 0;
+            transition: color 0.3s;
+            flex-shrink: 0;
         }
+
         .nav-link-content { flex: 1; }
         .nav-link-title {
             font-family: var(--font-title);
             font-size: 0.75rem;
             letter-spacing: 0.15em;
-            display: block; margin-bottom: 2px;
+            display: block;
+            margin-bottom: 2px;
         }
         .nav-link-sub {
-            font-size: 0.58rem; letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.3); display: block;
+            font-size: 0.58rem;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.3);
+            display: block;
         }
+
         .nav-panel-divider {
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent);
             margin: 14px 0;
         }
-        .nav-highlight { border-color: rgba(201,168,76,0.2) !important; background: rgba(201,168,76,0.04); }
+
+        .nav-highlight {
+            border-color: rgba(201,168,76,0.2) !important;
+            background: rgba(201,168,76,0.04);
+        }
         .nav-highlight .nav-link-title { color: var(--gold); }
         .nav-highlight::before {
-            content: '★'; position: absolute;
+            content: '★';
+            position: absolute;
             top: -7px; right: 10px;
-            color: var(--gold); font-size: 0.6rem;
+            color: var(--gold);
+            font-size: 0.6rem;
         }
+
         .nav-panel-footer {
-            margin-top: 28px; padding-top: 18px;
+            margin-top: 28px;
+            padding-top: 18px;
             border-top: 1px solid rgba(201,168,76,0.1);
-            font-size: 0.55rem; letter-spacing: 0.3em;
-            color: rgba(255,255,255,0.2); text-align: center;
+            font-size: 0.55rem;
+            letter-spacing: 0.3em;
+            color: rgba(255,255,255,0.2);
+            text-align: center;
         }
 
         /* ── RESPONSIVE ─────────────────────────────────── */
         @media (max-width: 768px) {
+
+            /* Cursor nativo no touch */
             body { cursor: auto; }
             #cursor, #cursor-ring { display: none; }
             a, button, .deity { cursor: pointer; }
+
+            /* Header: só logo */
             .header { padding: 16px 20px; justify-content: flex-start; }
             .logo-mark { font-size: 0.85rem; letter-spacing: 0.3em; }
             .nav-links { display: none; }
-            .auth-bar { left: auto; right: 72px; transform: none; top: 18px; gap: 6px; }
+
+            /* Auth bar: alinhada à direita, espaço para o toggle */
+            .auth-bar {
+                left: auto;
+                right: 72px;
+                transform: none;
+                top: 18px;
+                gap: 6px;
+            }
             .auth-btn { padding: 7px 12px; font-size: 0.5rem; letter-spacing: 0.2em; }
             .auth-divider { display: none; }
+
+            /* Menu-toggle */
             #menu-toggle { right: 16px; top: 16px; width: 40px; height: 40px; }
+
+            /* Nav panel */
             #nav-panel { width: 80vw; max-width: 300px; padding: 80px 20px 32px; }
             .nav-panel-link { padding: 12px 14px; cursor: pointer; }
+
+            /* Hero */
             .hero-block { margin-bottom: 4px; }
             .hero-subtitle { margin-bottom: 24px; letter-spacing: 0.3em; }
-            .sphere-area { width: clamp(200px, 70vw, 300px); height: clamp(200px, 70vw, 300px); }
+
+            /* Esfera menor */
+            .sphere-area {
+                width: clamp(200px, 70vw, 300px);
+                height: clamp(200px, 70vw, 300px);
+            }
+
+            /* Deuses reposicionados */
             .deity-anubis { bottom: -40px; }
             .deity-horus  { top: -40px; }
             .deity-isis   { left: -44px; }
@@ -1109,16 +803,33 @@
             .deity-orb    { width: 40px; height: 40px; font-size: 0.95rem; }
             .deity-name   { font-size: 0.48rem; }
             .deity-role   { display: none; }
+
+            /* Manifesto compacto */
             .manifesto { padding-bottom: 20px; }
-            .manifesto-lines { font-size: 0.55rem; letter-spacing: 0.12em; line-height: 2; margin-bottom: 18px; }
+            .manifesto-lines {
+                font-size: 0.55rem;
+                letter-spacing: 0.12em;
+                line-height: 2;
+                margin-bottom: 18px;
+            }
             .cta-btn { padding: 11px 24px; font-size: 0.55rem; letter-spacing: 0.25em; cursor: pointer; }
+
+            /* Elementos decorativos ocultos */
             .corner-glyph { display: none; }
             .side-line    { display: none; }
+
+            /* Enigma */
             #enigma { bottom: 100px; font-size: 0.5rem; letter-spacing: 0.2em; }
+
+            /* Sound */
             #sound-toggle { bottom: 18px; right: 16px; }
             .sound-label  { display: none; }
-            .pyramids-bg  { height: 25vh; }
+
+            /* Pyramids */
+            .pyramids-bg { height: 25vh; }
         }
+
+        /* Telas muito pequenas */
         @media (max-width: 380px) {
             .sphere-area { width: 190px; height: 190px; }
             .deity-isis  { left: -38px; }
@@ -1126,48 +837,50 @@
             .deity-orb   { width: 34px; height: 34px; font-size: 0.8rem; }
             .auth-bar    { display: none; }
         }
-
-        /* ✅ OPT 4: prefers-reduced-motion — acessibilidade + performance em low-power */
-        @media (prefers-reduced-motion: reduce) {
-            .deity-orb::before,
-            .deity-orb::after,
-            .loader-glyph,
-            .sound-bar { animation: none !important; }
-            * { transition-duration: 0.01ms !important; }
-        }
     </style>
 </head>
 <body>
 
+<!-- Custom Cursor -->
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
+<!-- Loader -->
 <div id="loader">
     <div class="loader-glyph">𓂀</div>
     <div class="loader-text">Inicializando Portal</div>
     <div class="loader-bar"><div class="loader-fill" id="loader-fill"></div></div>
 </div>
 
+<!-- Background Layers -->
 <canvas id="stage"></canvas>
 <canvas id="matrix-canvas"></canvas>
 
+<!-- Stars -->
 <svg class="stars-svg" xmlns="http://www.w3.org/2000/svg" id="stars-svg"></svg>
 
+<!-- Atmospheric -->
 <div class="vignette"></div>
 <div class="scanlines"></div>
 <div class="pyramids-bg"></div>
 
+<!-- Corner Glyphs -->
 <div class="corner-glyph corner-tl" id="c-tl">𓂀 AKASHA<br>◈ ONLINE</div>
 <div class="corner-glyph corner-tr" id="c-tr">PORTAL ATIVO ◈<br>𓁹 DESPERTAR</div>
 <div class="corner-glyph corner-bl" id="c-bl">𓆣 CONSCIÊNCIA<br>◈ EXPANDIDA</div>
 <div class="corner-glyph corner-br" id="c-br">REALIDADE ◈<br>𓂋 GOVERNADA</div>
 
+<!-- Side Lines -->
 <div class="side-line side-line-l" id="sl-l"></div>
 <div class="side-line side-line-r" id="sl-r"></div>
 
+<!-- Enigma Prompt -->
 <div id="enigma">▸ GIRE A ESFERA PARA ATIVAR ▸</div>
+
+<!-- Phrase Display -->
 <div id="phrase-display"></div>
 
+<!-- Portal Transition -->
 <div id="portal-overlay">
     <div class="portal-ring" style="width:80px;height:80px"></div>
     <div class="portal-ring" style="width:180px;height:180px"></div>
@@ -1179,6 +892,7 @@
 </div>
 <div id="flash"></div>
 
+<!-- Sound Toggle -->
 <div id="sound-toggle">
     <div class="sound-bars">
         <div class="sound-bar" style="height:4px"></div>
@@ -1189,12 +903,14 @@
     <span class="sound-label">SOM</span>
 </div>
 
+<!-- ── AUTH BUTTONS (centro-superior) ─────────────────────────── -->
 <div class="auth-bar" id="auth-bar">
     <a href="https://akashahub.com.br/login" class="auth-btn auth-btn-login">◈ Entrar</a>
     <div class="auth-divider"></div>
     <a href="https://akashahub.com.br/cadastro" class="auth-btn auth-btn-register">Cadastrar</a>
 </div>
 
+<!-- ── NAV MENU DIREITO ──────────────────────────────────────────── -->
 <div id="nav-overlay"></div>
 
 <button id="menu-toggle" aria-label="Menu de navegação" aria-expanded="false">
@@ -1207,6 +923,7 @@
 
 <nav id="nav-panel" aria-label="Menu principal">
     <div class="nav-panel-header">◈ Navegação ◈</div>
+
     <a href="https://akashahub.com.br/mentoria" class="nav-panel-link">
         <span class="nav-icon">𓁹</span>
         <div class="nav-link-content">
@@ -1214,6 +931,7 @@
             <span class="nav-link-sub">Programa de desenvolvimento</span>
         </div>
     </a>
+
     <a href="https://akashahub.com.br/partners" class="nav-panel-link">
         <span class="nav-icon">𓆣</span>
         <div class="nav-link-content">
@@ -1221,6 +939,7 @@
             <span class="nav-link-sub">Patrocinadores & afiliados</span>
         </div>
     </a>
+
     <a href="https://akashahub.com.br/vip" class="nav-panel-link">
         <span class="nav-icon">𓇳</span>
         <div class="nav-link-content">
@@ -1228,6 +947,7 @@
             <span class="nav-link-sub">Imersão & experiência VIP</span>
         </div>
     </a>
+
     <a href="https://akashahub.com.br/store" class="nav-panel-link">
         <span class="nav-icon">𓋹</span>
         <div class="nav-link-content">
@@ -1235,7 +955,9 @@
             <span class="nav-link-sub">Produtos & ferramentas</span>
         </div>
     </a>
+
     <div class="nav-panel-divider"></div>
+
     <a href="https://akashahub.com.br/doutrina" class="nav-panel-link">
         <span class="nav-icon">𓂋</span>
         <div class="nav-link-content">
@@ -1243,6 +965,7 @@
             <span class="nav-link-sub">Áudios, livros & conteúdos</span>
         </div>
     </a>
+
     <a href="https://akashahub.com.br/livre/" class="nav-panel-link nav-highlight">
         <span class="nav-icon">𓂀</span>
         <div class="nav-link-content">
@@ -1250,8 +973,10 @@
             <span class="nav-link-sub">Grupos online abertos</span>
         </div>
     </a>
+
     <div class="nav-panel-footer">𓂀 AKASHA EMPIRE</div>
 </nav>
+
 
 <div id="ui">
     <div class="header" id="header">
@@ -1270,8 +995,12 @@
         <p class="hero-subtitle" id="hero-sub">Biblioteca Global do Universo</p>
     </div>
 
-    <div class="sphere-area" id="sphere-area"></div>
+    <!-- Sphere + Deity Markers -->
+    <div class="sphere-area" id="sphere-area">
+        <!-- Deities injected by JS -->
+    </div>
 
+    <!-- Manifesto + CTA -->
     <div class="manifesto" id="manifesto">
         <div class="manifesto-lines">
             Saia da Matrix. &nbsp;<em>Acesse a Biblioteca Global do Universo.</em><br>
@@ -1281,15 +1010,16 @@
     </div>
 </div>
 
-<!-- ✅ OPT 5: defer — scripts NÃO bloqueiam o parsing do HTML -->
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
 <script>
 // ════════════════════════════════════════════════════════════════
-//  AKASHA ENGINE v4.1 — PERFORMANCE EDITION
+//  AKASHA ENGINE v4.0 — PORTAL DE DESPERTAR
 // ════════════════════════════════════════════════════════════════
 
+// ── DEITIES DATA ─────────────────────────────────────────────────
 const DEITIES = [
     { id:'anubis', name:'Anúbis', role:'Despertar',  level:'N1', emoji:'𓃣', color:'#C9A84C', url:'https://pay.hotmart.com/N104491126Y', cls:'deity-anubis' },
     { id:'horus',  name:'Hórus',  role:'Visão',      level:'N2', emoji:'𓁹', color:'#4A90E2', url:'https://pay.hotmart.com/O104491171B', cls:'deity-horus'  },
@@ -1297,6 +1027,7 @@ const DEITIES = [
     { id:'ra',     name:'Rá',     role:'Liderança',  level:'N4', emoji:'𓇳', color:'#FFD700', url:'https://pay.hotmart.com/L104491291E', cls:'deity-ra'     }
 ];
 
+// ── ENIGMA PHRASES ────────────────────────────────────────────────
 const PHRASES = [
     "Quem se conhece governa sua realidade.",
     "Conhecimento sem aplicação é ilusão.",
@@ -1307,23 +1038,20 @@ const PHRASES = [
     "Saia da Matrix. Governe sua Realidade."
 ];
 
-// ── CUSTOM CURSOR — rAF em vez de setInterval ─────────────────────
-// ✅ OPT 6: requestAnimationFrame sincroniza com o display (60fps), sem sobrecarga
-const cursorEl   = document.getElementById('cursor');
+// ── CUSTOM CURSOR ─────────────────────────────────────────────────
+const cursorEl  = document.getElementById('cursor');
 const cursorRing = document.getElementById('cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
 
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
-
-(function tickCursor() {
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+setInterval(() => {
     rx += (mx - rx) * 0.12;
     ry += (my - ry) * 0.12;
     cursorEl.style.left   = mx + 'px';
     cursorEl.style.top    = my + 'px';
     cursorRing.style.left = rx + 'px';
     cursorRing.style.top  = ry + 'px';
-    requestAnimationFrame(tickCursor);
-})();
+}, 16);
 
 document.querySelectorAll('a, button, .deity, #sound-toggle').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
@@ -1333,38 +1061,32 @@ document.querySelectorAll('a, button, .deity, #sound-toggle').forEach(el => {
 // ── GENERATE STARS ────────────────────────────────────────────────
 (function generateStars() {
     const svg = document.getElementById('stars-svg');
-    const count = 180; // ✅ OPT 7: 200→180 estrelas (imperceptível visualmente)
+    const count = 200;
     let html = '';
     for (let i = 0; i < count; i++) {
-        const x   = (Math.random() * 100).toFixed(1);
-        const y   = (Math.random() * 70).toFixed(1);
-        const r   = (Math.random() * 1.2 + 0.2).toFixed(2);
-        const op  = (Math.random() * 0.6 + 0.1).toFixed(2);
-        const dur = (Math.random() * 4 + 2).toFixed(1);
-        const del = (Math.random() * 4).toFixed(1);
+        const x    = Math.random() * 100;
+        const y    = Math.random() * 70;
+        const r    = Math.random() * 1.2 + 0.2;
+        const op   = Math.random() * 0.6 + 0.1;
+        const dur  = (Math.random() * 4 + 2).toFixed(1);
+        const del  = (Math.random() * 4).toFixed(1);
         html += `<circle cx="${x}%" cy="${y}%" r="${r}" fill="white" opacity="${op}">
-            <animate attributeName="opacity" values="${op};${(op*0.2).toFixed(2)};${op}" dur="${dur}s" begin="${del}s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="${op};${op*0.2};${op}" dur="${dur}s" begin="${del}s" repeatCount="indefinite"/>
         </circle>`;
     }
     svg.innerHTML = html;
 })();
 
-// ── MATRIX RAIN — pausa quando aba oculta ─────────────────────────
-// ✅ OPT 8: Page Visibility API economiza CPU/GPU quando fora da tela
+// ── MATRIX RAIN ───────────────────────────────────────────────────
 (function matrixRain() {
     const canvas = document.getElementById('matrix-canvas');
     const ctx    = canvas.getContext('2d');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    function resize() {
-        canvas.width  = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    resize();
-
-    const chars = 'アウエオカキクケコ01アBCDEFGHIJKLMNOPQRSTUVWXYZ𓂀𓁹𓆣𓇳𓋹01';
-    let cols  = Math.floor(canvas.width / 18);
-    let drops = Array(cols).fill(1);
-    let timer = null;
+    const chars  = 'アウエオカキクケコ01アBCDEFGHIJKLMNOPQRSTUVWXYZ𓂀𓁹𓆣𓇳𓋹01';
+    const cols   = Math.floor(canvas.width / 18);
+    const drops  = Array(cols).fill(1);
 
     function draw() {
         ctx.fillStyle = 'rgba(6,6,15,0.05)';
@@ -1379,390 +1101,439 @@ document.querySelectorAll('a, button, .deity, #sound-toggle').forEach(el => {
         });
     }
 
-    const start = () => { if (!timer) timer = setInterval(draw, 55); };
-    const stop  = () => { clearInterval(timer); timer = null; };
-
-    start();
-    document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
-
-    let resizeT;
+    setInterval(draw, 50);
     window.addEventListener('resize', () => {
-        clearTimeout(resizeT);
-        resizeT = setTimeout(() => {
-            resize();
-            cols  = Math.floor(canvas.width / 18);
-            drops = Array(cols).fill(1);
-        }, 200);
-    }, { passive: true });
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
 })();
 
-// ── THREE.JS — aguarda scripts defer carregarem ───────────────────
-// ✅ OPT 9: window.load garante que Three.js e GSAP estão prontos
-window.addEventListener('load', function() {
+// ── THREE.JS: ESFERA AKÁSHICA ─────────────────────────────────────
+const threeCanvas = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({
+    canvas: threeCanvas,
+    antialias: true,
+    alpha: true,
+    powerPreference: 'high-performance'
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
 
-    const threeCanvas = document.getElementById('stage');
-    const renderer = new THREE.WebGLRenderer({
-        canvas: threeCanvas, antialias: true, alpha: true,
-        powerPreference: 'high-performance'
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    // ✅ OPT 10: pixelRatio limitado a 1.5 (era 2) — grande ganho em telas Retina/HiDPI
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
+const scene  = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 7);
 
-    const scene  = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 0, 7);
+// Lighting
+scene.add(new THREE.AmbientLight(0x111122, 2));
+const goldLight = new THREE.PointLight(0xC9A84C, 3, 15);
+goldLight.position.set(2, 2, 4);
+scene.add(goldLight);
+const blueLight = new THREE.PointLight(0x4A90E2, 2, 15);
+blueLight.position.set(-3, -1, 3);
+scene.add(blueLight);
 
-    scene.add(new THREE.AmbientLight(0x111122, 2));
-    const goldLight = new THREE.PointLight(0xC9A84C, 3, 15);
-    goldLight.position.set(2, 2, 4);
-    scene.add(goldLight);
-    const blueLight = new THREE.PointLight(0x4A90E2, 2, 15);
-    blueLight.position.set(-3, -1, 3);
-    scene.add(blueLight);
+// ── SACRED GEOMETRY INNER SPHERE ─────────────────────────────────
+const innerGeo = new THREE.IcosahedronGeometry(1.3, 2);
+const innerMat = new THREE.MeshStandardMaterial({
+    color: 0x0A0A18,
+    metalness: 0.1,
+    roughness: 0.8,
+    wireframe: false,
+    emissive: 0x1A1A3A,
+    emissiveIntensity: 0.5
+});
+const innerSphere = new THREE.Mesh(innerGeo, innerMat);
+scene.add(innerSphere);
 
-    const innerGeo = new THREE.IcosahedronGeometry(1.3, 2);
-    const innerMat = new THREE.MeshStandardMaterial({
-        color: 0x0A0A18, metalness: 0.1, roughness: 0.8,
-        wireframe: false, emissive: 0x1A1A3A, emissiveIntensity: 0.5
-    });
-    const innerSphere = new THREE.Mesh(innerGeo, innerMat);
-    scene.add(innerSphere);
-
-    const outerShader = {
-        vertex: `
-            varying vec3 vNormal;
-            varying vec2 vUv;
-            void main() {
-                vNormal = normalize(normalMatrix * normal);
-                vUv = uv;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-        `,
-        fragment: `
-            uniform float uTime;
-            varying vec3 vNormal;
-            varying vec2 vUv;
-            float fresnel(vec3 n) {
-                return pow(1.0 - abs(dot(n, vec3(0.0, 0.0, 1.0))), 2.5);
-            }
-            void main() {
-                float fr    = fresnel(vNormal);
-                float pulse = sin(uTime * 1.2) * 0.5 + 0.5;
-                float grid  = step(0.97, fract(vUv.y * 30.0 + uTime * 0.1))
-                            + step(0.97, fract(vUv.x * 30.0 - uTime * 0.08));
-                grid = clamp(grid, 0.0, 1.0);
-                vec3 goldColor   = vec3(0.788, 0.659, 0.298);
-                vec3 blueColor   = vec3(0.29, 0.565, 0.886);
-                vec3 matrixColor = vec3(0.0, 1.0, 0.255);
-                vec3 fresnelColor = mix(blueColor, goldColor, fr);
-                vec3 baseColor    = mix(vec3(0.02, 0.02, 0.06), fresnelColor, fr * 0.7);
-                vec3 gridColor    = mix(baseColor, goldColor * 0.6, grid * 0.4);
-                vec3 final        = mix(gridColor, matrixColor * 0.3, grid * pulse * 0.15);
-                float alpha = fr * 0.65 + grid * 0.2 + pulse * 0.05;
-                gl_FragColor = vec4(final, clamp(alpha, 0.0, 0.8));
-            }
-        `
-    };
-
-    // ✅ OPT 11: Segmentos reduzidos de 64→48 — menos vértices, visual idêntico
-    const outerGeo = new THREE.SphereGeometry(1.65, 48, 48);
-    const outerMat = new THREE.ShaderMaterial({
-        vertexShader: outerShader.vertex,
-        fragmentShader: outerShader.fragment,
-        uniforms: { uTime: { value: 0 } },
-        transparent: true, side: THREE.DoubleSide,
-        blending: THREE.AdditiveBlending, depthWrite: false
-    });
-    const outerSphere = new THREE.Mesh(outerGeo, outerMat);
-    scene.add(outerSphere);
-
-    const sacredGeo = new THREE.IcosahedronGeometry(1.5, 1);
-    const sacredMat = new THREE.MeshBasicMaterial({
-        color: 0xC9A84C, wireframe: true, transparent: true, opacity: 0.08
-    });
-    const sacredMesh = new THREE.Mesh(sacredGeo, sacredMat);
-    scene.add(sacredMesh);
-
-    const rings = [];
-    [1.9, 2.1, 2.4].forEach((r, i) => {
-        const rGeo = new THREE.TorusGeometry(r, 0.004, 8, 120);
-        const rMat = new THREE.MeshBasicMaterial({
-            color: i === 0 ? 0xC9A84C : i === 1 ? 0x4A90E2 : 0x00FF41,
-            transparent: true, opacity: 0.3 - i * 0.07
-        });
-        const ring = new THREE.Mesh(rGeo, rMat);
-        ring.rotation.x = Math.PI / 2 + i * 0.3;
-        ring.rotation.z = i * 0.5;
-        scene.add(ring);
-        rings.push({ mesh: ring, speed: 0.003 + i * 0.002, axis: i % 2 === 0 ? 'y' : 'x' });
-    });
-
-    // ✅ OPT 12: Partículas adaptativas — 400 em mobile, 700 em desktop
-    const isMobile = window.innerWidth < 768;
-    const PARTICLE_COUNT = isMobile ? 400 : 700;
-    const partGeo  = new THREE.BufferGeometry();
-    const partPos  = new Float32Array(PARTICLE_COUNT * 3);
-    const partVel  = new Float32Array(PARTICLE_COUNT * 3);
-    const partSize = new Float32Array(PARTICLE_COUNT);
-
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-        const theta = Math.random() * Math.PI * 2;
-        const phi   = Math.acos(2 * Math.random() - 1);
-        const r     = 1.8 + Math.random() * 1.2;
-        partPos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
-        partPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
-        partPos[i*3+2] = r * Math.cos(phi);
-        partVel[i*3]   = theta;
-        partVel[i*3+1] = phi;
-        partVel[i*3+2] = r;
-        partSize[i] = Math.random() * 2 + 0.5;
-    }
-    partGeo.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
-    partGeo.setAttribute('size',     new THREE.BufferAttribute(partSize, 1));
-
-    const partMat = new THREE.PointsMaterial({
-        color: 0xC9A84C, size: 0.03, transparent: true, opacity: 0.6,
-        sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false
-    });
-    const particles = new THREE.Points(partGeo, partMat);
-    scene.add(particles);
-
-    let targetRotX = 0, targetRotY = 0;
-    let currentRotX = 0, currentRotY = 0;
-    let isNearSphere = false;
-    let rotationSpeed = 0.004;
-    let totalRotation = 0;
-    let phrase360Shown = false;
-
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2(-10, -10);
-
-    document.addEventListener('mousemove', e => {
-        mouse.x =  (e.clientX / window.innerWidth)  * 2 - 1;
-        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-        targetRotX = mouse.y * 0.25;
-        targetRotY = mouse.x * 0.25;
-    }, { passive: true });
-
-    document.addEventListener('touchmove', e => {
-        if (e.touches.length === 1) {
-            const t = e.touches[0];
-            mouse.x =  (t.clientX / window.innerWidth)  * 2 - 1;
-            mouse.y = -(t.clientY / window.innerHeight) * 2 + 1;
-            targetRotX = mouse.y * 0.2;
-            targetRotY = mouse.x * 0.2;
+// ── OUTER TRANSLUCENT SPHERE ──────────────────────────────────────
+const outerShader = {
+    vertex: `
+        varying vec3 vNormal;
+        varying vec3 vPos;
+        varying vec2 vUv;
+        void main() {
+            vNormal = normalize(normalMatrix * normal);
+            vPos    = position;
+            vUv     = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
-    }, { passive: true });
+    `,
+    fragment: `
+        uniform float uTime;
+        varying vec3 vNormal;
+        varying vec3 vPos;
+        varying vec2 vUv;
 
-    document.addEventListener('touchend', () => { pulseSphere(); playPulseSound(); });
+        float fresnel(vec3 n, float power) {
+            return pow(1.0 - abs(dot(n, vec3(0.0, 0.0, 1.0))), power);
+        }
 
-    document.addEventListener('click', e => {
-        raycaster.setFromCamera(mouse, camera);
-        if (raycaster.intersectObjects([outerSphere, innerSphere]).length > 0) {
-            pulseSphere(); playPulseSound();
+        void main() {
+            float fr      = fresnel(vNormal, 2.5);
+            float pulse   = sin(uTime * 1.2) * 0.5 + 0.5;
+            float grid    = step(0.97, fract(vUv.y * 30.0 + uTime * 0.1))
+                          + step(0.97, fract(vUv.x * 30.0 - uTime * 0.08));
+            grid = clamp(grid, 0.0, 1.0);
+
+            vec3 goldColor  = vec3(0.788, 0.659, 0.298);
+            vec3 blueColor  = vec3(0.29, 0.565, 0.886);
+            vec3 matrixColor= vec3(0.0, 1.0, 0.255);
+
+            vec3 fresnelColor = mix(blueColor, goldColor, fr);
+            vec3 baseColor    = mix(vec3(0.02, 0.02, 0.06), fresnelColor, fr * 0.7);
+            vec3 gridColor    = mix(baseColor, goldColor * 0.6, grid * 0.4);
+            vec3 matrixMix    = mix(gridColor, matrixColor * 0.3, grid * pulse * 0.15);
+
+            float alpha = fr * 0.65 + grid * 0.2 + pulse * 0.05;
+            gl_FragColor = vec4(matrixMix, clamp(alpha, 0.0, 0.8));
+        }
+    `
+};
+
+const outerGeo = new THREE.SphereGeometry(1.65, 64, 64);
+const outerMat = new THREE.ShaderMaterial({
+    vertexShader:   outerShader.vertex,
+    fragmentShader: outerShader.fragment,
+    uniforms: { uTime: { value: 0 } },
+    transparent: true,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+});
+const outerSphere = new THREE.Mesh(outerGeo, outerMat);
+scene.add(outerSphere);
+
+// ── WIREFRAME ICOSAHEDRON (Sacred Geometry) ───────────────────────
+const sacredGeo = new THREE.IcosahedronGeometry(1.5, 1);
+const sacredMat = new THREE.MeshBasicMaterial({
+    color: 0xC9A84C,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.08
+});
+const sacredMesh = new THREE.Mesh(sacredGeo, sacredMat);
+scene.add(sacredMesh);
+
+// ── ENERGY RINGS ──────────────────────────────────────────────────
+const rings = [];
+[1.9, 2.1, 2.4].forEach((r, i) => {
+    const rGeo = new THREE.TorusGeometry(r, 0.004, 8, 120);
+    const rMat = new THREE.MeshBasicMaterial({
+        color: i === 0 ? 0xC9A84C : i === 1 ? 0x4A90E2 : 0x00FF41,
+        transparent: true,
+        opacity: 0.3 - i * 0.07
+    });
+    const ring = new THREE.Mesh(rGeo, rMat);
+    ring.rotation.x = Math.PI / 2 + i * 0.3;
+    ring.rotation.z = i * 0.5;
+    scene.add(ring);
+    rings.push({ mesh: ring, speed: 0.003 + i * 0.002, axis: i % 2 === 0 ? 'y' : 'x' });
+});
+
+// ── PARTICLE SYSTEM ───────────────────────────────────────────────
+const PARTICLE_COUNT = 800;
+const partGeo  = new THREE.BufferGeometry();
+const partPos  = new Float32Array(PARTICLE_COUNT * 3);
+const partVel  = new Float32Array(PARTICLE_COUNT * 3); // orbital angles
+const partSize = new Float32Array(PARTICLE_COUNT);
+
+for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const phi   = Math.acos(2 * Math.random() - 1);
+    const r     = 1.8 + Math.random() * 1.2;
+    partPos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+    partPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+    partPos[i*3+2] = r * Math.cos(phi);
+    partVel[i*3]   = theta;
+    partVel[i*3+1] = phi;
+    partVel[i*3+2] = r;
+    partSize[i] = Math.random() * 2 + 0.5;
+}
+
+partGeo.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
+partGeo.setAttribute('size',     new THREE.BufferAttribute(partSize, 1));
+
+const partMat = new THREE.PointsMaterial({
+    color: 0xC9A84C,
+    size: 0.03,
+    transparent: true,
+    opacity: 0.6,
+    sizeAttenuation: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+});
+const particles = new THREE.Points(partGeo, partMat);
+scene.add(particles);
+
+// ── MOUSE INTERACTION ─────────────────────────────────────────────
+let targetRotX = 0, targetRotY = 0;
+let currentRotX = 0, currentRotY = 0;
+let isNearSphere = false;
+let rotationSpeed = 0.004;
+let totalRotation = 0;
+let phrase360Shown = false;
+
+const raycaster = new THREE.Raycaster();
+const mouse     = new THREE.Vector2(-10, -10);
+
+document.addEventListener('mousemove', e => {
+    mouse.x =  (e.clientX / window.innerWidth)  * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    targetRotX = mouse.y * 0.25;
+    targetRotY = mouse.x * 0.25;
+});
+
+// Touch support for sphere drag
+document.addEventListener('touchmove', e => {
+    if (e.touches.length === 1) {
+        const t = e.touches[0];
+        mouse.x =  (t.clientX / window.innerWidth)  * 2 - 1;
+        mouse.y = -(t.clientY / window.innerHeight) * 2 + 1;
+        targetRotX = mouse.y * 0.2;
+        targetRotY = mouse.x * 0.2;
+    }
+}, { passive: true });
+
+document.addEventListener('touchend', () => {
+    // Pulse on tap
+    pulseSphere();
+    playPulseSound();
+});
+
+document.addEventListener('click', e => {
+    raycaster.setFromCamera(mouse, camera);
+    const hits = raycaster.intersectObjects([outerSphere, innerSphere]);
+    if (hits.length > 0) {
+        pulseSphere();
+        playPulseSound();
+    }
+});
+
+function pulseSphere() {
+    gsap.to([outerSphere.scale, innerSphere.scale, sacredMesh.scale], {
+        x: 1.12, y: 1.12, z: 1.12,
+        duration: 0.15, ease: 'power2.out',
+        onComplete: () => {
+            gsap.to([outerSphere.scale, innerSphere.scale, sacredMesh.scale], {
+                x: 1, y: 1, z: 1,
+                duration: 0.4, ease: 'elastic.out(1, 0.5)'
+            });
         }
     });
+    gsap.to(goldLight, { intensity: 8, duration: 0.2, yoyo: true, repeat: 1 });
+}
 
-    function pulseSphere() {
-        gsap.to([outerSphere.scale, innerSphere.scale, sacredMesh.scale], {
-            x: 1.12, y: 1.12, z: 1.12, duration: 0.15, ease: 'power2.out',
-            onComplete: () => {
-                gsap.to([outerSphere.scale, innerSphere.scale, sacredMesh.scale], {
-                    x: 1, y: 1, z: 1, duration: 0.4, ease: 'elastic.out(1, 0.5)'
-                });
-            }
-        });
-        gsap.to(goldLight, { intensity: 8, duration: 0.2, yoyo: true, repeat: 1 });
-    }
+// ── SOUND SYSTEM ──────────────────────────────────────────────────
+let audioCtx   = null;
+let soundOn    = false;
+let ambientOsc = null;
 
-    // ── SOUND ──────────────────────────────────────────────────────
-    let audioCtx = null, soundOn = false, ambientOsc = null;
+function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
 
-    function initAudio() {
-        if (audioCtx) return;
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    function startAmbient() {
-        if (!audioCtx || ambientOsc) return;
-        const master = audioCtx.createGain();
-        master.gain.value = 0.04;
-        master.connect(audioCtx.destination);
-        [55, 110, 165].forEach((freq, i) => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.value = freq;
-            gain.gain.value = 1 - i * 0.25;
-            osc.connect(gain); gain.connect(master); osc.start();
-        });
-        ambientOsc = master;
-    }
-    function stopAmbient() {
-        if (!ambientOsc) return;
-        ambientOsc.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
-        setTimeout(() => { ambientOsc = null; }, 1000);
-    }
-    function playPulseSound() {
-        if (!audioCtx || !soundOn) return;
-        const osc = audioCtx.createOscillator();
+function startAmbient() {
+    if (!audioCtx || ambientOsc) return;
+    const master = audioCtx.createGain();
+    master.gain.value = 0.04;
+    master.connect(audioCtx.destination);
+
+    [55, 110, 165].forEach((freq, i) => {
+        const osc  = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type      = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.value     = 1 - i * 0.25;
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start();
+    });
+    ambientOsc = master;
+}
+
+function stopAmbient() {
+    if (!ambientOsc) return;
+    ambientOsc.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+    setTimeout(() => { ambientOsc = null; }, 1000);
+}
+
+function playPulseSound() {
+    if (!audioCtx || !soundOn) return;
+    const osc  = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(432, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(216, audioCtx.currentTime + 0.4);
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.5);
+}
+
+document.getElementById('sound-toggle').addEventListener('click', () => {
+    initAudio();
+    soundOn = !soundOn;
+    const el = document.getElementById('sound-toggle');
+    el.classList.toggle('active', soundOn);
+    soundOn ? startAmbient() : stopAmbient();
+});
+
+// ── BUILD DEITY MARKERS ───────────────────────────────────────────
+const sphereArea = document.getElementById('sphere-area');
+DEITIES.forEach(d => {
+    const el = document.createElement('div');
+    el.className = `deity ${d.cls}`;
+    el.id = `deity-${d.id}`;
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-label', `Portal ${d.name} — Nível ${d.level}`);
+    el.innerHTML = `
+        <div class="deity-orb" style="border-color:${d.color}33">
+            <span style="filter:drop-shadow(0 0 8px ${d.color})">${d.emoji}</span>
+            <div class="deity-level">${d.level}</div>
+        </div>
+        <div class="deity-name">${d.name}</div>
+        <div class="deity-role">${d.role}</div>
+    `;
+    el.addEventListener('click',   () => activatePortal(d));
+    el.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') activatePortal(d); });
+    sphereArea.appendChild(el);
+
+    gsap.to(el, {
+        y: '+=8',
+        repeat: -1,
+        yoyo: true,
+        duration: 2 + Math.random() * 1.5,
+        ease: 'sine.inOut',
+        delay: Math.random() * 2
+    });
+});
+
+// ── PORTAL TRANSITION ─────────────────────────────────────────────
+let isTransitioning = false;
+
+function activatePortal(deity) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    if (soundOn && audioCtx) {
+        const osc  = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(432, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(216, audioCtx.currentTime + 0.4);
-        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+        osc.frequency.setValueAtTime(111, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(432, audioCtx.currentTime + 2);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3);
         osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+        osc.start(); osc.stop(audioCtx.currentTime + 3);
     }
 
-    document.getElementById('sound-toggle').addEventListener('click', () => {
-        initAudio();
-        soundOn = !soundOn;
-        document.getElementById('sound-toggle').classList.toggle('active', soundOn);
-        soundOn ? startAmbient() : stopAmbient();
-    });
+    document.getElementById('portal-name').textContent = deity.name.toUpperCase();
+    document.getElementById('portal-name').style.color = deity.color;
+    document.getElementById('portal-name').style.textShadow = `0 0 40px ${deity.color}`;
 
-    // ── BUILD DEITY MARKERS — DocumentFragment (1 só reflow) ──────
-    // ✅ OPT 13: Fragment agrupa inserções DOM, evitando layout thrashing
-    const sphereArea = document.getElementById('sphere-area');
-    const fragment = document.createDocumentFragment();
+    const overlay = document.getElementById('portal-overlay');
+    const tl = gsap.timeline();
 
-    DEITIES.forEach(d => {
-        const el = document.createElement('div');
-        el.className = `deity ${d.cls}`;
-        el.id = `deity-${d.id}`;
-        el.setAttribute('role', 'button');
-        el.setAttribute('tabindex', '0');
-        el.setAttribute('aria-label', `Portal ${d.name} — Nível ${d.level}`);
-        el.innerHTML = `
-            <div class="deity-orb" style="border-color:${d.color}33">
-                <span style="filter:drop-shadow(0 0 8px ${d.color})">${d.emoji}</span>
-                <div class="deity-level">${d.level}</div>
-            </div>
-            <div class="deity-name">${d.name}</div>
-            <div class="deity-role">${d.role}</div>
-        `;
-        el.addEventListener('click',   () => activatePortal(d));
-        el.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') activatePortal(d); });
-        fragment.appendChild(el);
-    });
-    sphereArea.appendChild(fragment);
+    tl.to(overlay, { opacity: 1, duration: 0.6, pointerEvents: 'auto' })
+      .to('.portal-ring', {
+          opacity: 0.8, scale: 2,
+          duration: 1.5, stagger: 0.12, ease: 'power2.out'
+      }, 0.2)
+      .to('#portal-name', { opacity: 1, duration: 0.8, ease: 'power2.out' }, 0.8)
+      .to('#portal-sub',  { opacity: 1, duration: 0.6 }, 1.2)
+      .to([outerSphere.scale, innerSphere.scale], {
+          x: 0.01, y: 0.01, z: 0.01, duration: 1.5, ease: 'power2.in'
+      }, 0.5)
+      .to('#flash', { opacity: 1, duration: 0.5, ease: 'power2.in' }, 2.8)
+      .call(() => { window.location.href = deity.url; }, null, 3.4);
+}
 
-    DEITIES.forEach(d => {
-        gsap.to(`#deity-${d.id}`, {
-            y: '+=8', repeat: -1, yoyo: true,
-            duration: 2 + Math.random() * 1.5,
-            ease: 'sine.inOut', delay: Math.random() * 2
-        });
-    });
+// ── SHOW ENIGMA PHRASE ────────────────────────────────────────────
+let lastPhrase = -1;
+function showPhrase(index) {
+    const el = document.getElementById('phrase-display');
+    const p  = PHRASES[index !== undefined ? index : Math.floor(Math.random() * PHRASES.length)];
+    if (el._gsapTween) el._gsapTween.kill();
+    el.textContent = p;
+    el._gsapTween = gsap.timeline()
+        .to(el, { opacity: 1, duration: 0.8, ease: 'power2.out' })
+        .to(el, { opacity: 0, duration: 0.8, ease: 'power2.in', delay: 3 });
+}
 
-    // ── PORTAL TRANSITION ──────────────────────────────────────────
-    let isTransitioning = false;
+// Periodic phrase every 12s
+setInterval(() => { if (!isTransitioning) showPhrase(); }, 12000);
 
-    function activatePortal(deity) {
-        if (isTransitioning) return;
-        isTransitioning = true;
-        if (soundOn && audioCtx) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(111, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(432, audioCtx.currentTime + 2);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 3);
-        }
-        document.getElementById('portal-name').textContent = deity.name.toUpperCase();
-        document.getElementById('portal-name').style.color = deity.color;
-        document.getElementById('portal-name').style.textShadow = `0 0 40px ${deity.color}`;
+// ── RENDER LOOP ───────────────────────────────────────────────────
+const clock = new THREE.Clock();
 
-        const overlay = document.getElementById('portal-overlay');
-        const tl = gsap.timeline();
-        tl.to(overlay, { opacity: 1, duration: 0.6, pointerEvents: 'auto' })
-          .to('.portal-ring', { opacity: 0.8, scale: 2, duration: 1.5, stagger: 0.12, ease: 'power2.out' }, 0.2)
-          .to('#portal-name', { opacity: 1, duration: 0.8, ease: 'power2.out' }, 0.8)
-          .to('#portal-sub',  { opacity: 1, duration: 0.6 }, 1.2)
-          .to([outerSphere.scale, innerSphere.scale], { x: 0.01, y: 0.01, z: 0.01, duration: 1.5, ease: 'power2.in' }, 0.5)
-          .to('#flash', { opacity: 1, duration: 0.5, ease: 'power2.in' }, 2.8)
-          .call(() => { window.location.href = deity.url; }, null, 3.4);
+function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+
+    // Shader time
+    outerMat.uniforms.uTime.value = t;
+
+    // Check mouse proximity to center
+    raycaster.setFromCamera(mouse, camera);
+    const nearHits = raycaster.intersectObject(outerSphere);
+    isNearSphere   = nearHits.length > 0;
+    const target   = isNearSphere ? 0.0008 : 0.004;
+    rotationSpeed += (target - rotationSpeed) * 0.05;
+
+    // Sphere rotation
+    currentRotX += (targetRotX - currentRotX) * 0.04;
+    currentRotY += (targetRotY - currentRotY) * 0.04;
+
+    innerSphere.rotation.y  = t * rotationSpeed * 250 + currentRotY;
+    innerSphere.rotation.x  = currentRotX * 0.5;
+    outerSphere.rotation.y  = t * rotationSpeed * 200 + currentRotY;
+    outerSphere.rotation.x  = currentRotX * 0.3;
+    sacredMesh.rotation.y   = -t * 0.006 + currentRotY * 0.5;
+    sacredMesh.rotation.x   = t * 0.004;
+
+    // Track total rotation for 360° easter egg
+    totalRotation += rotationSpeed;
+    if (totalRotation > Math.PI * 2 && !phrase360Shown) {
+        phrase360Shown = true;
+        setTimeout(() => showPhrase(0), 500); // "Quem se conhece governa..."
+        setTimeout(() => { phrase360Shown = false; totalRotation = 0; }, 15000);
     }
 
-    function showPhrase(index) {
-        const el = document.getElementById('phrase-display');
-        const p  = PHRASES[index !== undefined ? index : Math.floor(Math.random() * PHRASES.length)];
-        if (el._gsapTween) el._gsapTween.kill();
-        el.textContent = p;
-        el._gsapTween = gsap.timeline()
-            .to(el, { opacity: 1, duration: 0.8, ease: 'power2.out' })
-            .to(el, { opacity: 0, duration: 0.8, ease: 'power2.in', delay: 3 });
-    }
-
-    setInterval(() => { if (!isTransitioning) showPhrase(); }, 12000);
-
-    // ── RENDER LOOP ────────────────────────────────────────────────
-    const clock = new THREE.Clock();
-    let animId;
-
-    function animate() {
-        animId = requestAnimationFrame(animate);
-        const t = clock.getElapsedTime();
-
-        outerMat.uniforms.uTime.value = t;
-
-        raycaster.setFromCamera(mouse, camera);
-        isNearSphere = raycaster.intersectObject(outerSphere).length > 0;
-        const target = isNearSphere ? 0.0008 : 0.004;
-        rotationSpeed += (target - rotationSpeed) * 0.05;
-
-        currentRotX += (targetRotX - currentRotX) * 0.04;
-        currentRotY += (targetRotY - currentRotY) * 0.04;
-
-        innerSphere.rotation.y = t * rotationSpeed * 250 + currentRotY;
-        innerSphere.rotation.x = currentRotX * 0.5;
-        outerSphere.rotation.y = t * rotationSpeed * 200 + currentRotY;
-        outerSphere.rotation.x = currentRotX * 0.3;
-        sacredMesh.rotation.y  = -t * 0.006 + currentRotY * 0.5;
-        sacredMesh.rotation.x  = t * 0.004;
-
-        totalRotation += rotationSpeed;
-        if (totalRotation > Math.PI * 2 && !phrase360Shown) {
-            phrase360Shown = true;
-            setTimeout(() => showPhrase(0), 500);
-            setTimeout(() => { phrase360Shown = false; totalRotation = 0; }, 15000);
-        }
-
-        rings.forEach(r => { r.mesh.rotation[r.axis] += r.speed; });
-
-        const pos = partGeo.attributes.position.array;
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            partVel[i*3] += 0.003 + (i % 5) * 0.0003;
-            const theta = partVel[i*3];
-            const phi   = partVel[i*3+1];
-            const r     = partVel[i*3+2];
-            pos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
-            pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta) + Math.sin(t * 0.3 + i) * 0.05;
-            pos[i*3+2] = r * Math.cos(phi);
-        }
-        partGeo.attributes.position.needsUpdate = true;
-
-        goldLight.intensity = 2.5 + Math.sin(t * 1.5) * 0.8;
-        blueLight.intensity = 1.8 + Math.cos(t * 1.1) * 0.6;
-
-        renderer.render(scene, camera);
-    }
-
-    // ✅ OPT 14: Pausa o loop Three.js quando aba está em background
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) { cancelAnimationFrame(animId); clock.stop(); }
-        else { clock.start(); animate(); }
+    // Rings
+    rings.forEach(r => {
+        r.mesh.rotation[r.axis] += r.speed;
     });
 
-    // ── INTRO SEQUENCE ─────────────────────────────────────────────
+    // Particles orbit
+    const pos = partGeo.attributes.position.array;
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        partVel[i*3] += 0.003 + (i % 5) * 0.0003;
+        const theta = partVel[i*3];
+        const phi   = partVel[i*3+1];
+        const r     = partVel[i*3+2];
+        pos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+        pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta) + Math.sin(t * 0.3 + i) * 0.05;
+        pos[i*3+2] = r * Math.cos(phi);
+    }
+    partGeo.attributes.position.needsUpdate = true;
+
+    // Pulse gold light
+    goldLight.intensity = 2.5 + Math.sin(t * 1.5) * 0.8;
+    blueLight.intensity = 1.8 + Math.cos(t * 1.1) * 0.6;
+
+    renderer.render(scene, camera);
+}
+
+// ── INTRO SEQUENCE ────────────────────────────────────────────────
+function runIntro() {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    // Fake load progress
     let p = 0;
     const fillEl = document.getElementById('loader-fill');
     const loaderTimer = setInterval(() => {
@@ -1776,54 +1547,70 @@ window.addEventListener('load', function() {
         }
     }, 120);
 
-    tl.to('#eyebrow',      { opacity: 1, y: 0, duration: 1.2, delay: 2 })
-      .to('#hero-title',   { opacity: 1, y: 0, duration: 1.2 }, '-=0.6')
-      .to('#hero-sub',     { opacity: 1, y: 0, duration: 1   }, '-=0.7')
-      .to('#header',       { opacity: 1, y: 0, duration: 1   }, '-=0.5')
-      .to('#manifesto',    { opacity: 1, y: 0, duration: 1   }, '-=0.5')
+    // UI reveal cascade
+    tl.to('#eyebrow',    { opacity: 1, y: 0, duration: 1.2, delay: 2 })
+      .to('#hero-title', { opacity: 1, y: 0, duration: 1.2 }, '-=0.6')
+      .to('#hero-sub',   { opacity: 1, y: 0, duration: 1 }, '-=0.7')
+      .to('#header',     { opacity: 1, y: 0, duration: 1 }, '-=0.5')
+      .to('#manifesto',  { opacity: 1, y: 0, duration: 1 }, '-=0.5')
       .to('.corner-glyph', { opacity: 1, duration: 1, stagger: 0.15 }, '-=0.5')
       .to('.side-line',    { opacity: 1, duration: 1.5 }, '-=0.5')
       .to('#enigma',       { opacity: 0.7, duration: 1 }, '-=0.3')
       .to('#sound-toggle', { opacity: 0.7, duration: 1 }, '-=0.5')
-      .to('#auth-bar',     { opacity: 1, duration: 0.8 }, '-=0.6')
+      .to('#auth-bar',     { opacity: 1, duration: 0.8, ease: 'power2.out' }, '-=0.6')
       .to('#menu-toggle',  { opacity: 0.9, duration: 0.8 }, '-=0.6');
 
-    DEITIES.forEach(d => {
-        tl.to(`#deity-${d.id}`, { opacity: 1, duration: 0.8 }, '>-0.4');
+    // Show deities
+    DEITIES.forEach((d, i) => {
+        tl.to(`#deity-${d.id}`, { opacity: 1, duration: 0.8 }, `>-0.4`);
     });
 
+    // First phrase after 5s
     setTimeout(() => showPhrase(6), 5000);
+}
 
-    // ── NAV MENU ───────────────────────────────────────────────────
-    const menuToggle = document.getElementById('menu-toggle');
-    const navPanel   = document.getElementById('nav-panel');
-    const navOverlay = document.getElementById('nav-overlay');
+// ── RIGHT NAV MENU ────────────────────────────────────────────────
+const menuToggle = document.getElementById('menu-toggle');
+const navPanel   = document.getElementById('nav-panel');
+const navOverlay = document.getElementById('nav-overlay');
 
-    const openNav  = () => { menuToggle.classList.add('open'); navPanel.classList.add('open'); navOverlay.classList.add('active'); menuToggle.setAttribute('aria-expanded', 'true'); };
-    const closeNav = () => { menuToggle.classList.remove('open'); navPanel.classList.remove('open'); navOverlay.classList.remove('active'); menuToggle.setAttribute('aria-expanded', 'false'); };
+function openNav() {
+    menuToggle.classList.add('open');
+    navPanel.classList.add('open');
+    navOverlay.classList.add('active');
+    menuToggle.setAttribute('aria-expanded', 'true');
+}
+function closeNav() {
+    menuToggle.classList.remove('open');
+    navPanel.classList.remove('open');
+    navOverlay.classList.remove('active');
+    menuToggle.setAttribute('aria-expanded', 'false');
+}
 
-    menuToggle.addEventListener('click', () => menuToggle.classList.contains('open') ? closeNav() : openNav());
-    navOverlay.addEventListener('click', closeNav);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNav(); });
+menuToggle.addEventListener('click', () => menuToggle.classList.contains('open') ? closeNav() : openNav());
+navOverlay.addEventListener('click', closeNav);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNav(); });
 
-    document.querySelectorAll('.nav-panel-link, .auth-btn, #menu-toggle').forEach(el => {
-        el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-        el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-    });
-
-    // ✅ OPT 15: passive:true no resize — não bloqueia scroll
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }, 150);
-    }, { passive: true });
-
-    animate();
+// Add nav panel links to cursor hovering
+document.querySelectorAll('.nav-panel-link, .auth-btn, #menu-toggle').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
 });
+
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }, 150);
+});
+
+// ── INIT ──────────────────────────────────────────────────────────
+animate();
+runIntro();
 </script>
 </body>
 </html>
