@@ -1,1 +1,525 @@
 
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliotheca Akasha | Os Grimórios Sagrados</title>
+    
+    <!-- Fontes Premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-dark: #05010a;
+            --primary-purple: #1a0b2e;
+            --accent-gold: #d4af37;
+            --accent-gold-light: #f9eac3;
+            --text-main: #e0e0e0;
+            --glass-bg: rgba(20, 20, 30, 0.4);
+            --glass-border: rgba(212, 175, 55, 0.15);
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--primary-dark);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* --- UI DE ALTA PERFORMANCE --- */
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 9999; pointer-events: none;
+        }
+        .cursor-dot { width: 6px; height: 6px; background-color: var(--accent-gold); }
+        .cursor-outline {
+            width: 50px; height: 50px; border: 1px solid var(--accent-gold);
+            transition: all 0.15s ease-out; opacity: 0.7;
+        }
+
+        /* Background Dinâmico */
+        #canvas-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at center, #130821 0%, #000000 100%);
+        }
+
+        /* Scrollbar Premium */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 10px; }
+
+        /* Typography & Layout */
+        h1, h2, h3 { font-family: 'Cinzel', serif; color: var(--accent-gold); }
+
+        .section-header {
+            text-align: center; margin-bottom: 3rem; position: relative; padding: 0 20px;
+        }
+        .level-badge {
+            display: inline-block; font-size: 0.8rem; letter-spacing: 4px; color: rgba(255,255,255,0.5);
+            margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); padding: 5px 15px;
+            text-transform: uppercase;
+        }
+        .section-title {
+            font-size: 3rem; background: linear-gradient(to bottom, #d4af37, #8a5a0f);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; position: relative; padding: 0 20px;
+        }
+        .hero h1 {
+            font-size: clamp(3rem, 6vw, 6rem); line-height: 1; margin-bottom: 20px;
+            text-shadow: 0 0 40px rgba(212, 175, 55, 0.3); opacity: 0; transform: translateY(50px);
+        }
+        .hero p {
+            font-size: 1.2rem; max-width: 600px; color: rgba(255,255,255,0.8); line-height: 1.6;
+            opacity: 0; transform: translateY(30px);
+        }
+
+        /* CAROUSEL CONTAINERS (Scroll Horizontal) */
+        .level-section {
+            padding: 80px 0; border-top: 1px solid rgba(255,255,255,0.03); position: relative;
+        }
+        
+        .carousel-wrapper {
+            width: 100%; overflow-x: auto; padding: 40px 5%;
+            display: flex; gap: 40px; scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch; /* Smooth scroll mobile */
+        }
+        
+        /* Centralizar se houver poucos itens */
+        .carousel-wrapper.center-items {
+            justify-content: center;
+        }
+
+        /* BOOK CARD DESIGN (Extraído e estilizado) */
+        .book-card {
+            flex: 0 0 280px; /* Largura fixa do card */
+            scroll-snap-align: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            opacity: 0; transform: translateY(50px); /* GSAP Init */
+            transition: box-shadow 0.3s ease;
+        }
+
+        .book-card:hover {
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
+            border-color: var(--accent-gold);
+        }
+
+        .book-cover-container {
+            width: 100%; height: 340px;
+            margin-bottom: 20px; position: relative;
+            border-radius: 4px; overflow: hidden;
+            box-shadow: 5px 10px 20px rgba(0,0,0,0.6);
+            transform: translateZ(20px); transition: transform 0.4s ease;
+        }
+        
+        .book-card:hover .book-cover-container { transform: translateZ(40px) scale(1.02); }
+
+        .book-cover-img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .book-card:hover .book-cover-img { transform: scale(1.1); }
+
+        .book-info { transform: translateZ(10px); text-align: center; }
+
+        .book-title {
+            font-size: 1.1rem; color: #fff; margin-bottom: 8px; font-weight: 600; line-height: 1.3;
+            min-height: 2.6rem; /* Altura fixa para alinhamento */
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        .book-price {
+            font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: var(--accent-gold); margin-bottom: 15px; font-weight: 300;
+        }
+
+        .btn-access {
+            display: block; width: 100%; padding: 12px 0;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            border: 1px solid var(--accent-gold); color: #fff;
+            text-decoration: none; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+
+        .btn-access:hover { background: var(--accent-gold); color: #000; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+
+        /* FOOTER */
+        .footer-cta {
+            padding: 100px 20px; text-align: center;
+            background: linear-gradient(to top, #000, transparent);
+        }
+
+        .btn-back-main {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 15px 40px; font-family: 'Cinzel', serif; font-size: 1rem;
+            color: var(--accent-gold); border: 2px solid var(--accent-gold); text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn-back-main:hover { background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 30px rgba(212, 175, 55, 0.2); }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .carousel-wrapper { padding: 40px 20px; gap: 20px; justify-content: flex-start; }
+            .carousel-wrapper.center-items { justify-content: flex-start; } /* No mobile, sempre scroll */
+            .book-card { flex: 0 0 80vw; } /* Card maior no mobile */
+            .book-cover-container { height: 400px; }
+            .section-title { font-size: 2rem; }
+            .cursor-dot, .cursor-outline { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Efeitos Visuais -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+    <div id="canvas-container"></div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1 class="hero-title">Bibliotheca<br><span style="color: var(--accent-gold);">Akasha</span></h1>
+        <p class="hero-text">"Os livros são espelhos: você só vê neles o que já tem dentro de si."<br>Explore os grimórios sagrados divididos pelos níveis de consciência.</p>
+        
+        <div style="margin-top: 50px; opacity: 0;" class="scroll-icon">
+            <i class="fa-solid fa-chevron-down" style="color: var(--accent-gold); font-size: 1.5rem; animation: bounce 2s infinite;"></i>
+        </div>
+    </section>
+
+    <!-- NÍVEL 1: ANÚBIS -->
+    <section class="level-section" id="nivel1">
+        <div class="section-header">
+            <span class="level-badge">Nível I • O Despertar</span>
+            <h2 class="section-title">Portal de Anúbis</h2>
+            <p style="color: rgba(255,255,255,0.6); font-style: italic;">O início da jornada e a quebra do véu.</p>
+        </div>
+
+        <div class="carousel-wrapper center-items">
+            <!-- Livro 1 -->
+            <div class="book-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.3">
+                <div class="book-cover-container">
+                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/5a86b4d7-4171-42fe-8305-ab2dd09fc1f1/AKASHAOCODIGOSECRETODOUNIVERSO.png" alt="O Código Secreto" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">O Código Secreto do Universo</h3>
+                    <p class="book-price">R$ 26,73</p>
+                    <a href="https://go.hotmart.com/G104196878C?dp=1" target="_blank" class="btn-access">Adquirir</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NÍVEL 2: HORUS -->
+    <section class="level-section" id="nivel2">
+        <div class="section-header">
+            <span class="level-badge">Nível II • A Visão</span>
+            <h2 class="section-title">Caminho de Horus</h2>
+            <p style="color: rgba(255,255,255,0.6); font-style: italic;">Percepção, conduta e o despertar da energia vital.</p>
+        </div>
+
+        <div class="carousel-wrapper">
+            <!-- Livro 1 -->
+            <div class="book-card" data-tilt data-tilt-max="10">
+                <div class="book-cover-container">
+                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/3133daf4-75c5-481d-a274-40620ce4691a/download20260124T161807608.jfif" alt="Código de Conduta" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Código de Conduta</h3>
+                    <p class="book-price">R$ 48,07</p>
+                    <a href="https://go.hotmart.com/F104168327C?dp=1" target="_blank" class="btn-access">Adquirir</a>
+                </div>
+            </div>
+
+            <!-- Livro 2 -->
+            <div class="book-card" data-tilt data-tilt-max="10">
+                <div class="book-cover-container">
+                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/34ef7bc9-318d-4878-8242-3155577dc887/b.jfif" alt="O Que é Tantra?" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">O Que é Tantra?</h3>
+                    <p class="book-price">R$ 26,73</p>
+                    <a href="https://go.hotmart.com/G104168848Y?dp=1" target="_blank" class="btn-access">Adquirir</a>
+                </div>
+            </div>
+
+            <!-- Livro 3 -->
+            <div class="book-card" data-tilt data-tilt-max="10">
+                <div class="book-cover-container">
+                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/1b1148c3-9452-48ab-acd9-ef188de96ea6/download4.jfif" alt="Shiva, Shakti e Shava" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Shiva, Shakti e Shava</h3>
+                    <p class="book-price">R$ 26,79</p>
+                    <a href="https://pay.hotmart.com/U104170307P" target="_blank" class="btn-access">Adquirir</a>
+                </div>
+            </div>
+
+            <!-- Livro 4 -->
+            <div class="book-card" data-tilt data-tilt-max="10">
+                <div class="book-cover-container">
+                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/4e98b40d-9257-45c5-bcae-49ec4d38169d/jk.jfif" alt="Honrar a Deusa" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Honrar a Deusa</h3>
+                    <p class="book-price">R$ 47,98</p>
+                    <a href="https://go.hotmart.com/M104187005M?dp=1" target="_blank" class="btn-access">Adquirir</a>
+                </div>
+            </div>
+
+            <!-- Livro 5 -->
+            <div class="book-card" data-tilt data-tilt-max="10">
+                <div class="book-cover-container">
+                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/579cbf6e-df90-4b70-afc7-aa5e324043d2/download5.jfif" alt="Tantra Descomplicado" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Tantra Descomplicado</h3>
+                    <p class="book-price">R$ 45,00</p>
+                    <a href="https://go.hotmart.com/P103542930V?dp=1" target="_blank" class="btn-access">Adquirir</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NÍVEL 3: ÍSIS -->
+    <section class="level-section" id="nivel3">
+        <div class="section-header">
+            <span class="level-badge">Nível III • A Fortaleza</span>
+            <h2 class="section-title">Templo de Ísis</h2>
+            <p style="color: rgba(255,255,255,0.6); font-style: italic;">Magia, proteção mental e soberania emocional.</p>
+        </div>
+
+        <div class="carousel-wrapper center-items">
+            <!-- Livro 1 -->
+            <div class="book-card" data-tilt data-tilt-max="10">
+                <div class="book-cover-container">
+                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/6a722dd2-6f23-419f-86c4-a84a7fef3dcf/autoestima.png" alt="Autoestima Blindada" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Autoestima Blindada</h3>
+                    <p class="book-price">R$ 43,00</p>
+                    <a href="https://go.hotmart.com/C103563355K?dp=1" target="_blank" class="btn-access">Adquirir</a>
+                </div>
+            </div>
+
+            <!-- Livro 2 -->
+            <div class="book-card" data-tilt data-tilt-max="10">
+                <div class="book-cover-container">
+                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/481a187c-659e-4225-b56e-b4563b70caa6/download20251228T123455411.jfif" alt="Como Blindar Sua Mente" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Como Blindar Sua Mente?</h3>
+                    <p class="book-price">R$ 43,00</p>
+                    <a href="https://go.hotmart.com/K103564499T?dp=1" target="_blank" class="btn-access">Adquirir</a>
+                </div>
+            </div>
+
+            <!-- Livro 3 -->
+            <div class="book-card" data-tilt data-tilt-max="10">
+                <div class="book-cover-container">
+                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/423bf2e2-e670-4248-ba80-afa7fb77d2af/download20251228T130038541.jfif" alt="Triplex na Mente" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Triplex na Mente</h3>
+                    <p class="book-price">R$ 39,90</p>
+                    <a href="https://go.hotmart.com/U103564795C?dp=1" target="_blank" class="btn-access">Adquirir</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NÍVEL 4: TOTH -->
+    <section class="level-section" id="nivel4">
+        <div class="section-header">
+            <span class="level-badge">Nível IV • O Legado</span>
+            <h2 class="section-title">Trono de Toth</h2>
+            <p style="color: rgba(255,255,255,0.6); font-style: italic;">Sabedoria, prosperidade e eternidade.</p>
+        </div>
+
+        <div class="carousel-wrapper center-items">
+            <!-- Livro 1 -->
+            <div class="book-card" data-tilt data-tilt-max="10" data-tilt-glare data-tilt-max-glare="0.3">
+                <div class="book-cover-container">
+                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/cce3f0bb-75de-44d3-9c86-21ee3498ef05/download20251228T105908411.jfif" alt="Coletânea Alinhamento" class="book-cover-img">
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Coletânea Alinhamento Financeiro</h3>
+                    <p class="book-price">R$ 70,00</p>
+                    <a href="https://pay.hotmart.com/S103543026B" target="_blank" class="btn-access">Adquirir</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Action -->
+    <section class="footer-cta">
+        <h2 style="font-size: 2rem; margin-bottom: 2rem;">Sua Biblioteca Pessoal</h2>
+        <a href="https://akashahub.com.br/doutrina" class="btn-back-main">
+            <i class="fa-solid fa-arrow-left"></i> Voltar para Doutrina
+        </a>
+    </section>
+
+    <!-- Scripts de Alta Performance -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+
+    <script>
+        // 1. PARTICLES BACKGROUND (Efeito Akasha)
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        document.getElementById('canvas-container').appendChild(canvas);
+
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.size = Math.random() * 2;
+                this.alpha = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(212, 175, 55, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                // Conexões (Rede Neural/Akáshica)
+                for (let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 100) {
+                        ctx.strokeStyle = `rgba(138, 43, 226, ${0.05 - dist/2000})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // 2. CUSTOM CURSOR
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+            
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // 3. GSAP ANIMATIONS
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Intro
+        const tl = gsap.timeline();
+        tl.to(".hero h1", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out" })
+          .to(".hero p", { opacity: 1, y: 0, duration: 1, ease: "power2.out" }, "-=1")
+          .to(".scroll-icon", { opacity: 1, duration: 1 }, "-=0.5");
+
+        // Reveal das Seções
+        gsap.utils.toArray('.level-section').forEach(section => {
+            const title = section.querySelector('.section-header');
+            const cards = section.querySelectorAll('.book-card');
+
+            // Título
+            gsap.fromTo(title, 
+                { opacity: 0, y: 30 },
+                {
+                    opacity: 1, y: 0, duration: 1,
+                    scrollTrigger: { trigger: section, start: "top 80%" }
+                }
+            );
+
+            // Cards (Stagger effect horizontal)
+            gsap.to(cards, {
+                scrollTrigger: { trigger: section, start: "top 75%" },
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                stagger: 0.15,
+                ease: "back.out(1.2)"
+            });
+        });
+
+        // Bounce Animation Keyframes (CSS)
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+                40% {transform: translateY(-10px);}
+                60% {transform: translateY(-5px);}
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+        // 4. VANILLA TILT INIT (Automático via data-tilt no HTML)
+    </script>
+</body>
+</html>
