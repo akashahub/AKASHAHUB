@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>O QUE É O TANTRA? | Tecnologia da Consciência</title>
+    
+    <!-- Fontes Futuristas e Elegantes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- DESIGN SYSTEM CYBER-MÍSTICO --- */
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-purple: #bc13fe;
+            --deep-void: #030005;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.1);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--deep-void);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* PALCO 3D IMERSIVO */
+        #webgl-stage {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1a0525 0%, #000 100%);
+        }
+
+        /* --- TIPOGRAFIA --- */
+        h1, h2, h3 {
+            font-family: 'Syncopate', sans-serif;
+            text-transform: uppercase;
+            line-height: 1.1;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #fff, var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- LAYOUT NARRATIVO --- */
+        .scroll-wrapper {
+            position: relative; z-index: 2;
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            perspective: 1000px; /* Profundidade 3D no HTML */
+        }
+
+        /* Cartões de Vidro Flutuante */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            transform: translateY(50px) rotateX(10deg);
+            opacity: 0; /* Controlado pelo GSAP */
+            box-shadow: 0 0 40px rgba(188, 19, 254, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efeito de Scanline no Card */
+        .glass-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--neon-cyan);
+            box-shadow: 0 0 10px var(--neon-cyan);
+            animation: scan 3s infinite linear;
+            opacity: 0.5;
+        }
+        @keyframes scan { 0% {top:0;} 100% {top:100%;} }
+
+        p {
+            font-size: 1.1rem; color: #ccc; line-height: 1.6; margin-top: 20px; font-weight: 200;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            text-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+            mix-blend-mode: screen;
+        }
+
+        .author-tag {
+            font-size: 0.9rem; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--neon-purple); margin-bottom: 20px; display: block;
+        }
+
+        /* --- LISTA DE BENEFÍCIOS (HUD STYLE) --- */
+        .tech-list {
+            list-style: none; padding: 0; text-align: left; margin-top: 30px;
+        }
+        .tech-list li {
+            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; gap: 10px; color: #aaa;
+        }
+        .tech-list li::before {
+            content: '►'; color: var(--neon-cyan); font-size: 0.8rem;
+        }
+
+        /* --- PREÇO E CTA --- */
+        .price-glitch {
+            font-size: 3rem; font-weight: 700; color: white;
+            text-shadow: 2px 0 var(--neon-purple), -2px 0 var(--neon-cyan);
+            margin: 20px 0; font-family: 'Syncopate';
+        }
+
+        .magnetic-btn {
+            position: relative;
+            background: transparent;
+            color: white;
+            font-family: 'Syncopate';
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 20px 40px;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            text-decoration: none;
+            border: 1px solid var(--neon-cyan);
+            overflow: hidden;
+            display: inline-block;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .magnetic-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: var(--neon-cyan); transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: -1;
+        }
+        .magnetic-btn:hover::before { left: 0; }
+        .magnetic-btn:hover { color: black; box-shadow: 0 0 30px var(--neon-cyan); }
+
+        /* LOADER */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-family: 'Syncopate'; color: var(--neon-cyan); letter-spacing: 3px;
+        }
+        .bar { width: 200px; height: 2px; background: #333; margin-top: 10px; position: relative; overflow: hidden; }
+        .bar::after {
+            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+            background: var(--neon-cyan); animation: load 1.5s ease-out forwards;
+        }
+        @keyframes load { to { width: 100%; } }
+
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div id="loader">
+        <div>INICIALIZANDO SISTEMA...</div>
+        <div class="bar"></div>
+    </div>
+
+    <!-- 3D ENGINE -->
+    <div id="webgl-stage"></div>
+
+    <!-- SCROLL CONTENT -->
+    <div class="scroll-wrapper">
+
+        <!-- S1: A PERGUNTA -->
+        <section id="s1">
+            <span class="author-tag">Roussenq Klehn</span>
+            <h1 class="hero-title">O QUE É<br><span class="gradient-text">O TANTRA?</span></h1>
+            <p>Desprograme as mentiras. Acesse a tecnologia.</p>
+        </section>
+
+        <!-- S2: A REALIDADE (MITOS) -->
+        <section id="s2">
+            <div class="glass-card">
+                <h2>Não é sobre<br>Exageros Culturais.</h2>
+                <p>O Tantra foi cercado por mitos e distorções. É hora de limpar o ruído e ver a essência.</p>
+            </div>
+        </section>
+
+        <!-- S3: A TECNOLOGIA (PROPOSTA) -->
+        <section id="s3">
+            <div class="glass-card">
+                <h2>Tecnologia da<br><span style="color:var(--neon-cyan)">Consciência.</span></h2>
+                <p>Simples, direto e libertador. Uma ferramenta aplicada à vida real para quem busca verdade, não dogmas.</p>
+                <ul class="tech-list">
+                    <li>O que Tantra NÃO é</li>
+                    <li>A proposta verdadeira</li>
+                    <li>Prática segura e ética</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- S4: PÚBLICO ALVO -->
+        <section id="s4">
+            <div class="glass-card">
+                <h2>Para Buscadores<br><span style="color:var(--neon-purple)">Céticos.</span></h2>
+                <p>Se você tem medo, vergonha ou curiosidade racional, este guia foi desenhado para sua mente.</p>
+            </div>
+        </section>
+
+        <!-- S5: CHECKOUT -->
+        <section id="s5">
+            <div class="glass-card" style="border-color: var(--neon-cyan);">
+                <h3 style="color:#888;">ACESSO IMEDIATO (PDF)</h3>
+                <div class="price-glitch">R$ 26,58</div>
+                <p style="font-size: 0.9rem; margin-bottom: 30px;">+ 5 Práticas Iniciais Seguras</p>
+                
+                <a href="https://pay.hotmart.com/G104168848Y?sck=HOTMART_PRODUCT_PAGE&off=b156yub5&hotfeature=32" class="magnetic-btn" target="_blank">
+                    INICIAR DOWNLOAD
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- SCRIPTS -->
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
+        import { EffectComposer } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/UnrealBloomPass.js';
+        import { gsap } from 'https://unpkg.com/gsap@3.12.2/index.js';
+        import { ScrollTrigger } from 'https://unpkg.com/gsap@3.12.2/ScrollTrigger.js';
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. CONFIGURAÇÃO DA CENA (O LABORATÓRIO) ---
+        const container = document.getElementById('webgl-stage');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x030005, 0.03); // Profundidade escura
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 7;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // --- 2. POST-PROCESSING (ETHEREAL GLOW) ---
+        const renderScene = new RenderPass(scene, camera);
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0;
+        bloomPass.strength = 1.5; // Brilho forte e etéreo
+        bloomPass.radius = 0.8;
+
+        const composer = new EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+
+        // --- 3. O "PRISMA DA VERDADE" (OBJETO CENTRAL) ---
+        // Usaremos um Icosaedro que muda de forma
+        const geometry = new THREE.IcosahedronGeometry(2.5, 2); // Geometria detalhada
+        
+        // Material holográfico complexo
+        const material = new THREE.MeshPhysicalMaterial({
+            color: 0x111111,
+            metalness: 0.9,
+            roughness: 0.1,
+            transmission: 0.2, // Vidro
+            thickness: 1,
+            clearcoat: 1,
+            emissive: 0x220033,
+            wireframe: false
+        });
+
+        const crystal = new THREE.Mesh(geometry, material);
+        scene.add(crystal);
+
+        // Wireframe externo (A "Grade" da tecnologia)
+        const wireGeo = new THREE.IcosahedronGeometry(3, 1);
+        const wireMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff, wireframe: true, transparent: true, opacity: 0.1 });
+        const wireframe = new THREE.Mesh(wireGeo, wireMat);
+        scene.add(wireframe);
+
+        // Luzes Orbitais
+        const light1 = new THREE.PointLight(0x00f3ff, 2, 20);
+        const light2 = new THREE.PointLight(0xbc13fe, 2, 20);
+        scene.add(light1, light2);
+
+        // Partículas Etéreas (Aura)
+        const pGeo = new THREE.BufferGeometry();
+        const pCount = 800;
+        const pPos = new Float32Array(pCount * 3);
+        for(let i=0; i<pCount*3; i++) pPos[i] = (Math.random()-0.5) * 20;
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+        const pMat = new THREE.PointsMaterial({ color: 0x8888ff, size: 0.04, transparent: true, opacity: 0.5 });
+        const aura = new THREE.Points(pGeo, pMat);
+        scene.add(aura);
+
+        // --- 4. MODIFICAÇÃO DE VÉRTICES (SIMULAÇÃO DE FLUIDO) ---
+        // Vamos guardar as posições originais para deformar o objeto
+        const originalPositions = geometry.attributes.position.array.slice();
+        
+        // --- 5. SCROLL TELLING (GSAP) ---
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".scroll-wrapper",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1
+            }
+        });
+
+        // FASE 1 -> 2: O Caos se organiza
+        // O cristal começa girando rápido e para em posição solene
+        tl.to(crystal.rotation, { x: 3, y: 3, duration: 4 })
+          .to(wireframe.rotation, { x: -3, y: -3, duration: 4 }, 0)
+          .to(material, { emissive: 0x00f3ff, emissiveIntensity: 1, duration: 2 }, 2);
+
+        // FASE 2 -> 3: Transparência e Tecnologia
+        // O cristal fica mais transparente revelando a grade
+        tl.to(material, { transmission: 0.8, opacity: 0.5, transparent: true, duration: 2 }, 4)
+          .to(wireMat, { opacity: 0.4, duration: 2 }, 4);
+        
+        // FASE 3 -> 4: Zoom e Imersão
+        tl.to(camera.position, { z: 4, duration: 3 }, 6);
+
+        // Animação dos Cards (Slide Up com Fade)
+        gsap.utils.toArray(".glass-card").forEach(card => {
+            gsap.to(card, {
+                opacity: 1,
+                y: 0,
+                rotateX: 0,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 75%",
+                    end: "top 40%",
+                    scrub: 1
+                }
+            });
+        });
+
+        // --- 6. RENDER LOOP ---
+        const clock = new THREE.Clock();
+        
+        // Mouse Smooth
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+
+        window.addEventListener('mousemove', e => {
+            mouseX = (e.clientX - window.innerWidth/2) * 0.001;
+            mouseY = (e.clientY - window.innerHeight/2) * 0.001;
+        });
+
+        function animate() {
+            const t = clock.getElapsedTime();
+
+            // Animação das Luzes Orbitais
+            light1.position.x = Math.sin(t) * 5;
+            light1.position.z = Math.cos(t) * 5;
+            light2.position.x = Math.sin(t + Math.PI) * 5;
+            light2.position.y = Math.cos(t * 0.5) * 5;
+
+            // Deformação Etérea do Cristal (Noise effect via CPU - simples)
+            // Faz o cristal parecer líquido/energia pulsante
+            const positions = geometry.attributes.position.array;
+            for(let i=0; i<positions.length; i+=3) {
+                // Pega pos original
+                const ox = originalPositions[i];
+                const oy = originalPositions[i+1];
+                const oz = originalPositions[i+2];
+
+                // Adiciona onda baseada no tempo
+                const wave = Math.sin(t * 2 + ox + oy) * 0.1;
+                
+                positions[i] = ox + wave;
+                positions[i+1] = oy + wave;
+                positions[i+2] = oz + wave;
+            }
+            geometry.attributes.position.needsUpdate = true;
+
+            // Rotação da Aura
+            aura.rotation.y = t * 0.05;
+
+            // Mouse Parallax
+            targetX = mouseX * 0.5;
+            targetY = mouseY * 0.5;
+            crystal.rotation.x += 0.05 * (targetY - crystal.rotation.x);
+            crystal.rotation.y += 0.05 * (targetX - crystal.rotation.y);
+
+            composer.render();
+            requestAnimationFrame(animate);
+        }
+
+        // --- 7. RESIZE ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        window.onload = () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = 0;
+                setTimeout(() => { loader.remove(); animate(); }, 1000);
+            }, 1500);
+        };
+
+    </script>
+</body>
+</html>
