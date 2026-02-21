@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRIPLEX NA MENTE | O Manual Que Eles Nunca Quiseram Que Você Lesse</title>
+    <meta name="description" content="O livro mais perigoso do Brasil. Descubra como CEOs, pastores milionários e líderes constroem impérios dentro da cabeça das pessoas.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --color-bg: #0a0a0a;
+            --color-bg-alt: #111111;
+            --color-text: #f5f5f5;
+            --color-text-muted: #888888;
+            --color-accent: #ff3d3d;
+            --color-accent-glow: rgba(255, 61, 61, 0.3);
+            --color-gold: #d4af37;
+            --font-display: 'Cormorant Garamond', serif;
+            --font-body: 'Inter', sans-serif;
+            --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: auto;
+        }
+
+        html.lenis, html.lenis body {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--color-bg);
+            color: var(--color-text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* WebGL Canvas */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Vignette */
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(0,0,0,0.5) 100%);
+        }
+
+        /* Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-gold));
+            z-index: 1001;
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            mix-blend-mode: difference;
+            transition: opacity 0.5s var(--ease-expo);
+        }
+
+        .nav.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .nav-cta {
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.8rem 1.5rem;
+            border: 1px solid var(--color-text);
+            background: transparent;
+            color: var(--color-text);
+            cursor: pointer;
+            transition: all 0.4s var(--ease-expo);
+        }
+
+        .nav-cta:hover {
+            background: var(--color-text);
+            color: var(--color-bg);
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .section-content {
+            max-width: 1400px;
+            width: 100%;
+            padding: 0 3rem;
+            position: relative;
+        }
+
+        /* Typography */
+        .display-xl {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 12vw, 10rem);
+            font-weight: 700;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+        }
+
+        .display-lg {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 6vw, 5rem);
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .display-md {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .body-lg {
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            line-height: 1.8;
+            color: var(--color-text-muted);
+        }
+
+        .body-md {
+            font-size: clamp(0.9rem, 1.2vw, 1rem);
+            line-height: 1.7;
+            color: var(--color-text-muted);
+        }
+
+        .label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--color-accent);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-warning {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+        }
+
+        .warning-icon {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--color-accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+        }
+
+        .hero-title {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title .line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero-title .line span {
+            display: inline-block;
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        .hero-subtitle {
+            margin-top: 2rem;
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero-cta {
+            margin-top: 3rem;
+            display: flex;
+            gap: 1.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .btn-primary {
+            padding: 1.2rem 3rem;
+            background: var(--color-accent);
+            color: white;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s var(--ease-expo);
+            box-shadow: 0 0 40px var(--color-accent-glow);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 50px var(--color-accent-glow);
+        }
+
+        .btn-secondary {
+            padding: 1.2rem 3rem;
+            background: transparent;
+            color: var(--color-text);
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.4s var(--ease-expo);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-text);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--color-text), transparent);
+            animation: scrollLine 2s infinite;
+        }
+
+        @keyframes scrollLine {
+            0% { transform: scaleY(0); transform-origin: top; }
+            50% { transform: scaleY(1); transform-origin: top; }
+            51% { transform-origin: bottom; }
+            100% { transform: scaleY(0); transform-origin: bottom; }
+        }
+
+        /* DANGER SECTION */
+        .danger-section {
+            background: linear-gradient(180deg, var(--color-bg) 0%, #1a0a0a 50%, var(--color-bg) 100%);
+        }
+
+        .danger-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            align-items: center;
+        }
+
+        .danger-visual {
+            position: relative;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .danger-circle {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border: 1px solid rgba(255, 61, 61, 0.2);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        .danger-circle:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            border-color: rgba(255, 61, 61, 0.4);
+            animation-direction: reverse;
+            animation-duration: 15s;
+        }
+
+        .danger-circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            border-color: var(--color-accent);
+            animation-duration: 10s;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .danger-text {
+            font-family: var(--font-display);
+            font-size: 8rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            opacity: 0.1;
+            position: absolute;
+        }
+
+        .danger-content {
+            padding-left: 2rem;
+        }
+
+        .danger-content .label {
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .danger-content h2 {
+            margin-bottom: 2rem;
+        }
+
+        .danger-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .danger-highlight {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        /* CONTENT SECTION */
+        .content-section {
+            padding: 10rem 0;
+        }
+
+        .content-header {
+            text-align: center;
+            margin-bottom: 6rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s var(--ease-expo);
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-accent), transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s var(--ease-expo);
+        }
+
+        .content-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .content-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .card-number {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 700;
+            color: rgba(255, 61, 61, 0.2);
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            line-height: 1;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            margin-top: 1rem;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* CASE STUDIES SECTION */
+        .cases-section {
+            background: var(--color-bg-alt);
+            padding: 10rem 0;
+        }
+
+        .cases-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .cases-marquee {
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 2rem 0;
+        }
+
+        .marquee-track {
+            display: inline-flex;
+            animation: marquee 30s linear infinite;
+        }
+
+        .marquee-item {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 600;
+            padding: 0 3rem;
+            color: rgba(255, 255, 255, 0.1);
+            transition: color 0.3s;
+        }
+
+        .marquee-item:hover {
+            color: var(--color-accent);
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* TESTIMONIALS SECTION */
+        .testimonials-section {
+            padding: 10rem 0;
+        }
+
+        .testimonials-header {
+            text-align: center;
+            margin-bottom: 6rem;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        .testimonial-card::after {
+            content: '"';
+            font-family: var(--font-display);
+            font-size: 8rem;
+            color: rgba(255, 61, 61, 0.1);
+            position: absolute;
+            top: -1rem;
+            left: 1rem;
+            line-height: 1;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-author {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .testimonial-role {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        /* AUTHOR SECTION */
+        .author-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--color-bg) 0%, #0f0f0f 100%);
+        }
+
+        .author-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            align-items: center;
+        }
+
+        .author-visual {
+            position: relative;
+            height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .author-portrait {
+            width: 400px;
+            height: 500px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .author-portrait::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, transparent 60%, rgba(255, 61, 61, 0.1) 100%);
+        }
+
+        .portrait-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--color-accent-glow) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: glowPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .author-name-display {
+            position: absolute;
+            bottom: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 700;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+            white-space: nowrap;
+        }
+
+        .author-content {
+            padding-right: 2rem;
+        }
+
+        .author-content .label {
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .author-content h2 {
+            margin-bottom: 2rem;
+        }
+
+        .author-bio {
+            margin-bottom: 2rem;
+        }
+
+        .author-bio p {
+            margin-bottom: 1rem;
+        }
+
+        .author-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(180deg, var(--color-bg) 0%, #0d0d0d 50%, var(--color-bg) 100%);
+            position: relative;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--color-accent-glow) 0%, transparent 60%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-price {
+            font-family: var(--font-display);
+            font-size: 6rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-price span {
+            font-size: 1.5rem;
+            color: var(--color-text-muted);
+        }
+
+        .cta-title {
+            margin-bottom: 2rem;
+        }
+
+        .cta-subtitle {
+            max-width: 500px;
+            margin: 0 auto 3rem;
+        }
+
+        .cta-button {
+            padding: 1.5rem 4rem;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-guarantee {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .cta-guarantee svg {
+            width: 16px;
+            height: 16px;
+            color: var(--color-accent);
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 4rem 3rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Magnetic Button Effect */
+        .magnetic {
+            transition: transform 0.3s var(--ease-expo);
+        }
+
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+        }
+
+        .glitch.active::before {
+            animation: glitch-1 0.3s linear;
+            color: #ff00ff;
+            z-index: -1;
+        }
+
+        .glitch.active::after {
+            animation: glitch-2 0.3s linear;
+            color: #00ffff;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { opacity: 0; transform: translate(0); }
+            20% { opacity: 0.8; transform: translate(-3px, 3px); }
+            40% { opacity: 0.8; transform: translate(3px, -3px); }
+            60% { opacity: 0.8; transform: translate(-3px, -3px); }
+            80% { opacity: 0.8; transform: translate(3px, 3px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { opacity: 0; transform: translate(0); }
+            20% { opacity: 0.8; transform: translate(3px, -3px); }
+            40% { opacity: 0.8; transform: translate(-3px, 3px); }
+            60% { opacity: 0.8; transform: translate(3px, 3px); }
+            80% { opacity: 0.8; transform: translate(-3px, -3px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .danger-grid,
+            .author-grid {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+            }
+
+            .content-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .danger-visual,
+            .author-visual {
+                height: 400px;
+                order: -1;
+            }
+
+            .author-portrait {
+                width: 280px;
+                height: 350px;
+            }
+
+            .author-name-display {
+                font-size: 2.5rem;
+            }
+
+            .nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .section-content {
+                padding: 0 1.5rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- WebGL Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+    
+    <!-- Noise Overlay -->
+    <div class="noise-overlay"></div>
+    
+    <!-- Vignette -->
+    <div class="vignette"></div>
+    
+    <!-- Scroll Progress -->
+    <div class="scroll-progress"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-logo">TRIPLEX</div>
+        <button class="nav-cta magnetic">Quero o Livro</button>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="hero">
+        <div class="hero-warning">
+            <div class="warning-icon">!</div>
+            <span class="label">Conteúdo Classificado</span>
+        </div>
+        
+        <div class="hero-title">
+            <div class="line">
+                <span>TRIPLEX</span>
+            </div>
+            <div class="line">
+                <span>NA MENTE</span>
+            </div>
+        </div>
+        
+        <p class="hero-subtitle body-lg">
+            O manual que CEOs, pastores milionários, políticos e líderes de seitas 
+            <strong style="color: var(--color-text);">nunca quiseram que você lesse.</strong>
+        </p>
+        
+        <div class="hero-cta">
+            <button class="btn-primary magnetic glitch" data-text="QUERO ACESSO">QUERO ACESSO</button>
+            <button class="btn-secondary magnetic">SAIBA MAIS</button>
+        </div>
+        
+        <div class="scroll-indicator">
+            <span>Continue</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- DANGER SECTION -->
+    <section class="danger-section" id="danger">
+        <div class="section-content">
+            <div class="danger-grid">
+                <div class="danger-visual">
+                    <div class="danger-circle"></div>
+                    <div class="danger-circle"></div>
+                    <div class="danger-circle"></div>
+                    <div class="danger-text">2025</div>
+                </div>
+                
+                <div class="danger-content">
+                    <span class="label">Aviso Oficial</span>
+                    <h2 class="display-lg">
+                        Já foi chamado de <em style="color: var(--color-accent);">"o livro mais perigoso do Brasil"</em>
+                    </h2>
+                    <p class="body-lg">
+                        Este não é um livro sobre teoria. É um <span class="danger-highlight">manual operacional</span> 
+                        que revela as técnicas exatas usadas para invadir, instalar e dominar mentes.
+                    </p>
+                    <p class="body-md">
+                        Você vai descobrir como líderes de todos os espectros — de Jesus a Hitler, 
+                        de Elon Musk a Edir Macedo — utilizam os mesmos princípios arquitetônicos 
+                        para construir impérios dentro da cabeça das pessoas.
+                    </p>
+                    <p class="body-md">
+                        <span class="danger-highlight">Aviso:</span> O conhecimento deste livro não pode ser "desvisto". 
+                        Leia por sua conta e risco.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENT SECTION -->
+    <section class="content-section" id="content">
+        <div class="section-content">
+            <div class="content-header">
+                <span class="label">O Que Você Vai Descobrir</span>
+                <h2 class="display-md">A Arquitetura da Dominação Mental</h2>
+            </div>
+            
+            <div class="content-grid">
+                <div class="content-card">
+                    <span class="card-number">01</span>
+                    <div class="card-title">Invasão Silenciosa</div>
+                    <p class="card-text">
+                        Como entrar na mente de alguém sem deixar digitais. 
+                        A técnica da porta dos fundos que torna a invasão 
+                        imperceptível até ser tarde demais.
+                    </p>
+                </div>
+                
+                <div class="content-card">
+                    <span class="card-number">02</span>
+                    <div class="card-title">Instalação no Topo</div>
+                    <p class="card-text">
+                        Como instalar suas crenças no último andar da mente 
+                        e trancar a porta para sempre. O método de 
+                        consolidação que resiste a qualquer tentativa de remoção.
+                    </p>
+                </div>
+                
+                <div class="content-card">
+                    <span class="card-number">03</span>
+                    <div class="card-title">O Síndico Voluntário</div>
+                    <p class="card-text">
+                        Como transformar uma pessoa em síndico do próprio 
+                        prédio mental — e ela ainda te agradecer por isso. 
+                        A arte da delegação do controle.
+                    </p>
+                </div>
+                
+                <div class="content-card">
+                    <span class="card-number">04</span>
+                    <div class="card-title">Expansão do Condomínio</div>
+                    <p class="card-text">
+                        Como expandir um triplex em um condomínio inteiro. 
+                        Movimentos, empresas, seitas, legiões — a escalada 
+                        do controle individual para o coletivo.
+                    </p>
+                </div>
+                
+                <div class="content-card">
+                    <span class="card-number">05</span>
+                    <div class="card-title">Estudos de Caso Reais</div>
+                    <p class="card-text">
+                        Análises detalhadas de Jesus, Hitler, Elon Musk, 
+                        Bolsonaro, Andrew Tate, Edir Macedo, NXIVM e Apple. 
+                        A mesma planta baixa, diferentes propósitos.
+                    </p>
+                </div>
+                
+                <div class="content-card">
+                    <span class="card-number">06</span>
+                    <div class="card-title">A Planta Baixa</div>
+                    <p class="card-text">
+                        O diagrama exato que o autor usa para morar na 
+                        cabeça de dezenas de milhares de pessoas agora 
+                        mesmo. Replicável. Escalável. Invisível.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CASE STUDIES SECTION -->
+    <section class="cases-section" id="cases">
+        <div class="section-content">
+            <div class="cases-header">
+                <span class="label">Arquitetos da Influência</span>
+                <h2 class="display-md">Quem Usa Essas Técnicas</h2>
+            </div>
+            
+            <div class="cases-marquee">
+                <div class="marquee-track">
+                    <span class="marquee-item">Jesus</span>
+                    <span class="marquee-item">Hitler</span>
+                    <span class="marquee-item">Elon Musk</span>
+                    <span class="marquee-item">Bolsonaro</span>
+                    <span class="marquee-item">Andrew Tate</span>
+                    <span class="marquee-item">Edir Macedo</span>
+                    <span class="marquee-item">NXIVM</span>
+                    <span class="marquee-item">Apple</span>
+                    <span class="marquee-item">Jesus</span>
+                    <span class="marquee-item">Hitler</span>
+                    <span class="marquee-item">Elon Musk</span>
+                    <span class="marquee-item">Bolsonaro</span>
+                    <span class="marquee-item">Andrew Tate</span>
+                    <span class="marquee-item">Edir Macedo</span>
+                    <span class="marquee-item">NXIVM</span>
+                    <span class="marquee-item">Apple</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS SECTION -->
+    <section class="testimonials-section" id="testimonials">
+        <div class="section-content">
+            <div class="testimonials-header">
+                <span class="label">Depoimentos</span>
+                <h2 class="display-md">O Que Estão Dizendo</h2>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text body-md">
+                        "Li em 3 horas e no dia seguinte minha equipe inteira 
+                        começou a repetir minhas frases sem eu mandar. 
+                        É assustador como funciona."
+                    </p>
+                    <div class="testimonial-author">Diego, 31</div>
+                    <div class="testimonial-role">Empresário</div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text body-md">
+                        "Usei no meu namorado. Hoje ele paga tudo e ainda 
+                        acha que foi ideia dele. Não sei se deveria me 
+                        sentir mal ou orgulhosa."
+                    </p>
+                    <div class="testimonial-author">Bia, 26</div>
+                    <div class="testimonial-role">Marketing Digital</div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text body-md">
+                        "Minha igreja dobrou de tamanho em 42 dias depois 
+                        do capítulo 9. Yan Simon revela verdades que 
+                        deveriam ser ilegais."
+                    </p>
+                    <div class="testimonial-author">Pastor R.</div>
+                    <div class="testimonial-role">Líder Religioso</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AUTHOR SECTION -->
+    <section class="author-section" id="author">
+        <div class="section-content">
+            <div class="author-grid">
+                <div class="author-visual">
+                    <div class="portrait-glow"></div>
+                    <div class="author-portrait"></div>
+                    <div class="author-name-display">YAN SIMON</div>
+                </div>
+                
+                <div class="author-content">
+                    <span class="label">O Arquiteto</span>
+                    <h2 class="display-lg">
+                        Yan Simon domina a arte da <em style="color: var(--color-accent);">transformação profunda</em>
+                    </h2>
+                    
+                    <div class="author-bio">
+                        <p class="body-lg">
+                            Formado em mais de <span class="danger-highlight">30 modalidades terapêuticas avançadas</span> 
+                            e imerso no Tantra autêntico desde 2020, ele não explica teorias. 
+                            Ele <strong>ativa estados superiores</strong>.
+                        </p>
+                        <p class="body-md">
+                            Sua jornada foi forjada em desafios reais que lapidaram um método exclusivo: 
+                            a integração precisa de Tantra, psicologia profunda, energia vital e 
+                            consciência aplicada.
+                        </p>
+                        <p class="body-md">
+                            Resultados concretos surgem na vida íntima, nos relacionamentos magnéticos 
+                            e nos negócios prósperos. Isso não é espiritualidade evasiva. 
+                            É <span class="danger-highlight">poder encarnado</span>. Presença inabalável.
+                        </p>
+                        <p class="body-md">
+                            Yan Simon já guiou centenas a desbloqueios radicais: mais clareza, 
+                            força interna e liderança natural. Seu método alinha mente, corpo e energia. 
+                            Dissolve padrões limitantes. Desperta magnetismo autêntico e confiança absoluta.
+                        </p>
+                    </div>
+                    
+                    <div class="author-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">30+</div>
+                            <div class="stat-label">Modalidades</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Transformados</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Anos de Tantra</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section" id="cta">
+        <div class="cta-content">
+            <div class="cta-price">
+                <span>R$</span>39,90
+            </div>
+            <h2 class="cta-title display-lg">Triplex na Mente</h2>
+            <p class="cta-subtitle body-lg">
+                Acesso imediato ao manual completo. 
+                Leia em qualquer dispositivo. 
+                <strong style="color: var(--color-text);">Para sempre.</strong>
+            </p>
+            <button class="btn-primary cta-button magnetic glitch" data-text="COMPRAR AGORA">
+                COMPRAR AGORA
+            </button>
+            <div class="cta-guarantee">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <path d="M9 12l2 2 4-4"/>
+                </svg>
+                <span>Garantia de 7 dias. Não gostou? Devolvemos 100%.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-logo">TRIPLEX NA MENTE</div>
+        <p class="footer-text">
+            Este material é destinado exclusivamente para fins educacionais. 
+            O autor não se responsabiliza pelo uso indevido das técnicas aqui apresentadas. 
+            Use este conhecimento com sabedoria e ética.
+        </p>
+    </footer>
+
+    <script>
+        // ============================================
+        // LENIS SMOOTH SCROLL
+        // ============================================
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Integrate with GSAP ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+
+        // ============================================
+        // WEBGL NEURAL NETWORK BACKGROUND
+        // ============================================
+        const canvas = document.getElementById('webgl-canvas');
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas, 
+            antialias: true, 
+            alpha: true 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 30;
+
+        // Neural Network Particles
+        const particleCount = 150;
+        const particles = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = [];
+
+        for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 80;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 80;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 40;
+            velocities.push({
+                x: (Math.random() - 0.5) * 0.02,
+                y: (Math.random() - 0.5) * 0.02,
+                z: (Math.random() - 0.5) * 0.01
+            });
+        }
+
+        particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const particleMaterial = new THREE.PointsMaterial({
+            color: 0xff3d3d,
+            size: 0.3,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particleSystem = new THREE.Points(particles, particleMaterial);
+        scene.add(particleSystem);
+
+        // Connection Lines
+        const lineMaterial = new THREE.LineBasicMaterial({
+            color: 0xff3d3d,
+            transparent: true,
+            opacity: 0.1
+        });
+
+        const lineGeometry = new THREE.BufferGeometry();
+        const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+        scene.add(lines);
+
+        // Mouse interaction
+        const mouse = { x: 0, y: 0 };
+        let targetCameraX = 0;
+        let targetCameraY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            targetCameraX = mouse.x * 2;
+            targetCameraY = mouse.y * 2;
+        });
+
+        // Animation
+        let frameCount = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            frameCount++;
+
+            // Skip frames for performance (render at 30fps)
+            if (frameCount % 2 !== 0) return;
+
+            const positions = particles.attributes.position.array;
+            const linePositions = [];
+
+            // Update particles
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] += velocities[i].x;
+                positions[i * 3 + 1] += velocities[i].y;
+                positions[i * 3 + 2] += velocities[i].z;
+
+                // Boundary check
+                if (Math.abs(positions[i * 3]) > 40) velocities[i].x *= -1;
+                if (Math.abs(positions[i * 3 + 1]) > 40) velocities[i].y *= -1;
+                if (Math.abs(positions[i * 3 + 2]) > 20) velocities[i].z *= -1;
+
+                // Connect nearby particles
+                for (let j = i + 1; j < particleCount; j++) {
+                    const dx = positions[i * 3] - positions[j * 3];
+                    const dy = positions[i * 3 + 1] - positions[j * 3 + 1];
+                    const dz = positions[i * 3 + 2] - positions[j * 3 + 2];
+                    const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+                    if (distance < 8) {
+                        linePositions.push(
+                            positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2],
+                            positions[j * 3], positions[j * 3 + 1], positions[j * 3 + 2]
+                        );
+                    }
+                }
+            }
+
+            particles.attributes.position.needsUpdate = true;
+            lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+
+            // Smooth camera movement
+            camera.position.x += (targetCameraX - camera.position.x) * 0.05;
+            camera.position.y += (targetCameraY - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ============================================
+        // GSAP ANIMATIONS
+        // ============================================
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Scroll Progress Bar
+        gsap.to('.scroll-progress', {
+            scaleX: 1,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: 'body',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.3
+            }
+        });
+
+        // Navigation hide/show
+        ScrollTrigger.create({
+            start: 'top -100',
+            end: 99999,
+            toggleClass: { className: 'hidden', targets: '.nav' }
+        });
+
+        // Hero Animations
+        const heroTl = gsap.timeline({ delay: 0.5 });
+
+        heroTl
+            .to('.hero-title .line span', {
+                y: '0%',
+                opacity: 1,
+                duration: 1.2,
+                stagger: 0.15,
+                ease: 'expo.out'
+            })
+            .to('.hero-warning', {
+                opacity: 1,
+                duration: 0.8,
+                ease: 'power2.out'
+            }, '-=0.8')
+            .to('.hero-subtitle', {
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                ease: 'expo.out'
+            }, '-=0.4')
+            .to('.hero-cta', {
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                ease: 'expo.out'
+            }, '-=0.6')
+            .to('.scroll-indicator', {
+                opacity: 1,
+                duration: 0.8,
+                ease: 'power2.out'
+            }, '-=0.4');
+
+        // Hero Parallax
+        gsap.to('.hero-title', {
+            y: -200,
+            opacity: 0,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '.hero',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true
+            }
+        });
+
+        // Danger Section
+        gsap.from('.danger-content > *', {
+            y: 60,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.15,
+            ease: 'expo.out',
+            scrollTrigger: {
+                trigger: '.danger-section',
+                start: 'top 70%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        gsap.from('.danger-circle', {
+            scale: 0,
+            opacity: 0,
+            duration: 1.5,
+            stagger: 0.2,
+            ease: 'elastic.out(1, 0.5)',
+            scrollTrigger: {
+                trigger: '.danger-section',
+                start: 'top 60%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        // Content Cards
+        gsap.from('.content-card', {
+            y: 80,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.1,
+            ease: 'expo.out',
+            scrollTrigger: {
+                trigger: '.content-section',
+                start: 'top 60%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        // Testimonials
+        gsap.from('.testimonial-card', {
+            y: 60,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.15,
+            ease: 'expo.out',
+            scrollTrigger: {
+                trigger: '.testimonials-section',
+                start: 'top 60%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        // Author Section
+        gsap.from('.author-portrait', {
+            x: -100,
+            opacity: 0,
+            duration: 1.5,
+            ease: 'expo.out',
+            scrollTrigger: {
+                trigger: '.author-section',
+                start: 'top 60%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        gsap.from('.author-content > *', {
+            y: 40,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.1,
+            ease: 'expo.out',
+            scrollTrigger: {
+                trigger: '.author-section',
+                start: 'top 50%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        // Stat numbers counter
+        const statNumbers = document.querySelectorAll('.stat-number');
+        statNumbers.forEach(stat => {
+            const target = parseInt(stat.textContent);
+            gsap.from(stat, {
+                textContent: 0,
+                duration: 2,
+                ease: 'power2.out',
+                snap: { textContent: 1 },
+                scrollTrigger: {
+                    trigger: stat,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                },
+                onUpdate: function() {
+                    stat.textContent = Math.round(this.targets()[0].textContent) + (stat.textContent.includes('+') ? '+' : '');
+                }
+            });
+        });
+
+        // CTA Section
+        gsap.from('.cta-content > *', {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.15,
+            ease: 'expo.out',
+            scrollTrigger: {
+                trigger: '.cta-section',
+                start: 'top 60%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+
+        // ============================================
+        // MAGNETIC BUTTON EFFECT
+        // ============================================
+        const magneticElements = document.querySelectorAll('.magnetic');
+
+        magneticElements.forEach(elem => {
+            elem.addEventListener('mousemove', (e) => {
+                const rect = elem.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                gsap.to(elem, {
+                    x: x * 0.3,
+                    y: y * 0.3,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+
+            elem.addEventListener('mouseleave', () => {
+                gsap.to(elem, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.5,
+                    ease: 'elastic.out(1, 0.3)'
+                });
+            });
+        });
+
+        // ============================================
+        // GLITCH EFFECT
+        // ============================================
+        const glitchElements = document.querySelectorAll('.glitch');
+
+        setInterval(() => {
+            glitchElements.forEach(el => {
+                if (Math.random() > 0.95) {
+                    el.classList.add('active');
+                    setTimeout(() => el.classList.remove('active'), 300);
+                }
+            });
+        }, 2000);
+
+        // ============================================
+        // SCROLL VELOCITY TILT
+        // ============================================
+        let lastScrollY = 0;
+        let scrollVelocity = 0;
+
+        lenis.on('scroll', ({ scroll, velocity }) => {
+            scrollVelocity = velocity;
+            
+            const tilt = Math.min(Math.max(velocity * 0.5, -2), 2);
+            gsap.to('.content-card, .testimonial-card', {
+                rotateX: tilt,
+                duration: 0.5,
+                ease: 'power2.out'
+            });
+        });
+
+        // ============================================
+        // BUTTON CLICK HANDLERS
+        // ============================================
+        document.querySelectorAll('.btn-primary, .nav-cta').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Scroll to CTA section
+                lenis.scrollTo('#cta', {
+                    offset: 0,
+                    duration: 2,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+                });
+            });
+        });
+
+        document.querySelectorAll('.btn-secondary').forEach(btn => {
+            btn.addEventListener('click', () => {
+                lenis.scrollTo('#content', {
+                    offset: 0,
+                    duration: 2
+                });
+            });
+        });
+
+        // ============================================
+        // VISIBILITY API - Pause when tab hidden
+        // ============================================
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Pause expensive animations
+            }
+        });
+
+        // ============================================
+        // PREFERS REDUCED MOTION
+        // ============================================
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        
+        if (prefersReducedMotion.matches) {
+            // Disable complex animations
+            gsap.globalTimeline.timeScale(0);
+            lenis.destroy();
+        }
+    </script>
+</body>
+</html>
