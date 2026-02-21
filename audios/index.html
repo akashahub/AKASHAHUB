@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akasha Vault | Frequências Sonoras</title>
+    
+    <!-- Fontes Premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-dark: #05010a;
+            --primary-purple: #1a0b2e;
+            --accent-gold: #d4af37;
+            --accent-gold-light: #f9eac3;
+            --text-main: #e0e0e0;
+            --glass-bg: rgba(15, 15, 25, 0.6);
+            --glass-border: rgba(212, 175, 55, 0.2);
+            --neon-glow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--primary-dark);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* --- UI DE ALTA PERFORMANCE --- */
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 9999; pointer-events: none;
+        }
+        .cursor-dot { width: 6px; height: 6px; background-color: var(--accent-gold); }
+        .cursor-outline {
+            width: 50px; height: 50px; border: 1px solid var(--accent-gold);
+            transition: all 0.15s ease-out; opacity: 0.5;
+        }
+
+        /* Background Dinâmico */
+        #canvas-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at center, #11051f 0%, #000000 100%);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 10px; }
+
+        /* Typography */
+        h1, h2, h3 { font-family: 'Cinzel', serif; color: var(--accent-gold); }
+
+        .section-header {
+            text-align: center; margin-bottom: 3rem; position: relative; padding: 0 20px;
+        }
+        .level-badge {
+            display: inline-block; font-size: 0.7rem; letter-spacing: 4px; color: rgba(255,255,255,0.5);
+            margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); padding: 5px 15px;
+            text-transform: uppercase; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px);
+        }
+        .section-title {
+            font-size: 2.5rem; background: linear-gradient(to bottom, #d4af37, #8a5a0f);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; position: relative; padding: 0 20px;
+        }
+        .hero h1 {
+            font-size: clamp(3rem, 6vw, 6rem); line-height: 1; margin-bottom: 20px;
+            text-shadow: 0 0 40px rgba(212, 175, 55, 0.3); opacity: 0; transform: translateY(50px);
+        }
+        .hero-subtitle {
+            font-size: 1.2rem; max-width: 600px; color: rgba(255,255,255,0.7); letter-spacing: 2px;
+            opacity: 0; transform: translateY(30px);
+        }
+
+        /* CAROUSEL LAYOUT */
+        .level-section {
+            padding: 80px 0; border-top: 1px solid rgba(255,255,255,0.03); position: relative;
+        }
+        
+        .carousel-wrapper {
+            width: 100%; overflow-x: auto; padding: 40px 5%;
+            display: flex; gap: 40px; scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 60px; /* Space for hover effects */
+        }
+        
+        .carousel-wrapper.center-items { justify-content: center; }
+
+        /* --- AUDIO CARD DESIGN --- */
+        .audio-card {
+            flex: 0 0 320px;
+            scroll-snap-align: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            opacity: 0; transform: translateY(50px);
+            transition: all 0.3s ease;
+        }
+
+        .audio-card:hover {
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.15);
+            border-color: var(--accent-gold);
+            transform: translateY(-5px);
+        }
+
+        .cover-art {
+            width: 100%; height: 200px; border-radius: 8px; overflow: hidden;
+            margin-bottom: 20px; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .cover-art img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .audio-card:hover .cover-art img { transform: scale(1.1); }
+
+        /* Visualizer Animation */
+        .visualizer {
+            position: absolute; bottom: 10px; right: 10px; display: flex; gap: 3px; align-items: flex-end; height: 20px; opacity: 0; transition: opacity 0.3s;
+        }
+        .audio-card.playing .visualizer { opacity: 1; }
+        .bar { width: 3px; background: var(--accent-gold); animation: equalize 0.5s infinite alternate; }
+        .bar:nth-child(1) { height: 60%; animation-delay: -0.4s; }
+        .bar:nth-child(2) { height: 30%; animation-delay: -0.2s; }
+        .bar:nth-child(3) { height: 90%; animation-delay: -0.5s; }
+        .bar:nth-child(4) { height: 50%; animation-delay: -0.1s; }
+
+        @keyframes equalize { 0% { height: 20%; } 100% { height: 100%; } }
+
+        .audio-info { text-align: center; margin-bottom: 20px; }
+        .audio-title { font-size: 1rem; color: #fff; margin-bottom: 5px; font-weight: 600; line-height: 1.3; }
+        .audio-sub { font-size: 0.7rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Custom Player Controls */
+        .player-controls { display: flex; flex-direction: column; gap: 15px; }
+        
+        .control-row { display: flex; justify-content: space-between; align-items: center; }
+        
+        .btn-play {
+            width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--accent-gold);
+            background: rgba(212, 175, 55, 0.1); color: var(--accent-gold);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s; font-size: 1rem;
+        }
+        .btn-play:hover { background: var(--accent-gold); color: #000; box-shadow: 0 0 15px var(--accent-gold); }
+
+        .time-txt { font-size: 0.7rem; color: rgba(255,255,255,0.5); font-family: monospace; width: 80px; text-align: right; }
+
+        .progress-container {
+            width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;
+            cursor: pointer; position: relative; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; width: 0%; background: var(--accent-gold);
+            box-shadow: 0 0 10px var(--accent-gold); transition: width 0.1s linear;
+        }
+
+        .btn-download {
+            margin-top: 15px; width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.7rem; text-transform: uppercase;
+            text-align: center; letter-spacing: 1px; transition: 0.3s; display: block;
+        }
+        .btn-download:hover { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(212, 175, 55, 0.05); }
+
+        /* --- PACK CARD DESIGN (Levels 2, 3, 4) --- */
+        .pack-card {
+            flex: 0 0 350px;
+            scroll-snap-align: center;
+            background: linear-gradient(145deg, rgba(20,20,30,0.9), rgba(5,5,10,0.95));
+            border: 1px solid var(--accent-gold);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: all 0.4s ease;
+        }
+        
+        .pack-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+        }
+
+        .pack-card:hover { transform: translateY(-10px); box-shadow: 0 0 40px rgba(212, 175, 55, 0.2); }
+
+        .pack-icon {
+            font-size: 3rem; color: var(--accent-gold); margin-bottom: 25px;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+            animation: pulse-gold 3s infinite ease-in-out;
+        }
+
+        .pack-title { font-size: 1.5rem; margin-bottom: 10px; color: #fff; }
+        .pack-desc { font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 30px; line-height: 1.5; }
+
+        .btn-whatsapp {
+            background: #25D366; color: #fff; text-decoration: none; padding: 15px 30px;
+            border-radius: 30px; font-weight: 600; font-size: 0.9rem; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 10px; transition: 0.3s;
+            border: 1px solid transparent; width: 100%; justify-content: center;
+        }
+        .btn-whatsapp:hover { background: transparent; border-color: #25D366; color: #25D366; box-shadow: 0 0 20px rgba(37, 211, 102, 0.2); }
+
+        @keyframes pulse-gold { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 20px var(--accent-gold); } }
+
+        /* FOOTER */
+        .footer-cta {
+            padding: 80px 20px; text-align: center; background: linear-gradient(to top, #000, transparent);
+        }
+        .btn-back {
+            color: var(--accent-gold); text-decoration: none; font-family: 'Cinzel', serif;
+            border-bottom: 1px solid transparent; transition: 0.3s;
+        }
+        .btn-back:hover { border-bottom: 1px solid var(--accent-gold); letter-spacing: 1px; }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .carousel-wrapper { padding: 40px 20px; justify-content: flex-start; }
+            .carousel-wrapper.center-items { justify-content: flex-start; }
+            .audio-card, .pack-card { flex: 0 0 85vw; }
+            .hero h1 { font-size: 3rem; }
+            .cursor-dot, .cursor-outline { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Efeitos Visuais -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+    <div id="canvas-container"></div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1 class="hero-title">Akasha<br><span style="color: var(--accent-gold);">Vault</span></h1>
+        <p class="hero-subtitle">"Frequências que reconfiguram a realidade. Acesse o poder do som através dos níveis de iniciação."</p>
+    </section>
+
+    <!-- NÍVEL 1: FREE (ISCAS) -->
+    <section class="level-section">
+        <div class="section-header">
+            <span class="level-badge">Nível I • Frequências Abertas</span>
+            <h2 class="section-title">Câmara da Ressonância</h2>
+            <p style="color: rgba(255,255,255,0.6);">Áudios essenciais para o despertar inicial. Ouça livremente.</p>
+        </div>
+
+        <div class="carousel-wrapper center-items">
+            
+            <!-- Áudio 1: Mente Crística -->
+            <div class="audio-card" id="card-audio1">
+                <div class="cover-art">
+                    <img src="https://res.cloudinary.com/dekoucycr/image/upload/v1769929071/a64ae81e-9e04-4ce3-bce6-33900f18b602_cku1sf.png" alt="Mente Crística">
+                    <div class="visualizer">
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    </div>
+                </div>
+                <div class="audio-info">
+                    <h3 class="audio-title">Mente Crística</h3>
+                    <div class="audio-sub">Oração Guiada</div>
+                </div>
+                <div class="player-controls">
+                    <div class="control-row">
+                        <button class="btn-play" onclick="togglePlay('audio1')"><i class="fas fa-play"></i></button>
+                        <span class="time-txt" id="time-audio1">00:00</span>
+                    </div>
+                    <div class="progress-container" onclick="seek(event, 'audio1')">
+                        <div class="progress-fill" id="prog-audio1"></div>
+                    </div>
+                </div>
+                <a href="https://res.cloudinary.com/dekoucycr/video/upload/v1769927580/MENTE_CRISTICA_PAI_NOSSO_AVE_MARIA_SANTO_ANJO_jcaaog.mp3" download class="btn-download">
+                    <i class="fas fa-download"></i> Download MP3
+                </a>
+                <audio id="audio1" src="https://res.cloudinary.com/dekoucycr/video/upload/v1769927580/MENTE_CRISTICA_PAI_NOSSO_AVE_MARIA_SANTO_ANJO_jcaaog.mp3" ontimeupdate="updateTime('audio1')"></audio>
+            </div>
+
+            <!-- Áudio 2: Cura das Feridas -->
+            <div class="audio-card" id="card-audio2">
+                <div class="cover-art">
+                    <img src="https://res.cloudinary.com/dekoucycr/image/upload/v1769929071/2dc42279-cf9a-485c-a863-a16e0dc28776_x8zrzz.png" alt="Cura das Feridas">
+                    <div class="visualizer">
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    </div>
+                </div>
+                <div class="audio-info">
+                    <h3 class="audio-title">Cura das Feridas Invisíveis</h3>
+                    <div class="audio-sub">Meditação Profunda</div>
+                </div>
+                <div class="player-controls">
+                    <div class="control-row">
+                        <button class="btn-play" onclick="togglePlay('audio2')"><i class="fas fa-play"></i></button>
+                        <span class="time-txt" id="time-audio2">00:00</span>
+                    </div>
+                    <div class="progress-container" onclick="seek(event, 'audio2')">
+                        <div class="progress-fill" id="prog-audio2"></div>
+                    </div>
+                </div>
+                <a href="https://res.cloudinary.com/dekoucycr/video/upload/v1769927585/Audiomedita%C3%A7%C3%A3o_Cura_das_Feridas_Invisiveis_krzkdw.wav" download class="btn-download">
+                    <i class="fas fa-download"></i> Download WAV
+                </a>
+                <audio id="audio2" src="https://res.cloudinary.com/dekoucycr/video/upload/v1769927585/Audiomedita%C3%A7%C3%A3o_Cura_das_Feridas_Invisiveis_krzkdw.wav" ontimeupdate="updateTime('audio2')"></audio>
+            </div>
+
+            <!-- Áudio 3: Código Secreto -->
+            <div class="audio-card" id="card-audio3">
+                <div class="cover-art">
+                    <img src="https://res.cloudinary.com/dekoucycr/image/upload/v1769929270/62da6b9c-6250-4289-b030-0ffee7a60f6a_g26tsh.png" alt="Código Secreto">
+                    <div class="visualizer">
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    </div>
+                </div>
+                <div class="audio-info">
+                    <h3 class="audio-title">O Código Secreto do Universo</h3>
+                    <div class="audio-sub">Audiobook Excerpt</div>
+                </div>
+                <div class="player-controls">
+                    <div class="control-row">
+                        <button class="btn-play" onclick="togglePlay('audio3')"><i class="fas fa-play"></i></button>
+                        <span class="time-txt" id="time-audio3">00:00</span>
+                    </div>
+                    <div class="progress-container" onclick="seek(event, 'audio3')">
+                        <div class="progress-fill" id="prog-audio3"></div>
+                    </div>
+                </div>
+                <a href="https://res.cloudinary.com/dekoucycr/video/upload/v1769927579/O_C%C3%B3digo_Secreto_do_Universo_kufyqm.mp3" download class="btn-download">
+                    <i class="fas fa-download"></i> Download MP3
+                </a>
+                <audio id="audio3" src="https://res.cloudinary.com/dekoucycr/video/upload/v1769927579/O_C%C3%B3digo_Secreto_do_Universo_kufyqm.mp3" ontimeupdate="updateTime('audio3')"></audio>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- NÍVEL 2: PREMIUM (PACK) -->
+    <section class="level-section">
+        <div class="section-header">
+            <span class="level-badge">Nível II • Horus</span>
+            <h2 class="section-title">O Olho que Tudo Ouve</h2>
+        </div>
+
+        <div class="carousel-wrapper center-items">
+            <!-- Pack Horus -->
+            <div class="pack-card" data-tilt>
+                <i class="fas fa-eye pack-icon"></i>
+                <h3 class="pack-title">Pack Frequência Horus</h3>
+                <p class="pack-desc">
+                    Desbloqueie o acesso a meditações binaurais focadas em clareza mental e visão estratégica.
+                    <br><br>
+                    <span style="color: var(--accent-gold);">Conteúdo Exclusivo e Fechado.</span>
+                </p>
+                <a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20quero%20o%20Pack%20de%20Audios%20Nivel%202" target="_blank" class="btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i> DESBLOQUEAR AGORA
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- NÍVEL 3: PALADIN (PACK) -->
+    <section class="level-section">
+        <div class="section-header">
+            <span class="level-badge">Nível III • Paladin</span>
+            <h2 class="section-title">Rituais de Ísis</h2>
+        </div>
+
+        <div class="carousel-wrapper center-items">
+            <!-- Pack Isis -->
+            <div class="pack-card" data-tilt style="border-color: #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);">
+                <i class="fas fa-ankh pack-icon" style="color: #a855f7;"></i>
+                <h3 class="pack-title">Pack Rituais Sonoros</h3>
+                <p class="pack-desc">
+                    Invocações antigas e frequências de cura emocional profunda. Proteção psíquica e magnetismo.
+                    <br><br>
+                    <span style="color: #a855f7;">Acesso Restrito a Iniciados.</span>
+                </p>
+                <a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20quero%20o%20Pack%20de%20Audios%20Nivel%203" target="_blank" class="btn-whatsapp" style="border-color: #a855f7; color: #fff; background: #a855f7;">
+                    <i class="fab fa-whatsapp"></i> ADQUIRIR PACK
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- NÍVEL 4: GOD-TIER (PACK) -->
+    <section class="level-section">
+        <div class="section-header">
+            <span class="level-badge">Nível IV • God-Tier</span>
+            <h2 class="section-title">Frequências de Toth</h2>
+        </div>
+
+        <div class="carousel-wrapper center-items">
+            <!-- Pack Toth -->
+            <div class="pack-card" data-tilt style="background: linear-gradient(145deg, #000, #111); border-color: #fff;">
+                <i class="fas fa-crown pack-icon" style="color: #fff; animation: none; text-shadow: 0 0 20px #fff;"></i>
+                <h3 class="pack-title">Pack Transcendência</h3>
+                <p class="pack-desc">
+                    O ápice sonoro. Áudios para reprogramação total da realidade e palestras mestras exclusivas.
+                    <br><br>
+                    <span style="color: #fff; font-weight: bold;">SOMENTE PARA A ELITE.</span>
+                </p>
+                <a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20quero%20o%20Pack%20de%20Audios%20Nivel%204" target="_blank" class="btn-whatsapp" style="background: #fff; color: #000;">
+                    <i class="fab fa-whatsapp"></i> ACESSAR IMPÉRIO
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-cta">
+        <a href="https://akashahub.com.br/doutrina" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Voltar à Doutrina
+        </a>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+
+    <script>
+        // 1. PARTICLES (Mesmo background de luxo)
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        document.getElementById('canvas-container').appendChild(canvas);
+
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.size = Math.random() * 2;
+                this.alpha = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(212, 175, 55, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // 2. CUSTOM CURSOR
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        window.addEventListener('mousemove', (e) => {
+            cursorDot.style.left = `${e.clientX}px`;
+            cursorDot.style.top = `${e.clientY}px`;
+            cursorOutline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 500, fill: "forwards" });
+        });
+
+        // 3. AUDIO LOGIC (The Vault Mechanics)
+        function togglePlay(id) {
+            const audio = document.getElementById(id);
+            const btnIcon = document.querySelector(`#card-${id} .btn-play i`);
+            const card = document.getElementById(`card-${id}`);
+
+            // Pause all others
+            document.querySelectorAll('audio').forEach(a => {
+                if (a.id !== id && !a.paused) {
+                    a.pause();
+                    const otherCard = document.getElementById(`card-${a.id}`);
+                    otherCard.classList.remove('playing');
+                    otherCard.querySelector('.btn-play i').className = 'fas fa-play';
+                }
+            });
+
+            if (audio.paused) {
+                audio.play();
+                btnIcon.className = 'fas fa-pause';
+                card.classList.add('playing');
+            } else {
+                audio.pause();
+                btnIcon.className = 'fas fa-play';
+                card.classList.remove('playing');
+            }
+        }
+
+        function updateTime(id) {
+            const audio = document.getElementById(id);
+            const progress = document.getElementById(`prog-${id}`);
+            const timeTxt = document.getElementById(`time-${id}`);
+            
+            if(!audio.duration) return;
+
+            const percent = (audio.currentTime / audio.duration) * 100;
+            progress.style.width = `${percent}%`;
+
+            const min = Math.floor(audio.currentTime / 60);
+            const sec = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+            timeTxt.innerText = `${min}:${sec}`;
+
+            if(audio.ended) {
+                document.getElementById(`card-${id}`).classList.remove('playing');
+                document.querySelector(`#card-${id} .btn-play i`).className = 'fas fa-play';
+                progress.style.width = '0%';
+            }
+        }
+
+        function seek(e, id) {
+            const audio = document.getElementById(id);
+            const container = e.currentTarget;
+            const clickPosition = (e.offsetX / container.offsetWidth);
+            audio.currentTime = clickPosition * audio.duration;
+        }
+
+        // 4. ANIMATIONS (GSAP)
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Hero
+        gsap.to(".hero h1", { opacity: 1, y: 0, duration: 1.5, ease: "power4.out" });
+        gsap.to(".hero-subtitle", { opacity: 1, y: 0, duration: 1.5, delay: 0.5, ease: "power2.out" });
+
+        // Sections
+        gsap.utils.toArray('.level-section').forEach(section => {
+            gsap.fromTo(section.querySelectorAll('.audio-card, .pack-card'), 
+                { opacity: 0, y: 50 },
+                {
+                    opacity: 1, y: 0, duration: 0.8, stagger: 0.2,
+                    scrollTrigger: { trigger: section, start: "top 75%" }
+                }
+            );
+        });
+        
+        // Vanilla Tilt
+        VanillaTilt.init(document.querySelectorAll(".pack-card"), {
+            max: 10, speed: 400, glare: true, "max-glare": 0.2
+        });
+    </script>
+</body>
+  </html>
