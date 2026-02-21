@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AUTOESTIMA BLINDADA | Yan Simon</title>
+    
+    <!-- Fontes de Poder e Elegância -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- ESTÉTICA DO PODER --- */
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #FFDF80;
+            --void: #050505;
+            --text: #EAEAEA;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--void);
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* O CANVAS ONDE A MÁGICA ACONTECE */
+        #canvas-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            /* Gradiente sutil para dar profundidade ao infinito */
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+
+        /* --- TIPOGRAFIA CINEMATOGRÁFICA --- */
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            background: linear-gradient(to right, #fff, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            opacity: 0; /* Animado */
+        }
+
+        .highlight { color: var(--gold); font-weight: 800; }
+
+        /* --- ESTRUTURA DE SCROLL --- */
+        .scroll-content { position: relative; z-index: 2; }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            /* Mistura o texto com o fundo para efeito holográfico */
+            mix-blend-mode: hard-light; 
+        }
+
+        p {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            max-width: 600px;
+            line-height: 1.6;
+            color: #ccc;
+            margin-top: 20px;
+        }
+
+        /* --- BOTÃO DE AÇÃO PULSANTE --- */
+        .cta-container {
+            position: fixed; bottom: 30px; left: 0; width: 100%;
+            display: flex; justify-content: center; z-index: 50;
+            pointer-events: none; /* Para não bloquear scroll */
+        }
+
+        .btn-gold {
+            pointer-events: auto;
+            background: linear-gradient(45deg, var(--gold), #8B6914);
+            color: #000;
+            padding: 20px 50px;
+            border: none;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 2px;
+            text-decoration: none;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+
+        .btn-gold:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.8);
+            color: #fff;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+
+        /* --- ELEMENTOS DE UI --- */
+        .book-mockup {
+            width: 200px; height: 300px;
+            background: linear-gradient(135deg, #111, #333);
+            border: 2px solid var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            margin: 40px auto;
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            opacity: 0;
+        }
+        
+        .book-title {
+            font-family: 'Cinzel'; color: var(--gold); text-align: center; padding: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.3); width: 80%; height: 80%; display: flex; align-items: center; justify-content: center;
+        }
+
+        .price-tag {
+            font-size: 3rem; color: var(--gold); font-weight: 700; font-family: 'Cinzel';
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            margin: 20px 0;
+        }
+
+        /* Loading */
+        .loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 100; display: flex; align-items: center; justify-content: center;
+            font-family: 'Cinzel'; color: var(--gold); letter-spacing: 5px;
+            transition: opacity 1s;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="loader" id="loader">FORJANDO BLINDAGEM...</div>
+
+    <div id="canvas-container"></div>
+
+    <div class="cta-container">
+        <a href="https://pay.hotmart.com/C103563355K?sck=HOTMART_PRODUCT_PAGE&off=rw01wzg2&hotfeature=32" class="btn-gold" target="_blank">
+            BLINDAR AGORA
+        </a>
+    </div>
+
+    <div class="scroll-content">
+        <!-- SEÇÃO 1: IMPACTO -->
+        <section id="s1">
+            <h1 class="hero-title">AUTOESTIMA<br>BLINDADA</h1>
+            <p style="letter-spacing: 3px; text-transform: uppercase; font-size: 0.8rem; color: var(--gold);">Yan Simon</p>
+        </section>
+
+        <!-- SEÇÃO 2: A DOR E A PROMESSA -->
+        <section id="s2">
+            <h2>Você não se entende melhor.<br><span class="highlight">Você se torna inevitável.</span></h2>
+            <p>Isso não é espiritualidade evasiva. É poder encarnado.<br>Limitações se dissolvem. A percepção se expande.</p>
+        </section>
+
+        <!-- SEÇÃO 3: AUTORIDADE -->
+        <section id="s3">
+            <h2 style="font-size: 2rem;">YAN SIMON</h2>
+            <p>Formado em 30 modalidades terapêuticas. Imerso no Tantra autêntico.<br>Ele não explica teorias. <strong>Ele ativa estados superiores.</strong></p>
+        </section>
+
+        <!-- SEÇÃO 4: A TRANSFORMAÇÃO (LISTA) -->
+        <section id="s4">
+            <div style="text-align: left;">
+                <h3 style="color:var(--gold); margin-bottom: 20px;">O LIVRO ATIVA:</h3>
+                <p>✦ Segurança Interna Inabalável</p>
+                <p>✦ Presença Magnética</p>
+                <p>✦ Autocontrole Emocional</p>
+                <p>✦ Campo Energético Protegido</p>
+                <p>✦ Autoridade sem Arrogância</p>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 5: CHECKOUT (O LIVRO) -->
+        <section id="s5">
+            <div class="book-mockup">
+                <div class="book-title">AUTOESTIMA<br>BLINDADA</div>
+            </div>
+            <h2 style="margin-top:20px;">DOMINE SUA ENERGIA</h2>
+            <div class="price-tag">R$ 43,00</div>
+            <p style="font-size: 0.9rem; opacity: 0.7;">Acesso Imediato • Pagamento Seguro</p>
+        </section>
+    </div>
+
+    <!-- ENGINE -->
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
+        import { EffectComposer } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/UnrealBloomPass.js';
+        import { gsap } from 'https://unpkg.com/gsap@3.12.2/index.js';
+        import { ScrollTrigger } from 'https://unpkg.com/gsap@3.12.2/ScrollTrigger.js';
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. CENÁRIO DE PODER ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        // Fog negro para que o infinito desapareça suavemente
+        scene.fog = new THREE.FogExp2(0x050505, 0.02);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 6;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+        container.appendChild(renderer.domElement);
+
+        // BLOOM (O Efeito de Energia Radiante)
+        const renderScene = new RenderPass(scene, camera);
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0;
+        bloomPass.strength = 1.8; // Força do brilho dourado
+        bloomPass.radius = 0.8;
+
+        const composer = new EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+
+        // --- 2. O ARTEFATO: ESCUDO ENERGÉTICO ---
+        // Usaremos TorusKnot (Nó Toral) para representar a complexidade da mente,
+        // mas feito de partículas para representar energia.
+        
+        const geometry = new THREE.TorusKnotGeometry(1.5, 0.5, 150, 20);
+        
+        // Criando sistema de partículas a partir da geometria
+        const particlesGeo = new THREE.BufferGeometry();
+        const positions = geometry.attributes.position.array;
+        
+        // Vamos adicionar "ruído" às posições para que elas possam explodir depois
+        const count = positions.length / 3;
+        const originalPos = new Float32Array(positions);
+        const explosionPos = new Float32Array(count * 3);
+
+        for(let i=0; i<count; i++) {
+            const x = originalPos[i*3];
+            const y = originalPos[i*3+1];
+            const z = originalPos[i*3+2];
+            
+            // Posição de explosão (longe do centro)
+            explosionPos[i*3] = x * 5 + (Math.random()-0.5)*5;
+            explosionPos[i*3+1] = y * 5 + (Math.random()-0.5)*5;
+            explosionPos[i*3+2] = z * 5 + (Math.random()-0.5)*5;
+        }
+
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(originalPos), 3));
+        
+        // Material Dourado Brilhante
+        const particlesMat = new THREE.PointsMaterial({
+            color: 0xD4AF37, // Ouro Yan Simon
+            size: 0.04,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+
+        const shield = new THREE.Points(particlesGeo, particlesMat);
+        scene.add(shield);
+
+        // Núcleo Sólido (A Alma Blindada) - Aparece depois
+        const coreGeo = new THREE.IcosahedronGeometry(0.8, 0);
+        const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0 });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        scene.add(core);
+
+
+        // --- 3. NARRATIVA VISUAL (TIMELINE) ---
+        
+        // Entrada Heroica
+        gsap.to(".hero-title", { opacity: 1, scale: 1, duration: 2, ease: "power4.out" });
+
+        // Scroll Timeline
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".scroll-content",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1
+            }
+        });
+
+        // FASE 1 -> 2: O Caos/Explosão (Dissolvendo Padrões)
+        // Quando rola para baixo, o objeto se distorce
+        tl.to(shield.rotation, { y: 2, duration: 3 }, 0)
+          .to(shield.scale, { x: 1.5, y: 1.5, z: 1.5, duration: 3 }, 0)
+          .to(particlesMat, { size: 0.06, color: '#ff0000', duration: 2 }, 0); // Fica vermelho/instável
+
+        // FASE 2 -> 3: Reconstrução (Blindagem)
+        // O objeto encolhe e fica denso e dourado
+        tl.to(shield.scale, { x: 0.8, y: 0.8, z: 0.8, duration: 3 }, 3)
+          .to(shield.rotation, { z: 2, x: 2, duration: 3 }, 3)
+          .to(particlesMat, { size: 0.03, color: '#D4AF37', opacity: 1, duration: 2 }, 3) // Ouro puro
+          .to(coreMat, { opacity: 0.5, duration: 2 }, 4); // Alma aparece
+
+        // FASE 3 -> 4: O Livro (Produto Final)
+        // Movemos a câmera para dar espaço ao livro
+        tl.to(camera.position, { x: -3, duration: 3 }, 6)
+          .to(shield.position, { x: 3, duration: 3 }, 6); // Escudo vai para a direita protegendo
+
+        // Animações de Texto
+        gsap.utils.toArray("section").forEach((sec, i) => {
+            if(i === 0) return;
+            gsap.from(sec.children, {
+                y: 50, opacity: 0, duration: 1, stagger: 0.2,
+                scrollTrigger: {
+                    trigger: sec,
+                    start: "top 70%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        });
+
+        // Revelar Livro Mockup no final
+        gsap.to(".book-mockup", {
+            opacity: 1, rotateY: 360, duration: 2,
+            scrollTrigger: {
+                trigger: "#s5",
+                start: "top 60%"
+            }
+        });
+
+
+        // --- 4. LOOP DE RENDERIZAÇÃO ---
+        const clock = new THREE.Clock();
+        
+        // Mouse parallax
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', e => {
+            mouseX = (e.clientX - window.innerWidth/2) * 0.0005;
+            mouseY = (e.clientY - window.innerHeight/2) * 0.0005;
+        });
+
+        function animate() {
+            const time = clock.getElapsedTime();
+
+            // Rotação constante (Energia viva)
+            shield.rotation.y += 0.002;
+            core.rotation.y -= 0.01;
+            core.rotation.z += 0.005;
+
+            // Movimento de "Respiração" das partículas
+            // Isso simula o campo de força vibrando
+            const positions = shield.geometry.attributes.position.array;
+            for(let i=0; i<count; i++) {
+                // Vibração sutil baseada na posição original
+                // (Para efeito de explosão real, precisaríamos de shaders complexos, 
+                // aqui usamos escala do grupo via GSAP para performance)
+            }
+
+            // Parallax Suave
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            composer.render();
+            requestAnimationFrame(animate);
+        }
+
+        // --- 5. RESIZE & INIT ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        window.onload = () => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = 0;
+            setTimeout(() => {
+                loader.remove();
+                animate();
+            }, 1000);
+        };
+
+    </script>
+</body>
+</html>
