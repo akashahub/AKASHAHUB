@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>O CÓDIGO | Os 10 Mandamentos</title>
+    
+    <!-- Fontes: Cinzel (Sagrado) e Inter (Prático/Moderno) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- ATMOSFERA MONUMENTAL --- */
+        :root {
+            --stone: #1a1a1a;
+            --light: #e0e0e0;
+            --gold-muted: #8a734b;
+            --energy-blue: #a3cfff;
+            --void: #050505;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--void);
+            color: var(--light);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* O UNIVERSO 3D */
+        #webgl-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #151515 0%, #000 100%);
+        }
+
+        /* --- TIPOGRAFIA --- */
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            margin: 0;
+        }
+
+        .title-huge {
+            font-size: clamp(3rem, 10vw, 6rem);
+            line-height: 0.9;
+            background: linear-gradient(to bottom, #fff, #555);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0; /* Animado */
+        }
+
+        .subtitle {
+            font-size: 0.9rem; color: var(--gold-muted); letter-spacing: 0.3em;
+            margin-top: 20px; display: block; opacity: 0;
+        }
+
+        /* --- LAYOUT DE SCROLL --- */
+        .scroll-container {
+            position: relative; z-index: 2;
+        }
+
+        section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        /* Paineis de Texto Flutuantes */
+        .law-card {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid var(--gold-muted);
+            padding: 40px;
+            max-width: 500px;
+            position: relative;
+            transform: translateX(-50px);
+            opacity: 0;
+        }
+        
+        .law-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+            background: linear-gradient(90deg, var(--gold-muted), transparent);
+        }
+
+        p {
+            font-size: 1.1rem; line-height: 1.6; color: #ccc; font-weight: 200; margin-top: 20px;
+        }
+
+        /* Lista dos Mandamentos (Estilo Pedra) */
+        .stone-list {
+            list-style: none; padding: 0; margin-top: 30px;
+            border-top: 1px solid #333; border-bottom: 1px solid #333;
+        }
+        .stone-list li {
+            padding: 15px 0; color: #888; font-family: 'Cinzel'; font-size: 0.9rem;
+            border-bottom: 1px solid #222; display: flex; justify-content: space-between;
+        }
+        .stone-list li span { color: var(--light); }
+
+        /* --- UI DE CHECKOUT --- */
+        .fixed-cta {
+            position: fixed; bottom: 40px; right: 40px; z-index: 50;
+            display: flex; flex-direction: column; align-items: flex-end;
+            mix-blend-mode: exclusion;
+        }
+
+        .price-label { font-size: 3rem; font-family: 'Cinzel'; font-weight: 700; color: white; margin-bottom: 10px; }
+
+        .btn-monolith {
+            background: white; color: black; padding: 20px 40px;
+            font-family: 'Cinzel'; font-weight: 700; letter-spacing: 2px;
+            text-decoration: none; text-transform: uppercase;
+            transition: 0.4s; position: relative; overflow: hidden;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+        
+        .btn-monolith:hover {
+            background: var(--gold-muted); color: white;
+            box-shadow: 0 0 30px rgba(138, 115, 75, 0.5);
+        }
+
+        /* LOADING */
+        .loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 999;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Cinzel'; letter-spacing: 5px; color: var(--gold-muted);
+            transition: opacity 1s;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="loader" id="loader">CARREGANDO O CÓDIGO...</div>
+
+    <!-- 3D WORLD -->
+    <div id="webgl-canvas"></div>
+
+    <!-- CTA FIXO -->
+    <div class="fixed-cta">
+        <div class="price-label">R$ 47,71</div>
+        <a href="https://pay.hotmart.com/F104168327C?sck=HOTMART_PRODUCT_PAGE&off=143pam4e&hotfeature=32&bid=1771128020250" class="btn-monolith" target="_blank">
+            ACESSAR O CÓDIGO
+        </a>
+    </div>
+
+    <div class="scroll-container">
+        
+        <!-- S1: O TÍTULO -->
+        <section id="s1">
+            <span class="subtitle">YAN SIMON APRESENTA</span>
+            <h1 class="title-huge">O CÓDIGO<br>DE CONDUTA</h1>
+            <p style="max-width: 400px; margin-top: 30px; opacity: 0.7;">Os 10 Mandamentos da Senda Tântrica</p>
+        </section>
+
+        <!-- S2: O PROBLEMA (DESALINHAMENTO) -->
+        <section id="s2">
+            <div class="law-card">
+                <h2>Isso não é<br>Moralismo.</h2>
+                <p>Esqueça as regras de certo e errado. Estamos falando de um <strong>Código Energético</strong>.</p>
+                <p>Princípios práticos para alinhar corpo, mente e propósito no caos do mundo moderno.</p>
+            </div>
+        </section>
+
+        <!-- S3: A SOLUÇÃO (O EIXO) -->
+        <section id="s3">
+            <div class="law-card" style="border-left-color: white; align-self: flex-end; margin-right: 10%; transform: translateX(50px);">
+                <h2>Retome o<br>Próprio Eixo.</h2>
+                <p>Descubra onde você perde energia, onde se sabota e como aplicar essas leis vivas no seu dia a dia.</p>
+                <p>Sem repressão. Sem dogmas. Sem fuga.</p>
+            </div>
+        </section>
+
+        <!-- S4: OS 10 MANDAMENTOS -->
+        <section id="s4">
+            <div class="law-card" style="width: 100%;">
+                <h2>PARA QUEM<br>DESPERTOU</h2>
+                <ul class="stone-list">
+                    <li>01. CLAREZA <span>DIREÇÃO</span></li>
+                    <li>02. PRESENÇA <span>AGORA</span></li>
+                    <li>03. INTEGRAÇÃO <span>CORPO/MENTE</span></li>
+                    <li>... E MAIS 7 LEIS VIVAS</li>
+                </ul>
+                <p style="font-size: 0.9rem;">+ Checklist Diário de Integração incluso.</p>
+            </div>
+        </section>
+
+        <!-- S5: O ALINHAMENTO FINAL -->
+        <section id="s5">
+            <h1 class="title-huge" style="font-size: 4rem; mix-blend-mode: overlay;">VIVA A<br>SENDA</h1>
+        </section>
+
+    </div>
+
+    <!-- ENGINE 3D -->
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
+        import { EffectComposer } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/UnrealBloomPass.js';
+        import { gsap } from 'https://unpkg.com/gsap@3.12.2/index.js';
+        import { ScrollTrigger } from 'https://unpkg.com/gsap@3.12.2/ScrollTrigger.js';
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. CONFIGURAÇÃO DA CENA (O TEMPLO ETÉREO) ---
+        const container = document.getElementById('webgl-canvas');
+        const scene = new THREE.Scene();
+        // Fog para esconder o fim dos anéis
+        scene.fog = new THREE.FogExp2(0x050505, 0.035);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 12;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // --- 2. POST-PROCESSING (O DESPERTAR/BLOOM) ---
+        const renderScene = new RenderPass(scene, camera);
+        // Bloom forte para parecer luz divina/energia
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0.1;
+        bloomPass.strength = 1.2;
+        bloomPass.radius = 0.5;
+
+        const composer = new EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+
+        // --- 3. OS 10 MANDAMENTOS (ANÉIS ORBITAIS) ---
+        const ringsGroup = new THREE.Group();
+        scene.add(ringsGroup);
+
+        const rings = [];
+        const ringCount = 10; // 10 Mandamentos
+
+        // Geometria Torus (Quadrada para parecer "Lei/Código")
+        // TorusGeometry(radius, tube, radialSegments, tubularSegments)
+        const baseGeometry = new THREE.TorusGeometry(4, 0.05, 4, 100); 
+
+        // Material Metálico/Pedra
+        const material = new THREE.MeshStandardMaterial({
+            color: 0x555555,
+            roughness: 0.4,
+            metalness: 0.8,
+            emissive: 0x000000
+        });
+
+        // Material Iluminado (Ouro) para quando alinhar
+        const goldMaterial = new THREE.MeshStandardMaterial({
+            color: 0xffd700,
+            roughness: 0.1,
+            metalness: 1,
+            emissive: 0xffaa00,
+            emissiveIntensity: 0.5
+        });
+
+        for (let i = 0; i < ringCount; i++) {
+            const ring = new THREE.Mesh(baseGeometry, material.clone());
+            
+            // Cada anel é maior que o anterior
+            const scale = 1 + (i * 0.3);
+            ring.scale.set(scale, scale, scale);
+            
+            // Rotação Inicial Caótica (Desalinhada)
+            ring.rotation.x = Math.random() * Math.PI;
+            ring.rotation.y = Math.random() * Math.PI;
+            
+            rings.push(ring);
+            ringsGroup.add(ring);
+        }
+
+        // Adicionar Partículas (Poeira do Tempo)
+        const pGeo = new THREE.BufferGeometry();
+        const pCount = 1000;
+        const pPos = new Float32Array(pCount * 3);
+        for(let i=0; i<pCount*3; i++) pPos[i] = (Math.random()-0.5) * 40;
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+        const pMat = new THREE.PointsMaterial({ color: 0x888888, size: 0.05, transparent: true, opacity: 0.4 });
+        const particles = new THREE.Points(pGeo, pMat);
+        scene.add(particles);
+
+        // --- 4. ILUMINAÇÃO DRAMÁTICA ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+        scene.add(ambientLight);
+
+        // Luz Principal (O "Sol" do Despertar)
+        const sunLight = new THREE.PointLight(0xffffff, 2, 50);
+        sunLight.position.set(0, 0, 0); // No centro dos anéis
+        scene.add(sunLight);
+
+        // Luzes laterais coloridas para profundidade
+        const blueLight = new THREE.PointLight(0x4444ff, 1, 20);
+        blueLight.position.set(10, 5, 5);
+        scene.add(blueLight);
+
+
+        // --- 5. NARRATIVA DE ALINHAMENTO (GSAP) ---
+        
+        // Intro
+        gsap.to(".title-huge", { opacity: 1, duration: 2, delay: 0.5 });
+        gsap.to(".subtitle", { opacity: 1, duration: 2, delay: 1 });
+
+        // Scroll Timeline
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".scroll-container",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1.5 // Um pouco de inércia para peso
+            }
+        });
+
+        // O GRANDE ALINHAMENTO
+        // Conforme desce, os anéis giram para a posição 0 (Alinhados)
+        rings.forEach((ring, i) => {
+            // Rotação: Vai do caos atual para 0 (plano perfeito)
+            tl.to(ring.rotation, { x: 0, y: 0, z: 0, duration: 10 }, 0);
+            
+            // Cor: Os anéis acendem um por um
+            // Começa cinza, termina Ouro Brilhante
+            const delay = i * 0.5;
+            tl.to(ring.material, { 
+                emissive: 0xffaa00, 
+                emissiveIntensity: 2, 
+                color: 0xffd700,
+                duration: 2 
+            }, 5 + delay); // Acendem na metade do caminho
+        });
+
+        // Movimento de Câmera (Entrando no Túnel)
+        // Começa longe (z=12), termina dentro dos anéis (z=2)
+        tl.to(camera.position, { z: 2, duration: 10 }, 0);
+        
+        // Intensidade da Luz Central (Explosão no final)
+        tl.to(sunLight, { intensity: 10, distance: 100, duration: 3 }, 8);
+
+
+        // Animação dos Textos (Cards entrando)
+        gsap.utils.toArray(".law-card").forEach(card => {
+            gsap.to(card, {
+                opacity: 1,
+                x: 0,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 70%",
+                    end: "top 40%",
+                    scrub: 1
+                }
+            });
+        });
+
+        // --- 6. RENDER LOOP ---
+        const clock = new THREE.Clock();
+        
+        // Mouse Interaction (Parallax Sutil)
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', e => {
+            mouseX = (e.clientX - window.innerWidth / 2) * 0.0002;
+            mouseY = (e.clientY - window.innerHeight / 2) * 0.0002;
+        });
+
+        function animate() {
+            const time = clock.getElapsedTime();
+
+            // Rotação constante de todo o grupo (mesmo alinhado, ele gira no eixo Z)
+            // Isso dá a ideia de um portal funcionando
+            ringsGroup.rotation.z += 0.002;
+
+            // Respiração dos anéis (Expansão/Contração sutil)
+            rings.forEach((ring, i) => {
+                const scaleBase = 1 + (i * 0.3);
+                const breath = Math.sin(time * 2 + i) * 0.02;
+                ring.scale.set(scaleBase + breath, scaleBase + breath, scaleBase + breath);
+            });
+
+            // Parallax da câmera
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            camera.lookAt(0,0,0);
+
+            composer.render();
+            requestAnimationFrame(animate);
+        }
+
+        // --- 7. RESIZE ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        window.onload = () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = 0;
+                setTimeout(() => { loader.remove(); animate(); }, 1000);
+            }, 1000);
+        };
+
+    </script>
+</body>
+</html>
