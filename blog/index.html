@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Akáshico - Sabedoria Ancestral & Conhecimento Místico | AkashaHub</title>
+    
+    <!-- Fontes Premium -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,600&family=Montserrat:wght@200;300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ===== VARIÁVEIS E RESET ===== */
+        :root {
+            --gold-primary: #d4af37;
+            --gold-light: #f9e69d;
+            --gold-dark: #8a5a0f;
+            --dark-bg: #020202;
+            --dark-bg-secondary: #0a0a0a;
+            --dark-panel: rgba(15, 15, 20, 0.98);
+            --glass-border: rgba(212, 175, 55, 0.12);
+            --transition-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+            
+            --accent-purple: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: var(--dark-bg);
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        ::selection {
+            background: var(--gold-primary);
+            color: #000;
+        }
+
+        /* ===== CURSOR CUSTOMIZADO (Desktop only) ===== */
+        @media (min-width: 1024px) {
+            .cursor-dot, .cursor-circle {
+                position: fixed;
+                top: 0;
+                left: 0;
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+                z-index: 9999;
+                pointer-events: none;
+                transition: transform 0.15s ease;
+            }
+
+            .cursor-dot {
+                width: 8px;
+                height: 8px;
+                background: var(--gold-light);
+                box-shadow: 0 0 15px var(--gold-primary);
+            }
+
+            .cursor-circle {
+                width: 40px;
+                height: 40px;
+                border: 2px solid rgba(212, 175, 55, 0.5);
+                transition: all 0.3s ease;
+            }
+
+            body.hovering .cursor-circle {
+                width: 70px;
+                height: 70px;
+                background-color: rgba(212, 175, 55, 0.08);
+                border-color: var(--gold-light);
+            }
+
+            .cursor-text {
+                position: fixed;
+                top: 0;
+                left: 0;
+                transform: translate(-50%, -50%);
+                z-index: 10000;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                font-family: 'Cinzel', serif;
+                font-size: 0.7rem;
+                color: var(--gold-light);
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                white-space: nowrap;
+            }
+        }
+
+        /* ===== NOISE & STARS ===== */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 900;
+            opacity: 0.025;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .stars-container {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.8; }
+        }
+
+        /* ===== ANIMATED BACKGROUND (Mais escuro) ===== */
+        .animated-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+                        var(--dark-bg);
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.12;
+            animation: float-orb 25s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--gold-primary);
+            top: -300px;
+            left: -300px;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent-purple);
+            top: 40%;
+            right: -250px;
+            animation-delay: 8s;
+        }
+
+        .orb-3 {
+            width: 700px;
+            height: 700px;
+            background: var(--accent-pink);
+            bottom: -350px;
+            left: 50%;
+            animation-delay: 16s;
+        }
+
+        @keyframes float-orb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(120px, -120px) scale(1.15); }
+            66% { transform: translate(-80px, 120px) scale(0.9); }
+        }
+
+        /* ===== LOADING SCREEN ===== */
+        .loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #000 0%, #0a0015 100%);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 1.2s ease, visibility 1.2s ease;
+        }
+
+        .loader-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-symbol {
+            font-size: 4rem;
+            color: var(--gold-primary);
+            margin-bottom: 30px;
+            animation: pulse-loader 2s infinite;
+        }
+
+        @keyframes pulse-loader {
+            0%, 100% { 
+                opacity: 0.4; 
+                transform: scale(0.9) rotate(0deg);
+                filter: drop-shadow(0 0 10px var(--gold-primary));
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.1) rotate(180deg);
+                filter: drop-shadow(0 0 30px var(--gold-primary));
+            }
+        }
+
+        .loader-text {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.4em;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            animation: fade-pulse 2s infinite;
+        }
+
+        @keyframes fade-pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+
+        .loader-progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold-primary), var(--gold-light));
+            animation: load-progress 3s ease-out forwards;
+            box-shadow: 0 0 10px var(--gold-primary);
+        }
+
+        @keyframes load-progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 18px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(2, 2, 2, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: all 0.5s var(--transition-smooth);
+        }
+
+        .header.scrolled {
+            padding: 12px 5%;
+            background: rgba(0, 0, 0, 0.98);
+            border-bottom: 1px solid var(--gold-dark);
+            box-shadow: 0 5px 30px rgba(0,0,0,0.7);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 45px;
+            width: auto;
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+            transition: transform 0.4s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-left: 2px solid rgba(255,255,255,0.3);
+            padding-left: 15px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            padding: 8px 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--gold-primary);
+            transition: width 0.4s var(--transition-smooth);
+        }
+
+        .nav-link:hover {
+            color: var(--gold-light);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--gold-primary);
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 5% 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-particles {
+            position: absolute;
+            inset: 0;
+            opacity: 0.15;
+        }
+
+        .floating-symbol {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.08;
+            animation: float-symbol 15s infinite ease-in-out;
+            color: var(--gold-primary);
+        }
+
+        @keyframes float-symbol {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, -50px) rotate(90deg); }
+            50% { transform: translate(-30px, 30px) rotate(180deg); }
+            75% { transform: translate(40px, -20px) rotate(270deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid var(--gold-primary);
+            border-radius: 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            color: var(--gold-primary);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            animation: fade-slide-down 1s ease forwards;
+            animation-delay: 0.5s;
+            opacity: 0;
+        }
+
+        .hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 400;
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 50%, var(--gold-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.1em;
+            margin-bottom: 25px;
+            line-height: 1.1;
+            filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.3));
+            animation: fade-slide-up 1s ease forwards;
+            animation-delay: 0.7s;
+            opacity: 0;
+        }
+
+        .hero-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.1rem, 3vw, 2rem);
+            color: rgba(255,255,255,0.8);
+            font-style: italic;
+            margin-bottom: 20px;
+            animation: fade-slide-up 1s ease forwards;
+            animation-delay: 0.9s;
+            opacity: 0;
+        }
+
+        .hero-description {
+            max-width: 700px;
+            margin: 0 auto 50px;
+            font-size: clamp(1rem, 2vw, 1.15rem);
+            color: rgba(255,255,255,0.6);
+            line-height: 1.8;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            animation: fade-slide-up 1s ease forwards;
+            animation-delay: 1.1s;
+            opacity: 0;
+        }
+
+        @keyframes fade-slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fade-slide-down {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: var(--gold-primary);
+            animation: fade-in 1s ease forwards 1.5s, bounce-smooth 3s infinite 2s;
+            opacity: 0;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .scroll-icon {
+            width: 28px;
+            height: 45px;
+            border: 2px solid var(--gold-primary);
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .scroll-icon::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 8px;
+            background: var(--gold-primary);
+            border-radius: 2px;
+            animation: scroll-down 2s infinite;
+        }
+
+        @keyframes scroll-down {
+            0% { opacity: 1; top: 8px; }
+            100% { opacity: 0; top: 25px; }
+        }
+
+        @keyframes bounce-smooth {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(15px); }
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ===== CATEGORY FILTER ===== */
+        .category-filter {
+            position: sticky;
+            top: 80px;
+            z-index: 900;
+            padding: 20px 5%;
+            background: rgba(2, 2, 2, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            margin-bottom: 60px;
+        }
+
+        .categories {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .categories::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .categories::-webkit-scrollbar-thumb {
+            background: var(--gold-primary);
+            border-radius: 2px;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 25px;
+            color: rgba(255,255,255,0.6);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .category-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .category-btn:hover::before {
+            left: 100%;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: rgba(212, 175, 55, 0.12);
+            border-color: var(--gold-primary);
+            color: var(--gold-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.15);
+        }
+
+        /* ===== BLOG GRID ===== */
+        .blog-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5% 100px;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--gold-primary);
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+            letter-spacing: 0.1em;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        /* ===== BLOG CARD ===== */
+        .blog-card {
+            background: var(--dark-panel);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.5s var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            opacity: 0;
+            transform: translateY(60px);
+        }
+
+        .blog-card.reveal {
+            animation: reveal-card 0.8s var(--transition-smooth) forwards;
+        }
+
+        @keyframes reveal-card {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .blog-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 1;
+        }
+
+        .blog-card:hover::before {
+            opacity: 1;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(212, 175, 55, 0.08);
+        }
+
+        .blog-image {
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #0a0a0a 0%, #050505 100%);
+        }
+
+        .blog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1.5s var(--transition-smooth);
+            filter: grayscale(30%) brightness(0.85);
+        }
+
+        .blog-card:hover .blog-image img {
+            transform: scale(1.15);
+            filter: grayscale(0%) brightness(1.05);
+        }
+
+        .blog-category-tag {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 6px 15px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--gold-primary);
+            border-radius: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        .blog-read-time {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 6px 12px;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .blog-content {
+            padding: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .blog-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            transition: color 0.3s ease;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .blog-card:hover .blog-title {
+            color: var(--gold-light);
+        }
+
+        .blog-excerpt {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.7;
+            margin-bottom: 25px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .blog-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--gold-primary);
+            object-fit: cover;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .blog-date {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .read-more {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            color: var(--gold-primary);
+            text-decoration: none;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .read-more i {
+            transition: transform 0.3s ease;
+        }
+
+        .blog-card:hover .read-more i {
+            transform: translateX(5px);
+        }
+
+        /* ===== FEATURED POST ===== */
+        .featured-post {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.03) 0%, rgba(212, 175, 55, 0.03) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 20px;
+            overflow: hidden;
+            padding: 0;
+            min-height: 500px;
+        }
+
+        .featured-post .blog-image {
+            height: 100%;
+            min-height: 500px;
+        }
+
+        .featured-post .blog-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 50px;
+        }
+
+        .featured-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--gold-primary);
+            color: #000;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+
+        .featured-post .blog-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            -webkit-line-clamp: 3;
+        }
+
+        .featured-post .blog-excerpt {
+            font-size: 1.05rem;
+            -webkit-line-clamp: 4;
+        }
+
+        /* ===== NEWSLETTER SECTION ===== */
+        .newsletter-section {
+            max-width: 800px;
+            margin: 80px auto 100px;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, rgba(15,15,20,0.98) 0%, rgba(20,15,25,0.98) 100%);
+            border: 2px solid var(--gold-primary);
+            border-radius: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .newsletter-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(212, 175, 55, 0.03), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .newsletter-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .newsletter-icon {
+            font-size: 3rem;
+            color: var(--gold-primary);
+            margin-bottom: 25px;
+        }
+
+        .newsletter-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.8rem, 3vw, 2.2rem);
+            color: var(--gold-light);
+            margin-bottom: 15px;
+        }
+
+        .newsletter-desc {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 35px;
+            line-height: 1.7;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 15px 25px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 30px;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-input::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+
+        .newsletter-input:focus {
+            border-color: var(--gold-primary);
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+        }
+
+        .newsletter-btn {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold-primary));
+            border: none;
+            border-radius: 30px;
+            color: #000;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.25);
+            flex-shrink: 0;
+        }
+
+        .newsletter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: linear-gradient(180deg, var(--dark-bg) 0%, #000 100%);
+            padding: 80px 5% 40px;
+            border-top: 1px solid rgba(212, 175, 55, 0.08);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 50px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .footer-logo {
+            height: 55px;
+            width: auto;
+            filter: grayscale(50%) brightness(120%);
+            transition: all 0.4s ease;
+        }
+
+        .footer-logo:hover {
+            filter: grayscale(0%) brightness(140%);
+            transform: scale(1.05);
+        }
+
+        .footer-desc {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.8;
+        }
+
+        .footer-section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--gold-primary);
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .footer-link {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-link i {
+            font-size: 0.75rem;
+            color: var(--gold-primary);
+            transition: transform 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--gold-light);
+            transform: translateX(5px);
+        }
+
+        .footer-link:hover i {
+            transform: translateX(3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.03);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.25);
+            letter-spacing: 1px;
+        }
+
+        /* ===== FLOATING ELEMENTS ===== */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold-primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+            transition: all 0.4s var(--transition-smooth);
+            z-index: 999;
+        }
+
+        .fab:hover {
+            transform: scale(1.15) rotate(180deg);
+            box-shadow: 0 12px 40px rgba(212, 175, 55, 0.6);
+        }
+
+        .progress-bar-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold-primary), var(--gold-light));
+            width: 0%;
+            z-index: 10001;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px var(--gold-primary);
+        }
+
+        /* ===== READING PROGRESS CIRCLE ===== */
+        .reading-progress {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            z-index: 999;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-circle {
+            stroke: rgba(212, 175, 55, 0.15);
+            fill: transparent;
+            stroke-width: 3;
+        }
+
+        .progress-ring-progress {
+            stroke: var(--gold-primary);
+            fill: transparent;
+            stroke-width: 3;
+            stroke-dasharray: 188.4;
+            stroke-dashoffset: 188.4;
+            transition: stroke-dashoffset 0.3s ease;
+            filter: drop-shadow(0 0 5px var(--gold-primary));
+        }
+
+        .progress-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+        }
+
+        /* ===== RESPONSIVE MOBILE & TABLET ===== */
+        @media (max-width: 1024px) {
+            .header {
+                padding: 15px 4%;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: rgba(0, 0, 0, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: flex-start;
+                padding: 50px 0;
+                gap: 30px;
+                transition: left 0.4s var(--transition-smooth);
+                border-top: 1px solid rgba(212, 175, 55, 0.2);
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-link {
+                font-size: 1rem;
+            }
+
+            .blog-grid {
+                grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+                gap: 25px;
+            }
+
+            .featured-post {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+
+            .featured-post .blog-image {
+                min-height: 300px;
+            }
+
+            .featured-post .blog-content {
+                padding: 35px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 6rem 4% 3rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .category-filter {
+                top: 70px;
+                padding: 15px 4%;
+            }
+
+            .categories {
+                justify-content: flex-start;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+
+            .category-btn {
+                font-size: 0.65rem;
+                padding: 8px 16px;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .blog-card {
+                margin: 0;
+            }
+
+            .newsletter-section {
+                padding: 40px 25px;
+                margin: 60px 4%;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .newsletter-input {
+                min-width: 100%;
+            }
+
+            .newsletter-btn {
+                width: 100%;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .fab,
+            .reading-progress {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+            }
+
+            .fab {
+                right: 20px;
+                font-size: 1.2rem;
+            }
+
+            .reading-progress {
+                left: 20px;
+            }
+
+            .progress-percentage {
+                font-size: 0.7rem;
+            }
+
+            .floating-symbol {
+                font-size: 2rem;
+            }
+
+            .scroll-indicator {
+                bottom: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+            }
+
+            .hero-badge {
+                font-size: 0.6rem;
+                padding: 6px 15px;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+                margin-bottom: 40px;
+            }
+
+            .blog-image {
+                height: 220px;
+            }
+
+            .blog-content {
+                padding: 25px;
+            }
+
+            .blog-title {
+                font-size: 1.2rem;
+            }
+
+            .blog-excerpt {
+                font-size: 0.9rem;
+            }
+
+            .featured-post .blog-content {
+                padding: 25px;
+            }
+
+            .newsletter-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Hide cursor elements on mobile */
+        @media (max-width: 1023px) {
+            .cursor-dot,
+            .cursor-circle,
+            .cursor-text {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Efeitos Globais -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-circle"></div>
+    <div class="cursor-text" id="cursorText"></div>
+    <div class="noise-overlay"></div>
+    <div class="stars-container" id="stars"></div>
+    <div class="progress-bar-top" id="progressBar"></div>
+
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div class="loader-overlay" id="loader">
+        <div class="loader-symbol">📜</div>
+        <div class="loader-text">ACESSANDO BIBLIOTECA...</div>
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="main-header">
+        <div class="logo-area">
+            <img src="https://i.ibb.co/Fbxk6mQ3/Design-sem-nome-2.png" alt="AkashaHub Logo" class="logo-img">
+            <span class="logo-text">BLOG AKÁSHICO</span>
+        </div>
+        
+        <div class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        
+        <nav class="nav-menu" id="navMenu">
+            <a href="/" class="nav-link hover-trigger">Home</a>
+            <a href="/doutrina" class="nav-link hover-trigger">Doutrina</a>
+            <a href="/livros" class="nav-link hover-trigger">Livros</a>
+            <a href="/vault" class="nav-link hover-trigger">Vault</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-particles">
+            <div class="floating-symbol" style="top: 10%; left: 10%;">☥</div>
+            <div class="floating-symbol" style="top: 20%; right: 15%; animation-delay: 2s;">🜏</div>
+            <div class="floating-symbol" style="bottom: 25%; left: 20%; animation-delay: 4s;">⚚</div>
+            <div class="floating-symbol" style="bottom: 15%; right: 10%; animation-delay: 6s;">☿</div>
+        </div>
+
+        <div class="hero-content">
+            <span class="hero-badge">✨ Sabedoria Milenar</span>
+            <h1>BLOG AKÁSHICO</h1>
+            <p class="hero-subtitle">Conhecimento Ancestral para a Nova Era</p>
+            <p class="hero-description">
+                Mergulhe em artigos profundos sobre espiritualidade, filosofia hermética, 
+                desenvolvimento pessoal e os mistérios do universo. Cada palavra é um portal.
+            </p>
+        </div>
+
+        <div class="scroll-indicator">
+            <span>Explorar Artigos</span>
+            <div class="scroll-icon"></div>
+        </div>
+    </section>
+
+    <!-- Category Filter -->
+    <div class="category-filter">
+        <div class="categories">
+            <button class="category-btn active hover-trigger" data-category="all">Todos</button>
+            <button class="category-btn hover-trigger" data-category="espiritualidade">Espiritualidade</button>
+            <button class="category-btn hover-trigger" data-category="hermetismo">Hermetismo</button>
+            <button class="category-btn hover-trigger" data-category="tantra">Tantra</button>
+            <button class="category-btn hover-trigger" data-category="alquimia">Alquimia</button>
+            <button class="category-btn hover-trigger" data-category="registros">Registros</button>
+            <button class="category-btn hover-trigger" data-category="desenvolvimento">Desenvolvimento</button>
+        </div>
+    </div>
+
+    <!-- Blog Container -->
+    <div class="blog-container">
+        <h2 class="section-title">Artigos em Destaque</h2>
+
+        <div class="blog-grid" id="blogGrid">
+            
+            <!-- Featured Post -->
+            <article class="blog-card featured-post hover-trigger reveal" data-category="registros">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1518176258769-f227c798150e?w=800" alt="Registros Akáshicos">
+                    <div class="blog-category-tag">REGISTROS AKÁSHICOS</div>
+                </div>
+                <div class="blog-content">
+                    <span class="featured-badge">⭐ Em Destaque</span>
+                    <h3 class="blog-title">Como Acessar os Registros Akáshicos: Um Guia Completo</h3>
+                    <p class="blog-excerpt">
+                        Descubra os segredos milenares para acessar a biblioteca universal do conhecimento. 
+                        Aprenda técnicas práticas de meditação, preparação energética e proteção espiritual 
+                        para navegar com segurança pelos Registros Akáshicos e receber orientações divinas.
+                    </p>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <img src="https://i.pravatar.cc/150?img=33" alt="Autor" class="author-avatar">
+                            <div class="author-info">
+                                <span class="author-name">Mestre Akasha</span>
+                                <span class="blog-date">15 Jan 2025</span>
+                            </div>
+                        </div>
+                        <a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Post 1 -->
+            <article class="blog-card hover-trigger reveal" data-category="hermetismo">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1533158326339-7f3cf2404354?w=600" alt="Hermetismo">
+                    <div class="blog-category-tag">HERMETISMO</div>
+                    <div class="blog-read-time">
+                        <i class="fas fa-clock"></i> 8 min
+                    </div>
+                </div>
+                <div class="blog-content">
+                    <h3 class="blog-title">Os 7 Princípios Herméticos Explicados</h3>
+                    <p class="blog-excerpt">
+                        Entenda profundamente as leis universais que governam toda a criação. 
+                        Do Mentalismo à Vibração, cada princípio revela um aspecto fundamental da realidade.
+                    </p>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <img src="https://i.pravatar.cc/150?img=12" alt="Autor" class="author-avatar">
+                            <div class="author-info">
+                                <span class="author-name">Thoth Escriba</span>
+                                <span class="blog-date">12 Jan 2025</span>
+                            </div>
+                        </div>
+                        <a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Post 2 -->
+            <article class="blog-card hover-trigger reveal" data-category="tantra">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600" alt="Tantra">
+                    <div class="blog-category-tag">TANTRA</div>
+                    <div class="blog-read-time">
+                        <i class="fas fa-clock"></i> 12 min
+                    </div>
+                </div>
+                <div class="blog-content">
+                    <h3 class="blog-title">Tantra Além do Sexo: A Verdadeira Essência</h3>
+                    <p class="blog-excerpt">
+                        Descubra o que realmente significa praticar Tantra. Uma jornada de união entre 
+                        Shiva e Shakti, transcendendo os mitos e revelando a sabedoria ancestral.
+                    </p>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <img src="https://i.pravatar.cc/150?img=45" alt="Autor" class="author-avatar">
+                            <div class="author-info">
+                                <span class="author-name">Shakti Devi</span>
+                                <span class="blog-date">10 Jan 2025</span>
+                            </div>
+                        </div>
+                        <a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Post 3 -->
+            <article class="blog-card hover-trigger reveal" data-category="alquimia">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1518176258769-f227c798150e?w=600" alt="Alquimia">
+                    <div class="blog-category-tag">ALQUIMIA INTERIOR</div>
+                    <div class="blog-read-time">
+                        <i class="fas fa-clock"></i> 10 min
+                    </div>
+                </div>
+                <div class="blog-content">
+                    <h3 class="blog-title">Alquimia Interior: Transformando Chumbo em Ouro</h3>
+                    <p class="blog-excerpt">
+                        A verdadeira alquimia não é sobre metais, mas sobre a transformação do ser. 
+                        Aprenda os processos de transmutação energética e elevação vibracional.
+                    </p>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <img src="https://i.pravatar.cc/150?img=68" alt="Autor" class="author-avatar">
+                            <div class="author-info">
+                                <span class="author-name">Alquimista Zen</span>
+                                <span class="blog-date">08 Jan 2025</span>
+                            </div>
+                        </div>
+                        <a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Post 4 -->
+            <article class="blog-card hover-trigger reveal" data-category="espiritualidade">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600" alt="Meditação">
+                    <div class="blog-category-tag">ESPIRITUALIDADE</div>
+                    <div class="blog-read-time">
+                        <i class="fas fa-clock"></i> 6 min
+                    </div>
+                </div>
+                <div class="blog-content">
+                    <h3 class="blog-title">Meditação Profunda: 5 Técnicas Avançadas</h3>
+                    <p class="blog-excerpt">
+                        Eleve sua prática meditativa com técnicas que vão além do básico. 
+                        Explore estados alterados de consciência e conexão com o divino interior.
+                    </p>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <img src="https://i.pravatar.cc/150?img=22" alt="Autor" class="author-avatar">
+                            <div class="author-info">
+                                <span class="author-name">Lótus Silencioso</span>
+                                <span class="blog-date">05 Jan 2025</span>
+                            </div>
+                        </div>
+                        <a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Post 5 -->
+            <article class="blog-card hover-trigger reveal" data-category="desenvolvimento">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600" alt="Desenvolvimento">
+                    <div class="blog-category-tag">DESENVOLVIMENTO</div>
+                    <div class="blog-read-time">
+                        <i class="fas fa-clock"></i> 7 min
+                    </div>
+                </div>
+                <div class="blog-content">
+                    <h3 class="blog-title">Lei da Atração: Ciência e Espiritualidade</h3>
+                    <p class="blog-excerpt">
+                        Como manifestar seus desejos através da física quântica e da sabedoria ancestral. 
+                        A ponte entre ciência moderna e esoterismo revelada.
+                    </p>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <img src="https://i.pravatar.cc/150?img=56" alt="Autor" class="author-avatar">
+                            <div class="author-info">
+                                <span class="author-name">Quantum Sage</span>
+                                <span class="blog-date">03 Jan 2025</span>
+                            </div>
+                        </div>
+                        <a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Post 6 -->
+            <article class="blog-card hover-trigger reveal" data-category="hermetismo">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1533158326339-7f3cf2404354?w=600" alt="Tábua Esmeralda">
+                    <div class="blog-category-tag">HERMETISMO</div>
+                    <div class="blog-read-time">
+                        <i class="fas fa-clock"></i> 15 min
+                    </div>
+                </div>
+                <div class="blog-content">
+                    <h3 class="blog-title">A Tábua de Esmeralda Decodificada</h3>
+                    <p class="blog-excerpt">
+                        "O que está em cima é como o que está embaixo". Desvende os mistérios 
+                        do texto hermético mais importante da história da alquimia.
+                    </p>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <img src="https://i.pravatar.cc/150?img=33" alt="Autor" class="author-avatar">
+                            <div class="author-info">
+                                <span class="author-name">Hermes Trismegistus</span>
+                                <span class="blog-date">01 Jan 2025</span>
+                            </div>
+                        </div>
+                        <a href="#" class="read-more">Ler Mais <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <!-- Newsletter Section -->
+        <section class="newsletter-section">
+            <div class="newsletter-content">
+                <div class="newsletter-icon">✉️</div>
+                <h2 class="newsletter-title">Receba Sabedoria Semanal</h2>
+                <p class="newsletter-desc">
+                    Inscreva-se para receber artigos exclusivos, ensinamentos profundos e 
+                    práticas místicas diretamente na sua caixa de entrada.
+                </p>
+                <form class="newsletter-form" onsubmit="return false;">
+                    <input type="email" class="newsletter-input" placeholder="seu@email.com" required>
+                    <button type="submit" class="newsletter-btn hover-trigger">Inscrever</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="https://i.ibb.co/Fbxk6mQ3/Design-sem-nome-2.png" alt="AkashaHub" class="footer-logo">
+                <p class="footer-desc">
+                    Portal de conhecimento ancestral e sabedoria esotérica. 
+                    Explorando os mistérios do universo através da síntese entre 
+                    ciência moderna e tradições milenares.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-section-title">Navegação</h3>
+                <div class="footer-links">
+                    <a href="/" class="footer-link hover-trigger"><i class="fas fa-chevron-right"></i> Home</a>
+                    <a href="/doutrina" class="footer-link hover-trigger"><i class="fas fa-chevron-right"></i> Doutrina</a>
+                    <a href="/livros" class="footer-link hover-trigger"><i class="fas fa-chevron-right"></i> Livros</a>
+                    <a href="/vault" class="footer-link hover-trigger"><i class="fas fa-chevron-right"></i> Vault</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-section-title">Categorias</h3>
+                <div class="footer-links">
+                    <a href="#" class="footer-link hover-trigger"><i class="fas fa-chevron-right"></i> Espiritualidade</a>
+                    <a href="#" class="footer-link hover-trigger"><i class="fas fa-chevron-right"></i> Hermetismo</a>
+                    <a href="#" class="footer-link hover-trigger"><i class="fas fa-chevron-right"></i> Tantra</a>
+                    <a href="#" class="footer-link hover-trigger"><i class="fas fa-chevron-right"></i> Alquimia</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-section-title">Conecte-se</h3>
+                <div class="footer-links">
+                    <a href="#" class="footer-link hover-trigger"><i class="fab fa-instagram"></i> Instagram</a>
+                    <a href="#" class="footer-link hover-trigger"><i class="fab fa-youtube"></i> YouTube</a>
+                    <a href="#" class="footer-link hover-trigger"><i class="fab fa-telegram"></i> Telegram</a>
+                    <a href="#" class="footer-link hover-trigger"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            © 2025 BLOG AKÁSHICO • TODOS OS DIREITOS RESERVADOS • "O CONHECIMENTO É LUZ"
+        </div>
+    </footer>
+
+    <!-- Floating Elements -->
+    <div class="fab hover-trigger" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <div class="reading-progress">
+        <svg class="progress-ring" width="60" height="60">
+            <circle class="progress-ring-circle" cx="30" cy="30" r="27"></circle>
+            <circle class="progress-ring-progress" cx="30" cy="30" r="27" id="progressCircle"></circle>
+        </svg>
+        <span class="progress-percentage" id="progressPercentage">0%</span>
+    </div>
+
+    <script>
+        // ===== LOADER =====
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+                initObservers();
+                createStars();
+            }, 2500);
+        });
+
+        // ===== CRIAR ESTRELAS =====
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = window.innerWidth > 768 ? 50 : 30;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                star.style.animationDuration = `${2 + Math.random() * 2}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // ===== MOBILE MENU =====
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu on link click
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // ===== CURSOR CUSTOMIZADO (Desktop only) =====
+        if (window.innerWidth >= 1024) {
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorCircle = document.querySelector('.cursor-circle');
+            const cursorText = document.getElementById('cursorText');
+
+            let mouseX = 0, mouseY = 0;
+            let dotX = 0, dotY = 0;
+            let circleX = 0, circleY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            function animateCursor() {
+                dotX += (mouseX - dotX) * 1;
+                dotY += (mouseY - dotY) * 1;
+                circleX += (mouseX - circleX) * 0.15;
+                circleY += (mouseY - circleY) * 0.15;
+
+                cursorDot.style.left = `${dotX}px`;
+                cursorDot.style.top = `${dotY}px`;
+                cursorCircle.style.left = `${circleX}px`;
+                cursorCircle.style.top = `${circleY}px`;
+                cursorText.style.left = `${circleX}px`;
+                cursorText.style.top = `${circleY - 50}px`;
+
+                requestAnimationFrame(animateCursor);
+            }
+
+            animateCursor();
+
+            document.body.addEventListener('mouseover', (e) => {
+                if (e.target.closest('.hover-trigger')) {
+                    document.body.classList.add('hovering');
+                    
+                    if (e.target.closest('.read-more')) {
+                        cursorText.textContent = 'Ler';
+                        cursorText.style.opacity = '1';
+                    } else if (e.target.closest('.blog-card')) {
+                        cursorText.textContent = 'Ver';
+                        cursorText.style.opacity = '1';
+                    } else {
+                        cursorText.style.opacity = '0';
+                    }
+                } else {
+                    document.body.classList.remove('hovering');
+                    cursorText.style.opacity = '0';
+                }
+            });
+        }
+
+        // ===== SCROLL REVEAL =====
+        function initObservers() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('reveal');
+                        }, index * 100);
+                    }
+                });
+            }, { 
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.blog-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        // ===== SCROLL EFFECTS =====
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            
+            // Header effect
+            const header = document.getElementById('main-header');
+            if (scrolled > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+
+            // Progress bar
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrolled / windowHeight) * 100;
+            document.getElementById('progressBar').style.width = scrollPercent + '%';
+
+            // Reading progress circle
+            const circumference = 2 * Math.PI * 27;
+            const offset = circumference - (scrollPercent / 100) * circumference;
+            document.getElementById('progressCircle').style.strokeDashoffset = offset;
+            document.getElementById('progressPercentage').textContent = Math.round(scrollPercent) + '%';
+
+            // Parallax orbs
+            const orbs = document.querySelectorAll('.orb');
+            orbs.forEach((orb, index) => {
+                const speed = 0.2 + (index * 0.1);
+                orb.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // ===== CATEGORY FILTER =====
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const blogCards = document.querySelectorAll('.blog-card');
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const category = btn.dataset.category;
+
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                blogCards.forEach(card => {
+                    if (category === 'all' || card.dataset.category === category) {
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 10);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(30px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // ===== NEWSLETTER FORM =====
+        document.querySelector('.newsletter-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.querySelector('.newsletter-input');
+            const btn = document.querySelector('.newsletter-btn');
+            
+            btn.textContent = 'INSCRITO! ✓';
+            btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            
+            setTimeout(() => {
+                input.value = '';
+                btn.textContent = 'INSCREVER';
+                btn.style.background = 'linear-gradient(135deg, var(--gold-dark), var(--gold-primary))';
+            }, 3000);
+        });
+
+        // ===== ANIMATED GRADIENT =====
+        let gradientPosition = 0;
+        setInterval(() => {
+            gradientPosition += 1;
+            if (gradientPosition > 360) gradientPosition = 0;
+            
+            const bg = document.querySelector('.animated-bg');
+            bg.style.background = `
+                radial-gradient(circle at ${20 + Math.sin(gradientPosition * 0.01) * 10}% ${50 + Math.cos(gradientPosition * 0.01) * 10}%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at ${80 + Math.sin(gradientPosition * 0.015) * 10}% ${80 + Math.cos(gradientPosition * 0.015) * 10}%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at ${40 + Math.sin(gradientPosition * 0.02) * 10}% ${20 + Math.cos(gradientPosition * 0.02) * 10}%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+                var(--dark-bg)
+            `;
+        }, 50);
+
+        // ===== CONSOLE EASTER EGG =====
+        console.log('%c📜 Bem-vindo ao Blog Akáshico! 📜', 'font-size: 22px; color: #d4af37; font-weight: bold; text-shadow: 0 0 10px #d4af37;');
+        console.log('%c"O conhecimento é a chave, a sabedoria é a porta" ✨', 'font-size: 14px; color: #f9e69d; font-style: italic;');
+    </script>
+
+</body>
+</html>
