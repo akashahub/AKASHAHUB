@@ -11,13 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --gold:#c9a84c;--gold2:#e8d08a;--rose:#a0524a;
-  --deep:#0a0608;--dark:#110c0e;--mid:#1c1318;
-  --text:#e8ddd5;--muted:#7a6a62;
-  --serif:'Cormorant Garamond',serif;--sans:'Inter',sans-serif;
-  --ease:cubic-bezier(.76,0,.24,1)
-}
+:root{--gold:#c9a84c;--gold2:#e8d08a;--rose:#a0524a;--deep:#0a0608;--dark:#110c0e;--mid:#1c1318;--text:#e8ddd5;--muted:#7a6a62;--serif:'Cormorant Garamond',serif;--sans:'Inter',sans-serif;--ease:cubic-bezier(.76,0,.24,1)}
 html{scroll-behavior:smooth;overflow-x:hidden}
 body{background:var(--deep);color:var(--text);font-family:var(--sans);font-weight:300;overflow-x:hidden;cursor:none}
 #cursor{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;mix-blend-mode:difference}
@@ -27,7 +21,7 @@ body.hov #cursor .ring{width:64px;height:64px;opacity:.85}
 #pcanvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.6rem 3rem;background:linear-gradient(to bottom,rgba(10,6,8,.9),transparent)}
 .nav-logo{font-family:var(--serif);font-size:1.35rem;letter-spacing:.18em;color:var(--gold);text-decoration:none}
-.nav-cta{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:.55rem 1.4rem;border-radius:2px;text-decoration:none;transition:background .3s,color .3s;cursor:none}
+.nav-cta{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:.55rem 1.4rem;border-radius:2px;background:transparent;font-family:var(--sans);transition:background .3s,color .3s;cursor:pointer}
 .nav-cta:hover{background:var(--gold);color:var(--deep)}
 #hero{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
 .hvbg{position:absolute;inset:0;z-index:-1;overflow:hidden}
@@ -57,7 +51,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 #sess{padding:10rem 0;background:var(--dark)}
 .shead{text-align:center;margin-bottom:5.5rem}
 .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.4rem}
-.scard{position:relative;background:linear-gradient(135deg,rgba(28,19,24,.92),rgba(17,12,14,.97));border:1px solid rgba(201,168,76,.14);border-radius:4px;padding:2.4rem;overflow:hidden;transition:border-color .45s,transform .45s var(--ease);cursor:none}
+.scard{position:relative;background:linear-gradient(135deg,rgba(28,19,24,.92),rgba(17,12,14,.97));border:1px solid rgba(201,168,76,.14);border-radius:4px;padding:2.4rem;overflow:hidden;transition:border-color .45s,transform .45s var(--ease)}
 .scard::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(201,168,76,.06),transparent 60%);opacity:0;transition:opacity .5s}
 .scard:hover{border-color:rgba(201,168,76,.52);transform:translateY(-5px)}
 .scard:hover::before{opacity:1}
@@ -67,9 +61,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .sdesc{font-size:.83rem;color:var(--muted);line-height:1.72;margin-bottom:1.4rem}
 .sdur{font-size:.66rem;letter-spacing:.2em;color:var(--gold);margin-bottom:1.4rem}
 .sprice{font-family:var(--serif);font-size:2.1rem;color:var(--gold);font-weight:300}
-.btn{display:block;width:100%;margin-top:1.4rem;text-align:center;padding:.85rem 1rem;background:transparent;border:1px solid rgba(201,168,76,.38);color:var(--gold);font-size:.67rem;letter-spacing:.24em;text-transform:uppercase;border-radius:2px;text-decoration:none;transition:background .3s,color .3s,border-color .3s;cursor:none}
-.btn:hover,.btn.pr{background:var(--gold);color:var(--deep);border-color:var(--gold)}
-.btn.pr:hover{background:var(--gold2)}
+/* ===== BOTÃO UNIVERSAL ===== */
+.btn-ag{display:block;width:100%;margin-top:1.4rem;text-align:center;padding:.85rem 1rem;background:transparent;border:1px solid rgba(201,168,76,.38);color:var(--gold);font-size:.67rem;letter-spacing:.24em;text-transform:uppercase;border-radius:2px;cursor:pointer;transition:background .3s,color .3s,border-color .3s;font-family:var(--sans);font-weight:400;position:relative;z-index:10;pointer-events:all}
+.btn-ag:hover,.btn-ag.pr{background:var(--gold);color:var(--deep);border-color:var(--gold)}
+.btn-ag.pr:hover{background:var(--gold2)}
 #sig{padding:10rem 0;background:var(--deep);position:relative;overflow:hidden}
 #sig::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(201,168,76,.06),transparent 70%)}
 .siginn{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
@@ -83,14 +78,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .sigvis video{width:100%;display:block;object-fit:cover;filter:saturate(.55) brightness(.6)}
 #gal{padding:8rem 0;background:var(--dark)}
 .ggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:4rem}
-.gitem{position:relative;overflow:hidden;border-radius:3px;cursor:none}
+.gitem{position:relative;overflow:hidden;border-radius:3px}
 .gitem:first-child{grid-column:span 2}
 .gitem video,.gitem img{width:100%;height:280px;object-fit:cover;filter:saturate(.45) brightness(.65);transition:filter .85s,transform .85s}
 .gitem:first-child video{height:360px}
 .gitem:hover video,.gitem:hover img{filter:saturate(.9) brightness(.85);transform:scale(1.04)}
 #bks{padding:10rem 0;background:var(--deep)}
 .bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1.4rem;margin-top:4rem}
-.bcard{background:rgba(28,19,24,.55);border:1px solid rgba(201,168,76,.12);border-radius:4px;overflow:hidden;transition:border-color .4s,transform .4s var(--ease);cursor:none}
+.bcard{background:rgba(28,19,24,.55);border:1px solid rgba(201,168,76,.12);border-radius:4px;overflow:hidden;transition:border-color .4s,transform .4s var(--ease)}
 .bcard:hover{border-color:rgba(201,168,76,.42);transform:translateY(-7px)}
 .bcover{overflow:hidden;aspect-ratio:3/4}
 .bcover img{width:100%;height:100%;object-fit:cover;transition:transform .65s,filter .65s;filter:saturate(.65)}
@@ -105,17 +100,22 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .cttl{font-family:var(--serif);font-size:clamp(3rem,8vw,8.5rem);font-weight:300;color:#fff;line-height:.93;margin-bottom:2rem}
 .cttl em{color:var(--gold);font-style:italic}
 footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex;justify-content:space-between;align-items:center;font-size:.68rem;letter-spacing:.14em;color:var(--muted)}
-#lmod{display:none;position:fixed;inset:0;z-index:10000;background:rgba(10,6,8,.94);backdrop-filter:blur(14px);align-items:center;justify-content:center}
+/* MODAL */
+#lmod{display:none;position:fixed;inset:0;z-index:99999;background:rgba(10,6,8,.95);backdrop-filter:blur(14px);align-items:center;justify-content:center}
 #lmod.on{display:flex}
-.lbox{background:var(--dark);border:1px solid rgba(201,168,76,.3);border-radius:6px;padding:3rem;width:min(500px,92vw);text-align:center;position:relative}
+.lbox{background:var(--dark);border:1px solid rgba(201,168,76,.35);border-radius:6px;padding:3rem;width:min(500px,92vw);text-align:center;position:relative}
 .lbox h3{font-family:var(--serif);font-size:2.1rem;color:#fff;margin-bottom:.7rem}
-.lbox p{font-size:.84rem;color:var(--muted);margin-bottom:1.7rem;line-height:1.75}
+.lbox p{font-size:.84rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.75}
 .lsname{font-size:.66rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.4rem;padding:.38rem .8rem;border:1px solid rgba(201,168,76,.2);display:inline-block;border-radius:2px}
-.linput{width:100%;padding:.9rem 1.2rem;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.2);border-radius:3px;color:#fff;font-size:.9rem;font-family:var(--sans);outline:none;transition:border-color .3s;margin-bottom:1rem}
+.linput{width:100%;padding:.9rem 1.2rem;background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.25);border-radius:3px;color:#fff;font-size:.9rem;font-family:var(--sans);outline:none;transition:border-color .3s;margin-bottom:.7rem}
+.linput::placeholder{color:var(--muted)}
 .linput:focus{border-color:var(--gold)}
-.lgo{width:100%;padding:.9rem;background:var(--gold);color:var(--deep);border:none;border-radius:3px;cursor:pointer;font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;font-family:var(--sans);font-weight:500;transition:background .3s}
+.linput.err{border-color:var(--rose)}
+.lerr{font-size:.72rem;color:var(--rose);margin-bottom:.8rem;display:none;text-align:left}
+.lerr.show{display:block}
+.lgo{width:100%;padding:.95rem;background:var(--gold);color:var(--deep);border:none;border-radius:3px;cursor:pointer;font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;font-family:var(--sans);font-weight:500;transition:background .3s;margin-top:.4rem}
 .lgo:hover{background:var(--gold2)}
-.lcls{position:absolute;top:.9rem;right:1.1rem;background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;line-height:1}
+.lcls{position:absolute;top:.9rem;right:1.1rem;background:none;border:none;color:var(--muted);font-size:1.6rem;cursor:pointer;line-height:1;transition:color .2s}
 .lcls:hover{color:var(--gold)}
 .rv{opacity:0;transform:translateY(45px)}
 .rvl{opacity:0;transform:translateX(-50px)}
@@ -130,7 +130,7 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
 
 <nav>
   <a href="#" class="nav-logo">Tantra Sagrado</a>
-  <a href="#sess" class="nav-cta" id="navb">Agendar Sessão</a>
+  <button class="nav-cta btn-ag" data-sessao="Interesse Geral — Quero saber mais" data-preco="">Agendar Sessão</button>
 </nav>
 
 <section id="hero">
@@ -177,21 +177,21 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
         <div class="sdur">45 min — 1h · Magnetismo Tântrico</div>
         <p class="sdesc">Sessão de entrada para quem quer sentir pela primeira vez o poder do toque consciente e da ativação energética. Presença, intenção e transformação desde o primeiro contato.</p>
         <div class="sprice">R$450</div>
-        <a href="#" class="btn" data-s="Sessão Tântrica Inicial — Ativação (45min–1h) R$450">Agendar Sessão</a>
+        <button class="btn-ag" data-sessao="Ativação Tântrica (45min–1h)" data-preco="R$450">Agendar Sessão</button>
       </div>
       <div class="scard rv">
         <div class="sname">Tântrica Premium</div>
         <div class="sdur">2h · Intensiva de Tempo Estendido</div>
         <p class="sdesc">Imersão profunda no campo tântrico. Duas horas de presença total, trabalho corporal intenso, desbloqueio energético e expansão da consciência sensorial.</p>
         <div class="sprice">R$700</div>
-        <a href="#" class="btn" data-s="Sessão Tântrica Premium — Intensiva 2h R$700">Agendar Sessão</a>
+        <button class="btn-ag" data-sessao="Tântrica Premium — Intensiva 2h" data-preco="R$700">Agendar Sessão</button>
       </div>
       <div class="scard rv">
         <div class="sname">Alinhamento Akashico</div>
         <div class="sdur">Sessão Completa + Registros Akashicos</div>
         <p class="sdesc">Combinação única de leitura dos Registros Akashicos com sessão tântrica. Cura de padrões profundos, reprogramação energética e reconexão com a alma.</p>
         <div class="sprice">R$999</div>
-        <a href="#" class="btn" data-s="Alinhamento Akashico + Sessão Tântrica Completa R$999">Agendar Sessão</a>
+        <button class="btn-ag" data-sessao="Alinhamento Akashico + Sessão Tântrica Completa" data-preco="R$999">Agendar Sessão</button>
       </div>
       <div class="scard ft rv">
         <span class="sbadge">⚡ Elite</span>
@@ -199,7 +199,7 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
         <div class="sdur">Sessão Completa + Mentoria + Acesso Exclusivo</div>
         <p class="sdesc">A experiência mais completa. Sessão tântrica de alto nível com mentoria personalizada e acesso liberado a conteúdos exclusivos. O investimento mais poderoso em si mesmo.</p>
         <div class="sprice">R$1.200</div>
-        <a href="#" class="btn pr" data-s="Sessão Tântrica Elite + Mentoria + Conteúdos Exclusivos R$1.200">Quero esta Experiência</a>
+        <button class="btn-ag pr" data-sessao="Tântrica Elite + Mentoria + Conteúdos Exclusivos" data-preco="R$1.200">Quero esta Experiência</button>
       </div>
     </div>
   </div>
@@ -218,7 +218,7 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
           <div class="sigpold">De R$5.100</div>
           <div class="sigpnew">R$3.000</div>
           <div class="sigpnote">Parcele em até 12x &nbsp;·&nbsp; 2 sessões/semana &nbsp;·&nbsp; Ativações diretas e intensivas</div>
-          <a href="#" class="btn pr" style="margin-top:1.5rem" data-s="Assinatura Mensal Tântrica — 2 sessões/semana, ativações diretas R$3.000 (parcelável em 12x)">Quero a Assinatura</a>
+          <button class="btn-ag pr" style="margin-top:1.5rem" data-sessao="Assinatura Mensal Tântrica — 2 sessões/semana + ativações" data-preco="R$3.000 (parcelável em 12x)">Quero a Assinatura</button>
         </div>
       </div>
       <div class="sigvis rvr">
@@ -235,30 +235,12 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
     <p class="eyeb rv">Presença Visual</p>
     <h2 class="stitle rv">A Energia em <em>Movimento</em></h2>
     <div class="ggrid">
-      <div class="gitem rv">
-        <video autoplay muted loop playsinline>
-          <source src="https://res.cloudinary.com/dcbarseus/video/upload/v1772073107/VID_20251225_140101_285_zo5vby.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="gitem rv">
-        <video autoplay muted loop playsinline>
-          <source src="https://res.cloudinary.com/dcbarseus/video/upload/v1772073106/grok_video_2026-02-25-06-50-43_wzsqvq.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="gitem rv">
-        <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772073062/grok_image_1772015003755_yt8tcr.jpg" alt="" loading="lazy">
-      </div>
-      <div class="gitem rv">
-        <video autoplay muted loop playsinline>
-          <source src="https://res.cloudinary.com/dcbarseus/video/upload/v1772073107/grok_video_2026-02-25-07-03-01_dibti7.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="gitem rv">
-        <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772073062/grok_image_1772013454832_ei0pw2.jpg" alt="" loading="lazy">
-      </div>
-      <div class="gitem rv">
-        <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772073062/grok_image_1772014346690_bek8s4.jpg" alt="" loading="lazy">
-      </div>
+      <div class="gitem rv"><video autoplay muted loop playsinline><source src="https://res.cloudinary.com/dcbarseus/video/upload/v1772073107/VID_20251225_140101_285_zo5vby.mp4" type="video/mp4"></video></div>
+      <div class="gitem rv"><video autoplay muted loop playsinline><source src="https://res.cloudinary.com/dcbarseus/video/upload/v1772073106/grok_video_2026-02-25-06-50-43_wzsqvq.mp4" type="video/mp4"></video></div>
+      <div class="gitem rv"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772073062/grok_image_1772015003755_yt8tcr.jpg" alt="" loading="lazy"></div>
+      <div class="gitem rv"><video autoplay muted loop playsinline><source src="https://res.cloudinary.com/dcbarseus/video/upload/v1772073107/grok_video_2026-02-25-07-03-01_dibti7.mp4" type="video/mp4"></video></div>
+      <div class="gitem rv"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772073062/grok_image_1772013454832_ei0pw2.jpg" alt="" loading="lazy"></div>
+      <div class="gitem rv"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772073062/grok_image_1772014346690_bek8s4.jpg" alt="" loading="lazy"></div>
     </div>
   </div>
 </section>
@@ -272,29 +254,17 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
     <div class="bgrid">
       <div class="bcard rv">
         <div class="bcover"><img src="https://hotmart.s3.amazonaws.com/product_pictures/4e98b40d-9257-45c5-bcae-49ec4d38169d/jk.jfif" alt="Honrar a Deusa" loading="lazy"></div>
-        <div class="binfo">
-          <h3 class="bttl">Honrar a Deusa</h3>
-          <p class="bprice">R$ 47,98</p>
-          <a href="https://go.hotmart.com/M104187005M?dp=1" target="_blank" class="bacc">Adquirir</a>
-        </div>
+        <div class="binfo"><h3 class="bttl">Honrar a Deusa</h3><p class="bprice">R$ 47,98</p><a href="https://go.hotmart.com/M104187005M?dp=1" target="_blank" class="bacc">Adquirir</a></div>
       </div>
       <div class="bcard rv">
         <div class="bcover"><img src="https://hotmart.s3.amazonaws.com/product_pictures/579cbf6e-df90-4b70-afc7-aa5e324043d2/download5.jfif" alt="Tantra Descomplicado" loading="lazy"></div>
-        <div class="binfo">
-          <h3 class="bttl">Tantra Descomplicado</h3>
-          <p class="bprice">R$ 45,00</p>
-          <a href="https://go.hotmart.com/P103542930V?dp=1" target="_blank" class="bacc">Adquirir</a>
-        </div>
+        <div class="binfo"><h3 class="bttl">Tantra Descomplicado</h3><p class="bprice">R$ 45,00</p><a href="https://go.hotmart.com/P103542930V?dp=1" target="_blank" class="bacc">Adquirir</a></div>
       </div>
       <div class="bcard rv">
         <div class="bcover" style="background:var(--mid);display:flex;align-items:center;justify-content:center">
           <div style="text-align:center;padding:2rem;font-family:var(--serif);color:var(--gold);font-size:1.2rem;line-height:1.4">Shiva,<br>Shakti<br>&amp; Shava</div>
         </div>
-        <div class="binfo">
-          <h3 class="bttl">Shiva, Shakti e Shava</h3>
-          <p class="bprice">R$ 26,79</p>
-          <a href="https://pay.hotmart.com/U104170307P" target="_blank" class="bacc">Adquirir</a>
-        </div>
+        <div class="binfo"><h3 class="bttl">Shiva, Shakti e Shava</h3><p class="bprice">R$ 26,79</p><a href="https://pay.hotmart.com/U104170307P" target="_blank" class="bacc">Adquirir</a></div>
       </div>
     </div>
   </div>
@@ -304,7 +274,7 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
   <div class="wrap">
     <h2 class="cttl rv">Você está<br>pronto para<br>a <em>Iniciação?</em></h2>
     <p class="sbody rv" style="margin:1.5rem auto 2.5rem;text-align:center;max-width:460px">Cada transformação começa com um único passo. Escolha sua sessão e permita que a mudança comece agora.</p>
-    <a href="#sess" class="btn rv" style="display:inline-block;width:auto;padding:.9rem 3rem;font-size:.72rem">Ver Todas as Sessões</a>
+    <a href="#sess" style="display:inline-block;width:auto;padding:.9rem 3rem;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,.38);border-radius:2px;text-decoration:none" class="rv">Ver Todas as Sessões</a>
   </div>
 </section>
 
@@ -318,8 +288,9 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
     <button class="lcls" id="lcls">×</button>
     <h3>Quase lá ✨</h3>
     <div class="lsname" id="lsname"></div>
-    <p>Deixe seu e-mail para confirmar interesse. Você será direcionado ao WhatsApp com todas as informações da sua sessão escolhida.</p>
+    <p>Deixe seu e-mail para confirmar interesse. Você será direcionado ao WhatsApp com todas as informações da sessão escolhida.</p>
     <input type="email" class="linput" id="lem" placeholder="Seu melhor e-mail" autocomplete="email">
+    <p class="lerr" id="lerr">Por favor, insira um e-mail válido.</p>
     <button class="lgo" id="lgo">Confirmar e ir ao WhatsApp →</button>
   </div>
 </div>
@@ -332,12 +303,12 @@ const cur=document.getElementById('cursor'),dot=cur.querySelector('.dot'),ring=c
 let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`;});
 (function ac(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;requestAnimationFrame(ac);})();
-document.querySelectorAll('a,button,.scard,.bcard').forEach(e=>{
-  e.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
-  e.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
+document.querySelectorAll('a,button,.scard,.bcard').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
 });
 
-/* THREE.JS PARTICLES */
+/* PARTICLES */
 (function(){
   const c=document.getElementById('pcanvas');
   const r=new THREE.WebGLRenderer({canvas:c,alpha:true,antialias:false});
@@ -347,8 +318,8 @@ document.querySelectorAll('a,button,.scard,.bcard').forEach(e=>{
   const n=900,p=new Float32Array(n*3);
   for(let i=0;i<n*3;i++)p[i]=(Math.random()-.5)*14;
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(p,3));
-  const m=new THREE.PointsMaterial({color:0xc9a84c,size:.018,transparent:true,opacity:.4});
-  const pts=new THREE.Points(g,m);sc.add(pts);
+  const mat=new THREE.PointsMaterial({color:0xc9a84c,size:.018,transparent:true,opacity:.4});
+  const pts=new THREE.Points(g,mat);sc.add(pts);
   window.addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});
   let pmx=0,pmy=0;
   document.addEventListener('mousemove',e=>{pmx=e.clientX/innerWidth-.5;pmy=e.clientY/innerHeight-.5;});
@@ -362,37 +333,65 @@ gsap.timeline({defaults:{ease:'power3.out'}})
   .to('.h-ttl',{opacity:1,y:0,duration:1.5},'<.3')
   .to('.h-sub',{opacity:1,y:0,duration:1.2},'<.35')
   .to('.h-scroll',{opacity:1,duration:1},'<.4');
-
 gsap.to('.hvbg',{scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:1.5},opacity:0,scale:1.08});
 
 /* REVEALS */
-gsap.utils.toArray('.rv').forEach(el=>{
-  gsap.fromTo(el,{opacity:0,y:50},{opacity:1,y:0,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 86%',toggleActions:'play none none none'}});
-});
-gsap.utils.toArray('.rvl').forEach(el=>{
-  gsap.fromTo(el,{opacity:0,x:-55},{opacity:1,x:0,duration:1.2,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 82%',toggleActions:'play none none none'}});
-});
-gsap.utils.toArray('.rvr').forEach(el=>{
-  gsap.fromTo(el,{opacity:0,x:55},{opacity:1,x:0,duration:1.2,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 82%',toggleActions:'play none none none'}});
-});
+gsap.utils.toArray('.rv').forEach(el=>{gsap.fromTo(el,{opacity:0,y:50},{opacity:1,y:0,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 86%',toggleActions:'play none none none'}});});
+gsap.utils.toArray('.rvl').forEach(el=>{gsap.fromTo(el,{opacity:0,x:-55},{opacity:1,x:0,duration:1.2,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 82%',toggleActions:'play none none none'}});});
+gsap.utils.toArray('.rvr').forEach(el=>{gsap.fromTo(el,{opacity:0,x:55},{opacity:1,x:0,duration:1.2,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 82%',toggleActions:'play none none none'}});});
 
-/* MODAL */
-const mod=document.getElementById('lmod'),lsn=document.getElementById('lsname'),lem=document.getElementById('lem');
-const WA='5571983448621';let cs='';
-function open(s){cs=s;lsn.textContent=s;lem.value='';mod.classList.add('on');document.body.style.overflow='hidden';setTimeout(()=>lem.focus(),200);}
-function close(){mod.classList.remove('on');document.body.style.overflow='';}
-document.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();open(b.dataset.s);}));
-document.getElementById('navb').addEventListener('click',e=>{e.preventDefault();open('Sessão Tântrica — Quero saber mais');});
-document.getElementById('lcls').addEventListener('click',close);
-mod.addEventListener('click',e=>{if(e.target===mod)close();});
-document.getElementById('lgo').addEventListener('click',()=>{
-  const em=lem.value.trim();
-  if(!em||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){lem.style.borderColor='var(--rose)';setTimeout(()=>lem.style.borderColor='',1800);return;}
-  const msg=encodeURIComponent(`Olá! Tenho interesse na seguinte sessão:\n\n*${cs}*\n\nMeu e-mail: ${em}\n\nGostaria de mais informações e agendar. 🙏`);
-  window.open(`https://wa.me/${WA}?text=${msg}`,'_blank');
-  close();
-});
-lem.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('lgo').click();});
+/* ============================================================
+   MODAL — listener único via delegação no document
+   Captura clique em QUALQUER .btn-ag independente do estado GSAP
+   ============================================================ */
+const WA='5571983448621';
+const modal=document.getElementById('lmod');
+const lsname=document.getElementById('lsname');
+const emailEl=document.getElementById('lem');
+const errEl=document.getElementById('lerr');
+let sessao='',preco='';
+
+function abrirModal(s,p){
+  sessao=s; preco=p||'';
+  lsname.textContent=s;
+  emailEl.value='';
+  emailEl.classList.remove('err');
+  errEl.classList.remove('show');
+  modal.classList.add('on');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>emailEl.focus(),250);
+}
+function fecharModal(){modal.classList.remove('on');document.body.style.overflow='';}
+
+/* Delegação — captura todos os cliques da página */
+document.addEventListener('click',function(e){
+  /* fechar */
+  if(e.target===modal||e.target.id==='lcls'){fecharModal();return;}
+  /* confirmar */
+  if(e.target.id==='lgo'){enviar();return;}
+  /* qualquer botão de agendar */
+  const btn=e.target.closest('.btn-ag');
+  if(btn){
+    e.preventDefault();
+    abrirModal(btn.getAttribute('data-sessao')||'Sessão Tântrica',btn.getAttribute('data-preco')||'');
+  }
+},true); /* captura=true garante que pega antes de qualquer stopPropagation */
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fecharModal();});
+emailEl.addEventListener('keydown',e=>{if(e.key==='Enter')enviar();});
+
+function enviar(){
+  const em=emailEl.value.trim();
+  if(!em||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){
+    emailEl.classList.add('err');errEl.classList.add('show');emailEl.focus();return;
+  }
+  emailEl.classList.remove('err');errEl.classList.remove('show');
+  const agora=new Date().toLocaleString('pt-BR',{timeZone:'America/Bahia'});
+  const pLinha=preco?'\n💰 *Valor:* '+preco:'';
+  const msg='🌟 *NOVO LEAD — TANTRA SAGRADO* 🌟\n\n📋 *Sessão de Interesse:*\n'+sessao+pLinha+'\n\n📧 *E-mail do Cliente:*\n'+em+'\n\n🕐 *Data/Hora (Bahia):*\n'+agora+'\n\n_Lead captado pelo site._';
+  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
+  fecharModal();
+}
 </script>
 </body>
-  </html>
+</html>
