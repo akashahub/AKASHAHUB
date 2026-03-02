@@ -5,30 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>O RITUAL REAL | Alquimia para Casais • Yan Simon</title>
     
-    <!-- Fontes de Luxo -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* --- DNA VISUAL: IMPÉRIO & PAIXÃO --- */
         :root {
             --bg: #030000;
             --surface: #0a0505;
             --gold-start: #bf953f;
             --gold-mid: #fcf6ba;
             --gold-end: #aa771c;
-            /* Gradiente Ouro Animado */
             --gold-grad: linear-gradient(135deg, #bf953f 0%, #fcf6ba 40%, #b38728 60%, #fbf5b7 100%);
             --crimson-glow: rgba(120, 0, 20, 0.4);
             --text-main: #F0F0F0;
             --text-muted: #A0A0A0;
-            
             --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
             --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* --- RESET & BASE --- */
         * { margin:0; padding:0; box-sizing:border-box; }
         
+        html { scroll-behavior: smooth; }
+
         body { 
             background: var(--bg); 
             color: var(--text-main); 
@@ -38,7 +35,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Textura de Ruído (Noise) para aspecto cinematográfico */
         .noise-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -57,7 +53,6 @@
         
         p { font-weight: 300; letter-spacing: 0.02em; }
 
-        /* --- CLASSES UTILITÁRIAS DE LUXO --- */
         .gold-text { 
             background: var(--gold-grad); 
             background-size: 200% auto;
@@ -74,20 +69,78 @@
             letter-spacing: 0.05em;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 30px; position: relative; z-index: 2; }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 30px; 
+            position: relative; 
+            z-index: 2; 
+        }
 
-        /* --- ANIMAÇÕES GERAIS --- */
+        /* --- ANIMAÇÕES --- */
         @keyframes shine {
             to { background-position: 200% center; }
         }
 
         @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+            0% { transform: translateY(0px) translateX(-50%); }
+            50% { transform: translateY(-10px) translateX(-50%); }
+            100% { transform: translateY(0px) translateX(-50%); }
         }
 
-        /* --- SCROLL REVEAL (JS Triggered) --- */
+        @keyframes pulseGold {
+            0%, 100% { box-shadow: 0 0 20px rgba(191, 149, 63, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(191, 149, 63, 0.5), 0 0 80px rgba(191, 149, 63, 0.1); }
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { border-color: rgba(191, 149, 63, 0.3); }
+            50% { border-color: rgba(191, 149, 63, 0.7); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        @keyframes heroZoom {
+            0% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        /* --- PARTÍCULAS DOURADAS --- */
+        .particles-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--gold-mid);
+            border-radius: 50%;
+            animation: particleFloat linear infinite;
+            opacity: 0;
+        }
+
+        /* --- SCROLL REVEAL --- */
         .reveal {
             opacity: 0;
             transform: translateY(40px);
@@ -123,15 +176,16 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 10px 40px -10px rgba(191, 149, 63, 0.4);
+            animation: pulseGold 3s ease-in-out infinite;
         }
 
         .btn-royal:hover { 
             transform: translateY(-3px) scale(1.02); 
             box-shadow: 0 20px 50px -10px rgba(191, 149, 63, 0.6); 
             background-position: right center;
+            animation: none;
         }
 
-        /* Efeito de brilho passando pelo botão */
         .btn-royal::after {
             content: '';
             position: absolute;
@@ -146,9 +200,23 @@
             transition: 0.7s;
         }
 
+        /* Ripple no clique */
+        .btn-royal .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            width: 100px;
+            height: 100px;
+            margin-top: -50px;
+            margin-left: -50px;
+            animation: ripple 0.8s linear;
+            pointer-events: none;
+        }
+
         /* --- HERO SECTION --- */
         .hero { 
-            height: 100vh; 
+            height: 100vh;
+            min-height: 600px;
             display: flex; 
             align-items: center; 
             justify-content: center; 
@@ -161,10 +229,11 @@
             position: absolute;
             top: 50%; left: 50%;
             min-width: 100%; min-height: 100%;
-            transform: translate(-50%, -50%) scale(1.1); /* Scale for slow zoom effect */
+            transform: translate(-50%, -50%) scale(1.1);
             z-index: -2;
             object-fit: cover;
             filter: saturate(0.8) contrast(1.1);
+            animation: heroZoom 20s ease-in-out infinite alternate;
         }
 
         .hero-overlay {
@@ -172,6 +241,21 @@
             inset: 0;
             background: radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, #030000 90%);
             z-index: -1;
+        }
+
+        /* Linha dourada animada no topo da hero */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 2px;
+            background: var(--gold-grad);
+            z-index: 10;
+            animation: slideRight 2s 0.5s var(--ease-out-expo) forwards;
+        }
+
+        @keyframes slideRight {
+            to { left: 0; }
         }
 
         .hero-badge { 
@@ -185,17 +269,18 @@
             text-transform: uppercase;
             backdrop-filter: blur(5px);
             background: rgba(0,0,0,0.4);
+            animation: borderGlow 3s ease-in-out infinite;
         }
 
         .hero h1 {
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-size: clamp(1.8rem, 5vw, 4.5rem);
             line-height: 1.1;
             margin-bottom: 25px;
             text-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
         .hero-desc {
-            font-size: 1.1rem;
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
             max-width: 650px;
             margin: 0 auto 50px;
             color: rgba(255,255,255,0.85);
@@ -217,13 +302,27 @@
         .section { padding: 140px 0; position: relative; }
         .bg-dark { background: var(--surface); }
 
-        .section-header { text-align: center; margin-bottom: 80px; }
-        .section-header h2 { font-size: 2.5rem; margin-top: 15px; }
+        /* Linha decorativa entre seções */
+        .section::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, rgba(191,149,63,0.3), transparent);
+        }
 
-        /* --- CARDS (GLASSMORPHISM) --- */
+        .section-header { text-align: center; margin-bottom: 80px; }
+        .section-header h2 { 
+            font-size: clamp(1.6rem, 4vw, 2.5rem);
+            margin-top: 15px; 
+        }
+
+        /* --- CARDS --- */
         .elements-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
         }
 
@@ -246,20 +345,37 @@
             transition: opacity 0.6s;
         }
 
+        /* Linha brilhante no topo do card */
+        .element-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 1px;
+            background: var(--gold-grad);
+            transition: left 0.6s var(--ease-out-expo);
+        }
+
         .element-card:hover {
             transform: translateY(-15px);
             border-color: rgba(191, 149, 63, 0.4);
             box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8);
         }
         .element-card:hover::before { opacity: 1; }
+        .element-card:hover::after { left: 0; }
 
         .element-card > * { position: relative; z-index: 2; }
 
         .icon-display { 
-            font-size: 3rem; 
+            font-size: clamp(2.2rem, 4vw, 3rem);
             margin-bottom: 30px; 
             display: inline-block;
             filter: drop-shadow(0 0 15px rgba(191, 149, 63, 0.3));
+            transition: transform 0.4s var(--ease-out-expo), filter 0.4s;
+        }
+
+        .element-card:hover .icon-display {
+            transform: scale(1.2) rotate(5deg);
+            filter: drop-shadow(0 0 25px rgba(191, 149, 63, 0.6));
         }
 
         /* --- YAN SECTION --- */
@@ -283,6 +399,7 @@
             border: 1px solid rgba(191, 149, 63, 0.3);
             transform: translate(-20px, -20px);
             transition: transform 0.8s var(--ease-out-expo);
+            animation: borderGlow 4s ease-in-out infinite;
         }
         
         .photo-frame:hover::before {
@@ -298,6 +415,11 @@
             position: relative;
             z-index: 1;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: filter 0.8s;
+        }
+
+        .photo-frame:hover .yan-photo {
+            filter: grayscale(0%) sepia(5%) contrast(1.15);
         }
 
         /* --- OFFER SECTION --- */
@@ -316,6 +438,30 @@
             max-width: 800px;
             margin: 0 auto;
             box-shadow: 0 0 100px rgba(120, 0, 20, 0.15);
+            animation: borderGlow 4s ease-in-out infinite;
+            transition: box-shadow 0.5s;
+        }
+
+        .offer-box:hover {
+            box-shadow: 0 0 120px rgba(120, 0, 20, 0.25), 0 0 60px rgba(191,149,63,0.1);
+        }
+
+        /* Ornamento dourado nos cantos */
+        .offer-box::before,
+        .offer-box::after {
+            content: '';
+            position: absolute;
+            width: 30px; height: 30px;
+            border-color: var(--gold-start);
+            border-style: solid;
+        }
+        .offer-box::before {
+            top: 15px; left: 15px;
+            border-width: 1px 0 0 1px;
+        }
+        .offer-box::after {
+            bottom: 15px; right: 15px;
+            border-width: 0 1px 1px 0;
         }
 
         .price-tag {
@@ -325,8 +471,18 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .price-old { text-decoration: line-through; opacity: 0.5; font-size: 1.1rem; }
-        .price-new { font-size: 4rem; font-family: 'Cinzel', serif; line-height: 1; margin: 10px 0; }
+        .price-old { 
+            text-decoration: line-through; 
+            opacity: 0.5; 
+            font-size: 1.1rem; 
+        }
+
+        .price-new { 
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-family: 'Cinzel', serif; 
+            line-height: 1; 
+            margin: 10px 0; 
+        }
 
         .feature-list {
             list-style: none;
@@ -334,35 +490,151 @@
             display: inline-block;
             margin-bottom: 40px;
         }
+
         .feature-list li {
             margin-bottom: 15px;
-            font-size: 1.1rem;
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
             color: #ddd;
             display: flex;
             align-items: center;
+            transform: translateX(0);
+            transition: transform 0.3s var(--ease-out-expo);
         }
-        .feature-list li span { color: var(--gold-mid); margin-right: 15px; font-size: 1.3rem; }
 
-        /* --- RESPONSIVO --- */
+        .feature-list li:hover {
+            transform: translateX(8px);
+        }
+
+        .feature-list li span { 
+            color: var(--gold-mid); 
+            margin-right: 15px; 
+            font-size: 1.3rem; 
+        }
+
+        /* --- CURSOR GLOW --- */
+        .cursor-glow {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(191,149,63,0.06) 0%, transparent 70%);
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s linear;
+        }
+
+        /* --- RESPONSIVO MOBILE --- */
         @media (max-width: 900px) {
-            .yan-container { grid-template-columns: 1fr; text-align: center; }
-            .photo-frame { max-width: 400px; margin: 0 auto; }
-            .photo-frame::before { transform: translate(10px, 10px); }
+            .yan-container { 
+                grid-template-columns: 1fr; 
+                text-align: center; 
+                gap: 50px;
+            }
+            .photo-frame { 
+                max-width: 320px; 
+                margin: 0 auto; 
+            }
+            .photo-frame::before { 
+                transform: translate(10px, 10px); 
+            }
             .section { padding: 80px 0; }
+            .section-header { margin-bottom: 50px; }
+
+            .offer-box {
+                padding: 60px 30px;
+            }
         }
 
         @media (max-width: 600px) {
-            .btn-royal { padding: 20px 30px; font-size: 1rem; width: 100%; }
-            .price-new { font-size: 3rem; }
-            .hero-badge { letter-spacing: 0.15em; padding: 10px 20px; }
-            .container { padding: 0 20px; }
+            .container { padding: 0 18px; }
+
+            /* Hero */
+            .hero { height: 100svh; min-height: 550px; }
+            .hero-badge { 
+                letter-spacing: 0.12em; 
+                padding: 10px 18px; 
+                font-size: 0.7rem;
+            }
+            .hero h1 { 
+                font-size: clamp(1.5rem, 7vw, 2.2rem);
+                line-height: 1.2;
+            }
+            .hero-desc { 
+                font-size: 0.9rem; 
+                margin-bottom: 36px;
+                padding: 0 5px;
+            }
+            .scroll-indicator { bottom: 25px; }
+
+            /* Seções */
+            .section { padding: 60px 0; }
+            .section-header { margin-bottom: 40px; }
+            .section-header h2 { font-size: 1.5rem; }
+
+            /* Cards */
+            .elements-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .element-card { padding: 40px 25px; }
+
+            /* Yan */
+            .yan-text { padding: 0 5px; }
+            .yan-container { gap: 35px; }
+
+            /* Oferta */
+            .offer-box { 
+                padding: 50px 22px; 
+            }
+            .price-new { font-size: 2.5rem; }
+            .price-tag { margin: 25px 0; padding: 20px 0; }
+            .feature-list { width: 100%; }
+            .feature-list li { font-size: 0.95rem; }
+
+            /* Botão */
+            .btn-royal { 
+                padding: 18px 24px; 
+                font-size: 0.9rem; 
+                width: 100%;
+                letter-spacing: 1.5px;
+            }
+
+            /* Partículas desativadas em mobile para performance */
+            .particles-container { display: none; }
+            .cursor-glow { display: none; }
+        }
+
+        @media (max-width: 380px) {
+            .hero h1 { font-size: 1.4rem; }
+            .hero-badge { font-size: 0.65rem; letter-spacing: 0.1em; }
+            .section-header h2 { font-size: 1.3rem; }
+        }
+
+        /* Garantir que a foto Yan seja responsiva */
+        @media (max-width: 600px) {
+            .yan-photo { 
+                aspect-ratio: 4/5; 
+                max-height: 380px;
+            }
+            .photo-frame { max-width: 260px; }
+        }
+
+        /* Touch devices: remover efeitos hover pesados */
+        @media (hover: none) {
+            .element-card:hover { transform: none; }
+            .btn-royal:hover { transform: none; }
+            .photo-frame:hover::before { transform: translate(10px, 10px); }
         }
     </style>
 </head>
 <body>
 
-    <!-- TEXTURA CINEMATOGRÁFICA -->
     <div class="noise-overlay"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- PARTÍCULAS DOURADAS (apenas desktop) -->
+    <div class="particles-container" id="particlesContainer"></div>
 
     <!-- HERO SECTION -->
     <section class="hero">
@@ -404,11 +676,11 @@
     <section class="section bg-dark">
         <div class="container">
             <div class="section-header reveal">
-                <p class="italic-serif" style="font-size: 1.8rem; margin-bottom: 10px;">O fim da mediocridade</p>
+                <p class="italic-serif" style="font-size: clamp(1.3rem, 3vw, 1.8rem); margin-bottom: 10px;">O fim da mediocridade</p>
                 <h2>Vocês são sócios ou <span class="gold-text">Amantes?</span></h2>
             </div>
             
-            <div class="reveal delay-100" style="max-width: 800px; margin: 0 auto; text-align: center; font-size: 1.15rem; color: #ccc;">
+            <div class="reveal delay-100" style="max-width: 800px; margin: 0 auto; text-align: center; font-size: clamp(1rem, 2vw, 1.15rem); color: #ccc;">
                 <p style="margin-bottom: 25px;">
                     A rotina é o veneno silencioso dos impérios. Ela transforma paixão em hábito, desejo em obrigação e mistério em tédio.
                     Muitos casais se amam, mas perderam a <strong>eletricidade</strong>.
@@ -429,21 +701,18 @@
             </div>
 
             <div class="elements-grid">
-                <!-- Card 1 -->
                 <div class="element-card reveal delay-100">
                     <span class="icon-display">👁️</span>
                     <h3 style="color: var(--gold-mid); margin-bottom: 15px;">Fascinação Mútua</h3>
                     <p style="color: var(--text-muted);">Aprenda a técnica do "Olhar Magnético" para criar uma bolha de intimidade absoluta. Recupere a admiração de quando se viram pela primeira vez.</p>
                 </div>
 
-                <!-- Card 2 -->
                 <div class="element-card reveal delay-200">
                     <span class="icon-display">🔥</span>
                     <h3 style="color: var(--gold-mid); margin-bottom: 15px;">Polaridade & Desejo</h3>
                     <p style="color: var(--text-muted);">Restaure a tensão sexual. O masculino direciona, o feminino flui. Quando os polos se realinham, a faísca se torna um incêndio incontrolável.</p>
                 </div>
 
-                <!-- Card 3 -->
                 <div class="element-card reveal delay-300">
                     <span class="icon-display">🐍</span>
                     <h3 style="color: var(--gold-mid); margin-bottom: 15px;">Tantra & Conexão</h3>
@@ -463,20 +732,20 @@
     <section class="section bg-dark">
         <div class="container yan-container">
             <div class="photo-frame reveal">
-                <img src="https://i.imgur.com/RiilCud.jpeg" alt="Yan Simon" class="yan-photo">
+                <img src="https://i.imgur.com/RiilCud.jpeg" alt="Yan Simon" class="yan-photo" loading="lazy">
             </div>
 
             <div class="yan-text reveal delay-100">
-                <div class="italic-serif" style="font-size: 2rem;">Seu Guia</div>
-                <h2 style="font-size: 3rem; margin-bottom: 25px;" class="gold-text">Yan Simon</h2>
-                <p style="margin-bottom: 25px; font-size: 1.1rem; color: #ddd;">
+                <div class="italic-serif" style="font-size: clamp(1.5rem, 3vw, 2rem);">Seu Guia</div>
+                <h2 style="font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 25px;" class="gold-text">Yan Simon</h2>
+                <p style="margin-bottom: 25px; font-size: clamp(0.95rem, 2vw, 1.1rem); color: #ddd;">
                     Eu não ensino apenas sobre energia individual. Eu ensino sobre a <strong>Alquimia da União</strong>.
                 </p>
-                <p style="margin-bottom: 30px; color: var(--text-muted);">
+                <p style="margin-bottom: 30px; color: var(--text-muted); font-size: clamp(0.9rem, 1.8vw, 1rem);">
                     Muitos homens e mulheres poderosos falham em seus relacionamentos porque tentam usar a lógica onde deveria reinar a energia. O <em>Ritual Real</em> é a compilação de conhecimentos milenares, adaptados para casais modernos que querem construir um legado.
                 </p>
                 <div style="border-left: 3px solid var(--gold-start); padding-left: 20px;">
-                    <p style="color: #fff; font-style: italic;">
+                    <p style="color: #fff; font-style: italic; font-size: clamp(0.95rem, 2vw, 1rem);">
                         "Um casal alinhado energeticamente é imparável."
                     </p>
                 </div>
@@ -488,8 +757,8 @@
     <section class="section offer-section">
         <div class="container">
             <div class="offer-box reveal">
-                <div class="italic-serif" style="font-size: 1.5rem; margin-bottom: 10px;">O Convite Final</div>
-                <h2 style="font-size: 2.5rem; margin-bottom: 10px;">O Ritual Real</h2>
+                <div class="italic-serif" style="font-size: clamp(1.2rem, 3vw, 1.5rem); margin-bottom: 10px;">O Convite Final</div>
+                <h2 style="font-size: clamp(1.6rem, 4vw, 2.5rem); margin-bottom: 10px;">O Ritual Real</h2>
                 <p style="color: #aaa; letter-spacing: 2px; font-size: 0.9rem;">ACESSO VITALÍCIO</p>
 
                 <div class="price-tag">
@@ -523,27 +792,85 @@
         <p style="font-size: 0.8rem;">© 2024 • Todos os direitos reservados</p>
     </footer>
 
-    <!-- SCRIPT DE SCROLL REVEAL -->
     <script>
-        // Lógica simples e eficiente para revelar elementos ao rolar a página
+        // ─── SCROLL REVEAL ───────────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
             const observerOptions = {
                 root: null,
                 rootMargin: '0px',
-                threshold: 0.15 // Elemento precisa estar 15% visível
+                threshold: 0.12
             };
 
-            const observer = new IntersectionObserver((entries, observer) => {
+            const observer = new IntersectionObserver((entries, obs) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        observer.unobserve(entry.target); // Para de observar após animar uma vez
+                        obs.unobserve(entry.target);
                     }
                 });
             }, observerOptions);
 
-            const revealElements = document.querySelectorAll('.reveal');
-            revealElements.forEach(el => observer.observe(el));
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            // ─── PARTÍCULAS DOURADAS (só desktop) ────────────────
+            const isMobile = window.innerWidth <= 600;
+            if (!isMobile) {
+                const container = document.getElementById('particlesContainer');
+                const count = 18;
+
+                for (let i = 0; i < count; i++) {
+                    const p = document.createElement('div');
+                    p.classList.add('particle');
+                    p.style.left = Math.random() * 100 + '%';
+                    p.style.width = (Math.random() * 2 + 1) + 'px';
+                    p.style.height = p.style.width;
+                    p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                    p.style.animationDelay = (Math.random() * 10) + 's';
+                    p.style.opacity = Math.random() * 0.6 + 0.2;
+                    container.appendChild(p);
+                }
+            }
+
+            // ─── CURSOR GLOW (só desktop) ─────────────────────────
+            const cursorGlow = document.getElementById('cursorGlow');
+            if (!isMobile && cursorGlow) {
+                let mouseX = 0, mouseY = 0;
+                let glowX = 0, glowY = 0;
+
+                document.addEventListener('mousemove', e => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                });
+
+                function animateGlow() {
+                    glowX += (mouseX - glowX) * 0.08;
+                    glowY += (mouseY - glowY) * 0.08;
+                    cursorGlow.style.left = glowX + 'px';
+                    cursorGlow.style.top = glowY + 'px';
+                    requestAnimationFrame(animateGlow);
+                }
+                animateGlow();
+            }
+
+            // ─── RIPPLE NOS BOTÕES ────────────────────────────────
+            document.querySelectorAll('.btn-royal').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('ripple-effect');
+                    ripple.style.left = (e.clientX - rect.left) + 'px';
+                    ripple.style.top = (e.clientY - rect.top) + 'px';
+                    this.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 800);
+                });
+            });
+
+            // ─── HERO REVEAL IMEDIATO ─────────────────────────────
+            // Elementos da hero aparecem sem esperar scroll
+            const heroReveals = document.querySelectorAll('.hero .reveal');
+            heroReveals.forEach((el, i) => {
+                setTimeout(() => el.classList.add('active'), 300 + i * 200);
+            });
         });
     </script>
 
