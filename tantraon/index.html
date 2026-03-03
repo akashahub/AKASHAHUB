@@ -3,134 +3,613 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tantra Sagrado — Experiência de Elite</title>
+<title>Tantra em Salvador — Akasha Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--gold:#c9a84c;--gold2:#e8d08a;--rose:#a0524a;--deep:#0a0608;--dark:#110c0e;--mid:#1c1318;--text:#e8ddd5;--muted:#7a6a62;--serif:'Cormorant Garamond',serif;--sans:'Inter',sans-serif;--ease:cubic-bezier(.76,0,.24,1)}
+:root{
+  --violet:#9b59d0;
+  --violet-light:#b87cf5;
+  --violet-dark:#7b3fb2;
+  --red:#dc143c;
+  --deep:#000000;
+  --dark:#0a0a0a;
+  --mid:#1a1a1a;
+  --text:#ffffff;
+  --muted:#999999;
+  --impact:'Bebas Neue',cursive;
+  --bold:'Montserrat',sans-serif;
+  --serif:'Cormorant Garamond',serif;
+  --ease:cubic-bezier(.76,0,.24,1);
+}
 html{scroll-behavior:smooth;overflow-x:hidden}
-body{background:var(--deep);color:var(--text);font-family:var(--sans);font-weight:300;overflow-x:hidden;cursor:none}
+body{background:var(--deep);color:var(--text);font-family:var(--bold);font-weight:300;overflow-x:hidden;cursor:none;line-height:1.6}
+
+/* CURSOR CUSTOMIZADO */
 #cursor{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;mix-blend-mode:difference}
-#cursor .dot{width:8px;height:8px;background:var(--gold);border-radius:50%;transform:translate(-50%,-50%)}
-#cursor .ring{position:absolute;top:0;left:0;width:40px;height:40px;border:1px solid var(--gold);border-radius:50%;transform:translate(-50%,-50%);opacity:.5;transition:width .4s,height .4s,opacity .4s}
+#cursor .dot{width:8px;height:8px;background:var(--violet);border-radius:50%;transform:translate(-50%,-50%)}
+#cursor .ring{position:absolute;top:0;left:0;width:40px;height:40px;border:1px solid var(--violet);border-radius:50%;transform:translate(-50%,-50%);opacity:.5;transition:width .4s,height .4s,opacity .4s}
 body.hov #cursor .ring{width:64px;height:64px;opacity:.85}
-#pcanvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.6rem 3rem;background:linear-gradient(to bottom,rgba(10,6,8,.9),transparent)}
-.nav-logo{font-family:var(--serif);font-size:1.35rem;letter-spacing:.18em;color:var(--gold);text-decoration:none}
-.nav-cta{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:.55rem 1.4rem;border-radius:2px;background:transparent;font-family:var(--sans);transition:background .3s,color .3s;cursor:pointer}
-.nav-cta:hover{background:var(--gold);color:var(--deep)}
-#hero{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+
+/* PARTICLES CANVAS */
+#pcanvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.3}
+
+/* NAVEGAÇÃO */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.8rem 4rem;background:linear-gradient(to bottom,rgba(0,0,0,.95),transparent);backdrop-filter:blur(10px)}
+.nav-logo{font-family:var(--impact);font-size:1.8rem;letter-spacing:.15em;color:var(--violet);text-decoration:none;text-transform:uppercase}
+.nav-cta{font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;color:var(--violet);border:2px solid var(--violet);padding:.7rem 2rem;border-radius:0;background:transparent;font-family:var(--bold);font-weight:700;transition:all .3s;cursor:pointer}
+.nav-cta:hover{background:var(--violet);color:var(--deep);transform:scale(1.05)}
+
+/* HERO SECTION */
+#hero{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding:8rem 2rem 4rem}
 .hvbg{position:absolute;inset:0;z-index:-1;overflow:hidden}
-.hvbg video{width:100%;height:100%;object-fit:cover;opacity:.38;filter:saturate(.5) brightness(.42)}
-.hvbg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 15%,var(--deep) 80%)}
-.h-eye{font-size:.68rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;opacity:0;transform:translateY(18px)}
-.h-ttl{font-family:var(--serif);font-size:clamp(3.5rem,9vw,9.5rem);font-weight:300;line-height:.93;color:#fff;opacity:0}
-.h-ttl em{color:var(--gold);font-style:italic}
-.h-sub{margin-top:1.8rem;font-size:clamp(.82rem,1.4vw,.98rem);letter-spacing:.08em;color:var(--muted);max-width:460px;line-height:1.78;opacity:0}
-.h-scroll{position:absolute;bottom:2.5rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);opacity:0}
-.sline{width:1px;height:55px;background:linear-gradient(to bottom,var(--gold),transparent);animation:sp 2.2s ease-in-out infinite}
-@keyframes sp{0%,100%{transform:scaleY(1);opacity:.6}50%{transform:scaleY(.45);opacity:1}}
-.sec{position:relative;z-index:2}
-.wrap{max-width:1200px;margin:0 auto;padding:0 2.5rem}
-.eyeb{font-size:.64rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
-.stitle{font-family:var(--serif);font-size:clamp(2.4rem,5vw,5rem);font-weight:300;line-height:1.05;color:#fff}
-.stitle em{color:var(--gold);font-style:italic}
-.sbody{font-size:clamp(.88rem,1.4vw,1.02rem);line-height:1.82;color:var(--muted);max-width:540px}
-.gline{width:55px;height:1px;background:linear-gradient(to right,var(--gold),transparent);margin:1.4rem 0}
-#mani{padding:14rem 0;background:var(--deep)}
-#mani .wrap{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
-.mvis{position:relative;border-radius:3px;overflow:hidden;aspect-ratio:3/4}
-.mvis video{width:100%;height:100%;object-fit:cover;filter:saturate(.65);transition:filter .8s}
+.hvbg video{width:100%;height:100%;object-fit:cover;opacity:.25;filter:saturate(.3) brightness(.4)}
+.hvbg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 0%,var(--deep) 85%)}
+
+.h-eye{font-size:.9rem;letter-spacing:.5em;text-transform:uppercase;color:var(--violet);margin-bottom:2rem;opacity:0;transform:translateY(30px);font-weight:700}
+
+.h-ttl{
+  font-family:var(--impact);
+  font-size:clamp(4rem,12vw,13rem);
+  font-weight:400;
+  line-height:.85;
+  color:var(--text);
+  opacity:0;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+  text-shadow:0 0 40px rgba(155,89,208,.4);
+}
+.h-ttl em{color:var(--violet);font-style:normal;display:block;margin-top:.2em}
+
+.h-sub{
+  margin-top:2.5rem;
+  font-size:clamp(1rem,2vw,1.3rem);
+  letter-spacing:.05em;
+  color:var(--muted);
+  max-width:700px;
+  line-height:1.8;
+  opacity:0;
+  font-weight:400;
+}
+
+.h-scroll{position:absolute;bottom:3rem;display:flex;flex-direction:column;align-items:center;gap:.6rem;font-size:.7rem;letter-spacing:.4em;text-transform:uppercase;color:var(--muted);opacity:0}
+.sline{width:2px;height:60px;background:linear-gradient(to bottom,var(--violet),transparent);animation:sp 2s ease-in-out infinite}
+@keyframes sp{0%,100%{transform:scaleY(1);opacity:.5}50%{transform:scaleY(.4);opacity:1}}
+
+/* SEÇÕES GERAIS */
+.sec{position:relative;z-index:2;padding:10rem 0}
+.wrap{max-width:1400px;margin:0 auto;padding:0 3rem}
+
+.eyeb{
+  font-size:.8rem;
+  letter-spacing:.5em;
+  text-transform:uppercase;
+  color:var(--violet);
+  margin-bottom:1.5rem;
+  font-weight:900;
+}
+
+.stitle{
+  font-family:var(--impact);
+  font-size:clamp(3.5rem,8vw,9rem);
+  font-weight:400;
+  line-height:.9;
+  color:var(--text);
+  text-transform:uppercase;
+  letter-spacing:.03em;
+}
+.stitle em{color:var(--violet);font-style:normal}
+
+.sbody{
+  font-size:clamp(1rem,1.8vw,1.2rem);
+  line-height:1.9;
+  color:var(--muted);
+  max-width:650px;
+  font-weight:300;
+}
+
+.gline{width:80px;height:3px;background:var(--violet);margin:2rem 0}
+
+/* MANIFESTO */
+#mani{padding:16rem 0;background:var(--deep)}
+#mani .wrap{display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center}
+.mvis{position:relative;border-radius:0;overflow:hidden;aspect-ratio:3/4;border:3px solid var(--violet)}
+.mvis video{width:100%;height:100%;object-fit:cover;filter:saturate(.5);transition:filter .8s}
 .mvis:hover video{filter:saturate(1)}
-.mvis::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,var(--deep),transparent 55%)}
-.mglow{position:absolute;inset:-60px;background:radial-gradient(ellipse,rgba(201,168,76,.09),transparent 70%);pointer-events:none;z-index:2}
-#sess{padding:10rem 0;background:var(--dark)}
-.shead{text-align:center;margin-bottom:5.5rem}
-.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.4rem}
-.scard{position:relative;background:linear-gradient(135deg,rgba(28,19,24,.92),rgba(17,12,14,.97));border:1px solid rgba(201,168,76,.14);border-radius:4px;padding:2.4rem;overflow:hidden;transition:border-color .45s,transform .45s var(--ease)}
-.scard::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(201,168,76,.06),transparent 60%);opacity:0;transition:opacity .5s}
-.scard:hover{border-color:rgba(201,168,76,.52);transform:translateY(-5px)}
+.mglow{position:absolute;inset:-80px;background:radial-gradient(ellipse,rgba(155,89,208,.15),transparent 70%);pointer-events:none;z-index:2}
+
+/* COPY FORTE */
+.copy-block{
+  background:linear-gradient(135deg,var(--dark) 0%,var(--mid) 100%);
+  padding:6rem 4rem;
+  border-left:6px solid var(--red);
+  margin:4rem 0;
+  position:relative;
+}
+.copy-block::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at top left,rgba(220,20,60,.1),transparent 60%);
+  pointer-events:none;
+}
+
+.copy-giant{
+  font-family:var(--impact);
+  font-size:clamp(2.5rem,6vw,7rem);
+  line-height:.95;
+  color:var(--text);
+  text-transform:uppercase;
+  margin-bottom:2rem;
+  letter-spacing:.02em;
+}
+.copy-giant .highlight{color:var(--red);display:block}
+.copy-giant .violet{color:var(--violet)}
+
+.copy-medium{
+  font-family:var(--bold);
+  font-size:clamp(1.3rem,3vw,2.5rem);
+  line-height:1.2;
+  color:var(--text);
+  font-weight:900;
+  text-transform:uppercase;
+  margin:2.5rem 0;
+  letter-spacing:.05em;
+}
+
+.copy-body{
+  font-size:clamp(1.1rem,2vw,1.4rem);
+  line-height:1.7;
+  color:var(--muted);
+  font-weight:400;
+  margin:1.5rem 0;
+}
+
+.copy-list{
+  list-style:none;
+  margin:2rem 0;
+}
+.copy-list li{
+  font-size:clamp(1rem,2vw,1.3rem);
+  color:var(--text);
+  padding:1rem 0;
+  border-bottom:1px solid rgba(155,89,208,.2);
+  font-weight:700;
+  letter-spacing:.05em;
+}
+.copy-list li::before{
+  content:'⚡';
+  margin-right:1rem;
+  color:var(--violet);
+}
+
+/* SESSÕES */
+#sess{padding:12rem 0;background:var(--dark)}
+.shead{text-align:center;margin-bottom:6rem}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2rem}
+
+.scard{
+  position:relative;
+  background:linear-gradient(135deg,rgba(26,26,26,.95),rgba(10,10,10,.98));
+  border:2px solid rgba(155,89,208,.2);
+  border-radius:0;
+  padding:3rem;
+  overflow:hidden;
+  transition:all .5s var(--ease);
+}
+.scard::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at top,rgba(155,89,208,.08),transparent 70%);
+  opacity:0;
+  transition:opacity .5s;
+}
+.scard:hover{
+  border-color:var(--violet);
+  transform:translateY(-10px);
+  box-shadow:0 20px 60px rgba(155,89,208,.3);
+}
 .scard:hover::before{opacity:1}
-.scard.ft{border-color:rgba(201,168,76,.38);background:linear-gradient(135deg,rgba(42,28,18,.96),rgba(20,14,10,.99))}
-.sbadge{display:inline-block;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;background:var(--gold);color:var(--deep);padding:.28rem .8rem;border-radius:2px;margin-bottom:1.1rem}
-.sname{font-family:var(--serif);font-size:1.55rem;font-weight:300;color:#fff;margin-bottom:.7rem;line-height:1.2}
-.sdesc{font-size:.83rem;color:var(--muted);line-height:1.72;margin-bottom:1.4rem}
-.sdur{font-size:.66rem;letter-spacing:.2em;color:var(--gold);margin-bottom:1.4rem}
-.sprice{font-family:var(--serif);font-size:2.1rem;color:var(--gold);font-weight:300}
-/* ===== BOTÃO UNIVERSAL ===== */
-.btn-ag{display:block;width:100%;margin-top:1.4rem;text-align:center;padding:.85rem 1rem;background:transparent;border:1px solid rgba(201,168,76,.38);color:var(--gold);font-size:.67rem;letter-spacing:.24em;text-transform:uppercase;border-radius:2px;cursor:pointer;transition:background .3s,color .3s,border-color .3s;font-family:var(--sans);font-weight:400;position:relative;z-index:10;pointer-events:all}
-.btn-ag:hover,.btn-ag.pr{background:var(--gold);color:var(--deep);border-color:var(--gold)}
-.btn-ag.pr:hover{background:var(--gold2)}
-#sig{padding:10rem 0;background:var(--deep);position:relative;overflow:hidden}
-#sig::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(201,168,76,.06),transparent 70%)}
-.siginn{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
-.sigtag{display:inline-block;font-size:.63rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,.3);padding:.38rem 1rem;border-radius:2px;margin-bottom:1.4rem}
-.sigpbox{margin-top:2rem;padding:2rem;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.2);border-radius:4px}
-.sigplbl{font-size:.63rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.45rem}
-.sigpold{font-family:var(--serif);font-size:1.35rem;color:var(--muted);text-decoration:line-through}
-.sigpnew{font-family:var(--serif);font-size:3.6rem;color:var(--gold);line-height:1;margin:.25rem 0}
-.sigpnote{font-size:.73rem;color:var(--muted);line-height:1.6}
-.sigvis{position:relative;border-radius:4px;overflow:hidden}
-.sigvis video{width:100%;display:block;object-fit:cover;filter:saturate(.55) brightness(.6)}
-#gal{padding:8rem 0;background:var(--dark)}
-.ggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:4rem}
-.gitem{position:relative;overflow:hidden;border-radius:3px}
+
+.scard.ft{
+  border-color:var(--red);
+  background:linear-gradient(135deg,rgba(40,10,10,.97),rgba(10,5,5,.99));
+}
+.scard.ft:hover{
+  border-color:var(--violet);
+  box-shadow:0 25px 80px rgba(220,20,60,.4);
+}
+
+.sbadge{
+  display:inline-block;
+  font-size:.7rem;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  background:var(--red);
+  color:var(--text);
+  padding:.4rem 1.2rem;
+  border-radius:0;
+  margin-bottom:1.5rem;
+  font-weight:900;
+}
+
+.sname{
+  font-family:var(--impact);
+  font-size:2.5rem;
+  font-weight:400;
+  color:var(--text);
+  margin-bottom:1rem;
+  line-height:1;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+
+.sdesc{
+  font-size:.95rem;
+  color:var(--muted);
+  line-height:1.8;
+  margin-bottom:2rem;
+  font-weight:300;
+}
+
+.sdur{
+  font-size:.75rem;
+  letter-spacing:.25em;
+  color:var(--violet);
+  margin-bottom:2rem;
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+.sprice{
+  font-family:var(--impact);
+  font-size:3.5rem;
+  color:var(--violet);
+  font-weight:400;
+  letter-spacing:.02em;
+}
+
+/* BOTÃO UNIVERSAL */
+.btn-ag{
+  display:block;
+  width:100%;
+  margin-top:2rem;
+  text-align:center;
+  padding:1.2rem 1.5rem;
+  background:transparent;
+  border:2px solid var(--violet);
+  color:var(--violet);
+  font-size:.75rem;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  border-radius:0;
+  cursor:pointer;
+  transition:all .3s;
+  font-family:var(--bold);
+  font-weight:900;
+  position:relative;
+  z-index:10;
+}
+.btn-ag:hover{
+  background:var(--violet);
+  color:var(--deep);
+  transform:scale(1.02);
+  box-shadow:0 10px 40px rgba(155,89,208,.5);
+}
+.btn-ag.pr{
+  background:var(--red);
+  border-color:var(--red);
+  color:var(--text);
+}
+.btn-ag.pr:hover{
+  background:var(--violet);
+  border-color:var(--violet);
+}
+
+/* ASSINATURA */
+#sig{padding:12rem 0;background:var(--deep);position:relative;overflow:hidden}
+#sig::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(155,89,208,.08),transparent 75%)}
+
+.siginn{display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center}
+
+.sigtag{
+  display:inline-block;
+  font-size:.75rem;
+  letter-spacing:.4em;
+  text-transform:uppercase;
+  color:var(--text);
+  background:var(--red);
+  padding:.6rem 1.5rem;
+  border-radius:0;
+  margin-bottom:2rem;
+  font-weight:900;
+}
+
+.sigpbox{
+  margin-top:3rem;
+  padding:3rem;
+  background:rgba(155,89,208,.05);
+  border:2px solid var(--violet);
+  border-radius:0;
+}
+
+.sigplbl{
+  font-size:.75rem;
+  letter-spacing:.35em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:.5rem;
+  font-weight:700;
+}
+
+.sigpold{
+  font-family:var(--bold);
+  font-size:1.5rem;
+  color:var(--muted);
+  text-decoration:line-through;
+  font-weight:300;
+}
+
+.sigpnew{
+  font-family:var(--impact);
+  font-size:5rem;
+  color:var(--violet);
+  line-height:1;
+  margin:.5rem 0;
+  letter-spacing:.02em;
+}
+
+.sigpnote{
+  font-size:.85rem;
+  color:var(--muted);
+  line-height:1.7;
+  margin-top:1rem;
+}
+
+.sigvis{position:relative;border-radius:0;overflow:hidden;border:3px solid var(--violet)}
+.sigvis video{width:100%;display:block;object-fit:cover;filter:saturate(.4) brightness(.5);transition:filter .8s}
+.sigvis:hover video{filter:saturate(.8) brightness(.8)}
+
+/* GALERIA */
+#gal{padding:10rem 0;background:var(--dark)}
+.ggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:5rem}
+.gitem{position:relative;overflow:hidden;border-radius:0;border:2px solid rgba(155,89,208,.3);transition:border-color .5s}
+.gitem:hover{border-color:var(--violet)}
 .gitem:first-child{grid-column:span 2}
-.gitem video,.gitem img{width:100%;height:280px;object-fit:cover;filter:saturate(.45) brightness(.65);transition:filter .85s,transform .85s}
-.gitem:first-child video{height:360px}
-.gitem:hover video,.gitem:hover img{filter:saturate(.9) brightness(.85);transform:scale(1.04)}
-#bks{padding:10rem 0;background:var(--deep)}
-.bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1.4rem;margin-top:4rem}
-.bcard{background:rgba(28,19,24,.55);border:1px solid rgba(201,168,76,.12);border-radius:4px;overflow:hidden;transition:border-color .4s,transform .4s var(--ease)}
-.bcard:hover{border-color:rgba(201,168,76,.42);transform:translateY(-7px)}
-.bcover{overflow:hidden;aspect-ratio:3/4}
-.bcover img{width:100%;height:100%;object-fit:cover;transition:transform .65s,filter .65s;filter:saturate(.65)}
-.bcard:hover .bcover img{transform:scale(1.07);filter:saturate(1)}
-.binfo{padding:1.3rem}
-.bttl{font-family:var(--serif);font-size:1.08rem;color:#fff;margin-bottom:.45rem}
-.bprice{font-size:.83rem;color:var(--gold);margin-bottom:.9rem}
-.bacc{display:block;text-align:center;padding:.58rem 1rem;border:1px solid rgba(201,168,76,.3);color:var(--gold);font-size:.63rem;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;border-radius:2px;transition:background .3s,color .3s}
-.bacc:hover{background:var(--gold);color:var(--deep)}
-#cls{padding:12rem 0 8rem;text-align:center;background:var(--deep);position:relative;overflow:hidden}
-#cls::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(201,168,76,.07),transparent 65%)}
-.cttl{font-family:var(--serif);font-size:clamp(3rem,8vw,8.5rem);font-weight:300;color:#fff;line-height:.93;margin-bottom:2rem}
-.cttl em{color:var(--gold);font-style:italic}
-footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex;justify-content:space-between;align-items:center;font-size:.68rem;letter-spacing:.14em;color:var(--muted)}
+.gitem video,.gitem img{width:100%;height:320px;object-fit:cover;filter:saturate(.3) brightness(.6);transition:all .9s}
+.gitem:first-child video{height:400px}
+.gitem:hover video,.gitem:hover img{filter:saturate(1) brightness(1);transform:scale(1.08)}
+
+/* PERFIL DO TERAPEUTA */
+#perfil{
+  padding:12rem 0;
+  background:var(--deep);
+}
+#perfil .wrap{
+  display:grid;
+  grid-template-columns:400px 1fr;
+  gap:6rem;
+  align-items:center;
+}
+.perfil-img{
+  width:100%;
+  aspect-ratio:1;
+  border-radius:50%;
+  overflow:hidden;
+  border:5px solid var(--violet);
+  box-shadow:0 0 80px rgba(155,89,208,.4);
+}
+.perfil-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:saturate(.8);
+  transition:filter .8s;
+}
+.perfil-img:hover img{
+  filter:saturate(1);
+}
+
+/* CTA FINAL */
+#cls{
+  padding:14rem 0 10rem;
+  text-align:center;
+  background:var(--deep);
+  position:relative;
+  overflow:hidden;
+}
+#cls::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 50% 60%,rgba(220,20,60,.12),transparent 70%);
+}
+
+.cttl{
+  font-family:var(--impact);
+  font-size:clamp(4rem,10vw,11rem);
+  font-weight:400;
+  color:var(--text);
+  line-height:.88;
+  margin-bottom:3rem;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+}
+.cttl em{color:var(--violet);font-style:normal}
+
+/* FOOTER */
+footer{
+  padding:3rem 4rem;
+  border-top:2px solid rgba(155,89,208,.2);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:.75rem;
+  letter-spacing:.2em;
+  color:var(--muted);
+  font-weight:700;
+  text-transform:uppercase;
+}
+
 /* MODAL */
-#lmod{display:none;position:fixed;inset:0;z-index:99999;background:rgba(10,6,8,.95);backdrop-filter:blur(14px);align-items:center;justify-content:center}
+#lmod{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:rgba(0,0,0,.96);
+  backdrop-filter:blur(20px);
+  align-items:center;
+  justify-content:center;
+}
 #lmod.on{display:flex}
-.lbox{background:var(--dark);border:1px solid rgba(201,168,76,.35);border-radius:6px;padding:3rem;width:min(500px,92vw);text-align:center;position:relative}
-.lbox h3{font-family:var(--serif);font-size:2.1rem;color:#fff;margin-bottom:.7rem}
-.lbox p{font-size:.84rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.75}
-.lsname{font-size:.66rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.4rem;padding:.38rem .8rem;border:1px solid rgba(201,168,76,.2);display:inline-block;border-radius:2px}
-.linput{width:100%;padding:.9rem 1.2rem;background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.25);border-radius:3px;color:#fff;font-size:.9rem;font-family:var(--sans);outline:none;transition:border-color .3s;margin-bottom:.7rem}
+
+.lbox{
+  background:var(--dark);
+  border:3px solid var(--violet);
+  border-radius:0;
+  padding:4rem;
+  width:min(550px,94vw);
+  text-align:center;
+  position:relative;
+  box-shadow:0 30px 100px rgba(155,89,208,.3);
+}
+
+.lbox h3{
+  font-family:var(--impact);
+  font-size:3rem;
+  color:var(--text);
+  margin-bottom:1rem;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+
+.lbox p{
+  font-size:.95rem;
+  color:var(--muted);
+  margin-bottom:2rem;
+  line-height:1.8;
+  font-weight:300;
+}
+
+.lsname{
+  font-size:.75rem;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--violet);
+  margin-bottom:2rem;
+  padding:.5rem 1rem;
+  border:2px solid var(--violet);
+  display:inline-block;
+  border-radius:0;
+  font-weight:900;
+}
+
+.linput{
+  width:100%;
+  padding:1.2rem 1.5rem;
+  background:rgba(255,255,255,.03);
+  border:2px solid rgba(155,89,208,.3);
+  border-radius:0;
+  color:var(--text);
+  font-size:1rem;
+  font-family:var(--bold);
+  outline:none;
+  transition:border-color .3s;
+  margin-bottom:1rem;
+  font-weight:300;
+}
 .linput::placeholder{color:var(--muted)}
-.linput:focus{border-color:var(--gold)}
-.linput.err{border-color:var(--rose)}
-.lerr{font-size:.72rem;color:var(--rose);margin-bottom:.8rem;display:none;text-align:left}
+.linput:focus{border-color:var(--violet)}
+.linput.err{border-color:var(--red)}
+
+.lerr{
+  font-size:.8rem;
+  color:var(--red);
+  margin-bottom:1rem;
+  display:none;
+  text-align:left;
+  font-weight:700;
+}
 .lerr.show{display:block}
-.lgo{width:100%;padding:.95rem;background:var(--gold);color:var(--deep);border:none;border-radius:3px;cursor:pointer;font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;font-family:var(--sans);font-weight:500;transition:background .3s;margin-top:.4rem}
-.lgo:hover{background:var(--gold2)}
-.lcls{position:absolute;top:.9rem;right:1.1rem;background:none;border:none;color:var(--muted);font-size:1.6rem;cursor:pointer;line-height:1;transition:color .2s}
-.lcls:hover{color:var(--gold)}
-.rv{opacity:0;transform:translateY(45px)}
-.rvl{opacity:0;transform:translateX(-50px)}
-.rvr{opacity:0;transform:translateX(50px)}
-@media(max-width:900px){#mani .wrap,.siginn{grid-template-columns:1fr;gap:3rem}.ggrid{grid-template-columns:1fr 1fr}.gitem:first-child{grid-column:span 2}nav{padding:1.2rem 1.5rem}.mvis{aspect-ratio:16/9}}
-@media(max-width:600px){.ggrid{grid-template-columns:1fr}.gitem:first-child{grid-column:span 1}footer{flex-direction:column;gap:1rem;text-align:center}.sgrid{grid-template-columns:1fr}}
+
+.lgo{
+  width:100%;
+  padding:1.2rem;
+  background:var(--violet);
+  color:var(--text);
+  border:none;
+  border-radius:0;
+  cursor:pointer;
+  font-size:.75rem;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  font-family:var(--bold);
+  font-weight:900;
+  transition:all .3s;
+  margin-top:1rem;
+}
+.lgo:hover{
+  background:var(--violet-light);
+  transform:scale(1.02);
+}
+
+.lcls{
+  position:absolute;
+  top:1.5rem;
+  right:1.5rem;
+  background:none;
+  border:none;
+  color:var(--muted);
+  font-size:2rem;
+  cursor:pointer;
+  line-height:1;
+  transition:color .3s;
+  font-weight:700;
+}
+.lcls:hover{color:var(--violet)}
+
+/* ANIMAÇÕES */
+.rv{opacity:0;transform:translateY(60px)}
+.rvl{opacity:0;transform:translateX(-60px)}
+.rvr{opacity:0;transform:translateX(60px)}
+
+/* RESPONSIVO */
+@media(max-width:1024px){
+  #mani .wrap,.siginn,#perfil .wrap{grid-template-columns:1fr;gap:4rem}
+  .ggrid{grid-template-columns:1fr 1fr}
+  .gitem:first-child{grid-column:span 2}
+  nav{padding:1.5rem 2rem}
+  .wrap{padding:0 2rem}
+  .copy-block{padding:4rem 2rem}
+}
+
+@media(max-width:768px){
+  .ggrid{grid-template-columns:1fr}
+  .gitem:first-child{grid-column:span 1}
+  footer{flex-direction:column;gap:1.5rem;text-align:center}
+  .sgrid{grid-template-columns:1fr}
+  .h-ttl{font-size:clamp(3rem,15vw,6rem)}
+  .stitle{font-size:clamp(2.5rem,12vw,5rem)}
+  .copy-giant{font-size:clamp(2rem,10vw,4rem)}
+  #perfil .wrap{grid-template-columns:1fr}
+  .perfil-img{max-width:300px;margin:0 auto}
+}
 </style>
 </head>
 <body>
+
 <div id="cursor"><div class="dot"></div><div class="ring"></div></div>
 <canvas id="pcanvas"></canvas>
 
 <nav>
-  <a href="#" class="nav-logo">Tantra Sagrado</a>
-  <button class="nav-cta btn-ag" data-sessao="Interesse Geral — Quero saber mais" data-preco="">Agendar Sessão</button>
+  <a href="#" class="nav-logo">AKASHA HUB</a>
+  <button class="nav-cta btn-ag" data-sessao="Interesse Geral — Quero saber mais" data-preco="">AGENDAR AGORA</button>
 </nav>
 
 <section id="hero">
@@ -139,10 +618,91 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
       <source src="https://res.cloudinary.com/dcbarseus/video/upload/v1772073106/grok_video_2026-02-25-07-22-38_nxe0ki.mp4" type="video/mp4">
     </video>
   </div>
-  <p class="h-eye">Experiência Tântrica de Elite</p>
-  <h1 class="h-ttl">Desperte a<br><em>Força Sagrada</em><br>em Você</h1>
-  <p class="h-sub">Sessões tântricas de alto nível — ativação, cura e expansão da consciência com presença total.</p>
-  <div class="h-scroll"><div class="sline"></div><span>Descubra</span></div>
+  <p class="h-eye">TANTRA EM SALVADOR</p>
+  <h1 class="h-ttl">SEXO VOCÊ ENCONTRA<br><em>EM QUALQUER ESQUINA</em></h1>
+  <p class="h-sub">Isso aqui não é sobre putaria nem essas baixarias que as pessoas estão acostumadas aqui em Salvador, terra do carnaval.</p>
+  <div class="h-scroll"><div class="sline"></div><span>DESCUBRA</span></div>
+</section>
+
+<!-- COPY FORTE SALVADOR -->
+<section class="sec" style="background:var(--deep);padding:8rem 0">
+  <div class="wrap">
+    <div class="copy-block rvl">
+      <h2 class="copy-giant">
+        SALVADOR É A CIDADE QUE<br>
+        <span class="highlight">MAIS PRECISA</span><br>
+        <span class="violet">DE TANTRA</span>
+      </h2>
+      <p class="copy-medium">A cidade do pagodão.<br>A cidade onde você esqueceu quem realmente é.</p>
+      <div class="gline"></div>
+      <p class="copy-body">
+        Aqui é onde você <strong>reprograma seu corpo e sua alma</strong> para sentir e lembrar que:
+      </p>
+      <ul class="copy-list">
+        <li>VOCÊ É UMA DEUSA 💫</li>
+        <li>VOCÊ É UM GUARDIÃO ⚡</li>
+      </ul>
+      <p class="copy-medium" style="color:var(--red);margin-top:3rem">
+        É HORA DE RESGATAR SEU PODER<br>QUE VOCÊ DEIXOU ESCORRER NO RALO.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- TECNOLOGIA DA ALMA -->
+<section class="sec" style="background:var(--dark);padding:8rem 0">
+  <div class="wrap">
+    <div class="copy-block rvr">
+      <p class="eyeb">O QUE É ISSO?</p>
+      <h2 class="copy-giant">
+        TRABALHAR COM TANTRA NÃO É<br>
+        <span class="violet">NAMASTÊ</span> NEM <span class="highlight">LIBERTINAGEM</span><br>
+        NEM HEDONISMO
+      </h2>
+      <div class="gline"></div>
+      <p class="copy-medium" style="color:var(--violet)">
+        É SOBRE TECNOLOGIA AVANÇADA DA ALMA
+      </p>
+      <p class="copy-body" style="margin-top:2rem;font-size:1.3rem">
+        É trabalhar com a energia <strong>MAIS PODEROSA</strong> que existe no universo. <span style="color:var(--violet)">Literalmente.</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ENERGIA VITAL -->
+<section class="sec" style="background:var(--deep);padding:8rem 0">
+  <div class="wrap">
+    <div class="copy-block rv" style="border-left-color:var(--violet)">
+      <h2 class="copy-giant" style="text-align:center">
+        <span class="violet">ENERGIA VITAL</span> = KUNDALINI =<br>
+        ENERGIA SEXUAL = VITALIDADE =<br>
+        LIBIDO = CRIATIVIDADE =<br>
+        ESPIRITUALIDADE = CHI
+      </h2>
+      <div class="gline" style="margin:3rem auto"></div>
+      <p class="copy-medium" style="text-align:center;color:var(--text)">
+        TUDO ISSO É UMA COISA SÓ<br>PARA O TANTRA
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SER DIVINO -->
+<section class="sec" style="background:var(--dark);padding:10rem 0">
+  <div class="wrap">
+    <div class="copy-block rv" style="border-left-color:var(--red);text-align:center">
+      <h2 class="copy-giant">
+        VOCÊ NÃO É<br>
+        <span class="highlight">UM SER HUMANO</span>
+      </h2>
+      <div class="gline" style="margin:2rem auto"></div>
+      <h2 class="copy-giant">
+        VOCÊ É<br>
+        <span class="violet">UM SER DIVINO</span>
+      </h2>
+    </div>
+  </div>
 </section>
 
 <section id="mani" class="sec">
@@ -154,8 +714,8 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
       </video>
     </div>
     <div class="rvr">
-      <p class="eyeb">O que é o Tantra</p>
-      <h2 class="stitle">Mais do que<br>toque — é uma<br><em>Iniciação</em></h2>
+      <p class="eyeb">O QUE É O TANTRA</p>
+      <h2 class="stitle">MAIS DO QUE<br>TOQUE — É UMA<br><em>INICIAÇÃO</em></h2>
       <div class="gline"></div>
       <p class="sbody">O Tantra sagrado não é apenas massagem. É um estado de presença onde o corpo se torna portal para a consciência expandida. Cada sessão é desenhada para você — seu ritmo, sua história, sua energia.</p>
       <br>
@@ -164,42 +724,59 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
   </div>
 </section>
 
+<!-- PERFIL -->
+<section id="perfil">
+  <div class="wrap">
+    <div class="perfil-img rvl">
+      <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772516452/preview_image_29_ferzvu.jpg" alt="Terapeuta Tântrico">
+    </div>
+    <div class="rvr">
+      <p class="eyeb">QUEM GUIA</p>
+      <h2 class="stitle">SEU<br><em>TERAPEUTA</em></h2>
+      <div class="gline"></div>
+      <p class="sbody">Meu nome está nos Registros Akashicos. Trabalho com Tantra há anos, integrando técnicas ancestrais com consciência moderna. Cada sessão é um espaço seguro, sagrado e profundamente transformador.</p>
+      <br>
+      <p class="sbody">Não sou massagista. Sou guardião de um processo iniciático que pode mudar sua relação com seu corpo, sua energia e sua essência.</p>
+    </div>
+  </div>
+</section>
+
 <section id="sess" class="sec">
   <div class="wrap">
     <div class="shead">
-      <p class="eyeb rv">Escolha sua Jornada</p>
-      <h2 class="stitle rv">Sessões <em>Tântricas</em></h2>
-      <div class="gline" style="margin:1.4rem auto"></div>
+      <p class="eyeb rv">ESCOLHA SUA JORNADA</p>
+      <h2 class="stitle rv">SESSÕES <em>TÂNTRICAS</em></h2>
+      <div class="gline" style="margin:2rem auto"></div>
     </div>
     <div class="sgrid">
       <div class="scard rv">
-        <div class="sname">Ativação Tântrica</div>
+        <div class="sname">ATIVAÇÃO<br>TÂNTRICA</div>
         <div class="sdur">45 min — 1h · Magnetismo Tântrico</div>
         <p class="sdesc">Sessão de entrada para quem quer sentir pela primeira vez o poder do toque consciente e da ativação energética. Presença, intenção e transformação desde o primeiro contato.</p>
         <div class="sprice">R$450</div>
-        <button class="btn-ag" data-sessao="Ativação Tântrica (45min–1h)" data-preco="R$450">Agendar Sessão</button>
+        <button class="btn-ag" data-sessao="Ativação Tântrica (45min–1h)" data-preco="R$450">AGENDAR SESSÃO</button>
       </div>
       <div class="scard rv">
-        <div class="sname">Tântrica Premium</div>
+        <div class="sname">TÂNTRICA<br>PREMIUM</div>
         <div class="sdur">2h · Intensiva de Tempo Estendido</div>
         <p class="sdesc">Imersão profunda no campo tântrico. Duas horas de presença total, trabalho corporal intenso, desbloqueio energético e expansão da consciência sensorial.</p>
         <div class="sprice">R$700</div>
-        <button class="btn-ag" data-sessao="Tântrica Premium — Intensiva 2h" data-preco="R$700">Agendar Sessão</button>
+        <button class="btn-ag" data-sessao="Tântrica Premium — Intensiva 2h" data-preco="R$700">AGENDAR SESSÃO</button>
       </div>
       <div class="scard rv">
-        <div class="sname">Alinhamento Akashico</div>
+        <div class="sname">ALINHAMENTO<br>AKASHICO</div>
         <div class="sdur">Sessão Completa + Registros Akashicos</div>
         <p class="sdesc">Combinação única de leitura dos Registros Akashicos com sessão tântrica. Cura de padrões profundos, reprogramação energética e reconexão com a alma.</p>
         <div class="sprice">R$999</div>
-        <button class="btn-ag" data-sessao="Alinhamento Akashico + Sessão Tântrica Completa" data-preco="R$999">Agendar Sessão</button>
+        <button class="btn-ag" data-sessao="Alinhamento Akashico + Sessão Tântrica Completa" data-preco="R$999">AGENDAR SESSÃO</button>
       </div>
       <div class="scard ft rv">
-        <span class="sbadge">⚡ Elite</span>
-        <div class="sname">Tântrica Elite<br>+ Mentoria</div>
+        <span class="sbadge">⚡ EXPERIÊNCIA COMPLETA</span>
+        <div class="sname">TÂNTRICA<br>COMPLETA<br>+ MENTORIA</div>
         <div class="sdur">Sessão Completa + Mentoria + Acesso Exclusivo</div>
         <p class="sdesc">A experiência mais completa. Sessão tântrica de alto nível com mentoria personalizada e acesso liberado a conteúdos exclusivos. O investimento mais poderoso em si mesmo.</p>
         <div class="sprice">R$1.200</div>
-        <button class="btn-ag pr" data-sessao="Tântrica Elite + Mentoria + Conteúdos Exclusivos" data-preco="R$1.200">Quero esta Experiência</button>
+        <button class="btn-ag pr" data-sessao="Tântrica Completa + Mentoria + Conteúdos Exclusivos" data-preco="R$1.200">QUERO ESTA EXPERIÊNCIA</button>
       </div>
     </div>
   </div>
@@ -209,16 +786,16 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
   <div class="wrap">
     <div class="siginn">
       <div>
-        <span class="sigtag rv">🔥 Oferta Limitada</span>
-        <h2 class="stitle rv">Assinatura<br><em>Mensal</em><br>Tântrica</h2>
+        <span class="sigtag rv">🔥 OFERTA LIMITADA</span>
+        <h2 class="stitle rv">ASSINATURA<br><em>MENSAL</em><br>TÂNTRICA</h2>
         <div class="gline"></div>
         <p class="sbody rv">O caminho mais poderoso para a transformação real é a consistência. Com a Assinatura Mensal você tem 2 sessões agendadas por semana, ativações diretas e intensivas — presença total, semana após semana.</p>
         <div class="sigpbox rv">
-          <div class="sigplbl">Investimento Mensal</div>
+          <div class="sigplbl">INVESTIMENTO MENSAL</div>
           <div class="sigpold">De R$5.100</div>
           <div class="sigpnew">R$3.000</div>
           <div class="sigpnote">Parcele em até 12x &nbsp;·&nbsp; 2 sessões/semana &nbsp;·&nbsp; Ativações diretas e intensivas</div>
-          <button class="btn-ag pr" style="margin-top:1.5rem" data-sessao="Assinatura Mensal Tântrica — 2 sessões/semana + ativações" data-preco="R$3.000 (parcelável em 12x)">Quero a Assinatura</button>
+          <button class="btn-ag pr" style="margin-top:2rem" data-sessao="Assinatura Mensal Tântrica — 2 sessões/semana + ativações" data-preco="R$3.000 (parcelável em 12x)">QUERO A ASSINATURA</button>
         </div>
       </div>
       <div class="sigvis rvr">
@@ -232,8 +809,8 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
 
 <section id="gal" class="sec">
   <div class="wrap">
-    <p class="eyeb rv">Presença Visual</p>
-    <h2 class="stitle rv">A Energia em <em>Movimento</em></h2>
+    <p class="eyeb rv">PRESENÇA VISUAL</p>
+    <h2 class="stitle rv">A ENERGIA EM <em>MOVIMENTO</em></h2>
     <div class="ggrid">
       <div class="gitem rv"><video autoplay muted loop playsinline><source src="https://res.cloudinary.com/dcbarseus/video/upload/v1772073107/VID_20251225_140101_285_zo5vby.mp4" type="video/mp4"></video></div>
       <div class="gitem rv"><video autoplay muted loop playsinline><source src="https://res.cloudinary.com/dcbarseus/video/upload/v1772073106/grok_video_2026-02-25-06-50-43_wzsqvq.mp4" type="video/mp4"></video></div>
@@ -243,149 +820,202 @@ footer{padding:2.5rem 3rem;border-top:1px solid rgba(201,168,76,.1);display:flex
   </div>
 </section>
 
-<section id="bks" class="sec">
+<section id="cls">
   <div class="wrap">
-    <p class="eyeb rv">Conhecimento Sagrado</p>
-    <h2 class="stitle rv">Livros <em>Tântricos</em></h2>
-    <div class="gline"></div>
-    <p class="sbody rv" style="margin-top:1rem">Aprofunde sua jornada com sabedoria tântrica em palavras.</p>
-    <div class="bgrid">
-      <div class="bcard rv">
-        <div class="bcover"><img src="https://hotmart.s3.amazonaws.com/product_pictures/4e98b40d-9257-45c5-bcae-49ec4d38169d/jk.jfif" alt="Honrar a Deusa" loading="lazy"></div>
-        <div class="binfo"><h3 class="bttl">Honrar a Deusa</h3><p class="bprice">R$ 47,98</p><a href="https://go.hotmart.com/M104187005M?dp=1" target="_blank" class="bacc">Adquirir</a></div>
-      </div>
-      <div class="bcard rv">
-        <div class="bcover"><img src="https://hotmart.s3.amazonaws.com/product_pictures/579cbf6e-df90-4b70-afc7-aa5e324043d2/download5.jfif" alt="Tantra Descomplicado" loading="lazy"></div>
-        <div class="binfo"><h3 class="bttl">Tantra Descomplicado</h3><p class="bprice">R$ 45,00</p><a href="https://go.hotmart.com/P103542930V?dp=1" target="_blank" class="bacc">Adquirir</a></div>
-      </div>
-      <div class="bcard rv">
-        <div class="bcover" style="background:var(--mid);display:flex;align-items:center;justify-content:center">
-    </div>
-  </div>
-</section>
-
-<section id="cls" class="sec">
-  <div class="wrap">
-    <h2 class="cttl rv">Você está<br>pronto para<br>a <em>Iniciação?</em></h2>
-    <p class="sbody rv" style="margin:1.5rem auto 2.5rem;text-align:center;max-width:460px">Cada transformação começa com um único passo. Escolha sua sessão e permita que a mudança comece agora.</p>
-    <a href="#sess" style="display:inline-block;width:auto;padding:.9rem 3rem;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,.38);border-radius:2px;text-decoration:none" class="rv">Ver Todas as Sessões</a>
+    <h2 class="cttl rv">PRONTO PARA<br><em>DESPERTAR?</em></h2>
+    <button class="btn-ag pr" style="max-width:500px;margin:0 auto;font-size:.9rem;padding:1.5rem 2rem" data-sessao="CTA Final — Quero Despertar" data-preco="">AGENDE SUA SESSÃO AGORA</button>
   </div>
 </section>
 
 <footer>
-  <span>© 2025 Tantra Sagrado — Todos os direitos reservados</span>
-  <span style="color:var(--gold)">Presença Total · Transformação Real</span>
+  <div>© 2025 AKASHA HUB — TANTRA EM SALVADOR</div>
+  <div>TECNOLOGIA DA ALMA</div>
 </footer>
 
+<!-- MODAL -->
 <div id="lmod">
   <div class="lbox">
-    <button class="lcls" id="lcls">×</button>
-    <h3>Quase lá ✨</h3>
-    <div class="lsname" id="lsname"></div>
-    <p>Deixe seu e-mail para confirmar interesse. Você será direcionado ao WhatsApp com todas as informações da sessão escolhida.</p>
-    <input type="email" class="linput" id="lem" placeholder="Seu melhor e-mail" autocomplete="email">
-    <p class="lerr" id="lerr">Por favor, insira um e-mail válido.</p>
-    <button class="lgo" id="lgo">Confirmar e ir ao WhatsApp →</button>
+    <button class="lcls" onclick="closeModal()">×</button>
+    <h3>Agende Sua Sessão</h3>
+    <p>Preencha os dados abaixo e vamos conversar diretamente no WhatsApp.</p>
+    <div class="lsname" id="modal-sessao">—</div>
+    <form id="lead-form" onsubmit="sendWhatsApp(event)">
+      <input type="text" class="linput" id="nome" placeholder="Seu nome completo" required>
+      <div class="lerr" id="err-nome">Por favor, insira seu nome</div>
+      
+      <input type="email" class="linput" id="email" placeholder="Seu e-mail (opcional)">
+      <div class="lerr" id="err-email">E-mail inválido</div>
+      
+      <button type="submit" class="lgo">ENVIAR PARA WHATSAPP</button>
+    </form>
   </div>
 </div>
 
 <script>
+// GSAP + ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
-/* CURSOR */
-const cur=document.getElementById('cursor'),dot=cur.querySelector('.dot'),ring=cur.querySelector('.ring');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`;});
-(function ac(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;requestAnimationFrame(ac);})();
-document.querySelectorAll('a,button,.scard,.bcard').forEach(el=>{
-  el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
-  el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
+// Cursor customizado
+const cursor = document.getElementById('cursor');
+const dot = cursor.querySelector('.dot');
+const ring = cursor.querySelector('.ring');
+let mouseX = 0, mouseY = 0;
+let dotX = 0, dotY = 0;
+let ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
 });
 
-/* PARTICLES */
-(function(){
-  const c=document.getElementById('pcanvas');
-  const r=new THREE.WebGLRenderer({canvas:c,alpha:true,antialias:false});
-  r.setPixelRatio(Math.min(devicePixelRatio,1.5));r.setSize(innerWidth,innerHeight);
-  const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.1,100);
-  cam.position.z=4;
-  const n=900,p=new Float32Array(n*3);
-  for(let i=0;i<n*3;i++)p[i]=(Math.random()-.5)*14;
-  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(p,3));
-  const mat=new THREE.PointsMaterial({color:0xc9a84c,size:.018,transparent:true,opacity:.4});
-  const pts=new THREE.Points(g,mat);sc.add(pts);
-  window.addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});
-  let pmx=0,pmy=0;
-  document.addEventListener('mousemove',e=>{pmx=e.clientX/innerWidth-.5;pmy=e.clientY/innerHeight-.5;});
-  let t=0;
-  (function tick(){t+=.003;pts.rotation.y=t*.12+pmx*.28;pts.rotation.x=t*.07+pmy*.18;r.render(sc,cam);requestAnimationFrame(tick);})();
-})();
-
-/* HERO */
-gsap.timeline({defaults:{ease:'power3.out'}})
-  .to('.h-eye',{opacity:1,y:0,duration:1.2},1)
-  .to('.h-ttl',{opacity:1,y:0,duration:1.5},'<.3')
-  .to('.h-sub',{opacity:1,y:0,duration:1.2},'<.35')
-  .to('.h-scroll',{opacity:1,duration:1},'<.4');
-gsap.to('.hvbg',{scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:1.5},opacity:0,scale:1.08});
-
-/* REVEALS */
-gsap.utils.toArray('.rv').forEach(el=>{gsap.fromTo(el,{opacity:0,y:50},{opacity:1,y:0,duration:1.1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 86%',toggleActions:'play none none none'}});});
-gsap.utils.toArray('.rvl').forEach(el=>{gsap.fromTo(el,{opacity:0,x:-55},{opacity:1,x:0,duration:1.2,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 82%',toggleActions:'play none none none'}});});
-gsap.utils.toArray('.rvr').forEach(el=>{gsap.fromTo(el,{opacity:0,x:55},{opacity:1,x:0,duration:1.2,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 82%',toggleActions:'play none none none'}});});
-
-/* ============================================================
-   MODAL — listener único via delegação no document
-   Captura clique em QUALQUER .btn-ag independente do estado GSAP
-   ============================================================ */
-const WA='5571983448621';
-const modal=document.getElementById('lmod');
-const lsname=document.getElementById('lsname');
-const emailEl=document.getElementById('lem');
-const errEl=document.getElementById('lerr');
-let sessao='',preco='';
-
-function abrirModal(s,p){
-  sessao=s; preco=p||'';
-  lsname.textContent=s;
-  emailEl.value='';
-  emailEl.classList.remove('err');
-  errEl.classList.remove('show');
-  modal.classList.add('on');
-  document.body.style.overflow='hidden';
-  setTimeout(()=>emailEl.focus(),250);
+function animateCursor() {
+  dotX += (mouseX - dotX) * 0.9;
+  dotY += (mouseY - dotY) * 0.9;
+  ringX += (mouseX - ringX) * 0.15;
+  ringY += (mouseY - ringY) * 0.15;
+  
+  dot.style.transform = `translate(${dotX}px, ${dotY}px)`;
+  ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
+  
+  requestAnimationFrame(animateCursor);
 }
-function fecharModal(){modal.classList.remove('on');document.body.style.overflow='';}
+animateCursor();
 
-/* Delegação — captura todos os cliques da página */
-document.addEventListener('click',function(e){
-  /* fechar */
-  if(e.target===modal||e.target.id==='lcls'){fecharModal();return;}
-  /* confirmar */
-  if(e.target.id==='lgo'){enviar();return;}
-  /* qualquer botão de agendar */
-  const btn=e.target.closest('.btn-ag');
-  if(btn){
-    e.preventDefault();
-    abrirModal(btn.getAttribute('data-sessao')||'Sessão Tântrica',btn.getAttribute('data-preco')||'');
-  }
-},true); /* captura=true garante que pega antes de qualquer stopPropagation */
+document.querySelectorAll('button, a, .scard').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('hov'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('hov'));
+});
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape')fecharModal();});
-emailEl.addEventListener('keydown',e=>{if(e.key==='Enter')enviar();});
+// Particles Canvas (Three.js)
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({
+  canvas: document.getElementById('pcanvas'),
+  alpha: true
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+camera.position.z = 5;
 
-function enviar(){
-  const em=emailEl.value.trim();
-  if(!em||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){
-    emailEl.classList.add('err');errEl.classList.add('show');emailEl.focus();return;
-  }
-  emailEl.classList.remove('err');errEl.classList.remove('show');
-  const agora=new Date().toLocaleString('pt-BR',{timeZone:'America/Bahia'});
-  const pLinha=preco?'\n💰 *Valor:* '+preco:'';
-  const msg='🌟 *NOVO LEAD — TANTRA SAGRADO* 🌟\n\n📋 *Sessão de Interesse:*\n'+sessao+pLinha+'\n\n📧 *E-mail do Cliente:*\n'+em+'\n\n🕐 *Data/Hora (Bahia):*\n'+agora+'\n\n_Lead captado pelo site._';
-  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
-  fecharModal();
+const geometry = new THREE.BufferGeometry();
+const particles = 800;
+const positions = new Float32Array(particles * 3);
+
+for(let i = 0; i < particles * 3; i++) {
+  positions[i] = (Math.random() - 0.5) * 20;
 }
+
+geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const material = new THREE.PointsMaterial({
+  color: 0x9b59d0,
+  size: 0.02,
+  transparent: true,
+  opacity: 0.6
+});
+
+const points = new THREE.Points(geometry, material);
+scene.add(points);
+
+function animateParticles() {
+  requestAnimationFrame(animateParticles);
+  points.rotation.y += 0.0005;
+  points.rotation.x += 0.0002;
+  renderer.render(scene, camera);
+}
+animateParticles();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Animações GSAP
+gsap.to('.h-eye', {opacity: 1, y: 0, duration: 1, delay: 0.3});
+gsap.to('.h-ttl', {opacity: 1, duration: 1.2, delay: 0.6});
+gsap.to('.h-sub', {opacity: 1, duration: 1, delay: 0.9});
+gsap.to('.h-scroll', {opacity: 1, duration: 1, delay: 1.2});
+
+gsap.utils.toArray('.rv, .rvl, .rvr').forEach((el) => {
+  gsap.to(el, {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    duration: 1,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 85%',
+      end: 'bottom 20%',
+      toggleActions: 'play none none none'
+    }
+  });
+});
+
+// Modal
+let currentSessao = '';
+let currentPreco = '';
+
+document.querySelectorAll('.btn-ag').forEach(btn => {
+  btn.addEventListener('click', function() {
+    currentSessao = this.dataset.sessao;
+    currentPreco = this.dataset.preco;
+    document.getElementById('modal-sessao').textContent = currentSessao + (currentPreco ? ` — ${currentPreco}` : '');
+    document.getElementById('lmod').classList.add('on');
+  });
+});
+
+function closeModal() {
+  document.getElementById('lmod').classList.remove('on');
+  document.getElementById('lead-form').reset();
+  document.querySelectorAll('.lerr').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.linput').forEach(i => i.classList.remove('err'));
+}
+
+function sendWhatsApp(e) {
+  e.preventDefault();
+  
+  const nome = document.getElementById('nome').value.trim();
+  const email = document.getElementById('email').value.trim();
+  
+  let valid = true;
+  
+  // Reset errors
+  document.querySelectorAll('.lerr').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.linput').forEach(i => i.classList.remove('err'));
+  
+  if(nome.length < 3) {
+    document.getElementById('err-nome').classList.add('show');
+    document.getElementById('nome').classList.add('err');
+    valid = false;
+  }
+  
+  // Validação opcional de email
+  if(email && !email.includes('@')) {
+    document.getElementById('err-email').classList.add('show');
+    document.getElementById('email').classList.add('err');
+    valid = false;
+  }
+  
+  if(!valid) return;
+  
+  const msg = `🔥 *NOVA SOLICITAÇÃO DE SESSÃO TÂNTRICA*\n\n` +
+              `📋 *Sessão:* ${currentSessao}\n` +
+              `${currentPreco ? `💰 *Preço:* ${currentPreco}\n` : ''}` +
+              `👤 *Nome:* ${nome}\n` +
+              `${email ? `📧 *E-mail:* ${email}\n` : ''}`;
+  
+  const whatsappNumber = '5571983448621';
+  const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`;
+  
+  window.open(url, '_blank');
+  closeModal();
+}
+
+// Fechar modal clicando fora
+document.getElementById('lmod').addEventListener('click', function(e) {
+  if(e.target === this) closeModal();
+});
 </script>
+
 </body>
-</html>
+        </html>
