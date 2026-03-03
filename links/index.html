@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akasha Hub | Portal de Conexão</title>
+    
+    <!-- Fonte Premium (Cinzel para títulos, Lato para texto) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIÁVEIS & RESET --- */
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --gold: #D4AF37;
+            --purple-glow: rgba(138, 43, 226, 0.15);
+            --text-main: #f0f0f0;
+            --text-dim: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Lato', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1a0b2e 0%, transparent 60%),
+                radial-gradient(circle at 100% 100%, #1a0b2e 0%, transparent 40%);
+        }
+
+        /* --- BACKGROUND ESTRELADO (CSS PURO) --- */
+        .stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(1px 1px at 10px 10px, white, transparent),
+                radial-gradient(1px 1px at 50px 80px, white, transparent),
+                radial-gradient(2px 2px at 120px 200px, rgba(255,255,255,0.5), transparent);
+            background-size: 300px 300px;
+            opacity: 0.3;
+            z-index: -1;
+            animation: moveStars 100s linear infinite;
+        }
+
+        @keyframes moveStars { from { background-position: 0 0; } to { background-position: 0 1000px; } }
+
+        /* --- CONTAINER PRINCIPAL --- */
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- HEADER --- */
+        .profile-section {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            padding: 4px;
+            background: url('https://akashahub.com.br/wp-content/uploads/2023/10/logo-akasha-dourado.png') no-repeat center center / contain; /* Fallback para logo */
+            background-color: #000;
+            box-shadow: 0 0 30px var(--purple-glow), inset 0 0 20px var(--purple-glow);
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        /* Se você tiver foto do guardião, substitua a URL acima */
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        p.tagline {
+            font-size: 0.9rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.8;
+        }
+
+        /* --- SEPARADORES --- */
+        .divider {
+            width: 100%;
+            text-align: left;
+            margin: 30px 0 15px 0;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 5px;
+        }
+
+        /* --- LINK CARDS (PRINCIPAL) --- */
+        .link-card {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            padding: 18px 25px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .link-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .link-card:hover::before {
+            left: 100%;
+        }
+
+        .link-title { font-weight: 400; font-size: 1rem; letter-spacing: 1px; }
+        .link-icon { font-size: 1.2rem; color: var(--gold); }
+
+        /* Estilo especial para VIP/Mentoria */
+        .link-card.premium {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(0,0,0,0) 100%);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        /* --- GRID DE CURSOS (Para economizar espaço) --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .mini-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 15px;
+            text-align: center;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #ccc;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .mini-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            border-color: #555;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: 50px;
+            font-size: 0.7rem;
+            color: #444;
+            letter-spacing: 1px;
+        }
+
+        /* --- ANIMAÇÕES --- */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-up {
+            animation: fadeInUp 0.8s forwards;
+            opacity: 0; /* Começa invisível */
+        }
+
+        /* Delays para efeito cascata */
+        .d-1 { animation-delay: 0.1s; }
+        .d-2 { animation-delay: 0.2s; }
+        .d-3 { animation-delay: 0.3s; }
+        .d-4 { animation-delay: 0.4s; }
+
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <div class="container">
+        
+        <!-- PERFIL -->
+        <div class="profile-section">
+            <!-- DICA: Coloque aqui a URL da foto do Guardião ou Logo -->
+            <div class="avatar" style="background-image: url('https://akashahub.com.br/wp-content/uploads/2023/10/logo-akasha-dourado.png'); background-size: 80%;"></div>
+            <h1>Akasha Hub</h1>
+            <p class="tagline">O Portal da Essência</p>
+        </div>
+
+        <!-- SESSÃO 1: O NÚCLEO (Premium) -->
+        <div class="divider animate-up d-1">Experiência Elevada</div>
+        
+        <a href="https://akashahub.com.br/mentoria" class="link-card premium animate-up d-1">
+            <span class="link-title">Mentoria Exclusiva</span>
+            <span class="link-icon">✦</span>
+        </a>
+
+        <a href="https://akashahub.com.br/vip" class="link-card premium animate-up d-1">
+            <span class="link-title">Área VIP</span>
+            <span class="link-icon">♛</span>
+        </a>
+
+        <a href="https://akashahub.com.br/tantraon" class="link-card animate-up d-2">
+            <span class="link-title">Tantra ON</span>
+            <span class="link-icon">∞</span>
+        </a>
+
+        <!-- SESSÃO 2: A SABEDORIA (Energia) -->
+        <div class="divider animate-up d-2">Caminho da Energia</div>
+
+        <div class="grid-container animate-up d-2">
+            <a href="https://akashahub.com.br/shiva" class="mini-card">Shiva</a>
+            <a href="https://akashahub.com.br/shakti" class="mini-card">Shakti</a>
+            <a href="https://akashahub.com.br/guardiao" class="mini-card" style="grid-column: span 2; border-color: var(--gold); color: var(--gold);">O Guardião</a>
+            <a href="https://akashahub.com.br/doutrina" class="mini-card" style="grid-column: span 2;">A Doutrina</a>
+        </div>
+
+        <!-- SESSÃO 3: ACERVO DE CURSOS (Produtos) -->
+        <div class="divider animate-up d-3">Cursos & Expansão</div>
+        
+        <!-- Usando Grid para não poluir a tela com muitos botões -->
+        <div class="grid-container animate-up d-3">
+            <a href="https://akashahub.com.br/alignmentcourse" class="mini-card">Alignment</a>
+            <a href="https://akashahub.com.br/autoestima" class="mini-card">Autoestima</a>
+            <a href="https://akashahub.com.br/blindagem" class="mini-card">Blindagem</a>
+            <a href="https://akashahub.com.br/coupleroyal" class="mini-card">Couple Royal</a>
+            <a href="https://akashahub.com.br/descomplicado" class="mini-card">Descomplicado</a>
+            <a href="https://akashahub.com.br/honrar" class="mini-card">Honrar</a>
+            <a href="https://akashahub.com.br/mandamentos" class="mini-card">Mandamentos</a>
+            <a href="https://akashahub.com.br/triplex" class="mini-card">Triplex</a>
+            <a href="https://akashahub.com.br/tantra" class="mini-card" style="grid-column: span 2;">Curso Tantra</a>
+        </div>
+
+        <!-- SESSÃO 4: CONTEÚDO & COMUNIDADE -->
+        <div class="divider animate-up d-4">Acervo & Comunidade</div>
+
+        <a href="https://akashahub.com.br/vault" class="link-card animate-up d-4">
+            <span class="link-title">The Vault (Cofre)</span>
+            <span class="link-icon">❖</span>
+        </a>
+
+        <a href="https://akashahub.com.br/livros" class="link-card animate-up d-4">
+            <span class="link-title">Livros & Leitura</span>
+            <span class="link-icon">📖</span>
+        </a>
+
+        <div class="grid-container animate-up d-4" style="margin-top: 10px;">
+            <a href="https://akashahub.com.br/audios" class="mini-card">Áudios</a>
+            <a href="https://akashahub.com.br/blog" class="mini-card">Blog</a>
+            <a href="https://akashahub.com.br/store" class="mini-card">Loja</a>
+            <a href="https://akashahub.com.br/partners" class="mini-card">Partners</a>
+            <a href="https://akashahub.com.br/eventos" class="mini-card" style="grid-column: span 2;">Agenda de Eventos</a>
+        </div>
+        
+        <a href="https://akashahub.com.br/livre" class="link-card animate-up d-4" style="margin-top: 15px; border-style: dashed;">
+            <span class="link-title">Conteúdo Gratuito (Livre)</span>
+            <span class="link-icon">🔓</span>
+        </a>
+
+        <footer>
+            © 2024 Akasha Hub - Todos os direitos reservados.
+        </footer>
+
+    </div>
+
+</body>
+</html>
