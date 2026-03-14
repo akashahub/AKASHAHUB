@@ -3,314 +3,607 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akasha Hub | Portal de Conexão</title>
-    
-    <!-- Fonte Premium (Cinzel para títulos, Lato para texto) -->
+    <title>Akasha Hub | Portal da Essência</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
 
     <style>
-        /* --- VARIÁVEIS & RESET --- */
         :root {
-            --bg-color: #050505;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --gold: #D4AF37;
-            --purple-glow: rgba(138, 43, 226, 0.15);
-            --text-main: #f0f0f0;
-            --text-dim: #888;
+            --bg: #06050a;
+            --gold-light: #f0d078;
+            --gold: #c9a227;
+            --gold-dim: rgba(201, 162, 39, 0.15);
+            --gold-border: rgba(201, 162, 39, 0.3);
+            --white: #f5f0e8;
+            --muted: rgba(245, 240, 232, 0.35);
+            --card-bg: rgba(255, 255, 255, 0.025);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        html { scroll-behavior: smooth; }
+
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Lato', sans-serif;
+            background-color: var(--bg);
+            color: var(--white);
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 300;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 50% 0%, #1a0b2e 0%, transparent 60%),
-                radial-gradient(circle at 100% 100%, #1a0b2e 0%, transparent 40%);
         }
 
-        /* --- BACKGROUND ESTRELADO (CSS PURO) --- */
-        .stars {
+        /* ── CANVAS DE LUZ ── */
+        .bg-canvas {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            inset: 0;
+            z-index: 0;
             pointer-events: none;
-            background-image: 
-                radial-gradient(1px 1px at 10px 10px, white, transparent),
-                radial-gradient(1px 1px at 50px 80px, white, transparent),
-                radial-gradient(2px 2px at 120px 200px, rgba(255,255,255,0.5), transparent);
-            background-size: 300px 300px;
-            opacity: 0.3;
-            z-index: -1;
-            animation: moveStars 100s linear infinite;
+            overflow: hidden;
         }
 
-        @keyframes moveStars { from { background-position: 0 0; } to { background-position: 0 1000px; } }
+        .bg-canvas::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(ellipse, rgba(201, 162, 39, 0.07) 0%, transparent 65%);
+            animation: breathe 8s ease-in-out infinite;
+        }
 
-        /* --- CONTAINER PRINCIPAL --- */
+        .bg-canvas::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(80, 30, 120, 0.12) 0%, transparent 70%);
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+        }
+
+        /* ── PARTÍCULAS ── */
+        .particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .p {
+            position: absolute;
+            width: 1.5px;
+            height: 1.5px;
+            border-radius: 50%;
+            background: var(--gold-light);
+            opacity: 0;
+            animation: floatUp var(--dur) var(--delay) ease-in infinite;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(0) scale(0); }
+            20% { opacity: 0.6; transform: translateY(-40px) scale(1); }
+            80% { opacity: 0.2; }
+            100% { opacity: 0; transform: translateY(-160px) scale(0); }
+        }
+
+        /* ── CONTAINER ── */
         .container {
+            position: relative;
+            z-index: 1;
             width: 100%;
-            max-width: 500px;
-            padding: 40px 20px;
+            max-width: 520px;
+            padding: 60px 24px 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+
+        /* ── EMBLEMA ── */
+        .emblem-wrap {
             position: relative;
+            margin-bottom: 36px;
+            animation: fadeDown 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
-        /* --- HEADER --- */
-        .profile-section {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 1s ease;
-        }
-
-        .avatar {
-            width: 110px;
-            height: 110px;
+        .emblem-ring {
+            width: 116px;
+            height: 116px;
             border-radius: 50%;
-            border: 2px solid var(--gold);
-            padding: 4px;
-            background: url('https://akashahub.com.br/wp-content/uploads/2023/10/logo-akasha-dourado.png') no-repeat center center / contain; /* Fallback para logo */
-            background-color: #000;
-            box-shadow: 0 0 30px var(--purple-glow), inset 0 0 20px var(--purple-glow);
-            margin-bottom: 15px;
-            position: relative;
-        }
-        
-        /* Se você tiver foto do guardião, substitua a URL acima */
-
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
-            letter-spacing: 2px;
-            color: var(--text-main);
-            margin-bottom: 5px;
-        }
-
-        p.tagline {
-            font-size: 0.9rem;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            opacity: 0.8;
-        }
-
-        /* --- SEPARADORES --- */
-        .divider {
-            width: 100%;
-            text-align: left;
-            margin: 30px 0 15px 0;
-            font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 1px solid var(--card-border);
-            padding-bottom: 5px;
-        }
-
-        /* --- LINK CARDS (PRINCIPAL) --- */
-        .link-card {
-            width: 100%;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(10px);
-            padding: 18px 25px;
-            margin-bottom: 12px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: white;
+            border: 1px solid var(--gold-border);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(ellipse at center, rgba(201,162,39,0.06) 0%, transparent 70%);
+        }
+
+        .emblem-ring::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 1px solid rgba(201, 162, 39, 0.1);
+        }
+
+        .emblem-ring::after {
+            content: '';
+            position: absolute;
+            inset: -14px;
+            border-radius: 50%;
+            border: 1px solid rgba(201, 162, 39, 0.05);
+        }
+
+        .emblem-ring img {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 12px rgba(201,162,39,0.4));
+        }
+
+        /* ── TÍTULO ── */
+        .headline {
+            text-align: center;
+            animation: fadeDown 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .headline h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            font-size: 2.8rem;
+            letter-spacing: 6px;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .headline h1 span {
+            color: var(--gold-light);
+        }
+
+        .tagline {
+            font-family: 'Josefin Sans', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 100;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.85;
+        }
+
+        /* ── LINHA ORNAMENTAL ── */
+        .ornament {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            margin: 36px 0 28px;
+            animation: fadeIn 1.6s ease both;
+        }
+
+        .ornament-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-border), transparent);
+        }
+
+        .ornament-diamond {
+            width: 5px;
+            height: 5px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            opacity: 0.7;
+        }
+
+        /* ── SEÇÃO LABEL ── */
+        .section-label {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 32px 0 14px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .section-label span {
+            font-size: 0.6rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.6;
+            white-space: nowrap;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--gold-border), transparent);
+        }
+
+        /* ── CARD PRINCIPAL ── */
+        .card {
+            width: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 26px;
+            margin-bottom: 10px;
+            border-radius: 2px;
+            text-decoration: none;
+            color: var(--white);
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0;
+            animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, transparent 40%, rgba(201,162,39,0.04) 100%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 1px;
+            background: linear-gradient(90deg, var(--gold), transparent);
+            transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .card:hover {
+            border-color: var(--gold-border);
+            background: rgba(201,162,39,0.04);
+            transform: translateX(4px);
+        }
+
+        .card:hover::before { opacity: 1; }
+        .card:hover::after { width: 100%; }
+
+        .card-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .card-icon {
+            font-size: 1rem;
+            color: var(--gold);
+            opacity: 0.8;
+            width: 18px;
+            text-align: center;
+            font-style: normal;
+        }
+
+        .card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 400;
+            font-size: 1.1rem;
+            letter-spacing: 1.5px;
+            color: var(--white);
+        }
+
+        .card-sub {
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .card-arrow {
+            font-size: 0.7rem;
+            color: var(--gold);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateX(-6px);
+        }
+
+        .card:hover .card-arrow {
+            opacity: 0.7;
+            transform: translateX(0);
+        }
+
+        /* Card premium */
+        .card.premium {
+            border-color: rgba(201,162,39,0.18);
+            background: linear-gradient(105deg, rgba(201,162,39,0.05) 0%, rgba(0,0,0,0) 60%);
+        }
+
+        /* ── GRID DE MINI CARDS ── */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            width: 100%;
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .mini {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.04);
+            padding: 16px 14px;
+            border-radius: 2px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 0.72rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: all 0.35s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .link-card::before {
+        .mini::after {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
-            transition: 0.5s;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 1px;
+            background: var(--gold);
+            transition: width 0.4s ease;
         }
 
-        .link-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--gold);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        .mini:hover {
+            background: rgba(201,162,39,0.04);
+            border-color: var(--gold-border);
+            color: var(--gold-light);
         }
 
-        .link-card:hover::before {
-            left: 100%;
+        .mini:hover::after { width: 60%; }
+
+        .mini.span2 { grid-column: span 2; }
+
+        .mini.highlight {
+            border-color: rgba(201,162,39,0.2);
+            color: var(--gold);
         }
 
-        .link-title { font-weight: 400; font-size: 1rem; letter-spacing: 1px; }
-        .link-icon { font-size: 1.2rem; color: var(--gold); }
-
-        /* Estilo especial para VIP/Mentoria */
-        .link-card.premium {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(0,0,0,0) 100%);
-            border-color: rgba(212, 175, 55, 0.3);
-        }
-
-        /* --- GRID DE CURSOS (Para economizar espaço) --- */
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .mini-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 15px;
-            text-align: center;
-            border-radius: 6px;
-            text-decoration: none;
-            color: #ccc;
-            font-size: 0.85rem;
-            transition: 0.3s;
-        }
-
-        .mini-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            border-color: #555;
-        }
-
-        /* --- FOOTER --- */
+        /* ── FOOTER ── */
         footer {
-            margin-top: 50px;
-            font-size: 0.7rem;
-            color: #444;
-            letter-spacing: 1px;
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeIn 1s 2s ease forwards;
         }
 
-        /* --- ANIMAÇÕES --- */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
+        .footer-ornament {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .footer-dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: var(--gold);
+            opacity: 0.3;
+        }
+
+        .footer-dot.big { width: 4px; height: 4px; opacity: 0.5; }
+
+        .footer-text {
+            font-size: 0.6rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.15);
+        }
+
+        /* ── ANIMAÇÕES ── */
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-16px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .animate-up {
-            animation: fadeInUp 0.8s forwards;
-            opacity: 0; /* Começa invisível */
-        }
-
-        /* Delays para efeito cascata */
-        .d-1 { animation-delay: 0.1s; }
-        .d-2 { animation-delay: 0.2s; }
-        .d-3 { animation-delay: 0.3s; }
-        .d-4 { animation-delay: 0.4s; }
-
+        /* delays em cascata */
+        .d1 { animation-delay: 0.5s; }
+        .d2 { animation-delay: 0.65s; }
+        .d3 { animation-delay: 0.8s; }
+        .d4 { animation-delay: 0.95s; }
+        .d5 { animation-delay: 1.1s; }
+        .d6 { animation-delay: 1.25s; }
+        .d7 { animation-delay: 1.4s; }
+        .d8 { animation-delay: 1.55s; }
+        .d9 { animation-delay: 1.7s; }
+        .d10 { animation-delay: 1.85s; }
+        .d11 { animation-delay: 2.0s; }
     </style>
 </head>
 <body>
 
-    <div class="stars"></div>
+<div class="bg-canvas"></div>
 
-    <div class="container">
-        
-        <!-- PERFIL -->
-        <div class="profile-section">
-            <!-- DICA: Coloque aqui a URL da foto do Guardião ou Logo -->
-            <div class="avatar" style="background-image: url('https://akashahub.com.br/wp-content/uploads/2023/10/logo-akasha-dourado.png'); background-size: 80%;"></div>
-            <h1>Akasha Hub</h1>
-            <p class="tagline">O Portal da Essência</p>
+<!-- Partículas flutuantes -->
+<div class="particles" id="particles"></div>
+
+<div class="container">
+
+    <!-- EMBLEMA -->
+    <div class="emblem-wrap">
+        <div class="emblem-ring">
+            <img src="https://akashahub.com.br/wp-content/uploads/2023/10/logo-akasha-dourado.png" alt="Akasha Hub" onerror="this.style.display='none'; this.parentNode.innerHTML+='<span style=\'font-size:2rem;color:var(--gold)\'>✦</span>'">
         </div>
-
-        <!-- SESSÃO 1: O NÚCLEO (Premium) -->
-        <div class="divider animate-up d-1">Experiência Elevada</div>
-        
-        <a href="https://akashahub.com.br/mentoria" class="link-card premium animate-up d-1">
-            <span class="link-title">Mentoria Exclusiva</span>
-            <span class="link-icon">✦</span>
-        </a>
-
-        <a href="https://akashahub.com.br/vip" class="link-card premium animate-up d-1">
-            <span class="link-title">Área VIP</span>
-            <span class="link-icon">♛</span>
-        </a>
-
-        <a href="https://akashahub.com.br/tantraon" class="link-card animate-up d-2">
-            <span class="link-title">Tantra ON</span>
-            <span class="link-icon">∞</span>
-        </a>
-
-        <!-- SESSÃO 2: A SABEDORIA (Energia) -->
-        <div class="divider animate-up d-2">Caminho da Energia</div>
-
-        <div class="grid-container animate-up d-2">
-            <a href="https://akashahub.com.br/shiva" class="mini-card">Shiva</a>
-            <a href="https://akashahub.com.br/shakti" class="mini-card">Shakti</a>
-            <a href="https://akashahub.com.br/guardiao" class="mini-card" style="grid-column: span 2; border-color: var(--gold); color: var(--gold);">O Guardião</a>
-            <a href="https://akashahub.com.br/doutrina" class="mini-card" style="grid-column: span 2;">A Doutrina</a>
-        </div>
-
-        <!-- SESSÃO 3: ACERVO DE CURSOS (Produtos) -->
-        <div class="divider animate-up d-3">Cursos & Expansão</div>
-        
-        <!-- Usando Grid para não poluir a tela com muitos botões -->
-        <div class="grid-container animate-up d-3">
-            <a href="https://akashahub.com.br/alignmentcourse" class="mini-card">Alignment</a>
-            <a href="https://akashahub.com.br/autoestima" class="mini-card">Autoestima</a>
-            <a href="https://akashahub.com.br/blindagem" class="mini-card">Blindagem</a>
-            <a href="https://akashahub.com.br/coupleroyal" class="mini-card">Couple Royal</a>
-            <a href="https://akashahub.com.br/descomplicado" class="mini-card">Descomplicado</a>
-            <a href="https://akashahub.com.br/honrar" class="mini-card">Honrar</a>
-            <a href="https://akashahub.com.br/mandamentos" class="mini-card">Mandamentos</a>
-            <a href="https://akashahub.com.br/triplex" class="mini-card">Triplex</a>
-            <a href="https://akashahub.com.br/tantra" class="mini-card" style="grid-column: span 2;">Curso Tantra</a>
-        </div>
-
-        <!-- SESSÃO 4: CONTEÚDO & COMUNIDADE -->
-        <div class="divider animate-up d-4">Acervo & Comunidade</div>
-
-        <a href="https://akashahub.com.br/vault" class="link-card animate-up d-4">
-            <span class="link-title">The Vault (Cofre)</span>
-            <span class="link-icon">❖</span>
-        </a>
-
-        <a href="https://akashahub.com.br/livros" class="link-card animate-up d-4">
-            <span class="link-title">Livros & Leitura</span>
-            <span class="link-icon">📖</span>
-        </a>
-
-        <div class="grid-container animate-up d-4" style="margin-top: 10px;">
-            <a href="https://akashahub.com.br/audios" class="mini-card">Áudios</a>
-            <a href="https://akashahub.com.br/blog" class="mini-card">Blog</a>
-            <a href="https://akashahub.com.br/store" class="mini-card">Loja</a>
-            <a href="https://akashahub.com.br/partners" class="mini-card">Partners</a>
-            <a href="https://akashahub.com.br/eventos" class="mini-card" style="grid-column: span 2;">Agenda de Eventos</a>
-        </div>
-        
-        <a href="https://akashahub.com.br/livre" class="link-card animate-up d-4" style="margin-top: 15px; border-style: dashed;">
-            <span class="link-title">Conteúdo Gratuito (Livre)</span>
-            <span class="link-icon">🔓</span>
-        </a>
-
-        <footer>
-            © 2024 Akasha Hub - Todos os direitos reservados.
-        </footer>
-
     </div>
+
+    <!-- TÍTULO -->
+    <div class="headline">
+        <h1>AK<span>A</span>SHA <span>HUB</span></h1>
+        <p class="tagline">O Portal da Essência</p>
+    </div>
+
+    <!-- DIVISOR ORNAMENTAL -->
+    <div class="ornament">
+        <div class="ornament-line"></div>
+        <div class="ornament-diamond"></div>
+        <div class="ornament-line"></div>
+    </div>
+
+    <!-- ──────────────────────────────── -->
+    <!-- SESSÃO 1: EXPERIÊNCIA ELEVADA    -->
+    <!-- ──────────────────────────────── -->
+    <div class="section-label d1">
+        <span>Experiência Elevada</span>
+    </div>
+
+    <a href="https://akashahub.com.br/mentoria" class="card premium d2">
+        <div class="card-left">
+            <i class="card-icon">✦</i>
+            <div>
+                <div class="card-title">Mentoria Exclusiva</div>
+                <div class="card-sub">Transformação Profunda</div>
+            </div>
+        </div>
+        <span class="card-arrow">›</span>
+    </a>
+
+    <!-- ──────────────────────────────── -->
+    <!-- SESSÃO 2: CAMINHO DA ENERGIA     -->
+    <!-- ──────────────────────────────── -->
+    <div class="section-label d4">
+        <span>Caminho da Energia</span>
+    </div>
+
+    <div class="grid d5">
+        <a href="https://akashahub.com.br/shiva" class="mini">Shiva</a>
+        <a href="https://akashahub.com.br/shakti" class="mini">Shakti</a>
+        <a href="https://akashahub.com.br/guardiao" class="mini span2 highlight">O Guardião</a>
+        <a href="https://akashahub.com.br/doutrina" class="mini span2">A Doutrina</a>
+    </div>
+
+    <!-- ──────────────────────────────── -->
+    <!-- SESSÃO 3: CURSOS & EXPANSÃO      -->
+    <!-- ──────────────────────────────── -->
+    <div class="section-label d6">
+        <span>Cursos & Expansão</span>
+    </div>
+
+    <div class="grid d7">
+        <a href="https://akashahub.com.br/alignmentcourse" class="mini">Alignment</a>
+        <a href="https://akashahub.com.br/autoestima" class="mini">Autoestima</a>
+        <a href="https://akashahub.com.br/blindagem" class="mini">Blindagem</a>
+        <a href="https://akashahub.com.br/coupleroyal" class="mini">Couple Royal</a>
+        <a href="https://akashahub.com.br/descomplicado" class="mini">Descomplicado</a>
+        <a href="https://akashahub.com.br/honrar" class="mini">Honrar</a>
+        <a href="https://akashahub.com.br/mandamentos" class="mini">Mandamentos</a>
+        <a href="https://akashahub.com.br/triplex" class="mini">Triplex</a>
+        <a href="https://akashahub.com.br/tantra" class="mini span2">Curso Tantra</a>
+    </div>
+
+    <!-- ──────────────────────────────── -->
+    <!-- SESSÃO 4: ACERVO & COMUNIDADE    -->
+    <!-- ──────────────────────────────── -->
+    <div class="section-label d8">
+        <span>Acervo & Comunidade</span>
+    </div>
+
+    <a href="https://akashahub.com.br/vault" class="card d9">
+        <div class="card-left">
+            <i class="card-icon">❖</i>
+            <div>
+                <div class="card-title">The Vault</div>
+                <div class="card-sub">O Cofre do Conhecimento</div>
+            </div>
+        </div>
+        <span class="card-arrow">›</span>
+    </a>
+
+    <a href="https://akashahub.com.br/livros" class="card d9">
+        <div class="card-left">
+            <i class="card-icon">◈</i>
+            <div>
+                <div class="card-title">Livros & Leitura</div>
+                <div class="card-sub">Sabedoria Essencial</div>
+            </div>
+        </div>
+        <span class="card-arrow">›</span>
+    </a>
+
+    <div class="grid d10">
+        <a href="https://akashahub.com.br/audios" class="mini">Áudios</a>
+        <a href="https://akashahub.com.br/blog" class="mini">Blog</a>
+        <a href="https://akashahub.com.br/store" class="mini">Loja</a>
+        <a href="https://akashahub.com.br/partners" class="mini">Partners</a>
+        <a href="https://akashahub.com.br/eventos" class="mini span2">Agenda de Eventos</a>
+    </div>
+
+    <a href="https://akashahub.com.br/livre" class="card d11" style="margin-top:14px; border-style: dashed; border-color: rgba(255,255,255,0.06);">
+        <div class="card-left">
+            <i class="card-icon" style="font-size:0.9rem">◎</i>
+            <div>
+                <div class="card-title">Conteúdo Livre</div>
+                <div class="card-sub">Acesso Gratuito</div>
+            </div>
+        </div>
+        <span class="card-arrow">›</span>
+    </a>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-ornament">
+            <div class="footer-dot"></div>
+            <div class="footer-dot big"></div>
+            <div class="footer-dot"></div>
+        </div>
+        <p class="footer-text">© 2024 Akasha Hub — Todos os direitos reservados</p>
+    </footer>
+
+</div>
+
+<script>
+    // Partículas douradas flutuantes
+    const container = document.getElementById('particles');
+    const count = 28;
+
+    for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'p';
+        p.style.cssText = `
+            left: ${Math.random() * 100}%;
+            top: ${20 + Math.random() * 75}%;
+            --dur: ${5 + Math.random() * 10}s;
+            --delay: ${Math.random() * 12}s;
+            width: ${Math.random() > 0.7 ? '2px' : '1.5px'};
+            height: ${Math.random() > 0.7 ? '2px' : '1.5px'};
+            opacity: ${0.2 + Math.random() * 0.4};
+        `;
+        container.appendChild(p);
+    }
+</script>
 
 </body>
 </html>
