@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akasha Hub | Dashboard</title>
+  <link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#06050a;--gold:#c9a227;--gold-light:#f0d078;
+      --gold-border:rgba(201,162,39,.3);--white:#f5f0e8;
+      --muted:rgba(245,240,232,.35);--card:rgba(255,255,255,.025);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--white);font-family:'Josefin Sans',sans-serif;
+      font-weight:300;min-height:100vh;overflow-x:hidden;}
+    body::before{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);
+      width:700px;height:700px;
+      background:radial-gradient(ellipse,rgba(201,162,39,.06) 0%,transparent 65%);
+      pointer-events:none;animation:breathe 9s ease-in-out infinite;}
+    @keyframes breathe{0%,100%{opacity:.4;}50%{opacity:.9;}}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
+      justify-content:space-between;padding:18px 32px;background:rgba(6,5,10,.85);
+      backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.04);}
+    .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+    .nav-logo img{width:36px;height:36px;border-radius:50%;filter:drop-shadow(0 0 6px rgba(201,162,39,.35));}
+    .nav-logo span{font-family:'Cormorant Garamond',serif;font-size:1.1rem;letter-spacing:4px;color:var(--white);}
+    .nav-logo span b{color:var(--gold-light);font-weight:400;}
+    .nav-right{display:flex;align-items:center;gap:16px;}
+    .nav-level{font-size:.55rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);
+      opacity:.8;border:1px solid var(--gold-border);padding:5px 12px;border-radius:20px;}
+    .nav-avatar{width:34px;height:34px;border-radius:50%;background:rgba(201,162,39,.1);
+      border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;
+      font-size:.85rem;color:var(--gold);cursor:pointer;text-decoration:none;transition:background .3s;}
+    .nav-avatar:hover{background:rgba(201,162,39,.2);}
+
+    main{max-width:680px;margin:0 auto;padding:110px 24px 80px;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+    .greeting{margin-bottom:40px;animation:fadeUp .8s ease both;}
+    .greeting-sub{font-size:.6rem;letter-spacing:5px;text-transform:uppercase;
+      color:var(--gold);opacity:.6;margin-bottom:10px;}
+    .greeting h2{font-family:'Cormorant Garamond',serif;font-weight:300;
+      font-size:2.2rem;letter-spacing:2px;}
+    .greeting h2 span{color:var(--gold-light);}
+
+    .sec{display:flex;align-items:center;gap:14px;margin:32px 0 14px;
+      opacity:0;animation:fadeUp .6s ease forwards;}
+    .sec span{font-size:.58rem;letter-spacing:5px;text-transform:uppercase;
+      color:var(--gold);opacity:.55;white-space:nowrap;}
+    .sec::after{content:'';flex:1;height:1px;
+      background:linear-gradient(90deg,var(--gold-border),transparent);}
+
+    .card{width:100%;display:flex;align-items:center;justify-content:space-between;
+      padding:20px 24px;margin-bottom:8px;border-radius:2px;text-decoration:none;
+      color:var(--white);background:var(--card);border:1px solid rgba(255,255,255,.05);
+      overflow:hidden;position:relative;transition:all .35s cubic-bezier(.25,1,.5,1);
+      opacity:0;animation:fadeUp .6s ease forwards;}
+    .card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;
+      background:linear-gradient(90deg,var(--gold),transparent);transition:width .5s ease;}
+    .card:hover{border-color:var(--gold-border);background:rgba(201,162,39,.04);transform:translateX(4px);}
+    .card:hover::after{width:100%;}
+    .card.premium{border-color:rgba(201,162,39,.18);
+      background:linear-gradient(105deg,rgba(201,162,39,.05) 0%,transparent 60%);}
+    .card.locked{opacity:.4!important;cursor:default;pointer-events:none;}
+
+    .card-l{display:flex;align-items:center;gap:16px;}
+    .card-icon{font-size:1rem;color:var(--gold);opacity:.8;width:20px;text-align:center;font-style:normal;}
+    .card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1.05rem;letter-spacing:1.5px;}
+    .card-sub{font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+    .card-arrow{font-size:.7rem;color:var(--gold);opacity:0;
+      transition:opacity .3s,transform .3s;transform:translateX(-6px);}
+    .card:hover .card-arrow{opacity:.7;transform:translateX(0);}
+    .lock-badge{font-size:.52rem;letter-spacing:3px;text-transform:uppercase;
+      color:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.08);padding:4px 10px;border-radius:20px;}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;
+      opacity:0;animation:fadeUp .6s ease forwards;}
+    .mini{background:var(--card);border:1px solid rgba(255,255,255,.04);padding:16px 14px;
+      border-radius:2px;text-align:center;text-decoration:none;color:var(--muted);
+      font-size:.68rem;letter-spacing:3px;text-transform:uppercase;transition:all .3s;
+      position:relative;overflow:hidden;}
+    .mini::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+      width:0;height:1px;background:var(--gold);transition:width .4s;}
+    .mini:hover{background:rgba(201,162,39,.04);border-color:var(--gold-border);color:var(--gold-light);}
+    .mini:hover::after{width:60%;}
+    .mini.span2{grid-column:span 2;}
+    .mini.hl{border-color:rgba(201,162,39,.2);color:var(--gold);}
+    .mini.dim{opacity:.35;pointer-events:none;}
+
+    .upgrade{width:100%;padding:20px 24px;margin-bottom:8px;
+      background:linear-gradient(135deg,rgba(201,162,39,.08),rgba(201,162,39,.03));
+      border:1px solid rgba(201,162,39,.2);border-radius:2px;
+      display:flex;align-items:center;justify-content:space-between;
+      text-decoration:none;color:var(--white);transition:all .35s;
+      opacity:0;animation:fadeUp .6s ease forwards;}
+    .upgrade:hover{background:rgba(201,162,39,.12);border-color:rgba(201,162,39,.4);}
+    .upgrade p{font-size:.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);opacity:.7;margin-bottom:4px;}
+    .upgrade h3{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1rem;letter-spacing:2px;}
+    .upgrade-btn{font-size:.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold-light);
+      border:1px solid var(--gold-border);padding:8px 16px;border-radius:2px;white-space:nowrap;}
+
+    footer{margin-top:60px;text-align:center;padding:20px 0;
+      border-top:1px solid rgba(255,255,255,.04);}
+    .btn-logout{background:none;border:1px solid rgba(255,255,255,.08);border-radius:2px;
+      padding:10px 24px;color:rgba(255,255,255,.2);cursor:pointer;
+      font-family:'Josefin Sans',sans-serif;font-size:.58rem;letter-spacing:4px;
+      text-transform:uppercase;transition:all .3s;}
+    .btn-logout:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5);}
+
+    .d1{animation-delay:.1s;}.d2{animation-delay:.2s;}.d3{animation-delay:.3s;}
+    .d4{animation-delay:.4s;}.d5{animation-delay:.5s;}.d6{animation-delay:.6s;}
+    .d7{animation-delay:.7s;}.d8{animation-delay:.8s;}.d9{animation-delay:.9s;}.d10{animation-delay:1s;}
+
+    #ls{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
+      justify-content:center;z-index:999;transition:opacity .5s;}
+    #ls.hide{opacity:0;pointer-events:none;}
+    #ls span{font-size:.6rem;letter-spacing:6px;text-transform:uppercase;color:var(--gold);
+      opacity:.5;animation:pulse 1.5s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:.8;}}
+  </style>
+</head>
+<body>
+
+<div id="ls"><span>Carregando…</span></div>
+
+<nav>
+  <a href="/dashboard/" class="nav-logo">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Logo">
+    <span>AK<b>A</b>SHA <b>HUB</b></span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-level" id="navLevel">…</div>
+    <a href="/perfil/" class="nav-avatar" id="navAvatar">?</a>
+  </div>
+</nav>
+
+<main>
+  <div class="greeting">
+    <p class="greeting-sub">Bem-vindo de volta</p>
+    <h2>Olá, <span id="userName">…</span></h2>
+  </div>
+
+  <!-- Banner upgrade (oculto se nível 4) -->
+  <a href="/vip/" class="upgrade d1" id="upgradeBanner">
+    <div>
+      <p>Próximo Nível</p>
+      <h3 id="upgradeText">Desbloquear acesso completo</h3>
+    </div>
+    <div class="upgrade-btn">Evoluir →</div>
+  </a>
+
+  <div class="sec d2"><span>Acesso Pessoal</span></div>
+
+  <a href="/members/" class="card premium d2" id="cardMembros">
+    <div class="card-l">
+      <i class="card-icon">✦</i>
+      <div>
+        <div class="card-title">Área de Membros</div>
+        <div class="card-sub" id="membrosNivel">…</div>
+      </div>
+    </div>
+    <span class="card-arrow">›</span>
+  </a>
+
+  <a href="/sessoes/" class="card d3" id="cardSessoes">
+    <div class="card-l">
+      <i class="card-icon">◈</i>
+      <div>
+        <div class="card-title">Sessões Confidenciais</div>
+        <div class="card-sub">Conteúdo exclusivo</div>
+      </div>
+    </div>
+    <span class="card-arrow" id="sessoesBadge">›</span>
+  </a>
+
+  <div class="sec d4"><span>Conteúdo & Comunidade</span></div>
+
+  <div class="grid d4">
+    <a href="/audios/" class="mini">Áudios Grátis</a>
+    <a href="/audios/" class="mini hl" id="miniAudioP">Áudios Premium</a>
+    <a href="/lives/" class="mini" id="miniLives">Lives</a>
+    <a href="/eventos/" class="mini">Eventos</a>
+    <a href="/mentoria/" class="mini" id="miniMentoria">Mentorias</a>
+    <a href="/compras/" class="mini">Minhas Compras</a>
+    <a href="/blog/" class="mini">Blog</a>
+    <a href="/store/" class="mini">Loja</a>
+    <a href="/sessao-gratuita/" class="mini span2">Sessão Gratuita</a>
+  </div>
+
+  <div class="sec d6"><span>Caminhos</span></div>
+
+  <div class="grid d6">
+    <a href="/shiva/" class="mini" id="miniShiva">Shiva ♂</a>
+    <a href="/shakti/" class="mini" id="miniShakti">Shakti ♀</a>
+    <a href="/perfil/" class="mini span2 hl">Meu Perfil</a>
+  </div>
+
+  <footer class="d9">
+    <button class="btn-logout" id="btnLogout">Sair da conta</button>
+  </footer>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+    authDomain: "hub-akasha.firebaseapp.com",
+    projectId: "hub-akasha",
+    storageBucket: "hub-akasha.firebasestorage.app",
+    messagingSenderId: "370851875474",
+    appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+  });
+
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  const NIVEIS = ['Visitante','Iniciado','Despertar','Domínio','Magnetismo Supremo'];
+
+  function temProduto(u, p){ return u?.produtos?.includes(p) ?? false; }
+  function podeAudioP(u){ return (u?.nivel>=2)||temProduto(u,'audios-premium')||temProduto(u,'vip'); }
+  function podeSessoes(u){ return (u?.nivel>=3)||temProduto(u,'vip'); }
+  function podeLives(u){ return (u?.nivel>=2)||temProduto(u,'vip'); }
+  function podeMentoria(u){ return (u?.nivel>=4)||temProduto(u,'mentoria'); }
+  function podeShiva(u){ return (u?.nivel>=3)||temProduto(u,'shiva')||temProduto(u,'vip'); }
+  function podeShakti(u){ return (u?.nivel>=3)||temProduto(u,'shakti')||temProduto(u,'vip'); }
+
+  onAuthStateChanged(auth, async user => {
+    if (!user) { window.location.href = '/login/'; return; }
+
+    const snap = await getDoc(doc(db, "users", user.uid));
+    const ud   = snap.exists() ? snap.data() : { nivel:0, produtos:[] };
+    const nivel = ud.nivel ?? 0;
+    const nome  = user.displayName || ud.nome || 'Membro';
+
+    document.getElementById('ls').classList.add('hide');
+    document.getElementById('userName').textContent = nome.split(' ')[0];
+    document.getElementById('navLevel').textContent = NIVEIS[nivel] || 'Visitante';
+    document.getElementById('navAvatar').textContent = nome.charAt(0).toUpperCase();
+    document.getElementById('membrosNivel').textContent = NIVEIS[nivel] || 'Visitante';
+
+    // Upgrade banner
+    if (nivel >= 4) document.getElementById('upgradeBanner').style.display = 'none';
+    else document.getElementById('upgradeText').textContent = `Alcançar: ${NIVEIS[nivel+1]}`;
+
+    // Sessões
+    if (!podeSessoes(ud)) {
+      const c = document.getElementById('cardSessoes');
+      c.classList.add('locked');
+      document.getElementById('sessoesBadge').outerHTML = '<span class="lock-badge">Nível 3+</span>';
+    }
+
+    // Premium condicional
+    if (!podeAudioP(ud)) document.getElementById('miniAudioP').classList.add('dim');
+    if (!podeLives(ud))  document.getElementById('miniLives').classList.add('dim');
+    if (!podeShiva(ud))  document.getElementById('miniShiva').classList.add('dim');
+    if (!podeShakti(ud)) document.getElementById('miniShakti').classList.add('dim');
+  });
+
+  document.getElementById('btnLogout').onclick = async () => {
+    await signOut(auth);
+    window.location.href = '/';
+  };
+</script>
+</body>
+</html>
