@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Hub — Mentoria: Arquitetura de Essência e Império Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #0D0520;
+    --dark2: #1A0A2E;
+    --purple: #4A1E6B;
+    --soft: #7B4F9E;
+    --gold: #C9A84C;
+    --light-gold: #F5E6B8;
+    --white: #FFFFFF;
+    --off-white: #FAF7FF;
+    --muted: #9A8AAA;
+    --bg-light: #F2ECF9;
+    --danger: #C0392B;
+    --success: #27AE60;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Stars background */
+  .stars {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(74,30,107,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.05) 0%, transparent 40%);
+  }
+
+  /* ---- NAVIGATION ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(13,5,32,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; color: var(--gold); font-weight: 600; letter-spacing: 3px;
+  }
+  .nav-logo span { font-style: italic; font-weight: 300; }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px;
+    text-transform: uppercase; transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    background: transparent; border: 1px solid var(--gold);
+    color: var(--gold) !important; padding: 0.5rem 1.2rem;
+    transition: all 0.3s !important;
+  }
+  .nav-cta:hover { background: var(--gold) !important; color: var(--dark) !important; }
+
+  /* ---- HERO ---- */
+  #hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 6rem 2rem 4rem;
+    z-index: 1;
+  }
+  .hero-symbol {
+    width: 80px; height: 80px; border: 2px solid var(--gold);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin-bottom: 2rem;
+    animation: pulse 3s ease-in-out infinite;
+    background: rgba(74,30,107,0.3);
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.2); }
+    50% { box-shadow: 0 0 30px 10px rgba(201,168,76,0.1); }
+  }
+  .hero-pre {
+    font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1rem;
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 600; line-height: 1.15;
+    background: linear-gradient(135deg, var(--light-gold) 0%, var(--gold) 50%, var(--light-gold) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+  }
+  .hero-sub {
+    font-size: 1.1rem; color: rgba(245,230,184,0.7);
+    max-width: 600px; line-height: 1.8; margin-bottom: 3rem;
+    font-style: italic; font-family: 'Cormorant Garamond', serif;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .btn-primary {
+    background: var(--gold); color: var(--dark);
+    border: none; padding: 1rem 2.5rem; font-family: 'Jost', sans-serif;
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .btn-primary:hover { background: var(--light-gold); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.3); }
+  .btn-secondary {
+    background: transparent; color: var(--gold);
+    border: 1px solid var(--gold); padding: 1rem 2.5rem;
+    font-family: 'Jost', sans-serif; font-size: 0.85rem; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.3s;
+  }
+  .btn-secondary:hover { background: rgba(201,168,76,0.1); transform: translateY(-2px); }
+
+  /* ---- SECTIONS ---- */
+  section { position: relative; z-index: 1; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 600;
+    color: var(--light-gold); margin-bottom: 0.5rem; text-align: center;
+  }
+  .section-sub { text-align: center; color: var(--muted); font-style: italic;
+    font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; margin-bottom: 3.5rem; }
+  .gold-divider {
+    width: 60px; height: 2px; background: var(--gold);
+    margin: 1rem auto; opacity: 0.7;
+  }
+
+  /* ---- PILLARS ---- */
+  #pillars { padding: 6rem 0; background: rgba(26,10,46,0.5); }
+  .pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .pillar-card {
+    background: rgba(74,30,107,0.2);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 2.5rem 2rem;
+    transition: all 0.4s;
+    position: relative; overflow: hidden;
+  }
+  .pillar-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0); transition: transform 0.4s;
+  }
+  .pillar-card:hover { background: rgba(74,30,107,0.4); transform: translateY(-4px); }
+  .pillar-card:hover::before { transform: scaleX(1); }
+  .pillar-num {
+    width: 50px; height: 50px; border: 1px solid var(--gold);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+  .pillar-card h3 {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--gold);
+    margin-bottom: 1rem; font-weight: 600; letter-spacing: 1px;
+  }
+  .pillar-card p { color: rgba(245,230,184,0.7); line-height: 1.8; font-size: 0.9rem; }
+  .pillar-layers { margin-top: 1.5rem; }
+  .layer-tag {
+    display: inline-block; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--gold); border: 1px solid rgba(201,168,76,0.3); padding: 0.2rem 0.7rem;
+    margin: 0.2rem 0.2rem 0.2rem 0;
+  }
+
+  /* ---- LAYERS ---- */
+  #layers { padding: 6rem 0; }
+  .layers-list { display: flex; flex-direction: column; gap: 1rem; }
+  .layer-item {
+    display: flex; align-items: flex-start; gap: 1.5rem;
+    background: rgba(26,10,46,0.6); border: 1px solid rgba(201,168,76,0.1);
+    padding: 2rem; transition: all 0.3s;
+  }
+  .layer-item:hover { border-color: rgba(201,168,76,0.4); background: rgba(74,30,107,0.2); }
+  .layer-badge {
+    min-width: 60px; height: 60px; background: var(--purple);
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .layer-badge span:first-child { font-size: 0.65rem; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; }
+  .layer-badge span:last-child { font-size: 1.8rem; color: var(--gold); font-weight: 600; line-height: 1; }
+  .layer-content h4 {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--gold);
+    margin-bottom: 0.5rem; font-weight: 600;
+  }
+  .layer-content p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+  .layer-content .tags { margin-top: 0.8rem; }
+
+  /* ---- MEDITATION ---- */
+  #meditation { padding: 6rem 0; background: rgba(13,5,32,0.8); }
+  .meditation-box {
+    max-width: 700px; margin: 0 auto;
+    background: rgba(74,30,107,0.15); border: 1px solid rgba(201,168,76,0.25);
+    padding: 3rem; position: relative;
+  }
+  .meditation-box::before, .meditation-box::after {
+    content: '✦'; position: absolute; color: var(--gold); opacity: 0.4; font-size: 1.5rem;
+  }
+  .meditation-box::before { top: 1rem; left: 1rem; }
+  .meditation-box::after { bottom: 1rem; right: 1rem; }
+  .meditation-note { font-size: 0.75rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2rem; text-align: center; }
+  .meditation-line {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    color: rgba(245,230,184,0.85); font-size: 1.05rem; line-height: 2.2; text-align: center;
+  }
+  .meditation-pause { color: rgba(201,168,76,0.4); display: block; font-size: 0.8rem; letter-spacing: 3px; margin: 0.5rem 0; }
+
+  /* ---- SESSIONS ---- */
+  #sessions { padding: 6rem 0; }
+  .sessions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+  .session-card {
+    background: rgba(26,10,46,0.8); border: 1px solid rgba(201,168,76,0.15);
+    padding: 2rem; transition: all 0.3s;
+  }
+  .session-card:hover { border-color: rgba(201,168,76,0.5); background: rgba(74,30,107,0.25); transform: translateY(-3px); }
+  .session-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+  .session-num {
+    width: 40px; height: 40px; background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-size: 1.2rem;
+    color: var(--dark); font-weight: 700;
+  }
+  .session-card h4 { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--gold); font-weight: 600; }
+  .session-card ul { list-style: none; }
+  .session-card li { color: rgba(245,230,184,0.65); font-size: 0.85rem; line-height: 1.8; padding-left: 1rem; position: relative; }
+  .session-card li::before { content: '→'; position: absolute; left: 0; color: var(--gold); opacity: 0.5; }
+
+  /* ---- FORM SECTION ---- */
+  #form-section { padding: 6rem 0; background: rgba(26,10,46,0.6); }
+  .form-header {
+    background: rgba(74,30,107,0.3); border: 1px solid rgba(201,168,76,0.2);
+    padding: 1.5rem 2rem; margin-bottom: 2rem;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: gap;
+  }
+  .form-header h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--gold); }
+  .tab-btns { display: flex; gap: 0.5rem; }
+  .tab-btn {
+    background: transparent; border: 1px solid rgba(201,168,76,0.3); color: var(--muted);
+    padding: 0.5rem 1.2rem; cursor: pointer; font-family: 'Jost', sans-serif;
+    font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s;
+  }
+  .tab-btn.active { background: var(--gold); color: var(--dark); border-color: var(--gold); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .mentoring-form {
+    background: rgba(13,5,32,0.5); border: 1px solid rgba(201,168,76,0.1); padding: 2.5rem;
+  }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .form-full { grid-column: 1 / -1; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group label {
+    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); opacity: 0.8;
+  }
+  .form-group input, .form-group textarea, .form-group select {
+    background: rgba(26,10,46,0.8); border: 1px solid rgba(201,168,76,0.2);
+    color: var(--white); padding: 0.9rem 1rem; font-family: 'Jost', sans-serif;
+    font-size: 0.9rem; transition: border 0.3s; outline: none;
+    font-weight: 300;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    border-color: rgba(201,168,76,0.6); background: rgba(74,30,107,0.2);
+  }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-group select option { background: var(--dark2); }
+  .form-section-header {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--gold);
+    margin: 2rem 0 1rem; border-bottom: 1px solid rgba(201,168,76,0.2); padding-bottom: 0.5rem;
+    grid-column: 1 / -1;
+  }
+  .submit-row { margin-top: 2rem; display: flex; gap: 1rem; align-items: center; }
+  .status-msg { font-size: 0.85rem; padding: 0.5rem 1rem; }
+  .status-success { background: rgba(39,174,96,0.15); border: 1px solid var(--success); color: var(--success); }
+  .status-error { background: rgba(192,57,43,0.15); border: 1px solid var(--danger); color: var(--danger); }
+  .status-loading { color: var(--muted); }
+
+  /* ---- RECORDS TABLE ---- */
+  #records-section { padding: 4rem 0 6rem; }
+  .records-filters { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .records-filters input, .records-filters select {
+    background: rgba(26,10,46,0.8); border: 1px solid rgba(201,168,76,0.2);
+    color: var(--white); padding: 0.6rem 1rem; font-family: 'Jost', sans-serif;
+    font-size: 0.85rem; outline: none; flex: 1; min-width: 180px;
+  }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: rgba(74,30,107,0.6); }
+  th { padding: 1rem; text-align: left; font-size: 0.7rem; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--gold); border-bottom: 1px solid rgba(201,168,76,0.3); }
+  td { padding: 1rem; border-bottom: 1px solid rgba(201,168,76,0.08);
+    color: rgba(245,230,184,0.75); font-size: 0.85rem; }
+  tr:hover td { background: rgba(74,30,107,0.2); }
+  .badge {
+    display: inline-block; padding: 0.2rem 0.7rem; font-size: 0.7rem;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .badge-fase1 { background: rgba(106,76,154,0.3); color: #C39BD3; border: 1px solid #7D3C98; }
+  .badge-fase2 { background: rgba(39,174,96,0.15); color: #82E0AA; border: 1px solid var(--success); }
+  .badge-fase3 { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid var(--gold); }
+  .badge-akashic { background: rgba(13,5,32,0.8); color: var(--light-gold); border: 1px solid var(--gold); }
+  .action-btn {
+    background: transparent; border: 1px solid rgba(201,168,76,0.3); color: var(--gold);
+    padding: 0.25rem 0.7rem; font-size: 0.75rem; cursor: pointer; font-family: 'Jost', sans-serif;
+    transition: all 0.2s; margin-right: 0.3rem;
+  }
+  .action-btn:hover { background: rgba(201,168,76,0.2); }
+  .empty-state { text-align: center; padding: 3rem; color: var(--muted); font-style: italic;
+    font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; }
+
+  /* ---- MODAL ---- */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(13,5,32,0.9);
+    z-index: 1000; align-items: center; justify-content: center; padding: 2rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--dark2); border: 1px solid rgba(201,168,76,0.3);
+    max-width: 750px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 2.5rem;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 1rem; right: 1rem; background: transparent;
+    border: none; color: var(--gold); font-size: 1.5rem; cursor: pointer;
+  }
+  .modal h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--gold); margin-bottom: 2rem; }
+  .report-section { margin-bottom: 2rem; }
+  .report-section h4 { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; opacity: 0.8; }
+  .report-field { display: flex; gap: 1rem; margin-bottom: 0.6rem; align-items: flex-start; }
+  .report-label { min-width: 140px; font-size: 0.8rem; color: var(--muted); }
+  .report-value { font-size: 0.9rem; color: rgba(245,230,184,0.85); line-height: 1.6; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    border-top: 1px solid rgba(201,168,76,0.15); padding: 3rem 2rem;
+    text-align: center; position: relative; z-index: 1;
+  }
+  .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--gold); margin-bottom: 0.5rem; letter-spacing: 4px; }
+  .footer-tagline { color: var(--muted); font-size: 0.85rem; font-style: italic; margin-bottom: 1.5rem; }
+  .footer-links { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+  .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; transition: color 0.3s; }
+  .footer-links a:hover { color: var(--gold); }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .pillars-grid, .sessions-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-full { grid-column: 1; }
+    .form-section-header { grid-column: 1; }
+    h1 { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-logo">AKASHA <span>Hub</span></div>
+  <div class="nav-links">
+    <a href="#pillars">Os Pilares</a>
+    <a href="#layers">Investigação</a>
+    <a href="#sessions">Encontros</a>
+    <a href="#form-section">Registrar</a>
+    <a href="#form-section" class="nav-cta">Acessar Portal</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-symbol">✦</div>
+  <div class="hero-pre">Akasha Hub · Mentoria</div>
+  <h1>Arquitetura de Essência<br>e Império Digital</h1>
+  <p class="hero-sub">
+    Do superficial ao akáshico — revelamos o universo que já existe dentro de você e construímos seu legado no mundo digital.
+  </p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="document.getElementById('form-section').scrollIntoView({behavior:'smooth'})">Acessar Portal da Mentoria</button>
+    <button class="btn-secondary" onclick="document.getElementById('pillars').scrollIntoView({behavior:'smooth'})">Conhecer o Método</button>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section id="pillars">
+  <div class="container">
+    <div class="section-title">Os 3 Pilares</div>
+    <div class="gold-divider"></div>
+    <div class="section-sub">A estrutura completa que transforma essência em império</div>
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-num">01</div>
+        <h3>Investigação de Essência</h3>
+        <p>Mergulho profundo em quem você é — profissional, familiar, emocional e akáshico. Do que é visível ao que é eterno.</p>
+        <div class="pillar-layers">
+          <span class="layer-tag">Superficial</span>
+          <span class="layer-tag">Ancestral</span>
+          <span class="layer-tag">Emocional</span>
+          <span class="layer-tag">Akáshico</span>
+        </div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-num">02</div>
+        <h3>Arquitetura de Identidade</h3>
+        <p>Transformamos as descobertas em uma identidade única: nome, missão, estética visual, narrativa e posicionamento.</p>
+        <div class="pillar-layers">
+          <span class="layer-tag">Missão</span>
+          <span class="layer-tag">Narrativa</span>
+          <span class="layer-tag">Visual</span>
+          <span class="layer-tag">Voz</span>
+        </div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-num">03</div>
+        <h3>Império Digital</h3>
+        <p>Criamos e operamos toda a estrutura digital: site, redes, campanhas, funil de vendas — você foca em criar, nós operamos.</p>
+        <div class="pillar-layers">
+          <span class="layer-tag">Site</span>
+          <span class="layer-tag">Conteúdo</span>
+          <span class="layer-tag">Campanhas</span>
+          <span class="layer-tag">Vendas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LAYERS -->
+<section id="layers">
+  <div class="container">
+    <div class="section-title">As 4 Camadas de Investigação</div>
+    <div class="gold-divider"></div>
+    <div class="section-sub">Cada camada revela um aspecto diferente da sua essência</div>
+    <div class="layers-list">
+      <div class="layer-item">
+        <div class="layer-badge"><span>Camada</span><span>1</span></div>
+        <div class="layer-content">
+          <h4>Mapa Superficial — Quem Você É Hoje</h4>
+          <p>Profissão, talentos, história de vida, obras criadas, o que te trouxe até aqui. A porta de entrada para o seu universo interior.</p>
+          <div class="tags"><span class="layer-tag">Profissão</span><span class="layer-tag">Talentos</span><span class="layer-tag">Obras</span><span class="layer-tag">Motivação</span></div>
+        </div>
+      </div>
+      <div class="layer-item">
+        <div class="layer-badge"><span>Camada</span><span>2</span></div>
+        <div class="layer-content">
+          <h4>Mapa Ancestral — Sua Linhagem</h4>
+          <p>Família, pais, avós, padrões geracionais, constelação familiar. Os dons e as dores que atravessam gerações e chegaram até você.</p>
+          <div class="tags"><span class="layer-tag">Família</span><span class="layer-tag">Ancestrais</span><span class="layer-tag">Padrões</span><span class="layer-tag">Linhagem</span></div>
+        </div>
+      </div>
+      <div class="layer-item">
+        <div class="layer-badge"><span>Camada</span><span>3</span></div>
+        <div class="layer-content">
+          <h4>Mapa Emocional — Seus Padrões Internos</h4>
+          <p>Bloqueios, crenças limitantes, medos, sonhos reprimidos. O que te impediu de ir além e o que te move em segredo.</p>
+          <div class="tags"><span class="layer-tag">Crenças</span><span class="layer-tag">Medos</span><span class="layer-tag">Sonhos</span><span class="layer-tag">Padrões</span></div>
+        </div>
+      </div>
+      <div class="layer-item">
+        <div class="layer-badge"><span>Camada</span><span>4</span></div>
+        <div class="layer-content">
+          <h4>Mapa Akáshico — Missão de Alma</h4>
+          <p>Vidas passadas, talentos eternos, registros akáshicos, propósito maior. O que sua alma veio trazer ao mundo desta vez.</p>
+          <div class="tags"><span class="layer-tag">Vidas Passadas</span><span class="layer-tag">Missão</span><span class="layer-tag">Dons Eternos</span><span class="layer-tag">Propósito</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEDITATION -->
+<section id="meditation">
+  <div class="container">
+    <div class="section-title">Meditação dos Registros Akáshicos</div>
+    <div class="gold-divider"></div>
+    <div class="section-sub">Script de áudio para acessar a memória profunda da alma</div>
+    <div class="meditation-box">
+      <div class="meditation-note">[ Música 528Hz · Voz calma · Pausas longas ]</div>
+      <div class="meditation-line">
+        "Feche os olhos devagar... Respire fundo pelo nariz... e solte pela boca..."
+        <span class="meditation-pause">· · · · ·</span>
+        "Imagine que você está em um campo aberto... o céu é claro e há uma luz dourada ao seu redor..."
+        <span class="meditation-pause">· · · · ·</span>
+        "À sua frente, há uma grande biblioteca que brilha com luz suave e acolhedora..."
+        <span class="meditation-pause">· · · · ·</span>
+        "Dentro, há um livro com o seu nome... Pegue-o nas mãos... Abra na primeira página..."
+        <span class="meditation-pause">· · · · ·</span>
+        "Pergunte à sua alma: <em>'Qual é o dom mais antigo que eu carrego?'</em>"
+        <span class="meditation-pause">· · · · ·</span>
+        "Deixe uma imagem, palavra ou sensação chegar... não force... apenas receba..."
+        <span class="meditation-pause">· · · · ·</span>
+        "E por último: <em>'Qual é a mensagem que vim trazer ao mundo desta vez?'</em>"
+        <span class="meditation-pause">· · · · ·</span>
+        "Quando estiver pronto... feche o livro gentilmente... agradeça... e volte."
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SESSIONS -->
+<section id="sessions">
+  <div class="container">
+    <div class="section-title">Os 6 Encontros da Mentoria</div>
+    <div class="gold-divider"></div>
+    <div class="section-sub">Uma jornada progressiva do superficial ao akáshico</div>
+    <div class="sessions-grid">
+      <div class="session-card">
+        <div class="session-header"><div class="session-num">1</div><h4>Abertura e Mapa Superficial</h4></div>
+        <ul>
+          <li>Perguntas 1–8 de investigação</li>
+          <li>Construção do pseudônimo</li>
+          <li>Tarefa: apresentação de 3 parágrafos</li>
+          <li>5 momentos de plenitude na vida</li>
+        </ul>
+      </div>
+      <div class="session-card">
+        <div class="session-header"><div class="session-num">2</div><h4>Mapa Ancestral e Familiar</h4></div>
+        <ul>
+          <li>Perguntas 9–15 de ancestralidade</li>
+          <li>Mapeamento da constelação familiar</li>
+          <li>Talentos que atravessam gerações</li>
+          <li>Tarefa: entrevistar familiar mais velho</li>
+        </ul>
+      </div>
+      <div class="session-card">
+        <div class="session-header"><div class="session-num">3</div><h4>Mapa Emocional e Padrões</h4></div>
+        <ul>
+          <li>Perguntas 16–23 de bloqueios</li>
+          <li>Visualização: quem você seria sem medo</li>
+          <li>Primeiros esboços da identidade</li>
+          <li>Tarefa: ouvir meditação de abertura</li>
+        </ul>
+      </div>
+      <div class="session-card">
+        <div class="session-header"><div class="session-num">4</div><h4>Investigação Akáshica</h4></div>
+        <ul>
+          <li>Meditação guiada ao vivo (30min)</li>
+          <li>Perguntas 24–30 pós-meditação</li>
+          <li>Mapeamento dos talentos de alma</li>
+          <li>Início da narrativa de marca</li>
+        </ul>
+      </div>
+      <div class="session-card">
+        <div class="session-header"><div class="session-num">5</div><h4>Arquitetura de Identidade</h4></div>
+        <ul>
+          <li>Definição do núcleo identitário</li>
+          <li>Narrativa: Origem → Missão</li>
+          <li>Direcionamentos para identidade visual</li>
+          <li>Aprovação do esboço de identidade</li>
+        </ul>
+      </div>
+      <div class="session-card">
+        <div class="session-header"><div class="session-num">6</div><h4>Lançamento do Império Digital</h4></div>
+        <ul>
+          <li>Apresentação de site, logo e Instagram</li>
+          <li>Revisão e aprovação de todos os elementos</li>
+          <li>Plano de Campanha (30 dias)</li>
+          <li>Próximos passos e segundo orçamento</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM + RECORDS -->
+<section id="form-section">
+  <div class="container">
+    <div class="section-title">Portal da Mentoria</div>
+    <div class="gold-divider"></div>
+    <div class="section-sub">Registre e acompanhe o progresso de cada mentorando</div>
+
+    <div class="form-header">
+      <h3>Painel de Mentorandos</h3>
+      <div class="tab-btns">
+        <button class="tab-btn active" onclick="switchTab('novo')">+ Novo Registro</button>
+        <button class="tab-btn" onclick="switchTab('lista')">Ver Todos</button>
+      </div>
+    </div>
+
+    <!-- TAB: NOVO REGISTRO -->
+    <div class="tab-content active" id="tab-novo">
+      <div class="mentoring-form">
+        <form id="mentoria-form">
+          <div class="form-grid">
+            <div class="form-section-header">👤 Dados do Mentorando</div>
+
+            <div class="form-group">
+              <label>Nome Real (confidencial)</label>
+              <input type="text" id="nome_real" placeholder="Ex: Maria das Dores Silva" required>
+            </div>
+            <div class="form-group">
+              <label>Pseudônimo / Nome Digital</label>
+              <input type="text" id="pseudonimo" placeholder="Ex: Aurora">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="email" placeholder="contato@email.com">
+            </div>
+            <div class="form-group">
+              <label>Telefone / WhatsApp</label>
+              <input type="text" id="telefone" placeholder="+55 (00) 00000-0000">
+            </div>
+            <div class="form-group">
+              <label>Fase Atual</label>
+              <select id="fase">
+                <option value="">Selecione a fase...</option>
+                <option value="fase1">Fase 1 — Fundação Digital</option>
+                <option value="fase2">Fase 2 — Campanha e Vendas</option>
+                <option value="fase3">Fase 3 — Escala e Império</option>
+                <option value="akashic">Mentoria Akasha Completa</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Último Encontro Realizado</label>
+              <select id="encontro">
+                <option value="0">Ainda não iniciou</option>
+                <option value="1">Encontro 1 — Mapa Superficial</option>
+                <option value="2">Encontro 2 — Mapa Ancestral</option>
+                <option value="3">Encontro 3 — Mapa Emocional</option>
+                <option value="4">Encontro 4 — Investigação Akáshica</option>
+                <option value="5">Encontro 5 — Arquitetura de Identidade</option>
+                <option value="6">Encontro 6 — Lançamento Digital</option>
+              </select>
+            </div>
+
+            <div class="form-section-header">📖 Investigação — Camada 1 (Superficial)</div>
+
+            <div class="form-group form-full">
+              <label>Profissão / O que fez na vida</label>
+              <textarea id="profissao" placeholder="Descreva a trajetória profissional e o que trouxe a pessoa até aqui..."></textarea>
+            </div>
+            <div class="form-group form-full">
+              <label>Talentos principais reconhecidos</label>
+              <input type="text" id="talentos" placeholder="Ex: Escrita criativa, ensino, empatia, velocidade de aprendizagem...">
+            </div>
+            <div class="form-group form-full">
+              <label>Obras, projetos ou criações existentes</label>
+              <textarea id="obras" placeholder="Liste todas as obras, projetos ou criações que a pessoa já possui..."></textarea>
+            </div>
+
+            <div class="form-section-header">🌳 Investigação — Camada 2 (Ancestral)</div>
+
+            <div class="form-group">
+              <label>Talento/herança da mãe</label>
+              <input type="text" id="mae" placeholder="O que a mãe trazia de especial...">
+            </div>
+            <div class="form-group">
+              <label>Talento/herança do pai</label>
+              <input type="text" id="pai" placeholder="O que o pai trazia de especial...">
+            </div>
+            <div class="form-group form-full">
+              <label>Padrões geracionais identificados</label>
+              <textarea id="padroes" placeholder="Padrões que se repetem na família, dores ancestrais, dons que atravessam gerações..."></textarea>
+            </div>
+
+            <div class="form-section-header">💜 Investigação — Camada 3 (Emocional)</div>
+
+            <div class="form-group form-full">
+              <label>Principais bloqueios e medos identificados</label>
+              <textarea id="bloqueios" placeholder="Medos em relação a aparecer, ser julgado, fracassar, cobrar valor pelo trabalho..."></textarea>
+            </div>
+            <div class="form-group form-full">
+              <label>Diagnósticos de saúde (confidencial)</label>
+              <textarea id="diagnosticos" placeholder="Informações relevantes de saúde mental ou física que impactam o processo criativo..."></textarea>
+            </div>
+
+            <div class="form-section-header">✦ Investigação — Camada 4 (Akáshica)</div>
+
+            <div class="form-group form-full">
+              <label>Missão de alma identificada</label>
+              <textarea id="missao_alma" placeholder="O que emergiu na meditação akáshica sobre o propósito maior desta alma..."></textarea>
+            </div>
+            <div class="form-group form-full">
+              <label>Talentos de alma / conexões com outras eras</label>
+              <input type="text" id="talentos_alma" placeholder="Civilizações, épocas ou arquétipos que emergiram na investigação...">
+            </div>
+
+            <div class="form-section-header">🏛️ Identidade Construída</div>
+
+            <div class="form-group form-full">
+              <label>Missão em 1 frase</label>
+              <input type="text" id="missao_frase" placeholder="Ex: Transformar palavras em pontes de cura e reconhecimento...">
+            </div>
+            <div class="form-group">
+              <label>Arquétipo principal</label>
+              <select id="arquetipo">
+                <option value="">Selecione...</option>
+                <option>Sábio / Mestre</option>
+                <option>Criador / Artista</option>
+                <option>Curandeiro / Mentor</option>
+                <option>Herói / Guerreiro</option>
+                <option>Amante / Guardião</option>
+                <option>Explorador / Visionário</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tom de voz da marca</label>
+              <input type="text" id="tom_voz" placeholder="Ex: Poético, acolhedor, sábio, profundo...">
+            </div>
+            <div class="form-group form-full">
+              <label>Notas do mentor / próximos passos</label>
+              <textarea id="notas" placeholder="Anotações importantes, próximas ações, observações estratégicas..."></textarea>
+            </div>
+          </div>
+
+          <div class="submit-row">
+            <button type="submit" class="btn-primary">Salvar Registro</button>
+            <div id="status-msg" class="status-msg" style="display:none"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB: LISTA -->
+    <div class="tab-content" id="tab-lista">
+      <div class="records-filters">
+        <input type="text" id="search-filter" placeholder="Buscar por nome ou pseudônimo..." oninput="filterRecords()">
+        <select id="fase-filter" onchange="filterRecords()">
+          <option value="">Todas as fases</option>
+          <option value="fase1">Fase 1 — Fundação</option>
+          <option value="fase2">Fase 2 — Campanha</option>
+          <option value="fase3">Fase 3 — Escala</option>
+          <option value="akashic">Mentoria Akasha Completa</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table id="records-table">
+          <thead>
+            <tr>
+              <th>Mentorando</th>
+              <th>Pseudônimo</th>
+              <th>Fase</th>
+              <th>Encontro</th>
+              <th>Missão</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="records-body">
+            <tr><td colspan="6" class="empty-state">Carregando registros...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">✦ AKASHA HUB</div>
+  <div class="footer-tagline">Arquitetura de Essência e Império Digital</div>
+  <div class="footer-links">
+    <a href="https://akashahub.com.br/mentoria" target="_blank">Site</a>
+    <a href="https://instagram.com/akasha.hub" target="_blank">@akasha.hub</a>
+  </div>
+</footer>
+
+<!-- MODAL DE DETALHES -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modal-title">Relatório do Mentorando</h3>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ---- IN-MEMORY STORAGE (Firebase-ready structure) ----
+let records = JSON.parse(localStorage.getItem('akasha_records') || '[]');
+// NOTE: Replace localStorage with Firebase Firestore:
+// import { initializeApp } from 'firebase/app';
+// import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
+// const firebaseConfig = { /* your config */ };
+// const app = initializeApp(firebaseConfig);
+// const db = getFirestore(app);
+
+function saveToStorage() {
+  localStorage.setItem('akasha_records', JSON.stringify(records));
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'lista') renderTable();
+}
+
+// ---- FORM SUBMIT ----
+document.getElementById('mentoria-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const msg = document.getElementById('status-msg');
+  msg.style.display = 'block';
+  msg.className = 'status-msg status-loading';
+  msg.textContent = 'Salvando registro...';
+
+  const record = {
+    id: Date.now().toString(),
+    created_at: new Date().toLocaleDateString('pt-BR'),
+    nome_real: document.getElementById('nome_real').value,
+    pseudonimo: document.getElementById('pseudonimo').value,
+    email: document.getElementById('email').value,
+    telefone: document.getElementById('telefone').value,
+    fase: document.getElementById('fase').value,
+    encontro: document.getElementById('encontro').value,
+    profissao: document.getElementById('profissao').value,
+    talentos: document.getElementById('talentos').value,
+    obras: document.getElementById('obras').value,
+    mae: document.getElementById('mae').value,
+    pai: document.getElementById('pai').value,
+    padroes: document.getElementById('padroes').value,
+    bloqueios: document.getElementById('bloqueios').value,
+    diagnosticos: document.getElementById('diagnosticos').value,
+    missao_alma: document.getElementById('missao_alma').value,
+    talentos_alma: document.getElementById('talentos_alma').value,
+    missao_frase: document.getElementById('missao_frase').value,
+    arquetipo: document.getElementById('arquetipo').value,
+    tom_voz: document.getElementById('tom_voz').value,
+    notas: document.getElementById('notas').value,
+  };
+
+  // Simulate async (replace with: await addDoc(collection(db, 'mentorandos'), record))
+  setTimeout(() => {
+    records.push(record);
+    saveToStorage();
+    msg.className = 'status-msg status-success';
+    msg.textContent = '✓ Registro salvo com sucesso!';
+    document.getElementById('mentoria-form').reset();
+    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+  }, 600);
+});
+
+// ---- RENDER TABLE ----
+function renderTable(filtered) {
+  const data = filtered !== undefined ? filtered : records;
+  const tbody = document.getElementById('records-body');
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">✦ Nenhum mentorando registrado ainda.</td></tr>';
+    return;
+  }
+  const faseLabels = {
+    'fase1': '<span class="badge badge-fase1">Fase 1</span>',
+    'fase2': '<span class="badge badge-fase2">Fase 2</span>',
+    'fase3': '<span class="badge badge-fase3">Fase 3</span>',
+    'akashic': '<span class="badge badge-akashic">✦ Akáshica</span>',
+  };
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td><strong>${r.nome_real}</strong><br><small style="color:var(--muted)">${r.email || ''}</small></td>
+      <td>${r.pseudonimo || '—'}</td>
+      <td>${faseLabels[r.fase] || '—'}</td>
+      <td>Encontro ${r.encontro || '0'}/6</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.missao_frase || '—'}</td>
+      <td>
+        <button class="action-btn" onclick="viewRecord('${r.id}')">Ver</button>
+        <button class="action-btn" onclick="deleteRecord('${r.id}')" style="border-color:rgba(192,57,43,0.4);color:#E74C3C">✕</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterRecords() {
+  const search = document.getElementById('search-filter').value.toLowerCase();
+  const fase = document.getElementById('fase-filter').value;
+  const filtered = records.filter(r => {
+    const matchSearch = !search ||
+      r.nome_real.toLowerCase().includes(search) ||
+      (r.pseudonimo && r.pseudonimo.toLowerCase().includes(search));
+    const matchFase = !fase || r.fase === fase;
+    return matchSearch && matchFase;
+  });
+  renderTable(filtered);
+}
+
+function viewRecord(id) {
+  const r = records.find(rec => rec.id === id);
+  if (!r) return;
+  const faseMap = { fase1: 'Fase 1 — Fundação', fase2: 'Fase 2 — Campanha', fase3: 'Fase 3 — Escala', akashic: 'Mentoria Akasha Completa' };
+  document.getElementById('modal-title').textContent = `✦ ${r.pseudonimo || r.nome_real}`;
+  const field = (label, value) => value ? `<div class="report-field"><span class="report-label">${label}</span><span class="report-value">${value}</span></div>` : '';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="report-section">
+      <h4>Dados Pessoais</h4>
+      ${field('Nome Real', r.nome_real)}
+      ${field('Pseudônimo', r.pseudonimo)}
+      ${field('Email', r.email)}
+      ${field('Telefone', r.telefone)}
+      ${field('Fase', faseMap[r.fase])}
+      ${field('Encontro', `${r.encontro}/6`)}
+      ${field('Registrado em', r.created_at)}
+    </div>
+    <div class="report-section">
+      <h4>Camada 1 — Superficial</h4>
+      ${field('Profissão', r.profissao)}
+      ${field('Talentos', r.talentos)}
+      ${field('Obras', r.obras)}
+    </div>
+    <div class="report-section">
+      <h4>Camada 2 — Ancestral</h4>
+      ${field('Herança da Mãe', r.mae)}
+      ${field('Herança do Pai', r.pai)}
+      ${field('Padrões Geracionais', r.padroes)}
+    </div>
+    <div class="report-section">
+      <h4>Camada 3 — Emocional</h4>
+      ${field('Bloqueios e Medos', r.bloqueios)}
+      ${field('Diagnósticos', r.diagnosticos)}
+    </div>
+    <div class="report-section">
+      <h4>Camada 4 — Akáshica</h4>
+      ${field('Missão de Alma', r.missao_alma)}
+      ${field('Talentos de Alma', r.talentos_alma)}
+    </div>
+    <div class="report-section">
+      <h4>Identidade Construída</h4>
+      ${field('Missão em 1 Frase', r.missao_frase)}
+      ${field('Arquétipo', r.arquetipo)}
+      ${field('Tom de Voz', r.tom_voz)}
+    </div>
+    ${r.notas ? `<div class="report-section"><h4>Notas do Mentor</h4>${field('Anotações', r.notas)}</div>` : ''}
+    <button class="btn-primary" style="margin-top:1rem" onclick="printReport('${id}')">Exportar / Imprimir</button>
+  `;
+  document.getElementById('modal').classList.add('open');
+}
+
+function printReport(id) {
+  window.print();
+}
+
+function deleteRecord(id) {
+  if (!confirm('Tem certeza que deseja excluir este registro?')) return;
+  records = records.filter(r => r.id !== id);
+  saveToStorage();
+  renderTable();
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ---- AURORA PRE-POPULATED EXAMPLE ----
+// Uncomment to add Aurora as example entry:
+// if (records.length === 0) {
+//   records.push({
+//     id: '1000', created_at: new Date().toLocaleDateString('pt-BR'),
+//     nome_real: '(Confidencial)', pseudonimo: 'Aurora', email: '', telefone: '',
+//     fase: 'fase1', encontro: '1',
+//     profissao: 'Ex-professora com mais de 39 anos dedicados à escrita criativa',
+//     talentos: 'Escrita veloz e profunda, narrativa poética, criação de personagens',
+//     obras: 'Novela manuscrita (39 anos), Livro infantil #1 (concluído e ilustrado), Livro infantil #2 (em andamento), Livro infantil #3 (título definido)',
+//     mae: '', pai: '', padroes: '',
+//     bloqueios: 'Não deseja aparecer publicamente. Prefere pseudônimo para proteger sua privacidade.',
+//     diagnosticos: 'Esquizofrenia diagnosticada — terapêutico complementar ao tratamento médico em curso',
+//     missao_alma: '', talentos_alma: '',
+//     missao_frase: 'Transformar palavras em pontes de cura, empatia e reconhecimento',
+//     arquetipo: 'Sábio / Mestre', tom_voz: 'Poético, acolhedor, profundo',
+//     notas: 'Cobrando valor simbólico na Fase 1. Apresentar proposta de Fase 2 após entrega da fundação digital.'
+//   });
+//   saveToStorage();
+// }
+
+renderTable();
+</script>
+</body>
+</html>
