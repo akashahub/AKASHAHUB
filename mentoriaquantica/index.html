@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caminho da Energia • Akasha Hub</title>
+  <link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+  <link rel="apple-touch-icon" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#06050a;--gold-light:#f0d078;--gold:#c9a227;--gold-border:rgba(201,162,39,0.3);--white:#f5f0e8;--muted:rgba(245,240,232,0.35);--card-bg:rgba(255,255,255,0.025);}
+    *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+    body{background-color:var(--bg);color:var(--white);font-family:'Josefin Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;justify-content:center;overflow-x:hidden;}
+    .bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+    .bg-canvas::before{content:'';position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(ellipse,rgba(201,162,39,0.07) 0%,transparent 65%);animation:breathe 8s ease-in-out infinite;}
+    .bg-canvas::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:900px;height:400px;background:radial-gradient(ellipse,rgba(80,30,120,0.12) 0%,transparent 70%);}
+    @keyframes breathe{0%,100%{opacity:.5;transform:translateX(-50%) scale(1);}50%{opacity:1;transform:translateX(-50%) scale(1.08);}}
+    .particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+    .p{position:absolute;width:1.5px;height:1.5px;border-radius:50%;background:var(--gold-light);opacity:0;animation:floatUp var(--dur) var(--delay) ease-in infinite;}
+    @keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(0);}20%{opacity:.6;transform:translateY(-40px) scale(1);}80%{opacity:.2;}100%{opacity:0;transform:translateY(-160px) scale(0);}}
+    .nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:rgba(6,5,10,0.75);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,162,39,0.08);}
+    .nav-logo{font-family:'Cormorant Garamond',serif;font-size:.85rem;letter-spacing:4px;color:var(--gold);text-decoration:none;font-weight:300;}
+    .nav-back{font-size:.5rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s;}
+    .nav-back:hover{color:var(--gold);}
+    .container{position:relative;z-index:1;width:100%;max-width:520px;padding:0 24px 160px;display:flex;flex-direction:column;align-items:center;}
+    .hero{width:100%;padding:96px 0 44px;text-align:center;display:flex;flex-direction:column;align-items:center;}
+    .emblem-wrap{position:relative;margin-bottom:30px;animation:fadeDown 1.2s cubic-bezier(0.16,1,0.3,1) both;}
+    .emblem-ring{width:116px;height:116px;border-radius:50%;border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;position:relative;background:radial-gradient(ellipse at center,rgba(201,162,39,0.06) 0%,transparent 70%);}
+    .emblem-ring::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(201,162,39,0.1);}
+    .emblem-ring::after{content:'';position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(201,162,39,0.05);}
+    .emblem-ring img{width:86px;height:86px;object-fit:contain;border-radius:50%;filter:drop-shadow(0 0 14px rgba(201,162,39,0.35));}
+    .hero-eye{font-size:.52rem;letter-spacing:6px;text-transform:uppercase;color:var(--gold);opacity:.6;display:block;margin-bottom:14px;animation:fadeIn 1s .3s ease both;}
+    .hero-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:3rem;letter-spacing:5px;line-height:1.05;margin-bottom:10px;animation:fadeDown 1.2s .2s cubic-bezier(0.16,1,0.3,1) both;}
+    .hero-title em{font-style:italic;color:var(--gold-light);}
+    .hero-sub{font-size:.6rem;letter-spacing:5px;text-transform:uppercase;color:var(--muted);margin-bottom:32px;animation:fadeIn 1s .5s ease both;}
+    .ornament{display:flex;align-items:center;gap:12px;width:100%;margin-bottom:36px;animation:fadeIn 1.6s ease both;}
+    .ornament-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-border),transparent);}
+    .ornament-diamond{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:.7;}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;width:100%;margin-bottom:40px;border:1px solid rgba(201,162,39,0.12);border-radius:3px;overflow:hidden;animation:fadeIn 1s .6s ease both;}
+    .stat{padding:20px 12px;text-align:center;background:rgba(201,162,39,0.025);position:relative;}
+    .stat+.stat::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:1px;background:rgba(201,162,39,0.12);}
+    .stat-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--gold-light);letter-spacing:1px;display:block;margin-bottom:4px;}
+    .stat-label{font-size:.52rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+    .section-label{width:100%;display:flex;align-items:center;gap:14px;margin:40px 0 16px;}
+    .section-label span{font-size:.58rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:.6;white-space:nowrap;}
+    .section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--gold-border),transparent);}
+    .about-box{width:100%;position:relative;border:1px solid rgba(201,162,39,0.15);border-radius:3px;background:linear-gradient(135deg,rgba(201,162,39,0.04) 0%,transparent 60%);padding:28px 26px;}
+    .about-box::before{content:'';position:absolute;top:0;left:0;width:36px;height:36px;border-top:1px solid rgba(201,162,39,0.45);border-left:1px solid rgba(201,162,39,0.45);}
+    .about-box::after{content:'';position:absolute;bottom:0;right:0;width:36px;height:36px;border-bottom:1px solid rgba(201,162,39,0.45);border-right:1px solid rgba(201,162,39,0.45);}
+    .about-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;font-weight:300;line-height:1.85;letter-spacing:.5px;color:rgba(245,240,232,0.7);text-align:center;}
+    .benefits{width:100%;display:flex;flex-direction:column;gap:8px;}
+    .benefit{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1px solid rgba(255,255,255,0.04);border-radius:2px;background:rgba(255,255,255,0.01);position:relative;overflow:hidden;transition:border-color .3s,background .3s;}
+    .benefit::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent);transition:width .5s ease;}
+    .benefit:hover{border-color:var(--gold-border);background:rgba(201,162,39,0.03);}.benefit:hover::after{width:100%;}
+    .benefit-icon{color:var(--gold);font-style:normal;flex-shrink:0;margin-top:2px;}
+    .benefit-text{font-size:.68rem;letter-spacing:1.5px;line-height:1.8;color:rgba(245,240,232,0.65);}
+    .benefit-text strong{color:var(--white);font-weight:400;display:block;font-size:.72rem;letter-spacing:2px;margin-bottom:3px;}
+    .weeks{width:100%;display:flex;flex-direction:column;gap:6px;}
+    .week{display:flex;align-items:center;gap:16px;padding:16px 20px;border:1px solid rgba(255,255,255,0.04);border-radius:2px;background:var(--card-bg);position:relative;overflow:hidden;transition:all .3s ease;}
+    .week::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent);transition:width .5s ease;}
+    .week:hover{border-color:var(--gold-border);background:rgba(201,162,39,0.03);}.week:hover::after{width:100%;}
+    .week-num{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:rgba(201,162,39,0.25);line-height:1;min-width:26px;}
+    .week-title{font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:1.5px;color:var(--white);margin-bottom:3px;}
+    .week-sub{font-size:.56rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);}
+    .format-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;width:100%;}
+    .format-item{padding:18px 14px;text-align:center;border:1px solid rgba(255,255,255,0.04);border-radius:2px;background:rgba(255,255,255,0.015);}
+    .format-icon{font-size:1.1rem;display:block;margin-bottom:8px;}
+    .format-label{font-size:.52rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.65;display:block;margin-bottom:4px;}
+    .format-val{font-family:'Cormorant Garamond',serif;font-size:.95rem;letter-spacing:1.5px;color:var(--white);}
+    .price-card{width:100%;position:relative;border:1px solid rgba(201,162,39,0.28);border-radius:3px;overflow:hidden;padding:36px 26px 28px;text-align:center;background:linear-gradient(135deg,rgba(201,162,39,0.06) 0%,rgba(80,30,120,0.07) 100%);}
+    .price-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:55%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+    .price-card::after{content:'';position:absolute;top:0;left:0;width:20px;height:20px;border-top:1px solid rgba(201,162,39,0.5);border-left:1px solid rgba(201,162,39,0.5);}
+    .price-corner{position:absolute;bottom:0;right:0;width:20px;height:20px;border-bottom:1px solid rgba(201,162,39,0.5);border-right:1px solid rgba(201,162,39,0.5);}
+    .price-shimmer{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(201,162,39,0.04),transparent);animation:pShimmer 4s ease-in-out infinite;}
+    @keyframes pShimmer{0%{transform:translateX(-100%);}70%,100%{transform:translateX(100%);}}
+    .price-eyebrow{font-size:.52rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:.6;display:block;margin-bottom:10px;}
+    .price-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;letter-spacing:3px;color:var(--white);margin-bottom:6px;}
+    .price-range{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--gold-light);letter-spacing:1px;margin-bottom:6px;}
+    .price-note{font-size:.56rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:30px;}
+    .cta-stack{display:flex;flex-direction:column;gap:10px;width:100%;}
+    .cta-divider{display:flex;align-items:center;gap:12px;margin:2px 0;}
+    .cta-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);}
+    .cta-divider-text{font-size:.48rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.12);white-space:nowrap;}
+    .cta-wpp{display:block;width:100%;text-align:center;text-decoration:none;position:relative;overflow:hidden;border-radius:2px;padding:18px 20px;background:linear-gradient(135deg,rgba(37,211,102,0.16) 0%,rgba(37,211,102,0.07) 100%);border:1px solid rgba(37,211,102,0.38);transition:all .4s ease;}
+    .cta-wpp::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(37,211,102,0.1),transparent);animation:wShimmer 2.8s ease-in-out infinite;}
+    @keyframes wShimmer{0%{left:-100%;}60%,100%{left:100%;}}
+    .cta-wpp:hover{background:linear-gradient(135deg,rgba(37,211,102,0.26) 0%,rgba(37,211,102,0.14) 100%);border-color:rgba(37,211,102,0.65);transform:translateY(-2px);box-shadow:0 8px 32px rgba(37,211,102,0.14);}
+    .cta-wpp-label{font-size:.48rem;letter-spacing:5px;text-transform:uppercase;color:rgba(37,211,102,0.5);display:block;margin-bottom:5px;}
+    .cta-wpp-text{font-family:'Cormorant Garamond',serif;font-size:1.15rem;letter-spacing:2px;color:#a0ffbf;display:block;}
+    .cta-wpp-sub{font-size:.5rem;letter-spacing:2px;color:rgba(37,211,102,0.38);display:block;margin-top:4px;}
+    .cta-pay{display:block;width:100%;text-align:center;text-decoration:none;position:relative;overflow:hidden;border-radius:2px;padding:18px 20px;background:linear-gradient(135deg,rgba(201,162,39,0.16) 0%,rgba(201,162,39,0.07) 100%);border:1px solid rgba(201,162,39,0.38);transition:all .4s ease;}
+    .cta-pay::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(201,162,39,0.1),transparent);animation:gShimmer 3.5s ease-in-out infinite;}
+    @keyframes gShimmer{0%{left:-100%;}60%,100%{left:100%;}}
+    .cta-pay:hover{background:linear-gradient(135deg,rgba(201,162,39,0.26) 0%,rgba(201,162,39,0.14) 100%);border-color:rgba(201,162,39,0.65);transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,162,39,0.12);}
+    .cta-pay-label{font-size:.48rem;letter-spacing:5px;text-transform:uppercase;color:rgba(201,162,39,0.5);display:block;margin-bottom:5px;}
+    .cta-pay-text{font-family:'Cormorant Garamond',serif;font-size:1.15rem;letter-spacing:2px;color:var(--gold-light);display:block;}
+    .cta-pay-sub{font-size:.5rem;letter-spacing:2px;color:rgba(201,162,39,0.38);display:block;margin-top:4px;}
+    .cta-group{display:block;width:100%;text-align:center;text-decoration:none;border-radius:2px;padding:15px 20px;border:1px solid rgba(37,211,102,0.18);background:rgba(37,211,102,0.035);transition:all .35s ease;}
+    .cta-group:hover{border-color:rgba(37,211,102,0.38);background:rgba(37,211,102,0.07);}
+    .cta-group-label{font-size:.46rem;letter-spacing:4px;text-transform:uppercase;color:rgba(37,211,102,0.38);display:block;margin-bottom:4px;}
+    .cta-group-text{font-size:.62rem;letter-spacing:2.5px;color:rgba(37,211,102,0.65);}
+    .affirmation{width:100%;text-align:center;padding:28px 24px;border:1px solid rgba(201,162,39,0.12);border-radius:3px;background:rgba(201,162,39,0.02);position:relative;}
+    .affirmation::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,162,39,0.3),transparent);}
+    .affirmation-sym{font-size:.8rem;color:var(--gold);opacity:.4;display:block;margin-bottom:14px;}
+    .affirmation-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.9rem;letter-spacing:1.5px;line-height:2;color:rgba(245,240,232,0.55);}
+    footer{margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+    .footer-ornament{display:flex;gap:6px;align-items:center;}
+    .footer-dot{width:3px;height:3px;border-radius:50%;background:var(--gold);opacity:.3;}
+    .footer-dot.big{width:4px;height:4px;opacity:.5;}
+    .footer-text{font-size:.58rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.12);}
+    .sticky-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;padding:10px 16px 18px;background:linear-gradient(0deg,rgba(6,5,10,0.98) 60%,transparent 100%);display:flex;flex-direction:column;align-items:center;gap:7px;}
+    .sticky-inner{width:100%;max-width:520px;display:flex;gap:8px;}
+    .sticky-btn{flex:1;text-decoration:none;text-align:center;padding:13px 10px;border-radius:2px;font-family:'Josefin Sans',sans-serif;font-size:.5rem;letter-spacing:3px;text-transform:uppercase;transition:all .3s ease;border:1px solid;}
+    .sticky-wpp{background:rgba(37,211,102,0.14);border-color:rgba(37,211,102,0.35);color:#a0ffbf;}
+    .sticky-wpp:hover{background:rgba(37,211,102,0.24);border-color:rgba(37,211,102,0.6);}
+    .sticky-pay{background:rgba(201,162,39,0.12);border-color:rgba(201,162,39,0.3);color:var(--gold-light);}
+    .sticky-pay:hover{background:rgba(201,162,39,0.22);border-color:rgba(201,162,39,0.55);}
+    .sticky-note{font-size:.46rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.1);}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(0.16,1,0.3,1);}
+    .reveal.visible{opacity:1;transform:translateY(0);}
+    .rd1{transition-delay:.08s;}.rd2{transition-delay:.16s;}.rd3{transition-delay:.24s;}
+    .rd4{transition-delay:.32s;}.rd5{transition-delay:.40s;}.rd6{transition-delay:.48s;}
+    .rd7{transition-delay:.56s;}.rd8{transition-delay:.64s;}
+  </style>
+</head>
+<body>
+<div class="bg-canvas"></div>
+<div class="particles" id="particles"></div>
+<nav class="nav">
+  <a href="/" class="nav-logo">AKASHA HUB</a>
+  <a href="/" class="nav-back">← Voltar</a>
+</nav>
+<div class="container">
+  <section class="hero">
+    <div class="emblem-wrap">
+      <div class="emblem-ring">
+        <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Akasha Hub" onerror="this.style.display='none';this.parentNode.innerHTML+='<span style=\'font-size:2rem;color:var(--gold)\'>✦</span>'">
+      </div>
+    </div>
+    <span class="hero-eye">Mentoria em Grupo · 8 Semanas · Portal VIP</span>
+    <h1 class="hero-title">Caminho<br><em>da Energia</em></h1>
+    <p class="hero-sub">Alinhamento Quântico · Transformação Real</p>
+    <div class="ornament"><div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line"></div></div>
+  </section>
+
+  <div class="stats reveal">
+    <div class="stat"><span class="stat-num">8</span><span class="stat-label">Semanas</span></div>
+    <div class="stat"><span class="stat-num">18</span><span class="stat-label">Min/dia</span></div>
+    <div class="stat"><span class="stat-num">2</span><span class="stat-label">Lives/mês</span></div>
+  </div>
+
+  <div class="section-label reveal"><span>A Proposta</span></div>
+  <div class="about-box reveal">
+    <p class="about-text">"Não é sobre aprender física quântica — é sobre VIVER a física quântica. Conhecimento que fica na cabeça não transforma. Conhecimento que desce para o corpo, vira prática, se torna IDENTIDADE — isso transforma."</p>
+  </div>
+
+  <div class="section-label reveal"><span>O que você vai criar</span></div>
+  <div class="benefits reveal">
+    <div class="benefit"><span class="benefit-icon">◈</span><div class="benefit-text"><strong>Padrões Revelados</strong>Identificar os padrões subconscientes que estão sabotando sua realidade — sem julgamento</div></div>
+    <div class="benefit"><span class="benefit-icon">◈</span><div class="benefit-text"><strong>Reprogramação Real</strong>Incorporar o método quântico no seu sistema nervoso — não só na mente</div></div>
+    <div class="benefit"><span class="benefit-icon">◈</span><div class="benefit-text"><strong>Estados Coerentes</strong>Criar novos estados emocionais alinhados com a vida que você realmente quer</div></div>
+    <div class="benefit"><span class="benefit-icon">◈</span><div class="benefit-text"><strong>Campo Coletivo</strong>Conectar-se a um grupo em transformação — o campo amplifica tudo</div></div>
+  </div>
+
+  <div class="section-label reveal"><span>As 8 Semanas</span></div>
+  <div class="weeks">
+    <div class="week reveal rd1"><span class="week-num">01</span><div><div class="week-title">Diagnóstico do Campo</div><div class="week-sub">Seu padrão energético · Os 4 perfis akáshicos</div></div></div>
+    <div class="week reveal rd2"><span class="week-num">02</span><div><div class="week-title">Fundamentos Quânticos</div><div class="week-sub">A ciência por trás do método</div></div></div>
+    <div class="week reveal rd3"><span class="week-num">03</span><div><div class="week-title">Reprogramação do Subconsciente</div><div class="week-sub">Onde a transformação acontece de verdade</div></div></div>
+    <div class="week reveal rd4"><span class="week-num">04</span><div><div class="week-title">Abundância como Estado Natural</div><div class="week-sub">Dinheiro, recursos e merecimento</div></div></div>
+    <div class="week reveal rd5"><span class="week-num">05</span><div><div class="week-title">Relacionamentos & Campo Coletivo</div><div class="week-sub">Você e o campo ao seu redor</div></div></div>
+    <div class="week reveal rd6"><span class="week-num">06</span><div><div class="week-title">Propósito e Alinhamento Akáshico</div><div class="week-sub">Encontrar e seguir seu vetor</div></div></div>
+    <div class="week reveal rd7"><span class="week-num">07</span><div><div class="week-title">Alinhamento Quântico Avançado</div><div class="week-sub">Integração, amplificação e retiro</div></div></div>
+    <div class="week reveal rd8"><span class="week-num">08</span><div><div class="week-title">Código Ativado — Vida Nova</div><div class="week-sub">Celebração, cerimônia e Portal Akasha vitalício</div></div></div>
+  </div>
+
+  <div class="section-label reveal"><span>O Formato</span></div>
+  <div class="format-grid reveal">
+    <div class="format-item"><span class="format-icon">💬</span><span class="format-label">Comunidade</span><span class="format-val">Grupo VIP<br>WhatsApp</span></div>
+    <div class="format-item"><span class="format-icon">🎙</span><span class="format-label">Ao Vivo</span><span class="format-val">2 Lives<br>por Mês</span></div>
+    <div class="format-item"><span class="format-icon">🎬</span><span class="format-label">Portal</span><span class="format-val">Módulos<br>Semanais</span></div>
+    <div class="format-item"><span class="format-icon">⏱</span><span class="format-label">Prática Diária</span><span class="format-val">18 minutos<br>por dia</span></div>
+  </div>
+
+  <div class="section-label reveal"><span>Acesse o Programa</span></div>
+  <div class="price-card reveal">
+    <div class="price-corner"></div>
+    <div class="price-shimmer"></div>
+    <span class="price-eyebrow">Investimento</span>
+    <div class="price-title">Caminho da Energia</div>
+    <div class="price-range">R$ 297 – R$ 497</div>
+    <p class="price-note">8 semanas · Grupo VIP · Portal Akasha vitalício · Vagas limitadas</p>
+    <div class="cta-stack">
+      <a href="https://wa.me/557183448621?text=Ol%C3%A1!%20Quero%20entrar%20no%20Caminho%20da%20Energia%20%F0%9F%8C%9F" target="_blank" rel="noopener" class="cta-wpp">
+        <span class="cta-wpp-label">Mais rápido · Fale comigo agora</span>
+        <span class="cta-wpp-text">📲 Comprar pelo WhatsApp</span>
+        <span class="cta-wpp-sub">Tire dúvidas e garanta sua vaga</span>
+      </a>
+      <div class="cta-divider"><div class="cta-divider-line"></div><span class="cta-divider-text">ou pelo link de pagamento</span><div class="cta-divider-line"></div></div>
+      <a href="https://pay.hotmart.com/A105220562W" target="_blank" rel="noopener" class="cta-pay">
+        <span class="cta-pay-label">🔒 Rápido e seguro · Hotmart</span>
+        <span class="cta-pay-text">Acessar Link de Pagamento</span>
+        <span class="cta-pay-sub">Cartão de crédito · Pix · Boleto</span>
+      </a>
+      <div class="cta-divider"><div class="cta-divider-line"></div><span class="cta-divider-text">já é aluna?</span><div class="cta-divider-line"></div></div>
+      <a href="https://wa.me/557183448621?text=Ol%C3%A1!%20Quero%20acessar%20o%20grupo%20do%20Caminho%20da%20Energia" target="_blank" rel="noopener" class="cta-group">
+        <span class="cta-group-label">Acesso · Grupo VIP</span>
+        <span class="cta-group-text">💬 Entrar no Grupo do WhatsApp</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="section-label reveal"><span>A Afirmação do Programa</span></div>
+  <div class="affirmation reveal">
+    <span class="affirmation-sym">✦ ✦ ✦</span>
+    <p class="affirmation-text">
+      "Eu sou um campo de consciência em expansão.<br>
+      O que é meu, vibra até mim.<br>
+      O que libero, abre espaço para o novo.<br>
+      Minha realidade é uma extensão do que escolho ser.<br>
+      Estou em coerência. Estou em fluxo. Estou em poder.<br>
+      <em>E assim é.</em>"
+    </p>
+  </div>
+
+  <footer>
+    <div style="height:16px"></div>
+    <div class="footer-ornament"><div class="footer-dot"></div><div class="footer-dot big"></div><div class="footer-dot"></div></div>
+    <p class="footer-text">© 2025 Akasha Hub — akashahub.com.br</p>
+  </footer>
+</div>
+
+<div class="sticky-bar">
+  <div class="sticky-inner">
+    <a href="https://wa.me/557183448621?text=Ol%C3%A1!%20Quero%20entrar%20no%20Caminho%20da%20Energia%20%F0%9F%8C%9F" target="_blank" rel="noopener" class="sticky-btn sticky-wpp">📲 WhatsApp</a>
+    <a href="https://pay.hotmart.com/A105220562W" target="_blank" rel="noopener" class="sticky-btn sticky-pay">🔒 Pagar Agora</a>
+  </div>
+  <span class="sticky-note">Vagas limitadas · 20 a 50 pessoas por turma</span>
+</div>
+
+<script>
+  const pc = document.getElementById('particles');
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'p';
+    p.style.cssText = `left:${Math.random()*100}%;top:${20+Math.random()*75}%;--dur:${5+Math.random()*10}s;--delay:${Math.random()*12}s;width:${Math.random()>.7?'2px':'1.5px'};height:${Math.random()>.7?'2px':'1.5px'};`;
+    pc.appendChild(p);
+  }
+  const obs = new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target);}}),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
