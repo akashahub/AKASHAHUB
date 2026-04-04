@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leitura Energética Express — Akasha Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --bg2: #edeae2;
+    --ink: #1a1612;
+    --ink2: #5c5548;
+    --teal: #1a5f5a;
+    --teal-light: #e8f4f3;
+    --teal-mid: #2d8a82;
+    --gold: #b8860b;
+    --gold-light: #faf3e0;
+    --white: #ffffff;
+    --border: rgba(26,22,18,0.1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(247,245,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--teal);
+    letter-spacing: 0.02em;
+  }
+
+  .nav-cta {
+    background: var(--teal);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 24px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: background 0.2s;
+  }
+
+  .nav-cta:hover { background: var(--teal-mid); }
+
+  /* HERO SPLIT */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+  }
+
+  .hero-left {
+    padding: 80px 60px 80px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .hero-right {
+    padding: 80px 80px 80px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-right::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(26,95,90,0.08), transparent 70%);
+    border-radius: 50%;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 32px;
+  }
+
+  .tag::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--teal);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--teal);
+  }
+
+  .hero-desc {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink2);
+    max-width: 420px;
+    margin-bottom: 40px;
+  }
+
+  /* CARD DE OFERTA */
+  .offer-card {
+    background: var(--teal-light);
+    border: 1px solid rgba(26,95,90,0.2);
+    padding: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .offer-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 16px;
+  }
+
+  .offer-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--teal);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .offer-price span {
+    font-size: 22px;
+    font-weight: 400;
+    vertical-align: top;
+    margin-top: 8px;
+    display: inline-block;
+  }
+
+  .offer-details {
+    font-size: 13px;
+    color: var(--ink2);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  .offer-items {
+    list-style: none;
+    margin-bottom: 28px;
+  }
+
+  .offer-items li {
+    font-size: 14px;
+    color: var(--ink2);
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(26,95,90,0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .offer-items li::before {
+    content: '◆';
+    font-size: 8px;
+    color: var(--teal);
+    flex-shrink: 0;
+  }
+
+  .offer-items li:last-child { border-bottom: none; }
+
+  .cta-primary {
+    display: block;
+    width: 100%;
+    background: var(--teal);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    padding: 16px 24px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: all 0.3s;
+  }
+
+  .cta-primary:hover {
+    background: var(--teal-mid);
+    transform: translateY(-1px);
+  }
+
+  .trust-line {
+    font-size: 12px;
+    color: var(--ink2);
+    text-align: center;
+    margin-top: 12px;
+    opacity: 0.7;
+  }
+
+  /* SECTION */
+  section {
+    padding: 96px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .section-tag::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 80px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 3.5vw, 48px);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+    max-width: 680px;
+  }
+
+  .section-title em { font-style: italic; color: var(--teal); }
+
+  /* COMO FUNCIONA */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+    margin-top: 64px;
+    border: 1px solid var(--border);
+  }
+
+  .step {
+    padding: 40px 32px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+
+  .step:last-child { border-right: none; }
+
+  .step-time {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 16px;
+  }
+
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .step-desc {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink2);
+  }
+
+  .step-num {
+    position: absolute;
+    top: 32px;
+    right: 28px;
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: rgba(26,95,90,0.06);
+    line-height: 1;
+  }
+
+  /* PARA QUEM */
+  .who-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    margin-top: 56px;
+  }
+
+  .who-item {
+    background: var(--white);
+    padding: 32px 36px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink2);
+  }
+
+  .who-item strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+
+  /* DEPOIMENTOS */
+  .test-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .test-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 32px;
+  }
+
+  .test-stars {
+    color: var(--gold);
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+
+  .test-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+
+  .test-name {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+
+  /* FAQ */
+  .faq-list {
+    margin-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 0;
+  }
+
+  .faq-q {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .faq-a {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink2);
+  }
+
+  /* CTA FINAL */
+  .cta-section {
+    background: var(--teal);
+    color: var(--white);
+    padding: 96px 80px;
+    text-align: center;
+  }
+
+  .cta-section .section-title {
+    color: var(--white);
+    margin: 0 auto 16px;
+  }
+
+  .cta-section em { color: rgba(255,255,255,0.6) !important; }
+
+  .cta-desc {
+    font-size: 17px;
+    color: rgba(255,255,255,0.75);
+    max-width: 520px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+
+  .cta-white {
+    display: inline-block;
+    background: var(--white);
+    color: var(--teal);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 18px 48px;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: all 0.3s;
+  }
+
+  .cta-white:hover { background: var(--bg); transform: translateY(-2px); }
+
+  footer {
+    text-align: center;
+    padding: 36px;
+    background: var(--bg2);
+    font-size: 12px;
+    color: var(--ink2);
+    letter-spacing: 0.05em;
+    border-top: 1px solid var(--border);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 860px) {
+    nav { padding: 16px 24px; }
+    .hero { grid-template-columns: 1fr; padding-top: 80px; }
+    .hero-left { padding: 60px 32px 40px; border-right: none; border-bottom: 1px solid var(--border); }
+    .hero-right { padding: 40px 32px 60px; }
+    section { padding: 64px 32px; }
+    .who-grid { grid-template-columns: 1fr; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .step { border-right: none; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .cta-section { padding: 64px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">Akasha Hub</span>
+  <a href="#reservar" class="nav-cta">Reservar minha sessão — R$ 47</a>
+</nav>
+
+<!-- HERO SPLIT -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="tag">Sessão individual · 15 minutos</div>
+    <h1 class="hero-title">
+      Leitura<br>Energética<br><em>Express</em>
+    </h1>
+    <p class="hero-desc">Em 15 minutos, identificamos o padrão energético que está moldando sua realidade agora — e o que precisa mudar para o campo se reorganizar ao seu redor.</p>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div style="width:40px;height:1px;background:var(--teal);"></div>
+      <span style="font-size:13px;color:var(--ink2);">Via Zoom ou WhatsApp · Agendamento imediato</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="offer-card">
+      <p class="offer-label">Investimento único</p>
+      <div class="offer-price"><span>R$</span> 47</div>
+      <p class="offer-details">Sessão de 15 minutos · Agendamento em até 48h · Gravação disponível</p>
+      <ul class="offer-items">
+        <li>Leitura do seu padrão energético atual</li>
+        <li>1 insight transformador aplicável hoje</li>
+        <li>Prática de ancoragem personalizada</li>
+        <li>Follow-up por WhatsApp após a sessão</li>
+        <li>Indicação do próximo passo no seu processo</li>
+      </ul>
+      <a href="https://calendly.com" class="cta-primary" id="reservar">Reservar minha leitura — R$ 47</a>
+      <p class="trust-line">Pagamento seguro via Pix, cartão ou boleto</p>
+    </div>
+  </div>
+</div>
+
+<!-- COMO FUNCIONA -->
+<section>
+  <div class="section-tag reveal">Como funciona</div>
+  <h2 class="section-title reveal">Uma sessão que entrega<br>o que anos de busca<br><em>não entregaram</em></h2>
+  <div class="steps-grid">
+    <div class="step reveal">
+      <span class="step-num">1</span>
+      <p class="step-time">Minutos 0–3</p>
+      <h3 class="step-title">Conexão ao campo</h3>
+      <p class="step-desc">Começo me conectando ao seu campo energético enquanto você me conta brevemente qual área da vida sente mais travada agora.</p>
+    </div>
+    <div class="step reveal">
+      <span class="step-num">2</span>
+      <p class="step-time">Minutos 3–7</p>
+      <h3 class="step-title">Leitura do padrão</h3>
+      <p class="step-desc">Identifico o padrão energético central que está moldando sua realidade atual — o que o campo está mostrando sobre onde você está.</p>
+    </div>
+    <div class="step reveal">
+      <span class="step-num">3</span>
+      <p class="step-time">Minutos 7–11</p>
+      <h3 class="step-title">O insight transformador</h3>
+      <p class="step-desc">Um único insight preciso que você pode aplicar ainda hoje. Não informação genérica — algo específico para o seu padrão.</p>
+    </div>
+    <div class="step reveal">
+      <span class="step-num">4</span>
+      <p class="step-time">Minutos 11–15</p>
+      <h3 class="step-title">Ancoragem e encerramento</h3>
+      <p class="step-desc">Uma prática personalizada para ancorar o insight e manter o campo em movimento após a sessão.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PARA QUEM -->
+<section style="background:var(--white);max-width:100%;padding:96px 80px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-tag reveal">Para quem é esta leitura</div>
+    <h2 class="section-title reveal">Você reconhece<br>alguma dessas<br><em>situações?</em></h2>
+    <div class="who-grid">
+      <div class="who-item reveal">
+        <strong>Estagnação invisível</strong>
+        Você trabalha, se esforça, tenta — mas parece que algo sempre segura você justo antes de dar o próximo salto. Não é falta de esforço. É padrão de campo.
+      </div>
+      <div class="who-item reveal">
+        <strong>Ciclos que se repetem</strong>
+        Relacionamentos que terminam da mesma forma. Oportunidades que aparecem e somem. Você já reparou que os cenários mudam, mas os padrões ficam?
+      </div>
+      <div class="who-item reveal">
+        <strong>Sabe que há mais</strong>
+        Uma sensação persistente de que sua realidade atual não reflete quem você é ou o que é capaz. Como se houvesse uma versão maior de você esperando ser desbloqueada.
+      </div>
+      <div class="who-item reveal">
+        <strong>Confusão de caminhos</strong>
+        Proposito, carreira, relacionamento — muitas portas, nenhuma clareza. A leitura revela o que o campo está pedindo que você priorize agora.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section>
+  <div class="section-tag reveal">Quem já passou pela leitura</div>
+  <h2 class="section-title reveal">O que acontece quando<br>o campo é <em>visto</em></h2>
+  <div class="test-grid">
+    <div class="test-card reveal">
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">"Em 15 minutos ela nomeou exatamente o que eu carregava há anos sem conseguir articular. O insight que recebi mudou a forma como eu me relaciono comigo mesma."</p>
+      <p class="test-name">Ana P. — Rio de Janeiro</p>
+    </div>
+    <div class="test-card reveal">
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">"Fui com ceticismo total. Saí em silêncio por dez minutos depois da sessão. Ela tocou em algo que eu não sabia que existia. Em 3 semanas minha situação financeira começou a se mover."</p>
+      <p class="test-name">Fernanda T. — Curitiba</p>
+    </div>
+    <div class="test-card reveal">
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">"Não é uma conversa genérica de coaching. É como se ela lesse o que está por baixo do que eu falo. Preciso e cirúrgico. Já fiz a terceira sessão."</p>
+      <p class="test-name">Juliana M. — São Paulo</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section style="background:var(--white);max-width:100%;padding:96px 80px;">
+  <div style="max-width:860px;margin:0 auto;">
+    <div class="section-tag reveal">Dúvidas frequentes</div>
+    <h2 class="section-title reveal">Tudo que você precisa <em>saber</em></h2>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <h3 class="faq-q">Funciona por WhatsApp também?</h3>
+        <p class="faq-a">Sim. A leitura pode ser feita por videochamada (Zoom ou Google Meet) ou por chamada de áudio no WhatsApp. O campo não precisa de vídeo para ser lido.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3 class="faq-q">Preciso ter feito alguma prática espiritual antes?</h3>
+        <p class="faq-a">Não. A leitura é o ponto de partida ideal para quem está começando E uma ferramenta de calibração valiosa para quem já pratica há anos. O campo de cada pessoa é único.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3 class="faq-q">Em quanto tempo consigo agendar?</h3>
+        <p class="faq-a">Normalmente em 24 a 48 horas após a confirmação do pagamento. Você escolhe o horário no calendário disponível logo após reservar.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3 class="faq-q">Recebo a gravação da sessão?</h3>
+        <p class="faq-a">Sim. A sessão é gravada (com sua autorização) e enviada por WhatsApp em até 2 horas após o encerramento.</p>
+      </div>
+      <div class="faq-item reveal">
+        <h3 class="faq-q">Qual é a diferença entre a leitura e a mentoria?</h3>
+        <p class="faq-a">A leitura é um diagnóstico — ela revela o que está acontecendo no seu campo agora. A mentoria Caminho da Energia é o processo de transformação — 8 semanas para reprogramar os padrões que a leitura revela. A maioria das pessoas que faz a leitura sente vontade de continuar na mentoria.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="cta-section">
+  <h2 class="section-title reveal">Seu campo está<br>esperando ser <em>visto.</em></h2>
+  <p class="cta-desc reveal">15 minutos podem revelar o que anos de busca não encontraram. Reserve sua leitura agora.</p>
+  <a href="https://calendly.com" class="cta-white reveal">Reservar minha leitura — R$ 47</a>
+  <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:16px;" class="reveal">Vagas limitadas por semana · Agendamento em até 48h</p>
+</div>
+
+<footer>© 2025 Akasha Hub · akashahub.com.br · Todos os direitos reservados</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+    </html>
