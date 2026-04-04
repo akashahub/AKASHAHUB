@@ -417,12 +417,576 @@
       text-align: center;
     }
 
+
+    /* ═══════════════════════════════════════════
+       BOTÃO FLUTUANTE — ABRIR QUIZ
+    ═══════════════════════════════════════════ */
+    .quiz-float-btn {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      z-index: 200;
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Josefin Sans', sans-serif; font-size: .58rem;
+      letter-spacing: 4px; text-transform: uppercase;
+      color: var(--bg); background: linear-gradient(135deg, #f0d078 0%, #c9a227 100%);
+      border: none; cursor: pointer;
+      padding: 13px 26px; border-radius: 2px;
+      box-shadow: 0 8px 32px rgba(201,162,39,0.35), 0 2px 8px rgba(0,0,0,0.5);
+      transition: all .3s cubic-bezier(0.25,1,0.5,1);
+      animation: floatBtn 3s ease-in-out infinite, fadeIn 1s 2.5s ease both;
+      opacity: 0;
+      white-space: nowrap;
+    }
+    .quiz-float-btn:hover {
+      transform: translateX(-50%) translateY(-3px);
+      box-shadow: 0 14px 40px rgba(201,162,39,0.5), 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .quiz-float-btn-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(6,5,10,0.4);
+      animation: dotBlink 1.5s ease-in-out infinite;
+    }
+    @keyframes floatBtn {
+      0%,100%{ box-shadow:0 8px 32px rgba(201,162,39,0.35),0 2px 8px rgba(0,0,0,0.5); }
+      50%    { box-shadow:0 12px 44px rgba(201,162,39,0.55),0 4px 14px rgba(0,0,0,0.5); }
+    }
+    @keyframes dotBlink { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+
+    /* ═══════════════════════════════════════════
+       OVERLAY + MODAL
+    ═══════════════════════════════════════════ */
+    .quiz-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(6,5,10,0.88);
+      backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .4s ease;
+    }
+    .quiz-overlay.open { opacity: 1; pointer-events: all; }
+
+    .quiz-modal {
+      width: 100%; max-width: 480px; max-height: 90vh;
+      overflow-y: auto;
+      background: #0b0916;
+      border: 1px solid rgba(201,162,39,0.22);
+      border-radius: 3px;
+      position: relative;
+      transform: translateY(20px) scale(0.98);
+      transition: transform .4s cubic-bezier(0.16,1,0.3,1);
+      scrollbar-width: thin; scrollbar-color: rgba(201,162,39,0.2) transparent;
+    }
+    .quiz-overlay.open .quiz-modal { transform: translateY(0) scale(1); }
+
+    /* cantos */
+    .quiz-modal::before, .quiz-modal::after {
+      content:''; position:absolute; width:16px; height:16px;
+      border-color: var(--gold); border-style: solid; opacity:.5; z-index:1; pointer-events:none;
+    }
+    .quiz-modal::before { top:-1px; left:-1px; border-width:2px 0 0 2px; border-radius:2px 0 0 0; }
+    .quiz-modal::after  { bottom:-1px; right:-1px; border-width:0 2px 2px 0; border-radius:0 0 2px 0; }
+
+    .quiz-modal-inner { padding: 36px 28px 32px; }
+
+    /* Fechar */
+    .quiz-close {
+      position: absolute; top: 16px; right: 18px;
+      background: none; border: none; cursor: pointer;
+      font-size: 1rem; color: var(--muted);
+      transition: color .2s;
+      line-height:1;
+    }
+    .quiz-close:hover { color: var(--gold); }
+
+    /* Header do modal */
+    .quiz-header { text-align: center; margin-bottom: 28px; }
+    .quiz-eyebrow {
+      font-size:.5rem; letter-spacing:5px; text-transform:uppercase;
+      color: var(--gold); opacity:.6; display:block; margin-bottom:10px;
+    }
+    .quiz-title {
+      font-family:'Cormorant Garamond',serif; font-weight:300;
+      font-size:1.7rem; letter-spacing:3px; line-height:1.2;
+      color: var(--white); margin-bottom:8px;
+    }
+    .quiz-title em { font-style:italic; color: var(--gold-light); }
+    .quiz-subtitle {
+      font-size:.62rem; letter-spacing:2px; color: var(--muted); line-height:1.7;
+    }
+
+    .quiz-divider {
+      display:flex; align-items:center; gap:10px; margin: 20px 0;
+    }
+    .quiz-divider-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--gold-border),transparent); }
+    .quiz-divider-sym { font-size:.6rem; color:var(--gold); opacity:.4; }
+
+    /* Progresso */
+    .quiz-progress-wrap { margin-bottom: 24px; }
+    .quiz-progress-label {
+      display:flex; justify-content:space-between;
+      font-size:.52rem; letter-spacing:3px; text-transform:uppercase;
+      color:var(--muted); margin-bottom:8px;
+    }
+    .quiz-progress-bar {
+      width:100%; height:2px;
+      background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden;
+    }
+    .quiz-progress-fill {
+      height:100%;
+      background:linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius:2px;
+      transition: width .5s cubic-bezier(0.25,1,0.5,1);
+      width: 0%;
+    }
+
+    /* Pergunta */
+    .quiz-question { display:none; }
+    .quiz-question.active { display:block; animation: qFadeIn .35s ease; }
+    @keyframes qFadeIn { from{opacity:0;transform:translateX(10px);} to{opacity:1;transform:translateX(0);} }
+
+    .quiz-q-num {
+      font-family:'Cormorant Garamond',serif;
+      font-size:.85rem; color:var(--gold); opacity:.4;
+      letter-spacing:2px; margin-bottom:8px; display:block;
+    }
+    .quiz-q-text {
+      font-family:'Cormorant Garamond',serif; font-weight:300;
+      font-size:1.1rem; letter-spacing:1.5px; line-height:1.5;
+      color:var(--white); margin-bottom:20px;
+    }
+
+    /* Opções */
+    .quiz-options { display:flex; flex-direction:column; gap:8px; }
+    .quiz-option {
+      display:flex; align-items:flex-start; gap:14px;
+      padding:14px 16px;
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:2px;
+      cursor:pointer;
+      transition:all .25s ease;
+      background:rgba(255,255,255,0.015);
+      position:relative; overflow:hidden;
+    }
+    .quiz-option::after {
+      content:''; position:absolute; bottom:0; left:0;
+      width:0; height:1px;
+      background:linear-gradient(90deg,var(--gold),transparent);
+      transition:width .35s ease;
+    }
+    .quiz-option:hover { border-color:var(--gold-border); background:rgba(201,162,39,0.04); }
+    .quiz-option:hover::after { width:100%; }
+    .quiz-option.selected {
+      border-color:rgba(201,162,39,0.5);
+      background:rgba(201,162,39,0.08);
+    }
+    .quiz-option.selected::after { width:100%; }
+    .quiz-opt-letter {
+      font-size:.58rem; letter-spacing:2px; color:var(--gold); opacity:.6;
+      flex-shrink:0; margin-top:1px; font-weight:400;
+    }
+    .quiz-opt-text {
+      font-size:.68rem; letter-spacing:1.5px; line-height:1.7;
+      color:rgba(245,240,232,0.7);
+    }
+
+    /* Navegação */
+    .quiz-nav {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-top:24px; gap:12px;
+    }
+    .quiz-btn {
+      font-family:'Josefin Sans',sans-serif; font-size:.55rem;
+      letter-spacing:4px; text-transform:uppercase;
+      padding:11px 22px; border-radius:2px; cursor:pointer;
+      transition:all .3s ease; border:1px solid;
+    }
+    .quiz-btn-back {
+      background:transparent; border-color:rgba(255,255,255,0.08);
+      color:var(--muted);
+    }
+    .quiz-btn-back:hover { border-color:rgba(255,255,255,0.2); color:var(--white); }
+    .quiz-btn-next {
+      background:linear-gradient(135deg,rgba(201,162,39,0.2),rgba(201,162,39,0.1));
+      border-color:rgba(201,162,39,0.4); color:var(--gold-light);
+      flex:1;
+    }
+    .quiz-btn-next:hover {
+      background:linear-gradient(135deg,rgba(201,162,39,0.32),rgba(201,162,39,0.18));
+      border-color:rgba(201,162,39,0.7);
+    }
+    .quiz-btn-next:disabled { opacity:.35; cursor:not-allowed; }
+
+    /* Tela de email */
+    .quiz-email-screen { display:none; text-align:center; }
+    .quiz-email-screen.active { display:block; animation:qFadeIn .35s ease; }
+    .quiz-email-title {
+      font-family:'Cormorant Garamond',serif; font-weight:300;
+      font-size:1.4rem; letter-spacing:2px; color:var(--white);
+      margin-bottom:8px; line-height:1.3;
+    }
+    .quiz-email-title em { font-style:italic; color:var(--gold-light); }
+    .quiz-email-sub {
+      font-size:.62rem; letter-spacing:2px; color:var(--muted);
+      line-height:1.8; margin-bottom:24px;
+    }
+    .quiz-input {
+      width:100%; padding:13px 16px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:2px; color:var(--white);
+      font-family:'Josefin Sans',sans-serif; font-size:.7rem;
+      letter-spacing:2px; outline:none; margin-bottom:10px;
+      transition:border-color .3s;
+    }
+    .quiz-input::placeholder { color:rgba(245,240,232,0.25); }
+    .quiz-input:focus { border-color:rgba(201,162,39,0.45); }
+    .quiz-submit {
+      width:100%; padding:14px;
+      background:linear-gradient(135deg,rgba(201,162,39,0.22),rgba(201,162,39,0.12));
+      border:1px solid rgba(201,162,39,0.5); border-radius:2px;
+      color:var(--gold-light); cursor:pointer;
+      font-family:'Josefin Sans',sans-serif; font-size:.6rem;
+      letter-spacing:4px; text-transform:uppercase;
+      transition:all .3s ease;
+    }
+    .quiz-submit:hover {
+      background:linear-gradient(135deg,rgba(201,162,39,0.35),rgba(201,162,39,0.2));
+      border-color:rgba(201,162,39,0.75);
+    }
+    .quiz-submit:disabled { opacity:.4; cursor:not-allowed; }
+    .quiz-privacy {
+      font-size:.5rem; letter-spacing:2px; color:rgba(255,255,255,.15);
+      margin-top:12px;
+    }
+
+    /* Tela de resultado */
+    .quiz-result-screen { display:none; text-align:center; }
+    .quiz-result-screen.active { display:block; animation:qFadeIn .4s ease; }
+    .quiz-result-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:.5rem; letter-spacing:5px; text-transform:uppercase;
+      color:var(--gold); border:1px solid var(--gold-border);
+      padding:5px 14px; border-radius:1px; margin-bottom:16px;
+      background:rgba(201,162,39,0.05);
+    }
+    .quiz-result-perfil {
+      font-family:'Cormorant Garamond',serif; font-weight:300;
+      font-size:1.8rem; letter-spacing:3px; line-height:1.2;
+      color:var(--white); margin-bottom:10px;
+    }
+    .quiz-result-perfil em { font-style:italic; color:var(--gold-light); }
+    .quiz-result-score {
+      font-size:.55rem; letter-spacing:4px; text-transform:uppercase;
+      color:var(--muted); margin-bottom:20px;
+    }
+    .quiz-result-desc {
+      font-size:.68rem; letter-spacing:1.5px; line-height:1.9;
+      color:rgba(245,240,232,0.6); margin-bottom:16px;
+      text-align:left;
+    }
+    .quiz-result-missao {
+      padding:16px 18px;
+      border:1px solid rgba(201,162,39,0.2);
+      border-radius:2px;
+      background:rgba(201,162,39,0.04);
+      margin-bottom:24px; text-align:left;
+    }
+    .quiz-result-missao-label {
+      font-size:.5rem; letter-spacing:4px; text-transform:uppercase;
+      color:var(--gold); opacity:.7; display:block; margin-bottom:6px;
+    }
+    .quiz-result-missao-text {
+      font-size:.67rem; letter-spacing:1.5px; line-height:1.8;
+      color:rgba(245,240,232,0.65);
+    }
+    .quiz-result-cta {
+      display:block; width:100%; padding:15px;
+      background:linear-gradient(135deg,rgba(201,162,39,0.2),rgba(107,63,160,0.15));
+      border:1px solid rgba(201,162,39,0.45); border-radius:2px;
+      text-decoration:none; color:var(--gold-light);
+      font-family:'Cormorant Garamond',serif; font-size:1.05rem;
+      letter-spacing:2px; transition:all .3s ease;
+      margin-bottom:12px;
+    }
+    .quiz-result-cta:hover {
+      background:linear-gradient(135deg,rgba(201,162,39,0.3),rgba(107,63,160,0.25));
+      border-color:rgba(201,162,39,0.7);
+    }
+    .quiz-result-share {
+      font-size:.52rem; letter-spacing:3px; color:rgba(255,255,255,.2);
+    }
+
+    /* Status de envio */
+    .quiz-sending { display:none; text-align:center; padding:20px 0; }
+    .quiz-sending-spin {
+      width:28px; height:28px; border-radius:50%;
+      border:1px solid rgba(201,162,39,0.2);
+      border-top-color:var(--gold);
+      animation:spin .9s linear infinite; margin:0 auto 14px;
+    }
+    @keyframes spin { to{transform:rotate(360deg);} }
+    .quiz-sending-text {
+      font-size:.58rem; letter-spacing:3px; text-transform:uppercase;
+      color:var(--muted);
+    }
+
   </style>
 </head>
 <body>
 
 <!-- Botão de acesso (muda para Dashboard se já logado) -->
 <a href="/login/" class="access-btn" id="accessBtn">Entrar →</a>
+
+<!-- ══ BOTÃO FLUTUANTE QUIZ ══ -->
+<button class="quiz-float-btn" id="quizFloatBtn" onclick="openQuiz()">
+  <span class="quiz-float-btn-dot"></span>
+  Descobrir meu Perfil Akáshico
+</button>
+
+<!-- ══ MODAL QUIZ ══ -->
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal" role="dialog" aria-modal="true" aria-label="Quiz Perfil Akáshico">
+    <button class="quiz-close" onclick="closeQuiz()" aria-label="Fechar">✕</button>
+    <div class="quiz-modal-inner">
+
+      <!-- HEADER -->
+      <div class="quiz-header">
+        <span class="quiz-eyebrow">Akasha Hub · Quiz</span>
+        <h2 class="quiz-title">Qual é o seu<br><em>Perfil Akáshico?</em></h2>
+        <p class="quiz-subtitle">6 perguntas para descobrir como você<br>se relaciona com o campo quântico</p>
+      </div>
+
+      <div class="quiz-divider">
+        <div class="quiz-divider-line"></div>
+        <span class="quiz-divider-sym">✦</span>
+        <div class="quiz-divider-line"></div>
+      </div>
+
+      <!-- PROGRESSO -->
+      <div class="quiz-progress-wrap" id="quizProgressWrap">
+        <div class="quiz-progress-label">
+          <span id="progressLabel">Pergunta 1 de 6</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- ── PERGUNTA 1 ── -->
+      <div class="quiz-question active" data-q="0">
+        <span class="quiz-q-num">01 / 06</span>
+        <p class="quiz-q-text">Quando você precisa tomar uma decisão importante, como costuma agir?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" data-pts="1" onclick="selectOpt(this,0)">
+            <span class="quiz-opt-letter">A</span>
+            <span class="quiz-opt-text">Analiso tudo racionalmente, busco informações e só decido quando tenho dados suficientes.</span>
+          </div>
+          <div class="quiz-option" data-pts="3" onclick="selectOpt(this,0)">
+            <span class="quiz-opt-letter">B</span>
+            <span class="quiz-opt-text">Sigo minha intuição — geralmente meu primeiro instinto é o certo.</span>
+          </div>
+          <div class="quiz-option" data-pts="2" onclick="selectOpt(this,0)">
+            <span class="quiz-opt-letter">C</span>
+            <span class="quiz-opt-text">Consulto pessoas próximas e considero como a decisão afeta a todos.</span>
+          </div>
+          <div class="quiz-option" data-pts="4" onclick="selectOpt(this,0)">
+            <span class="quiz-opt-letter">D</span>
+            <span class="quiz-opt-text">Fico em dúvida por bastante tempo, com medo de errar.</span>
+          </div>
+        </div>
+        <div class="quiz-nav">
+          <button class="quiz-btn quiz-btn-next" onclick="nextQ()" id="nextBtn0" disabled>Próxima →</button>
+        </div>
+      </div>
+
+      <!-- ── PERGUNTA 2 ── -->
+      <div class="quiz-question" data-q="1">
+        <span class="quiz-q-num">02 / 06</span>
+        <p class="quiz-q-text">Como você se sente quando está em lugares com muitas pessoas ao mesmo tempo?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" data-pts="2" onclick="selectOpt(this,1)">
+            <span class="quiz-opt-letter">A</span>
+            <span class="quiz-opt-text">Energizado — adoro a interação e saio de lá cheio de energia.</span>
+          </div>
+          <div class="quiz-option" data-pts="1" onclick="selectOpt(this,1)">
+            <span class="quiz-opt-letter">B</span>
+            <span class="quiz-opt-text">Neutro — consigo me adaptar a qualquer ambiente facilmente.</span>
+          </div>
+          <div class="quiz-option" data-pts="3" onclick="selectOpt(this,1)">
+            <span class="quiz-opt-letter">C</span>
+            <span class="quiz-opt-text">Absorvo as energias ao redor e preciso de um tempo sozinho depois para me reequilibrar.</span>
+          </div>
+          <div class="quiz-option" data-pts="4" onclick="selectOpt(this,1)">
+            <span class="quiz-opt-letter">D</span>
+            <span class="quiz-opt-text">Fico sobrecarregado rapidamente — prefiro ambientes tranquilos.</span>
+          </div>
+        </div>
+        <div class="quiz-nav">
+          <button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button>
+          <button class="quiz-btn quiz-btn-next" onclick="nextQ()" id="nextBtn1" disabled>Próxima →</button>
+        </div>
+      </div>
+
+      <!-- ── PERGUNTA 3 ── -->
+      <div class="quiz-question" data-q="2">
+        <span class="quiz-q-num">03 / 06</span>
+        <p class="quiz-q-text">Quando você pensa na sua relação com o dinheiro e abundância, o que mais ressoa?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" data-pts="1" onclick="selectOpt(this,2)">
+            <span class="quiz-opt-letter">A</span>
+            <span class="quiz-opt-text">Acredito que com esforço e planejamento consigo qualquer coisa — o dinheiro é resultado de trabalho.</span>
+          </div>
+          <div class="quiz-option" data-pts="2" onclick="selectOpt(this,2)">
+            <span class="quiz-opt-letter">B</span>
+            <span class="quiz-opt-text">Sinto que estou num fluxo — às vezes vem, às vezes some, mas geralmente me viro.</span>
+          </div>
+          <div class="quiz-option" data-pts="4" onclick="selectOpt(this,2)">
+            <span class="quiz-opt-letter">C</span>
+            <span class="quiz-opt-text">Percebo padrões repetitivos — parece que sempre chego num certo ponto e trava.</span>
+          </div>
+          <div class="quiz-option" data-pts="3" onclick="selectOpt(this,2)">
+            <span class="quiz-opt-letter">D</span>
+            <span class="quiz-opt-text">Tenho uma sensação de que a abundância é o meu estado natural — só preciso me alinhar a ela.</span>
+          </div>
+        </div>
+        <div class="quiz-nav">
+          <button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button>
+          <button class="quiz-btn quiz-btn-next" onclick="nextQ()" id="nextBtn2" disabled>Próxima →</button>
+        </div>
+      </div>
+
+      <!-- ── PERGUNTA 4 ── -->
+      <div class="quiz-question" data-q="3">
+        <span class="quiz-q-num">04 / 06</span>
+        <p class="quiz-q-text">Qual dessas experiências você já teve com mais frequência?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" data-pts="3" onclick="selectOpt(this,3)">
+            <span class="quiz-opt-letter">A</span>
+            <span class="quiz-opt-text">Pensar em alguém e a pessoa me ligar logo em seguida.</span>
+          </div>
+          <div class="quiz-option" data-pts="4" onclick="selectOpt(this,3)">
+            <span class="quiz-opt-letter">B</span>
+            <span class="quiz-opt-text">Sonhar com situações que depois aconteceram de forma similar.</span>
+          </div>
+          <div class="quiz-option" data-pts="2" onclick="selectOpt(this,3)">
+            <span class="quiz-opt-letter">C</span>
+            <span class="quiz-opt-text">Entrar num lugar e sentir imediatamente o "clima" do ambiente.</span>
+          </div>
+          <div class="quiz-option" data-pts="1" onclick="selectOpt(this,3)">
+            <span class="quiz-opt-letter">D</span>
+            <span class="quiz-opt-text">Não costumo ter esse tipo de experiência ou não presto atenção nisso.</span>
+          </div>
+        </div>
+        <div class="quiz-nav">
+          <button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button>
+          <button class="quiz-btn quiz-btn-next" onclick="nextQ()" id="nextBtn3" disabled>Próxima →</button>
+        </div>
+      </div>
+
+      <!-- ── PERGUNTA 5 ── -->
+      <div class="quiz-question" data-q="4">
+        <span class="quiz-q-num">05 / 06</span>
+        <p class="quiz-q-text">Como você lida com períodos de dificuldade ou crise?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" data-pts="1" onclick="selectOpt(this,4)">
+            <span class="quiz-opt-letter">A</span>
+            <span class="quiz-opt-text">Busco soluções práticas imediatamente — a ação me faz sentir melhor.</span>
+          </div>
+          <div class="quiz-option" data-pts="3" onclick="selectOpt(this,4)">
+            <span class="quiz-opt-letter">B</span>
+            <span class="quiz-opt-text">Confio que é um período de transformação e que vai passar — tento aprender com ele.</span>
+          </div>
+          <div class="quiz-option" data-pts="2" onclick="selectOpt(this,4)">
+            <span class="quiz-opt-letter">C</span>
+            <span class="quiz-opt-text">Fico bastante abalado emocionalmente, mas eventualmente me recomponho.</span>
+          </div>
+          <div class="quiz-option" data-pts="4" onclick="selectOpt(this,4)">
+            <span class="quiz-opt-letter">D</span>
+            <span class="quiz-opt-text">Tendo a interpretar como prova de que as coisas não funcionam para mim.</span>
+          </div>
+        </div>
+        <div class="quiz-nav">
+          <button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button>
+          <button class="quiz-btn quiz-btn-next" onclick="nextQ()" id="nextBtn4" disabled>Próxima →</button>
+        </div>
+      </div>
+
+      <!-- ── PERGUNTA 6 ── -->
+      <div class="quiz-question" data-q="5">
+        <span class="quiz-q-num">06 / 06</span>
+        <p class="quiz-q-text">O que mais descreve sua relação com práticas espirituais ou de consciência?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" data-pts="1" onclick="selectOpt(this,5)">
+            <span class="quiz-opt-letter">A</span>
+            <span class="quiz-opt-text">Sou cético — acredito em evidências e resultados concretos.</span>
+          </div>
+          <div class="quiz-option" data-pts="3" onclick="selectOpt(this,5)">
+            <span class="quiz-opt-letter">B</span>
+            <span class="quiz-opt-text">Pratico com constância e vejo resultados claros na minha vida.</span>
+          </div>
+          <div class="quiz-option" data-pts="2" onclick="selectOpt(this,5)">
+            <span class="quiz-opt-letter">C</span>
+            <span class="quiz-opt-text">Estou começando a explorar esse universo — estou aberto mas ainda aprendendo.</span>
+          </div>
+          <div class="quiz-option" data-pts="4" onclick="selectOpt(this,5)">
+            <span class="quiz-opt-letter">D</span>
+            <span class="quiz-opt-text">Já explorei muito mas não encontrei algo que realmente funcionasse para mim ainda.</span>
+          </div>
+        </div>
+        <div class="quiz-nav">
+          <button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button>
+          <button class="quiz-btn quiz-btn-next" onclick="goToEmail()" id="nextBtn5" disabled>Ver meu perfil →</button>
+        </div>
+      </div>
+
+      <!-- ── TELA DE EMAIL ── -->
+      <div class="quiz-email-screen" id="quizEmailScreen">
+        <div class="quiz-divider" style="margin-top:0">
+          <div class="quiz-divider-line"></div>
+          <span class="quiz-divider-sym">✦</span>
+          <div class="quiz-divider-line"></div>
+        </div>
+        <h3 class="quiz-email-title">Seu perfil está<br><em>pronto para revelar</em></h3>
+        <p class="quiz-email-sub">Insira seu nome e email para receber<br>sua análise completa e resultado.</p>
+        <input class="quiz-input" type="text" id="quizName" placeholder="Seu nome" autocomplete="given-name">
+        <input class="quiz-input" type="email" id="quizEmail" placeholder="Seu melhor email" autocomplete="email">
+        <button class="quiz-submit" onclick="submitQuiz()" id="quizSubmitBtn">
+          Revelar meu Perfil Akáshico →
+        </button>
+        <p class="quiz-privacy">Seus dados são protegidos. Sem spam.</p>
+      </div>
+
+      <!-- ── ENVIANDO ── -->
+      <div class="quiz-sending" id="quizSending">
+        <div class="quiz-sending-spin"></div>
+        <p class="quiz-sending-text">Lendo o campo quântico...</p>
+      </div>
+
+      <!-- ── RESULTADO ── -->
+      <div class="quiz-result-screen" id="quizResultScreen">
+        <div class="quiz-divider" style="margin-top:0">
+          <div class="quiz-divider-line"></div>
+          <span class="quiz-divider-sym">✦</span>
+          <div class="quiz-divider-line"></div>
+        </div>
+        <div class="quiz-result-badge">◈ Seu Perfil</div>
+        <h3 class="quiz-result-perfil" id="resultTitle"></h3>
+        <p class="quiz-result-score" id="resultScore"></p>
+        <p class="quiz-result-desc" id="resultDesc"></p>
+        <div class="quiz-result-missao">
+          <span class="quiz-result-missao-label">✦ Sua Missão</span>
+          <p class="quiz-result-missao-text" id="resultMissao"></p>
+        </div>
+        <a href="https://pay.hotmart.com/X105218960C" class="quiz-result-cta" target="_blank" rel="noopener">
+          Aprofundar com o Código Quântico →
+        </a>
+        <p class="quiz-result-share">Compartilhe @akasha.hub nos stories ✦</p>
+      </div>
+
+    </div><!-- /quiz-modal-inner -->
+  </div><!-- /quiz-modal -->
+</div><!-- /quiz-overlay -->
 
 <div class="bg-canvas"></div>
 <div class="particles" id="particles"></div>
@@ -585,6 +1149,176 @@
   </footer>
 </div>
 
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // ══ EMAILJS INIT ══
+  // Configure em emailjs.com: Service ID, Template ID e Public Key
+  // Substitua os valores abaixo após criar sua conta gratuita
+  const EMAILJS_SERVICE_ID  = 'SEU_SERVICE_ID';   // ex: 'service_abc123'
+  const EMAILJS_TEMPLATE_ID = 'SEU_TEMPLATE_ID';  // ex: 'template_xyz789'
+  const EMAILJS_PUBLIC_KEY  = 'SUA_PUBLIC_KEY';   // ex: 'user_AbCdEfGhIj'
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  // ══ ESTADO DO QUIZ ══
+  let currentQ   = 0;
+  const totalQ   = 6;
+  const answers  = new Array(totalQ).fill(null); // pontos de cada resposta
+  const answerTexts = new Array(totalQ).fill(''); // texto da resposta escolhida
+
+  const questions = [
+    'Quando você precisa tomar uma decisão importante, como costuma agir?',
+    'Como você se sente quando está em lugares com muitas pessoas ao mesmo tempo?',
+    'Quando você pensa na sua relação com o dinheiro e abundância, o que mais ressoa?',
+    'Qual dessas experiências você já teve com mais frequência?',
+    'Como você lida com períodos de dificuldade ou crise?',
+    'O que mais descreve sua relação com práticas espirituais ou de consciência?'
+  ];
+
+  // ══ PERFIS ══
+  const perfis = [
+    {
+      range: [6, 10],
+      nome: 'O Arquiteto Racional',
+      desc: 'Você é alguém que valoriza evidências, lógica e resultados concretos. Sua relação com o campo quântico está começando — e isso é perfeito. A física quântica vai fazer muito sentido para você porque é ciência verificável, não crença.',
+      missao: 'Começar a registrar sincronicidades e "coincidências" que acontecem ao seu redor. O ceticismo saudável vai se transformar em curiosidade ativa.'
+    },
+    {
+      range: [11, 16],
+      nome: 'O Explorador Desperto',
+      desc: 'Você está em uma fase de transição — já percebe que existe algo além do que os olhos veem, mas ainda está aprendendo a navegar por esse campo. Sua sensibilidade está crescendo.',
+      missao: 'Criar uma prática consistente, mesmo que pequena. 18 minutos por dia vão revelar em 21 dias o que anos de busca esporádica não revelaram.'
+    },
+    {
+      range: [17, 21],
+      nome: 'O Canal Quântico',
+      desc: 'Você tem uma sensibilidade natural ao campo. Absorve energias, percebe padrões, tem intuições frequentes. O desafio é aprender a trabalhar com isso de forma estruturada — sem se perder no excesso de input.',
+      missao: 'Desenvolver limites energéticos claros e uma prática de ancoragem diária. Você tem o dom — precisa da técnica.'
+    },
+    {
+      range: [22, 24],
+      nome: 'O Transmutador',
+      desc: 'Você carrega padrões profundos que ainda não foram completamente transformados. A boa notícia: quem chega a esse ponto de autoconhecimento tem um potencial extraordinário de transformação — mas precisa de suporte.',
+      missao: 'Não fazer essa jornada sozinho. O trabalho profundo de reprogramação é mais poderoso quando feito em campo compartilhado.'
+    }
+  ];
+
+  function getPerfil(score) {
+    return perfis.find(p => score >= p.range[0] && score <= p.range[1]) || perfis[0];
+  }
+
+  // ══ ABRIR / FECHAR ══
+  function openQuiz() {
+    document.getElementById('quizOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeQuiz() {
+    document.getElementById('quizOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('quizOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeQuiz();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeQuiz(); });
+
+  // ══ SELECIONAR OPÇÃO ══
+  function selectOpt(el, qIdx) {
+    const opts = el.closest('.quiz-options').querySelectorAll('.quiz-option');
+    opts.forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    answers[qIdx]     = parseInt(el.dataset.pts);
+    answerTexts[qIdx] = el.querySelector('.quiz-opt-text').textContent.trim();
+    const nextBtn = document.getElementById('nextBtn' + qIdx);
+    if (nextBtn) nextBtn.disabled = false;
+  }
+
+  // ══ PROGRESSO ══
+  function updateProgress(qIdx) {
+    const pct = Math.round((qIdx / totalQ) * 100);
+    document.getElementById('progressFill').style.width  = pct + '%';
+    document.getElementById('progressPct').textContent   = pct + '%';
+    document.getElementById('progressLabel').textContent = `Pergunta ${qIdx + 1} de ${totalQ}`;
+  }
+
+  // ══ NAVEGAR ══
+  function showQ(idx) {
+    document.querySelectorAll('.quiz-question').forEach(q => q.classList.remove('active'));
+    const target = document.querySelector(`.quiz-question[data-q="${idx}"]`);
+    if (target) target.classList.add('active');
+    updateProgress(idx);
+    document.querySelector('.quiz-modal').scrollTop = 0;
+  }
+
+  function nextQ() {
+    if (currentQ < totalQ - 1) { currentQ++; showQ(currentQ); }
+  }
+  function prevQ() {
+    if (currentQ > 0) { currentQ--; showQ(currentQ); }
+  }
+
+  // ══ IR PARA EMAIL ══
+  function goToEmail() {
+    document.querySelectorAll('.quiz-question').forEach(q => q.classList.remove('active'));
+    document.getElementById('quizProgressWrap').style.display = 'none';
+    document.getElementById('quizEmailScreen').classList.add('active');
+    document.querySelector('.quiz-modal').scrollTop = 0;
+  }
+
+  // ══ SUBMETER ══
+  async function submitQuiz() {
+    const name  = document.getElementById('quizName').value.trim();
+    const email = document.getElementById('quizEmail').value.trim();
+    if (!name || !email || !/\S+@\S+\.\S+/.test(email)) {
+      document.getElementById('quizEmail').style.borderColor = 'rgba(201,162,39,0.8)';
+      document.getElementById('quizEmail').focus();
+      return;
+    }
+
+    const score  = answers.reduce((a, b) => a + (b || 0), 0);
+    const perfil = getPerfil(score);
+
+    // Montar resumo das respostas
+    const answersHTML = questions.map((q, i) => `
+      <strong>P${i+1}:</strong> ${q}<br>
+      <em>Resposta (${answers[i]} pt):</em> ${answerTexts[i]}
+    `).join('<br><br>');
+
+    // Mostrar enviando
+    document.getElementById('quizEmailScreen').classList.remove('active');
+    document.getElementById('quizSending').style.display = 'block';
+
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email:      'akashaguardia@gmail.com',
+        from_name:     name,
+        from_email:    email,
+        score:         score,
+        perfil:        perfil.nome,
+        answers_html:  answersHTML,
+        reply_to:      email,
+      });
+    } catch(err) {
+      console.warn('EmailJS error:', err);
+      // Mesmo com erro no envio, mostra o resultado ao usuário
+    }
+
+    // Mostrar resultado
+    document.getElementById('quizSending').style.display = 'none';
+    mostrarResultado(score, perfil);
+  }
+
+  function mostrarResultado(score, perfil) {
+    document.getElementById('resultTitle').innerHTML =
+      perfil.nome.replace('O ', 'O <em>').replace('A ', 'A <em>') + '</em>';
+    document.getElementById('resultTitle').textContent = perfil.nome;
+    document.getElementById('resultScore').textContent = `Pontuação: ${score} pontos`;
+    document.getElementById('resultDesc').textContent   = perfil.desc;
+    document.getElementById('resultMissao').textContent = perfil.missao;
+    document.getElementById('quizResultScreen').classList.add('active');
+    document.querySelector('.quiz-modal').scrollTop = 0;
+  }
+</script>
+
 <script>
   // Partículas
   const container = document.getElementById('particles');
@@ -622,4 +1356,4 @@
   });
 </script>
 </body>
-</html>
+  </html>
