@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campo Vivo · Akasha Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Josefin+Sans:wght@100;200;300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #05040a;
+      --bg2: #080613;
+      --gold: #c9a227;
+      --gold-lt: #f0d078;
+      --gold-dim: rgba(201,162,39,0.3);
+      --gold-faint: rgba(201,162,39,0.08);
+      --purple: #6b3fa0;
+      --purple-lt: #9b6fd4;
+      --purple-dim: rgba(107,63,160,0.3);
+      --white: #f5f0e8;
+      --muted: rgba(245,240,232,0.4);
+      --faint: rgba(245,240,232,0.12);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Josefin Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── CANVAS BG ── */
+    .bg-layer {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(107,63,160,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 10% 80%, rgba(201,162,39,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 35% at 90% 60%, rgba(80,30,130,0.1) 0%, transparent 50%);
+    }
+    .grid-overlay {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.025;
+      background-image:
+        linear-gradient(rgba(201,162,39,1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,162,39,1) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* ── LAYOUT ── */
+    .wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 600px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 72px 0 56px;
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .hero-emblem {
+      width: 90px; height: 90px; border-radius: 50%;
+      border: 1px solid var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 32px; position: relative;
+      background: radial-gradient(ellipse, rgba(201,162,39,0.07), transparent 70%);
+      animation: pulse-ring 4s ease-in-out infinite;
+    }
+    .hero-emblem::before {
+      content: ''; position: absolute; inset: -8px; border-radius: 50%;
+      border: 1px solid rgba(201,162,39,0.1);
+    }
+    .hero-emblem::after {
+      content: ''; position: absolute; inset: -18px; border-radius: 50%;
+      border: 1px solid rgba(201,162,39,0.05);
+    }
+    .hero-emblem img {
+      width: 66px; height: 66px; border-radius: 50%; object-fit: cover;
+      filter: drop-shadow(0 0 12px rgba(201,162,39,0.3));
+    }
+    @keyframes pulse-ring {
+      0%,100% { box-shadow: 0 0 0 0 rgba(201,162,39,0); }
+      50% { box-shadow: 0 0 0 12px rgba(201,162,39,0.06); }
+    }
+
+    .hero-eyebrow {
+      font-size: .52rem; letter-spacing: 6px; text-transform: uppercase;
+      color: var(--gold); opacity: .7; margin-bottom: 14px;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 8vw, 3.8rem);
+      font-weight: 300; letter-spacing: 4px; line-height: 1.1;
+      color: var(--white); margin-bottom: 10px;
+    }
+    .hero-title em { font-style: italic; color: var(--gold-lt); }
+    .hero-subtitle {
+      font-size: .65rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 28px;
+    }
+    .hero-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-weight: 300;
+      line-height: 1.8; letter-spacing: 0.5px;
+      color: rgba(245,240,232,0.65);
+      max-width: 480px; text-align: center;
+      margin-bottom: 36px;
+    }
+
+    /* ── PRICE BLOCK ── */
+    .price-block {
+      border: 1px solid var(--gold-dim);
+      border-radius: 3px;
+      padding: 28px 32px;
+      text-align: center;
+      background: var(--gold-faint);
+      position: relative; overflow: hidden;
+      margin-bottom: 12px; width: 100%;
+    }
+    .price-block::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,162,39,0.05) 0%, transparent 60%);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%,100% { opacity: 0; } 50% { opacity: 1; }
+    }
+    .price-label {
+      font-size: .5rem; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--gold); opacity: .6; display: block; margin-bottom: 6px;
+    }
+    .price-main {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem; font-weight: 600; color: var(--gold-lt);
+      line-height: 1; letter-spacing: 2px;
+    }
+    .price-period {
+      font-size: .6rem; letter-spacing: 3px; color: var(--muted);
+      display: block; margin-top: 4px; margin-bottom: 4px;
+    }
+    .price-equiv {
+      font-size: .58rem; letter-spacing: 2px; color: rgba(201,162,39,0.5);
+    }
+
+    /* ── CTA BUTTON ── */
+    .cta-btn {
+      display: block; width: 100%; padding: 18px 24px;
+      text-align: center; text-decoration: none;
+      background: linear-gradient(135deg, rgba(201,162,39,0.22), rgba(201,162,39,0.12));
+      border: 1px solid rgba(201,162,39,0.5);
+      border-radius: 2px; color: var(--gold-lt);
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: .62rem; letter-spacing: 5px; text-transform: uppercase;
+      transition: all .35s cubic-bezier(0.25,1,0.5,1);
+      position: relative; overflow: hidden;
+      cursor: pointer; margin-bottom: 8px;
+    }
+    .cta-btn::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(201,162,39,0.1), transparent);
+      animation: slide-shine 2.5s ease-in-out infinite;
+    }
+    @keyframes slide-shine {
+      0% { left: -100%; } 60%,100% { left: 100%; }
+    }
+    .cta-btn:hover {
+      background: linear-gradient(135deg, rgba(201,162,39,0.32), rgba(201,162,39,0.2));
+      border-color: rgba(201,162,39,0.75);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 36px rgba(201,162,39,0.15);
+    }
+    .cta-btn-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-weight: 400; letter-spacing: 2px;
+      color: var(--gold-lt); display: block; margin-top: 3px;
+    }
+    .cta-guarantee {
+      font-size: .52rem; letter-spacing: 3px; color: rgba(255,255,255,0.18);
+      text-align: center; margin-top: 6px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex; align-items: center; gap: 14px;
+      margin: 44px 0 36px;
+    }
+    .divider-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    }
+    .divider-symbol { font-size: .7rem; color: var(--gold); opacity: .4; letter-spacing: 6px; }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: .55rem; letter-spacing: 6px; text-transform: uppercase;
+      color: var(--gold); opacity: .55;
+      margin-bottom: 20px; display: block;
+    }
+
+    /* ── WHAT YOU GET ── */
+    .benefits-grid {
+      display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 36px;
+    }
+    .benefit-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 18px 20px;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 2px;
+      background: rgba(255,255,255,0.015);
+      transition: border-color .3s;
+    }
+    .benefit-item:hover { border-color: var(--gold-dim); }
+    .benefit-icon {
+      font-size: .85rem; color: var(--gold);
+      opacity: .7; flex-shrink: 0; margin-top: 2px;
+    }
+    .benefit-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-weight: 400; letter-spacing: 1px;
+      color: var(--white); margin-bottom: 4px;
+    }
+    .benefit-desc {
+      font-size: .63rem; letter-spacing: 1.5px; line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ── COMPARISON ── */
+    .compare-table {
+      width: 100%; border-collapse: collapse; margin-bottom: 36px;
+    }
+    .compare-table th {
+      font-size: .52rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--gold); opacity: .6; padding: 10px 14px;
+      border-bottom: 1px solid var(--gold-dim);
+      text-align: left; font-weight: 300;
+    }
+    .compare-table th:last-child { text-align: center; }
+    .compare-table td {
+      font-size: .65rem; letter-spacing: 1.5px;
+      color: var(--muted); padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      line-height: 1.6;
+    }
+    .compare-table td:last-child { text-align: center; }
+    .compare-table tr.highlight td {
+      color: var(--white); background: rgba(201,162,39,0.04);
+    }
+    .check { color: var(--gold); font-size: .9rem; }
+    .cross { color: rgba(255,255,255,0.2); font-size: .85rem; }
+
+    /* ── FOR WHO ── */
+    .for-who-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+    .for-who-list li {
+      display: flex; align-items: flex-start; gap: 14px;
+      font-size: .67rem; letter-spacing: 1.5px; line-height: 1.7;
+      color: rgba(245,240,232,0.6);
+    }
+    .for-who-list li::before {
+      content: '◈'; color: var(--gold); opacity: .6;
+      font-size: .65rem; flex-shrink: 0; margin-top: 2px;
+    }
+
+    /* ── URGENCY ── */
+    .urgency-bar {
+      border: 1px solid rgba(201,162,39,0.4);
+      border-radius: 2px;
+      padding: 18px 22px;
+      background: rgba(201,162,39,0.06);
+      text-align: center; margin-bottom: 28px;
+    }
+    .urgency-label {
+      font-size: .5rem; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 6px; display: block;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:.6;} 50%{opacity:1;} }
+    .urgency-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; letter-spacing: 1.5px; color: var(--white);
+    }
+    .urgency-sub {
+      font-size: .58rem; letter-spacing: 2px; color: var(--muted);
+      margin-top: 4px; display: block;
+    }
+
+    /* ── TESTIMONIAL ── */
+    .testimonial {
+      border-left: 2px solid var(--gold-dim);
+      padding: 16px 20px; margin-bottom: 36px;
+      background: rgba(255,255,255,0.02);
+    }
+    .testimonial-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-style: italic;
+      line-height: 1.8; color: rgba(245,240,232,0.6);
+      margin-bottom: 10px;
+    }
+    .testimonial-author {
+      font-size: .55rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); opacity: .5;
+    }
+
+    /* ── FAQ ── */
+    .faq-item {
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 18px 0;
+    }
+    .faq-q {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; letter-spacing: 1px; color: var(--white);
+      margin-bottom: 8px;
+    }
+    .faq-a {
+      font-size: .65rem; letter-spacing: 1.5px; line-height: 1.9;
+      color: var(--muted);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding-top: 48px;
+    }
+    footer p {
+      font-size: .55rem; letter-spacing: 3px; color: rgba(255,255,255,0.12);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { opacity: 0; animation: fadeUp .9s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .d1 { animation-delay: .1s; }
+    .d2 { animation-delay: .25s; }
+    .d3 { animation-delay: .4s; }
+    .d4 { animation-delay: .55s; }
+    .d5 { animation-delay: .7s; }
+  </style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="grid-overlay"></div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-emblem fade-up d1">
+      <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp"
+           alt="Akasha Hub"
+           onerror="this.style.display='none';this.parentNode.innerHTML+='<span style=\'font-size:1.8rem;color:var(--gold)\'>✦</span>'">
+    </div>
+    <p class="hero-eyebrow fade-up d1">Akasha Hub</p>
+    <h1 class="hero-title fade-up d2">Campo <em>Vivo</em></h1>
+    <p class="hero-subtitle fade-up d2">Transmissão Diária · Grupo Fechado</p>
+    <p class="hero-desc fade-up d3">
+      Todo dia uma transmissão completa entra no seu campo. Um artigo, uma reflexão, uma conexão que muda como você vê a realidade.
+    </p>
+
+    <!-- PRICE -->
+    <div class="price-block fade-up d3" style="max-width:320px;">
+      <span class="price-label">Acesso anual</span>
+      <div class="price-main">R$29<span style="font-size:1.6rem">,90</span></div>
+      <span class="price-period">por ano · menos de R$0,10 por dia</span>
+      <span class="price-equiv">≈ 3 xícaras de café no ano inteiro</span>
+    </div>
+
+    <a href="https://wa.me/5571983448621?text=Quero%20entrar%20no%20Campo%20Vivo%20%E2%9C%A6"
+       class="cta-btn fade-up d4" target="_blank" rel="noopener">
+      <span style="font-size:.52rem;letter-spacing:5px;text-transform:uppercase;color:rgba(201,162,39,0.6);">Entrar agora</span>
+      <span class="cta-btn-text">Quero meu acesso ao Campo Vivo ›</span>
+    </a>
+    <p class="cta-guarantee fade-up d4">Acesso imediato após confirmação · Grupo no WhatsApp</p>
+  </section>
+
+  <!-- DIVIDER -->
+  <div class="divider fade-up d5">
+    <div class="divider-line"></div>
+    <span class="divider-symbol">✦ ✦ ✦</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- URGENCY -->
+  <div class="urgency-bar fade-up">
+    <span class="urgency-label">✦ Fundadores</span>
+    <p class="urgency-text">Quem entrar nesta semana garante o preço de fundador</p>
+    <span class="urgency-sub">O preço pode subir a qualquer momento · R$29,90/ano só para os primeiros</span>
+  </div>
+
+  <!-- O QUE VOCÊ RECEBE -->
+  <span class="section-label">O que entra no Campo Vivo</span>
+  <div class="benefits-grid">
+    <div class="benefit-item">
+      <span class="benefit-icon">◈</span>
+      <div>
+        <div class="benefit-title">Transmissão diária completa</div>
+        <div class="benefit-desc">Um artigo ou reflexão profunda todos os dias — física quântica, consciência, civilizações antigas, psicologia profunda e tradições que o mundo esqueceu.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <span class="benefit-icon">✦</span>
+      <div>
+        <div class="benefit-title">Conexões que expandem a percepção</div>
+        <div class="benefit-desc">Cada mensagem conecta pontos que a maioria nunca conectou. Você sai enxergando a realidade de um ângulo diferente.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <span class="benefit-icon">◎</span>
+      <div>
+        <div class="benefit-title">Acesso a ofertas exclusivas</div>
+        <div class="benefit-desc">Membros do Campo Vivo têm acesso antecipado e condições especiais em todos os produtos e mentorias do Akasha Hub.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <span class="benefit-icon">⬡</span>
+      <div>
+        <div class="benefit-title">Campo compartilhado de expansão</div>
+        <div class="benefit-desc">Você não cresce sozinho. O grupo cria um campo coletivo — o que um membro desperta, reverbera em todos.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-symbol">✦</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- CAMPO LIVRE VS CAMPO VIVO -->
+  <span class="section-label">Campo Livre vs Campo Vivo</span>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>O que você acessa</th>
+        <th>Campo Livre<br><span style="font-size:.48rem;opacity:.5">Gratuito</span></th>
+        <th>Campo Vivo<br><span style="font-size:.48rem;opacity:.5">R$29,90/ano</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Fragmentos de consciência e conteúdo aberto</td>
+        <td class="check">✦</td>
+        <td class="check">✦</td>
+      </tr>
+      <tr class="highlight">
+        <td>Transmissão completa todos os dias</td>
+        <td class="cross">—</td>
+        <td class="check">✦</td>
+      </tr>
+      <tr class="highlight">
+        <td>Artigos e reflexões aprofundados</td>
+        <td class="cross">—</td>
+        <td class="check">✦</td>
+      </tr>
+      <tr class="highlight">
+        <td>Acesso antecipado a ofertas e produtos</td>
+        <td class="cross">—</td>
+        <td class="check">✦</td>
+      </tr>
+      <tr class="highlight">
+        <td>Campo coletivo de membros avançados</td>
+        <td class="cross">—</td>
+        <td class="check">✦</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- PARA QUEM É -->
+  <span class="section-label">Para quem é o Campo Vivo</span>
+  <ul class="for-who-list">
+    <li>Para quem sente que a maioria do conteúdo espiritual é raso — e busca profundidade real.</li>
+    <li>Para quem quer uma prática diária de expansão de consciência sem precisar de horas livres.</li>
+    <li>Para quem já percebeu que existem padrões na realidade que ninguém explica direito.</li>
+    <li>Para quem está cansado de buscar e quer finalmente encontrar um campo de referência confiável.</li>
+    <li>Para quem valoriza conhecimento de verdade e entende que R$29,90 é praticamente nada por isso.</li>
+  </ul>
+
+  <!-- TESTIMONIAL (placeholder) -->
+  <div class="testimonial">
+    <p class="testimonial-text">"Em uma semana dentro do campo já percebi coisas sobre minha mente que anos de busca não tinham revelado. É como se alguém finalmente tivesse dado nome ao que eu já sentia."</p>
+    <span class="testimonial-author">Membro fundador · Campo Vivo</span>
+  </div>
+
+  <!-- CTA FINAL -->
+  <div class="urgency-bar" style="margin-bottom:16px;">
+    <span class="urgency-label">✦ Acesso imediato</span>
+    <p class="urgency-text">R$29,90 · Ano inteiro · Cancele quando quiser</p>
+    <span class="urgency-sub">Você leva menos de 2 minutos para estar dentro do campo</span>
+  </div>
+
+  <a href="https://wa.me/5571983448621?text=Quero%20entrar%20no%20Campo%20Vivo%20%E2%9C%A6"
+     class="cta-btn" target="_blank" rel="noopener">
+    <span style="font-size:.52rem;letter-spacing:5px;text-transform:uppercase;color:rgba(201,162,39,0.6);">Entrar agora · R$29,90/ano</span>
+    <span class="cta-btn-text">Quero meu Campo Vivo ›</span>
+  </a>
+  <p class="cta-guarantee" style="margin-bottom:36px;">Fale no WhatsApp e receba o link do grupo em minutos</p>
+
+  <!-- DIVIDER -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-symbol">✦</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- FAQ -->
+  <span class="section-label">Perguntas frequentes</span>
+
+  <div class="faq-item">
+    <p class="faq-q">Como funciona o pagamento?</p>
+    <p class="faq-a">Você fala via WhatsApp, recebe as instruções de pagamento (Pix ou cartão) e o link do grupo é enviado em minutos após a confirmação.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">O que exatamente chega todo dia?</p>
+    <p class="faq-a">Uma transmissão completa: pode ser um artigo sobre física quântica aplicada, uma reflexão sobre psicologia profunda, uma conexão entre tradições antigas e a ciência moderna, ou um protocolo prático. Sempre denso, sempre relevante.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Posso cancelar a qualquer momento?</p>
+    <p class="faq-a">Sim. Basta falar no WhatsApp. Sem burocracia, sem letras miúdas.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Qual é a diferença para o Campo Livre (gratuito)?</p>
+    <p class="faq-a">O Campo Livre traz fragmentos e conteúdo aberto. O Campo Vivo é onde o conhecimento completo acontece — transmissão diária, profundidade total, e acesso privilegiado a tudo que o Akasha Hub produz.</p>
+  </div>
+
+  <footer>
+    <div class="divider" style="margin-top:48px;">
+      <div class="divider-line"></div>
+      <span class="divider-symbol" style="font-size:.6rem">✦</span>
+      <div class="divider-line"></div>
+    </div>
+    <p>© 2026 Akasha Hub · Campo Vivo · Todos os direitos reservados</p>
+    <p style="margin-top:6px;">akashahub.com.br</p>
+  </footer>
+
+</div>
+</body>
+      </html>
