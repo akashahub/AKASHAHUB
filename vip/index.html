@@ -1,1789 +1,929 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AKASHA | Portal de Experiência</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500;700&family=Raleway:wght@200;400;600&display=swap" rel="stylesheet">
-
-    <style>
-        /* ════════════════════════════════════════════════════
-           NÚCLEO FUNDAMENTAL
-        ════════════════════════════════════════════════════ */
-        :root {
-            --void: #000000;
-            --petrol: #0a1f2e;
-            --gold: #d4af37;
-            --gold-dim: rgba(212, 175, 55, 0.15);
-            --ethereal: #1a3d5c;
-            --text: #e8e8e8;
-            --text-dim: #8a8a8a;
-            
-            --font-serif: 'Cormorant Garamond', serif;
-            --font-sans: 'Raleway', sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        ::selection {
-            background: var(--gold-dim);
-            color: var(--gold);
-        }
-
-        body {
-            background: var(--void);
-            color: var(--text);
-            font-family: var(--font-sans);
-            overflow-x: hidden;
-            cursor: none;
-            position: relative;
-        }
-
-        body.no-cursor {
-            cursor: default;
-        }
-
-        a, button {
-            text-decoration: none;
-            color: inherit;
-            border: none;
-            background: none;
-            outline: none;
-            cursor: none;
-            font-family: inherit;
-        }
-
-        /* ═══════════════════════════════════════════════════
-           🎯 LOGO NO CANTO INFERIOR ESQUERDO
-        ════════════════════════════════════════════════════ */
-        .logo-footer {
-            position: fixed;
-            bottom: clamp(30px, 6vw, 50px);
-            left: clamp(30px, 6vw, 50px);
-            z-index: 10000;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .logo-footer a {
-            display: block;
-            width: clamp(120px, 20vw, 200px);
-            height: auto;
-            position: relative;
-            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
-            transition: all 0.6s cubic-bezier(0.76, 0, 0.24, 1);
-        }
-
-        .logo-footer a::before {
-            content: '';
-            position: absolute;
-            inset: -15px;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            transition: all 0.6s cubic-bezier(0.76, 0, 0.24, 1);
-        }
-
-        .logo-footer a:hover {
-            transform: translateY(-8px) scale(1.05);
-            filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.6))
-                    drop-shadow(0 10px 30px rgba(212, 175, 55, 0.2));
-        }
-
-        .logo-footer a:hover::before {
-            border-color: var(--gold-dim);
-            transform: rotate(180deg);
-        }
-
-        .logo-footer a:active {
-            transform: translateY(-4px) scale(1.02);
-        }
-
-        .logo-footer img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: filter 0.4s;
-        }
-
-        .logo-footer a:hover img {
-            filter: brightness(1.2);
-        }
-
-        /* Partículas ao redor da logo */
-        .logo-particles {
-            position: absolute;
-            inset: -20px;
-            pointer-events: none;
-        }
-
-        .logo-particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: var(--gold);
-            border-radius: 50%;
-            opacity: 0;
-            animation: float-logo-particle 4s ease-in-out infinite;
-        }
-
-        @keyframes float-logo-particle {
-            0%, 100% {
-                transform: translate(0, 0);
-                opacity: 0;
-            }
-            25% {
-                opacity: 0.6;
-            }
-            75% {
-                opacity: 0.4;
-            }
-            100% {
-                transform: translate(var(--tx), var(--ty));
-                opacity: 0;
-            }
-        }
-
-        /* ═══════════════════════════════════════════════════
-           🎯 BOTÃO WHATSAPP FLUTUANTE
-        ════════════════════════════════════════════════════ */
-        .whatsapp-float {
-            position: fixed;
-            bottom: clamp(30px, 6vw, 50px);
-            right: clamp(30px, 6vw, 50px);
-            z-index: 10000;
-            opacity: 0;
-            transform: scale(0.8);
-        }
-
-        .whatsapp-btn {
-            position: relative;
-            width: clamp(60px, 12vw, 70px);
-            height: clamp(60px, 12vw, 70px);
-            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
-            transition: all 0.5s cubic-bezier(0.76, 0, 0.24, 1);
-            cursor: none;
-        }
-
-        .whatsapp-btn::before {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            background: linear-gradient(135deg, #25d366, #128c7e, #25d366);
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.5s;
-            z-index: -1;
-            animation: rotate-gradient 3s linear infinite;
-        }
-
-        @keyframes rotate-gradient {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .whatsapp-btn:hover {
-            transform: scale(1.15) rotate(15deg);
-            box-shadow: 0 12px 50px rgba(37, 211, 102, 0.7);
-        }
-
-        .whatsapp-btn:hover::before {
-            opacity: 1;
-        }
-
-        .whatsapp-btn:active {
-            transform: scale(1.05);
-        }
-
-        .whatsapp-btn svg {
-            width: 55%;
-            height: 55%;
-            fill: white;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-            transition: transform 0.4s;
-        }
-
-        .whatsapp-btn:hover svg {
-            transform: scale(1.1) rotate(-15deg);
-        }
-
-        /* Pulso animado */
-        .whatsapp-pulse {
-            position: absolute;
-            inset: -8px;
-            border: 2px solid #25d366;
-            border-radius: 50%;
-            animation: pulse-ring 2s cubic-bezier(0.76, 0, 0.24, 1) infinite;
-        }
-
-        @keyframes pulse-ring {
-            0% {
-                transform: scale(1);
-                opacity: 0.8;
-            }
-            100% {
-                transform: scale(1.4);
-                opacity: 0;
-            }
-        }
-
-        /* Tooltip */
-        .whatsapp-tooltip {
-            position: absolute;
-            right: calc(100% + 15px);
-            top: 50%;
-            transform: translateY(-50%) translateX(10px);
-            background: rgba(10, 31, 46, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--gold-dim);
-            padding: 12px 20px;
-            border-radius: 8px;
-            white-space: nowrap;
-            font-size: 0.85rem;
-            letter-spacing: 0.1em;
-            color: var(--gold);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.76, 0, 0.24, 1);
-        }
-
-        .whatsapp-tooltip::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%) rotate(45deg);
-            width: 12px;
-            height: 12px;
-            background: var(--petrol);
-            border-right: 1px solid var(--gold-dim);
-            border-bottom: 1px solid var(--gold-dim);
-        }
-
-        .whatsapp-btn:hover + .whatsapp-tooltip {
-            opacity: 1;
-            transform: translateY(-50%) translateX(0);
-        }
-
-        /* Mobile ajustes */
-        @media (max-width: 1024px) {
-            .whatsapp-tooltip {
-                display: none;
-            }
-            
-            .whatsapp-btn {
-                cursor: pointer;
-            }
-            
-            .logo-footer a {
-                cursor: pointer;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .logo-footer {
-                bottom: clamp(20px, 4vw, 30px);
-                left: clamp(20px, 4vw, 30px);
-            }
-            
-            .logo-footer a {
-                width: clamp(90px, 25vw, 140px);
-            }
-            
-            .whatsapp-float {
-                bottom: clamp(20px, 4vw, 30px);
-                right: clamp(20px, 4vw, 30px);
-            }
-        }
-
-        @media (max-width: 380px) {
-            .logo-footer {
-                bottom: 16px;
-                left: 16px;
-            }
-            
-            .logo-footer a {
-                width: 80px;
-            }
-            
-            .whatsapp-float {
-                bottom: 16px;
-                right: 16px;
-            }
-            
-            .whatsapp-btn {
-                width: 55px;
-                height: 55px;
-            }
-        }
-
-        /* ════════════════════════════════════════════════════
-           CURSOR PREMIUM (Desktop Only)
-        ════════════════════════════════════════════════════ */
-        .cursor {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            background: var(--gold);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 100000;
-            mix-blend-mode: difference;
-            transition: transform 0.15s ease;
-        }
-
-        .cursor-follower {
-            position: fixed;
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--gold);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 99999;
-            transition: all 0.3s cubic-bezier(0.75, 0, 0.27, 1);
-            opacity: 0.5;
-        }
-
-        body.hovering .cursor-follower {
-            width: 80px;
-            height: 80px;
-            opacity: 0.3;
-            border-color: var(--gold);
-        }
-
-        @media (max-width: 1024px) {
-            .cursor,
-            .cursor-follower {
-                display: none;
-            }
-            
-            body {
-                cursor: default;
-            }
-            
-            a, button {
-                cursor: pointer;
-            }
-        }
-
-        /* ════════════════════════════════════════════════════
-           WEBGL CANVAS (CAMPO AKÁSHICO)
-        ════════════════════════════════════════════════════ */
-        #akasha-field {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.7;
-        }
-
-        /* ════════════════════════════════════════════════════
-           TELA DE ENTRADA (O PORTAL)
-        ════════════════════════════════════════════════════ */
-        #portal-entrance {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            background: var(--void);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 1.5s cubic-bezier(0.76, 0, 0.24, 1);
-        }
-
-        #portal-entrance.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .portal-sigil {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 40px;
-            position: relative;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
-        }
-
-        .sigil-circle {
-            position: absolute;
-            border: 1px solid var(--gold);
-            border-radius: 50%;
-            animation: pulse-circle 3s ease-in-out infinite;
-        }
-
-        .sigil-circle:nth-child(1) {
-            width: 100%;
-            height: 100%;
-            animation-delay: 0s;
-        }
-
-        .sigil-circle:nth-child(2) {
-            width: 70%;
-            height: 70%;
-            top: 15%;
-            left: 15%;
-            animation-delay: 0.5s;
-        }
-
-        .sigil-circle:nth-child(3) {
-            width: 40%;
-            height: 40%;
-            top: 30%;
-            left: 30%;
-            animation-delay: 1s;
-        }
-
-        @keyframes pulse-circle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.1); }
-        }
-
-        .portal-title {
-            font-family: var(--font-serif);
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 300;
-            letter-spacing: 0.3em;
-            color: var(--gold);
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .portal-subtitle {
-            font-size: clamp(0.7rem, 2vw, 0.9rem);
-            letter-spacing: 0.2em;
-            color: var(--text-dim);
-            margin-bottom: 50px;
-            text-transform: uppercase;
-        }
-
-        .enter-portal {
-            font-family: var(--font-serif);
-            font-size: 1rem;
-            letter-spacing: 0.3em;
-            color: var(--text);
-            padding: 20px 50px;
-            border: 1px solid var(--gold-dim);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.76, 0, 0.24, 1);
-            text-transform: uppercase;
-        }
-
-        .enter-portal::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--gold);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
-            z-index: -1;
-        }
-
-        .enter-portal:hover {
-            color: var(--void);
-            border-color: var(--gold);
-        }
-
-        .enter-portal:hover::before {
-            transform: scaleX(1);
-        }
-
-        /* ════════════════════════════════════════════════════
-           NAVEGAÇÃO FLUTUANTE
-        ════════════════════════════════════════════════════ */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 30px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            mix-blend-mode: exclusion;
-        }
-
-        .logo {
-            font-family: var(--font-serif);
-            font-size: 1.5rem;
-            font-weight: 300;
-            letter-spacing: 0.4em;
-            color: var(--gold);
-        }
-
-        .sound-control {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.7rem;
-            letter-spacing: 0.3em;
-            color: var(--text-dim);
-            text-transform: uppercase;
-        }
-
-        .sound-visualizer {
-            display: flex;
-            gap: 3px;
-            height: 20px;
-            align-items: flex-end;
-        }
-
-        .sound-bar {
-            width: 2px;
-            background: var(--gold);
-            animation: none;
-        }
-
-        .sound-control.active .sound-bar {
-            animation: sound-pulse 0.6s ease-in-out infinite;
-        }
-
-        .sound-bar:nth-child(1) { animation-delay: 0s; }
-        .sound-bar:nth-child(2) { animation-delay: 0.15s; }
-        .sound-bar:nth-child(3) { animation-delay: 0.3s; }
-
-        @keyframes sound-pulse {
-            0%, 100% { height: 30%; }
-            50% { height: 100%; }
-        }
-
-        /* ════════════════════════════════════════════════════
-           SEÇÃO HERO (VOCÊ NÃO CHEGOU AQUI POR ACASO)
-        ════════════════════════════════════════════════════ */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-            padding: 100px 20px;
-        }
-
-        .hero-headline {
-            font-family: var(--font-serif);
-            font-size: clamp(2rem, 7vw, 5.5rem);
-            font-weight: 300;
-            line-height: 1.2;
-            color: var(--text);
-            margin-bottom: 30px;
-            opacity: 0;
-        }
-
-        .hero-headline .word {
-            display: inline-block;
-            overflow: hidden;
-        }
-
-        .hero-headline .char {
-            display: inline-block;
-            transform: translateY(120%);
-        }
-
-        .hero-subline {
-            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
-            font-weight: 200;
-            letter-spacing: 0.1em;
-            color: var(--text-dim);
-            max-width: 700px;
-            line-height: 1.8;
-            margin-bottom: 60px;
-            opacity: 0;
-        }
-
-        .hero-cta {
-            font-family: var(--font-serif);
-            font-size: clamp(0.8rem, 2vw, 1rem);
-            letter-spacing: 0.3em;
-            color: var(--gold);
-            padding: 18px 45px;
-            border: 1px solid var(--gold-dim);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.76, 0, 0.24, 1);
-            text-transform: uppercase;
-            opacity: 0;
-        }
-
-        .hero-cta::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at center, var(--gold-dim), transparent);
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
-        .hero-cta:hover::after {
-            opacity: 1;
-        }
-
-        /* ════════════════════════════════════════════════════
-           SEÇÃO: PALÁCIO DAS MEMÓRIAS
-        ════════════════════════════════════════════════════ */
-        .palace-section {
-            min-height: 100vh;
-            padding: 150px 20px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .section-marker {
-            font-size: 0.65rem;
-            letter-spacing: 0.4em;
-            color: var(--gold);
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            opacity: 0.7;
-        }
-
-        .section-title {
-            font-family: var(--font-serif);
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            font-weight: 300;
-            color: var(--text);
-            margin-bottom: 30px;
-            line-height: 1.2;
-        }
-
-        .section-desc {
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
-            font-weight: 200;
-            color: var(--text-dim);
-            max-width: 800px;
-            line-height: 1.8;
-            margin-bottom: 80px;
-        }
-
-        .palace-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .palace-door {
-            background: rgba(10, 31, 46, 0.3);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            padding: 50px 40px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.76, 0, 0.24, 1);
-            cursor: none;
-        }
-
-        .palace-door::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            opacity: 0;
-            transition: opacity 0.6s;
-        }
-
-        .palace-door:hover::before {
-            opacity: 1;
-        }
-
-        .palace-door:hover {
-            transform: translateY(-10px);
-            border-color: var(--gold-dim);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .door-number {
-            font-family: var(--font-serif);
-            font-size: 3rem;
-            color: var(--gold);
-            opacity: 0.3;
-            margin-bottom: 20px;
-        }
-
-        .door-title {
-            font-family: var(--font-serif);
-            font-size: 1.8rem;
-            color: var(--text);
-            margin-bottom: 15px;
-        }
-
-        .door-desc {
-            font-size: 0.95rem;
-            color: var(--text-dim);
-            line-height: 1.7;
-            margin-bottom: 30px;
-        }
-
-        .door-action {
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
-            color: var(--gold);
-            text-transform: uppercase;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transition: gap 0.3s;
-        }
-
-        .door-action:hover {
-            gap: 15px;
-        }
-
-        /* ════════════════════════════════════════════════════
-           SEÇÃO: ALQUIMIA & FASCINAÇÃO
-        ════════════════════════════════════════════════════ */
-        .alchemy-section {
-            min-height: 100vh;
-            padding: 150px 20px;
-            position: relative;
-            z-index: 10;
-            background: linear-gradient(180deg, transparent, rgba(10, 31, 46, 0.3), transparent);
-        }
-
-        .alchemy-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 100px;
-            align-items: center;
-        }
-
-        .alchemy-text h2 {
-            font-family: var(--font-serif);
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            font-weight: 300;
-            line-height: 1.3;
-            margin-bottom: 30px;
-        }
-
-        .alchemy-text p {
-            font-size: 1.1rem;
-            color: var(--text-dim);
-            line-height: 1.9;
-            margin-bottom: 20px;
-        }
-
-        .alchemy-visual {
-            position: relative;
-            height: 500px;
-        }
-
-        .magnetism-orb {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, var(--gold-dim), transparent);
-            animation: breathe 4s ease-in-out infinite;
-        }
-
-        @keyframes breathe {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; }
-        }
-
-        .magnetism-particles {
-            position: absolute;
-            inset: 0;
-        }
-
-        .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: var(--gold);
-            border-radius: 50%;
-            animation: float-particle 10s linear infinite;
-        }
-
-        @keyframes float-particle {
-            0% {
-                transform: translate(0, 0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--tx), var(--ty));
-                opacity: 0;
-            }
-        }
-
-        /* ════════════════════════════════════════════════════
-           SEÇÃO: AKASHA PRIME (ASSINATURA)
-        ════════════════════════════════════════════════════ */
-        .prime-section {
-            min-height: 100vh;
-            padding: 150px 20px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .prime-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .prime-badge {
-            display: inline-block;
-            font-size: 0.65rem;
-            letter-spacing: 0.4em;
-            color: var(--void);
-            background: var(--gold);
-            padding: 8px 20px;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-        }
-
-        .timeline-visual {
-            position: relative;
-            height: 200px;
-            margin: 80px 0;
-        }
-
-        .timeline-line {
-            position: absolute;
-            top: 50%;
-            left: 10%;
-            width: 80%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-        }
-
-        .timeline-node {
-            position: absolute;
-            top: 50%;
-            width: 12px;
-            height: 12px;
-            background: var(--gold);
-            border-radius: 50%;
-            transform: translateY(-50%);
-            animation: pulse-node 2s ease-in-out infinite;
-        }
-
-        .timeline-node:nth-child(1) { left: 10%; animation-delay: 0s; }
-        .timeline-node:nth-child(2) { left: 30%; animation-delay: 0.5s; }
-        .timeline-node:nth-child(3) { left: 50%; animation-delay: 1s; }
-        .timeline-node:nth-child(4) { left: 70%; animation-delay: 1.5s; }
-        .timeline-node:nth-child(5) { left: 90%; animation-delay: 2s; }
-
-        @keyframes pulse-node {
-            0%, 100% { box-shadow: 0 0 0 0 var(--gold); }
-            50% { box-shadow: 0 0 0 10px transparent; }
-        }
-
-        /* ════════════════════════════════════════════════════
-           SEÇÃO: REGRESSÃO (VIDAS PASSADAS)
-        ════════════════════════════════════════════════════ */
-        .regression-section {
-            min-height: 100vh;
-            padding: 150px 20px;
-            position: relative;
-            z-index: 10;
-            background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.8));
-        }
-
-        .regression-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .memory-layers {
-            position: relative;
-            height: 400px;
-            margin: 60px 0;
-        }
-
-        .memory-layer {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at center, var(--ethereal), transparent);
-            opacity: 0.1;
-            animation: fade-layer 6s ease-in-out infinite;
-        }
-
-        .memory-layer:nth-child(1) { animation-delay: 0s; }
-        .memory-layer:nth-child(2) { animation-delay: 2s; }
-        .memory-layer:nth-child(3) { animation-delay: 4s; }
-
-        @keyframes fade-layer {
-            0%, 100% { opacity: 0.05; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.1); }
-        }
-
-        /* ════════════════════════════════════════════════════
-           SEÇÃO: SESSÕES PERSONALIZADAS
-        ════════════════════════════════════════════════════ */
-        .sessions-section {
-            min-height: 100vh;
-            padding: 150px 20px;
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .sessions-lock {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 40px;
-            position: relative;
-        }
-
-        .lock-circle {
-            position: absolute;
-            inset: 0;
-            border: 1px solid var(--gold);
-            border-radius: 50%;
-            animation: rotate-lock 20s linear infinite;
-        }
-
-        @keyframes rotate-lock {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .sessions-cta {
-            font-family: var(--font-serif);
-            font-size: 1rem;
-            letter-spacing: 0.3em;
-            color: var(--text);
-            padding: 20px 50px;
-            border: 1px solid var(--gold);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.5s;
-            text-transform: uppercase;
-            animation: pulse-border 3s ease-in-out infinite;
-        }
-
-        @keyframes pulse-border {
-            0%, 100% { box-shadow: 0 0 0 0 var(--gold); }
-            50% { box-shadow: 0 0 0 8px transparent; }
-        }
-
-        /* ════════════════════════════════════════════════════
-           MODAL DE CAPTURA
-        ════════════════════════════════════════════════════ */
-        #activation-modal {
-            position: fixed;
-            inset: 0;
-            z-index: 20000;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(30px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.6s cubic-bezier(0.76, 0, 0.24, 1);
-        }
-
-        #activation-modal.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-inner {
-            background: var(--petrol);
-            border: 1px solid var(--gold);
-            padding: 60px 50px;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-            transform: translateY(100px);
-            transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
-        }
-
-        #activation-modal.active .modal-inner {
-            transform: translateY(0);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 1.5rem;
-            color: var(--text-dim);
-            transition: color 0.3s;
-        }
-
-        .modal-close:hover {
-            color: var(--gold);
-        }
-
-        .modal-title {
-            font-family: var(--font-serif);
-            font-size: 2rem;
-            color: var(--gold);
-            margin-bottom: 10px;
-        }
-
-        .modal-context {
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            margin-bottom: 40px;
-        }
-
-        .form-field {
-            margin-bottom: 25px;
-        }
-
-        .form-input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 15px 0;
-            color: var(--text);
-            font-size: 1rem;
-            font-family: var(--font-sans);
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .form-input:focus {
-            border-bottom-color: var(--gold);
-        }
-
-        .form-input::placeholder {
-            color: var(--text-dim);
-            font-size: 0.85rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        .modal-submit {
-            width: 100%;
-            background: var(--gold);
-            color: var(--void);
-            padding: 18px;
-            font-family: var(--font-serif);
-            font-size: 1rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            margin-top: 30px;
-            transition: all 0.3s;
-        }
-
-        .modal-submit:hover {
-            background: var(--text);
-        }
-
-        /* ════════════════════════════════════════════════════
-           RODAPÉ
-        ════════════════════════════════════════════════════ */
-        footer {
-            padding: 80px 20px;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-            z-index: 10;
-        }
-
-        .footer-text {
-            font-size: 0.7rem;
-            letter-spacing: 0.3em;
-            color: var(--text-dim);
-            text-transform: uppercase;
-        }
-
-        /* ════════════════════════════════════════════════════
-           RESPONSIVE
-        ════════════════════════════════════════════════════ */
-        @media (max-width: 1024px) {
-            nav {
-                padding: 20px 30px;
-            }
-
-            .alchemy-content {
-                grid-template-columns: 1fr;
-                gap: 60px;
-            }
-
-            .alchemy-visual {
-                height: 300px;
-            }
-
-            .magnetism-orb {
-                width: 200px;
-                height: 200px;
-            }
-
-            .palace-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            nav {
-                padding: 20px;
-            }
-
-            .logo {
-                font-size: 1.2rem;
-            }
-
-            .hero {
-                padding: 80px 20px;
-            }
-
-            .palace-section,
-            .alchemy-section,
-            .prime-section,
-            .regression-section,
-            .sessions-section {
-                padding: 100px 20px;
-            }
-
-            .modal-inner {
-                padding: 40px 30px;
-            }
-        }
-
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AKASHA | Sessão Presencial · Alinhamento Energético</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#000;
+  --deep:#050d14;
+  --petrol:#0a1f2e;
+  --petrol2:#0d2a3f;
+  --gold:#d4af37;
+  --gold2:#e8c84a;
+  --gold-dim:rgba(212,175,55,.12);
+  --gold-mid:rgba(212,175,55,.35);
+  --text:#ede8df;
+  --text2:#b0a898;
+  --text3:#6e6660;
+  --purple:#2d1b4e;
+  --violet:#7c3aed;
+  --teal:#0e4d5c;
+  --serif:'Cormorant Garamond',serif;
+  --cinzel:'Cinzel',serif;
+  --sans:'Raleway',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--text);font-family:var(--sans);overflow-x:hidden;cursor:default}
+::selection{background:var(--gold-dim);color:var(--gold)}
+a{text-decoration:none;color:inherit}
+button{border:none;background:none;font-family:inherit;cursor:pointer;outline:none}
+img{display:block}
+
+/* ══════════════ CANVAS FUNDO ══════════════ */
+#bg-canvas{position:fixed;inset:0;z-index:0;opacity:.75;pointer-events:none}
+
+/* ══════════════ NAV ══════════════ */
+nav{
+  position:fixed;top:0;left:0;width:100%;z-index:900;
+  padding:22px 48px;display:flex;justify-content:space-between;align-items:center;
+  background:linear-gradient(180deg,rgba(0,0,0,.7) 0%,transparent 100%);
+}
+.nav-logo{font-family:var(--cinzel);font-size:.85rem;letter-spacing:.45em;color:var(--gold);opacity:.9}
+.nav-cta{
+  font-family:var(--cinzel);font-size:.65rem;letter-spacing:.3em;color:var(--void);
+  background:var(--gold);padding:10px 22px;transition:all .3s;
+  border:1px solid var(--gold);
+}
+.nav-cta:hover{background:transparent;color:var(--gold)}
+@media(max-width:600px){nav{padding:18px 20px}.nav-cta{display:none}}
+
+/* ══════════════ HERO ══════════════ */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;text-align:center;
+  position:relative;z-index:10;padding:120px 24px 80px;
+}
+.hero-eyebrow{
+  font-family:var(--cinzel);font-size:.6rem;letter-spacing:.55em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:28px;opacity:.8;
+  animation:fadeUp .8s .2s both ease-out;
+}
+.hero-h1{
+  font-family:var(--serif);font-weight:300;font-style:italic;
+  font-size:clamp(2.6rem,7vw,6rem);line-height:1.1;color:var(--text);
+  margin-bottom:20px;animation:fadeUp .9s .35s both ease-out;
+}
+.hero-h1 em{font-style:normal;color:var(--gold)}
+.hero-sub{
+  font-size:clamp(.85rem,2vw,1.05rem);font-weight:200;letter-spacing:.08em;
+  color:var(--text2);max-width:580px;line-height:1.9;margin-bottom:48px;
+  animation:fadeUp .9s .5s both ease-out;
+}
+
+/* Urgência tag */
+.urgency-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(212,175,55,.08);border:1px solid var(--gold-mid);
+  padding:10px 24px;border-radius:2px;margin-bottom:40px;
+  animation:fadeUp .9s .6s both ease-out;
+}
+.urgency-dot{width:7px;height:7px;background:#e34a4a;border-radius:50%;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.urgency-text{font-family:var(--cinzel);font-size:.62rem;letter-spacing:.3em;color:var(--gold)}
+
+/* Price block */
+.price-block{
+  display:flex;align-items:flex-end;gap:16px;justify-content:center;
+  margin-bottom:36px;animation:fadeUp .9s .7s both ease-out;
+}
+.price-old{font-size:1.1rem;color:var(--text3);text-decoration:line-through;padding-bottom:4px}
+.price-new{font-family:var(--serif);font-size:clamp(3rem,7vw,4.5rem);color:var(--gold);line-height:1}
+.price-label{font-size:.75rem;color:var(--text2);letter-spacing:.1em;padding-bottom:8px}
+
+.hero-btn{
+  font-family:var(--cinzel);font-size:.72rem;letter-spacing:.35em;
+  color:var(--void);background:var(--gold);padding:18px 48px;
+  position:relative;overflow:hidden;transition:all .4s;border:1px solid var(--gold);
+  animation:fadeUp .9s .85s both ease-out;
+}
+.hero-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+  transform:translateX(-100%);transition:transform .6s;
+}
+.hero-btn:hover::before{transform:translateX(100%)}
+.hero-btn:hover{background:transparent;color:var(--gold)}
+.hero-scroll{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  font-size:.6rem;letter-spacing:.4em;color:var(--text3);text-transform:uppercase;
+  animation:fadeUp 1s 1.2s both ease-out;display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.scroll-line{width:1px;height:40px;background:linear-gradient(180deg,var(--gold-mid),transparent);animation:scrollPulse 2s infinite}
+@keyframes scrollPulse{0%{opacity:0;transform:scaleY(0);transform-origin:top}50%{opacity:1}100%{opacity:0;transform:scaleY(1);transform-origin:top}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════ SEÇÃO GERAL ══════════════ */
+.section{position:relative;z-index:10;padding:100px 24px}
+.section-inner{max-width:1100px;margin:0 auto}
+.label{font-family:var(--cinzel);font-size:.58rem;letter-spacing:.5em;color:var(--gold);margin-bottom:18px;opacity:.75}
+.section-h2{font-family:var(--serif);font-weight:300;font-size:clamp(2rem,5vw,3.4rem);line-height:1.2;margin-bottom:20px}
+.section-p{font-size:clamp(.9rem,2vw,1.05rem);font-weight:200;line-height:1.9;color:var(--text2);max-width:720px}
+.divider{width:60px;height:1px;background:var(--gold-mid);margin:40px 0}
+
+/* ══════════════ O QUE É A SESSÃO ══════════════ */
+.what-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:60px;
+}
+@media(max-width:768px){.what-grid{grid-template-columns:1fr}}
+.what-card{
+  background:rgba(10,31,46,.4);backdrop-filter:blur(12px);
+  border:1px solid rgba(212,175,55,.08);padding:44px 36px;
+  position:relative;overflow:hidden;transition:all .5s;
+}
+.what-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-mid),transparent);
+  opacity:0;transition:opacity .4s;
+}
+.what-card:hover{border-color:var(--gold-dim);transform:translateY(-4px)}
+.what-card:hover::after{opacity:1}
+.what-icon{font-size:2rem;margin-bottom:20px;opacity:.7}
+.what-title{font-family:var(--serif);font-size:1.5rem;margin-bottom:12px;color:var(--text)}
+.what-desc{font-size:.9rem;color:var(--text2);line-height:1.8;font-weight:200}
+
+/* ══════════════ COMO FUNCIONA ══════════════ */
+.steps-section{background:linear-gradient(180deg,transparent,rgba(13,42,63,.35),transparent)}
+.steps{display:flex;flex-direction:column;gap:0;margin-top:60px;position:relative}
+.steps::before{
+  content:'';position:absolute;left:23px;top:0;bottom:0;width:1px;
+  background:linear-gradient(180deg,transparent,var(--gold-mid),transparent);
+}
+.step{display:flex;gap:32px;padding:36px 0;position:relative}
+.step-num{
+  min-width:46px;height:46px;border:1px solid var(--gold-mid);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--cinzel);font-size:.75rem;color:var(--gold);
+  background:var(--deep);position:relative;z-index:1;flex-shrink:0;
+}
+.step-content h3{font-family:var(--serif);font-size:1.4rem;margin-bottom:8px}
+.step-content p{font-size:.9rem;color:var(--text2);line-height:1.8;font-weight:200}
+.step-content .step-tag{
+  display:inline-block;font-size:.58rem;letter-spacing:.3em;
+  background:var(--gold-dim);border:1px solid var(--gold-mid);
+  padding:4px 12px;color:var(--gold);margin-top:10px;
+}
+
+/* ══════════════ POSSIBILIDADES ══════════════ */
+.poss-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:1px;margin-top:60px;
+  border:1px solid rgba(212,175,55,.06);
+}
+.poss-item{
+  padding:36px 28px;background:rgba(5,13,20,.6);
+  border-right:1px solid rgba(212,175,55,.05);
+  border-bottom:1px solid rgba(212,175,55,.05);
+  transition:background .3s;
+}
+.poss-item:hover{background:rgba(10,31,46,.8)}
+.poss-glyph{font-size:1.6rem;margin-bottom:16px}
+.poss-title{font-family:var(--serif);font-size:1.2rem;margin-bottom:8px;color:var(--text)}
+.poss-text{font-size:.82rem;color:var(--text2);line-height:1.7;font-weight:200}
+.poss-badge{
+  display:inline-block;margin-top:12px;font-size:.55rem;letter-spacing:.3em;
+  background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);
+  padding:3px 10px;color:#b98af0;
+}
+
+/* ══════════════ QUIZ ══════════════ */
+#quiz-section{background:linear-gradient(180deg,transparent,rgba(45,27,78,.2),transparent)}
+.quiz-wrap{
+  max-width:680px;margin:60px auto 0;
+  background:rgba(10,31,46,.5);backdrop-filter:blur(20px);
+  border:1px solid var(--gold-mid);padding:60px 48px;position:relative;
+}
+@media(max-width:600px){.quiz-wrap{padding:40px 24px}}
+.quiz-wrap::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.quiz-progress{
+  display:flex;gap:6px;margin-bottom:40px;
+}
+.qp-dot{
+  flex:1;height:2px;background:rgba(212,175,55,.2);transition:background .4s;
+}
+.qp-dot.active{background:var(--gold)}
+.quiz-q-label{
+  font-family:var(--cinzel);font-size:.58rem;letter-spacing:.4em;color:var(--gold);
+  margin-bottom:16px;opacity:.7;
+}
+.quiz-q-text{
+  font-family:var(--serif);font-size:clamp(1.3rem,3.5vw,1.8rem);font-weight:300;
+  line-height:1.4;margin-bottom:36px;color:var(--text);
+}
+.quiz-options{display:flex;flex-direction:column;gap:12px}
+.quiz-opt{
+  text-align:left;padding:18px 24px;border:1px solid rgba(212,175,55,.15);
+  font-size:.9rem;font-weight:200;color:var(--text2);letter-spacing:.05em;
+  transition:all .3s;background:transparent;position:relative;overflow:hidden;
+  font-family:var(--sans);
+}
+.quiz-opt::before{
+  content:'';position:absolute;inset:0;background:var(--gold-dim);
+  transform:scaleX(0);transform-origin:left;transition:transform .4s;
+}
+.quiz-opt:hover{border-color:var(--gold-mid);color:var(--text)}
+.quiz-opt:hover::before{transform:scaleX(1)}
+.quiz-opt span{position:relative;z-index:1}
+
+/* Quiz resultado */
+#quiz-result{display:none}
+.quiz-result-title{
+  font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.4rem);
+  color:var(--gold);margin-bottom:16px;line-height:1.3;
+}
+.quiz-result-text{
+  font-size:.95rem;color:var(--text2);line-height:1.9;font-weight:200;margin-bottom:32px;
+}
+.quiz-cta{
+  display:block;width:100%;font-family:var(--cinzel);font-size:.72rem;letter-spacing:.35em;
+  color:var(--void);background:var(--gold);padding:20px;text-align:center;
+  transition:all .35s;border:1px solid var(--gold);margin-top:8px;
+}
+.quiz-cta:hover{background:transparent;color:var(--gold)}
+
+/* ══════════════ PLANOS ══════════════ */
+.plans-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:60px;
+}
+@media(max-width:680px){.plans-grid{grid-template-columns:1fr}}
+.plan-card{
+  border:1px solid rgba(212,175,55,.15);padding:48px 36px;
+  background:rgba(10,31,46,.35);backdrop-filter:blur(10px);
+  position:relative;transition:all .4s;
+}
+.plan-card.featured{
+  border-color:var(--gold-mid);
+  background:rgba(13,42,63,.55);
+}
+.plan-card.featured::before{
+  content:'MELHOR VALOR';
+  position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  font-family:var(--cinzel);font-size:.5rem;letter-spacing:.4em;
+  background:var(--gold);color:var(--void);padding:5px 18px;white-space:nowrap;
+}
+.plan-card:hover{transform:translateY(-6px);border-color:var(--gold-mid)}
+.plan-name{font-family:var(--cinzel);font-size:.7rem;letter-spacing:.35em;color:var(--gold);margin-bottom:20px}
+.plan-price{font-family:var(--serif);font-size:3rem;color:var(--text);line-height:1;margin-bottom:4px}
+.plan-per{font-size:.78rem;color:var(--text2);margin-bottom:28px;letter-spacing:.06em}
+.plan-divider{width:100%;height:1px;background:rgba(212,175,55,.12);margin:28px 0}
+.plan-feat{
+  list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:36px;
+}
+.plan-feat li{
+  display:flex;align-items:flex-start;gap:12px;font-size:.85rem;color:var(--text2);font-weight:200;line-height:1.6;
+}
+.plan-feat li::before{content:'✦';color:var(--gold);font-size:.7rem;flex-shrink:0;margin-top:2px}
+.plan-btn{
+  display:block;width:100%;text-align:center;
+  font-family:var(--cinzel);font-size:.65rem;letter-spacing:.3em;
+  padding:16px;border:1px solid var(--gold-mid);color:var(--gold);
+  transition:all .35s;
+}
+.plan-btn:hover,.plan-card.featured .plan-btn{
+  background:var(--gold);color:var(--void);border-color:var(--gold);
+}
+.plan-card.featured .plan-btn:hover{background:transparent;color:var(--gold)}
+.plan-note{
+  margin-top:18px;font-size:.75rem;color:var(--text3);text-align:center;line-height:1.6;
+}
+
+/* ══════════════ AGENDAMENTO / FOOTER ══════════════ */
+#agendar{background:linear-gradient(180deg,transparent,rgba(13,42,63,.5))}
+.booking-wrap{
+  max-width:640px;margin:0 auto;text-align:center;
+}
+.booking-steps{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;margin:48px 0;
+}
+.bs{
+  padding:28px 16px;background:rgba(10,31,46,.5);border:1px solid rgba(212,175,55,.1);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.bs-num{
+  font-family:var(--cinzel);font-size:.65rem;letter-spacing:.2em;color:var(--gold);
+  opacity:.7;
+}
+.bs-text{font-size:.8rem;color:var(--text2);font-weight:200;line-height:1.6;text-align:center}
+.bs-icon{font-size:1.4rem}
+.book-btn{
+  display:inline-block;font-family:var(--cinzel);font-size:.75rem;letter-spacing:.4em;
+  color:var(--void);background:var(--gold);padding:22px 56px;
+  position:relative;overflow:hidden;transition:all .4s;border:1px solid var(--gold);
+}
+.book-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+  transform:translateX(-100%);transition:transform .5s;
+}
+.book-btn:hover::before{transform:translateX(100%)}
+.book-btn:hover{background:transparent;color:var(--gold)}
+.book-note{
+  margin-top:20px;font-size:.78rem;color:var(--text3);line-height:1.7;
+}
+.book-note strong{color:var(--gold)}
+
+/* Location btn */
+.loc-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  margin-top:24px;font-size:.72rem;letter-spacing:.2em;color:var(--text2);
+  border-bottom:1px solid rgba(212,175,55,.2);padding-bottom:4px;transition:color .3s;
+}
+.loc-btn:hover{color:var(--gold)}
+
+/* ══════════════ FOOTER MINIMAL ══════════════ */
+footer{
+  position:relative;z-index:10;
+  padding:48px 24px;text-align:center;
+  border-top:1px solid rgba(212,175,55,.06);
+}
+.footer-logo{font-family:var(--cinzel);font-size:.9rem;letter-spacing:.5em;color:var(--gold);margin-bottom:12px;opacity:.7}
+.footer-text{font-size:.65rem;letter-spacing:.25em;color:var(--text3);text-transform:uppercase}
+
+/* ══════════════ WA FLOAT ══════════════ */
+.wa-float{
+  position:fixed;bottom:32px;right:32px;z-index:800;
+}
+.wa-btn{
+  width:62px;height:62px;background:linear-gradient(135deg,#25d366,#128c7e);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 24px rgba(37,211,102,.4);transition:all .35s;
+  position:relative;
+}
+.wa-btn:hover{transform:scale(1.12);box-shadow:0 10px 40px rgba(37,211,102,.6)}
+.wa-btn svg{width:54%;fill:white}
+.wa-ring{
+  position:absolute;inset:-7px;border:2px solid #25d366;border-radius:50%;
+  animation:waRing 2.4s cubic-bezier(.76,0,.24,1) infinite;
+}
+@keyframes waRing{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.45);opacity:0}}
+
+/* ══════════════ MODAL LOCALIZAÇÃO ══════════════ */
+#loc-modal{
+  position:fixed;inset:0;z-index:9000;
+  background:rgba(0,0,0,.9);backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .4s;
+}
+#loc-modal.open{opacity:1;pointer-events:auto}
+.loc-modal-inner{
+  background:var(--petrol);border:1px solid var(--gold-mid);
+  max-width:520px;width:92%;padding:48px 40px;position:relative;
+  transform:translateY(40px);transition:transform .45s cubic-bezier(.76,0,.24,1);
+}
+#loc-modal.open .loc-modal-inner{transform:translateY(0)}
+.loc-close{
+  position:absolute;top:18px;right:22px;font-size:1.6rem;color:var(--text3);
+  transition:color .2s;
+}
+.loc-close:hover{color:var(--gold)}
+.loc-modal-inner h3{
+  font-family:var(--serif);font-size:1.8rem;color:var(--gold);margin-bottom:8px;
+}
+.loc-modal-inner .loc-addr{
+  font-size:.82rem;color:var(--text2);line-height:1.7;margin-bottom:28px;font-weight:200;
+}
+.loc-map-frame{
+  width:100%;aspect-ratio:16/9;border:1px solid rgba(212,175,55,.15);
+  margin-bottom:24px;overflow:hidden;
+}
+.loc-map-frame iframe{width:100%;height:100%;border:0;filter:grayscale(.4) contrast(1.1)}
+.loc-modal-cta{
+  display:block;width:100%;text-align:center;
+  font-family:var(--cinzel);font-size:.65rem;letter-spacing:.3em;
+  background:var(--gold);color:var(--void);padding:16px;transition:all .3s;
+}
+.loc-modal-cta:hover{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+
+/* ══════════════ SCROLL REVEAL ══════════════ */
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.35s}
+
+@media(max-width:480px){
+  .what-grid,.steps{gap:0}
+  .plan-card{padding:36px 24px}
+  .quiz-wrap{padding:36px 20px}
+  .booking-steps{grid-template-columns:1fr}
+  .wa-float{bottom:20px;right:20px}
+}
+</style>
 </head>
-<body class="no-cursor">
+<body>
 
-    <!-- AUDIO AMBIENTE -->
-    <audio id="ambient-audio" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=ambient-piano-amp-strings-10711.mp3" type="audio/mp3">
-    </audio>
+<!-- BG WebGL -->
+<canvas id="bg-canvas"></canvas>
 
-    <!-- CURSOR CUSTOMIZADO -->
-    <div class="cursor"></div>
-    <div class="cursor-follower"></div>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">✦ AKASHA HUB</div>
+  <a href="https://wa.me/5571983448621?text=Olá!%20Quero%20agendar%20minha%20Sessão%20Presencial%20de%20Alinhamento%20Energético%20🌟" target="_blank" class="nav-cta">AGENDAR AGORA</a>
+</nav>
 
-    <!-- WEBGL CAMPO AKÁSHICO -->
-    <canvas id="akasha-field"></canvas>
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">✦ Agendamento Presencial · Salvador, BA ✦</p>
+  <h1 class="hero-h1">
+    Alinhamento Energético,<br><em>Magnetismo & Fascinação</em>
+  </h1>
+  <p class="hero-sub">
+    Uma hora sagrada onde seu corpo se regenera, sua energia se libera e você sai completamente diferente de como entrou.
+  </p>
 
-    <!-- ═══════════════════════════════════════════════════
-         🎯 LOGO NO CANTO INFERIOR ESQUERDO
-    ════════════════════════════════════════════════════ -->
-    <div class="logo-footer">
-        <a href="https://akashahub.com.br" aria-label="Voltar para AKASHA Hub">
-            <div class="logo-particles"></div>
-            <img 
-                src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_1_rnj2cs.png" 
-                alt="AKASHA Logo" 
-                loading="lazy"
-            >
-        </a>
+  <div class="urgency-tag">
+    <span class="urgency-dot"></span>
+    <span class="urgency-text">APENAS 9 VAGAS NESTE VALOR · ENCERRA EM BREVE</span>
+  </div>
+
+  <div class="price-block">
+    <span class="price-old">R$400</span>
+    <span class="price-new">R$200</span>
+    <span class="price-label">/ sessão<br>1 hora</span>
+  </div>
+
+  <a href="https://wa.me/5571983448621?text=Olá!%20Vi%20a%20oferta%20especial%20e%20quero%20garantir%20minha%20vaga%20na%20Sessão%20de%20Alinhamento%20Energético%20por%20R$200%20🌟" target="_blank" class="hero-btn">
+    GARANTIR MINHA VAGA
+  </a>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>DESCER</span>
+  </div>
+</section>
+
+<!-- O QUE É -->
+<section class="section">
+  <div class="section-inner">
+    <p class="label reveal">○ A EXPERIÊNCIA</p>
+    <h2 class="section-h2 reveal reveal-delay-1">Uma sessão. Uma transformação.<br>Um momento que você não esquece.</h2>
+    <p class="section-p reveal reveal-delay-2">
+      Combinamos Leitura Energética, Magnetismo, Fascinação, Alinhamento Akáshico e Constelação Familiar em <strong style="color:var(--text)">uma experiência única e personalizada</strong>. Frequências sonoras, toques de pressão em pontos específicos, campo harmônico. Tudo o que você precisa para o seu momento.
+    </p>
+    <div class="divider reveal reveal-delay-3"></div>
+
+    <div class="what-grid">
+      <div class="what-card reveal">
+        <div class="what-icon">◎</div>
+        <h3 class="what-title">Alinhamento do Campo</h3>
+        <p class="what-desc">Harmonização energética completa do seu campo áurico. Liberação de bloqueios que estão impedindo seu fluxo natural de abundância, saúde e conexão.</p>
+      </div>
+      <div class="what-card reveal reveal-delay-1">
+        <div class="what-icon">◈</div>
+        <h3 class="what-title">Alívio de Dores</h3>
+        <p class="what-desc">Toques de pressão em pontos específicos para aliviar tensões físicas, liberar padrões musculares presos e restaurar a comunicação entre corpo e mente.</p>
+      </div>
+      <div class="what-card reveal reveal-delay-2">
+        <div class="what-icon">✦</div>
+        <h3 class="what-title">Frequências & Som</h3>
+        <p class="what-desc">Música, sons e frequências cuidadosamente selecionadas que elevam seu estado interno, induzem coerência cardíaca e amplificam o processo de regeneração.</p>
+      </div>
+      <div class="what-card reveal reveal-delay-3">
+        <div class="what-icon">◬</div>
+        <h3 class="what-title">Magnetismo Pessoal</h3>
+        <p class="what-desc">Trabalho com fascinação e magnetismo como tecnologia — ativando camadas do seu campo que atraem, influenciam e criam presença magnética real.</p>
+      </div>
     </div>
+  </div>
+</section>
 
-    <!-- ═══════════════════════════════════════════════════
-         🎯 BOTÃO WHATSAPP FLUTUANTE
-    ════════════════════════════════════════════════════ -->
-    <div class="whatsapp-float">
-        <a href="https://wa.me/5571983448621?text=Olá%20AKASHA%20Hub!%20Gostaria%20de%20saber%20mais%20sobre%20o%20Portal%20de%20Experiência." 
-           class="whatsapp-btn" 
-           target="_blank" 
-           rel="noopener noreferrer"
-           aria-label="Conversar no WhatsApp">
-            <div class="whatsapp-pulse"></div>
-            <div class="whatsapp-pulse" style="animation-delay: 1s;"></div>
-            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 0C7.164 0 0 7.163 0 16c0 2.832.744 5.489 2.047 7.789L.703 30.5l6.834-1.793A15.89 15.89 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333c-2.456 0-4.808-.67-6.837-1.942l-.49-.291-5.078 1.332 1.354-4.942-.32-.508A13.228 13.228 0 012.667 16c0-7.364 5.969-13.333 13.333-13.333S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.292-9.958c-.4-.2-2.367-1.167-2.733-1.3-.367-.134-.633-.2-.9.2-.267.4-1.033 1.3-1.267 1.567-.233.266-.466.3-.866.1-.4-.2-1.688-.622-3.213-1.983-1.188-1.059-1.99-2.367-2.223-2.767-.233-.4-.025-.617.175-.817.18-.179.4-.467.6-.7.2-.234.267-.4.4-.667.133-.267.067-.5-.033-.7-.1-.2-.9-2.167-1.233-2.967-.325-.78-.655-.673-.9-.686-.233-.012-.5-.015-.767-.015-.267 0-.7.1-1.067.5-.367.4-1.4 1.367-1.4 3.333s1.433 3.867 1.633 4.134c.2.266 2.823 4.309 6.84 6.042.955.413 1.701.66 2.282.845.959.304 1.831.261 2.52.159.769-.115 2.367-.968 2.7-1.902.333-.934.333-1.734.233-1.902-.1-.167-.367-.267-.767-.467z"/>
-            </svg>
-        </a>
-        <div class="whatsapp-tooltip">Conversar no WhatsApp</div>
-    </div>
-
-    <!-- PORTAL DE ENTRADA -->
-    <div id="portal-entrance">
-        <div class="portal-sigil">
-            <div class="sigil-circle"></div>
-            <div class="sigil-circle"></div>
-            <div class="sigil-circle"></div>
+<!-- COMO FUNCIONA -->
+<section class="section steps-section">
+  <div class="section-inner">
+    <p class="label reveal">○ COMO FUNCIONA</p>
+    <h2 class="section-h2 reveal reveal-delay-1">Simples. Sagrado.<br>Sem complicação.</h2>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Você entra em contato</h3>
+          <p>Manda uma mensagem no WhatsApp. A gente escolhe juntos o melhor dia e horário pra você. Rápido e sem burocracia.</p>
+          <span class="step-tag">VIA WHATSAPP</span>
         </div>
-        <h1 class="portal-title">AKASHA</h1>
-        <p class="portal-subtitle">Portal de Experiência</p>
-        <button class="enter-portal" onclick="enterPortal()">
-            ACESSAR O CAMPO
-        </button>
-    </div>
-
-    <!-- MODAL DE ATIVAÇÃO -->
-    <div id="activation-modal">
-        <div class="modal-inner">
-            <button class="modal-close" onclick="closeModal()">×</button>
-            <h2 class="modal-title">ATIVAÇÃO</h2>
-            <p class="modal-context" id="modal-interest">Interesse Geral</p>
-            
-            <div class="form-field">
-                <input type="text" class="form-input" id="userName" placeholder="Nome Completo" required>
-            </div>
-            <div class="form-field">
-                <input type="email" class="form-input" id="userEmail" placeholder="E-mail Principal" required>
-            </div>
-            
-            <button class="modal-submit" onclick="submitActivation()">
-                INICIAR PROTOCOLO
-            </button>
+      </div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Confirma com metade do valor</h3>
+          <p>Assim que confirmar o horário, você paga <strong style="color:var(--text)">R$100 antecipado</strong> para garantir sua vaga. Os outros R$100 você paga depois da sessão.</p>
+          <span class="step-tag">PIX / TRANSFERÊNCIA</span>
         </div>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Chega e entrega</h3>
+          <p>Você chega no endereço em Stella Maris, Salvador. O ambiente já está preparado — música, cheiros, luz. Só chegar e entregar. A sessão dura 1 hora completa.</p>
+          <span class="step-tag">STELLA MARIS · SALVADOR</span>
+        </div>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Sai transformado(a)</h3>
+          <p>Você leva uma <strong style="color:var(--text)">apostila personalizada</strong> com leitura energética estratégica — para posicionamento, identidade e prosperidade na vida e no digital.</p>
+          <span class="step-tag">+ APOSTILA EXCLUSIVA</span>
+        </div>
+      </div>
     </div>
-
-    <!-- NAVEGAÇÃO -->
-    <nav>
-        <div class="logo">AKASHA HUB</div>
-        <button class="sound-control" onclick="toggleSound()">
-            <div class="sound-visualizer">
-                <div class="sound-bar"></div>
-                <div class="sound-bar"></div>
-                <div class="sound-bar"></div>
-            </div>
-            <span>CAMPO SONORO</span>
-        </button>
-    </nav>
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main>
-        
-        <!-- HERO: VOCÊ NÃO CHEGOU AQUI POR ACASO -->
-        <section class="hero">
-            <h1 class="hero-headline">
-                <span class="word">Você</span>
-                <span class="word">não</span>
-                <span class="word">chegou</span>
-                <span class="word">aqui</span>
-                <span class="word">por</span>
-                <span class="word">acaso.</span>
-            </h1>
-            <p class="hero-subline">
-                Alguns acessam conhecimento. Outros ativam poder.
-                Este é um portal para quem escolheu expandir.
-            </p>
-            <button class="hero-cta" onclick="openModal('Exploração Inicial')">
-                EXPLORAR O CAMPO
-            </button>
-        </section>
-
-        <!-- PALÁCIO DAS MEMÓRIAS -->
-        <section class="palace-section">
-            <div class="container" style="max-width: 1400px; margin: 0 auto;">
-                <p class="section-marker">Campo Terapêutico</p>
-                <h2 class="section-title">O Palácio das Memórias</h2>
-                <p class="section-desc">
-                    Não é apenas técnica de memorização. É abertura de campo mental terapêutico.
-                    Um espaço direcionado onde você acessa memórias, recursos internos e ativações específicas.
-                </p>
-
-                <div class="palace-grid">
-                    <div class="palace-door">
-                        <div class="door-number">01</div>
-                        <h3 class="door-title">Abertura de Campo</h3>
-                        <p class="door-desc">
-                            Primeira porta. Reconhecimento do espaço interno e ativação da percepção expandida.
-                        </p>
-                        <button class="door-action" onclick="openModal('Palácio - Abertura de Campo')">
-                            Abrir Portal <span>→</span>
-                        </button>
-                    </div>
-
-                    <div class="palace-door">
-                        <div class="door-number">02</div>
-                        <h3 class="door-title">Recursos Internos</h3>
-                        <p class="door-desc">
-                            Acesso profundo às suas memórias de excelência, poder e clareza.
-                        </p>
-                        <button class="door-action" onclick="openModal('Palácio - Recursos Internos')">
-                            Abrir Portal <span>→</span>
-                        </button>
-                    </div>
-
-                    <div class="palace-door">
-                        <div class="door-number">03</div>
-                        <h3 class="door-title">Ativações Específicas</h3>
-                        <p class="door-desc">
-                            Direcionamentos precisos para expansão de habilidades e percepções.
-                        </p>
-                        <button class="door-action" onclick="openModal('Palácio - Ativações Específicas')">
-                            Abrir Portal <span>→</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ALQUIMIA & FASCINAÇÃO -->
-        <section class="alchemy-section">
-            <div class="alchemy-content">
-                <div class="alchemy-text">
-                    <p class="section-marker">Presença Magnética</p>
-                    <h2>Alquimia, Fascinação & Magnetismo</h2>
-                    <p>
-                        Existe uma força invisível que atrai oportunidades, conexões e experiências.
-                        Não é sorte. É campo.
-                    </p>
-                    <p>
-                        Trabalhamos com magnetismo pessoal, presença ampliada e influência energética.
-                        Para quem entende que a realidade responde à vibração.
-                    </p>
-                    <button class="hero-cta" onclick="openModal('Alquimia & Magnetismo')" style="margin-top: 30px;">
-                        Ativar Magnetismo
-                    </button>
-                </div>
-
-                <div class="alchemy-visual">
-                    <div class="magnetism-orb"></div>
-                    <div class="magnetism-particles" id="particles-container"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- AKASHA PRIME -->
-        <section class="prime-section">
-            <div class="prime-container">
-                <span class="prime-badge">Campo Contínuo</span>
-                <h2 class="section-title">Akasha Prime</h2>
-                <p class="section-desc">
-                    Não é conteúdo. É campo contínuo. Acesso mensal a ativações, 
-                    direcionamentos, aprofundamentos e expansão progressiva.
-                </p>
-
-                <div class="timeline-visual">
-                    <div class="timeline-line"></div>
-                    <div class="timeline-node"></div>
-                    <div class="timeline-node"></div>
-                    <div class="timeline-node"></div>
-                    <div class="timeline-node"></div>
-                    <div class="timeline-node"></div>
-                </div>
-
-                <button class="hero-cta" onclick="openModal('Akasha Prime - Assinatura')">
-                    Acessar o Campo Contínuo
-                </button>
-            </div>
-        </section>
-
-        <!-- REGRESSÃO -->
-        <section class="regression-section">
-            <div class="regression-content">
-                <p class="section-marker">Memória Ancestral</p>
-                <h2 class="section-title">Akasha Regressão</h2>
-                <p class="section-desc">
-                    Vidas passadas não são crença. São camadas de memória.
-                    Acesse padrões, dons esquecidos e compreensões que transcendem esta existência.
-                </p>
-
-                <div class="memory-layers">
-                    <div class="memory-layer"></div>
-                    <div class="memory-layer"></div>
-                    <div class="memory-layer"></div>
-                </div>
-
-                <button class="hero-cta" onclick="openModal('Regressão - Vidas Passadas')">
-                    Acessar Memória Profunda
-                </button>
-            </div>
-        </section>
-
-        <!-- SESSÕES PERSONALIZADAS -->
-        <section class="sessions-section">
-            <div class="sessions-lock">
-                <div class="lock-circle"></div>
-            </div>
-            
-            <h2 class="section-title" style="margin-bottom: 20px;">
-                Algumas sessões não são para todos.
-            </h2>
-            
-            <p class="section-desc" style="margin-bottom: 50px;">
-                Seleção por ressonância. Agenda limitada. Experiência personalizada de alto valor.
-            </p>
-
-            <button class="sessions-cta" onclick="openModal('Sessão Personalizada - Seleção')">
-                SOLICITAR SELEÇÃO
-            </button>
-        </section>
-
-        <!-- RODAPÉ -->
-        <footer>
-            <p class="footer-text">AKASHA HUB © 2025 • TODOS OS DIREITOS RESERVADOS</p>
-        </footer>
-
-    </main>
-
-    <!-- SCRIPTS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
-
-    <script>
-        // ════════════════════════════════════════════════════
-        // SISTEMA DE CAPTURA DE LEADS
-        // ════════════════════════════════════════════════════
-        const modal = document.getElementById('activation-modal');
-        const modalInterest = document.getElementById('modal-interest');
-        let currentInterest = '';
-
-        function openModal(interest) {
-            currentInterest = interest;
-            modalInterest.textContent = `Interesse: ${interest}`;
-            modal.classList.add('active');
-        }
-
-        function closeModal() {
-            modal.classList.remove('active');
-        }
-
-        function submitActivation() {
-            const name = document.getElementById('userName').value;
-            const email = document.getElementById('userEmail').value;
-
-            if (!name || !email) {
-                gsap.to('.modal-inner', { x: 10, duration: 0.1, yoyo: true, repeat: 5 });
-                return;
-            }
-
-            const btn = document.querySelector('.modal-submit');
-            btn.textContent = "CONECTANDO...";
-
-            const phone = "5571983448621";
-            const message = `Olá Akasha Hub,%0A%0AMe chamo *${encodeURIComponent(name)}* (${encodeURIComponent(email)}).%0A%0ADesejo iniciar o protocolo referente a: *${encodeURIComponent(currentInterest)}*.`;
-
-            setTimeout(() => {
-                window.location.href = `https://wa.me/${phone}?text=${message}`;
-            }, 1000);
-        }
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
-
-        // ════════════════════════════════════════════════════
-        // ÁUDIO AMBIENTE
-        // ════════════════════════════════════════════════════
-        const audio = document.getElementById('ambient-audio');
-        let audioPlaying = false;
-
-        function enterPortal() {
-            audio.volume = 0;
-            audio.play();
-            gsap.to(audio, { volume: 0.3, duration: 2 });
-            audioPlaying = true;
-            document.querySelector('.sound-control').classList.add('active');
-
-            gsap.to('#portal-entrance', {
-                opacity: 0,
-                duration: 1.5,
-                ease: 'power3.inOut',
-                onComplete: () => {
-                    document.getElementById('portal-entrance').classList.add('hidden');
-                    animateHero();
-                    animateLogoAndWhatsapp();
-                }
-            });
-        }
-
-        function toggleSound() {
-            const control = document.querySelector('.sound-control');
-            
-            if (audioPlaying) {
-                gsap.to(audio, { 
-                    volume: 0, 
-                    duration: 0.5, 
-                    onComplete: () => audio.pause() 
-                });
-                control.classList.remove('active');
-            } else {
-                audio.play();
-                gsap.to(audio, { volume: 0.3, duration: 0.5 });
-                control.classList.add('active');
-            }
-            audioPlaying = !audioPlaying;
-        }
-
-        // ════════════════════════════════════════════════════
-        // 🎯 ANIMAÇÃO LOGO + WHATSAPP
-        // ════════════════════════════════════════════════════
-        function animateLogoAndWhatsapp() {
-            // Logo entrada
-            gsap.to('.logo-footer', {
-                opacity: 1,
-                y: 0,
-                duration: 1.2,
-                delay: 0.5,
-                ease: 'power3.out'
-            });
-
-            // WhatsApp entrada
-            gsap.to('.whatsapp-float', {
-                opacity: 1,
-                scale: 1,
-                duration: 1,
-                delay: 0.8,
-                ease: 'back.out(1.7)'
-            });
-
-            // Partículas da logo
-            createLogoParticles();
-        }
-
-        function createLogoParticles() {
-            const container = document.querySelector('.logo-particles');
-            for (let i = 0; i < 8; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'logo-particle';
-                
-                const angle = (Math.PI * 2 * i) / 8;
-                const distance = 60;
-                particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
-                particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
-                particle.style.animationDelay = (i * 0.5) + 's';
-                
-                container.appendChild(particle);
-            }
-        }
-
-        // ════════════════════════════════════════════════════
-        // SMOOTH SCROLL (LENIS)
-        // ════════════════════════════════════════════════════
-        const lenis = new Lenis({
-            duration: 1.4,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            smooth: true,
-            touchMultiplier: 2,
-        });
-
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-
-        // ════════════════════════════════════════════════════
-        // WEBGL CAMPO AKÁSHICO
-        // ════════════════════════════════════════════════════
-        const canvas = document.getElementById('akasha-field');
-        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-        const fragmentShader = `
-            uniform float uTime;
-            uniform vec2 uMouse;
-            uniform vec2 uResolution;
-
-            vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-
-            float snoise(vec2 v) {
-                const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-                vec2 i = floor(v + dot(v, C.yy));
-                vec2 x0 = v - i + dot(i, C.xx);
-                vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-                vec4 x12 = x0.xyxy + C.xxzz;
-                x12.xy -= i1;
-                i = mod(i, 289.0);
-                vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
-                vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-                m = m*m;
-                m = m*m;
-                vec3 x = 2.0 * fract(p * C.www) - 1.0;
-                vec3 h = abs(x) - 0.5;
-                vec3 ox = floor(x + 0.5);
-                vec3 a0 = x - ox;
-                m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
-                vec3 g;
-                g.x = a0.x * x0.x + h.x * x0.y;
-                g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-                return 130.0 * dot(m, g);
-            }
-
-            void main() {
-                vec2 st = gl_FragCoord.xy / uResolution.xy;
-                st.x *= uResolution.x / uResolution.y;
-
-                float mouseDist = distance(st, uMouse);
-                float mouseEffect = smoothstep(0.5, 0.0, mouseDist) * 0.4;
-
-                float noise1 = snoise(st * 2.0 + uTime * 0.08);
-                float noise2 = snoise(st * 4.0 - uTime * 0.12);
-
-                vec3 colorVoid = vec3(0.0, 0.0, 0.0);
-                vec3 colorPetrol = vec3(0.04, 0.12, 0.18);
-                vec3 colorGold = vec3(0.83, 0.69, 0.22);
-
-                float mixVal = smoothstep(-0.5, 0.5, noise1 + noise2 * 0.5);
-                
-                vec3 finalColor = mix(colorVoid, colorPetrol, mixVal * 0.2);
-                finalColor = mix(finalColor, colorGold, smoothstep(0.4, 0.9, mixVal) * 0.15);
-                finalColor += colorGold * mouseEffect * 0.2;
-
-                gl_FragColor = vec4(finalColor, 1.0);
-            }
-        `;
-
-        const uniforms = {
-            uTime: { value: 0 },
-            uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-            uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
-        };
-
-        const material = new THREE.ShaderMaterial({
-            vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position, 1.0); }`,
-            fragmentShader,
-            uniforms
-        });
-
-        scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
-
-        let targetMouse = new THREE.Vector2(0.5, 0.5);
-
-        function updateMouse(x, y) {
-            const normX = (x / window.innerWidth) * (window.innerWidth / window.innerHeight);
-            const normY = 1.0 - (y / window.innerHeight);
-            targetMouse.set(normX, normY);
-
-            if (window.innerWidth > 1024) {
-                gsap.to('.cursor', { x, y, duration: 0.1 });
-                gsap.to('.cursor-follower', { x, y, duration: 0.3 });
-            }
-        }
-
-        window.addEventListener('mousemove', (e) => updateMouse(e.clientX, e.clientY));
-        window.addEventListener('touchmove', (e) => {
-            const touch = e.touches[0];
-            updateMouse(touch.clientX, touch.clientY);
-        });
-
-        document.querySelectorAll('a, button').forEach(el => {
-            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-        });
-
-        function animate() {
-            uniforms.uTime.value += 0.005;
-            uniforms.uMouse.value.lerp(targetMouse, 0.05);
-            renderer.render(scene, camera);
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
-        });
-
-        // ════════════════════════════════════════════════════
-        // GSAP ANIMATIONS
-        // ════════════════════════════════════════════════════
-        gsap.registerPlugin(ScrollTrigger);
-
-        function animateHero() {
-            const headline = document.querySelector('.hero-headline');
-            const words = headline.querySelectorAll('.word');
-            
-            words.forEach(word => {
-                const chars = word.textContent.split('').map(c => 
-                    `<span class='char'>${c}</span>`
-                ).join('');
-                word.innerHTML = chars;
-            });
-
-            gsap.to('.char', {
-                y: 0,
-                opacity: 1,
-                duration: 0.8,
-                stagger: 0.02,
-                ease: 'power3.out'
-            });
-
-            gsap.to('.hero-subline', {
-                opacity: 1,
-                duration: 1,
-                delay: 0.8,
-                ease: 'power2.out'
-            });
-
-            gsap.to('.hero-cta', {
-                opacity: 1,
-                duration: 1,
-                delay: 1.2,
-                ease: 'power2.out'
-            });
-        }
-
-        gsap.utils.toArray('.palace-door').forEach((door, i) => {
-            gsap.from(door, {
-                scrollTrigger: {
-                    trigger: door,
-                    start: 'top 80%'
-                },
-                y: 60,
-                opacity: 0,
-                duration: 1,
-                delay: i * 0.15,
-                ease: 'power3.out'
-            });
-        });
-
-        const particlesContainer = document.getElementById('particles-container');
-        for (let i = 0; i < 20; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            
-            const angle = (Math.PI * 2 * i) / 20;
-            const distance = 150;
-            particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
-            particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
-            particle.style.left = '50%';
-            particle.style.top = '50%';
-            particle.style.animationDelay = (i * 0.5) + 's';
-            
-            particlesContainer.appendChild(particle);
-        }
-
-        if (window.innerWidth <= 1024) {
-            document.body.classList.add('no-cursor');
-        }
-
-    </script>
+  </div>
+</section>
+
+<!-- POSSIBILIDADES -->
+<section class="section">
+  <div class="section-inner">
+    <p class="label reveal">○ O QUE É POSSÍVEL ACESSAR</p>
+    <h2 class="section-h2 reveal reveal-delay-1">A sessão é um portal.<br>Cada pessoa acessa o que precisa.</h2>
+    <p class="section-p reveal reveal-delay-2">
+      O foco da primeira sessão é sempre <strong style="color:var(--text)">alinhamento geral, alívio das dores e harmonização do campo</strong>. Com o tempo e nas sessões seguintes, outras camadas se abrem naturalmente.
+    </p>
+
+    <div class="poss-grid reveal">
+      <div class="poss-item">
+        <div class="poss-glyph">🌿</div>
+        <h4 class="poss-title">Alívio de Dores</h4>
+        <p class="poss-text">Tensões físicas, musculares e energéticas liberadas com toques e magnetismo direcionado.</p>
+      </div>
+      <div class="poss-item">
+        <div class="poss-glyph">⚡</div>
+        <h4 class="poss-title">Revitalização Profunda</h4>
+        <p class="poss-text">Regeneração da energia vital. Você sai sentindo que dormiu 10 horas de sono de qualidade.</p>
+      </div>
+      <div class="poss-item">
+        <div class="poss-glyph">🌀</div>
+        <h4 class="poss-title">Liberação de Padrões</h4>
+        <p class="poss-text">Padrões negativos, crenças limitantes e bloqueios emocionais identificados e liberados no campo.</p>
+      </div>
+      <div class="poss-item">
+        <div class="poss-glyph">🧬</div>
+        <h4 class="poss-title">Memórias da Infância</h4>
+        <p class="poss-text">Acesso a memórias de origem para compreender padrões presentes e ressignificá-los.</p>
+        <span class="poss-badge">2ª SESSÃO EM DIANTE</span>
+      </div>
+      <div class="poss-item">
+        <div class="poss-glyph">📜</div>
+        <h4 class="poss-title">Registros Akáshicos</h4>
+        <p class="poss-text">Acesso a informações do campo e a memórias de vidas passadas para compreensão mais profunda da missão.</p>
+        <span class="poss-badge">2ª SESSÃO EM DIANTE</span>
+      </div>
+      <div class="poss-item">
+        <div class="poss-glyph">🌟</div>
+        <h4 class="poss-title">Constelação Familiar</h4>
+        <p class="poss-text">Ferramentas de constelação familiar e akáshica para resolver emaranhamentos e padrões de linhagem.</p>
+        <span class="poss-badge">2ª SESSÃO EM DIANTE</span>
+      </div>
+      <div class="poss-item">
+        <div class="poss-glyph">💎</div>
+        <h4 class="poss-title">Magnetismo & Fascinação</h4>
+        <p class="poss-text">Ativação do magnetismo pessoal — como tecnologia para atrair oportunidades, conexões e prosperidade.</p>
+      </div>
+      <div class="poss-item">
+        <div class="poss-glyph">🗺</div>
+        <h4 class="poss-title">Estratégia de Vida</h4>
+        <p class="poss-text">Leitura e estratégia para prosperidade na vida e no digital — com ou sem aparecer publicamente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section class="section" id="quiz-section">
+  <div class="section-inner" style="text-align:center">
+    <p class="label reveal" style="text-align:center">○ DESCUBRA SEU PERFIL</p>
+    <h2 class="section-h2 reveal reveal-delay-1" style="text-align:center;margin:0 auto 12px">Você sabe o que<br>está bloqueando você?</h2>
+    <p class="section-p reveal reveal-delay-2" style="margin:0 auto 0;text-align:center">
+      Responda 7 perguntas rápidas e descubra exatamente por onde começar sua transformação.
+    </p>
+
+    <div class="quiz-wrap reveal reveal-delay-3">
+      <!-- QUIZ ATIVO -->
+      <div id="quiz-active">
+        <div class="quiz-progress" id="quiz-progress">
+          <div class="qp-dot active"></div>
+          <div class="qp-dot"></div>
+          <div class="qp-dot"></div>
+          <div class="qp-dot"></div>
+          <div class="qp-dot"></div>
+          <div class="qp-dot"></div>
+          <div class="qp-dot"></div>
+        </div>
+        <p class="quiz-q-label" id="q-label">PERGUNTA 1 DE 7</p>
+        <p class="quiz-q-text" id="q-text">Como você tem se sentido no seu corpo nos últimos meses?</p>
+        <div class="quiz-options" id="q-options"></div>
+      </div>
+
+      <!-- RESULTADO -->
+      <div id="quiz-result">
+        <p class="quiz-q-label">SEU PERFIL ENERGÉTICO</p>
+        <h3 class="quiz-result-title" id="result-title"></h3>
+        <p class="quiz-result-text" id="result-text"></p>
+        <a href="#" id="result-cta" class="quiz-cta" target="_blank">
+          AGENDAR MINHA SESSÃO NO WHATSAPP ✦
+        </a>
+        <p style="font-size:.7rem;color:var(--text3);margin-top:16px;line-height:1.6">
+          Ao clicar, você será direcionado para o WhatsApp com seu perfil já preenchido 🌟
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section class="section" id="planos">
+  <div class="section-inner">
+    <p class="label reveal">○ INVESTIMENTO</p>
+    <h2 class="section-h2 reveal reveal-delay-1">Escolha como<br>você quer começar.</h2>
+    <p class="section-p reveal reveal-delay-2">
+      Cada sessão inclui uma apostila exclusiva com leitura energética estratégica para sua vida e seu digital.
+    </p>
+
+    <div class="plans-grid">
+      <div class="plan-card reveal">
+        <p class="plan-name">SESSÃO ÚNICA</p>
+        <div class="price-block" style="justify-content:flex-start;margin-bottom:0">
+          <span class="price-old" style="font-size:.9rem">R$400</span>
+        </div>
+        <div class="plan-price">R$200</div>
+        <p class="plan-per">por sessão · 1 hora · 9 vagas neste valor</p>
+        <div class="plan-divider"></div>
+        <ul class="plan-feat">
+          <li>1 hora de atendimento presencial completo</li>
+          <li>Alinhamento energético, magnetismo e fascinação</li>
+          <li>Alívio de dores com toques de pressão</li>
+          <li>Frequências sonoras e campo harmônico</li>
+          <li>Apostila exclusiva de leitura energética</li>
+          <li>R$100 antecipado + R$100 após a sessão</li>
+        </ul>
+        <a href="https://wa.me/5571983448621?text=Olá!%20Quero%20agendar%20uma%20Sessão%20Única%20de%20Alinhamento%20Energético%20por%20R$200%20🌟" target="_blank" class="plan-btn">AGENDAR SESSÃO ÚNICA</a>
+        <p class="plan-note">⚡ Apenas 9 vagas disponíveis neste valor</p>
+      </div>
+
+      <div class="plan-card featured reveal reveal-delay-2">
+        <p class="plan-name">PLANO 3 SESSÕES</p>
+        <div class="plan-price">R$450</div>
+        <p class="plan-per">3 sessões completas · maior aprofundamento</p>
+        <div class="plan-divider"></div>
+        <ul class="plan-feat">
+          <li>3 sessões de 1 hora cada (R$150/sessão)</li>
+          <li>Progressão: alinhamento → aprofundamento → ativação</li>
+          <li>3 apostilas exclusivas com conteúdo crescente</li>
+          <li>Acesso a camadas mais profundas a partir da 2ª sessão</li>
+          <li>Constelação familiar, registros akáshicos, memórias</li>
+          <li>Estratégia completa para vida e digital</li>
+          <li>Sem custos extras · tudo incluído</li>
+        </ul>
+        <a href="https://wa.me/5571983448621?text=Olá!%20Quero%20conhecer%20o%20Plano%20de%203%20Sessões%20por%20R$450%20🌟%20Pode%20me%20explicar%20como%20funciona?" target="_blank" class="plan-btn">QUERO AS 3 SESSÕES</a>
+        <p class="plan-note">✦ Cada sessão vem com apostila exclusiva de aprofundamento</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENDAMENTO -->
+<section class="section" id="agendar">
+  <div class="section-inner">
+    <div class="booking-wrap" style="text-align:center">
+      <p class="label reveal" style="text-align:center">○ AGENDAMENTO</p>
+      <h2 class="section-h2 reveal reveal-delay-1" style="text-align:center;margin:0 auto 16px">É mais simples<br>do que parece.</h2>
+      <p class="section-p reveal reveal-delay-2" style="text-align:center;margin:0 auto 0">
+        3 passos. Nenhuma burocracia. Só você e o processo.
+      </p>
+
+      <div class="booking-steps reveal reveal-delay-3">
+        <div class="bs">
+          <span class="bs-icon">💬</span>
+          <span class="bs-num">01</span>
+          <span class="bs-text">Manda mensagem no WhatsApp e escolhemos o horário</span>
+        </div>
+        <div class="bs">
+          <span class="bs-icon">💸</span>
+          <span class="bs-num">02</span>
+          <span class="bs-text">Confirma com R$100 antecipado via PIX</span>
+        </div>
+        <div class="bs">
+          <span class="bs-icon">✨</span>
+          <span class="bs-num">03</span>
+          <span class="bs-text">Chega, entrega e transforma. Os outros R$100 depois.</span>
+        </div>
+      </div>
+
+      <a href="https://wa.me/5571983448621?text=Olá!%20Quero%20agendar%20minha%20Sessão%20Presencial%20de%20Alinhamento%20Energético%20por%20R$200%20🌟%20Qual%20o%20próximo%20horário%20disponível?" target="_blank" class="book-btn reveal">
+        AGENDAR NO WHATSAPP
+      </a>
+      <p class="book-note reveal reveal-delay-1">
+        Disponível apenas em Salvador – BA &nbsp;·&nbsp; Stella Maris<br>
+        <strong>(71) 98344-8621</strong> &nbsp;·&nbsp; Atendimento em horários combinados
+      </p>
+
+      <button class="loc-btn reveal reveal-delay-2" onclick="document.getElementById('loc-modal').classList.add('open')">
+        <span>📍</span>
+        <span>VER LOCALIZAÇÃO NO MAPA</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">✦ AKASHA HUB ✦</div>
+  <p class="footer-text">akashahub.com.br · Salvador, BA · © 2026</p>
+</footer>
+
+<!-- WA FLOAT -->
+<div class="wa-float">
+  <a href="https://wa.me/5571983448621?text=Olá!%20Quero%20agendar%20minha%20sessão%20presencial%20🌟" target="_blank" class="wa-btn" aria-label="WhatsApp">
+    <div class="wa-ring"></div>
+    <svg viewBox="0 0 32 32"><path d="M16 0C7.164 0 0 7.163 0 16c0 2.832.744 5.489 2.047 7.789L.703 30.5l6.834-1.793A15.89 15.89 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm7.292 19.375c-.4-.2-2.367-1.167-2.733-1.3-.367-.134-.633-.2-.9.2-.267.4-1.033 1.3-1.267 1.567-.233.266-.466.3-.866.1-.4-.2-1.688-.622-3.213-1.983-1.188-1.059-1.99-2.367-2.223-2.767-.233-.4-.025-.617.175-.817.18-.179.4-.467.6-.7.2-.234.267-.4.4-.667.133-.267.067-.5-.033-.7-.1-.2-.9-2.167-1.233-2.967-.325-.78-.655-.673-.9-.686-.233-.012-.5-.015-.767-.015-.267 0-.7.1-1.067.5-.367.4-1.4 1.367-1.4 3.333s1.433 3.867 1.633 4.134c.2.266 2.823 4.309 6.84 6.042.955.413 1.701.66 2.282.845.959.304 1.831.261 2.52.159.769-.115 2.367-.968 2.7-1.902.333-.934.333-1.734.233-1.902-.1-.167-.367-.267-.767-.467z"/></svg>
+  </a>
+</div>
+
+<!-- MODAL LOCALIZAÇÃO -->
+<div id="loc-modal">
+  <div class="loc-modal-inner">
+    <button class="loc-close" onclick="document.getElementById('loc-modal').classList.remove('open')">×</button>
+    <h3>Onde nos encontrar</h3>
+    <p class="loc-addr">
+      📍 Stella Maris, Salvador – BA<br>
+      A poucos minutos das praias mais belas de Salvador.<br>
+      Ambiente privativo, tranquilo e seguro. Estacionamento disponível.
+    </p>
+    <div class="loc-map-frame">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.0!2d-38.3!3d-12.95!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDU3JzAyLjAiUyAzOMKwMTgnMDAuMCJX!5e0!3m2!1spt-BR!2sbr!4v1"
+        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+    <a href="https://maps.app.goo.gl/tHDxnKRWz1pSbKJQ7" target="_blank" class="loc-modal-cta">
+      ABRIR NO GOOGLE MAPS ↗
+    </a>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ══════════ BG SHADER ══════════ */
+(function(){
+  const canvas=document.getElementById('bg-canvas');
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+  renderer.setSize(innerWidth,innerHeight);
+  const scene=new THREE.Scene();
+  const cam=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+  const frag=`
+    uniform float t;uniform vec2 res;
+    vec3 perm(vec3 x){return mod(((x*34.)+1.)*x,289.);}
+    float sn(vec2 v){
+      const vec4 C=vec4(.211324865,.366025403,-.577350269,.024390243);
+      vec2 i=floor(v+dot(v,C.yy)),x0=v-i+dot(i,C.xx),i1=(x0.x>x0.y)?vec2(1,0):vec2(0,1);
+      vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod(i,289.);
+      vec3 p=perm(perm(i.y+vec3(0,i1.y,1))+i.x+vec3(0,i1.x,1));
+      vec3 m=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);
+      m*=m;m*=m;
+      vec3 x=2.*fract(p*C.www)-1.,h=abs(x)-.5,ox=floor(x+.5),a0=x-ox;
+      m*=1.79284-.85373*(a0*a0+h*h);
+      return 130.*dot(m,vec3(a0.x*x0.x+h.x*x0.y,a0.yz*x12.xz+h.yz*x12.yw));
+    }
+    void main(){
+      vec2 st=gl_FragCoord.xy/res;
+      st.x*=res.x/res.y;
+      float n1=sn(st*2.+t*.06),n2=sn(st*5.-t*.1);
+      float m=smoothstep(-.5,.5,n1+n2*.4);
+      vec3 c=mix(vec3(0),vec3(.04,.12,.18),m*.18);
+      c=mix(c,vec3(.83,.69,.22),smoothstep(.45,.95,m)*.12);
+      gl_FragColor=vec4(c,1.);
+    }
+  `;
+  const uni={t:{value:0},res:{value:new THREE.Vector2(innerWidth,innerHeight)}};
+  const mat=new THREE.ShaderMaterial({
+    vertexShader:'varying vec2 v;void main(){v=uv;gl_Position=vec4(position,1.);}',
+    fragmentShader:frag,uniforms:uni
+  });
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat));
+  function loop(){uni.t.value+=.004;renderer.render(scene,cam);requestAnimationFrame(loop);}
+  loop();
+  window.addEventListener('resize',()=>{
+    renderer.setSize(innerWidth,innerHeight);
+    uni.res.value.set(innerWidth,innerHeight);
+  });
+})();
+
+/* ══════════ SCROLL REVEAL ══════════ */
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* ══════════ QUIZ ══════════ */
+const questions=[
+  {
+    q:"Como você tem se sentido no seu corpo nos últimos meses?",
+    opts:["Com dores, tensões ou desconforto frequente","Cansado(a) mesmo descansando","Desconectado(a) de mim mesmo(a)","Bem fisicamente, mas travado(a) energeticamente"]
+  },
+  {
+    q:"O que mais você sente que está bloqueado na sua vida agora?",
+    opts:["Minha saúde e minha energia vital","Minha prosperidade e abundância financeira","Meus relacionamentos e conexões","Meu propósito e direção de vida"]
+  },
+  {
+    q:"Quando você pensa em 'transformação', o que mais ressoa?",
+    opts:["Quero me sentir bem no meu corpo","Quero liberar o passado e padrões antigos","Quero ativar meu magnetismo e presença","Quero clareza sobre quem sou e pra onde vou"]
+  },
+  {
+    q:"Como você se relaciona com sua história de vida?",
+    opts:["Sinto muito peso de experiências difíceis","Vejo padrões que se repetem e quero entender","Tenho uma história rica que ainda não usei a favor","Carrego heranças familiares que me limitam"]
+  },
+  {
+    q:"O que mais te atrai na ideia de uma sessão como essa?",
+    opts:["O alívio físico e a regeneração do corpo","A conexão com algo maior e mais profundo","Ativar meu poder pessoal e magnetismo","Ter clareza estratégica para minha vida"]
+  },
+  {
+    q:"Você já tentou resolver esse bloqueio de outra forma?",
+    opts:["Sim, tentei mas sinto que falta algo mais profundo","Não sabia que existia algo como isso","Sim, e tenho curiosidade de experimentar esta abordagem","Não tentei ainda, mas sinto urgência agora"]
+  },
+  {
+    q:"O que você quer sentir ao sair da sessão?",
+    opts:["Leveza no corpo e alívio real das dores","Paz interior e clareza mental","Poder, presença e magnetismo ativado","Direção, propósito e energia renovada"]
+  }
+];
+
+const profiles=[
+  {
+    title:"Campo Físico-Vital · Você precisa regenerar",
+    text:"Seu campo energético está pedindo restauração profunda. O foco da sua primeira sessão será liberar tensões físicas, aliviar dores e restaurar seu fluxo vital. Quando o corpo está alinhado, tudo o mais flui com muito mais facilidade.",
+    msg:"Olá! Fiz o quiz e meu perfil é 'Campo Físico-Vital'. Quero agendar minha sessão de alinhamento e alívio de dores por R$200 🌟"
+  },
+  {
+    title:"Campo da Abundância · Você está pronto(a) para fluir",
+    text:"Padrões de escassez e limitação estão travando sua prosperidade. A sessão vai trabalhar especificamente as camadas do seu campo que bloqueiam o fluxo de abundância, recursos e oportunidades.",
+    msg:"Olá! Fiz o quiz e meu perfil é 'Campo da Abundância'. Quero agendar minha sessão de alinhamento energético por R$200 🌟"
+  },
+  {
+    title:"Campo Magnético · Hora de ativar seu poder",
+    text:"Você tem muito a oferecer ao mundo, mas ainda não ativou plenamente sua presença e magnetismo. A sessão vai trabalhar sua fascinação, sua influência energética e sua capacidade de atrair o que é seu.",
+    msg:"Olá! Fiz o quiz e meu perfil é 'Campo Magnético'. Quero agendar minha sessão de magnetismo e alinhamento por R$200 🌟"
+  },
+  {
+    title:"Campo Akáshico · Você está chamado(a) a um nível mais profundo",
+    text:"Sua busca por propósito e direção indica que está pronto(a) para acessar camadas mais profundas. A sessão vai combinar alinhamento geral com um primeiro acesso à sua missão e identidade mais verdadeira.",
+    msg:"Olá! Fiz o quiz e meu perfil é 'Campo Akáshico'. Quero agendar minha sessão de alinhamento e leitura energética por R$200 🌟"
+  }
+];
+
+let current=0;
+const answers=[];
+
+function renderQ(){
+  const q=questions[current];
+  document.getElementById('q-label').textContent=`PERGUNTA ${current+1} DE 7`;
+  document.getElementById('q-text').textContent=q.q;
+  const opts=document.getElementById('q-options');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='quiz-opt';
+    btn.innerHTML=`<span>${o}</span>`;
+    btn.addEventListener('click',()=>answer(i));
+    opts.appendChild(btn);
+  });
+  document.querySelectorAll('.qp-dot').forEach((d,i)=>{
+    d.classList.toggle('active',i<=current);
+  });
+}
+
+function answer(idx){
+  answers.push(idx);
+  if(current<questions.length-1){
+    current++;
+    renderQ();
+  } else {
+    showResult();
+  }
+}
+
+function showResult(){
+  const sum=answers.reduce((a,b)=>a+b,0);
+  const profileIdx=sum%profiles.length;
+  const p=profiles[profileIdx];
+  document.getElementById('result-title').textContent=p.title;
+  document.getElementById('result-text').textContent=p.text;
+  document.getElementById('result-cta').href=
+    `https://wa.me/5571983448621?text=${encodeURIComponent(p.msg)}`;
+  document.getElementById('quiz-active').style.display='none';
+  document.getElementById('quiz-result').style.display='block';
+}
+
+renderQ();
+
+/* Modal click outside */
+document.getElementById('loc-modal').addEventListener('click',function(e){
+  if(e.target===this)this.classList.remove('open');
+});
+</script>
 </body>
-</html>
+    </html>
