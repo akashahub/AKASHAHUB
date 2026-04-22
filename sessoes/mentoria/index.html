@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akasha Hub | Minha Mentoria</title>
+  <link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06050a; --gold: #c9a227; --gold-light: #f0d078;
+      --gold-border: rgba(201,162,39,.3); --white: #f5f0e8;
+      --muted: rgba(245,240,232,.35); --card: rgba(255,255,255,.025);
+      --green: rgba(74,222,128,.7); --green-bg: rgba(74,222,128,.07);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg); color: var(--white);
+      font-family: 'Josefin Sans', sans-serif; font-weight: 300;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; top: -10%; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 600px;
+      background: radial-gradient(ellipse, rgba(201,162,39,.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 32px; background: rgba(6,5,10,.9);
+      backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo img { width: 34px; height: 34px; border-radius: 50%; filter: drop-shadow(0 0 5px rgba(201,162,39,.3)); }
+    .nav-logo span { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; letter-spacing: 4px; color: var(--white); }
+    .nav-logo span b { color: var(--gold-light); font-weight: 400; }
+    .back { font-size: .55rem; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .3s; }
+    .back:hover { color: var(--gold); }
+
+    /* LOADING */
+    #ls {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; align-items: center; justify-content: center; z-index: 999; transition: opacity .5s;
+    }
+    #ls.hide { opacity: 0; pointer-events: none; }
+    #ls span { font-size: .58rem; letter-spacing: 6px; text-transform: uppercase; color: var(--gold); opacity: .5; animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity:.3; } 50% { opacity:.8; } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    /* MAIN — LIST VIEW */
+    #viewList {
+      max-width: 700px; margin: 0 auto;
+      padding: 110px 24px 80px;
+    }
+    .page-header { margin-bottom: 10px; animation: fadeUp .8s ease both; }
+    .page-sub { font-size: .55rem; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); opacity: .6; margin-bottom: 10px; }
+    h1 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 2rem; letter-spacing: 3px; }
+
+    /* Progress bar */
+    .progress-wrap { margin: 24px 0 32px; animation: fadeUp .6s .1s ease both; opacity: 0; }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: .52rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    .progress-bar {
+      height: 3px; background: rgba(255,255,255,.05); border-radius: 2px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 2px; transition: width .8s ease;
+    }
+
+    /* Section divider */
+    .sec-label {
+      font-size: .5rem; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--gold); opacity: .4; margin: 28px 0 12px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .sec-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-border), transparent); }
+
+    /* ENCOUNTER CARDS */
+    .encounter-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .enc-card {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px; border-radius: 2px;
+      background: var(--card); border: 1px solid rgba(255,255,255,.05);
+      cursor: pointer; transition: all .3s ease;
+      position: relative; overflow: hidden;
+    }
+    .enc-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--gold); transform: scaleY(0); transition: transform .35s; transform-origin: bottom;
+    }
+    .enc-card:hover { border-color: var(--gold-border); background: rgba(201,162,39,.04); transform: translateX(3px); }
+    .enc-card:hover::before { transform: scaleY(1); }
+    .enc-card.done { border-color: rgba(74,222,128,.1); background: rgba(74,222,128,.025); }
+    .enc-card.pending { opacity: .5; }
+
+    .enc-left { display: flex; align-items: center; gap: 16px; }
+    .enc-num {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid var(--gold-border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--gold-light); flex-shrink: 0;
+    }
+    .enc-card.done .enc-num { border-color: rgba(74,222,128,.3); color: var(--green); }
+    .enc-title { font-family: 'Cormorant Garamond', serif; font-size: 1rem; letter-spacing: 1.5px; }
+    .enc-meta { font-size: .52rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+    .enc-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .badge-done { font-size: .48rem; letter-spacing: 3px; text-transform: uppercase; color: var(--green); border: 1px solid rgba(74,222,128,.2); padding: 4px 10px; border-radius: 20px; }
+    .badge-sched { font-size: .48rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold-border); padding: 4px 10px; border-radius: 20px; }
+    .badge-pend { font-size: .48rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); border: 1px solid rgba(255,255,255,.08); padding: 4px 10px; border-radius: 20px; }
+
+    /* ═══════════════════════════════
+       DETAIL VIEW
+    ═══════════════════════════════ */
+    #viewDetail {
+      display: none; max-width: 680px; margin: 0 auto;
+      padding: 110px 24px 80px;
+    }
+    #viewDetail.show { display: block; }
+
+    .det-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .55rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--muted); cursor: pointer; background: none; border: none;
+      margin-bottom: 32px; transition: color .3s; padding: 0;
+    }
+    .det-back:hover { color: var(--gold); }
+
+    .det-header { margin-bottom: 36px; }
+    .det-num {
+      font-size: .5rem; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--gold); opacity: .6; margin-bottom: 8px;
+    }
+    .det-title { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 1.9rem; letter-spacing: 2px; margin-bottom: 8px; }
+    .det-date { font-size: .55rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+    .det-status-badge {
+      display: inline-block; font-size: .48rem; letter-spacing: 3px;
+      text-transform: uppercase; padding: 5px 12px; border-radius: 20px; margin-left: 12px;
+    }
+
+    /* Block sections */
+    .det-block { margin-bottom: 32px; }
+    .det-label {
+      font-size: .52rem; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--gold); opacity: .55; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .det-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-border), transparent); }
+
+    .mentor-notes {
+      background: linear-gradient(105deg, rgba(201,162,39,.05) 0%, transparent 70%);
+      border: 1px solid rgba(201,162,39,.15); border-radius: 2px;
+      padding: 20px 22px; font-size: .8rem; line-height: 1.85; color: var(--white); letter-spacing: .3px;
+    }
+    .mentor-notes.empty { color: var(--muted); font-style: italic; font-size: .75rem; }
+
+    /* Personal notes */
+    textarea.personal-notes {
+      width: 100%; background: rgba(255,255,255,.02);
+      border: 1px solid rgba(255,255,255,.07); border-radius: 2px;
+      padding: 18px 20px; color: var(--white);
+      font-family: 'Josefin Sans', sans-serif; font-weight: 300;
+      font-size: .8rem; line-height: 1.85; letter-spacing: .3px;
+      resize: vertical; min-height: 150px; outline: none;
+      transition: border-color .3s;
+    }
+    textarea.personal-notes:focus { border-color: var(--gold-border); }
+    .notes-actions { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+    .btn-save {
+      background: none; border: 1px solid var(--gold-border); border-radius: 2px;
+      padding: 10px 24px; color: var(--gold);
+      font-family: 'Josefin Sans', sans-serif; font-size: .55rem;
+      letter-spacing: 4px; text-transform: uppercase;
+      cursor: pointer; transition: all .3s;
+    }
+    .btn-save:hover { background: rgba(201,162,39,.08); }
+    .save-msg { font-size: .52rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+
+    /* VIDEO BLOCK */
+    .video-block {
+      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06);
+      border-radius: 2px; padding: 20px 22px;
+    }
+    .video-available { display: flex; flex-direction: column; gap: 14px; }
+    .video-info { display: flex; align-items: center; gap: 14px; }
+    .video-thumb {
+      width: 52px; height: 52px; border-radius: 2px;
+      background: rgba(201,162,39,.08); border: 1px solid var(--gold-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+    }
+    .video-name { font-size: .78rem; letter-spacing: 1px; margin-bottom: 4px; }
+    .video-dur { font-size: .55rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+    .video-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-video {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 2px;
+      font-family: 'Josefin Sans', sans-serif; font-size: .55rem;
+      letter-spacing: 4px; text-transform: uppercase;
+      cursor: pointer; transition: all .3s; text-decoration: none;
+      border: 1px solid;
+    }
+    .btn-dl   { border-color: var(--gold-border); color: var(--gold); background: none; }
+    .btn-dl:hover { background: rgba(201,162,39,.08); }
+    .btn-wa   { border-color: rgba(74,222,128,.25); color: var(--green); background: none; }
+    .btn-wa:hover { background: rgba(74,222,128,.06); }
+    .video-empty { font-size: .72rem; color: var(--muted); font-style: italic; }
+
+    /* PDF BLOCK */
+    .pdf-upload-area {
+      border: 1px dashed rgba(255,255,255,.1); border-radius: 2px;
+      padding: 20px; text-align: center; cursor: pointer;
+      transition: border-color .3s; margin-bottom: 12px;
+    }
+    .pdf-upload-area:hover { border-color: var(--gold-border); }
+    .pdf-upload-area input { display: none; }
+    .pdf-upload-hint { font-size: .62rem; color: var(--muted); letter-spacing: 2px; }
+    .pdf-upload-hint strong { color: var(--gold); }
+
+    .pdf-list { display: flex; flex-direction: column; gap: 7px; }
+    .pdf-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; background: rgba(255,255,255,.02);
+      border: 1px solid rgba(255,255,255,.05); border-radius: 2px;
+    }
+    .pdf-row-left .pdf-n { font-size: .72rem; letter-spacing: 1px; }
+    .pdf-row-left .pdf-s { font-size: .52rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+    .btn-pdf-dl {
+      font-size: .5rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); border: 1px solid var(--gold-border);
+      padding: 5px 14px; border-radius: 20px; text-decoration: none;
+      transition: all .3s; white-space: nowrap;
+    }
+    .btn-pdf-dl:hover { background: rgba(201,162,39,.08); }
+
+    .upload-progress {
+      height: 2px; background: rgba(255,255,255,.05); border-radius: 2px;
+      margin-top: 10px; overflow: hidden; display: none;
+    }
+    .upload-progress.active { display: block; }
+    .upload-bar { height: 100%; background: var(--gold); width: 0%; transition: width .3s; }
+    .upload-label { font-size: .52rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+<div id="ls"><span>Carregando…</span></div>
+
+<nav>
+  <a href="/dashboard/" class="nav-logo">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Logo">
+    <span>AK<b>A</b>SHA <b>HUB</b></span>
+  </a>
+  <a href="/sessoes/" class="back">← Sessões</a>
+</nav>
+
+<!-- ═══ LIST VIEW ═══ -->
+<div id="viewList">
+  <div class="page-header">
+    <p class="page-sub">Sessões Confidenciais</p>
+    <h1>Minha Mentoria</h1>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Progresso da Jornada</span>
+      <span id="progressText">0 / 26 realizados</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div id="encountersList">
+    <!-- cards injetados por JS -->
+  </div>
+</div>
+
+<!-- ═══ DETAIL VIEW ═══ -->
+<div id="viewDetail">
+  <button class="det-back" onclick="voltarLista()">← Voltar para todos os encontros</button>
+
+  <div class="det-header">
+    <div class="det-num" id="detNum">Encontro —</div>
+    <div class="det-title" id="detTitle">…</div>
+    <div>
+      <span class="det-date" id="detDate"></span>
+      <span class="det-status-badge" id="detBadge"></span>
+    </div>
+  </div>
+
+  <!-- Anotações do Mentor -->
+  <div class="det-block">
+    <div class="det-label">✦ Anotações do Encontro</div>
+    <div class="mentor-notes" id="mentorNotesBox">
+      <em>As anotações desta sessão aparecerão aqui após o encontro.</em>
+    </div>
+  </div>
+
+  <!-- Notas Pessoais -->
+  <div class="det-block">
+    <div class="det-label">Minhas Notas Pessoais</div>
+    <textarea class="personal-notes" id="personalNotes" placeholder="Escreva aqui seus insights, reflexões e anotações deste encontro…"></textarea>
+    <div class="notes-actions">
+      <button class="btn-save" onclick="salvarNotas()">Salvar notas</button>
+      <span class="save-msg" id="saveMsg"></span>
+    </div>
+  </div>
+
+  <!-- Gravação do Encontro -->
+  <div class="det-block">
+    <div class="det-label">Gravação do Encontro</div>
+    <div class="video-block" id="videoBlock">
+      <span class="video-empty">A gravação estará disponível após o encontro.</span>
+    </div>
+  </div>
+
+  <!-- PDFs do Encontro -->
+  <div class="det-block">
+    <div class="det-label">Arquivos & Apostilas</div>
+
+    <!-- Upload (máx 3) -->
+    <div class="pdf-upload-area" id="uploadArea" onclick="document.getElementById('pdfInput').click()">
+      <input type="file" id="pdfInput" accept=".pdf" multiple onchange="uploadPdfs(this.files)">
+      <div class="pdf-upload-hint">
+        <strong>Clique para subir um PDF</strong> — apostilas, exercícios ou anotações<br>
+        <span style="font-size:.5rem">Máximo 3 arquivos · PDF · até 30MB cada</span>
+      </div>
+    </div>
+    <div class="upload-progress" id="uploadProgress">
+      <div class="upload-bar" id="uploadBar"></div>
+    </div>
+    <div class="upload-label" id="uploadLabel"></div>
+
+    <div class="pdf-list" id="pdfList">
+      <!-- PDFs injetados por JS -->
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+  import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, collection, getDocs,
+    updateDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import {
+    getStorage, ref, uploadBytesResumable, getDownloadURL
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+    authDomain: "hub-akasha.firebaseapp.com",
+    projectId: "hub-akasha",
+    storageBucket: "hub-akasha.firebasestorage.app",
+    messagingSenderId: "370851875474",
+    appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+  });
+
+  const auth    = getAuth(app);
+  const db      = getFirestore(app);
+  const storage = getStorage(app);
+
+  let currentUser = null;
+  let encounters  = [];
+  let activeEnc   = null;  // dados do encontro aberto
+
+  // Títulos dos 26 encontros (ajuste conforme sua mentoria)
+  const TITULOS = [
+    "Abertura e Mapa Superficial",       // 1
+    "Mapa Familiar e Ancestral",          // 2
+    "Mapa Emocional e Padrões",           // 3
+    "Investigação Akáshica",              // 4
+    "Arquitetura de Identidade",          // 5
+    "Lançamento do Império Digital",      // 6
+    "Aprofundamento — Camada 1",          // 7
+    "Aprofundamento — Camada 2",          // 8
+    "Narrativa de Marca",                 // 9
+    "Identidade Visual",                  // 10
+    "Conteúdo Sem Aparecer",              // 11
+    "Funil de Vendas",                    // 12
+    "Campanha de Lançamento",             // 13
+    "Estratégia de Instagram",            // 14
+    "Criação de Conteúdo",                // 15
+    "Análise e Ajuste",                   // 16
+    "Primeira Venda",                     // 17
+    "Escala e Audiência",                 // 18
+    "Audiobook e Multimídia",             // 19
+    "Expansão de Plataformas",            // 20
+    "Internacionalização",                // 21
+    "Monetização Avançada",               // 22
+    "Clube de Leitores / Assinatura",     // 23
+    "Legado e Visão de Longo Prazo",      // 24
+    "Identidade Akáshica — Revisão",      // 25
+    "Encerramento e Próximos Passos",     // 26
+  ];
+
+  // ── Auth Guard ──────────────────────────────────────────────
+  onAuthStateChanged(auth, async user => {
+    if (!user) { window.location.href = '/login/'; return; }
+    currentUser = user;
+
+    const snapUser = await getDoc(doc(db, "users", user.uid));
+    const ud = snapUser.exists() ? snapUser.data() : {};
+    if (!ud.tem_mentoria) { window.location.href = '/sessoes/'; return; }
+
+    await carregarEncontros();
+    document.getElementById('ls').classList.add('hide');
+  });
+
+  // ── Carregar todos os encontros ─────────────────────────────
+  async function carregarEncontros() {
+    const col = collection(db, `mentorias/${currentUser.uid}/encontros`);
+    const snap = await getDocs(col);
+
+    const map = {};
+    snap.forEach(d => { map[parseInt(d.id)] = d.data(); });
+
+    // Montar array de 26 (ou criar vazios)
+    encounters = [];
+    const total = 26;
+    for (let i = 1; i <= total; i++) {
+      encounters.push(map[i] || {
+        numero: i, titulo: TITULOS[i-1] || `Encontro ${i}`,
+        status: 'pendente', anotacoes_mentor: '', notas_cliente: '',
+        video_url: '', video_nome: '', video_duracao: '', pdfs: []
+      });
+    }
+
+    renderLista();
+  }
+
+  // ── Renderizar lista de encontros ───────────────────────────
+  function renderLista() {
+    const realizados = encounters.filter(e => e.status === 'realizado').length;
+    document.getElementById('progressText').textContent = `${realizados} / 26 realizados`;
+    document.getElementById('progressFill').style.width = `${(realizados/26)*100}%`;
+
+    const container = document.getElementById('encountersList');
+    container.innerHTML = '';
+
+    const grupos = [
+      { label: 'Pilar 1 — Investigação de Essência', de: 1, ate: 4 },
+      { label: 'Pilar 2 — Arquitetura de Identidade', de: 5, ate: 6 },
+      { label: 'Pilar 3 — Império Digital', de: 7, ate: 26 },
+    ];
+
+    grupos.forEach(g => {
+      const sec = document.createElement('div');
+      sec.className = 'sec-label';
+      sec.textContent = g.label;
+      container.appendChild(sec);
+
+      const list = document.createElement('div');
+      list.className = 'encounter-list';
+
+      for (let i = g.de; i <= g.ate; i++) {
+        const enc = encounters[i-1];
+        const card = document.createElement('div');
+        card.className = `enc-card ${enc.status === 'realizado' ? 'done' : enc.status === 'agendado' ? '' : 'pending'}`;
+        card.onclick = () => abrirEncontro(i);
+
+        const badgeHtml =
+          enc.status === 'realizado' ? `<span class="badge-done">✓ Realizado</span>` :
+          enc.status === 'agendado'  ? `<span class="badge-sched">Agendado</span>` :
+          `<span class="badge-pend">Pendente</span>`;
+
+        const dateMeta = enc.data_realizado ? formatarData(enc.data_realizado) : '';
+
+        card.innerHTML = `
+          <div class="enc-left">
+            <div class="enc-num">${i}</div>
+            <div>
+              <div class="enc-title">${enc.titulo || TITULOS[i-1]}</div>
+              <div class="enc-meta">${dateMeta || 'Encontro ' + i}</div>
+            </div>
+          </div>
+          <div class="enc-right">
+            ${badgeHtml}
+            <span style="color:var(--gold);opacity:.5;font-size:.8rem">›</span>
+          </div>
+        `;
+        list.appendChild(card);
+      }
+      container.appendChild(list);
+    });
+  }
+
+  // ── Abrir detalhe de um encontro ────────────────────────────
+  async function abrirEncontro(num) {
+    // Buscar dados atualizados
+    const snap = await getDoc(doc(db, `mentorias/${currentUser.uid}/encontros/${num}`));
+    activeEnc = snap.exists() ? { ...snap.data(), numero: num } : {
+      numero: num, titulo: TITULOS[num-1], status: 'pendente',
+      anotacoes_mentor: '', notas_cliente: '', video_url: '',
+      video_nome: '', video_duracao: '', pdfs: []
+    };
+
+    // Preencher cabeçalho
+    document.getElementById('detNum').textContent = `Encontro ${num} de 26`;
+    document.getElementById('detTitle').textContent = activeEnc.titulo || TITULOS[num-1];
+    const dateEl = document.getElementById('detDate');
+    dateEl.textContent = activeEnc.data_realizado ? formatarData(activeEnc.data_realizado) : '';
+
+    const badge = document.getElementById('detBadge');
+    if (activeEnc.status === 'realizado') {
+      badge.textContent = '✓ Realizado';
+      badge.style.cssText = 'color:var(--green);border:1px solid rgba(74,222,128,.2);background:rgba(74,222,128,.05)';
+    } else if (activeEnc.status === 'agendado') {
+      badge.textContent = 'Agendado';
+      badge.style.cssText = 'color:var(--gold);border:1px solid var(--gold-border);background:transparent';
+    } else {
+      badge.textContent = '';
+    }
+
+    // Anotações do mentor
+    const mentorBox = document.getElementById('mentorNotesBox');
+    if (activeEnc.anotacoes_mentor) {
+      mentorBox.textContent = activeEnc.anotacoes_mentor;
+      mentorBox.classList.remove('empty');
+    } else {
+      mentorBox.innerHTML = '<em style="color:var(--muted)">As anotações desta sessão aparecerão aqui após o encontro.</em>';
+      mentorBox.classList.add('empty');
+    }
+
+    // Notas pessoais
+    document.getElementById('personalNotes').value = activeEnc.notas_cliente || '';
+    document.getElementById('saveMsg').textContent = '';
+
+    // Vídeo
+    renderVideo(activeEnc);
+
+    // PDFs
+    renderPdfs(activeEnc.pdfs || []);
+
+    // Mostrar detalhe, esconder lista
+    document.getElementById('viewList').style.display = 'none';
+    const det = document.getElementById('viewDetail');
+    det.classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Voltar à lista ──────────────────────────────────────────
+  window.voltarLista = function() {
+    document.getElementById('viewDetail').classList.remove('show');
+    document.getElementById('viewList').style.display = 'block';
+    activeEnc = null;
+    carregarEncontros();  // atualiza o progresso
+  };
+
+  // ── Salvar notas pessoais ────────────────────────────────────
+  window.salvarNotas = async function() {
+    if (!currentUser || !activeEnc) return;
+    const notas = document.getElementById('personalNotes').value;
+    const msg = document.getElementById('saveMsg');
+    msg.textContent = 'Salvando…';
+    try {
+      await setDoc(
+        doc(db, `mentorias/${currentUser.uid}/encontros/${activeEnc.numero}`),
+        { notas_cliente: notas, atualizado_em: serverTimestamp() },
+        { merge: true }
+      );
+      activeEnc.notas_cliente = notas;
+      msg.textContent = '✓ Salvo';
+      setTimeout(() => { msg.textContent = ''; }, 2500);
+    } catch (err) {
+      msg.textContent = '✗ Erro ao salvar';
+      console.error(err);
+    }
+  };
+
+  // Auto-save com debounce
+  let saveTimer;
+  document.getElementById('personalNotes').addEventListener('input', () => {
+    clearTimeout(saveTimer);
+    document.getElementById('saveMsg').textContent = '…';
+    saveTimer = setTimeout(() => window.salvarNotas(), 2000);
+  });
+
+  // ── Renderizar bloco de vídeo ────────────────────────────────
+  function renderVideo(enc) {
+    const block = document.getElementById('videoBlock');
+    if (!enc.video_url) {
+      block.innerHTML = '<span class="video-empty">A gravação estará disponível após o encontro.</span>';
+      return;
+    }
+    const dur = enc.video_duracao ? `<div class="video-dur">${enc.video_duracao}</div>` : '';
+    block.innerHTML = `
+      <div class="video-available">
+        <div class="video-info">
+          <div class="video-thumb">▶</div>
+          <div>
+            <div class="video-name">${enc.video_nome || 'Gravação do encontro'}</div>
+            ${dur}
+          </div>
+        </div>
+        <div class="video-actions">
+          <a href="${enc.video_url}" download="${enc.video_nome || 'encontro.mp4'}"
+             class="btn-video btn-dl">⬇ Baixar vídeo</a>
+          <button class="btn-video btn-wa" onclick="compartilharWhatsApp()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Compartilhar
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  window.compartilharWhatsApp = function() {
+    if (!activeEnc?.video_url) return;
+    const texto = encodeURIComponent(
+      `✦ Akasha Hub — Encontro ${activeEnc.numero}: ${activeEnc.titulo}\n\nGravação: ${activeEnc.video_url}`
+    );
+    window.open(`https://wa.me/?text=${texto}`, '_blank');
+  };
+
+  // ── Renderizar PDFs ──────────────────────────────────────────
+  function renderPdfs(pdfs) {
+    const list = document.getElementById('pdfList');
+    if (!pdfs || pdfs.length === 0) {
+      list.innerHTML = '';
+      return;
+    }
+    list.innerHTML = pdfs.map(pdf => `
+      <div class="pdf-row">
+        <div class="pdf-row-left">
+          <div class="pdf-n">📄 ${pdf.nome}</div>
+          <div class="pdf-s">${pdf.tamanho ? Math.round(pdf.tamanho/1024) + ' KB' : 'PDF'}</div>
+        </div>
+        <a href="${pdf.url}" target="_blank" download="${pdf.nome}" class="btn-pdf-dl">Baixar</a>
+      </div>
+    `).join('');
+
+    // Esconder área de upload se já tem 3 PDFs
+    document.getElementById('uploadArea').style.display = pdfs.length >= 3 ? 'none' : '';
+  }
+
+  // ── Upload de PDFs ───────────────────────────────────────────
+  window.uploadPdfs = async function(files) {
+    if (!currentUser || !activeEnc) return;
+
+    const pdfsExistentes = activeEnc.pdfs || [];
+    const slots = 3 - pdfsExistentes.length;
+    if (slots <= 0) { alert('Máximo de 3 PDFs por encontro atingido.'); return; }
+
+    const filesToUpload = Array.from(files).slice(0, slots);
+    const progress = document.getElementById('uploadProgress');
+    const bar = document.getElementById('uploadBar');
+    const label = document.getElementById('uploadLabel');
+
+    progress.classList.add('active');
+    const novos = [];
+
+    for (let idx = 0; idx < filesToUpload.length; idx++) {
+      const file = filesToUpload[idx];
+      if (file.size > 30 * 1024 * 1024) { alert(`${file.name} é maior que 30MB. Não enviado.`); continue; }
+
+      label.textContent = `Enviando ${file.name}…`;
+      const storPath = `mentorias/${currentUser.uid}/encontro-${activeEnc.numero}/${Date.now()}-${file.name}`;
+      const storRef = ref(storage, storPath);
+      const task = uploadBytesResumable(storRef, file);
+
+      await new Promise((resolve, reject) => {
+        task.on('state_changed',
+          snap => {
+            const pct = (snap.bytesTransferred / snap.totalBytes) * 100;
+            bar.style.width = `${pct}%`;
+          },
+          reject,
+          async () => {
+            const url = await getDownloadURL(task.snapshot.ref);
+            novos.push({ nome: file.name, url, tamanho: file.size, data: new Date().toISOString() });
+            resolve();
+          }
+        );
+      });
+    }
+
+    // Salvar URLs no Firestore
+    const todosPdfs = [...pdfsExistentes, ...novos];
+    await setDoc(
+      doc(db, `mentorias/${currentUser.uid}/encontros/${activeEnc.numero}`),
+      { pdfs: todosPdfs, atualizado_em: serverTimestamp() },
+      { merge: true }
+    );
+    activeEnc.pdfs = todosPdfs;
+
+    progress.classList.remove('active');
+    bar.style.width = '0%';
+    label.textContent = `✓ ${novos.length} arquivo${novos.length > 1 ? 's' : ''} enviado${novos.length > 1 ? 's' : ''}`;
+    setTimeout(() => { label.textContent = ''; }, 3000);
+    renderPdfs(todosPdfs);
+    document.getElementById('pdfInput').value = '';
+  };
+
+  // ── Helpers ──────────────────────────────────────────────────
+  function formatarData(ts) {
+    if (!ts) return '';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+  }
+
+</script>
+</body>
+</html>
