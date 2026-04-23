@@ -637,6 +637,45 @@
 
 
     /* ══════════════════════════════════════════════════════
+       INTRO SPLASH — aparece primeiro, antes do modal
+    ══════════════════════════════════════════════════════ */
+    .intro-splash {
+      position: fixed; inset: 0; z-index: 700;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+      pointer-events: none;
+      animation: splashExit 0.6s 1.1s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+    }
+    @keyframes splashExit {
+      0%   { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.04); }
+    }
+    .intro-splash-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      font-weight: 300; letter-spacing: 10px; text-transform: uppercase;
+      color: var(--gold);
+      animation: fadeUp .8s .15s ease both;
+    }
+    .intro-splash-line {
+      width: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      animation: lineGrow .7s .4s ease forwards;
+    }
+    @keyframes lineGrow { to { width: 220px; } }
+    .intro-splash-sub {
+      font-size: .42rem; letter-spacing: 7px; text-transform: uppercase;
+      color: var(--muted); opacity: 0;
+      animation: fadeIn .6s .65s ease forwards;
+    }
+    .intro-splash-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold); opacity: 0;
+      animation: fadeIn .5s .85s ease forwards, livePulse 1.5s .85s ease-in-out infinite;
+    }
+
+    /* ══════════════════════════════════════════════════════
        VIDEO MODAL — tela cheia com retenção psicológica
     ══════════════════════════════════════════════════════ */
     .vsl-vm-overlay {
@@ -644,19 +683,24 @@
       background: #000;
       display: flex; align-items: center; justify-content: center;
       opacity: 0; pointer-events: none;
-      transition: opacity .5s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity .7s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .vsl-vm-overlay.open {
       opacity: 1; pointer-events: all;
     }
 
-    /* Wrapper do vídeo modal — 100% viewport */
+    /* Wrapper do vídeo modal — 100% viewport com entrada cinematográfica */
     .vsl-vm-wrapper {
       position: relative;
       width: 100vw; height: 100vh;
       cursor: pointer;
       overflow: hidden;
       display: flex; align-items: center; justify-content: center;
+      transform: scale(1.05);
+      transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .vsl-vm-overlay.open .vsl-vm-wrapper {
+      transform: scale(1);
     }
 
     /* Vídeo modal — object-fit contain para ver tudo */
@@ -686,22 +730,54 @@
     /* Botão X de fechar */
     .vsl-vm-close {
       position: absolute; top: 22px; right: 24px; z-index: 10;
-      width: 48px; height: 48px;
+      width: 52px; height: 52px;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(6,5,10,0.75);
-      border: 1px solid rgba(201,162,39,0.4);
-      color: var(--white);
-      font-size: 1.4rem; line-height: 1;
+      background: rgba(6,5,10,0.8);
+      border: 1px solid rgba(201,162,39,0.5);
+      color: var(--gold-light);
+      font-size: 1.5rem; line-height: 1;
       cursor: pointer;
       transition: all .3s ease;
       font-family: 'Josefin Sans', sans-serif;
+      opacity: 0;
+      animation: none;
+    }
+    .vsl-vm-overlay.open .vsl-vm-close {
+      animation: fadeIn .5s 1.4s ease forwards;
     }
     .vsl-vm-close:hover {
-      background: rgba(201,162,39,0.2);
+      background: rgba(201,162,39,0.18);
       border-color: var(--gold);
-      color: var(--gold-light);
+      color: var(--white);
       transform: scale(1.08);
     }
+
+    /* Botão "continuar para o site" */
+    .vsl-vm-continue {
+      position: absolute; bottom: 80px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: .44rem; letter-spacing: 5px; text-transform: uppercase;
+      color: rgba(245,240,232,0.4);
+      background: none; border: none; cursor: pointer;
+      transition: color .3s ease;
+      opacity: 0;
+      animation: none;
+      white-space: nowrap;
+    }
+    .vsl-vm-overlay.open .vsl-vm-continue {
+      animation: fadeIn .5s 1.8s ease forwards;
+    }
+    .vsl-vm-continue:hover { color: var(--gold); }
+    .vsl-vm-continue::after {
+      content: '';
+      display: block; width: 20px; height: 1px;
+      background: currentColor; flex-shrink: 0;
+      transition: width .3s ease;
+    }
+    .vsl-vm-continue:hover::after { width: 32px; }
 
     /* Texto de retenção — pequeno, na base */
     .vsl-vm-retention {
@@ -978,6 +1054,14 @@
 <div class="bg-canvas"></div>
 <div class="particles" id="particles"></div>
 
+<!-- ══════════════ INTRO SPLASH (abre antes do modal) ══════════════ -->
+<div class="intro-splash" id="introSplash" aria-hidden="true">
+  <div class="intro-splash-logo">✦ Akasha Hub</div>
+  <div class="intro-splash-line"></div>
+  <div class="intro-splash-sub">Carregando experiência</div>
+  <div class="intro-splash-dot"></div>
+</div>
+
 <!-- ══════════════ VIDEO MODAL (tela cheia) ══════════════ -->
 <div class="vsl-vm-overlay" id="vslVmOverlay" role="dialog" aria-modal="true" aria-label="Vídeo em tela cheia">
   <!-- Gradiente topo para X ficar legível -->
@@ -1026,6 +1110,12 @@
       <div class="vsl-vm-progress-fill" id="vslVmProgressFill"></div>
     </div>
   </div><!-- /wrapper -->
+
+  <!-- Botão "continuar para o site" — abaixo do vídeo, fora do wrapper -->
+  <button class="vsl-vm-continue" onclick="closeVideoModal()" aria-label="Continuar para o site">
+    Continuar para o site
+  </button>
+
 </div>
 <!-- /VIDEO MODAL -->
 
@@ -1670,6 +1760,34 @@ document.querySelectorAll('.pilar-card, .camada-card, .encontro-card, .fase-row,
   el.style.transform = 'translateY(16px)';
   el.style.transition = 'opacity .7s ease, transform .7s ease';
   revealObserver.observe(el);
+});
+
+/* ══════════════════════════════════════════════════════
+   AUTO-ABERTURA DO MODAL NO CARREGAMENTO DA PÁGINA
+   
+   Sequência cinematográfica:
+   1. Splash (logo + linha) → 1.1s
+   2. Splash some → modal abre imediatamente (1.2s total)
+   3. Vídeo tenta tocar com som; fallback muted se bloqueado
+   4. X e "Continuar" aparecem com delay para forçar atenção
+══════════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  /* Abre o modal logo após o splash desaparecer */
+  setTimeout(() => {
+    vslVmOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    /* Tenta com som — browsers modernos podem bloquear sem interação do usuário */
+    vslModalVideo.muted = false;
+    const p = vslModalVideo.play();
+    if (p !== undefined) {
+      p.catch(() => {
+        /* Autoplay bloqueado → toca muted (mostrará botão de som) */
+        vslModalVideo.muted = true;
+        vslModalVideo.play().catch(() => {});
+      });
+    }
+  }, 1200); /* aguarda splash terminar */
 });
 
 
