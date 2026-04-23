@@ -52,29 +52,94 @@ input[type=text]::placeholder{color:var(--mu)}
 .dot.on{background:var(--acc);animation:pulse 2s infinite}
 .dot.err{background:var(--danger)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* VIDEO GRID */
 .vgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
 @media(max-width:520px){.vgrid{grid-template-columns:1fr}}
-.vwrap{position:relative;background:var(--sur);border:1px solid var(--bor);border-radius:14px;overflow:hidden;aspect-ratio:16/9}
+
+.vwrap{
+  position:relative;background:var(--sur);border:1px solid var(--bor);
+  border-radius:14px;overflow:hidden;aspect-ratio:16/9;
+  transition:border-color .2s;
+}
+.vwrap:hover .voverlay{opacity:1}
+.vwrap.fullscreen-active{
+  position:fixed;inset:0;z-index:9000;border-radius:0;
+  aspect-ratio:unset;border:none;background:#000;
+}
+.vwrap.fullscreen-active video{object-fit:contain}
+.vwrap.fullscreen-active .voverlay{border-radius:0}
+
 .vwrap video{width:100%;height:100%;object-fit:cover;display:block}
-.vlabel{position:absolute;bottom:9px;left:9px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);border-radius:5px;padding:3px 8px;font-size:11px;font-weight:500;color:#fff}
-.vph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mu);font-size:12px}
+
+/* Overlay de controles sobre o vídeo */
+.voverlay{
+  position:absolute;inset:0;opacity:0;transition:opacity .2s;
+  background:linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 50%);
+  display:flex;align-items:flex-end;justify-content:flex-end;
+  padding:10px;gap:7px;border-radius:14px;
+}
+.vbtn{
+  width:34px;height:34px;border-radius:8px;border:none;cursor:pointer;
+  background:rgba(255,255,255,.12);backdrop-filter:blur(8px);
+  color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;flex-shrink:0;
+}
+.vbtn:hover{background:rgba(255,255,255,.25);transform:scale(1.1)}
+.vbtn.pip-active{background:rgba(0,201,167,.3);border:1px solid rgba(0,201,167,.5)}
+.vbtn:disabled{opacity:.3;cursor:not-allowed}
+
+.vlabel{
+  position:absolute;bottom:10px;left:10px;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(6px);
+  border-radius:5px;padding:3px 8px;font-size:11px;font-weight:500;color:#fff;
+  pointer-events:none;
+}
+.vph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mu);font-size:12px;pointer-events:none}
 .vph .ic{font-size:28px;opacity:.4}.vph.hide{display:none}
+
+/* Fullscreen close btn (aparece dentro do vwrap fullscreen) */
+.fs-close{
+  display:none;position:absolute;top:16px;right:16px;z-index:9001;
+  width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(8px);
+  color:#fff;font-size:18px;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.vwrap.fullscreen-active .fs-close{display:flex}
+.fs-close:hover{background:rgba(0,0,0,.85)}
+
+/* PiP indicator badge */
+.pip-badge{
+  display:none;position:absolute;top:9px;left:9px;
+  background:rgba(0,201,167,.2);border:1px solid rgba(0,201,167,.4);
+  border-radius:5px;padding:2px 8px;font-size:10px;font-weight:600;
+  color:var(--acc);pointer-events:none;letter-spacing:.5px;
+}
+.pip-badge.show{display:block}
+
+/* CONTROLS BAR */
 .ctrls{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;padding:14px;background:var(--sur);border:1px solid var(--bor);border-radius:13px}
 .cb{width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:all .18s;background:var(--sur2);border:1px solid var(--bor)}
 .cb:hover{transform:scale(1.08)}
 .cb.off{background:rgba(255,75,110,.15);border-color:rgba(255,75,110,.3)}
 .cb.end{background:var(--danger);border:none;width:54px;height:54px;font-size:20px}
 .cb.end:hover{background:#ff2050}
+.cb:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
+
+/* Separator visual entre grupos de botões */
+.sep{width:1px;height:34px;background:var(--bor);align-self:center;flex-shrink:0}
+
 .share{margin-top:12px;padding:12px 14px;background:var(--sur);border:1px solid var(--bor);border-radius:11px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .sh-lbl{font-size:11px;color:var(--mu);font-weight:500;white-space:nowrap}
 .sh-link{flex:1;min-width:0;font-size:11px;color:var(--acc);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* Debug log */
-.dbg{margin-top:10px;padding:10px 12px;background:var(--sur);border:1px solid var(--bor);border-radius:9px;font-size:11px;color:var(--mu);max-height:120px;overflow-y:auto;line-height:1.8;font-family:monospace}
+/* Log */
+.dbg{margin-top:10px;padding:10px 12px;background:var(--sur);border:1px solid var(--bor);border-radius:9px;font-size:11px;color:var(--mu);max-height:110px;overflow-y:auto;line-height:1.8;font-family:monospace}
 .dbg .e{display:flex;gap:8px}.dbg .ok{color:var(--acc)}.dbg .er{color:var(--danger)}.dbg .t{opacity:.5;flex-shrink:0}
 
 /* Toast */
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(18px);background:var(--sur2);border:1px solid var(--bor);color:var(--tx);padding:9px 18px;border-radius:100px;font-size:12px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:1000;white-space:nowrap}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(18px);background:var(--sur2);border:1px solid var(--bor);color:var(--tx);padding:9px 18px;border-radius:100px;font-size:12px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:10000;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 footer{position:relative;z-index:5;text-align:center;padding:18px;font-size:11px;color:var(--mu);border-top:1px solid var(--bor)}
 footer a{color:var(--acc);text-decoration:none}
@@ -128,22 +193,44 @@ footer a{color:var(--acc);text-decoration:none}
     </div>
 
     <div class="vgrid">
-      <div class="vwrap">
+      <!-- LOCAL -->
+      <div class="vwrap" id="localWrap">
         <video id="localVid" autoplay muted playsinline></video>
         <div class="vph" id="localPh"><div class="ic">📷</div><span>Câmera local</span></div>
         <div class="vlabel">Você</div>
+        <div class="pip-badge" id="localPipBadge">PiP</div>
+        <div class="voverlay">
+          <button class="vbtn" id="localPipBtn" onclick="togglePip('local')" title="Picture-in-Picture">⧉</button>
+          <button class="vbtn" onclick="toggleFullscreen('local')" title="Tela cheia">⛶</button>
+        </div>
+        <button class="fs-close" onclick="exitFullscreen('local')" title="Sair da tela cheia">✕</button>
       </div>
-      <div class="vwrap">
+
+      <!-- REMOTE -->
+      <div class="vwrap" id="remoteWrap">
         <video id="remoteVid" autoplay playsinline></video>
         <div class="vph" id="remotePh"><div class="ic">⏳</div><span>Aguardando...</span></div>
         <div class="vlabel">Remoto</div>
+        <div class="pip-badge" id="remotePipBadge">PiP</div>
+        <div class="voverlay">
+          <button class="vbtn" id="remotePipBtn" onclick="togglePip('remote')" title="Picture-in-Picture">⧉</button>
+          <button class="vbtn" onclick="toggleFullscreen('remote')" title="Tela cheia">⛶</button>
+        </div>
+        <button class="fs-close" onclick="exitFullscreen('remote')" title="Sair da tela cheia">✕</button>
       </div>
     </div>
 
+    <!-- CONTROLS -->
     <div class="ctrls">
-      <button class="cb" id="micBtn" onclick="toggleMic()">🎙️</button>
-      <button class="cb" id="camBtn" onclick="toggleCam()">📷</button>
-      <button class="cb end" onclick="hangup()">📵</button>
+      <button class="cb" id="micBtn" onclick="toggleMic()" title="Microfone">🎙️</button>
+      <button class="cb" id="camBtn" onclick="toggleCam()" title="Câmera">📷</button>
+      <div class="sep"></div>
+      <!-- PiP do remoto na barra de controles (atalho rápido) -->
+      <button class="cb" id="pipBarBtn" onclick="togglePip('remote')" title="Picture-in-Picture (segundo plano)">⧉</button>
+      <!-- Tela cheia do remoto na barra de controles -->
+      <button class="cb" id="fsBarBtn" onclick="toggleFullscreen('remote')" title="Tela cheia (remoto)">⛶</button>
+      <div class="sep"></div>
+      <button class="cb end" onclick="hangup()" title="Encerrar">📵</button>
     </div>
 
     <div class="share">
@@ -161,7 +248,7 @@ footer a{color:var(--acc);text-decoration:none}
 <script type="module">
 import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, collection, setDoc, getDoc, updateDoc,
-         onSnapshot, addDoc, serverTimestamp }
+         onSnapshot, addDoc, getDocs, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ─── FIREBASE ─────────────────────────────────────────────────────────── */
@@ -177,246 +264,344 @@ let db;
 try { db = getFirestore(initializeApp(FB)); L('Firebase OK','ok'); }
 catch(e){ L('Firebase ERRO: '+e.message,'er'); }
 
-/* ─── ICE — STUN + TURN públicos ──────────────────────────────────────── */
+/* ─── ICE ───────────────────────────────────────────────────────────────── */
 const RTC_CFG = {
   iceServers:[
     {urls:'stun:stun.l.google.com:19302'},
     {urls:'stun:stun1.l.google.com:19302'},
     {urls:'stun:global.stun.twilio.com:3478'},
-    /* TURN gratuito metered.ca */
     {urls:'turn:openrelay.metered.ca:80',      username:'openrelayproject',credential:'openrelayproject'},
     {urls:'turn:openrelay.metered.ca:443',     username:'openrelayproject',credential:'openrelayproject'},
     {urls:'turns:openrelay.metered.ca:443',    username:'openrelayproject',credential:'openrelayproject'},
     {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'},
   ],
-  iceCandidatePoolSize: 10
+  iceCandidatePoolSize:10
 };
 
 /* ─── STATE ─────────────────────────────────────────────────────────────── */
-let pc = null, localStream = null, roomId = null;
-let micOn = true, camOn = true;
-let subs = [];            // Firestore unsubscribers
-let iceBuf = [];          // buffer de candidates até remoteDesc estar pronta
-let rdReady = false;      // remoteDescription setada?
-let makingOffer = false;  // lock anti-glare
+let pc=null, localStream=null, roomId=null;
+let micOn=true, camOn=true;
+let subs=[], iceBuf=[], rdReady=false;
+let pipVideo=null; // qual vídeo está em PiP agora
 
 /* ─── PUBLIC ─────────────────────────────────────────────────────────────── */
 window.handleCreate = () => init(true);
 window.handleJoin   = () => {
   const raw = document.getElementById('joinId').value.trim();
-  if (!raw){ toast('Cole o ID da sala!'); return; }
+  if(!raw){ toast('Cole o ID da sala!'); return; }
   const id = raw.includes('roomId=')
-    ? new URL(raw.startsWith('http') ? raw : 'https://x.com/?'+raw.split('?')[1]).searchParams.get('roomId') || raw
+    ? (new URLSearchParams(raw.split('?')[1]||raw)).get('roomId') || raw
     : raw;
   init(false, id.toUpperCase());
 };
-window.showJoin     = () => {
-  const b = document.getElementById('joinBox');
+window.showJoin = () => {
+  const b=document.getElementById('joinBox');
   b.classList.toggle('open');
   if(b.classList.contains('open')) document.getElementById('joinId').focus();
 };
-window.toggleMic    = () => {
+window.toggleMic = () => {
   if(!localStream) return;
-  micOn = !micOn;
-  localStream.getAudioTracks().forEach(t => t.enabled = micOn);
-  document.getElementById('micBtn').textContent = micOn ? '🎙️' : '🔇';
+  micOn=!micOn;
+  localStream.getAudioTracks().forEach(t=>t.enabled=micOn);
+  document.getElementById('micBtn').textContent=micOn?'🎙️':'🔇';
   document.getElementById('micBtn').classList.toggle('off',!micOn);
 };
-window.toggleCam    = () => {
+window.toggleCam = () => {
   if(!localStream) return;
-  camOn = !camOn;
-  localStream.getVideoTracks().forEach(t => t.enabled = camOn);
-  document.getElementById('camBtn').textContent = camOn ? '📷' : '🚫';
+  camOn=!camOn;
+  localStream.getVideoTracks().forEach(t=>t.enabled=camOn);
+  document.getElementById('camBtn').textContent=camOn?'📷':'🚫';
   document.getElementById('camBtn').classList.toggle('off',!camOn);
 };
-window.hangup       = () => { cleanup(); showScreen('homeScreen'); toast('Chamada encerrada'); };
-window.copyLink     = () => navigator.clipboard.writeText(buildLink()).then(()=>toast('Link copiado! 🎉'));
+window.hangup = () => { cleanup(); showScreen('homeScreen'); toast('Chamada encerrada'); };
+window.copyLink = () => navigator.clipboard.writeText(buildLink()).then(()=>toast('Link copiado! 🎉'));
+
+/* ─── FULLSCREEN ─────────────────────────────────────────────────────────── */
+window.toggleFullscreen = (which) => {
+  const wrap = document.getElementById(which==='local'?'localWrap':'remoteWrap');
+  const vid  = document.getElementById(which==='local'?'localVid':'remoteVid');
+
+  // Tenta API nativa do browser primeiro (melhor suporte mobile)
+  if(document.fullscreenEnabled || document.webkitFullscreenEnabled) {
+    if(!document.fullscreenElement && !document.webkitFullscreenElement) {
+      const req = wrap.requestFullscreen || wrap.webkitRequestFullscreen;
+      if(req) { req.call(wrap); return; }
+    } else {
+      const ex = document.exitFullscreen || document.webkitExitFullscreen;
+      if(ex) { ex.call(document); return; }
+    }
+  }
+
+  // Fallback CSS fullscreen para quando API não está disponível
+  const isFs = wrap.classList.contains('fullscreen-active');
+  document.querySelectorAll('.vwrap.fullscreen-active').forEach(w=>w.classList.remove('fullscreen-active'));
+  if(!isFs){
+    wrap.classList.add('fullscreen-active');
+    document.body.style.overflow='hidden';
+  } else {
+    document.body.style.overflow='';
+  }
+};
+
+window.exitFullscreen = (which) => {
+  if(document.fullscreenElement || document.webkitFullscreenElement) {
+    const ex = document.exitFullscreen || document.webkitExitFullscreen;
+    if(ex) ex.call(document);
+  }
+  const wrap = document.getElementById(which==='local'?'localWrap':'remoteWrap');
+  wrap.classList.remove('fullscreen-active');
+  document.body.style.overflow='';
+};
+
+// Sai do CSS-fullscreen quando pressionar ESC
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('.vwrap.fullscreen-active').forEach(w=>w.classList.remove('fullscreen-active'));
+    document.body.style.overflow='';
+  }
+});
+
+// Sincroniza quando sai do fullscreen nativo pelo botão do browser
+document.addEventListener('fullscreenchange', ()=>{
+  if(!document.fullscreenElement){
+    document.querySelectorAll('.vwrap.fullscreen-active').forEach(w=>w.classList.remove('fullscreen-active'));
+    document.body.style.overflow='';
+  }
+});
+document.addEventListener('webkitfullscreenchange', ()=>{
+  if(!document.webkitFullscreenElement){
+    document.querySelectorAll('.vwrap.fullscreen-active').forEach(w=>w.classList.remove('fullscreen-active'));
+    document.body.style.overflow='';
+  }
+});
+
+/* ─── PICTURE-IN-PICTURE ─────────────────────────────────────────────────── */
+window.togglePip = async (which) => {
+  const vid    = document.getElementById(which==='local'?'localVid':'remoteVid');
+  const badge  = document.getElementById(which==='local'?'localPipBadge':'remotePipBadge');
+  const btn    = document.getElementById(which==='local'?'localPipBtn':'remotePipBtn');
+
+  // PiP não funciona sem srcObject
+  if(!vid.srcObject){
+    toast('⚠️ Vídeo ainda não disponível');
+    return;
+  }
+
+  // Se esse vídeo já está em PiP, sai
+  if(document.pictureInPictureElement === vid){
+    await document.exitPictureInPicture();
+    badge.classList.remove('show');
+    btn.classList.remove('pip-active');
+    document.getElementById('pipBarBtn').classList.remove('pip-active');
+    pipVideo=null;
+    L('PiP encerrado','');
+    return;
+  }
+
+  // Sai de qualquer PiP ativo antes de entrar num novo
+  if(document.pictureInPictureElement){
+    await document.exitPictureInPicture();
+  }
+
+  try {
+    await vid.requestPictureInPicture();
+    badge.classList.add('show');
+    btn.classList.add('pip-active');
+    if(which==='remote') document.getElementById('pipBarBtn').classList.add('pip-active');
+    pipVideo = vid;
+    L('PiP ativado: '+which,'ok');
+    toast('📺 PiP ativo — navegue à vontade!');
+  } catch(e){
+    L('PiP ERRO: '+e.message,'er');
+    toast('⚠️ PiP não suportado neste browser/dispositivo');
+  }
+};
+
+// Limpa badges quando PiP fecha (botão nativo do sistema)
+document.addEventListener('leavepictureinpicture', ()=>{
+  document.getElementById('localPipBadge').classList.remove('show');
+  document.getElementById('remotePipBadge').classList.remove('show');
+  document.getElementById('localPipBtn').classList.remove('pip-active');
+  document.getElementById('remotePipBtn').classList.remove('pip-active');
+  document.getElementById('pipBarBtn').classList.remove('pip-active');
+  pipVideo=null;
+  L('PiP encerrado (evento nativo)','');
+});
+
+/* Mostra/esconde botão PiP dependendo do suporte do browser */
+function updatePipSupport(){
+  const supported = 'pictureInPictureEnabled' in document && document.pictureInPictureEnabled;
+  ['localPipBtn','remotePipBtn','pipBarBtn'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.disabled=!supported;
+    if(el && !supported) el.title='PiP não suportado neste browser';
+  });
+  if(!supported) L('PiP: não suportado neste browser','er');
+}
 
 /* ─── INIT SESSION ──────────────────────────────────────────────────────── */
 async function init(isCreator, existingId) {
-  cleanup(); // garante estado limpo
+  cleanup();
   roomId = isCreator ? randId() : existingId;
   showScreen('callScreen');
-  document.getElementById('roomLabel').textContent  = roomId;
-  document.getElementById('shareLink').textContent  = buildLink();
+  document.getElementById('roomLabel').textContent = roomId;
+  document.getElementById('shareLink').textContent = buildLink();
+  updatePipSupport();
 
-  /* 1. Câmera/microfone */
   L('Solicitando câmera e microfone...','');
   try {
-    localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+    localStream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
     document.getElementById('localVid').srcObject = localStream;
     document.getElementById('localPh').classList.add('hide');
     L('Câmera e microfone OK ✓','ok');
-  } catch(err) {
+  } catch(err){
     L('Câmera ERRO: '+err.message,'er');
     toast('❌ Sem acesso à câmera/microfone');
     showScreen('homeScreen'); return;
   }
 
-  /* 2. PeerConnection */
   pc = new RTCPeerConnection(RTC_CFG);
   L('RTCPeerConnection criado ✓','ok');
 
-  /* Adiciona tracks ANTES de qualquer offer/answer */
-  localStream.getTracks().forEach(t => {
-    pc.addTrack(t, localStream);
+  localStream.getTracks().forEach(t=>{
+    pc.addTrack(t,localStream);
     L('Track adicionado: '+t.kind,'');
   });
 
-  /* ontrack — vídeo remoto */
-  pc.ontrack = ev => {
-    L('ontrack: '+ev.track.kind+' streams='+ev.streams.length,'ok');
+  pc.ontrack = ev=>{
+    L('ontrack: '+ev.track.kind,'ok');
     if(!ev.streams[0]) return;
-    const rv = document.getElementById('remoteVid');
-    if(rv.srcObject !== ev.streams[0]) {
-      rv.srcObject = ev.streams[0];
+    const rv=document.getElementById('remoteVid');
+    if(rv.srcObject!==ev.streams[0]){
+      rv.srcObject=ev.streams[0];
       rv.play().catch(e=>L('play err: '+e.message,'er'));
       document.getElementById('remotePh').classList.add('hide');
       L('Vídeo remoto conectado ✓','ok');
     }
   };
 
-  /* Estados de conexão */
-  pc.onconnectionstatechange = () => {
-    const s = pc.connectionState;
+  pc.onconnectionstatechange = ()=>{
+    const s=pc.connectionState;
     L('connectionState: '+s, s==='connected'?'ok':s==='failed'?'er':'');
-    if(s==='connected')                       { setDot('on');  setStatus('Conectado ✓'); banner('✅ Conectado!'); }
-    if(s==='failed'||s==='disconnected')      { setDot('err'); setStatus('Desconectado'); }
+    if(s==='connected')                  { setDot('on');  setStatus('Conectado ✓'); banner('✅ Conectado!'); }
+    if(s==='failed'||s==='disconnected') { setDot('err'); setStatus('Desconectado'); }
   };
-  pc.oniceconnectionstatechange = () => L('iceConnection: '+pc.iceConnectionState,'');
-  pc.onsignalingstatechange     = () => L('signalingState: '+pc.signalingState,'');
-  pc.onicegatheringstatechange  = () => L('iceGathering: '+pc.iceGatheringState,'');
+  pc.oniceconnectionstatechange = ()=>L('iceConnection: '+pc.iceConnectionState,'');
+  pc.onsignalingstatechange     = ()=>L('signalingState: '+pc.signalingState,'');
 
-  /* 3. Signaling */
   if(isCreator) await doOffer();
   else          await doAnswer();
 }
 
-/* ─── CRIADOR: cria offer e escuta answer ──────────────────────────────── */
-async function doOffer() {
-  const roomRef  = doc(db,'calls',roomId);
+/* ─── CRIADOR ────────────────────────────────────────────────────────────── */
+async function doOffer(){
+  const roomRef   = doc(db,'calls',roomId);
   const callerRef = collection(roomRef,'callerCandidates');
 
-  /* onicecandidate ANTES de createOffer para não perder candidates gerados imediatamente */
-  pc.onicecandidate = async ({candidate}) => {
-    if(!candidate) { L('ICE gathering completo (caller)',''); return; }
-    L('ICE candidate gerado (caller): '+candidate.type,'');
-    try { await addDoc(callerRef, candidate.toJSON()); }
+  pc.onicecandidate = async ({candidate})=>{
+    if(!candidate){ L('ICE gathering completo (caller)',''); return; }
+    L('ICE gerado (caller): '+candidate.type,'');
+    try{ await addDoc(callerRef,candidate.toJSON()); }
     catch(e){ L('addDoc ICE err: '+e.message,'er'); }
   };
 
-  /* Cria offer */
-  makingOffer = true;
-  try {
-    const offer = await pc.createOffer({offerToReceiveAudio:true, offerToReceiveVideo:true});
+  try{
+    const offer=await pc.createOffer({offerToReceiveAudio:true,offerToReceiveVideo:true});
     await pc.setLocalDescription(offer);
-    L('Offer criado e setLocalDescription OK','ok');
+    L('Offer criado ✓','ok');
   } catch(e){ L('createOffer ERRO: '+e.message,'er'); return; }
-  finally { makingOffer = false; }
 
-  /* Salva no Firestore */
-  await setDoc(roomRef, {
-    offer: {type: pc.localDescription.type, sdp: pc.localDescription.sdp},
-    ts: serverTimestamp()
+  await setDoc(roomRef,{
+    offer:{type:pc.localDescription.type,sdp:pc.localDescription.sdp},
+    ts:serverTimestamp()
   });
-  L('Offer salvo no Firestore: '+roomId,'ok');
+  L('Offer salvo: '+roomId,'ok');
   setStatus('Aguardando participante...');
 
-  /* Escuta callee candidates — chegam ANTES do answer, por isso buffer */
-  const unCallee = onSnapshot(collection(roomRef,'calleeCandidates'), snap => {
-    snap.docChanges().forEach(ch => {
-      if(ch.type==='added') bufOrApply(ch.doc.data());
-    });
+  const unCallee = onSnapshot(collection(roomRef,'calleeCandidates'),snap=>{
+    snap.docChanges().forEach(ch=>{ if(ch.type==='added') bufOrApply(ch.doc.data()); });
   });
   subs.push(unCallee);
 
-  /* Escuta answer */
-  const unRoom = onSnapshot(roomRef, async snap => {
-    const data = snap.data();
-    if(!data?.answer || pc.currentRemoteDescription) return;
-    L('Answer recebido! Aplicando remoteDescription...','ok');
-    try {
+  const unRoom = onSnapshot(roomRef,async snap=>{
+    const data=snap.data();
+    if(!data?.answer||pc.currentRemoteDescription) return;
+    L('Answer recebido, aplicando...','ok');
+    try{
       await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-      rdReady = true;
-      L('setRemoteDescription (answer) OK ✓','ok');
+      rdReady=true;
+      L('setRemoteDescription OK ✓','ok');
       await flushIce();
     } catch(e){ L('setRemoteDescription ERRO: '+e.message,'er'); }
   });
   subs.push(unRoom);
 }
 
-/* ─── ENTRANTE: pega offer, cria answer ────────────────────────────────── */
-async function doAnswer() {
-  const roomRef    = doc(db,'calls',roomId);
-  const calleeRef  = collection(roomRef,'calleeCandidates');
-  const callerRef  = collection(roomRef,'callerCandidates');
+/* ─── ENTRANTE ───────────────────────────────────────────────────────────── */
+async function doAnswer(){
+  const roomRef   = doc(db,'calls',roomId);
+  const calleeRef = collection(roomRef,'calleeCandidates');
+  const callerRef = collection(roomRef,'callerCandidates');
 
-  /* Verifica sala */
   L('Procurando sala '+roomId+'...','');
-  const snap = await getDoc(roomRef);
+  const snap=await getDoc(roomRef);
   if(!snap.exists()){ L('Sala não encontrada!','er'); toast('❌ Sala não encontrada'); showScreen('homeScreen'); cleanup(); return; }
   L('Sala encontrada ✓','ok');
 
-  /* onicecandidate ANTES de createAnswer */
-  pc.onicecandidate = async ({candidate}) => {
+  pc.onicecandidate = async ({candidate})=>{
     if(!candidate){ L('ICE gathering completo (callee)',''); return; }
-    L('ICE candidate gerado (callee): '+candidate.type,'');
-    try { await addDoc(calleeRef, candidate.toJSON()); }
+    L('ICE gerado (callee): '+candidate.type,'');
+    try{ await addDoc(calleeRef,candidate.toJSON()); }
     catch(e){ L('addDoc ICE err: '+e.message,'er'); }
   };
 
-  /* ORDEM OBRIGATÓRIA: setRemoteDescription → createAnswer → setLocalDescription */
-  const offer = snap.data().offer;
-  try {
-    await pc.setRemoteDescription(new RTCSessionDescription(offer));
-    rdReady = true;
+  try{
+    await pc.setRemoteDescription(new RTCSessionDescription(snap.data().offer));
+    rdReady=true;
     L('setRemoteDescription (offer) OK ✓','ok');
   } catch(e){ L('setRemoteDescription ERRO: '+e.message,'er'); return; }
 
   let answer;
-  try {
-    answer = await pc.createAnswer();
+  try{
+    answer=await pc.createAnswer();
     await pc.setLocalDescription(answer);
-    L('Answer criado e setLocalDescription OK ✓','ok');
+    L('Answer criado ✓','ok');
   } catch(e){ L('createAnswer ERRO: '+e.message,'er'); return; }
 
-  /* Salva answer */
-  try {
-    await updateDoc(roomRef, {answer: {type: answer.type, sdp: answer.sdp}});
-    L('Answer salvo no Firestore ✓','ok');
-  } catch(e){ L('updateDoc answer ERRO: '+e.message,'er'); return; }
+  try{
+    await updateDoc(roomRef,{answer:{type:answer.type,sdp:answer.sdp}});
+    L('Answer salvo ✓','ok');
+  } catch(e){ L('updateDoc ERRO: '+e.message,'er'); return; }
 
   setStatus('Conectando...');
 
-  /* Aplica candidates do caller que já estavam no Firestore ANTES de subscribermos */
-  const callerSnap = await getDocs(callerRef);
-  for(const d of callerSnap.docs) bufOrApply(d.data());
+  // Busca candidates já existentes do caller
+  const callerDocs=await getDocs(callerRef);
+  callerDocs.forEach(d=>bufOrApply(d.data()));
   await flushIce();
 
-  /* Escuta novos caller candidates que chegarem depois */
-  const unCaller = onSnapshot(callerRef, snap => {
-    snap.docChanges().forEach(ch => {
-      if(ch.type==='added') bufOrApply(ch.doc.data());
-    });
+  // Escuta novos candidates
+  const unCaller=onSnapshot(callerRef,snap=>{
+    snap.docChanges().forEach(ch=>{ if(ch.type==='added') bufOrApply(ch.doc.data()); });
   });
   subs.push(unCaller);
 }
 
-/* ─── ICE BUFFER ────────────────────────────────────────────────────────── */
-function bufOrApply(data) {
+/* ─── ICE BUFFER ─────────────────────────────────────────────────────────── */
+function bufOrApply(data){
   if(!data?.candidate) return;
-  if(rdReady && pc) applyIce(data);
-  else { iceBuf.push(data); L('ICE bufferizado (rdReady=false)',''); }
+  if(rdReady&&pc) applyIce(data);
+  else { iceBuf.push(data); L('ICE bufferizado',''); }
 }
-async function flushIce() {
+async function flushIce(){
   if(!iceBuf.length) return;
-  L('Flush: '+iceBuf.length+' ICE candidates do buffer','ok');
-  const pending = [...iceBuf]; iceBuf=[];
-  for(const c of pending) await applyIce(c);
+  L('Flush: '+iceBuf.length+' candidates','ok');
+  const p=[...iceBuf]; iceBuf=[];
+  for(const c of p) await applyIce(c);
 }
-async function applyIce(data) {
-  if(!pc || pc.signalingState==='closed') return;
-  try {
+async function applyIce(data){
+  if(!pc||pc.signalingState==='closed') return;
+  try{
     await pc.addIceCandidate(new RTCIceCandidate(data));
     L('addIceCandidate OK ('+data.type+')','ok');
   } catch(e){
@@ -428,18 +613,13 @@ async function applyIce(data) {
 /* ─── UTILS ─────────────────────────────────────────────────────────────── */
 function randId(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
 function buildLink(){ return location.href.split('?')[0]+'?roomId='+roomId; }
-
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-function setDot(cls){
-  document.getElementById('dot').className='dot '+(cls||'');
-}
-function setStatus(txt){
-  document.getElementById('statusTxt').textContent=txt;
-}
-function L(msg, type=''){
+function setDot(cls){ document.getElementById('dot').className='dot '+(cls||''); }
+function setStatus(txt){ document.getElementById('statusTxt').textContent=txt; }
+function L(msg,type=''){
   const el=document.getElementById('dbg');
   if(!el) return;
   const now=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -447,9 +627,9 @@ function L(msg, type=''){
   e.className='e '+(type==='ok'?'ok':type==='er'?'er':'');
   e.innerHTML=`<span class="t">${now}</span><span>${msg}</span>`;
   el.appendChild(e); el.scrollTop=el.scrollHeight;
-  console.log('['+type.toUpperCase()+'] '+msg);
+  console.log('['+type+'] '+msg);
 }
-function toast(msg,d=2800){
+function toast(msg,d=3000){
   const el=document.getElementById('toast');
   el.textContent=msg; el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'),d);
@@ -467,28 +647,24 @@ function banner(msg){
 }
 function cleanup(){
   subs.forEach(u=>u()); subs=[];
+  if(document.pictureInPictureElement) document.exitPictureInPicture().catch(()=>{});
   if(localStream) localStream.getTracks().forEach(t=>t.stop());
   if(pc){ try{pc.close();}catch(e){} pc=null; }
-  localStream=null; roomId=null; iceBuf=[]; rdReady=false; makingOffer=false;
+  localStream=null; roomId=null; iceBuf=[]; rdReady=false; pipVideo=null;
   const lv=document.getElementById('localVid');
   const rv=document.getElementById('remoteVid');
   if(lv) lv.srcObject=null;
   if(rv) rv.srcObject=null;
   document.getElementById('localPh')?.classList.remove('hide');
   document.getElementById('remotePh')?.classList.remove('hide');
+  document.getElementById('localPipBadge')?.classList.remove('show');
+  document.getElementById('remotePipBadge')?.classList.remove('show');
+  document.querySelectorAll('.vwrap.fullscreen-active').forEach(w=>w.classList.remove('fullscreen-active'));
+  document.body.style.overflow='';
   document.getElementById('dbg').innerHTML='';
   setDot(''); setStatus('');
 }
 
-/* getDocs necessário para busca inicial dos callerCandidates */
-async function getDocs(ref){
-  return new Promise((res,rej)=>{
-    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
-      .then(({getDocs:gd})=>gd(ref).then(res).catch(rej));
-  });
-}
-
-/* Auto-join via URL */
 addEventListener('load',()=>{
   const rid=new URLSearchParams(location.search).get('roomId');
   if(rid){
