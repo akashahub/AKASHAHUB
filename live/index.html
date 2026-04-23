@@ -32,7 +32,6 @@
     overflow-x: hidden;
   }
 
-  /* Background mesh */
   body::before {
     content: '';
     position: fixed;
@@ -101,11 +100,9 @@
     width: 100%;
   }
 
-  /* ====== SCREENS ====== */
   .screen { display: none; }
   .screen.active { display: block; }
 
-  /* ====== HOME SCREEN ====== */
   .hero {
     text-align: center;
     padding: 40px 0 36px;
@@ -199,7 +196,6 @@
 
   .card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
 
-  /* Join room input area */
   .join-input-area {
     display: none;
     max-width: 560px;
@@ -286,7 +282,6 @@
 
   .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
-  /* ====== CALL SCREEN ====== */
   .call-header {
     display: flex;
     align-items: center;
@@ -333,7 +328,6 @@
     50% { opacity: 0.4; }
   }
 
-  /* Video grid */
   .video-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -389,7 +383,6 @@
   .video-placeholder .icon { font-size: 32px; opacity: 0.4; }
   .video-placeholder.hidden { display: none; }
 
-  /* Controls */
   .controls {
     display: flex;
     gap: 10px;
@@ -421,7 +414,6 @@
   .ctrl-btn.end { background: var(--danger); border: none; width: 56px; height: 56px; font-size: 22px; }
   .ctrl-btn.end:hover { background: #ff2050; }
 
-  /* Share link */
   .share-section {
     margin-top: 14px;
     padding: 14px 16px;
@@ -446,7 +438,6 @@
     white-space: nowrap;
   }
 
-  /* Status log */
   .status-log {
     margin-top: 12px;
     padding: 12px 14px;
@@ -466,7 +457,6 @@
   .status-log .entry.info { color: var(--muted); }
   .status-log .time { opacity: 0.5; flex-shrink: 0; }
 
-  /* Toast */
   .toast {
     position: fixed;
     bottom: 24px;
@@ -488,7 +478,6 @@
 
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* Spinner */
   .spinner {
     width: 18px;
     height: 18px;
@@ -605,7 +594,6 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDKs -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
@@ -637,6 +625,10 @@ let app, db, pc, localStream, roomId, isCreator = false;
 let micOn = true, camOn = true;
 let unsubscribeAnswer, unsubscribeCallerCandidates, unsubscribeCalleeCandidates;
 
+// FIX 1: Buffer for ICE candidates that arrive before remoteDescription is set
+let pendingCandidates = [];
+let remoteDescriptionSet = false;
+
 // ===================== INIT =====================
 try {
   app = initializeApp(firebaseConfig);
@@ -665,8 +657,6 @@ window.showJoinInput = function() {
 window.handleJoin = async function() {
   const input = document.getElementById('joinRoomId').value.trim();
   if (!input) { toast('Cole o ID da sala!'); return; }
-
-  // Support full URL or just ID
   roomId = input.includes('roomId=') ? new URL(input).searchParams.get('roomId') : input;
   isCreator = false;
   await startCall();
@@ -701,11 +691,47 @@ window.copyLink = function() {
   navigator.clipboard.writeText(link).then(() => toast('Link copiado! 🎉'));
 };
 
+// ===================== HELPER: add ICE candidate safely =====================
+// FIX 2: Always buffer candidates; flush them once remoteDescription is set
+async function addIceCandidateSafe(candidate) {
+  if (!candidate || !candidate.candidate) return;
+  if (remoteDescriptionSet && pc) {
+    try {
+      await pc.addIceCandidate(new RTCIceCandidate(candidate));
+      log('ICE candidate adicionado ✓', 'info');
+    } catch(e) {
+      log('ICE err: ' + e.message, 'err');
+    }
+  } else {
+    pendingCandidates.push(candidate);
+    log('ICE candidate bufferizado (aguardando remoteDesc)', 'info');
+  }
+}
+
+async function flushPendingCandidates() {
+  log(`Processando ${pendingCandidates.length} ICE candidates pendentes...`, 'info');
+  const toFlush = [...pendingCandidates];
+  pendingCandidates = [];
+  for (const c of toFlush) {
+    try {
+      await pc.addIceCandidate(new RTCIceCandidate(c));
+      log('ICE candidate pendente adicionado ✓', 'info');
+    } catch(e) {
+      log('ICE flush err: ' + e.message, 'err');
+    }
+  }
+}
+
 // ===================== CALL LOGIC =====================
 async function startCall() {
   showScreen('callScreen');
   document.getElementById('displayRoomId').textContent = roomId;
   document.getElementById('shareLink').textContent = buildShareLink();
+
+  // Reset state
+  pendingCandidates = [];
+  remoteDescriptionSet = false;
+
   log('Iniciando câmera...', 'info');
 
   try {
@@ -721,23 +747,28 @@ async function startCall() {
     return;
   }
 
-  // Create RTCPeerConnection
   pc = new RTCPeerConnection(iceServers);
 
   // Add local tracks BEFORE creating offer/answer
   localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
 
-  // Remote track handler
+  // FIX 3: ontrack — use event.streams[0] directly and force play
   pc.ontrack = (event) => {
-    log('Stream remoto recebido ✓', 'ok');
+    log('ontrack disparado, streams: ' + event.streams.length, 'ok');
     const remoteVideo = document.getElementById('remoteVideo');
-    if (remoteVideo.srcObject !== event.streams[0]) {
-      remoteVideo.srcObject = event.streams[0];
-      document.getElementById('remotePlaceholder').classList.add('hidden');
+    const stream = event.streams[0];
+    if (!stream) {
+      log('ontrack sem stream!', 'err');
+      return;
     }
+    // Always reassign to force video element to update
+    remoteVideo.srcObject = stream;
+    document.getElementById('remotePlaceholder').classList.add('hidden');
+    // Force play (some browsers require explicit call)
+    remoteVideo.play().catch(e => log('Play err: ' + e.message, 'err'));
+    log('Vídeo remoto atribuído ✓', 'ok');
   };
 
-  // Connection state changes
   pc.onconnectionstatechange = () => {
     const state = pc.connectionState;
     log('Conexão: ' + state, state === 'connected' ? 'ok' : 'info');
@@ -751,7 +782,11 @@ async function startCall() {
   };
 
   pc.oniceconnectionstatechange = () => {
-    log('ICE: ' + pc.iceConnectionState, 'info');
+    log('ICE state: ' + pc.iceConnectionState, 'info');
+  };
+
+  pc.onsignalingstatechange = () => {
+    log('Signaling state: ' + pc.signalingState, 'info');
   };
 }
 
@@ -759,15 +794,14 @@ async function createRoom() {
   const roomRef = doc(db, 'calls', roomId);
   const callerCandidatesRef = collection(roomRef, 'callerCandidates');
 
-  // CRITICAL: set onicecandidate BEFORE createOffer so no candidates are lost
+  // Set onicecandidate BEFORE createOffer
   pc.onicecandidate = async (event) => {
     if (event.candidate) {
-      log('ICE candidate (caller) enviado', 'info');
+      log('Enviando ICE candidate (caller)', 'info');
       await addDoc(callerCandidatesRef, event.candidate.toJSON());
     }
   };
 
-  // Create and set offer
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
 
@@ -780,12 +814,11 @@ async function createRoom() {
   log('Sala criada. Aguardando participante...', 'ok');
   setStatus('waiting', 'Aguardando participante...');
 
-  // Listen for answer + join notification
+  // Listen for answer
   unsubscribeAnswer = onSnapshot(roomRef, async (snap) => {
     const data = snap.data();
     if (!data) return;
 
-    // Notify when callee joins (before WebRTC connects)
     if (data.calleeJoined && !document.getElementById('joinNotified')) {
       const el = document.createElement('div');
       el.id = 'joinNotified';
@@ -794,31 +827,26 @@ async function createRoom() {
       log('Participante entrou na sala!', 'ok');
     }
 
-    // Set remote description when answer arrives
+    // FIX 4: set remoteDescription then flush pending ICE candidates
     if (data.answer && !pc.currentRemoteDescription) {
-      log('Answer recebido, conectando...', 'ok');
+      log('Answer recebido, definindo remoteDescription...', 'ok');
       try {
         await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+        remoteDescriptionSet = true;
         log('RemoteDescription definida ✓', 'ok');
+        await flushPendingCandidates();
       } catch(e) {
         log('Erro setRemoteDescription: ' + e.message, 'err');
       }
     }
   });
 
-  // Listen for callee ICE candidates
+  // Listen for callee ICE candidates (buffer until remoteDesc is ready)
   const calleeCandidatesRef = collection(roomRef, 'calleeCandidates');
   unsubscribeCalleeCandidates = onSnapshot(calleeCandidatesRef, (snap) => {
     snap.docChanges().forEach(async (change) => {
       if (change.type === 'added') {
-        const data = change.doc.data();
-        if (!data.candidate) return;
-        try {
-          await pc.addIceCandidate(new RTCIceCandidate(data));
-          log('ICE callee candidate adicionado', 'info');
-        } catch(e) {
-          log('ICE err: ' + e.message, 'err');
-        }
+        await addIceCandidateSafe(change.doc.data());
       }
     });
   });
@@ -838,29 +866,28 @@ async function joinRoom() {
 
   const calleeCandidatesRef = collection(roomRef, 'calleeCandidates');
 
-  // CRITICAL: set onicecandidate BEFORE createAnswer
+  // Set onicecandidate BEFORE createAnswer
   pc.onicecandidate = async (event) => {
     if (event.candidate) {
-      log('ICE candidate (callee) enviado', 'info');
+      log('Enviando ICE candidate (callee)', 'info');
       await addDoc(calleeCandidatesRef, event.candidate.toJSON());
     }
   };
 
-  // Set offer as remote description first
+  // FIX 5: set remoteDescription FIRST, then create answer, then flush
   const offer = roomSnap.data().offer;
   try {
     await pc.setRemoteDescription(new RTCSessionDescription(offer));
-    log('Offer recebido ✓', 'ok');
+    remoteDescriptionSet = true;
+    log('Offer recebido e remoteDescription definida ✓', 'ok');
   } catch(e) {
     log('Erro ao processar offer: ' + e.message, 'err');
     return;
   }
 
-  // Create answer
   const answer = await pc.createAnswer();
   await pc.setLocalDescription(answer);
 
-  // Update room: add answer + mark joined
   await updateDoc(roomRef, {
     answer: { type: answer.type, sdp: answer.sdp },
     calleeJoined: true
@@ -869,19 +896,15 @@ async function joinRoom() {
   log('Entrou na sala. Conectando...', 'ok');
   setStatus('waiting', 'Conectando...');
 
+  // Flush any ICE candidates that arrived before remoteDescription
+  await flushPendingCandidates();
+
   // Listen for caller ICE candidates
   const callerCandidatesRef = collection(roomRef, 'callerCandidates');
   unsubscribeCallerCandidates = onSnapshot(callerCandidatesRef, (snap) => {
     snap.docChanges().forEach(async (change) => {
       if (change.type === 'added') {
-        const data = change.doc.data();
-        if (!data.candidate) return;
-        try {
-          await pc.addIceCandidate(new RTCIceCandidate(data));
-          log('ICE caller candidate adicionado', 'info');
-        } catch(e) {
-          log('ICE err: ' + e.message, 'err');
-        }
+        await addIceCandidateSafe(change.doc.data());
       }
     });
   });
@@ -958,6 +981,8 @@ function cleanup() {
   if (localStream) localStream.getTracks().forEach(t => t.stop());
   if (pc) { try { pc.close(); } catch(e) {} }
   pc = null; localStream = null; roomId = null;
+  pendingCandidates = [];
+  remoteDescriptionSet = false;
   const jn = document.getElementById('joinNotified');
   if (jn) jn.remove();
   document.getElementById('localVideo').srcObject = null;
