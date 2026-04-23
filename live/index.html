@@ -716,28 +716,42 @@ async function startCall() {
     log('Câmera OK ✓', 'ok');
   } catch(e) {
     log('Erro câmera: ' + e.message, 'err');
-    toast('Erro ao acessar câmera/microfone');
+    toast('❌ Erro ao acessar câmera/microfone');
+    showScreen('homeScreen');
     return;
   }
 
+  // Create RTCPeerConnection
   pc = new RTCPeerConnection(iceServers);
 
+  // Add local tracks BEFORE creating offer/answer
   localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
 
+  // Remote track handler
   pc.ontrack = (event) => {
+    log('Stream remoto recebido ✓', 'ok');
     const remoteVideo = document.getElementById('remoteVideo');
-    remoteVideo.srcObject = event.streams[0];
-    document.getElementById('remotePlaceholder').classList.add('hidden');
-    setStatus('connected', 'Conectado ✓');
-    log('Participante remoto conectado ✓', 'ok');
+    if (remoteVideo.srcObject !== event.streams[0]) {
+      remoteVideo.srcObject = event.streams[0];
+      document.getElementById('remotePlaceholder').classList.add('hidden');
+    }
+  };
+
+  // Connection state changes
+  pc.onconnectionstatechange = () => {
+    const state = pc.connectionState;
+    log('Conexão: ' + state, state === 'connected' ? 'ok' : 'info');
+    if (state === 'connected') {
+      setStatus('connected', 'Conectado ✓');
+      showNotification('✅ Participante conectado!');
+    } else if (state === 'disconnected' || state === 'failed' || state === 'closed') {
+      setStatus('error', 'Desconectado');
+      showNotification('⚠️ Participante saiu da chamada');
+    }
   };
 
   pc.oniceconnectionstatechange = () => {
-    log('ICE state: ' + pc.iceConnectionState, 'info');
-    if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
-      setStatus('error', 'Desconectado');
-      log('Conexão perdida', 'err');
-    }
+    log('ICE: ' + pc.iceConnectionState, 'info');
   };
 }
 
@@ -745,30 +759,50 @@ async function createRoom() {
   const roomRef = doc(db, 'calls', roomId);
   const callerCandidatesRef = collection(roomRef, 'callerCandidates');
 
+  // CRITICAL: set onicecandidate BEFORE createOffer so no candidates are lost
   pc.onicecandidate = async (event) => {
     if (event.candidate) {
+      log('ICE candidate (caller) enviado', 'info');
       await addDoc(callerCandidatesRef, event.candidate.toJSON());
     }
   };
 
+  // Create and set offer
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
 
   await setDoc(roomRef, {
     offer: { type: offer.type, sdp: offer.sdp },
+    calleeJoined: false,
     createdAt: Date.now()
   });
 
-  log('Sala criada. Aguardando...', 'ok');
+  log('Sala criada. Aguardando participante...', 'ok');
   setStatus('waiting', 'Aguardando participante...');
 
-  // Listen for answer
+  // Listen for answer + join notification
   unsubscribeAnswer = onSnapshot(roomRef, async (snap) => {
     const data = snap.data();
-    if (data?.answer && !pc.currentRemoteDescription) {
-      const answer = new RTCSessionDescription(data.answer);
-      await pc.setRemoteDescription(answer);
-      log('Resposta recebida ✓', 'ok');
+    if (!data) return;
+
+    // Notify when callee joins (before WebRTC connects)
+    if (data.calleeJoined && !document.getElementById('joinNotified')) {
+      const el = document.createElement('div');
+      el.id = 'joinNotified';
+      document.body.appendChild(el);
+      showNotification('🔔 Alguém entrou na sala!');
+      log('Participante entrou na sala!', 'ok');
+    }
+
+    // Set remote description when answer arrives
+    if (data.answer && !pc.currentRemoteDescription) {
+      log('Answer recebido, conectando...', 'ok');
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+        log('RemoteDescription definida ✓', 'ok');
+      } catch(e) {
+        log('Erro setRemoteDescription: ' + e.message, 'err');
+      }
     }
   });
 
@@ -777,8 +811,14 @@ async function createRoom() {
   unsubscribeCalleeCandidates = onSnapshot(calleeCandidatesRef, (snap) => {
     snap.docChanges().forEach(async (change) => {
       if (change.type === 'added') {
-        const candidate = new RTCIceCandidate(change.doc.data());
-        await pc.addIceCandidate(candidate).catch(e => log('ICE err: ' + e.message, 'err'));
+        const data = change.doc.data();
+        if (!data.candidate) return;
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(data));
+          log('ICE callee candidate adicionado', 'info');
+        } catch(e) {
+          log('ICE err: ' + e.message, 'err');
+        }
       }
     });
   });
@@ -790,27 +830,40 @@ async function joinRoom() {
 
   if (!roomSnap.exists()) {
     log('Sala não encontrada!', 'err');
-    toast('Sala não encontrada. Verifique o ID.');
+    toast('❌ Sala não encontrada. Verifique o ID.');
     showScreen('homeScreen');
+    cleanup();
     return;
   }
 
   const calleeCandidatesRef = collection(roomRef, 'calleeCandidates');
 
+  // CRITICAL: set onicecandidate BEFORE createAnswer
   pc.onicecandidate = async (event) => {
     if (event.candidate) {
+      log('ICE candidate (callee) enviado', 'info');
       await addDoc(calleeCandidatesRef, event.candidate.toJSON());
     }
   };
 
+  // Set offer as remote description first
   const offer = roomSnap.data().offer;
-  await pc.setRemoteDescription(new RTCSessionDescription(offer));
+  try {
+    await pc.setRemoteDescription(new RTCSessionDescription(offer));
+    log('Offer recebido ✓', 'ok');
+  } catch(e) {
+    log('Erro ao processar offer: ' + e.message, 'err');
+    return;
+  }
 
+  // Create answer
   const answer = await pc.createAnswer();
   await pc.setLocalDescription(answer);
 
+  // Update room: add answer + mark joined
   await updateDoc(roomRef, {
-    answer: { type: answer.type, sdp: answer.sdp }
+    answer: { type: answer.type, sdp: answer.sdp },
+    calleeJoined: true
   });
 
   log('Entrou na sala. Conectando...', 'ok');
@@ -821,8 +874,14 @@ async function joinRoom() {
   unsubscribeCallerCandidates = onSnapshot(callerCandidatesRef, (snap) => {
     snap.docChanges().forEach(async (change) => {
       if (change.type === 'added') {
-        const candidate = new RTCIceCandidate(change.doc.data());
-        await pc.addIceCandidate(candidate).catch(e => log('ICE err: ' + e.message, 'err'));
+        const data = change.doc.data();
+        if (!data.candidate) return;
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(data));
+          log('ICE caller candidate adicionado', 'info');
+        } catch(e) {
+          log('ICE err: ' + e.message, 'err');
+        }
       }
     });
   });
@@ -860,11 +919,36 @@ function log(msg, type = 'info') {
   console.log(`[${type.toUpperCase()}] ${msg}`);
 }
 
-function toast(msg) {
+function toast(msg, duration = 2800) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2800);
+  setTimeout(() => el.classList.remove('show'), duration);
+}
+
+function showNotification(msg) {
+  let banner = document.getElementById('notifBanner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'notifBanner';
+    banner.style.cssText = `
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) scale(0.9);
+      background: #0e1419; border: 1.5px solid var(--accent);
+      color: var(--text); padding: 14px 28px; border-radius: 14px;
+      font-family: 'Syne', sans-serif; font-weight: 600; font-size: 15px;
+      box-shadow: 0 8px 32px rgba(0,201,167,0.25); z-index: 9999;
+      opacity: 0; transition: all 0.3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap;
+    `;
+    document.body.appendChild(banner);
+  }
+  banner.textContent = msg;
+  banner.style.opacity = '1';
+  banner.style.transform = 'translateX(-50%) scale(1)';
+  clearTimeout(banner._timer);
+  banner._timer = setTimeout(() => {
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateX(-50%) scale(0.92)';
+  }, 4500);
 }
 
 function cleanup() {
@@ -872,8 +956,10 @@ function cleanup() {
   if (unsubscribeCallerCandidates) unsubscribeCallerCandidates();
   if (unsubscribeCalleeCandidates) unsubscribeCalleeCandidates();
   if (localStream) localStream.getTracks().forEach(t => t.stop());
-  if (pc) pc.close();
+  if (pc) { try { pc.close(); } catch(e) {} }
   pc = null; localStream = null; roomId = null;
+  const jn = document.getElementById('joinNotified');
+  if (jn) jn.remove();
   document.getElementById('localVideo').srcObject = null;
   document.getElementById('remoteVideo').srcObject = null;
   document.getElementById('localPlaceholder').classList.remove('hidden');
