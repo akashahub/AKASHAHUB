@@ -4,621 +4,497 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Akasha Hub — Vídeo ao Vivo</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #080c10;
-    --surface: #0e1419;
-    --surface2: #161d25;
-    --border: #1e2a35;
-    --accent: #00c9a7;
-    --accent2: #0077ff;
-    --text: #e8edf2;
-    --muted: #5a7080;
-    --danger: #ff4b6e;
-    --warn: #f59e0b;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-  }
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 40% at 10% 20%, rgba(0,201,167,0.06) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 50% at 90% 80%, rgba(0,119,255,0.06) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-  header {
-    position: relative; z-index: 10;
-    padding: 20px 32px;
-    display: flex; align-items: center; gap: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .logo-mark {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: #000;
-  }
-  .logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; }
-  .logo-text span { color: var(--accent); }
-  .header-badge {
-    margin-left: auto; font-size: 11px; color: var(--muted);
-    background: var(--surface2); border: 1px solid var(--border);
-    padding: 4px 10px; border-radius: 20px;
-  }
-  main {
-    position: relative; z-index: 5; flex: 1;
-    padding: 32px 20px; max-width: 900px; margin: 0 auto; width: 100%;
-  }
-  .screen { display: none; }
-  .screen.active { display: block; }
+:root{--bg:#080c10;--sur:#0e1419;--sur2:#161d25;--bor:#1e2a35;--acc:#00c9a7;--acc2:#0077ff;--tx:#e8edf2;--mu:#5a7080;--danger:#ff4b6e;--warn:#f59e0b}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 10% 20%,rgba(0,201,167,.06),transparent 60%),radial-gradient(ellipse 50% 50% at 90% 80%,rgba(0,119,255,.06),transparent 60%);pointer-events:none;z-index:0}
+header{position:relative;z-index:10;padding:18px 28px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--bor)}
+.logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#000}
+.logo-t{font-family:'Syne',sans-serif;font-weight:700;font-size:17px}.logo-t span{color:var(--acc)}
+.hbadge{margin-left:auto;font-size:11px;color:var(--mu);background:var(--sur2);border:1px solid var(--bor);padding:4px 10px;border-radius:20px}
+main{position:relative;z-index:5;flex:1;padding:28px 18px;max-width:860px;margin:0 auto;width:100%}
+.screen{display:none}.screen.active{display:block}
 
-  /* HOME */
-  .hero { text-align: center; padding: 40px 0 36px; }
-  .hero h1 {
-    font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: clamp(28px, 6vw, 48px); line-height: 1.1;
-    letter-spacing: -1px; margin-bottom: 14px;
-  }
-  .hero h1 .grad {
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .hero p { color: var(--muted); font-size: 16px; max-width: 400px; margin: 0 auto 36px; line-height: 1.6; }
-  .action-cards {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-    max-width: 560px; margin: 0 auto 32px;
-  }
-  @media(max-width: 480px) { .action-cards { grid-template-columns: 1fr; } }
-  .card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-    padding: 28px 24px; cursor: pointer; transition: all 0.2s ease;
-    text-align: left; position: relative; overflow: hidden;
-  }
-  .card::before {
-    content: ''; position: absolute; inset: 0; opacity: 0;
-    transition: opacity 0.2s; border-radius: inherit;
-  }
-  .card.create::before { background: radial-gradient(circle at 50% 0%, rgba(0,201,167,0.12), transparent 70%); }
-  .card.join::before   { background: radial-gradient(circle at 50% 0%, rgba(0,119,255,0.12), transparent 70%); }
-  .card:hover { transform: translateY(-2px); }
-  .card:hover::before { opacity: 1; }
-  .card.create:hover { border-color: rgba(0,201,167,0.3); }
-  .card.join:hover   { border-color: rgba(0,119,255,0.3); }
-  .card-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; margin-bottom: 14px;
-  }
-  .card.create .card-icon { background: rgba(0,201,167,0.1); }
-  .card.join   .card-icon { background: rgba(0,119,255,0.1); }
-  .card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 6px; }
-  .card p  { font-size: 13px; color: var(--muted); line-height: 1.5; }
-  .join-input-area { display: none; max-width: 560px; margin: 0 auto; }
-  .join-input-area.visible { display: block; }
-  .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
-  input[type="text"] {
-    flex: 1; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 16px; color: var(--text);
-    font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none;
-    transition: border-color 0.2s;
-  }
-  input[type="text"]:focus { border-color: var(--accent2); }
-  input[type="text"]::placeholder { color: var(--muted); }
-  .btn {
-    border: none; border-radius: 10px; padding: 12px 20px;
-    font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px;
-    cursor: pointer; transition: all 0.18s ease; white-space: nowrap;
-    display: inline-flex; align-items: center; gap: 7px;
-  }
-  .btn-primary { background: linear-gradient(135deg, var(--accent), #00a88a); color: #000; }
-  .btn-primary:hover { transform: translateY(-1px); }
-  .btn-blue { background: linear-gradient(135deg, var(--accent2), #0055cc); color: #fff; }
-  .btn-blue:hover { transform: translateY(-1px); }
-  .btn-ghost { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
-  .btn-ghost:hover { background: #1a2430; }
+/* HOME */
+.hero{text-align:center;padding:36px 0 30px}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(26px,5.5vw,44px);line-height:1.1;letter-spacing:-1px;margin-bottom:12px}
+.grad{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--mu);font-size:15px;max-width:380px;margin:0 auto 32px;line-height:1.6}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:520px;margin:0 auto 28px}
+@media(max-width:460px){.cards{grid-template-columns:1fr}}
+.card{background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:24px 20px;cursor:pointer;transition:all .2s;text-align:left;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s;border-radius:inherit}
+.card.c1::before{background:radial-gradient(circle at 50% 0%,rgba(0,201,167,.12),transparent 70%)}
+.card.c2::before{background:radial-gradient(circle at 50% 0%,rgba(0,119,255,.12),transparent 70%)}
+.card:hover{transform:translateY(-2px)}.card:hover::before{opacity:1}
+.card.c1:hover{border-color:rgba(0,201,167,.3)}.card.c2:hover{border-color:rgba(0,119,255,.3)}
+.ci{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:12px}
+.c1 .ci{background:rgba(0,201,167,.1)}.c2 .ci{background:rgba(0,119,255,.1)}
+.card h3{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:5px}
+.card p{font-size:12px;color:var(--mu);line-height:1.5}
+.join-box{display:none;max-width:520px;margin:0 auto}.join-box.open{display:block}
+.row{display:flex;gap:10px}
+input[type=text]{flex:1;background:var(--sur);border:1px solid var(--bor);border-radius:9px;padding:11px 14px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+input[type=text]:focus{border-color:var(--acc2)}
+input[type=text]::placeholder{color:var(--mu)}
+.btn{border:none;border-radius:9px;padding:11px 18px;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all .18s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.bp{background:linear-gradient(135deg,var(--acc),#00a88a);color:#000}.bp:hover{transform:translateY(-1px)}
+.bb{background:linear-gradient(135deg,var(--acc2),#0055cc);color:#fff}.bb:hover{transform:translateY(-1px)}
+.bg{background:var(--sur2);border:1px solid var(--bor);color:var(--tx)}.bg:hover{background:#1a2430}
 
-  /* CALL */
-  .call-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
-  }
-  .room-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .room-id-badge {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-    padding: 6px 12px; font-size: 13px; color: var(--muted);
-    display: flex; align-items: center; gap: 8px;
-  }
-  .room-id-badge strong { color: var(--text); font-family: 'Syne', sans-serif; }
-  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); flex-shrink: 0; }
-  .status-dot.connected { background: var(--accent); animation: pulse 2s infinite; }
-  .status-dot.error { background: var(--danger); }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-  .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-  @media(max-width: 560px) { .video-grid { grid-template-columns: 1fr; } }
-  .video-wrap {
-    position: relative; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden; aspect-ratio: 16/9;
-  }
-  .video-wrap video { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .video-label {
-    position: absolute; bottom: 10px; left: 10px;
-    background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
-    border-radius: 6px; padding: 3px 9px; font-size: 12px; font-weight: 500; color: #fff;
-  }
-  .video-placeholder {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 12px;
-    color: var(--muted); font-size: 13px;
-  }
-  .video-placeholder .icon { font-size: 32px; opacity: 0.4; }
-  .video-placeholder.hidden { display: none; }
-  .controls {
-    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-    padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-  }
-  .ctrl-btn {
-    width: 48px; height: 48px; border-radius: 50%;
-    cursor: pointer; font-size: 18px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.18s ease; background: var(--surface2); border: 1px solid var(--border);
-  }
-  .ctrl-btn:hover { transform: scale(1.08); }
-  .ctrl-btn.off { background: rgba(255,75,110,0.15); border-color: rgba(255,75,110,0.3); }
-  .ctrl-btn.end { background: var(--danger); border: none; width: 56px; height: 56px; font-size: 22px; }
-  .ctrl-btn.end:hover { background: #ff2050; }
-  .share-section {
-    margin-top: 14px; padding: 14px 16px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: 12px;
-    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  }
-  .share-label { font-size: 12px; color: var(--muted); font-weight: 500; white-space: nowrap; }
-  .share-link {
-    flex: 1; min-width: 0; font-size: 12px; color: var(--accent);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .status-log {
-    margin-top: 12px; padding: 12px 14px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: 10px; font-size: 12px;
-    color: var(--muted); max-height: 100px; overflow-y: auto; line-height: 1.7;
-  }
-  .status-log .entry { display: flex; gap: 8px; }
-  .status-log .entry.ok   { color: var(--accent); }
-  .status-log .entry.err  { color: var(--danger); }
-  .status-log .entry.info { color: var(--muted); }
-  .status-log .time { opacity: 0.5; flex-shrink: 0; }
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
-    padding: 10px 20px; border-radius: 100px; font-size: 13px; font-weight: 500;
-    opacity: 0; transition: all 0.3s ease; pointer-events: none; z-index: 1000; white-space: nowrap;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  footer {
-    position: relative; z-index: 5; text-align: center; padding: 20px;
-    font-size: 12px; color: var(--muted); border-top: 1px solid var(--border);
-  }
-  footer a { color: var(--accent); text-decoration: none; }
+/* CALL */
+.call-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.room-badge{background:var(--sur);border:1px solid var(--bor);border-radius:8px;padding:5px 11px;font-size:12px;color:var(--mu);display:flex;align-items:center;gap:7px}
+.room-badge strong{color:var(--tx);font-family:'Syne',sans-serif}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--warn);flex-shrink:0}
+.dot.on{background:var(--acc);animation:pulse 2s infinite}
+.dot.err{background:var(--danger)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
+@media(max-width:520px){.vgrid{grid-template-columns:1fr}}
+.vwrap{position:relative;background:var(--sur);border:1px solid var(--bor);border-radius:14px;overflow:hidden;aspect-ratio:16/9}
+.vwrap video{width:100%;height:100%;object-fit:cover;display:block}
+.vlabel{position:absolute;bottom:9px;left:9px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);border-radius:5px;padding:3px 8px;font-size:11px;font-weight:500;color:#fff}
+.vph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mu);font-size:12px}
+.vph .ic{font-size:28px;opacity:.4}.vph.hide{display:none}
+.ctrls{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;padding:14px;background:var(--sur);border:1px solid var(--bor);border-radius:13px}
+.cb{width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:all .18s;background:var(--sur2);border:1px solid var(--bor)}
+.cb:hover{transform:scale(1.08)}
+.cb.off{background:rgba(255,75,110,.15);border-color:rgba(255,75,110,.3)}
+.cb.end{background:var(--danger);border:none;width:54px;height:54px;font-size:20px}
+.cb.end:hover{background:#ff2050}
+.share{margin-top:12px;padding:12px 14px;background:var(--sur);border:1px solid var(--bor);border-radius:11px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.sh-lbl{font-size:11px;color:var(--mu);font-weight:500;white-space:nowrap}
+.sh-link{flex:1;min-width:0;font-size:11px;color:var(--acc);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Debug log */
+.dbg{margin-top:10px;padding:10px 12px;background:var(--sur);border:1px solid var(--bor);border-radius:9px;font-size:11px;color:var(--mu);max-height:120px;overflow-y:auto;line-height:1.8;font-family:monospace}
+.dbg .e{display:flex;gap:8px}.dbg .ok{color:var(--acc)}.dbg .er{color:var(--danger)}.dbg .t{opacity:.5;flex-shrink:0}
+
+/* Toast */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(18px);background:var(--sur2);border:1px solid var(--bor);color:var(--tx);padding:9px 18px;border-radius:100px;font-size:12px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:1000;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{position:relative;z-index:5;text-align:center;padding:18px;font-size:11px;color:var(--mu);border-top:1px solid var(--bor)}
+footer a{color:var(--acc);text-decoration:none}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo-mark">AK</div>
-  <div class="logo-text">Akasha<span>Hub</span></div>
-  <div class="header-badge">WebRTC · Firebase</div>
+  <div class="logo">AK</div>
+  <div class="logo-t">Akasha<span>Hub</span></div>
+  <div class="hbadge">WebRTC · Firebase</div>
 </header>
-
 <main>
+
+  <!-- HOME -->
   <div id="homeScreen" class="screen active">
     <div class="hero">
-      <h1>Vídeo & Ao Vivo<br><span class="grad">em tempo real</span></h1>
-      <p>Crie ou entre em uma sala de vídeo chamada segura, sem instalação, direto no navegador.</p>
+      <h1>Vídeo &amp; Ao Vivo<br><span class="grad">em tempo real</span></h1>
+      <p>Crie ou entre em uma sala sem instalação, direto no navegador.</p>
     </div>
-    <div class="action-cards">
-      <div class="card create" onclick="handleCreate()">
-        <div class="card-icon">📡</div>
+    <div class="cards">
+      <div class="card c1" onclick="handleCreate()">
+        <div class="ci">📡</div>
         <h3>Criar Sala</h3>
-        <p>Gera um ID único e aguarda outro participante conectar.</p>
+        <p>Gera um ID único e aguarda outra pessoa conectar.</p>
       </div>
-      <div class="card join" onclick="showJoinInput()">
-        <div class="card-icon">🔗</div>
+      <div class="card c2" onclick="showJoin()">
+        <div class="ci">🔗</div>
         <h3>Entrar na Sala</h3>
-        <p>Insira o código da sala ou use o link compartilhado.</p>
+        <p>Insira o código ou use o link compartilhado.</p>
       </div>
     </div>
-    <div class="join-input-area" id="joinArea">
-      <div class="input-row">
-        <input type="text" id="joinRoomId" placeholder="Cole o ID da sala aqui..." />
-        <button class="btn btn-blue" onclick="handleJoin()">Entrar</button>
+    <div class="join-box" id="joinBox">
+      <div class="row">
+        <input type="text" id="joinId" placeholder="Cole o ID ou link da sala..." />
+        <button class="btn bb" onclick="handleJoin()">Entrar</button>
       </div>
     </div>
   </div>
 
+  <!-- CALL -->
   <div id="callScreen" class="screen">
-    <div class="call-header">
-      <div class="room-info">
-        <div class="room-id-badge">
-          <div class="status-dot" id="statusDot"></div>
-          Sala: <strong id="displayRoomId">—</strong>
+    <div class="call-bar">
+      <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+        <div class="room-badge">
+          <div class="dot" id="dot"></div>
+          Sala:&nbsp;<strong id="roomLabel">—</strong>
         </div>
-        <span id="statusText" style="font-size:12px; color:var(--muted);">Aguardando...</span>
+        <span id="statusTxt" style="font-size:12px;color:var(--mu)">Iniciando...</span>
       </div>
-      <button class="btn btn-ghost" onclick="copyLink()" style="font-size:13px;">📋 Copiar link</button>
+      <button class="btn bg" onclick="copyLink()" style="font-size:12px">📋 Copiar link</button>
     </div>
-    <div class="video-grid">
-      <div class="video-wrap">
-        <video id="localVideo" autoplay muted playsinline></video>
-        <div class="video-placeholder" id="localPlaceholder">
-          <div class="icon">📷</div><span>Câmera local</span>
-        </div>
-        <div class="video-label">Você</div>
+
+    <div class="vgrid">
+      <div class="vwrap">
+        <video id="localVid" autoplay muted playsinline></video>
+        <div class="vph" id="localPh"><div class="ic">📷</div><span>Câmera local</span></div>
+        <div class="vlabel">Você</div>
       </div>
-      <div class="video-wrap">
-        <video id="remoteVideo" autoplay playsinline></video>
-        <div class="video-placeholder" id="remotePlaceholder">
-          <div class="icon">⏳</div><span>Aguardando participante...</span>
-        </div>
-        <div class="video-label">Remoto</div>
+      <div class="vwrap">
+        <video id="remoteVid" autoplay playsinline></video>
+        <div class="vph" id="remotePh"><div class="ic">⏳</div><span>Aguardando...</span></div>
+        <div class="vlabel">Remoto</div>
       </div>
     </div>
-    <div class="controls">
-      <button class="ctrl-btn" id="micBtn" onclick="toggleMic()">🎙️</button>
-      <button class="ctrl-btn" id="camBtn" onclick="toggleCam()">📷</button>
-      <button class="ctrl-btn end" onclick="hangup()">📵</button>
+
+    <div class="ctrls">
+      <button class="cb" id="micBtn" onclick="toggleMic()">🎙️</button>
+      <button class="cb" id="camBtn" onclick="toggleCam()">📷</button>
+      <button class="cb end" onclick="hangup()">📵</button>
     </div>
-    <div class="share-section">
-      <span class="share-label">🔗 Link da sala:</span>
-      <span class="share-link" id="shareLink">—</span>
-      <button class="btn btn-ghost" onclick="copyLink()" style="font-size:12px;padding:6px 14px;">Copiar</button>
+
+    <div class="share">
+      <span class="sh-lbl">🔗 Link:</span>
+      <span class="sh-link" id="shareLink">—</span>
+      <button class="btn bg" onclick="copyLink()" style="font-size:11px;padding:5px 12px">Copiar</button>
     </div>
-    <div class="status-log" id="statusLog"></div>
+
+    <div class="dbg" id="dbg"></div>
   </div>
 </main>
-
-<footer>
-  <a href="https://akashahub.com.br" target="_blank">akashahub.com.br</a> · Powered by WebRTC & Firebase
-</footer>
+<footer><a href="https://akashahub.com.br" target="_blank">akashahub.com.br</a> · WebRTC &amp; Firebase</footer>
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getFirestore, collection, doc, setDoc, getDoc, updateDoc,
-  onSnapshot, addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, collection, setDoc, getDoc, updateDoc,
+         onSnapshot, addDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ── CONFIG ──────────────────────────────────────────────────────────────────
-const firebaseConfig = {
-  apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
-  authDomain: "hub-akasha.firebaseapp.com",
-  projectId: "hub-akasha",
-  storageBucket: "hub-akasha.firebasestorage.app",
-  messagingSenderId: "370851875474",
-  appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+/* ─── FIREBASE ─────────────────────────────────────────────────────────── */
+const FB = {
+  apiKey:"AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+  authDomain:"hub-akasha.firebaseapp.com",
+  projectId:"hub-akasha",
+  storageBucket:"hub-akasha.firebasestorage.app",
+  messagingSenderId:"370851875474",
+  appId:"1:370851875474:web:29b1ba3a76b0fed7d9344b"
+};
+let db;
+try { db = getFirestore(initializeApp(FB)); L('Firebase OK','ok'); }
+catch(e){ L('Firebase ERRO: '+e.message,'er'); }
+
+/* ─── ICE — STUN + TURN públicos ──────────────────────────────────────── */
+const RTC_CFG = {
+  iceServers:[
+    {urls:'stun:stun.l.google.com:19302'},
+    {urls:'stun:stun1.l.google.com:19302'},
+    {urls:'stun:global.stun.twilio.com:3478'},
+    /* TURN gratuito metered.ca */
+    {urls:'turn:openrelay.metered.ca:80',      username:'openrelayproject',credential:'openrelayproject'},
+    {urls:'turn:openrelay.metered.ca:443',     username:'openrelayproject',credential:'openrelayproject'},
+    {urls:'turns:openrelay.metered.ca:443',    username:'openrelayproject',credential:'openrelayproject'},
+    {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'},
+  ],
+  iceCandidatePoolSize: 10
 };
 
-const ICE_SERVERS = { iceServers: [
-  { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'stun:stun1.l.google.com:19302' },
-  { urls: 'stun:stun2.l.google.com:19302' },
-  // TURN público gratuito como fallback (ajuda em NATs restritivos)
-  { urls: 'turn:openrelay.metered.ca:80',    username: 'openrelayproject', credential: 'openrelayproject' },
-  { urls: 'turn:openrelay.metered.ca:443',   username: 'openrelayproject', credential: 'openrelayproject' },
-  { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' },
-]};
-
-// ── STATE ────────────────────────────────────────────────────────────────────
-let db, pc, localStream, roomId;
+/* ─── STATE ─────────────────────────────────────────────────────────────── */
+let pc = null, localStream = null, roomId = null;
 let micOn = true, camOn = true;
-let unsubs = [];                // todas as unsubscribes ficam aqui
-let iceCandidateBuffer = [];    // buffer de ICE enquanto remoteDesc não está pronta
-let remoteReady = false;        // flag: remoteDescription já foi setada?
+let subs = [];            // Firestore unsubscribers
+let iceBuf = [];          // buffer de candidates até remoteDesc estar pronta
+let rdReady = false;      // remoteDescription setada?
+let makingOffer = false;  // lock anti-glare
 
-// ── INIT FIREBASE ────────────────────────────────────────────────────────────
-try {
-  const app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
-  log('Firebase OK ✓', 'ok');
-} catch(e) { log('Firebase erro: ' + e.message, 'err'); }
-
-// ── EXPOSED ──────────────────────────────────────────────────────────────────
-window.handleCreate  = () => startSession(true);
-window.handleJoin    = () => {
-  const raw = document.getElementById('joinRoomId').value.trim();
-  if (!raw) { toast('Cole o ID da sala!'); return; }
+/* ─── PUBLIC ─────────────────────────────────────────────────────────────── */
+window.handleCreate = () => init(true);
+window.handleJoin   = () => {
+  const raw = document.getElementById('joinId').value.trim();
+  if (!raw){ toast('Cole o ID da sala!'); return; }
   const id = raw.includes('roomId=')
-    ? new URL(raw).searchParams.get('roomId')
+    ? new URL(raw.startsWith('http') ? raw : 'https://x.com/?'+raw.split('?')[1]).searchParams.get('roomId') || raw
     : raw;
-  startSession(false, id);
+  init(false, id.toUpperCase());
 };
-window.showJoinInput = () => {
-  const a = document.getElementById('joinArea');
-  a.classList.toggle('visible');
-  if (a.classList.contains('visible')) document.getElementById('joinRoomId').focus();
+window.showJoin     = () => {
+  const b = document.getElementById('joinBox');
+  b.classList.toggle('open');
+  if(b.classList.contains('open')) document.getElementById('joinId').focus();
 };
-window.toggleMic = () => {
-  if (!localStream) return;
+window.toggleMic    = () => {
+  if(!localStream) return;
   micOn = !micOn;
   localStream.getAudioTracks().forEach(t => t.enabled = micOn);
   document.getElementById('micBtn').textContent = micOn ? '🎙️' : '🔇';
-  document.getElementById('micBtn').classList.toggle('off', !micOn);
+  document.getElementById('micBtn').classList.toggle('off',!micOn);
 };
-window.toggleCam = () => {
-  if (!localStream) return;
+window.toggleCam    = () => {
+  if(!localStream) return;
   camOn = !camOn;
   localStream.getVideoTracks().forEach(t => t.enabled = camOn);
   document.getElementById('camBtn').textContent = camOn ? '📷' : '🚫';
-  document.getElementById('camBtn').classList.toggle('off', !camOn);
+  document.getElementById('camBtn').classList.toggle('off',!camOn);
 };
-window.hangup = () => { cleanup(); showScreen('homeScreen'); toast('Chamada encerrada'); };
-window.copyLink = () => {
-  navigator.clipboard.writeText(buildLink()).then(() => toast('Link copiado! 🎉'));
-};
+window.hangup       = () => { cleanup(); showScreen('homeScreen'); toast('Chamada encerrada'); };
+window.copyLink     = () => navigator.clipboard.writeText(buildLink()).then(()=>toast('Link copiado! 🎉'));
 
-// ── SESSÃO PRINCIPAL ─────────────────────────────────────────────────────────
-async function startSession(isCreator, existingId) {
-  roomId = isCreator ? generateId() : existingId;
-
-  // reset state
-  iceCandidateBuffer = [];
-  remoteReady = false;
-  unsubs = [];
-
+/* ─── INIT SESSION ──────────────────────────────────────────────────────── */
+async function init(isCreator, existingId) {
+  cleanup(); // garante estado limpo
+  roomId = isCreator ? randId() : existingId;
   showScreen('callScreen');
-  document.getElementById('displayRoomId').textContent = roomId;
-  document.getElementById('shareLink').textContent = buildLink();
+  document.getElementById('roomLabel').textContent  = roomId;
+  document.getElementById('shareLink').textContent  = buildLink();
 
-  // 1. Câmera
-  log('Acessando câmera...', 'info');
+  /* 1. Câmera/microfone */
+  L('Solicitando câmera e microfone...','');
   try {
-    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    document.getElementById('localVideo').srcObject = localStream;
-    document.getElementById('localPlaceholder').classList.add('hidden');
-    log('Câmera OK ✓', 'ok');
-  } catch(e) {
-    log('Câmera erro: ' + e.message, 'err');
+    localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+    document.getElementById('localVid').srcObject = localStream;
+    document.getElementById('localPh').classList.add('hide');
+    L('Câmera e microfone OK ✓','ok');
+  } catch(err) {
+    L('Câmera ERRO: '+err.message,'er');
     toast('❌ Sem acesso à câmera/microfone');
-    showScreen('homeScreen');
-    return;
+    showScreen('homeScreen'); return;
   }
 
-  // 2. PeerConnection
-  pc = new RTCPeerConnection(ICE_SERVERS);
+  /* 2. PeerConnection */
+  pc = new RTCPeerConnection(RTC_CFG);
+  L('RTCPeerConnection criado ✓','ok');
 
-  // CRÍTICO: adiciona tracks ANTES de criar offer/answer
-  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+  /* Adiciona tracks ANTES de qualquer offer/answer */
+  localStream.getTracks().forEach(t => {
+    pc.addTrack(t, localStream);
+    L('Track adicionado: '+t.kind,'');
+  });
 
-  // CRÍTICO: ontrack — atribui o stream remoto ao vídeo
-  pc.ontrack = ({ streams }) => {
-    if (!streams || !streams[0]) return;
-    log('Stream remoto recebido ✓', 'ok');
-    const rv = document.getElementById('remoteVideo');
-    rv.srcObject = streams[0];
-    rv.play().catch(() => {});
-    document.getElementById('remotePlaceholder').classList.add('hidden');
+  /* ontrack — vídeo remoto */
+  pc.ontrack = ev => {
+    L('ontrack: '+ev.track.kind+' streams='+ev.streams.length,'ok');
+    if(!ev.streams[0]) return;
+    const rv = document.getElementById('remoteVid');
+    if(rv.srcObject !== ev.streams[0]) {
+      rv.srcObject = ev.streams[0];
+      rv.play().catch(e=>L('play err: '+e.message,'er'));
+      document.getElementById('remotePh').classList.add('hide');
+      L('Vídeo remoto conectado ✓','ok');
+    }
   };
 
+  /* Estados de conexão */
   pc.onconnectionstatechange = () => {
     const s = pc.connectionState;
-    log('Conexão: ' + s, s === 'connected' ? 'ok' : 'info');
-    if (s === 'connected')    { setStatus('connected', 'Conectado ✓'); notify('✅ Conectado!'); }
-    if (s === 'disconnected' || s === 'failed') { setStatus('error', 'Desconectado'); notify('⚠️ Conexão perdida'); }
+    L('connectionState: '+s, s==='connected'?'ok':s==='failed'?'er':'');
+    if(s==='connected')                       { setDot('on');  setStatus('Conectado ✓'); banner('✅ Conectado!'); }
+    if(s==='failed'||s==='disconnected')      { setDot('err'); setStatus('Desconectado'); }
   };
+  pc.oniceconnectionstatechange = () => L('iceConnection: '+pc.iceConnectionState,'');
+  pc.onsignalingstatechange     = () => L('signalingState: '+pc.signalingState,'');
+  pc.onicegatheringstatechange  = () => L('iceGathering: '+pc.iceGatheringState,'');
 
-  pc.oniceconnectionstatechange = () => log('ICE: ' + pc.iceConnectionState, 'info');
-
-  // 3. Signaling
-  if (isCreator) await doCreate();
-  else           await doJoin();
+  /* 3. Signaling */
+  if(isCreator) await doOffer();
+  else          await doAnswer();
 }
 
-// ── CRIADOR ───────────────────────────────────────────────────────────────────
-async function doCreate() {
-  const roomRef = doc(db, 'calls', roomId);
+/* ─── CRIADOR: cria offer e escuta answer ──────────────────────────────── */
+async function doOffer() {
+  const roomRef  = doc(db,'calls',roomId);
+  const callerRef = collection(roomRef,'callerCandidates');
 
-  // onicecandidate ANTES de createOffer — nenhum candidate é perdido
-  pc.onicecandidate = async ({ candidate }) => {
-    if (!candidate) return;
-    log('Enviando ICE candidate (caller)', 'info');
-    await addDoc(collection(roomRef, 'callerCandidates'), candidate.toJSON());
+  /* onicecandidate ANTES de createOffer para não perder candidates gerados imediatamente */
+  pc.onicecandidate = async ({candidate}) => {
+    if(!candidate) { L('ICE gathering completo (caller)',''); return; }
+    L('ICE candidate gerado (caller): '+candidate.type,'');
+    try { await addDoc(callerRef, candidate.toJSON()); }
+    catch(e){ L('addDoc ICE err: '+e.message,'er'); }
   };
 
-  const offer = await pc.createOffer();
-  await pc.setLocalDescription(offer);
+  /* Cria offer */
+  makingOffer = true;
+  try {
+    const offer = await pc.createOffer({offerToReceiveAudio:true, offerToReceiveVideo:true});
+    await pc.setLocalDescription(offer);
+    L('Offer criado e setLocalDescription OK','ok');
+  } catch(e){ L('createOffer ERRO: '+e.message,'er'); return; }
+  finally { makingOffer = false; }
 
+  /* Salva no Firestore */
   await setDoc(roomRef, {
-    offer: { type: offer.type, sdp: offer.sdp },
-    createdAt: Date.now()
+    offer: {type: pc.localDescription.type, sdp: pc.localDescription.sdp},
+    ts: serverTimestamp()
   });
+  L('Offer salvo no Firestore: '+roomId,'ok');
+  setStatus('Aguardando participante...');
 
-  setStatus('waiting', 'Aguardando participante...');
-  log('Sala criada: ' + roomId, 'ok');
-
-  // Escuta callee candidates — chegam ANTES do answer, por isso usamos o buffer
-  const unsubCC = onSnapshot(collection(roomRef, 'calleeCandidates'), snap => {
-    snap.docChanges().forEach(c => {
-      if (c.type === 'added') bufferOrAdd(c.doc.data());
+  /* Escuta callee candidates — chegam ANTES do answer, por isso buffer */
+  const unCallee = onSnapshot(collection(roomRef,'calleeCandidates'), snap => {
+    snap.docChanges().forEach(ch => {
+      if(ch.type==='added') bufOrApply(ch.doc.data());
     });
   });
-  unsubs.push(unsubCC);
+  subs.push(unCallee);
 
-  // Escuta answer
-  const unsubRoom = onSnapshot(roomRef, async snap => {
+  /* Escuta answer */
+  const unRoom = onSnapshot(roomRef, async snap => {
     const data = snap.data();
-    if (!data?.answer || pc.currentRemoteDescription) return;
-    log('Answer recebido, conectando...', 'ok');
+    if(!data?.answer || pc.currentRemoteDescription) return;
+    L('Answer recebido! Aplicando remoteDescription...','ok');
     try {
       await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-      remoteReady = true;
-      log('RemoteDescription OK ✓', 'ok');
-      await flushBuffer(); // aplica todos os candidates que ficaram na fila
-    } catch(e) { log('setRemoteDescription erro: ' + e.message, 'err'); }
+      rdReady = true;
+      L('setRemoteDescription (answer) OK ✓','ok');
+      await flushIce();
+    } catch(e){ L('setRemoteDescription ERRO: '+e.message,'er'); }
   });
-  unsubs.push(unsubRoom);
+  subs.push(unRoom);
 }
 
-// ── ENTRANTE ──────────────────────────────────────────────────────────────────
-async function doJoin() {
-  const roomRef = doc(db, 'calls', roomId);
+/* ─── ENTRANTE: pega offer, cria answer ────────────────────────────────── */
+async function doAnswer() {
+  const roomRef    = doc(db,'calls',roomId);
+  const calleeRef  = collection(roomRef,'calleeCandidates');
+  const callerRef  = collection(roomRef,'callerCandidates');
+
+  /* Verifica sala */
+  L('Procurando sala '+roomId+'...','');
   const snap = await getDoc(roomRef);
+  if(!snap.exists()){ L('Sala não encontrada!','er'); toast('❌ Sala não encontrada'); showScreen('homeScreen'); cleanup(); return; }
+  L('Sala encontrada ✓','ok');
 
-  if (!snap.exists()) {
-    log('Sala não encontrada!', 'err');
-    toast('❌ Sala não encontrada. Verifique o ID.');
-    showScreen('homeScreen');
-    cleanup();
-    return;
-  }
-
-  // onicecandidate ANTES de createAnswer
-  pc.onicecandidate = async ({ candidate }) => {
-    if (!candidate) return;
-    log('Enviando ICE candidate (callee)', 'info');
-    await addDoc(collection(roomRef, 'calleeCandidates'), candidate.toJSON());
+  /* onicecandidate ANTES de createAnswer */
+  pc.onicecandidate = async ({candidate}) => {
+    if(!candidate){ L('ICE gathering completo (callee)',''); return; }
+    L('ICE candidate gerado (callee): '+candidate.type,'');
+    try { await addDoc(calleeRef, candidate.toJSON()); }
+    catch(e){ L('addDoc ICE err: '+e.message,'er'); }
   };
 
-  // ORDEM CORRETA: setRemoteDescription → createAnswer → setLocalDescription
+  /* ORDEM OBRIGATÓRIA: setRemoteDescription → createAnswer → setLocalDescription */
+  const offer = snap.data().offer;
   try {
-    await pc.setRemoteDescription(new RTCSessionDescription(snap.data().offer));
-    remoteReady = true;
-    log('Offer recebido OK ✓', 'ok');
-  } catch(e) {
-    log('Offer erro: ' + e.message, 'err');
-    return;
-  }
+    await pc.setRemoteDescription(new RTCSessionDescription(offer));
+    rdReady = true;
+    L('setRemoteDescription (offer) OK ✓','ok');
+  } catch(e){ L('setRemoteDescription ERRO: '+e.message,'er'); return; }
 
-  const answer = await pc.createAnswer();
-  await pc.setLocalDescription(answer);
-  await updateDoc(roomRef, { answer: { type: answer.type, sdp: answer.sdp } });
+  let answer;
+  try {
+    answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    L('Answer criado e setLocalDescription OK ✓','ok');
+  } catch(e){ L('createAnswer ERRO: '+e.message,'er'); return; }
 
-  setStatus('waiting', 'Conectando...');
-  log('Answer enviado. Aguardando ICE...', 'ok');
+  /* Salva answer */
+  try {
+    await updateDoc(roomRef, {answer: {type: answer.type, sdp: answer.sdp}});
+    L('Answer salvo no Firestore ✓','ok');
+  } catch(e){ L('updateDoc answer ERRO: '+e.message,'er'); return; }
 
-  // Escuta caller candidates — remoteReady=true então podem ser aplicados direto
-  const unsubCaller = onSnapshot(collection(roomRef, 'callerCandidates'), snap => {
-    snap.docChanges().forEach(c => {
-      if (c.type === 'added') bufferOrAdd(c.doc.data());
+  setStatus('Conectando...');
+
+  /* Aplica candidates do caller que já estavam no Firestore ANTES de subscribermos */
+  const callerSnap = await getDocs(callerRef);
+  for(const d of callerSnap.docs) bufOrApply(d.data());
+  await flushIce();
+
+  /* Escuta novos caller candidates que chegarem depois */
+  const unCaller = onSnapshot(callerRef, snap => {
+    snap.docChanges().forEach(ch => {
+      if(ch.type==='added') bufOrApply(ch.doc.data());
     });
   });
-  unsubs.push(unsubCaller);
-
-  // Aplica qualquer candidate que chegou antes do snapshot registrar
-  await flushBuffer();
+  subs.push(unCaller);
 }
 
-// ── ICE BUFFER ────────────────────────────────────────────────────────────────
-// Se remoteDescription ainda não está pronta, guarda no buffer.
-// Quando ficar pronta (flushBuffer), aplica tudo de uma vez.
-function bufferOrAdd(data) {
-  if (!data?.candidate) return;
-  if (remoteReady) {
-    applyCandidate(data);
-  } else {
-    iceCandidateBuffer.push(data);
-    log('ICE bufferizado (aguarda remoteDesc)', 'info');
-  }
+/* ─── ICE BUFFER ────────────────────────────────────────────────────────── */
+function bufOrApply(data) {
+  if(!data?.candidate) return;
+  if(rdReady && pc) applyIce(data);
+  else { iceBuf.push(data); L('ICE bufferizado (rdReady=false)',''); }
 }
-
-async function flushBuffer() {
-  if (iceCandidateBuffer.length === 0) return;
-  log(`Aplicando ${iceCandidateBuffer.length} ICE candidates do buffer...`, 'info');
-  const pending = [...iceCandidateBuffer];
-  iceCandidateBuffer = [];
-  for (const c of pending) await applyCandidate(c);
+async function flushIce() {
+  if(!iceBuf.length) return;
+  L('Flush: '+iceBuf.length+' ICE candidates do buffer','ok');
+  const pending = [...iceBuf]; iceBuf=[];
+  for(const c of pending) await applyIce(c);
 }
-
-async function applyCandidate(data) {
-  if (!pc || !data?.candidate) return;
+async function applyIce(data) {
+  if(!pc || pc.signalingState==='closed') return;
   try {
     await pc.addIceCandidate(new RTCIceCandidate(data));
-    log('ICE candidate aplicado ✓', 'info');
-  } catch(e) {
-    // Ignora erros de "offer/answer not set" residuais — já protegidos pelo buffer
-    if (!e.message.includes('remote') && !e.message.includes('offer')) {
-      log('ICE erro: ' + e.message, 'err');
-    }
+    L('addIceCandidate OK ('+data.type+')','ok');
+  } catch(e){
+    if(e.message.includes('closed')||e.message.includes('NULL')) return;
+    L('addIceCandidate ERRO: '+e.message,'er');
   }
 }
 
-// ── UTILS ─────────────────────────────────────────────────────────────────────
-function generateId() { return Math.random().toString(36).substring(2,8).toUpperCase(); }
-function buildLink()  { return `${location.href.split('?')[0]}?roomId=${roomId}`; }
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+/* ─── UTILS ─────────────────────────────────────────────────────────────── */
+function randId(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
+function buildLink(){ return location.href.split('?')[0]+'?roomId='+roomId; }
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-function setStatus(state, text) {
-  document.getElementById('statusDot').className = 'status-dot ' + state;
-  document.getElementById('statusText').textContent = text;
+function setDot(cls){
+  document.getElementById('dot').className='dot '+(cls||'');
 }
-function log(msg, type = 'info') {
-  const el = document.getElementById('statusLog');
-  if (!el) return;
-  const t = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  const e = document.createElement('div');
-  e.className = 'entry ' + type;
-  e.innerHTML = `<span class="time">${t}</span><span>${msg}</span>`;
-  el.appendChild(e);
-  el.scrollTop = el.scrollHeight;
-  console.log(`[${type.toUpperCase()}] ${msg}`);
+function setStatus(txt){
+  document.getElementById('statusTxt').textContent=txt;
 }
-function toast(msg, d = 2800) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), d);
+function L(msg, type=''){
+  const el=document.getElementById('dbg');
+  if(!el) return;
+  const now=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const e=document.createElement('div');
+  e.className='e '+(type==='ok'?'ok':type==='er'?'er':'');
+  e.innerHTML=`<span class="t">${now}</span><span>${msg}</span>`;
+  el.appendChild(e); el.scrollTop=el.scrollHeight;
+  console.log('['+type.toUpperCase()+'] '+msg);
 }
-function notify(msg) {
-  let b = document.getElementById('nb');
-  if (!b) {
-    b = document.createElement('div');
-    b.id = 'nb';
-    b.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%) scale(0.9);
-      background:#0e1419;border:1.5px solid var(--accent);color:var(--text);
-      padding:14px 28px;border-radius:14px;font-family:'Syne',sans-serif;font-weight:600;
-      font-size:15px;box-shadow:0 8px 32px rgba(0,201,167,0.25);z-index:9999;
-      opacity:0;transition:all 0.3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;`;
+function toast(msg,d=2800){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),d);
+}
+function banner(msg){
+  let b=document.getElementById('bn');
+  if(!b){
+    b=document.createElement('div'); b.id='bn';
+    b.style.cssText='position:fixed;top:18px;left:50%;transform:translateX(-50%) scale(.9);background:#0e1419;border:1.5px solid var(--acc);color:var(--tx);padding:13px 26px;border-radius:13px;font-family:Syne,sans-serif;font-weight:700;font-size:14px;box-shadow:0 8px 30px rgba(0,201,167,.25);z-index:9999;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap';
     document.body.appendChild(b);
   }
-  b.textContent = msg;
-  b.style.opacity = '1';
-  b.style.transform = 'translateX(-50%) scale(1)';
+  b.textContent=msg; b.style.opacity='1'; b.style.transform='translateX(-50%) scale(1)';
   clearTimeout(b._t);
-  b._t = setTimeout(() => { b.style.opacity='0'; b.style.transform='translateX(-50%) scale(0.92)'; }, 4500);
+  b._t=setTimeout(()=>{b.style.opacity='0';b.style.transform='translateX(-50%) scale(.92)';},4500);
 }
-function cleanup() {
-  unsubs.forEach(u => u());
-  unsubs = [];
-  if (localStream) localStream.getTracks().forEach(t => t.stop());
-  if (pc) try { pc.close(); } catch(e) {}
-  pc = null; localStream = null; roomId = null;
-  iceCandidateBuffer = []; remoteReady = false;
-  document.getElementById('localVideo').srcObject  = null;
-  document.getElementById('remoteVideo').srcObject = null;
-  document.getElementById('localPlaceholder').classList.remove('hidden');
-  document.getElementById('remotePlaceholder').classList.remove('hidden');
-  document.getElementById('statusLog').innerHTML = '';
+function cleanup(){
+  subs.forEach(u=>u()); subs=[];
+  if(localStream) localStream.getTracks().forEach(t=>t.stop());
+  if(pc){ try{pc.close();}catch(e){} pc=null; }
+  localStream=null; roomId=null; iceBuf=[]; rdReady=false; makingOffer=false;
+  const lv=document.getElementById('localVid');
+  const rv=document.getElementById('remoteVid');
+  if(lv) lv.srcObject=null;
+  if(rv) rv.srcObject=null;
+  document.getElementById('localPh')?.classList.remove('hide');
+  document.getElementById('remotePh')?.classList.remove('hide');
+  document.getElementById('dbg').innerHTML='';
+  setDot(''); setStatus('');
 }
 
-// Auto-join pelo link
-window.addEventListener('load', () => {
-  const rid = new URLSearchParams(location.search).get('roomId');
-  if (rid) {
-    document.getElementById('joinRoomId').value = rid;
-    showJoinInput();
-    toast(`Sala detectada: ${rid}`);
+/* getDocs necessário para busca inicial dos callerCandidates */
+async function getDocs(ref){
+  return new Promise((res,rej)=>{
+    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
+      .then(({getDocs:gd})=>gd(ref).then(res).catch(rej));
+  });
+}
+
+/* Auto-join via URL */
+addEventListener('load',()=>{
+  const rid=new URLSearchParams(location.search).get('roomId');
+  if(rid){
+    document.getElementById('joinId').value=rid;
+    showJoin();
+    toast('Sala detectada: '+rid);
   }
 });
 </script>
