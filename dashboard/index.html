@@ -1,1208 +1,270 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aurora de Carvalho — Escritora</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --azul:#1B3A6B;--azul-esc:#0D1F3C;--azul-claro:#2E5FA3;
-  --vermelho:#C0392B;--vermelho-v:#E74C3C;
-  --amarelo:#F0C040;--amarelo-s:#D4A820;
-  --branco:#FDFAF4;
-  --ff-serif:'Playfair Display',Georgia,serif;
-  --ff-body:'Crimson Text',Georgia,serif;
-  --ff-ui:'DM Sans',sans-serif;
-  --ease:cubic-bezier(0.25,0.46,0.45,0.94);
-}
-html{scroll-behavior:smooth;}
-body{background:var(--azul-esc);color:var(--branco);font-family:var(--ff-body);font-size:1.1rem;line-height:1.7;overflow-x:hidden;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akasha Hub | Dashboard</title>
+  <link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#06050a;--gold:#c9a227;--gold-light:#f0d078;
+      --gold-border:rgba(201,162,39,.3);--white:#f5f0e8;
+      --muted:rgba(245,240,232,.35);--card:rgba(255,255,255,.025);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--white);font-family:'Josefin Sans',sans-serif;
+      font-weight:300;min-height:100vh;overflow-x:hidden;}
+    body::before{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);
+      width:700px;height:700px;
+      background:radial-gradient(ellipse,rgba(201,162,39,.06) 0%,transparent 65%);
+      pointer-events:none;animation:breathe 9s ease-in-out infinite;}
+    @keyframes breathe{0%,100%{opacity:.4;}50%{opacity:.9;}}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 3rem;display:flex;align-items:center;justify-content:space-between;transition:background .4s,padding .4s;}
-nav.scrolled{background:rgba(13,31,60,.96);backdrop-filter:blur(20px);padding:.8rem 3rem;border-bottom:1px solid rgba(240,192,64,.15);}
-.nav-logo{font-family:var(--ff-serif);font-size:1.2rem;font-weight:700;color:var(--branco);text-decoration:none;}
-.nav-logo span{color:var(--amarelo);}
-.nav-links{display:flex;gap:2rem;list-style:none;}
-.nav-links a{font-family:var(--ff-ui);font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(253,250,244,.7);text-decoration:none;transition:color .3s;}
-.nav-links a:hover{color:var(--amarelo);}
-.nav-cta{font-family:var(--ff-ui);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--azul-esc);background:var(--amarelo);padding:.55rem 1.3rem;text-decoration:none;border-radius:2px;transition:background .3s;font-weight:500;}
-.nav-cta:hover{background:var(--amarelo-s);}
-.nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
-.nav-toggle span{width:24px;height:2px;background:var(--branco);display:block;}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
+      justify-content:space-between;padding:18px 32px;background:rgba(6,5,10,.85);
+      backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.04);}
+    .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+    .nav-logo img{width:36px;height:36px;border-radius:50%;filter:drop-shadow(0 0 6px rgba(201,162,39,.35));}
+    .nav-logo span{font-family:'Cormorant Garamond',serif;font-size:1.1rem;letter-spacing:4px;color:var(--white);}
+    .nav-logo span b{color:var(--gold-light);font-weight:400;}
+    .nav-right{display:flex;align-items:center;gap:16px;}
+    .nav-level{font-size:.55rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);
+      opacity:.8;border:1px solid var(--gold-border);padding:5px 12px;border-radius:20px;}
+    .nav-avatar{width:34px;height:34px;border-radius:50%;background:rgba(201,162,39,.1);
+      border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;
+      font-size:.85rem;color:var(--gold);cursor:pointer;text-decoration:none;transition:background .3s;}
+    .nav-avatar:hover{background:rgba(201,162,39,.2);}
 
-/* HERO */
-#hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-#three-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.3;}
-.hero-content{position:relative;z-index:2;text-align:center;max-width:860px;padding:2rem;}
-.hero-eyebrow{font-family:var(--ff-ui);font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;color:var(--amarelo);opacity:0;transform:translateY(20px);animation:fadeUp .8s var(--ease) .6s forwards;margin-bottom:1.5rem;display:block;}
-.hero-title{font-family:var(--ff-serif);font-size:clamp(3rem,9vw,8.5rem);font-weight:900;line-height:.9;letter-spacing:-.02em;color:var(--branco);opacity:0;animation:heroReveal 1.2s var(--ease) .9s forwards;margin-bottom:.3em;}
-.hero-title .line-red{display:block;color:var(--vermelho);font-style:italic;}
-.hero-tagline{font-family:var(--ff-body);font-size:clamp(1rem,2.5vw,1.5rem);font-style:italic;color:rgba(253,250,244,.8);opacity:0;transform:translateY(20px);animation:fadeUp .8s var(--ease) 1.4s forwards;max-width:580px;margin:1.5rem auto 2.5rem;}
-.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;opacity:0;transform:translateY(20px);animation:fadeUp .8s var(--ease) 1.8s forwards;}
-@keyframes heroReveal{from{opacity:0;clip-path:inset(0 0 100% 0)}to{opacity:1;clip-path:inset(0 0 0% 0)}}
-@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-.hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;opacity:0;animation:fadeUp .8s var(--ease) 2.2s forwards;}
-.hero-scroll span{font-family:var(--ff-ui);font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(253,250,244,.35);}
-.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--amarelo),transparent);animation:sPulse 2s ease-in-out 2.5s infinite;}
-@keyframes sPulse{0%,100%{opacity:1}50%{opacity:.3}}
+    main{max-width:680px;margin:0 auto;padding:110px 24px 80px;}
 
-/* BUTTONS */
-.btn-primary{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--ff-ui);font-size:.8rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;background:var(--vermelho);color:var(--branco);padding:.9rem 2rem;border-radius:2px;border:none;cursor:pointer;transition:background .3s,transform .2s,box-shadow .3s;}
-.btn-primary:hover{background:var(--vermelho-v);transform:translateY(-2px);box-shadow:0 8px 24px rgba(192,57,43,.4);}
-.btn-ghost{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--ff-ui);font-size:.8rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;background:transparent;color:var(--branco);padding:.9rem 2rem;border-radius:2px;border:1px solid rgba(253,250,244,.3);cursor:pointer;transition:border-color .3s,color .3s,transform .2s;}
-.btn-ghost:hover{border-color:var(--amarelo);color:var(--amarelo);transform:translateY(-2px);}
-.btn-gold{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--ff-ui);font-size:.8rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;background:var(--amarelo);color:var(--azul-esc);padding:.9rem 2rem;border-radius:2px;border:none;cursor:pointer;transition:background .3s,transform .2s,box-shadow .3s;}
-.btn-gold:hover{background:var(--amarelo-s);transform:translateY(-2px);box-shadow:0 8px 24px rgba(240,192,64,.35);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 
-/* SHARED */
-section{position:relative;z-index:1;}
-.section-inner{max-width:1100px;margin:0 auto;padding:0 2rem;}
-.section-eyebrow{font-family:var(--ff-ui);font-size:.68rem;letter-spacing:.38em;text-transform:uppercase;color:var(--amarelo);margin-bottom:.9rem;display:block;}
-.section-title{font-family:var(--ff-serif);font-size:clamp(2rem,4.5vw,3.6rem);font-weight:900;line-height:1.05;color:var(--branco);margin-bottom:1.25rem;}
-.section-title em{color:var(--vermelho);font-style:italic;}
-.divider{width:56px;height:3px;background:linear-gradient(90deg,var(--vermelho),var(--amarelo));margin:1.25rem 0 2rem;border-radius:2px;}
-.reveal{opacity:0;transform:translateY(36px);transition:opacity .8s var(--ease),transform .8s var(--ease);}
-.reveal.visible{opacity:1;transform:translateY(0);}
-.reveal-left{opacity:0;transform:translateX(-36px);transition:opacity .8s var(--ease),transform .8s var(--ease);}
-.reveal-left.visible{opacity:1;transform:translateX(0);}
-.reveal-right{opacity:0;transform:translateX(36px);transition:opacity .8s var(--ease),transform .8s var(--ease);}
-.reveal-right.visible{opacity:1;transform:translateX(0);}
-.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
-.section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(240,192,64,.18),transparent);}
+    .greeting{margin-bottom:40px;animation:fadeUp .8s ease both;}
+    .greeting-sub{font-size:.6rem;letter-spacing:5px;text-transform:uppercase;
+      color:var(--gold);opacity:.6;margin-bottom:10px;}
+    .greeting h2{font-family:'Cormorant Garamond',serif;font-weight:300;
+      font-size:2.2rem;letter-spacing:2px;}
+    .greeting h2 span{color:var(--gold-light);}
 
-/* SOBRE */
-#sobre{padding:9rem 0;}
-.sobre-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;}
-.sobre-portrait{width:100%;aspect-ratio:3/4;background:linear-gradient(135deg,var(--azul),var(--azul-esc));border-radius:4px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid rgba(240,192,64,.15);}
-.sobre-portrait::before{content:'A';font-family:var(--ff-serif);font-size:16rem;font-weight:900;color:rgba(240,192,64,.06);line-height:1;position:absolute;}
-.portrait-badge{position:absolute;bottom:-1.2rem;right:-1.2rem;background:var(--vermelho);color:var(--branco);padding:1.25rem;text-align:center;border-radius:3px;box-shadow:0 10px 40px rgba(0,0,0,.4);}
-.portrait-badge strong{display:block;font-family:var(--ff-serif);font-size:2.5rem;font-weight:900;line-height:1;color:var(--amarelo);}
-.portrait-badge span{font-family:var(--ff-ui);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;}
-.sobre-text p{color:rgba(253,250,244,.8);margin-bottom:1.25rem;line-height:1.8;}
-.sobre-text p strong{color:var(--amarelo);}
-.sobre-stats{display:flex;gap:2rem;margin-top:2.5rem;padding-top:2rem;border-top:1px solid rgba(240,192,64,.12);flex-wrap:wrap;}
-.stat-item{text-align:center;}
-.stat-num{display:block;font-family:var(--ff-serif);font-size:2.2rem;font-weight:900;color:var(--amarelo);line-height:1;}
-.stat-label{font-family:var(--ff-ui);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(253,250,244,.45);margin-top:.25rem;}
+    .sec{display:flex;align-items:center;gap:14px;margin:32px 0 14px;
+      opacity:0;animation:fadeUp .6s ease forwards;}
+    .sec span{font-size:.58rem;letter-spacing:5px;text-transform:uppercase;
+      color:var(--gold);opacity:.55;white-space:nowrap;}
+    .sec::after{content:'';flex:1;height:1px;
+      background:linear-gradient(90deg,var(--gold-border),transparent);}
 
-/* LIVROS */
-#obras{padding:9rem 0;background:linear-gradient(180deg,var(--azul-esc) 0%,#091525 100%);}
-#obras::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--amarelo),transparent);}
-.obras-header{text-align:center;margin-bottom:4rem;}
-.obras-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;}
-.livro-card{background:rgba(27,58,107,.2);border:1px solid rgba(240,192,64,.12);border-radius:6px;overflow:hidden;transition:transform .4s var(--ease),border-color .4s,box-shadow .4s;}
-.livro-card:hover{transform:translateY(-8px);border-color:rgba(240,192,64,.4);box-shadow:0 20px 60px rgba(0,0,0,.4);}
-.livro-cover{height:240px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#091525;}
-.livro-cover img{width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .5s var(--ease);filter:brightness(.9);}
-.livro-card:hover .livro-cover img{transform:scale(1.05);filter:brightness(1);}
-.cover-tag{position:absolute;top:.75rem;right:.75rem;background:var(--amarelo);color:var(--azul-esc);font-family:var(--ff-ui);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;padding:.28rem .65rem;border-radius:2px;z-index:2;}
-.cover-promo{position:absolute;top:.75rem;left:.75rem;background:var(--vermelho);color:var(--branco);font-family:var(--ff-ui);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:.28rem .65rem;border-radius:2px;z-index:2;}
-.livro-body{padding:1.5rem;}
-.livro-categoria{font-family:var(--ff-ui);font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--vermelho);margin-bottom:.6rem;}
-.livro-titulo{font-family:var(--ff-serif);font-size:1.3rem;font-weight:700;color:var(--branco);margin-bottom:.6rem;line-height:1.2;}
-.livro-desc{font-size:.88rem;color:rgba(253,250,244,.6);line-height:1.6;margin-bottom:1.25rem;}
-.livro-footer{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;}
-.livro-preco{font-family:var(--ff-ui);font-size:.78rem;font-weight:500;color:var(--amarelo);}
-.livro-preco small{display:block;font-size:.6rem;color:rgba(253,250,244,.35);font-weight:400;margin-top:.2rem;}
-.btn-comprar{font-family:var(--ff-ui);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;background:var(--vermelho);color:var(--branco);padding:.65rem 1.3rem;border-radius:2px;text-decoration:none;transition:background .3s,transform .2s,box-shadow .3s;display:inline-flex;align-items:center;gap:.35rem;font-weight:500;white-space:nowrap;}
-.btn-comprar:hover{background:var(--vermelho-v);transform:translateY(-2px);box-shadow:0 8px 20px rgba(192,57,43,.4);}
+    .card{width:100%;display:flex;align-items:center;justify-content:space-between;
+      padding:20px 24px;margin-bottom:8px;border-radius:2px;text-decoration:none;
+      color:var(--white);background:var(--card);border:1px solid rgba(255,255,255,.05);
+      overflow:hidden;position:relative;transition:all .35s cubic-bezier(.25,1,.5,1);
+      opacity:0;animation:fadeUp .6s ease forwards;}
+    .card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;
+      background:linear-gradient(90deg,var(--gold),transparent);transition:width .5s ease;}
+    .card:hover{border-color:var(--gold-border);background:rgba(201,162,39,.04);transform:translateX(4px);}
+    .card:hover::after{width:100%;}
+    .card.premium{border-color:rgba(201,162,39,.18);
+      background:linear-gradient(105deg,rgba(201,162,39,.05) 0%,transparent 60%);}
+    .card.locked{opacity:.4!important;cursor:default;pointer-events:none;}
 
-/* ESPECIAIS */
-#especiais{padding:8rem 0;}
-.especiais-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:3rem;}
-.especial-card{border-radius:8px;overflow:hidden;transition:transform .4s var(--ease),box-shadow .4s;}
-.especial-card:hover{transform:translateY(-6px);}
-.card-novela{background:linear-gradient(140deg,#110820 0%,#0d1f3c 55%,#150f00 100%);border:1px solid rgba(240,192,64,.28);}
-.card-novela:hover{box-shadow:0 20px 60px rgba(240,192,64,.18);}
-.card-musica{background:linear-gradient(140deg,#051525 0%,#0d2030 60%,#0d1525 100%);border:1px solid rgba(46,95,163,.45);}
-.card-musica:hover{box-shadow:0 20px 60px rgba(46,95,163,.28);}
-.especial-inner{padding:2.75rem;}
-.especial-badge{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--ff-ui);font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;padding:.3rem .9rem;border-radius:20px;margin-bottom:1.25rem;}
-.badge-novela{color:var(--amarelo);background:rgba(240,192,64,.1);border:1px solid rgba(240,192,64,.25);}
-.badge-musica{color:#7db3ff;background:rgba(46,95,163,.15);border:1px solid rgba(46,95,163,.35);}
-.especial-icon{font-size:3rem;margin-bottom:1.25rem;display:block;}
-.especial-titulo{font-family:var(--ff-serif);font-size:1.65rem;font-weight:900;color:var(--branco);margin-bottom:.65rem;line-height:1.2;}
-.especial-desc{font-size:.92rem;color:rgba(253,250,244,.68);line-height:1.7;margin-bottom:1.5rem;}
-.especial-destaque{border-radius:4px;padding:.9rem 1.1rem;margin-bottom:1.75rem;font-size:.88rem;line-height:1.65;font-style:italic;}
-.card-novela .especial-destaque{background:rgba(240,192,64,.06);border-left:3px solid var(--amarelo);color:rgba(253,250,244,.82);}
-.card-musica .especial-destaque{background:rgba(46,95,163,.1);border-left:3px solid #2E5FA3;color:rgba(253,250,244,.82);}
-.especial-destaque strong{font-style:normal;color:var(--amarelo);}
-.card-musica .especial-destaque strong{color:#7db3ff;}
-.btn-especial-novela{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;width:100%;font-family:var(--ff-ui);font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;background:linear-gradient(135deg,var(--amarelo),var(--amarelo-s));color:var(--azul-esc);padding:.95rem;border-radius:3px;border:none;cursor:pointer;transition:transform .2s,box-shadow .3s;}
-.btn-especial-novela:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(240,192,64,.4);}
-.btn-especial-musica{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;width:100%;font-family:var(--ff-ui);font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;background:linear-gradient(135deg,#2E5FA3,#1a3a7a);color:#fff;padding:.95rem;border-radius:3px;border:none;cursor:pointer;transition:transform .2s,box-shadow .3s;}
-.btn-especial-musica:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(46,95,163,.5);}
+    .card-l{display:flex;align-items:center;gap:16px;}
+    .card-icon{font-size:1rem;color:var(--gold);opacity:.8;width:20px;text-align:center;font-style:normal;}
+    .card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1.05rem;letter-spacing:1.5px;}
+    .card-sub{font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+    .card-arrow{font-size:.7rem;color:var(--gold);opacity:0;
+      transition:opacity .3s,transform .3s;transform:translateX(-6px);}
+    .card:hover .card-arrow{opacity:.7;transform:translateX(0);}
+    .lock-badge{font-size:.52rem;letter-spacing:3px;text-transform:uppercase;
+      color:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.08);padding:4px 10px;border-radius:20px;}
 
-/* MANIFESTO */
-#manifesto{padding:11rem 0;background:var(--vermelho);text-align:center;overflow:hidden;position:relative;}
-#manifesto::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(192,57,43,.4) 0%,var(--vermelho) 70%);}
-#manifesto::after{content:'LEGADO';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-serif);font-size:clamp(7rem,18vw,20rem);font-weight:900;color:rgba(255,255,255,.04);pointer-events:none;}
-.manifesto-inner{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:0 2rem;}
-.manifesto-quote{font-family:var(--ff-serif);font-size:clamp(1.4rem,3.5vw,2.5rem);font-weight:400;font-style:italic;line-height:1.45;color:var(--branco);margin-bottom:1.75rem;}
-.manifesto-body{font-size:1.05rem;color:rgba(255,255,255,.82);line-height:1.8;margin-bottom:2.5rem;}
-.manifesto-assinatura{font-family:var(--ff-serif);font-size:1.4rem;font-style:italic;color:var(--amarelo);}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;
+      opacity:0;animation:fadeUp .6s ease forwards;}
+    .mini{background:var(--card);border:1px solid rgba(255,255,255,.04);padding:16px 14px;
+      border-radius:2px;text-align:center;text-decoration:none;color:var(--muted);
+      font-size:.68rem;letter-spacing:3px;text-transform:uppercase;transition:all .3s;
+      position:relative;overflow:hidden;}
+    .mini::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+      width:0;height:1px;background:var(--gold);transition:width .4s;}
+    .mini:hover{background:rgba(201,162,39,.04);border-color:var(--gold-border);color:var(--gold-light);}
+    .mini:hover::after{width:60%;}
+    .mini.span2{grid-column:span 2;}
+    .mini.hl{border-color:rgba(201,162,39,.2);color:var(--gold);}
+    .mini.dim{opacity:.35;pointer-events:none;}
 
-/* CONTATO */
-#contato{padding:9rem 0;}
-#contato::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--amarelo),transparent);}
-.contato-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
-.contato-info p{font-size:1.05rem;color:rgba(253,250,244,.75);line-height:1.8;margin-bottom:1.75rem;}
-.contato-links{display:flex;flex-direction:column;gap:.9rem;}
-.contato-link{display:flex;align-items:center;gap:.9rem;font-family:var(--ff-ui);font-size:.88rem;color:rgba(253,250,244,.68);text-decoration:none;transition:color .3s;}
-.contato-link:hover{color:var(--amarelo);}
-.contato-link-icon{width:38px;height:38px;background:rgba(27,58,107,.45);border:1px solid rgba(240,192,64,.14);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;transition:background .3s,border-color .3s;flex-shrink:0;}
-.contato-link:hover .contato-link-icon{background:rgba(240,192,64,.14);border-color:var(--amarelo);}
-.form-group{margin-bottom:1.1rem;}
-.form-group label{display:block;font-family:var(--ff-ui);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(253,250,244,.45);margin-bottom:.4rem;}
-.form-group input,.form-group textarea,.form-group select{width:100%;background:rgba(27,58,107,.28);border:1px solid rgba(240,192,64,.14);border-radius:3px;padding:.82rem .95rem;color:var(--branco);font-family:var(--ff-body);font-size:.98rem;outline:none;transition:border-color .3s;}
-.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--amarelo);}
-.form-group textarea{resize:vertical;min-height:110px;}
-.form-group select option{background:#0d1f3c;}
+    .upgrade{width:100%;padding:20px 24px;margin-bottom:8px;
+      background:linear-gradient(135deg,rgba(201,162,39,.08),rgba(201,162,39,.03));
+      border:1px solid rgba(201,162,39,.2);border-radius:2px;
+      display:flex;align-items:center;justify-content:space-between;
+      text-decoration:none;color:var(--white);transition:all .35s;
+      opacity:0;animation:fadeUp .6s ease forwards;}
+    .upgrade:hover{background:rgba(201,162,39,.12);border-color:rgba(201,162,39,.4);}
+    .upgrade p{font-size:.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);opacity:.7;margin-bottom:4px;}
+    .upgrade h3{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1rem;letter-spacing:2px;}
+    .upgrade-btn{font-size:.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold-light);
+      border:1px solid var(--gold-border);padding:8px 16px;border-radius:2px;white-space:nowrap;}
 
-/* FOOTER */
-footer{background:#050e1d;padding:3.5rem 0 2rem;}
-.footer-inner{max-width:1100px;margin:0 auto;padding:0 2rem;}
-.footer-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:2.5rem;border-bottom:1px solid rgba(240,192,64,.1);margin-bottom:1.75rem;flex-wrap:wrap;gap:1.5rem;}
-.footer-brand{font-family:var(--ff-serif);font-size:1.3rem;font-weight:700;color:var(--branco);}
-.footer-brand span{color:var(--amarelo);}
-.footer-nav{display:flex;gap:1.75rem;flex-wrap:wrap;list-style:none;}
-.footer-nav a{font-family:var(--ff-ui);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(253,250,244,.45);text-decoration:none;transition:color .3s;}
-.footer-nav a:hover{color:var(--amarelo);}
-.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
-.footer-copy{font-family:var(--ff-ui);font-size:.72rem;color:rgba(253,250,244,.28);}
-.footer-tagline{font-family:var(--ff-serif);font-style:italic;font-size:.9rem;color:rgba(240,192,64,.45);}
+    footer{margin-top:60px;text-align:center;padding:20px 0;
+      border-top:1px solid rgba(255,255,255,.04);}
+    .btn-logout{background:none;border:1px solid rgba(255,255,255,.08);border-radius:2px;
+      padding:10px 24px;color:rgba(255,255,255,.2);cursor:pointer;
+      font-family:'Josefin Sans',sans-serif;font-size:.58rem;letter-spacing:4px;
+      text-transform:uppercase;transition:all .3s;}
+    .btn-logout:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5);}
 
-/* PARTICLES */
-.particle{position:fixed;border-radius:50%;pointer-events:none;z-index:0;opacity:0;animation:pFloat linear infinite;}
-@keyframes pFloat{0%{opacity:0;transform:translateY(0) scale(0)}10%{opacity:.5}90%{opacity:.15}100%{opacity:0;transform:translateY(-100vh) scale(1.5)}}
+    .d1{animation-delay:.1s;}.d2{animation-delay:.2s;}.d3{animation-delay:.3s;}
+    .d4{animation-delay:.4s;}.d5{animation-delay:.5s;}.d6{animation-delay:.6s;}
+    .d7{animation-delay:.7s;}.d8{animation-delay:.8s;}.d9{animation-delay:.9s;}.d10{animation-delay:1s;}
 
-/* ============================================================
-   MODAL BASE
-============================================================ */
-.modal-overlay{position:fixed;inset:0;background:rgba(5,14,29,.93);backdrop-filter:blur(14px);z-index:5000;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .4s var(--ease);}
-.modal-overlay.active{opacity:1;pointer-events:all;}
-.modal-box{position:relative;max-width:500px;width:100%;border-radius:8px;padding:2.75rem;transform:translateY(28px) scale(.97);transition:transform .4s var(--ease);}
-.modal-overlay.active .modal-box{transform:translateY(0) scale(1);}
-.modal-novela{background:linear-gradient(145deg,#0e0520 0%,#0d1f3c 50%,#1a1200 100%);border:1px solid rgba(240,192,64,.32);box-shadow:0 40px 100px rgba(0,0,0,.8);}
-.modal-close{position:absolute;top:1.1rem;right:1.1rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(253,250,244,.55);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem;transition:background .3s,color .3s;}
-.modal-close:hover{background:rgba(255,255,255,.14);color:var(--branco);}
-.modal-eyebrow{font-family:var(--ff-ui);font-size:.6rem;letter-spacing:.38em;text-transform:uppercase;margin-bottom:1.1rem;display:inline-block;padding:.28rem .85rem;border-radius:20px;}
-.modal-novela .modal-eyebrow{color:var(--amarelo);background:rgba(240,192,64,.1);border:1px solid rgba(240,192,64,.22);}
-.modal-icon{font-size:2.75rem;margin-bottom:1rem;display:block;}
-.modal-titulo{font-family:var(--ff-serif);font-size:1.55rem;font-weight:900;color:var(--branco);margin-bottom:.6rem;line-height:1.2;}
-.modal-desc{font-size:.9rem;color:rgba(253,250,244,.68);line-height:1.7;margin-bottom:1.35rem;}
-.modal-destaque{border-radius:4px;padding:.88rem 1.1rem;margin-bottom:1.5rem;font-size:.88rem;line-height:1.65;font-style:italic;}
-.modal-novela .modal-destaque{background:rgba(240,192,64,.07);border-left:3px solid var(--amarelo);color:rgba(253,250,244,.82);}
-.modal-destaque strong{font-style:normal;color:var(--amarelo);}
-.modal-form .form-group{margin-bottom:.9rem;}
-.modal-form label{display:block;font-family:var(--ff-ui);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(253,250,244,.42);margin-bottom:.35rem;}
-.modal-form input,.modal-form textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.11);border-radius:3px;padding:.75rem .9rem;color:var(--branco);font-family:var(--ff-body);font-size:.92rem;outline:none;transition:border-color .3s;}
-.modal-novela .modal-form input:focus,.modal-novela .modal-form textarea:focus{border-color:var(--amarelo);}
-.modal-form textarea{resize:vertical;min-height:80px;}
-.btn-modal-novela{width:100%;padding:.9rem;border-radius:3px;border:none;cursor:pointer;font-family:var(--ff-ui);font-size:.76rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;background:linear-gradient(135deg,var(--amarelo),var(--amarelo-s));color:var(--azul-esc);transition:transform .2s,box-shadow .3s;display:flex;align-items:center;justify-content:center;gap:.55rem;margin-top:1.1rem;}
-.btn-modal-novela:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(240,192,64,.38);}
-.modal-sucesso{display:none;text-align:center;padding:1rem 0;}
-.modal-sucesso.show{display:block;}
-.modal-sucesso .sucesso-icon{font-size:2.75rem;margin-bottom:.9rem;display:block;}
-.modal-sucesso h3{font-family:var(--ff-serif);font-size:1.35rem;color:var(--branco);margin-bottom:.65rem;}
-.modal-sucesso p{font-size:.9rem;color:rgba(253,250,244,.68);line-height:1.65;}
-
-/* ============================================================
-   MUSIC PLAYER MODAL
-============================================================ */
-.modal-player{
-  background:linear-gradient(160deg,#060d1a 0%,#0a1628 40%,#050f20 100%);
-  border:1px solid rgba(46,95,163,.35);
-  box-shadow:0 50px 120px rgba(0,0,0,.9),inset 0 1px 0 rgba(125,179,255,.08);
-  max-width:560px;
-  padding:0;
-  overflow:hidden;
-  border-radius:12px;
-}
-
-/* Player Header */
-.mp-header{
-  padding:2rem 2rem 1.5rem;
-  background:linear-gradient(180deg,rgba(46,95,163,.18) 0%,transparent 100%);
-  border-bottom:1px solid rgba(46,95,163,.18);
-  display:flex;
-  align-items:center;
-  gap:1.1rem;
-}
-.mp-header-icon{
-  width:52px;height:52px;
-  background:linear-gradient(135deg,rgba(46,95,163,.5),rgba(14,36,80,.8));
-  border:1px solid rgba(125,179,255,.2);
-  border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.5rem;
-  flex-shrink:0;
-}
-.mp-header-text{}
-.mp-header-eyebrow{
-  font-family:var(--ff-ui);font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;
-  color:#7db3ff;opacity:.75;margin-bottom:.2rem;
-}
-.mp-header-title{
-  font-family:var(--ff-serif);font-size:1.25rem;font-weight:700;color:var(--branco);line-height:1.2;
-}
-.mp-header-sub{
-  font-family:var(--ff-ui);font-size:.7rem;color:rgba(253,250,244,.4);margin-top:.15rem;
-}
-
-/* Demo Banner */
-.mp-demo-banner{
-  margin:0 2rem;
-  margin-top:1.25rem;
-  background:rgba(46,95,163,.1);
-  border:1px solid rgba(46,95,163,.22);
-  border-radius:6px;
-  padding:.65rem 1rem;
-  display:flex;align-items:center;gap:.6rem;
-  font-family:var(--ff-ui);font-size:.68rem;color:rgba(125,179,255,.8);
-  letter-spacing:.04em;
-}
-.mp-demo-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:#7db3ff;opacity:.6;flex-shrink:0;
-}
-
-/* Track List */
-.mp-tracklist{padding:1.25rem 2rem 0;}
-.mp-track{
-  display:flex;align-items:center;gap:1rem;
-  padding:.9rem .9rem;
-  border-radius:8px;
-  cursor:pointer;
-  transition:background .25s,border-color .25s;
-  border:1px solid transparent;
-  margin-bottom:.5rem;
-  position:relative;
-  overflow:hidden;
-}
-.mp-track::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,rgba(46,95,163,.0),rgba(46,95,163,.06));
-  opacity:0;transition:opacity .3s;
-}
-.mp-track:hover::before,.mp-track.active::before{opacity:1;}
-.mp-track:hover{background:rgba(46,95,163,.12);border-color:rgba(46,95,163,.22);}
-.mp-track.active{background:rgba(46,95,163,.18);border-color:rgba(125,179,255,.28);}
-.mp-track.playing{background:rgba(46,95,163,.22);border-color:rgba(125,179,255,.4);}
-
-.mp-track-num{
-  width:24px;height:24px;
-  font-family:var(--ff-ui);font-size:.68rem;color:rgba(253,250,244,.28);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;font-weight:500;
-}
-.mp-track.active .mp-track-num,.mp-track.playing .mp-track-num{color:transparent;}
-
-/* Equalizer bars */
-.mp-eq{display:none;width:16px;height:16px;flex-shrink:0;align-items:flex-end;justify-content:center;gap:2px;}
-.mp-track.playing .mp-eq{display:flex;}
-.mp-track.playing .mp-track-num{display:none;}
-.mp-track.active:not(.playing) .mp-track-num{display:none;}
-.mp-track.active:not(.playing) .mp-eq{display:flex;}
-.mp-track.active:not(.playing) .mp-eq-bar{animation-play-state:paused;}
-.mp-eq-bar{
-  width:3px;background:#7db3ff;border-radius:2px;
-  animation:eqBounce .6s ease-in-out infinite alternate;
-}
-.mp-eq-bar:nth-child(1){height:6px;animation-delay:0s;}
-.mp-eq-bar:nth-child(2){height:10px;animation-delay:.15s;}
-.mp-eq-bar:nth-child(3){height:7px;animation-delay:.3s;}
-.mp-eq-bar:nth-child(4){height:12px;animation-delay:.08s;}
-@keyframes eqBounce{
-  from{transform:scaleY(1);}
-  to{transform:scaleY(.3);}
-}
-
-.mp-track-art{
-  width:40px;height:40px;border-radius:6px;
-  background:linear-gradient(135deg,#0d2030,#1b3a6b);
-  border:1px solid rgba(46,95,163,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1rem;flex-shrink:0;
-  position:relative;overflow:hidden;
-}
-.mp-track.active .mp-track-art,.mp-track.playing .mp-track-art{border-color:rgba(125,179,255,.5);}
-.mp-track-art::after{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at 30% 30%,rgba(125,179,255,.15),transparent);
-}
-
-.mp-track-info{flex:1;min-width:0;}
-.mp-track-name{
-  font-family:var(--ff-serif);font-size:.95rem;font-weight:700;
-  color:var(--branco);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  line-height:1.2;margin-bottom:.18rem;
-}
-.mp-track.active .mp-track-name,.mp-track.playing .mp-track-name{color:#a8ccff;}
-.mp-track-sub{
-  font-family:var(--ff-ui);font-size:.62rem;
-  color:rgba(253,250,244,.32);letter-spacing:.04em;
-}
-.mp-track.active .mp-track-sub,.mp-track.playing .mp-track-sub{color:rgba(125,179,255,.55);}
-.mp-track-label{
-  font-family:var(--ff-ui);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;
-  padding:.18rem .5rem;border-radius:10px;flex-shrink:0;white-space:nowrap;
-}
-.label-trilha{background:rgba(192,57,43,.18);color:#f08070;border:1px solid rgba(192,57,43,.25);}
-.label-demo{background:rgba(46,95,163,.15);color:#7db3ff;border:1px solid rgba(46,95,163,.22);}
-
-/* Player Controls */
-.mp-controls{
-  padding:1.5rem 2rem 0;
-}
-
-/* Progress / Waveform Area */
-.mp-now-playing{
-  background:rgba(0,0,0,.25);
-  border:1px solid rgba(46,95,163,.18);
-  border-radius:8px;
-  padding:1.1rem 1.25rem;
-  margin-bottom:1.1rem;
-}
-.mp-np-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;}
-.mp-np-song{
-  font-family:var(--ff-serif);font-size:1rem;font-weight:700;color:var(--branco);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;
-}
-.mp-np-idle{color:rgba(253,250,244,.25);font-style:italic;font-weight:400;font-size:.9rem;}
-.mp-np-time{
-  font-family:var(--ff-ui);font-size:.72rem;
-  color:rgba(253,250,244,.35);white-space:nowrap;letter-spacing:.04em;
-}
-
-/* Progress bar */
-.mp-progress-wrap{
-  height:4px;background:rgba(46,95,163,.2);border-radius:2px;
-  cursor:pointer;position:relative;overflow:hidden;
-  transition:height .2s;
-}
-.mp-progress-wrap:hover{height:6px;}
-.mp-progress-fill{
-  height:100%;width:0%;
-  background:linear-gradient(90deg,#2E5FA3,#7db3ff);
-  border-radius:2px;
-  transition:width .3s linear;
-  position:relative;
-}
-.mp-progress-fill::after{
-  content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);
-  width:10px;height:10px;border-radius:50%;
-  background:#7db3ff;
-  opacity:0;transition:opacity .2s;
-  margin-right:-5px;
-}
-.mp-progress-wrap:hover .mp-progress-fill::after{opacity:1;}
-
-/* Demo limit indicator */
-.mp-demo-limit{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-top:.55rem;
-}
-.mp-demo-label{
-  font-family:var(--ff-ui);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(125,179,255,.4);
-}
-.mp-demo-limit-bar{
-  flex:1;margin:0 .75rem;height:2px;
-  background:rgba(46,95,163,.15);border-radius:1px;position:relative;
-}
-.mp-demo-limit-fill{
-  position:absolute;left:0;top:0;bottom:0;
-  background:rgba(125,179,255,.3);border-radius:1px;
-  transition:width .3s linear;
-}
-
-/* Big play button row */
-.mp-btn-row{
-  display:flex;align-items:center;justify-content:center;gap:1rem;
-  padding:.5rem 0;
-}
-.mp-btn-prev,.mp-btn-next{
-  width:36px;height:36px;border-radius:50%;
-  background:rgba(46,95,163,.12);border:1px solid rgba(46,95,163,.22);
-  color:rgba(253,250,244,.5);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .25s;font-size:.9rem;
-}
-.mp-btn-prev:hover,.mp-btn-next:hover{
-  background:rgba(46,95,163,.28);border-color:rgba(125,179,255,.4);
-  color:var(--branco);
-}
-.mp-btn-play{
-  width:54px;height:54px;border-radius:50%;
-  background:linear-gradient(135deg,#2E5FA3,#1a3a7a);
-  border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.4rem;
-  transition:transform .2s,box-shadow .3s;
-  box-shadow:0 4px 20px rgba(46,95,163,.5);
-  color:#fff;
-}
-.mp-btn-play:hover{transform:scale(1.07);box-shadow:0 8px 30px rgba(46,95,163,.7);}
-.mp-btn-play:active{transform:scale(.96);}
-
-/* Volume */
-.mp-volume-row{
-  display:flex;align-items:center;gap:.75rem;
-  padding:.6rem 0 0;
-}
-.mp-vol-icon{font-size:.85rem;color:rgba(253,250,244,.3);}
-.mp-vol-slider{
-  flex:1;-webkit-appearance:none;appearance:none;
-  height:3px;border-radius:2px;
-  background:rgba(46,95,163,.25);outline:none;cursor:pointer;
-}
-.mp-vol-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:12px;height:12px;border-radius:50%;
-  background:#7db3ff;cursor:pointer;
-  box-shadow:0 0 6px rgba(125,179,255,.4);
-}
-
-/* Footer CTA */
-.mp-footer{
-  padding:1.25rem 2rem 1.75rem;
-  margin-top:1.25rem;
-  border-top:1px solid rgba(46,95,163,.14);
-  text-align:center;
-}
-.mp-footer-note{
-  font-family:var(--ff-ui);font-size:.68rem;
-  color:rgba(253,250,244,.3);margin-bottom:.85rem;letter-spacing:.03em;
-}
-.btn-mp-wpp{
-  display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
-  font-family:var(--ff-ui);font-size:.76rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
-  background:linear-gradient(135deg,#2E5FA3,#1a3a7a);color:#fff;
-  padding:.9rem 2rem;border-radius:3px;border:none;cursor:pointer;
-  transition:transform .2s,box-shadow .3s;width:100%;
-}
-.btn-mp-wpp:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(46,95,163,.45);}
-
-/* MOBILE */
-@media(max-width:900px){
-  nav{padding:1rem 1.25rem;}
-  nav.scrolled{padding:.75rem 1.25rem;}
-  .nav-links{display:none;}
-  .nav-links.open{display:flex;flex-direction:column;position:fixed;inset:0;background:rgba(13,31,60,.98);align-items:center;justify-content:center;gap:2.5rem;z-index:99;}
-  .nav-links.open a{font-size:1.4rem;}
-  .nav-cta{display:none;}
-  .nav-toggle{display:flex;z-index:101;}
-  .sobre-grid,.especiais-grid,.contato-grid{grid-template-columns:1fr;gap:3rem;}
-  .obras-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto;}
-  #sobre,#obras,#especiais,#contato{padding:6rem 0;}
-  #manifesto{padding:7rem 0;}
-  .hero-actions{flex-direction:column;align-items:center;}
-  .modal-box{padding:2rem 1.5rem;}
-  .modal-player{max-width:100%;}
-  .mp-header,.mp-tracklist,.mp-controls,.mp-footer{padding-left:1.25rem;padding-right:1.25rem;}
-  .mp-demo-banner{margin-left:1.25rem;margin-right:1.25rem;}
-}
-</style>
+    #ls{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
+      justify-content:center;z-index:999;transition:opacity .5s;}
+    #ls.hide{opacity:0;pointer-events:none;}
+    #ls span{font-size:.6rem;letter-spacing:6px;text-transform:uppercase;color:var(--gold);
+      opacity:.5;animation:pulse 1.5s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:.8;}}
+  </style>
 </head>
 <body>
 
-<nav id="nav">
-  <a href="#" class="nav-logo">Aurora <span>de Carvalho</span></a>
-  <ul class="nav-links" id="nav-links">
-    <li><a href="#sobre">Sobre</a></li>
-    <li><a href="#obras">Livros</a></li>
-    <li><a href="#especiais">Obra Especial</a></li>
-    <li><a href="#contato">Contato</a></li>
-  </ul>
-  <a href="#obras" class="nav-cta">Ver Livros</a>
-  <button class="nav-toggle" id="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+<div id="ls"><span>Carregando…</span></div>
+
+<nav>
+  <a href="/dashboard/" class="nav-logo">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Logo">
+    <span>AK<b>A</b>SHA <b>HUB</b></span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-level" id="navLevel">…</div>
+    <a href="/perfil/" class="nav-avatar" id="navAvatar">?</a>
+  </div>
 </nav>
 
-<canvas id="three-canvas"></canvas>
-
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-content">
-    <span class="hero-eyebrow">✦ 40 anos de escrita. Uma obra para o mundo. ✦</span>
-    <h1 class="hero-title">Aurora<span class="line-red">de Carvalho</span></h1>
-    <p class="hero-tagline">"Palavras que atravessam gerações.<br>Uma obra que o mundo estava esperando."</p>
-    <div class="hero-actions">
-      <a href="#obras" class="btn-primary">📚 Ver os Livros</a>
-      <a href="#especiais" class="btn-ghost">✦ Obra Especial</a>
-    </div>
+<main>
+  <div class="greeting">
+    <p class="greeting-sub">Bem-vindo de volta</p>
+    <h2>Olá, <span id="userName">…</span></h2>
   </div>
-  <div class="hero-scroll"><span>Rolar</span><div class="scroll-line"></div></div>
-</section>
 
-<!-- SOBRE -->
-<section id="sobre">
-  <div class="section-inner">
-    <div class="sobre-grid">
-      <div class="reveal-left">
-        <div class="sobre-portrait" style="position:relative;">
-          <span style="font-family:var(--ff-serif);font-size:4.5rem;font-style:italic;color:rgba(240,192,64,.45);">AC</span>
-          <div class="portrait-badge"><strong>40+</strong><span>Anos de escrita</span></div>
-        </div>
-      </div>
-      <div class="reveal-right">
-        <span class="section-eyebrow">A escritora</span>
-        <h2 class="section-title">Uma vida dedicada às <em>palavras que curam</em></h2>
-        <div class="divider"></div>
-        <p>Aurora de Carvalho não escolheu a escrita. A escrita a escolheu. Durante mais de quatro décadas, ela registrou em papel — com a própria mão — histórias que tocaram corações de crianças, jovens e adultos.</p>
-        <p>Professora de vocação e escritora por missão, Aurora acredita que <strong>a literatura é o ato mais radical de empatia</strong> que existe.</p>
-        <p>Além da escrita, Aurora também é compositora — suas músicas carregam a mesma alma poética que define sua obra. <strong>Uma artista completa, finalmente apresentada ao mundo.</strong></p>
-        <div class="sobre-stats">
-          <div class="stat-item"><span class="stat-num">40+</span><span class="stat-label">Anos escrevendo</span></div>
-          <div class="stat-item"><span class="stat-num">39+</span><span class="stat-label">Anos na novela</span></div>
-          <div class="stat-item"><span class="stat-num">3</span><span class="stat-label">Livros infantis</span></div>
-          <div class="stat-item"><span class="stat-num">∞</span><span class="stat-label">Vidas tocadas</span></div>
-        </div>
-      </div>
+  <!-- Banner upgrade (oculto se nível 4) -->
+  <a href="/vip/" class="upgrade d1" id="upgradeBanner">
+    <div>
+      <p>Próximo Nível</p>
+      <h3 id="upgradeText">Desbloquear acesso completo</h3>
     </div>
-  </div>
-</section>
+    <div class="upgrade-btn">Evoluir →</div>
+  </a>
 
-<div class="section-divider"></div>
+  <div class="sec d2"><span>Acesso Pessoal</span></div>
 
-<!-- LIVROS -->
-<section id="obras">
-  <div class="section-inner">
-    <div class="obras-header reveal">
-      <span class="section-eyebrow">Literatura infantil</span>
-      <h2 class="section-title">Livros que <em>formam pessoas</em></h2>
-      <div class="divider" style="margin:1.25rem auto;"></div>
-      <p style="color:rgba(253,250,244,.6);max-width:500px;margin:0 auto;font-size:.95rem;">Histórias para crianças que ensinam, encantam e constroem um mundo mais bonito.</p>
-    </div>
-    <div class="obras-grid">
-      <div class="livro-card reveal d1">
-        <div class="livro-cover">
-          <div class="cover-promo">Novidade</div>
-          <img src="https://hotmart.s3.amazonaws.com/product_pictures/1e5ae7f2-da95-4f65-a27e-85dd5352c724/Screenshot_20260327_065741_SamsungNotes.jpg" alt="O Que o Silêncio Guarda" loading="lazy">
-          <div class="cover-tag">Infantil</div>
-        </div>
-        <div class="livro-body">
-          <div class="livro-categoria">Literatura Infantil · Aurora de Carvalho</div>
-          <div class="livro-titulo">O Que o Silêncio Guarda</div>
-          <p class="livro-desc">Às vezes, o que não se diz fala mais alto do que qualquer palavra. Uma história delicada sobre escuta, presença e a força transformadora do silêncio compartilhado.</p>
-          <div class="livro-footer">
-            <div class="livro-preco">Comprar agora<small>Pagamento seguro via Hotmart</small></div>
-            <a href="https://hotmart.com/pt-br/marketplace/produtos/hagsxd-o-que-o-silencio-guarda-3sba0/S105205036E" target="_blank" rel="noopener" class="btn-comprar">Comprar →</a>
-          </div>
-        </div>
-      </div>
-      <div class="livro-card reveal d2">
-        <div class="livro-cover">
-          <img src="https://static-media.hotmart.com/qi6GLTFF8pAgDUUF_UK674hkxB4=/300x300/filters:quality(100)/hotmart/product_pictures/a9cf7ee0-59a5-4ce0-b4c7-d8d11bd1a782/1000186172.jpg" alt="Cada Criança é Especial" loading="lazy">
-          <div class="cover-tag">Infantil</div>
-        </div>
-        <div class="livro-body">
-          <div class="livro-categoria">Literatura Infantil · Aurora de Carvalho</div>
-          <div class="livro-titulo">Cada Criança é Especial</div>
-          <p class="livro-desc">Uma celebração de cada criança como ela é. A história que abraça as diferenças, desperta a autoestima e ensina que todo ser humano carrega um dom único dentro de si.</p>
-          <div class="livro-footer">
-            <div class="livro-preco">Comprar agora<small>Pagamento seguro via Hotmart</small></div>
-            <a href="https://pay.hotmart.com/I105099280R" target="_blank" rel="noopener" class="btn-comprar">Comprar →</a>
-          </div>
-        </div>
-      </div>
-      <div class="livro-card reveal d3">
-        <div class="livro-cover">
-          <img src="https://static-media.hotmart.com/B6lAw9zBZTs-Fg16Nsa1XaBk-GU=/295x165/smart/filters:quality(100)/hotmart/product_pictures/ae26b6f4-0f66-4f0a-9d54-15c87011cd01/image73.jpg" alt="O Dia que Glória Contou Seu Segredo" loading="lazy">
-          <div class="cover-tag">Infantil</div>
-        </div>
-        <div class="livro-body">
-          <div class="livro-categoria">Literatura Infantil · Aurora de Carvalho</div>
-          <div class="livro-titulo">O Dia que Glória Contou Seu Segredo</div>
-          <p class="livro-desc">Glória guardava um segredo que a pesava. Quando encontra coragem para contar, descobre que a verdade pode ser o mais poderoso ato de amor.</p>
-          <div class="livro-footer">
-            <div class="livro-preco">Comprar agora<small>Pagamento seguro via Hotmart</small></div>
-            <a href="https://pay.hotmart.com/N105326917W" target="_blank" rel="noopener" class="btn-comprar">Comprar →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top:2.5rem;text-align:center;padding:2rem;background:rgba(27,58,107,.18);border:1px solid rgba(240,192,64,.11);border-radius:6px;">
-      <span style="font-size:1.6rem;display:block;margin-bottom:.7rem;">🏫</span>
-      <div style="font-family:var(--ff-serif);font-size:1.15rem;color:var(--branco);margin-bottom:.4rem;font-weight:700;">Para Escolas e Instituições</div>
-      <p style="color:rgba(253,250,244,.55);margin-bottom:1.1rem;font-size:.88rem;">Kits educacionais e condições especiais para uso em ambientes escolares.</p>
-      <a href="#contato" class="btn-gold">Solicitar proposta</a>
-    </div>
-  </div>
-</section>
-
-<div class="section-divider"></div>
-
-<!-- ESPECIAIS -->
-<section id="especiais">
-  <div class="section-inner">
-    <div class="reveal" style="text-align:center;">
-      <span class="section-eyebrow">Acesso exclusivo</span>
-      <h2 class="section-title">A obra de uma <em>vida inteira</em></h2>
-      <div class="divider" style="margin:1.25rem auto;"></div>
-      <p style="color:rgba(253,250,244,.62);max-width:520px;margin:0 auto;font-size:.95rem;">Além dos livros, Aurora guarda duas obras de alma profunda — a grande novela de sua vida e as músicas compostas ao longo das décadas.</p>
-    </div>
-    <div class="especiais-grid">
-      <div class="especial-card card-novela reveal d1">
-        <div class="especial-inner">
-          <div class="especial-badge badge-novela">✦ Obra prima literária</div>
-          <span class="especial-icon">📜</span>
-          <div class="especial-titulo">A Grande Novela — Manuscrita</div>
-          <p class="especial-desc">Uma novela escrita à mão ao longo de mais de 39 anos. Uma obra de qualidade excepcional, aguardando o leitor certo.</p>
-          <div class="especial-destaque"><strong>Acesso exclusivo:</strong> Esta obra não está à venda direta. Aurora entra em contato pessoalmente com cada leitor selecionado via WhatsApp.</div>
-          <button class="btn-especial-novela" onclick="abrirModal('novela')">✦ Quero ter acesso exclusivo</button>
-        </div>
-      </div>
-      <div class="especial-card card-musica reveal d2">
-        <div class="especial-inner">
-          <div class="especial-badge badge-musica">🎵 Composições autorais</div>
-          <span class="especial-icon">🎼</span>
-          <div class="especial-titulo">As Músicas de Aurora</div>
-          <p class="especial-desc">Aurora também compõe. Suas músicas carregam a mesma poesia profunda da sua escrita — histórias em melodia, alma em cada acorde.</p>
-          <div class="especial-destaque" style="border-left-color:#2E5FA3;background:rgba(46,95,163,.1);"><strong style="color:#7db3ff;">Ouça agora:</strong> Deguste 30 segundos de cada composição e sinta a alma por trás das notas.</div>
-          <button class="btn-especial-musica" onclick="abrirModal('musica')">🎵 Ouvir as composições</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- MANIFESTO -->
-<section id="manifesto">
-  <div class="manifesto-inner">
-    <span class="section-eyebrow reveal" style="color:rgba(255,255,255,.65);">O manifesto</span>
-    <blockquote class="manifesto-quote reveal">"Escrevi em silêncio por décadas. Não por timidez — mas porque sabia que certas palavras precisam amadurecer antes de serem ditas."</blockquote>
-    <p class="manifesto-body reveal">Aurora de Carvalho não é uma estrela em ascensão. É uma constelação que sempre existiu, aguardando o momento certo para brilhar. Sua escrita não segue tendências — ela as precede. Sua obra não é produto — é herança.</p>
-    <div class="manifesto-assinatura reveal">— Aurora de Carvalho</div>
-  </div>
-</section>
-
-<!-- CONTATO -->
-<section id="contato">
-  <div class="section-inner">
-    <div class="contato-grid">
+  <a href="/members/" class="card premium d2" id="cardMembros">
+    <div class="card-l">
+      <i class="card-icon">✦</i>
       <div>
-        <span class="section-eyebrow reveal">Fale com Aurora</span>
-        <h2 class="section-title reveal">Vamos construir algo <em>significativo</em> juntos</h2>
-        <div class="divider reveal"></div>
-        <p class="reveal">Para compras, parcerias institucionais, imprensa ou uma boa conversa sobre literatura — Aurora está aqui.</p>
-        <div class="contato-links reveal">
-          <a href="https://wa.me/5571984005781" target="_blank" class="contato-link">
-            <div class="contato-link-icon">💬</div>(71) 98400-5781 — WhatsApp
-          </a>
-          <a href="mailto:auroracarvalho.escritora@gmail.com" class="contato-link">
-            <div class="contato-link-icon">✉️</div>auroracarvalho.escritora@gmail.com
-          </a>
-        </div>
-      </div>
-      <div class="reveal d2">
-        <form onsubmit="handleForm(event)">
-          <div class="form-group"><label>Seu nome</label><input type="text" placeholder="Como posso te chamar?" required></div>
-          <div class="form-group"><label>WhatsApp ou E-mail</label><input type="text" placeholder="Para te responder" required></div>
-          <div class="form-group">
-            <label>Assunto</label>
-            <select>
-              <option value="">Selecione</option>
-              <option>Compra de livros</option>
-              <option>Parceria escolar / institucional</option>
-              <option>Imprensa / entrevista</option>
-              <option>Outro</option>
-            </select>
-          </div>
-          <div class="form-group"><label>Mensagem</label><textarea placeholder="Escreva sua mensagem..."></textarea></div>
-          <button type="submit" class="btn-primary" style="width:100%;justify-content:center;">Enviar via WhatsApp 💬</button>
-        </form>
+        <div class="card-title">Área de Membros</div>
+        <div class="card-sub" id="membrosNivel">…</div>
       </div>
     </div>
+    <span class="card-arrow">›</span>
+  </a>
+
+  <a href="/sessoes/" class="card d3" id="cardSessoes">
+    <div class="card-l">
+      <i class="card-icon">◈</i>
+      <div>
+        <div class="card-title">Sessões Confidenciais</div>
+        <div class="card-sub">Conteúdo exclusivo</div>
+      </div>
+    </div>
+    <span class="card-arrow" id="sessoesBadge">›</span>
+  </a>
+
+  <div class="sec d4"><span>Conteúdo & Comunidade</span></div>
+
+  <div class="grid d4">
+    <a href="/audios/" class="mini">Áudios Grátis</a>
+    <a href="/audios/" class="mini hl" id="miniAudioP">Áudios Premium</a>
+    <a href="/lives/" class="mini" id="miniLives">Lives</a>
+    <a href="/eventos/" class="mini">Eventos</a>
+    <a href="/mentoria/" class="mini" id="miniMentoria">Mentorias</a>
+    <a href="/compras/" class="mini">Minhas Compras</a>
+    <a href="/blog/" class="mini">Blog</a>
+    <a href="/store/" class="mini">Loja</a>
+    <a href="/sessao-gratuita/" class="mini span2">Sessão Gratuita</a>
   </div>
-</section>
 
-<footer>
-  <div class="footer-inner">
-    <div class="footer-top">
-      <div class="footer-brand">Aurora <span>de Carvalho</span></div>
-      <ul class="footer-nav">
-        <li><a href="#sobre">Sobre</a></li>
-        <li><a href="#obras">Livros</a></li>
-        <li><a href="#especiais">Obra Especial</a></li>
-        <li><a href="#contato">Contato</a></li>
-      </ul>
-    </div>
-    <div class="footer-bottom">
-      <p class="footer-copy">© 2025 Aurora de Carvalho. Todos os direitos reservados.</p>
-      <p class="footer-tagline">"Palavras que atravessam gerações."</p>
-    </div>
+  <div class="sec d6"><span>Caminhos</span></div>
+
+  <div class="grid d6">
+    <a href="/shiva/" class="mini" id="miniShiva">Shiva ♂</a>
+    <a href="/shakti/" class="mini" id="miniShakti">Shakti ♀</a>
+    <a href="/perfil/" class="mini span2 hl">Meu Perfil</a>
   </div>
-</footer>
 
-<!-- MODAL NOVELA -->
-<div class="modal-overlay" id="modal-novela">
-  <div class="modal-box modal-novela">
-    <button class="modal-close" onclick="fecharModal('novela')">✕</button>
-    <div id="novela-form-area">
-      <span class="modal-eyebrow">✦ Acesso exclusivo</span>
-      <span class="modal-icon">📜</span>
-      <div class="modal-titulo">A Grande Novela Manuscrita</div>
-      <p class="modal-desc">Mais de 39 anos escritos à mão. Aurora entra em contato pessoalmente com cada leitor selecionado via WhatsApp.</p>
-      <div class="modal-destaque"><strong>Atenção:</strong> Você será contatado diretamente pela Aurora — ela quer conhecer quem vai ler sua obra mais íntima.</div>
-      <form class="modal-form" onsubmit="enviarLeadNovela(event)">
-        <div class="form-group"><label>Seu nome *</label><input type="text" id="novela-nome" placeholder="Como você se chama?" required></div>
-        <div class="form-group"><label>WhatsApp *</label><input type="tel" id="novela-whatsapp" placeholder="(00) 00000-0000" required></div>
-        <div class="form-group"><label>E-mail (opcional)</label><input type="email" id="novela-email" placeholder="Seu e-mail"></div>
-        <div class="form-group"><label>Por que quer ler esta novela?</label><textarea id="novela-motivo" placeholder="Conta um pouco..."></textarea></div>
-        <button type="submit" class="btn-modal-novela">✦ Solicitar acesso</button>
-      </form>
-    </div>
-    <div class="modal-sucesso" id="novela-sucesso">
-      <span class="sucesso-icon">✨</span>
-      <h3>Solicitação enviada!</h3>
-      <p>Aurora recebeu sua solicitação e entrará em contato pessoalmente pelo WhatsApp. <strong style="color:var(--amarelo);">Fique atento!</strong></p>
-    </div>
-  </div>
-</div>
+  <footer class="d9">
+    <button class="btn-logout" id="btnLogout">Sair da conta</button>
+  </footer>
+</main>
 
-<!-- MODAL MÚSICAS (Player) -->
-<div class="modal-overlay" id="modal-musica">
-  <div class="modal-box modal-player">
-    <button class="modal-close" onclick="fecharModal('musica');pararAudio()">✕</button>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    <!-- Header -->
-    <div class="mp-header">
-      <div class="mp-header-icon">🎼</div>
-      <div class="mp-header-text">
-        <div class="mp-header-eyebrow">Composições autorais</div>
-        <div class="mp-header-title">As Músicas de Aurora</div>
-        <div class="mp-header-sub">4 composições • Letra &amp; melodia autorais</div>
-      </div>
-    </div>
+  const app = initializeApp({
+    apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+    authDomain: "hub-akasha.firebaseapp.com",
+    projectId: "hub-akasha",
+    storageBucket: "hub-akasha.firebasestorage.app",
+    messagingSenderId: "370851875474",
+    appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+  });
 
-    <!-- Demo notice -->
-    <div class="mp-demo-banner">
-      <div class="mp-demo-dot"></div>
-      Deguste 30 segundos de cada composição — prévia exclusiva
-    </div>
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
 
-    <!-- Track List -->
-    <div class="mp-tracklist">
-      <div class="mp-track" data-index="0" onclick="selecionarFaixa(0)">
-        <div class="mp-track-num">1</div>
-        <div class="mp-eq"><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div></div>
-        <div class="mp-track-art">🌅</div>
-        <div class="mp-track-info">
-          <div class="mp-track-name">Varanda</div>
-          <div class="mp-track-sub">Aurora de Carvalho</div>
-        </div>
-        <span class="mp-track-label label-demo">Demo</span>
-      </div>
-      <div class="mp-track" data-index="1" onclick="selecionarFaixa(1)">
-        <div class="mp-track-num">2</div>
-        <div class="mp-eq"><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div></div>
-        <div class="mp-track-art">🌿</div>
-        <div class="mp-track-info">
-          <div class="mp-track-name">Lembranças</div>
-          <div class="mp-track-sub">Aurora de Carvalho</div>
-        </div>
-        <span class="mp-track-label label-demo">Demo</span>
-      </div>
-      <div class="mp-track" data-index="2" onclick="selecionarFaixa(2)">
-        <div class="mp-track-num">3</div>
-        <div class="mp-eq"><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div></div>
-        <div class="mp-track-art">🌑</div>
-        <div class="mp-track-info">
-          <div class="mp-track-name">Terror</div>
-          <div class="mp-track-sub">Aurora de Carvalho</div>
-        </div>
-        <span class="mp-track-label label-demo">Demo</span>
-      </div>
-      <div class="mp-track" data-index="3" onclick="selecionarFaixa(3)">
-        <div class="mp-track-num">4</div>
-        <div class="mp-eq"><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div><div class="mp-eq-bar"></div></div>
-        <div class="mp-track-art">❤️</div>
-        <div class="mp-track-info">
-          <div class="mp-track-name">Minha Paixão</div>
-          <div class="mp-track-sub">Trilha de novela</div>
-        </div>
-        <span class="mp-track-label label-trilha">Trilha</span>
-      </div>
-    </div>
+  const NIVEIS = ['Visitante','Iniciado','Despertar','Domínio','Magnetismo Supremo'];
 
-    <!-- Controls -->
-    <div class="mp-controls">
-      <div class="mp-now-playing">
-        <div class="mp-np-top">
-          <div class="mp-np-song mp-np-idle" id="mp-now-title">Selecione uma faixa</div>
-          <div class="mp-np-time" id="mp-time-display">0:00 / 0:30</div>
-        </div>
-        <div class="mp-progress-wrap" id="mp-progress-wrap" onclick="seekAudio(event)">
-          <div class="mp-progress-fill" id="mp-progress-fill"></div>
-        </div>
-        <div class="mp-demo-limit">
-          <span class="mp-demo-label">Demo</span>
-          <div class="mp-demo-limit-bar">
-            <div class="mp-demo-limit-fill" id="mp-demo-limit-fill"></div>
-          </div>
-          <span class="mp-demo-label">30s</span>
-        </div>
-      </div>
+  function temProduto(u, p){ return u?.produtos?.includes(p) ?? false; }
+  function podeAudioP(u){ return (u?.nivel>=2)||temProduto(u,'audios-premium')||temProduto(u,'vip'); }
+  function podeSessoes(u){ return (u?.nivel>=3)||temProduto(u,'vip'); }
+  function podeLives(u){ return (u?.nivel>=2)||temProduto(u,'vip'); }
+  function podeMentoria(u){ return (u?.nivel>=4)||temProduto(u,'mentoria'); }
+  function podeShiva(u){ return (u?.nivel>=3)||temProduto(u,'shiva')||temProduto(u,'vip'); }
+  function podeShakti(u){ return (u?.nivel>=3)||temProduto(u,'shakti')||temProduto(u,'vip'); }
 
-      <div class="mp-btn-row">
-        <button class="mp-btn-prev" onclick="faixaAnterior()" title="Anterior">&#9664;&#9664;</button>
-        <button class="mp-btn-play" id="mp-btn-play" onclick="togglePlay()">▶</button>
-        <button class="mp-btn-next" onclick="proximaFaixa()" title="Próxima">&#9654;&#9654;</button>
-      </div>
+  onAuthStateChanged(auth, async user => {
+    if (!user) { window.location.href = '/login/'; return; }
 
-      <div class="mp-volume-row">
-        <span class="mp-vol-icon">🔈</span>
-        <input type="range" class="mp-vol-slider" id="mp-volume" min="0" max="1" step="0.05" value="0.8" oninput="setVolume(this.value)">
-        <span class="mp-vol-icon">🔊</span>
-      </div>
-    </div>
+    const snap = await getDoc(doc(db, "users", user.uid));
+    const ud   = snap.exists() ? snap.data() : { nivel:0, produtos:[] };
+    const nivel = ud.nivel ?? 0;
+    const nome  = user.displayName || ud.nome || 'Membro';
 
-    <!-- Footer CTA -->
-    <div class="mp-footer">
-      <p class="mp-footer-note">Gostou? Fale com Aurora para ouvir as composições completas</p>
-      <button class="btn-mp-wpp" onclick="wppMusica()">💬 Quero ouvir completo via WhatsApp</button>
-    </div>
-  </div>
-</div>
+    document.getElementById('ls').classList.add('hide');
+    document.getElementById('userName').textContent = nome.split(' ')[0];
+    document.getElementById('navLevel').textContent = NIVEIS[nivel] || 'Visitante';
+    document.getElementById('navAvatar').textContent = nome.charAt(0).toUpperCase();
+    document.getElementById('membrosNivel').textContent = NIVEIS[nivel] || 'Visitante';
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-/* NAV */
-const nav=document.getElementById('nav');
-window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>50));
-const toggle=document.getElementById('nav-toggle'),links=document.getElementById('nav-links');
-toggle.addEventListener('click',()=>links.classList.toggle('open'));
-links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+    // Upgrade banner
+    if (nivel >= 4) document.getElementById('upgradeBanner').style.display = 'none';
+    else document.getElementById('upgradeText').textContent = `Alcançar: ${NIVEIS[nivel+1]}`;
 
-/* REVEAL */
-const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
-document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>obs.observe(el));
-
-/* COUNTER */
-function animNum(el,target,suffix){
-  let v=0;const step=Math.ceil(target/40);
-  const t=setInterval(()=>{v=Math.min(v+step,target);el.textContent=v+suffix;if(v>=target)clearInterval(t);},40);
-}
-const sObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.querySelectorAll('.stat-num').forEach(n=>{
-        const raw=n.textContent.replace(/[+∞]/g,'');
-        if(!isNaN(raw)&&raw!=='')animNum(n,parseInt(raw),n.textContent.includes('+')?'+':'');
-      });
-      sObs.unobserve(e.target);
+    // Sessões
+    if (!podeSessoes(ud)) {
+      const c = document.getElementById('cardSessoes');
+      c.classList.add('locked');
+      document.getElementById('sessoesBadge').outerHTML = '<span class="lock-badge">Nível 3+</span>';
     }
+
+    // Premium condicional
+    if (!podeAudioP(ud)) document.getElementById('miniAudioP').classList.add('dim');
+    if (!podeLives(ud))  document.getElementById('miniLives').classList.add('dim');
+    if (!podeShiva(ud))  document.getElementById('miniShiva').classList.add('dim');
+    if (!podeShakti(ud)) document.getElementById('miniShakti').classList.add('dim');
   });
-},{threshold:.5});
-document.querySelectorAll('.sobre-stats').forEach(el=>sObs.observe(el));
 
-/* PARTICLES */
-function sp(){
-  const p=document.createElement('div');p.className='particle';
-  const d=Math.random()*8+6,dl=Math.random()*3;
-  p.style.cssText=`left:${Math.random()*100}vw;bottom:-8px;width:${Math.random()*3+2}px;height:${Math.random()*3+2}px;animation-duration:${d}s;animation-delay:${dl}s;background:${['var(--amarelo)','var(--vermelho)','#7db3ff'][Math.floor(Math.random()*3)]}`;
-  document.body.appendChild(p);setTimeout(()=>p.remove(),(d+dl)*1000);
-}
-setInterval(sp,900);
-
-/* THREE.JS */
-(function(){
-  const canvas=document.getElementById('three-canvas');
-  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  renderer.setSize(innerWidth,innerHeight);
-  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,1000);
-  camera.position.z=5;
-  const geo=new THREE.PlaneGeometry(1.2,1.6);
-  const mats=[
-    new THREE.MeshBasicMaterial({color:0x1B3A6B,transparent:true,opacity:.1,side:THREE.DoubleSide}),
-    new THREE.MeshBasicMaterial({color:0xC0392B,transparent:true,opacity:.07,side:THREE.DoubleSide}),
-    new THREE.MeshBasicMaterial({color:0xF0C040,transparent:true,opacity:.05,side:THREE.DoubleSide}),
-  ];
-  const pages=[];
-  for(let i=0;i<12;i++){
-    const m=new THREE.Mesh(geo,mats[i%3]);
-    m.position.set((Math.random()-.5)*14,(Math.random()-.5)*10,(Math.random()-.5)*6);
-    m.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,Math.random()*Math.PI);
-    m.userData={vx:(Math.random()-.5)*.003,vy:(Math.random()-.5)*.002,rx:(Math.random()-.5)*.004,ry:(Math.random()-.5)*.003};
-    scene.add(m);pages.push(m);
-  }
-  const dg=new THREE.SphereGeometry(.04,6,6),dm=new THREE.MeshBasicMaterial({color:0xF0C040,transparent:true,opacity:.4});
-  const dots=[];
-  for(let i=0;i<30;i++){
-    const d=new THREE.Mesh(dg,dm);
-    d.position.set((Math.random()-.5)*20,(Math.random()-.5)*14,(Math.random()-.5)*8);
-    d.userData={vy:-(Math.random()*.01+.003)};
-    scene.add(d);dots.push(d);
-  }
-  let tx=0,ty=0,cx=0,cy=0;
-  document.addEventListener('mousemove',e=>{tx=(e.clientX/innerWidth-.5)*.5;ty=(e.clientY/innerHeight-.5)*.5;});
-  addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();});
-  (function animate(){
-    requestAnimationFrame(animate);
-    cx+=(tx-cx)*.05;cy+=(ty-cy)*.05;
-    camera.position.x=cx;camera.position.y=-cy;
-    pages.forEach(p=>{
-      p.position.x+=p.userData.vx;p.position.y+=p.userData.vy;
-      p.rotation.x+=p.userData.rx;p.rotation.y+=p.userData.ry;
-      if(p.position.y>6)p.position.y=-6;if(p.position.y<-6)p.position.y=6;
-      if(p.position.x>8)p.position.x=-8;if(p.position.x<-8)p.position.x=8;
-    });
-    dots.forEach(d=>{d.position.y+=d.userData.vy;if(d.position.y<-8){d.position.y=8;d.position.x=(Math.random()-.5)*20;}});
-    renderer.render(scene,camera);
-  })();
-})();
-
-/* PARALLAX */
-window.addEventListener('scroll',()=>{
-  const y=scrollY,hero=document.querySelector('.hero-content');
-  if(hero&&y<innerHeight){hero.style.transform=`translateY(${y*.22}px)`;hero.style.opacity=1-(y/(innerHeight*.75));}
-});
-
-/* FORM → WhatsApp */
-function handleForm(e){
-  e.preventDefault();
-  const inputs=e.target.querySelectorAll('input,select,textarea');
-  const nome=inputs[0].value,contato=inputs[1].value,assunto=inputs[2].value||'Geral',msg=inputs[3].value;
-  const txt=encodeURIComponent(`Olá Aurora! 👋\n\nNome: ${nome}\nContato: ${contato}\nAssunto: ${assunto}\nMensagem: ${msg}`);
-  window.open(`https://wa.me/5571984005781?text=${txt}`,'_blank');
-  const btn=e.target.querySelector('button[type=submit]');
-  btn.textContent='✓ Abrindo WhatsApp...';btn.style.background='#2E5FA3';
-  setTimeout(()=>{btn.textContent='Enviar via WhatsApp 💬';btn.style.background='';},3500);
-}
-
-/* MODAIS */
-function abrirModal(t){document.getElementById('modal-'+t).classList.add('active');document.body.style.overflow='hidden';}
-function fecharModal(t){document.getElementById('modal-'+t).classList.remove('active');document.body.style.overflow='';}
-document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o){o.classList.remove('active');document.body.style.overflow='';if(o.id==='modal-musica')pararAudio();}}));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.active').forEach(m=>{m.classList.remove('active');document.body.style.overflow='';});pararAudio();}});
-
-/* LEAD NOVELA */
-function enviarLeadNovela(e){
-  e.preventDefault();
-  const nome=document.getElementById('novela-nome').value;
-  const wpp=document.getElementById('novela-whatsapp').value;
-  const email=document.getElementById('novela-email').value;
-  const motivo=document.getElementById('novela-motivo').value;
-  const txt=encodeURIComponent(`🔔 *Novo lead — NOVELA*\n\nNome: ${nome}\nWhatsApp: ${wpp}\nE-mail: ${email||'—'}\nMotivo: ${motivo||'—'}`);
-  window.open(`https://wa.me/5571984005781?text=${txt}`,'_blank');
-  document.getElementById('novela-form-area').style.display='none';
-  document.getElementById('novela-sucesso').classList.add('show');
-}
-
-/* ============================================================
-   MUSIC PLAYER
-============================================================ */
-const TRACKS = [
-  {
-    name: 'Varanda',
-    sub: 'Aurora de Carvalho',
-    url: 'https://res.cloudinary.com/dpyqmw0an/video/upload/v1776906387/Varanda_Esperando_Aurora_kojtat.mp3',
-    demo: 30
-  },
-  {
-    name: 'Lembranças',
-    sub: 'Aurora de Carvalho',
-    url: 'https://res.cloudinary.com/dpyqmw0an/video/upload/v1776906385/Lembran%C3%A7as-Vento_Aurora_rd1qoc.mp3',
-    demo: 30
-  },
-  {
-    name: 'Terror',
-    sub: 'Aurora de Carvalho',
-    url: 'https://res.cloudinary.com/dpyqmw0an/video/upload/v1776906382/Terror_Aurora_v9dn9y.mp3',
-    demo: 30
-  },
-  {
-    name: 'Minha Paixão',
-    sub: 'Trilha de novela',
-    url: 'https://res.cloudinary.com/dpyqmw0an/video/upload/v1776909098/minha_paixao_rawkb9.mp3',
-    demo: 30
-  }
-];
-
-let audio = null;
-let currentIndex = -1;
-let isPlaying = false;
-let demoTimer = null;
-let progressInterval = null;
-
-function formatTime(s){
-  const m = Math.floor(s/60);
-  const sec = Math.floor(s%60);
-  return m+':'+(sec<10?'0':'')+sec;
-}
-
-function atualizarTracklist(){
-  document.querySelectorAll('.mp-track').forEach((el,i)=>{
-    el.classList.remove('active','playing');
-    if(i===currentIndex){
-      el.classList.add('active');
-      if(isPlaying) el.classList.add('playing');
-    }
-  });
-}
-
-function atualizarBotaoPlay(){
-  const btn = document.getElementById('mp-btn-play');
-  btn.textContent = isPlaying ? '⏸' : '▶';
-}
-
-function atualizarNowPlaying(){
-  const titleEl = document.getElementById('mp-now-title');
-  if(currentIndex>=0){
-    titleEl.textContent = TRACKS[currentIndex].name;
-    titleEl.classList.remove('mp-np-idle');
-  } else {
-    titleEl.textContent = 'Selecione uma faixa';
-    titleEl.classList.add('mp-np-idle');
-  }
-}
-
-function atualizarProgresso(){
-  if(!audio) return;
-  const current = audio.currentTime;
-  const limit = TRACKS[currentIndex] ? TRACKS[currentIndex].demo : 30;
-  const pct = Math.min((current/limit)*100,100);
-  document.getElementById('mp-progress-fill').style.width = pct+'%';
-  document.getElementById('mp-demo-limit-fill').style.width = pct+'%';
-  document.getElementById('mp-time-display').textContent = formatTime(current)+' / 0:30';
-}
-
-function limparTimers(){
-  if(demoTimer){clearTimeout(demoTimer);demoTimer=null;}
-  if(progressInterval){clearInterval(progressInterval);progressInterval=null;}
-}
-
-function selecionarFaixa(idx){
-  limparTimers();
-  if(audio){audio.pause();audio.src='';}
-  currentIndex = idx;
-  isPlaying = false;
-  atualizarTracklist();
-  atualizarNowPlaying();
-  document.getElementById('mp-progress-fill').style.width='0%';
-  document.getElementById('mp-demo-limit-fill').style.width='0%';
-  document.getElementById('mp-time-display').textContent='0:00 / 0:30';
-  atualizarBotaoPlay();
-  // Auto play
-  iniciarFaixa();
-}
-
-function iniciarFaixa(){
-  if(currentIndex<0) return;
-  const track = TRACKS[currentIndex];
-  audio = new Audio(track.url);
-  audio.volume = parseFloat(document.getElementById('mp-volume').value);
-  audio.play().then(()=>{
-    isPlaying=true;
-    atualizarTracklist();
-    atualizarBotaoPlay();
-    progressInterval = setInterval(atualizarProgresso,250);
-    demoTimer = setTimeout(()=>{
-      pararAudio();
-      // Show end of demo state
-      document.getElementById('mp-progress-fill').style.width='100%';
-      document.getElementById('mp-demo-limit-fill').style.width='100%';
-      document.getElementById('mp-time-display').textContent='0:30 / 0:30';
-    }, track.demo*1000);
-  }).catch(err=>{
-    console.error('Audio error:',err);
-    isPlaying=false;
-    atualizarBotaoPlay();
-  });
-  audio.addEventListener('ended',()=>{
-    limparTimers();
-    isPlaying=false;
-    atualizarTracklist();
-    atualizarBotaoPlay();
-  });
-}
-
-function pararAudio(){
-  limparTimers();
-  if(audio){audio.pause();audio.currentTime=0;}
-  isPlaying=false;
-  atualizarTracklist();
-  atualizarBotaoPlay();
-}
-
-function togglePlay(){
-  if(currentIndex<0){
-    selecionarFaixa(0);
-    return;
-  }
-  if(isPlaying){
-    limparTimers();
-    audio.pause();
-    isPlaying=false;
-    atualizarTracklist();
-    atualizarBotaoPlay();
-  } else {
-    // Resume if within demo limit
-    const track=TRACKS[currentIndex];
-    const remaining = track.demo - (audio?audio.currentTime:0);
-    if(remaining<=0){
-      // Restart demo
-      selecionarFaixa(currentIndex);
-      return;
-    }
-    audio.play().then(()=>{
-      isPlaying=true;
-      atualizarTracklist();
-      atualizarBotaoPlay();
-      progressInterval=setInterval(atualizarProgresso,250);
-      demoTimer=setTimeout(()=>{
-        pararAudio();
-        document.getElementById('mp-progress-fill').style.width='100%';
-        document.getElementById('mp-demo-limit-fill').style.width='100%';
-      },remaining*1000);
-    });
-  }
-}
-
-function proximaFaixa(){
-  const next=(currentIndex+1)%TRACKS.length;
-  selecionarFaixa(next);
-}
-
-function faixaAnterior(){
-  const prev=(currentIndex-1+TRACKS.length)%TRACKS.length;
-  selecionarFaixa(prev);
-}
-
-function seekAudio(e){
-  if(!audio||currentIndex<0) return;
-  const wrap=document.getElementById('mp-progress-wrap');
-  const rect=wrap.getBoundingClientRect();
-  const pct=(e.clientX-rect.left)/rect.width;
-  const limit=TRACKS[currentIndex].demo;
-  const newTime=Math.min(pct*limit,limit);
-  limparTimers();
-  audio.currentTime=newTime;
-  atualizarProgresso();
-  if(isPlaying){
-    const remaining=limit-newTime;
-    progressInterval=setInterval(atualizarProgresso,250);
-    demoTimer=setTimeout(()=>{
-      pararAudio();
-      document.getElementById('mp-progress-fill').style.width='100%';
-      document.getElementById('mp-demo-limit-fill').style.width='100%';
-    },remaining*1000);
-  }
-}
-
-function setVolume(v){
-  if(audio) audio.volume=parseFloat(v);
-}
-
-function wppMusica(){
-  const txt=encodeURIComponent('🎵 Oi Aurora! Ouvi as demos das suas músicas e quero ouvir as composições completas! 🎼');
-  window.open('https://wa.me/5571984005781?text='+txt,'_blank');
-}
+  document.getElementById('btnLogout').onclick = async () => {
+    await signOut(auth);
+    window.location.href = '/';
+  };
 </script>
 </body>
-                                                                                       </html>
+</html>
