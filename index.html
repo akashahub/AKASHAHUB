@@ -10,19 +10,51 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
   <style>
+    /* ═══════════════════════════════════
+       CORREÇÕES CRÍTICAS v2.0
+       • font-size mínimo 15px em mobile
+       • hierarquia de produtos simplificada
+       • prova social acima da dobra
+       • EmailJS removido → WhatsApp direto
+       • botão quiz com pulso mais forte
+    ═══════════════════════════════════ */
     :root {
-      --bg: #04030a; --gold-light: #f0d078; --gold: #c9a227;
-      --gold-border: rgba(201,162,39,0.3); --white: #f5f0e8;
-      --muted: rgba(245,240,232,0.35); --card-bg: rgba(255,255,255,0.025);
-      --purple: #6b3fa0; --purple-lt: #9b6fd4;
-      --teal: #1a8fa0; --teal-lt: #4dd4e8;
-      --cyan: rgba(77,212,232,0.15);
+      --bg: #04030a;
+      --gold-light: #f0d078;
+      --gold: #c9a227;
+      --gold-border: rgba(201,162,39,0.3);
+      --white: #f5f0e8;
+      --muted: rgba(245,240,232,0.45); /* ↑ era 0.35 — mais legível */
+      --card-bg: rgba(255,255,255,0.025);
+      --purple: #6b3fa0;
+      --purple-lt: #9b6fd4;
+      --teal: #1a8fa0;
+      --teal-lt: #4dd4e8;
+
+      /* ── FONTES CORRIGIDAS ── */
+      --fs-body: 15px;      /* era ~12px em vários lugares */
+      --fs-sub: 13px;       /* era 0.6rem ≈ 9.6px — ILEGÍVEL */
+      --fs-label: 12px;     /* era 0.55rem ≈ 8.8px */
+      --ls-wide: 3px;       /* letter-spacing reduzido — mais legível */
+      --ls-xwide: 4px;
     }
+
     * { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; }
-    body { background-color:var(--bg); color:var(--white); font-family:'Josefin Sans',sans-serif;
-      font-weight:300; min-height:100vh; display:flex; justify-content:center; overflow-x:hidden; }
+    body {
+      background-color:var(--bg);
+      color:var(--white);
+      font-family:'Josefin Sans',sans-serif;
+      font-weight:300;
+      font-size:var(--fs-body); /* BASE CORRIGIDA */
+      line-height:1.7;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      overflow-x:hidden;
+    }
 
+    /* ── BACKGROUNDS ── */
     .bg-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
     .bg-canvas::before {
       content:''; position:absolute; top:10%; left:50%; transform:translateX(-50%);
@@ -42,7 +74,6 @@
       0%,100%{opacity:.5;transform:translateX(-50%) scale(1);}
       50%{opacity:1;transform:translateX(-50%) scale(1.06);}
     }
-
     .bg-grid {
       position:fixed; inset:0; z-index:0; pointer-events:none;
       background-image:
@@ -51,9 +82,7 @@
       background-size:48px 48px;
       animation:gridShift 20s linear infinite;
     }
-    @keyframes gridShift {
-      0%{background-position:0 0;} 100%{background-position:48px 48px;}
-    }
+    @keyframes gridShift { 0%{background-position:0 0;} 100%{background-position:48px 48px;} }
 
     .bg-sacred {
       position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
@@ -61,21 +90,8 @@
     }
     .bg-sacred circle { fill:none; stroke:var(--gold); }
 
-    .rune {
-      position:fixed; font-size:1.2rem; color:var(--gold); opacity:0;
-      pointer-events:none; z-index:0; font-family:'Cormorant Garamond',serif;
-      animation:runeFloat var(--dur) var(--delay) ease-in-out infinite;
-    }
-    @keyframes runeFloat {
-      0%{opacity:0;transform:translateY(0) rotate(0deg);}
-      20%{opacity:0.06;}
-      80%{opacity:0.03;}
-      100%{opacity:0;transform:translateY(-120px) rotate(15deg);}
-    }
-
     .particles { position:fixed; inset:0; z-index:0; pointer-events:none; }
-    .p { position:absolute; border-radius:50%; opacity:0;
-      animation:floatUp var(--dur) var(--delay) ease-in infinite; }
+    .p { position:absolute; border-radius:50%; opacity:0; animation:floatUp var(--dur) var(--delay) ease-in infinite; }
     .p.gold { background:var(--gold-light); width:1.5px; height:1.5px; }
     .p.teal { background:var(--teal-lt); width:1px; height:1px; }
     @keyframes floatUp {
@@ -84,14 +100,19 @@
       80%{opacity:.15;} 100%{opacity:0;transform:translateY(-160px) scale(0);}
     }
 
-    .container { position:relative; z-index:1; width:100%; max-width:520px;
-      padding:60px 24px 80px; display:flex; flex-direction:column; align-items:center; }
+    /* ── LAYOUT ── */
+    .container {
+      position:relative; z-index:1; width:100%; max-width:520px;
+      padding:60px 24px 100px;
+      display:flex; flex-direction:column; align-items:center;
+    }
 
+    /* ── BOTÕES FIXOS ── */
     .access-btn {
       position:fixed; top:20px; right:20px; z-index:100;
-      font-size:.55rem; letter-spacing:4px; text-transform:uppercase;
+      font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase;
       color:var(--gold); border:1px solid var(--gold-border);
-      padding:8px 16px; border-radius:2px; text-decoration:none;
+      padding:10px 18px; border-radius:2px; text-decoration:none;
       background:rgba(4,3,10,.75); backdrop-filter:blur(10px);
       transition:all .3s; opacity:0; animation:fadeIn 1s 1s ease forwards;
     }
@@ -100,113 +121,127 @@
     .wpp-btn {
       position:fixed; top:20px; left:20px; z-index:100;
       display:flex; align-items:center; gap:8px;
-      font-family:'Josefin Sans',sans-serif;
-      font-size:.55rem; letter-spacing:3px; text-transform:uppercase;
+      font-size:var(--fs-label); letter-spacing:3px; text-transform:uppercase;
       color:#25d366; border:1px solid rgba(37,211,102,0.3);
-      padding:8px 14px; border-radius:2px; text-decoration:none;
+      padding:10px 16px; border-radius:2px; text-decoration:none;
       background:rgba(4,3,10,.75); backdrop-filter:blur(10px);
-      transition:all .3s;
-      opacity:0; animation:fadeIn 1s 1s ease forwards;
+      transition:all .3s; opacity:0; animation:fadeIn 1s 1s ease forwards;
     }
     .wpp-btn:hover { background:rgba(37,211,102,.1); border-color:rgba(37,211,102,.6); }
-    .wpp-btn svg { width:14px; height:14px; fill:#25d366; flex-shrink:0; }
+    .wpp-btn svg { width:15px; height:15px; fill:#25d366; flex-shrink:0; }
 
-    .emblem-wrap { position:relative; margin-bottom:36px;
-      animation:fadeDown 1.2s cubic-bezier(0.16,1,0.3,1) both; }
+    /* ── EMBLEMA ── */
+    .emblem-wrap { position:relative; margin-bottom:36px; animation:fadeDown 1.2s cubic-bezier(0.16,1,0.3,1) both; }
     .emblem-ring {
       width:120px; height:120px; border-radius:50%;
       border:1px solid var(--gold-border);
       display:flex; align-items:center; justify-content:center; position:relative;
       background:radial-gradient(ellipse at center,rgba(201,162,39,0.07) 0%,transparent 70%);
     }
-    .emblem-ring::before {
-      content:''; position:absolute; inset:-7px; border-radius:50%;
-      border:1px solid rgba(201,162,39,0.1);
-      animation:ringRotate 40s linear infinite;
-    }
-    .emblem-ring::after {
-      content:''; position:absolute; inset:-16px; border-radius:50%;
-      border:1px solid rgba(201,162,39,0.04);
-      animation:ringRotate 60s linear infinite reverse;
-    }
-    .emblem-outer-ring {
-      position:absolute; inset:-28px; border-radius:50%;
-      border:1px solid rgba(77,212,232,0.08);
-      animation:ringRotate 90s linear infinite;
-    }
+    .emblem-ring::before { content:''; position:absolute; inset:-7px; border-radius:50%; border:1px solid rgba(201,162,39,0.1); animation:ringRotate 40s linear infinite; }
+    .emblem-ring::after { content:''; position:absolute; inset:-16px; border-radius:50%; border:1px solid rgba(201,162,39,0.04); animation:ringRotate 60s linear infinite reverse; }
+    .emblem-outer-ring { position:absolute; inset:-28px; border-radius:50%; border:1px solid rgba(77,212,232,0.08); animation:ringRotate 90s linear infinite; }
     @keyframes ringRotate { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
-    .emblem-ring img { width:88px; height:88px; object-fit:contain; border-radius:50%;
-      filter:drop-shadow(0 0 16px rgba(201,162,39,0.4)); }
+    .emblem-ring img { width:88px; height:88px; object-fit:contain; border-radius:50%; filter:drop-shadow(0 0 16px rgba(201,162,39,0.4)); }
 
+    /* ── HEADLINE ── */
     .headline { text-align:center; animation:fadeDown 1.4s cubic-bezier(0.16,1,0.3,1) both; }
-    .headline h1 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:2.8rem;
-      letter-spacing:6px; color:var(--white); line-height:1; margin-bottom:10px; }
+    .headline h1 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:2.8rem; letter-spacing:6px; color:var(--white); line-height:1; margin-bottom:10px; }
     .headline h1 span { color:var(--gold-light); }
-    .tagline { font-size:.65rem; font-weight:100; letter-spacing:6px; text-transform:uppercase;
-      color:var(--gold); opacity:.85; }
+    .tagline { font-size:var(--fs-label); font-weight:100; letter-spacing:var(--ls-xwide); text-transform:uppercase; color:var(--gold); opacity:.85; }
 
-    .ornament { display:flex; align-items:center; gap:12px; width:100%;
-      margin:36px 0 28px; animation:fadeIn 1.6s ease both; }
-    .ornament-line { flex:1; height:1px;
-      background:linear-gradient(90deg,transparent,var(--gold-border),transparent); }
-    .ornament-diamond { width:5px; height:5px; background:var(--gold);
-      transform:rotate(45deg); opacity:.7; }
+    .ornament { display:flex; align-items:center; gap:12px; width:100%; margin:28px 0 20px; animation:fadeIn 1.6s ease both; }
+    .ornament-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--gold-border),transparent); }
+    .ornament-diamond { width:5px; height:5px; background:var(--gold); transform:rotate(45deg); opacity:.7; }
 
-    .section-label { width:100%; display:flex; align-items:center; gap:14px;
-      margin:32px 0 14px; opacity:0; animation:fadeIn .8s ease forwards; }
-    .section-label span { font-size:.6rem; letter-spacing:5px; text-transform:uppercase;
-      color:var(--gold); opacity:.6; white-space:nowrap; }
-    .section-label::after { content:''; flex:1; height:1px;
-      background:linear-gradient(90deg,var(--gold-border),transparent); }
+    /* ════════════════════════════════════
+       PROVA SOCIAL — NOVO BLOCO
+       Aparece logo abaixo do headline
+    ════════════════════════════════════ */
+    .social-proof {
+      width:100%; display:flex; gap:8px; margin-bottom:28px;
+      opacity:0; animation:fadeIn 1s 1.4s ease forwards;
+    }
+    .sp-card {
+      flex:1; text-align:center; padding:14px 8px;
+      border:1px solid var(--gold-border);
+      border-radius:3px;
+      background:linear-gradient(135deg,rgba(201,162,39,0.06) 0%,rgba(0,0,0,0) 100%);
+    }
+    .sp-number {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.7rem; font-weight:600;
+      color:var(--gold-light); line-height:1; display:block;
+      margin-bottom:4px;
+    }
+    .sp-label {
+      font-size:11px; /* único lugar que tolera <12px — são números curtos */
+      letter-spacing:2px; text-transform:uppercase;
+      color:var(--muted); line-height:1.3; display:block;
+    }
 
-    .card { width:100%; position:relative; display:flex; align-items:center;
-      justify-content:space-between; padding:20px 26px; margin-bottom:10px; border-radius:2px;
+    /* ── SECTION LABEL ── */
+    .section-label {
+      width:100%; display:flex; align-items:center; gap:14px;
+      margin:32px 0 14px; opacity:0; animation:fadeIn .8s ease forwards;
+    }
+    .section-label span {
+      font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase;
+      color:var(--gold); opacity:.7; white-space:nowrap;
+    }
+    .section-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--gold-border),transparent); }
+
+    /* ── CARDS ── */
+    .card {
+      width:100%; position:relative; display:flex; align-items:center;
+      justify-content:space-between; padding:20px 24px; margin-bottom:10px; border-radius:2px;
       text-decoration:none; color:var(--white); background:var(--card-bg);
       border:1px solid rgba(255,255,255,0.05); overflow:hidden;
-      transition:all .4s cubic-bezier(0.25,1,0.5,1); opacity:0;
-      animation:slideUp .7s cubic-bezier(0.16,1,0.3,1) forwards; }
-    .card::before { content:''; position:absolute; inset:0;
-      background:linear-gradient(105deg,transparent 40%,rgba(201,162,39,0.04) 100%);
-      opacity:0; transition:opacity .4s; }
-    .card::after { content:''; position:absolute; bottom:0; left:0; width:0; height:1px;
-      background:linear-gradient(90deg,var(--gold),transparent);
-      transition:width .5s cubic-bezier(0.25,1,0.5,1); }
+      transition:all .4s cubic-bezier(0.25,1,0.5,1);
+      opacity:0; animation:slideUp .7s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .card::before { content:''; position:absolute; inset:0; background:linear-gradient(105deg,transparent 40%,rgba(201,162,39,0.04) 100%); opacity:0; transition:opacity .4s; }
+    .card::after { content:''; position:absolute; bottom:0; left:0; width:0; height:1px; background:linear-gradient(90deg,var(--gold),transparent); transition:width .5s; }
     .card:hover { border-color:var(--gold-border); background:rgba(201,162,39,0.04); transform:translateX(4px); }
     .card:hover::before { opacity:1; }
     .card:hover::after { width:100%; }
     .card-left { display:flex; align-items:center; gap:16px; }
-    .card-icon { font-size:1rem; color:var(--gold); opacity:.8; width:18px;
-      text-align:center; font-style:normal; }
-    .card-title { font-family:'Cormorant Garamond',serif; font-weight:400;
-      font-size:1.1rem; letter-spacing:1.5px; color:var(--white); }
-    .card-sub { font-size:.6rem; letter-spacing:3px; text-transform:uppercase;
-      color:var(--muted); margin-top:2px; }
-    .card-arrow { font-size:.7rem; color:var(--gold); opacity:0;
-      transition:opacity .3s,transform .3s; transform:translateX(-6px); }
+    .card-icon { font-size:1.1rem; color:var(--gold); opacity:.8; width:20px; text-align:center; font-style:normal; }
+    .card-title {
+      font-family:'Cormorant Garamond',serif; font-weight:400;
+      font-size:1.15rem; /* ↑ era 1.1rem — mais respiro */
+      letter-spacing:1.5px; color:var(--white);
+    }
+    .card-sub {
+      font-size:var(--fs-sub); /* ↑ CORRIGIDO — era ~9px */
+      letter-spacing:2px; text-transform:uppercase;
+      color:var(--muted); margin-top:3px;
+    }
+    .card-arrow { font-size:.8rem; color:var(--gold); opacity:0; transition:opacity .3s,transform .3s; transform:translateX(-6px); }
     .card:hover .card-arrow { opacity:.7; transform:translateX(0); }
-    .card.premium { border-color:rgba(201,162,39,0.18);
-      background:linear-gradient(105deg,rgba(201,162,39,0.05) 0%,rgba(0,0,0,0) 60%); }
+    .card.premium { border-color:rgba(201,162,39,0.18); background:linear-gradient(105deg,rgba(201,162,39,0.05) 0%,rgba(0,0,0,0) 60%); }
 
-    .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;
-      opacity:0; animation:fadeIn .8s ease forwards; }
-    .mini { background:var(--card-bg); border:1px solid rgba(255,255,255,0.04);
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; opacity:0; animation:fadeIn .8s ease forwards; }
+    .mini {
+      background:var(--card-bg); border:1px solid rgba(255,255,255,0.04);
       padding:16px 14px; border-radius:2px; text-align:center; text-decoration:none;
-      color:var(--muted); font-size:.72rem; letter-spacing:3px; text-transform:uppercase;
-      transition:all .35s ease; position:relative; overflow:hidden; }
-    .mini::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%);
-      width:0; height:1px; background:var(--gold); transition:width .4s ease; }
+      color:var(--muted);
+      font-size:var(--fs-sub); /* ↑ CORRIGIDO */
+      letter-spacing:2px; text-transform:uppercase;
+      transition:all .35s ease; position:relative; overflow:hidden;
+    }
+    .mini::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:0; height:1px; background:var(--gold); transition:width .4s ease; }
     .mini:hover { background:rgba(201,162,39,0.04); border-color:var(--gold-border); color:var(--gold-light); }
     .mini:hover::after { width:60%; }
     .mini.span2 { grid-column:span 2; }
     .mini.highlight { border-color:rgba(201,162,39,0.2); color:var(--gold); }
 
-    /* ════════════════════════════════════════
-       MENTORIA HERO
-    ════════════════════════════════════════ */
+    /* ════════════════════════════════════
+       MENTORIA HERO — FONTES CORRIGIDAS
+    ════════════════════════════════════ */
     .mentoria-hero {
       width:100%; position:relative; border-radius:3px; overflow:hidden;
-      opacity:0; animation:fadeIn 1s 0.3s ease forwards;
-      margin-bottom:10px;
+      opacity:0; animation:fadeIn 1s 0.3s ease forwards; margin-bottom:10px;
     }
     .mentoria-hero-bg {
       position:absolute; inset:0;
@@ -218,41 +253,38 @@
     }
     .mentoria-hero-grid {
       position:absolute; inset:0; z-index:0; opacity:0.05;
-      background-image:
-        linear-gradient(rgba(155,111,212,1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(155,111,212,1) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(155,111,212,1) 1px, transparent 1px), linear-gradient(90deg, rgba(155,111,212,1) 1px, transparent 1px);
       background-size:28px 28px;
     }
-    .mentoria-hero-border {
-      position:absolute; inset:0;
-      border:1px solid rgba(155,111,212,0.45);
-      border-radius:3px; z-index:1; pointer-events:none;
-    }
-    .mentoria-hero-border::before, .mentoria-hero-border::after {
-      content:''; position:absolute; width:16px; height:16px;
-      border-color:var(--purple-lt); border-style:solid; opacity:.8;
-    }
+    .mentoria-hero-border { position:absolute; inset:0; border:1px solid rgba(155,111,212,0.45); border-radius:3px; z-index:1; pointer-events:none; }
+    .mentoria-hero-border::before, .mentoria-hero-border::after { content:''; position:absolute; width:16px; height:16px; border-color:var(--purple-lt); border-style:solid; opacity:.8; }
     .mentoria-hero-border::before { top:-1px; left:-1px; border-width:2px 0 0 2px; border-radius:2px 0 0 0; }
     .mentoria-hero-border::after { bottom:-1px; right:-1px; border-width:0 2px 2px 0; border-radius:0 0 2px 0; }
-    .mentoria-hero-inner { position:relative; z-index:2; padding:28px 26px 24px; }
+    .mentoria-hero-inner { position:relative; z-index:2; padding:28px 24px 24px; }
+
     .mentoria-badge {
       display:inline-flex; align-items:center; gap:8px;
-      font-size:.48rem; letter-spacing:5px; text-transform:uppercase;
+      font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase;
       color:var(--purple-lt); border:1px solid rgba(155,111,212,0.3);
-      padding:4px 12px; border-radius:1px; margin-bottom:14px;
+      padding:5px 14px; border-radius:1px; margin-bottom:14px;
       background:rgba(107,63,160,0.1);
     }
-    .mentoria-title { font-family:'Cormorant Garamond',serif; font-weight:300;
-      font-size:2rem; letter-spacing:3px; line-height:1.15;
-      color:var(--white); margin-bottom:4px; }
+    .mentoria-title {
+      font-family:'Cormorant Garamond',serif; font-weight:300;
+      font-size:2rem; letter-spacing:2px; line-height:1.15;
+      color:var(--white); margin-bottom:4px;
+    }
     .mentoria-title em { font-style:italic; color:var(--purple-lt); }
     .mentoria-sub {
-      font-size:.58rem; letter-spacing:3px; text-transform:uppercase;
-      color:rgba(155,111,212,0.6); margin-bottom:18px;
+      font-size:var(--fs-sub); /* ↑ CORRIGIDO */
+      letter-spacing:2px; text-transform:uppercase;
+      color:rgba(155,111,212,0.7); margin-bottom:16px;
     }
     .mentoria-desc {
-      font-size:.67rem; letter-spacing:1.5px; line-height:1.9;
-      color:rgba(245,240,232,0.55); margin-bottom:20px;
+      font-size:var(--fs-body); /* ↑ CORRIGIDO — era ~10px */
+      letter-spacing:0.5px; line-height:1.8;
+      color:rgba(245,240,232,0.7); /* ↑ mais contrastado */
+      margin-bottom:20px;
     }
     .mentoria-pilares { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
     .mentoria-pilar {
@@ -260,59 +292,77 @@
       border-radius:2px; padding:10px 12px; background:rgba(107,63,160,0.07);
     }
     .mentoria-pilar-num {
-      font-size:.42rem; letter-spacing:4px; text-transform:uppercase;
-      color:rgba(155,111,212,0.5); display:block; margin-bottom:4px;
+      font-size:11px; letter-spacing:3px; text-transform:uppercase;
+      color:rgba(155,111,212,0.6); display:block; margin-bottom:4px;
     }
     .mentoria-pilar-nome {
-      font-family:'Cormorant Garamond',serif; font-size:.9rem;
+      font-family:'Cormorant Garamond',serif; font-size:.95rem;
       letter-spacing:1px; color:var(--white); display:block; line-height:1.3;
     }
-    .mentoria-incluso {
-      list-style:none; margin-bottom:20px;
-      display:flex; flex-direction:column; gap:7px;
-    }
+    .mentoria-incluso { list-style:none; margin-bottom:20px; display:flex; flex-direction:column; gap:9px; }
     .mentoria-incluso li {
       display:flex; align-items:flex-start; gap:10px;
-      font-size:.62rem; letter-spacing:1.5px;
-      color:rgba(245,240,232,0.6); line-height:1.5;
+      font-size:var(--fs-body); /* ↑ CORRIGIDO */
+      letter-spacing:0.5px; color:rgba(245,240,232,0.7); line-height:1.6;
     }
-    .mentoria-incluso li::before { content:'◈'; color:var(--purple-lt); opacity:.7; font-size:.65rem; flex-shrink:0; margin-top:1px; }
+    .mentoria-incluso li::before { content:'◈'; color:var(--purple-lt); opacity:.7; font-size:.7rem; flex-shrink:0; margin-top:3px; }
     .mentoria-divider { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
     .mentoria-divider-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(155,111,212,0.25),transparent); }
     .mentoria-divider-sym { font-size:.6rem; color:var(--purple-lt); opacity:.4; }
     .mentoria-price-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
     .mentoria-price { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:600; color:var(--gold-light); letter-spacing:2px; line-height:1; }
-    .mentoria-price-note { font-size:.55rem; letter-spacing:2px; color:rgba(155,111,212,0.6); }
+    .mentoria-price-note {
+      font-size:var(--fs-sub); /* ↑ CORRIGIDO */
+      letter-spacing:1.5px; color:rgba(155,111,212,0.7);
+    }
     .mentoria-vagas {
       display:inline-flex; align-items:center; gap:6px;
-      font-size:.48rem; letter-spacing:4px; text-transform:uppercase;
+      font-size:var(--fs-label); letter-spacing:3px; text-transform:uppercase;
       color:#e24b4a; border:1px solid rgba(226,75,74,0.3);
-      padding:4px 10px; border-radius:1px; background:rgba(226,75,74,0.06);
+      padding:5px 12px; border-radius:1px; background:rgba(226,75,74,0.06);
       animation:vagasPulse 2s ease-in-out infinite;
     }
     .mentoria-cta {
-      display:block; width:100%; padding:15px 20px;
+      display:block; width:100%; padding:16px 20px;
       text-align:center; text-decoration:none;
       background:linear-gradient(135deg, rgba(107,63,160,0.3), rgba(155,111,212,0.15));
       border:1px solid rgba(155,111,212,0.5); border-radius:2px; color:var(--purple-lt);
-      font-family:'Josefin Sans',sans-serif; font-size:.55rem; letter-spacing:4px; text-transform:uppercase;
+      font-family:'Josefin Sans',sans-serif;
+      font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase;
       transition:all .35s ease; position:relative; overflow:hidden;
     }
-    .mentoria-cta::before {
-      content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
-      background:linear-gradient(90deg, transparent, rgba(155,111,212,0.1), transparent);
-      animation:slide-shine 3s ease-in-out infinite;
-    }
+    .mentoria-cta::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg, transparent, rgba(155,111,212,0.1), transparent); animation:slide-shine 3s ease-in-out infinite; }
     @keyframes slide-shine { 0%{left:-100%;} 60%,100%{left:100%;} }
     .mentoria-cta:hover { background:linear-gradient(135deg, rgba(107,63,160,0.45), rgba(155,111,212,0.25)); border-color:rgba(155,111,212,0.8); transform:translateY(-1px); }
-    .mentoria-cta-main { font-family:'Cormorant Garamond',serif; font-size:1.1rem; letter-spacing:2px; display:block; margin-top:2px; color:var(--white); }
+    .mentoria-cta-main { font-family:'Cormorant Garamond',serif; font-size:1.15rem; letter-spacing:2px; display:block; margin-top:3px; color:var(--white); }
 
-    /* ════════════════════════════════════════
+    /* ════════════════════════════════════
+       CARD LEITURA EXPRESS — DESTAQUE MAIOR
+    ════════════════════════════════════ */
+    .card-leitura {
+      width:100%; position:relative; display:flex; align-items:center;
+      justify-content:space-between; padding:22px 24px; margin-bottom:10px;
+      border-radius:2px; text-decoration:none; color:var(--white);
+      border:1px solid rgba(201,162,39,0.35);
+      background:linear-gradient(105deg,rgba(201,162,39,0.1) 0%,rgba(107,63,160,0.08) 100%);
+      overflow:hidden; transition:all .4s cubic-bezier(0.25,1,0.5,1);
+      opacity:0; animation:slideUp .7s cubic-bezier(0.16,1,0.3,1) .55s forwards;
+    }
+    .card-leitura::before { content:''; position:absolute; inset:0; background:linear-gradient(105deg,rgba(201,162,39,0.08) 0%,transparent 60%); animation:breathe 5s ease-in-out infinite; }
+    .card-leitura::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:1px; background:linear-gradient(90deg,var(--gold),rgba(201,162,39,0.2),transparent); }
+    .card-leitura:hover { border-color:rgba(201,162,39,0.65); background:linear-gradient(105deg,rgba(201,162,39,0.16) 0%,rgba(107,63,160,0.12) 100%); transform:translateX(4px); box-shadow:0 8px 28px rgba(201,162,39,0.12); }
+    .card-leitura .card-badge { position:absolute; top:10px; right:12px; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--bg); background:var(--gold); padding:3px 9px; border-radius:1px; }
+    .card-leitura .card-price {
+      font-size:var(--fs-sub); /* ↑ CORRIGIDO */
+      letter-spacing:2px; color:var(--gold-light); opacity:.9; margin-top:4px;
+    }
+
+    /* ════════════════════════════════════
        CARD CAMPO VIVO
-    ════════════════════════════════════════ */
+    ════════════════════════════════════ */
     .card-campo-vivo {
       width:100%; position:relative; display:flex; align-items:center;
-      justify-content:space-between; padding:20px 26px; margin-bottom:10px;
+      justify-content:space-between; padding:20px 24px; margin-bottom:10px;
       border-radius:2px; text-decoration:none; color:var(--white);
       border:1px solid rgba(201,162,39,0.25);
       background:linear-gradient(105deg,rgba(201,162,39,0.07) 0%,rgba(0,0,0,0) 60%);
@@ -322,12 +372,35 @@
     .card-campo-vivo::after { content:''; position:absolute; bottom:0; left:0; width:0; height:1px; background:linear-gradient(90deg,var(--gold),transparent); transition:width .5s; }
     .card-campo-vivo:hover { border-color:rgba(201,162,39,0.5); background:linear-gradient(105deg,rgba(201,162,39,0.12) 0%,rgba(0,0,0,0) 60%); transform:translateX(4px); }
     .card-campo-vivo:hover::after { width:100%; }
-    .card-campo-vivo .cv-badge { position:absolute; top:10px; right:12px; font-size:.42rem; letter-spacing:3px; text-transform:uppercase; color:var(--bg); background:var(--gold); padding:3px 8px; border-radius:1px; }
-    .card-campo-vivo .cv-price { font-size:.58rem; letter-spacing:2px; color:var(--gold); opacity:.7; margin-top:2px; }
+    .card-campo-vivo .cv-badge { position:absolute; top:10px; right:12px; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--bg); background:var(--gold); padding:3px 8px; border-radius:1px; }
+    .card-campo-vivo .cv-price {
+      font-size:var(--fs-sub); /* ↑ CORRIGIDO */
+      letter-spacing:2px; color:var(--gold); opacity:.8; margin-top:3px;
+    }
 
-    /* ════════════════════════════════════════
-       LIVRO CÓDIGO QUÂNTICO
-    ════════════════════════════════════════ */
+    /* ════════════════════════════════════
+       MENTORIA QUÂNTICA
+    ════════════════════════════════════ */
+    .card-mentoria-q {
+      width:100%; position:relative; display:flex; align-items:center;
+      justify-content:space-between; padding:24px; margin-bottom:10px;
+      border-radius:2px; text-decoration:none; color:var(--white);
+      border:1px solid rgba(155,111,212,0.4);
+      background:linear-gradient(135deg,rgba(107,63,160,0.18) 0%,rgba(201,162,39,0.06) 100%);
+      overflow:hidden; transition:all .4s cubic-bezier(0.25,1,0.5,1);
+      opacity:0; animation:slideUp .7s cubic-bezier(0.16,1,0.3,1) .7s forwards;
+    }
+    .card-mentoria-q::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(155,111,212,0.06) 0%,transparent 60%); }
+    .card-mentoria-q::after { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background:linear-gradient(to bottom,transparent,var(--purple-lt),transparent); }
+    .card-mentoria-q:hover { border-color:rgba(155,111,212,0.7); background:linear-gradient(135deg,rgba(107,63,160,0.28) 0%,rgba(201,162,39,0.1) 100%); transform:translateX(4px); box-shadow:0 8px 28px rgba(107,63,160,0.2); }
+    .card-mentoria-q .card-price-big {
+      font-size:var(--fs-sub); /* ↑ CORRIGIDO */
+      letter-spacing:2px; color:rgba(155,111,212,0.9); margin-top:4px;
+    }
+
+    /* ════════════════════════════════════
+       LIVRO — FONTES CORRIGIDAS
+    ════════════════════════════════════ */
     .book-hero { width:100%; position:relative; margin-bottom:10px; border-radius:3px; overflow:hidden; opacity:0; animation:fadeIn 1s 0.2s ease forwards; }
     .book-hero-bg {
       position:absolute; inset:0;
@@ -338,117 +411,105 @@
         linear-gradient(135deg, rgba(201,162,39,0.06) 0%, rgba(0,0,0,0) 100%);
       z-index:0;
     }
-    .book-hero-grid {
-      position:absolute; inset:0; z-index:0;
-      background-image: linear-gradient(rgba(201,162,39,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(201,162,39,0.04) 1px, transparent 1px);
-      background-size:32px 32px;
-      animation:gridPulse 6s ease-in-out infinite;
-    }
+    .book-hero-grid { position:absolute; inset:0; z-index:0; background-image: linear-gradient(rgba(201,162,39,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(201,162,39,0.04) 1px, transparent 1px); background-size:32px 32px; animation:gridPulse 6s ease-in-out infinite; }
     @keyframes gridPulse { 0%,100%{opacity:.4;} 50%{opacity:1;} }
     .book-hero-border { position:absolute; inset:0; border:1px solid rgba(201,162,39,0.28); border-radius:3px; z-index:1; pointer-events:none; }
     .book-hero-border::before, .book-hero-border::after { content:''; position:absolute; width:18px; height:18px; border-color:var(--gold); border-style:solid; opacity:.7; }
     .book-hero-border::before { top:-1px; left:-1px; border-width:2px 0 0 2px; border-radius:2px 0 0 0; }
     .book-hero-border::after { bottom:-1px; right:-1px; border-width:0 2px 2px 0; border-radius:0 0 2px 0; }
-    .book-hero-inner { position:relative; z-index:2; padding:32px 28px 28px; display:flex; flex-direction:column; align-items:center; gap:0; }
+    .book-hero-inner { position:relative; z-index:2; padding:32px 24px 28px; display:flex; flex-direction:column; align-items:center; }
     .book-badge {
       display:inline-flex; align-items:center; gap:8px;
-      font-size:.52rem; letter-spacing:5px; text-transform:uppercase;
+      font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase;
       color:var(--gold); border:1px solid rgba(201,162,39,0.25);
       padding:5px 14px; border-radius:1px; margin-bottom:22px;
-      background:rgba(201,162,39,0.05);
-      animation:badgePulse 3s ease-in-out infinite;
+      background:rgba(201,162,39,0.05); animation:badgePulse 3s ease-in-out infinite;
     }
-    .book-badge::before { content:'⬡'; font-size:.7rem; animation:badgeSpin 8s linear infinite; display:inline-block; }
+    .book-badge::before { content:'⬡'; font-size:.8rem; animation:badgeSpin 8s linear infinite; display:inline-block; }
     @keyframes badgePulse { 0%,100%{border-color:rgba(201,162,39,0.25);} 50%{border-color:rgba(201,162,39,0.5);box-shadow:0 0 14px rgba(201,162,39,0.08);} }
     @keyframes badgeSpin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
     .book-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.85rem; letter-spacing:3px; color:var(--white); text-align:center; line-height:1.15; margin-bottom:6px; }
     .book-title em { font-style:italic; color:var(--gold-light); }
-    .book-subtitle { font-size:.62rem; letter-spacing:3.5px; text-transform:uppercase; color:rgba(240,208,120,0.55); text-align:center; margin-bottom:24px; font-weight:100; }
+    .book-subtitle {
+      font-size:var(--fs-sub); /* ↑ CORRIGIDO */
+      letter-spacing:3px; text-transform:uppercase; color:rgba(240,208,120,0.6); text-align:center; margin-bottom:24px; font-weight:100;
+    }
     .book-divider { display:flex; align-items:center; gap:10px; width:100%; margin-bottom:22px; }
     .book-divider-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(201,162,39,0.3),transparent); }
-    .book-divider-symbol { font-size:.7rem; color:var(--gold); opacity:.5; letter-spacing:4px; }
-    .book-benefits { list-style:none; width:100%; display:flex; flex-direction:column; gap:9px; margin-bottom:28px; }
-    .book-benefits li { display:flex; align-items:flex-start; gap:12px; font-size:.68rem; letter-spacing:1.5px; color:rgba(245,240,232,0.65); line-height:1.5; }
-    .book-benefits li::before { content:'◈'; color:var(--gold); opacity:.7; font-size:.7rem; flex-shrink:0; margin-top:1px; }
+    .book-divider-symbol { font-size:.8rem; color:var(--gold); opacity:.5; letter-spacing:4px; }
+    .book-benefits { list-style:none; width:100%; display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
+    .book-benefits li {
+      display:flex; align-items:flex-start; gap:12px;
+      font-size:var(--fs-body); /* ↑ CORRIGIDO */
+      letter-spacing:0.5px; color:rgba(245,240,232,0.7); line-height:1.6;
+    }
+    .book-benefits li::before { content:'◈'; color:var(--gold); opacity:.7; font-size:.8rem; flex-shrink:0; margin-top:2px; }
     .book-cta {
       display:block; width:100%; text-align:center; text-decoration:none;
-      position:relative; overflow:hidden; border-radius:2px; padding:16px 24px;
+      position:relative; overflow:hidden; border-radius:2px; padding:17px 24px;
       background:linear-gradient(135deg,rgba(201,162,39,0.18) 0%,rgba(201,162,39,0.08) 50%,rgba(201,162,39,0.14) 100%);
       border:1px solid rgba(201,162,39,0.45);
-      transition:all .4s cubic-bezier(0.25,1,0.5,1); cursor:pointer;
+      transition:all .4s cubic-bezier(0.25,1,0.5,1);
     }
     .book-cta::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(201,162,39,0.12),transparent); animation:shimmer 2.8s ease-in-out infinite; }
     @keyframes shimmer { 0%{left:-100%;} 60%,100%{left:100%;} }
     .book-cta:hover { background:linear-gradient(135deg,rgba(201,162,39,0.28) 0%,rgba(201,162,39,0.14) 50%,rgba(201,162,39,0.22) 100%); border-color:rgba(201,162,39,0.75); transform:translateY(-1px); box-shadow:0 8px 32px rgba(201,162,39,0.12); }
-    .book-cta-label { font-size:.52rem; letter-spacing:5px; text-transform:uppercase; color:rgba(201,162,39,0.6); display:block; margin-bottom:4px; }
-    .book-cta-text { font-family:'Cormorant Garamond',serif; font-size:1.15rem; letter-spacing:2.5px; color:var(--gold-light); font-weight:400; display:block; }
+    .book-cta-label {
+      font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase;
+      color:rgba(201,162,39,0.7); display:block; margin-bottom:4px;
+    }
+    .book-cta-text { font-family:'Cormorant Garamond',serif; font-size:1.2rem; letter-spacing:2.5px; color:var(--gold-light); font-weight:400; display:block; }
     .book-cta-arrow { display:inline-block; margin-left:8px; transition:transform .3s ease; font-style:normal; }
     .book-cta:hover .book-cta-arrow { transform:translateX(4px); }
-    .book-note { margin-top:14px; font-size:.55rem; letter-spacing:3px; text-transform:uppercase; color:rgba(245,240,232,0.18); text-align:center; }
-
-    .card-leitura {
-      width:100%; position:relative; display:flex; align-items:center;
-      justify-content:space-between; padding:22px 26px; margin-bottom:10px;
-      border-radius:2px; text-decoration:none; color:var(--white);
-      border:1px solid rgba(201,162,39,0.35);
-      background:linear-gradient(105deg,rgba(201,162,39,0.1) 0%,rgba(107,63,160,0.08) 100%);
-      overflow:hidden; transition:all .4s cubic-bezier(0.25,1,0.5,1);
-      opacity:0; animation:slideUp .7s cubic-bezier(0.16,1,0.3,1) .55s forwards;
+    .book-note {
+      margin-top:14px; font-size:var(--fs-label); letter-spacing:3px; text-transform:uppercase;
+      color:rgba(245,240,232,0.2); text-align:center;
     }
-    .card-leitura::before { content:''; position:absolute; inset:0; background:linear-gradient(105deg,rgba(201,162,39,0.08) 0%,transparent 60%); animation:breathe 5s ease-in-out infinite; }
-    .card-leitura::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:1px; background:linear-gradient(90deg,var(--gold),rgba(201,162,39,0.2),transparent); }
-    .card-leitura:hover { border-color:rgba(201,162,39,0.65); background:linear-gradient(105deg,rgba(201,162,39,0.16) 0%,rgba(107,63,160,0.12) 100%); transform:translateX(4px); box-shadow:0 8px 28px rgba(201,162,39,0.12); }
-    .card-leitura .card-badge { position:absolute; top:10px; right:12px; font-size:.45rem; letter-spacing:3px; text-transform:uppercase; color:var(--bg); background:var(--gold); padding:3px 9px; border-radius:1px; }
-    .card-leitura .card-price { font-size:.58rem; letter-spacing:3px; color:var(--gold-light); opacity:.8; margin-top:3px; }
 
-    .card-mentoria-q {
-      width:100%; position:relative; display:flex; align-items:center;
-      justify-content:space-between; padding:24px 26px; margin-bottom:10px;
-      border-radius:2px; text-decoration:none; color:var(--white);
-      border:1px solid rgba(155,111,212,0.4);
-      background:linear-gradient(135deg,rgba(107,63,160,0.18) 0%,rgba(201,162,39,0.06) 100%);
-      overflow:hidden; transition:all .4s cubic-bezier(0.25,1,0.5,1);
-      opacity:0; animation:slideUp .7s cubic-bezier(0.16,1,0.3,1) .7s forwards;
-    }
-    .card-mentoria-q::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(155,111,212,0.06) 0%,transparent 60%); }
-    .card-mentoria-q::after { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background:linear-gradient(to bottom,transparent,var(--purple-lt),transparent); }
-    .card-mentoria-q:hover { border-color:rgba(155,111,212,0.7); background:linear-gradient(135deg,rgba(107,63,160,0.28) 0%,rgba(201,162,39,0.1) 100%); transform:translateX(4px); box-shadow:0 8px 28px rgba(107,63,160,0.2); }
-    .card-mentoria-q .card-price-big { font-size:.68rem; letter-spacing:3px; color:rgba(155,111,212,0.9); margin-top:4px; }
-
+    /* ── FOOTER ── */
     footer { margin-top:60px; display:flex; flex-direction:column; align-items:center; gap:10px; opacity:0; animation:fadeIn 1s 2s ease forwards; }
     .footer-ornament { display:flex; gap:6px; align-items:center; }
     .footer-dot { width:3px; height:3px; border-radius:50%; background:var(--gold); opacity:.3; }
     .footer-dot.big { width:4px; height:4px; opacity:.5; }
-    .footer-text { font-size:.6rem; letter-spacing:4px; text-transform:uppercase; color:rgba(255,255,255,0.15); }
+    .footer-text { font-size:var(--fs-label); letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.15); }
 
+    /* ════════════════════════════════════
+       BOTÃO FLUTUANTE QUIZ — MAIS DESTAQUE
+    ════════════════════════════════════ */
     .quiz-float-btn {
       position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
       z-index:200; display:flex; align-items:center; gap:10px;
-      font-family:'Josefin Sans',sans-serif; font-size:.58rem;
-      letter-spacing:4px; text-transform:uppercase;
+      font-family:'Josefin Sans',sans-serif;
+      font-size:13px; /* ↑ CORRIGIDO — mais legível */
+      letter-spacing:3px; text-transform:uppercase;
       color:var(--bg); background:linear-gradient(135deg,#f0d078 0%,#c9a227 100%);
-      border:none; cursor:pointer; padding:13px 26px; border-radius:2px;
-      box-shadow:0 8px 32px rgba(201,162,39,0.35),0 2px 8px rgba(0,0,0,0.5);
+      border:none; cursor:pointer; padding:15px 28px; border-radius:2px;
+      box-shadow:0 8px 32px rgba(201,162,39,0.45),0 2px 8px rgba(0,0,0,0.5);
       transition:all .3s cubic-bezier(0.25,1,0.5,1);
-      animation:floatBtn 3s ease-in-out infinite, fadeIn 1s 2.5s ease both;
+      animation:floatBtn 2.5s ease-in-out infinite, fadeIn 1s 2.5s ease both;
       opacity:0; white-space:nowrap;
     }
-    .quiz-float-btn:hover { transform:translateX(-50%) translateY(-3px); box-shadow:0 14px 40px rgba(201,162,39,0.5),0 4px 12px rgba(0,0,0,0.5); }
-    .quiz-float-btn-dot { width:6px; height:6px; border-radius:50%; background:rgba(6,5,10,0.4); animation:dotBlink 1.5s ease-in-out infinite; }
-    @keyframes floatBtn { 0%,100%{box-shadow:0 8px 32px rgba(201,162,39,0.35),0 2px 8px rgba(0,0,0,0.5);} 50%{box-shadow:0 12px 44px rgba(201,162,39,0.55),0 4px 14px rgba(0,0,0,0.5);} }
+    .quiz-float-btn:hover { transform:translateX(-50%) translateY(-3px); box-shadow:0 16px 44px rgba(201,162,39,0.6),0 4px 12px rgba(0,0,0,0.5); }
+    .quiz-float-btn-dot { width:7px; height:7px; border-radius:50%; background:rgba(6,5,10,0.4); animation:dotBlink 1.2s ease-in-out infinite; }
+    @keyframes floatBtn {
+      0%,100%{box-shadow:0 8px 32px rgba(201,162,39,0.45),0 2px 8px rgba(0,0,0,0.5);}
+      50%{box-shadow:0 16px 48px rgba(201,162,39,0.65),0 4px 16px rgba(0,0,0,0.5); transform:translateX(-50%) translateY(-3px);}
+    }
 
+    /* ════════════════════════════════════
+       MODAL QUIZ — FONTES CORRIGIDAS
+    ════════════════════════════════════ */
     .quiz-overlay {
       position:fixed; inset:0; z-index:300;
-      background:rgba(4,3,10,0.9); backdrop-filter:blur(12px);
+      background:rgba(4,3,10,0.92); backdrop-filter:blur(12px);
       display:flex; align-items:center; justify-content:center; padding:20px;
       opacity:0; pointer-events:none; transition:opacity .4s ease;
     }
     .quiz-overlay.open { opacity:1; pointer-events:all; }
     .quiz-modal {
       width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
-      background:#0a0815;
-      border:1px solid rgba(201,162,39,0.22); border-radius:3px; position:relative;
-      transform:translateY(20px) scale(0.98);
+      background:#0a0815; border:1px solid rgba(201,162,39,0.22); border-radius:3px;
+      position:relative; transform:translateY(20px) scale(0.98);
       transition:transform .4s cubic-bezier(0.16,1,0.3,1);
       scrollbar-width:thin; scrollbar-color:rgba(201,162,39,0.2) transparent;
     }
@@ -456,83 +517,113 @@
     .quiz-modal::before, .quiz-modal::after { content:''; position:absolute; width:16px; height:16px; border-color:var(--gold); border-style:solid; opacity:.5; z-index:1; pointer-events:none; }
     .quiz-modal::before { top:-1px; left:-1px; border-width:2px 0 0 2px; border-radius:2px 0 0 0; }
     .quiz-modal::after { bottom:-1px; right:-1px; border-width:0 2px 2px 0; border-radius:0 0 2px 0; }
-    .quiz-modal-inner { padding:36px 28px 32px; }
-    .quiz-close { position:absolute; top:16px; right:18px; background:none; border:none; cursor:pointer; font-size:1rem; color:var(--muted); transition:color .2s; line-height:1; }
+    .quiz-modal-inner { padding:36px 24px 32px; }
+    .quiz-close { position:absolute; top:16px; right:18px; background:none; border:none; cursor:pointer; font-size:1.1rem; color:var(--muted); transition:color .2s; line-height:1; }
     .quiz-close:hover { color:var(--gold); }
+
     .quiz-header { text-align:center; margin-bottom:28px; }
-    .quiz-eyebrow { font-size:.5rem; letter-spacing:5px; text-transform:uppercase; color:var(--gold); opacity:.6; display:block; margin-bottom:10px; }
+    .quiz-eyebrow { font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase; color:var(--gold); opacity:.7; display:block; margin-bottom:10px; }
     .quiz-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.7rem; letter-spacing:3px; line-height:1.2; color:var(--white); margin-bottom:8px; }
     .quiz-title em { font-style:italic; color:var(--gold-light); }
-    .quiz-subtitle { font-size:.62rem; letter-spacing:2px; color:var(--muted); line-height:1.7; }
+    .quiz-subtitle {
+      font-size:var(--fs-body); /* ↑ CORRIGIDO */
+      letter-spacing:1px; color:var(--muted); line-height:1.7;
+    }
     .quiz-divider { display:flex; align-items:center; gap:10px; margin:20px 0; }
     .quiz-divider-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--gold-border),transparent); }
-    .quiz-divider-sym { font-size:.6rem; color:var(--gold); opacity:.4; }
+    .quiz-divider-sym { font-size:.7rem; color:var(--gold); opacity:.4; }
+
     .quiz-progress-wrap { margin-bottom:24px; }
-    .quiz-progress-label { display:flex; justify-content:space-between; font-size:.52rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+    .quiz-progress-label { display:flex; justify-content:space-between; font-size:var(--fs-label); letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
     .quiz-progress-bar { width:100%; height:2px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
     .quiz-progress-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:2px; transition:width .5s cubic-bezier(0.25,1,0.5,1); width:0%; }
+
     .quiz-question { display:none; }
     .quiz-question.active { display:block; animation:qFadeIn .35s ease; }
     @keyframes qFadeIn { from{opacity:0;transform:translateX(10px);} to{opacity:1;transform:translateX(0);} }
-    .quiz-q-num { font-family:'Cormorant Garamond',serif; font-size:.85rem; color:var(--gold); opacity:.4; letter-spacing:2px; margin-bottom:8px; display:block; }
-    .quiz-q-text { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.1rem; letter-spacing:1.5px; line-height:1.5; color:var(--white); margin-bottom:20px; }
+    .quiz-q-num { font-family:'Cormorant Garamond',serif; font-size:.95rem; color:var(--gold); opacity:.5; letter-spacing:2px; margin-bottom:8px; display:block; }
+    .quiz-q-text {
+      font-family:'Cormorant Garamond',serif; font-weight:300;
+      font-size:1.15rem; /* ↑ CORRIGIDO */
+      letter-spacing:1px; line-height:1.6; color:var(--white); margin-bottom:20px;
+    }
     .quiz-options { display:flex; flex-direction:column; gap:8px; }
-    .quiz-option { display:flex; align-items:flex-start; gap:14px; padding:14px 16px; border:1px solid rgba(255,255,255,0.06); border-radius:2px; cursor:pointer; transition:all .25s ease; background:rgba(255,255,255,0.015); position:relative; overflow:hidden; }
+    .quiz-option {
+      display:flex; align-items:flex-start; gap:14px; padding:14px 16px;
+      border:1px solid rgba(255,255,255,0.06); border-radius:2px; cursor:pointer;
+      transition:all .25s ease; background:rgba(255,255,255,0.015); position:relative; overflow:hidden;
+    }
     .quiz-option::after { content:''; position:absolute; bottom:0; left:0; width:0; height:1px; background:linear-gradient(90deg,var(--gold),transparent); transition:width .35s ease; }
     .quiz-option:hover { border-color:var(--gold-border); background:rgba(201,162,39,0.04); }
     .quiz-option:hover::after { width:100%; }
     .quiz-option.selected { border-color:rgba(201,162,39,0.5); background:rgba(201,162,39,0.08); }
     .quiz-option.selected::after { width:100%; }
-    .quiz-opt-letter { font-size:.58rem; letter-spacing:2px; color:var(--gold); opacity:.6; flex-shrink:0; margin-top:1px; font-weight:400; }
-    .quiz-opt-text { font-size:.68rem; letter-spacing:1.5px; line-height:1.7; color:rgba(245,240,232,0.7); }
+    .quiz-opt-letter { font-size:var(--fs-sub); letter-spacing:2px; color:var(--gold); opacity:.7; flex-shrink:0; margin-top:1px; font-weight:400; }
+    .quiz-opt-text {
+      font-size:var(--fs-body); /* ↑ CORRIGIDO */
+      letter-spacing:0.5px; line-height:1.7; color:rgba(245,240,232,0.75);
+    }
     .quiz-nav { display:flex; justify-content:space-between; align-items:center; margin-top:24px; gap:12px; }
-    .quiz-btn { font-family:'Josefin Sans',sans-serif; font-size:.55rem; letter-spacing:4px; text-transform:uppercase; padding:11px 22px; border-radius:2px; cursor:pointer; transition:all .3s ease; border:1px solid; }
+    .quiz-btn { font-family:'Josefin Sans',sans-serif; font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase; padding:12px 22px; border-radius:2px; cursor:pointer; transition:all .3s ease; border:1px solid; }
     .quiz-btn-back { background:transparent; border-color:rgba(255,255,255,0.08); color:var(--muted); }
     .quiz-btn-back:hover { border-color:rgba(255,255,255,0.2); color:var(--white); }
     .quiz-btn-next { background:linear-gradient(135deg,rgba(201,162,39,0.2),rgba(201,162,39,0.1)); border-color:rgba(201,162,39,0.4); color:var(--gold-light); flex:1; }
     .quiz-btn-next:hover { background:linear-gradient(135deg,rgba(201,162,39,0.32),rgba(201,162,39,0.18)); border-color:rgba(201,162,39,0.7); }
     .quiz-btn-next:disabled { opacity:.35; cursor:not-allowed; }
-    .quiz-email-screen { display:none; text-align:center; }
-    .quiz-email-screen.active { display:block; animation:qFadeIn .35s ease; }
-    .quiz-email-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.4rem; letter-spacing:2px; color:var(--white); margin-bottom:8px; line-height:1.3; }
-    .quiz-email-title em { font-style:italic; color:var(--gold-light); }
-    .quiz-email-sub { font-size:.62rem; letter-spacing:2px; color:var(--muted); line-height:1.8; margin-bottom:24px; }
-    .quiz-input { width:100%; padding:13px 16px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:2px; color:var(--white); font-family:'Josefin Sans',sans-serif; font-size:.7rem; letter-spacing:2px; outline:none; margin-bottom:10px; transition:border-color .3s; }
-    .quiz-input::placeholder { color:rgba(245,240,232,0.25); }
-    .quiz-input:focus { border-color:rgba(201,162,39,0.45); }
-    .quiz-submit { width:100%; padding:14px; background:linear-gradient(135deg,rgba(201,162,39,0.22),rgba(201,162,39,0.12)); border:1px solid rgba(201,162,39,0.5); border-radius:2px; color:var(--gold-light); cursor:pointer; font-family:'Josefin Sans',sans-serif; font-size:.6rem; letter-spacing:4px; text-transform:uppercase; transition:all .3s ease; }
-    .quiz-submit:hover { background:linear-gradient(135deg,rgba(201,162,39,0.35),rgba(201,162,39,0.2)); border-color:rgba(201,162,39,0.75); }
-    .quiz-submit:disabled { opacity:.4; cursor:not-allowed; }
-    .quiz-privacy { font-size:.5rem; letter-spacing:2px; color:rgba(255,255,255,.15); margin-top:12px; }
+
+    /* RESULTADO QUIZ → WPP (sem email) */
     .quiz-result-screen { display:none; text-align:center; }
     .quiz-result-screen.active { display:block; animation:qFadeIn .4s ease; }
-    .quiz-result-badge { display:inline-flex; align-items:center; gap:8px; font-size:.5rem; letter-spacing:5px; text-transform:uppercase; color:var(--gold); border:1px solid var(--gold-border); padding:5px 14px; border-radius:1px; margin-bottom:16px; background:rgba(201,162,39,0.05); }
+    .quiz-result-badge { display:inline-flex; align-items:center; gap:8px; font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase; color:var(--gold); border:1px solid var(--gold-border); padding:5px 14px; border-radius:1px; margin-bottom:16px; background:rgba(201,162,39,0.05); }
     .quiz-result-perfil { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.8rem; letter-spacing:3px; line-height:1.2; color:var(--white); margin-bottom:10px; }
     .quiz-result-perfil em { font-style:italic; color:var(--gold-light); }
-    .quiz-result-score { font-size:.55rem; letter-spacing:4px; text-transform:uppercase; color:var(--muted); margin-bottom:20px; }
-    .quiz-result-desc { font-size:.68rem; letter-spacing:1.5px; line-height:1.9; color:rgba(245,240,232,0.6); margin-bottom:16px; text-align:left; }
+    .quiz-result-score {
+      font-size:var(--fs-label); letter-spacing:3px; text-transform:uppercase;
+      color:var(--muted); margin-bottom:20px;
+    }
+    .quiz-result-desc {
+      font-size:var(--fs-body); /* ↑ CORRIGIDO */
+      letter-spacing:0.5px; line-height:1.9; color:rgba(245,240,232,0.65);
+      margin-bottom:16px; text-align:left;
+    }
     .quiz-result-missao { padding:16px 18px; border:1px solid rgba(201,162,39,0.2); border-radius:2px; background:rgba(201,162,39,0.04); margin-bottom:24px; text-align:left; }
-    .quiz-result-missao-label { font-size:.5rem; letter-spacing:4px; text-transform:uppercase; color:var(--gold); opacity:.7; display:block; margin-bottom:6px; }
-    .quiz-result-missao-text { font-size:.67rem; letter-spacing:1.5px; line-height:1.8; color:rgba(245,240,232,0.65); }
-    .quiz-result-cta { display:block; width:100%; padding:15px; background:linear-gradient(135deg,rgba(37,211,102,0.15),rgba(37,211,102,0.08)); border:1px solid rgba(37,211,102,0.4); border-radius:2px; text-decoration:none; color:#25d366; font-family:'Cormorant Garamond',serif; font-size:1.05rem; letter-spacing:2px; transition:all .3s ease; margin-bottom:8px; }
-    .quiz-result-cta:hover { background:linear-gradient(135deg,rgba(37,211,102,0.25),rgba(37,211,102,0.15)); border-color:rgba(37,211,102,0.7); }
-    .quiz-result-cta-secondary { display:block; width:100%; padding:13px; background:linear-gradient(135deg,rgba(201,162,39,0.15),rgba(107,63,160,0.1)); border:1px solid rgba(201,162,39,0.35); border-radius:2px; text-decoration:none; color:var(--gold-light); font-family:'Cormorant Garamond',serif; font-size:.95rem; letter-spacing:2px; transition:all .3s ease; margin-bottom:12px; }
+    .quiz-result-missao-label { font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase; color:var(--gold); opacity:.7; display:block; margin-bottom:6px; }
+    .quiz-result-missao-text {
+      font-size:var(--fs-body); /* ↑ CORRIGIDO */
+      letter-spacing:0.5px; line-height:1.8; color:rgba(245,240,232,0.65);
+    }
+    /* CTA WPP no resultado */
+    .quiz-result-cta {
+      display:block; width:100%; padding:16px;
+      background:linear-gradient(135deg,rgba(37,211,102,0.18),rgba(37,211,102,0.08));
+      border:1px solid rgba(37,211,102,0.45); border-radius:2px; text-decoration:none;
+      color:#25d366; font-family:'Cormorant Garamond',serif;
+      font-size:1.1rem; letter-spacing:2px; transition:all .3s ease; margin-bottom:8px;
+    }
+    .quiz-result-cta:hover { background:linear-gradient(135deg,rgba(37,211,102,0.3),rgba(37,211,102,0.15)); border-color:rgba(37,211,102,0.75); }
+    .quiz-result-cta-secondary {
+      display:block; width:100%; padding:14px;
+      background:linear-gradient(135deg,rgba(201,162,39,0.15),rgba(107,63,160,0.1));
+      border:1px solid rgba(201,162,39,0.35); border-radius:2px; text-decoration:none;
+      color:var(--gold-light); font-family:'Cormorant Garamond',serif;
+      font-size:1rem; letter-spacing:2px; transition:all .3s ease; margin-bottom:12px;
+    }
     .quiz-result-cta-secondary:hover { background:linear-gradient(135deg,rgba(201,162,39,0.25),rgba(107,63,160,0.18)); border-color:rgba(201,162,39,0.6); }
-    .quiz-result-share { font-size:.52rem; letter-spacing:3px; color:rgba(255,255,255,.2); }
-    .quiz-sending { display:none; text-align:center; padding:20px 0; }
-    .quiz-sending-spin { width:28px; height:28px; border-radius:50%; border:1px solid rgba(201,162,39,0.2); border-top-color:var(--gold); animation:spin .9s linear infinite; margin:0 auto 14px; }
-    @keyframes spin { to{transform:rotate(360deg);} }
-    .quiz-sending-text { font-size:.58rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
+    .quiz-result-share {
+      font-size:var(--fs-label); letter-spacing:3px; color:rgba(255,255,255,.2);
+    }
 
+    /* ── KEYFRAMES GLOBAIS ── */
     @keyframes fadeDown { from{opacity:0;transform:translateY(-16px);} to{opacity:1;transform:translateY(0);} }
-    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-    @keyframes slideUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+    @keyframes fadeIn   { from{opacity:0;} to{opacity:1;} }
+    @keyframes slideUp  { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
     @keyframes vagasPulse {
       0%,100%{border-color:rgba(226,75,74,0.4);}
       50%{border-color:rgba(226,75,74,0.8); box-shadow:0 0 14px rgba(226,75,74,0.15);}
     }
     @keyframes dotBlink { 0%,100%{opacity:1;} 50%{opacity:0.15;} }
 
+    /* DELAYS */
     .d1{animation-delay:.5s;} .d2{animation-delay:.65s;} .d3{animation-delay:.8s;}
     .d4{animation-delay:.95s;} .d5{animation-delay:1.1s;} .d6{animation-delay:1.25s;}
     .d7{animation-delay:1.4s;} .d8{animation-delay:1.55s;} .d9{animation-delay:1.7s;}
@@ -543,7 +634,7 @@
 
 <a href="/login/" class="access-btn" id="accessBtn">Entrar →</a>
 
-<a href="https://wa.me/5571983448621?text=Olá!%20Vim%20pelo%20Akasha%20Hub%20e%20quero%20saber%20mais%20%E2%9C%A6"
+<a href="https://wa.me/5571983448621?text=Olá!%20Vim%20pelo%20Akasha%20Hub%20e%20quero%20saber%20mais%20✦"
    class="wpp-btn" target="_blank" rel="noopener" aria-label="WhatsApp">
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
@@ -552,18 +643,19 @@
   WhatsApp
 </a>
 
+<!-- ═══════════════ BOTÃO QUIZ FLUTUANTE ═══════════════ -->
 <button class="quiz-float-btn" id="quizFloatBtn" onclick="openQuiz()">
   <span class="quiz-float-btn-dot"></span>
   Descobrir meu Perfil Akáshico
 </button>
 
-<!-- Modal Quiz -->
+<!-- ═══════════════ MODAL QUIZ ═══════════════ -->
 <div class="quiz-overlay" id="quizOverlay">
   <div class="quiz-modal" role="dialog" aria-modal="true" aria-label="Quiz Perfil Akáshico">
     <button class="quiz-close" onclick="closeQuiz()" aria-label="Fechar">✕</button>
     <div class="quiz-modal-inner">
       <div class="quiz-header">
-        <span class="quiz-eyebrow">Akasha Hub · Quiz</span>
+        <span class="quiz-eyebrow">Akasha Hub · Quiz Gratuito</span>
         <h2 class="quiz-title">Qual é o seu<br><em>Perfil Akáshico?</em></h2>
         <p class="quiz-subtitle">6 perguntas para descobrir como você<br>se relaciona com o campo quântico</p>
       </div>
@@ -572,6 +664,8 @@
         <div class="quiz-progress-label"><span id="progressLabel">Pergunta 1 de 6</span><span id="progressPct">0%</span></div>
         <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="progressFill"></div></div>
       </div>
+
+      <!-- P1 -->
       <div class="quiz-question active" data-q="0">
         <span class="quiz-q-num">01 / 06</span>
         <p class="quiz-q-text">Quando você precisa tomar uma decisão importante, como costuma agir?</p>
@@ -583,6 +677,7 @@
         </div>
         <div class="quiz-nav"><button class="quiz-btn quiz-btn-next" onclick="nextQ()" id="nextBtn0" disabled>Próxima →</button></div>
       </div>
+      <!-- P2 -->
       <div class="quiz-question" data-q="1">
         <span class="quiz-q-num">02 / 06</span>
         <p class="quiz-q-text">Como você se sente quando está em lugares com muitas pessoas ao mesmo tempo?</p>
@@ -594,6 +689,7 @@
         </div>
         <div class="quiz-nav"><button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button><button class="quiz-btn quiz-btn-next" onclick="nextQ()" id="nextBtn1" disabled>Próxima →</button></div>
       </div>
+      <!-- P3 -->
       <div class="quiz-question" data-q="2">
         <span class="quiz-q-num">03 / 06</span>
         <p class="quiz-q-text">Quando você pensa na sua relação com o dinheiro e abundância, o que mais ressoa?</p>
@@ -605,6 +701,7 @@
         </div>
         <div class="quiz-nav"><button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button><button class="quiz-btn quiz-btn-next" onclick="nextQ()" id="nextBtn2" disabled>Próxima →</button></div>
       </div>
+      <!-- P4 -->
       <div class="quiz-question" data-q="3">
         <span class="quiz-q-num">04 / 06</span>
         <p class="quiz-q-text">Qual dessas experiências você já teve com mais frequência?</p>
@@ -616,6 +713,7 @@
         </div>
         <div class="quiz-nav"><button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button><button class="quiz-btn quiz-btn-next" onclick="nextQ()" id="nextBtn3" disabled>Próxima →</button></div>
       </div>
+      <!-- P5 -->
       <div class="quiz-question" data-q="4">
         <span class="quiz-q-num">05 / 06</span>
         <p class="quiz-q-text">Como você lida com períodos de dificuldade ou crise?</p>
@@ -627,6 +725,7 @@
         </div>
         <div class="quiz-nav"><button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button><button class="quiz-btn quiz-btn-next" onclick="nextQ()" id="nextBtn4" disabled>Próxima →</button></div>
       </div>
+      <!-- P6 -->
       <div class="quiz-question" data-q="5">
         <span class="quiz-q-num">06 / 06</span>
         <p class="quiz-q-text">O que mais descreve sua relação com práticas espirituais ou de consciência?</p>
@@ -636,36 +735,34 @@
           <div class="quiz-option" data-pts="2" onclick="selectOpt(this,5)"><span class="quiz-opt-letter">C</span><span class="quiz-opt-text">Estou começando a explorar esse universo — estou aberto mas ainda aprendendo.</span></div>
           <div class="quiz-option" data-pts="4" onclick="selectOpt(this,5)"><span class="quiz-opt-letter">D</span><span class="quiz-opt-text">Já explorei muito mas não encontrei algo que realmente funcionasse para mim ainda.</span></div>
         </div>
-        <div class="quiz-nav"><button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button><button class="quiz-btn quiz-btn-next" onclick="goToEmail()" id="nextBtn5" disabled>Ver meu perfil →</button></div>
+        <div class="quiz-nav"><button class="quiz-btn quiz-btn-back" onclick="prevQ()">← Voltar</button><button class="quiz-btn quiz-btn-next" onclick="showResult()" id="nextBtn5" disabled>Ver meu perfil →</button></div>
       </div>
-      <div class="quiz-email-screen" id="quizEmailScreen">
-        <div class="quiz-divider" style="margin-top:0"><div class="quiz-divider-line"></div><span class="quiz-divider-sym">✦</span><div class="quiz-divider-line"></div></div>
-        <h3 class="quiz-email-title">Seu perfil está<br><em>pronto para revelar</em></h3>
-        <p class="quiz-email-sub">Insira seu nome e email para receber<br>sua análise completa e resultado.</p>
-        <input class="quiz-input" type="text" id="quizName" placeholder="Seu nome" autocomplete="given-name">
-        <input class="quiz-input" type="email" id="quizEmail" placeholder="Seu melhor email" autocomplete="email">
-        <button class="quiz-submit" onclick="submitQuiz()" id="quizSubmitBtn">Revelar meu Perfil Akáshico →</button>
-        <p class="quiz-privacy">Seus dados são protegidos. Sem spam.</p>
-      </div>
-      <div class="quiz-sending" id="quizSending">
-        <div class="quiz-sending-spin"></div>
-        <p class="quiz-sending-text">Lendo o campo quântico...</p>
-      </div>
+
+      <!-- RESULTADO DIRETO (sem email) -->
       <div class="quiz-result-screen" id="quizResultScreen">
         <div class="quiz-divider" style="margin-top:0"><div class="quiz-divider-line"></div><span class="quiz-divider-sym">✦</span><div class="quiz-divider-line"></div></div>
-        <div class="quiz-result-badge">◈ Seu Perfil</div>
+        <div class="quiz-result-badge">◈ Seu Perfil Akáshico</div>
         <h3 class="quiz-result-perfil" id="resultTitle"></h3>
         <p class="quiz-result-score" id="resultScore"></p>
         <p class="quiz-result-desc" id="resultDesc"></p>
-        <div class="quiz-result-missao"><span class="quiz-result-missao-label">✦ Sua Missão</span><p class="quiz-result-missao-text" id="resultMissao"></p></div>
-        <a href="https://wa.me/5571983448621?text=Olá!%20Fiz%20o%20quiz%20e%20quero%20aprofundar%20minha%20jornada%20%E2%9C%A6" class="quiz-result-cta" target="_blank" rel="noopener">↗ Falar com a Akasha agora</a>
-        <a href="https://pay.hotmart.com/X105218960C" class="quiz-result-cta-secondary" target="_blank" rel="noopener">Aprofundar com o Código Quântico →</a>
+        <div class="quiz-result-missao">
+          <span class="quiz-result-missao-label">✦ Sua Missão</span>
+          <p class="quiz-result-missao-text" id="resultMissao"></p>
+        </div>
+        <!-- BOTÃO PRINCIPAL: WPP com perfil no texto -->
+        <a href="#" id="wppResultCta" class="quiz-result-cta" target="_blank" rel="noopener">
+          ↗ Aprofundar meu perfil com a Akasha
+        </a>
+        <a href="https://pay.hotmart.com/X105218960C" class="quiz-result-cta-secondary" target="_blank" rel="noopener">
+          Começar com o Código Quântico →
+        </a>
         <p class="quiz-result-share">Compartilhe @akasha.hub nos stories ✦</p>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ═══════════════ BACKGROUNDS ═══════════════ -->
 <div class="bg-canvas"></div>
 <div class="bg-grid"></div>
 
@@ -684,7 +781,10 @@
 
 <div class="particles" id="particles"></div>
 
+<!-- ═══════════════ CONTEÚDO PRINCIPAL ═══════════════ -->
 <div class="container">
+
+  <!-- EMBLEMA -->
   <div class="emblem-wrap">
     <div class="emblem-ring">
       <div class="emblem-outer-ring"></div>
@@ -693,9 +793,26 @@
     </div>
   </div>
 
+  <!-- HEADLINE -->
   <div class="headline">
     <h1>AK<span>A</span>SHA <span>HUB</span></h1>
     <p class="tagline">O Portal da Essência</p>
+  </div>
+
+  <!-- ═══ PROVA SOCIAL — ACIMA DA DOBRA ═══ -->
+  <div class="social-proof">
+    <div class="sp-card">
+      <span class="sp-number">2,2 mi</span>
+      <span class="sp-label">visualizações<br>este mês</span>
+    </div>
+    <div class="sp-card">
+      <span class="sp-number">236</span>
+      <span class="sp-label">conteúdos<br>publicados</span>
+    </div>
+    <div class="sp-card">
+      <span class="sp-number">+30</span>
+      <span class="sp-label">formações<br>completadas</span>
+    </div>
   </div>
 
   <div class="ornament">
@@ -704,7 +821,7 @@
     <div class="ornament-line"></div>
   </div>
 
-  <!-- MENTORIA INDIVIDUAL -->
+  <!-- ═══ MENTORIA PRINCIPAL ═══ -->
   <div class="section-label d2"><span>Transformação Profunda</span></div>
 
   <div class="mentoria-hero d2">
@@ -719,9 +836,18 @@
         Você não precisa criar nada do zero. O que você veio trazer ao mundo já está dentro de você — em talentos, histórias, conhecimentos e obras que ainda não chegaram ao mundo. Nesta mentoria, tiramos isso de dentro de você, damos forma e construímos seu império digital a partir daí.
       </p>
       <div class="mentoria-pilares">
-        <div class="mentoria-pilar"><span class="mentoria-pilar-num">Pilar 01</span><span class="mentoria-pilar-nome">Investigação de Essência</span></div>
-        <div class="mentoria-pilar"><span class="mentoria-pilar-num">Pilar 02</span><span class="mentoria-pilar-nome">Arquitetura de Identidade</span></div>
-        <div class="mentoria-pilar"><span class="mentoria-pilar-num">Pilar 03</span><span class="mentoria-pilar-nome">Império Digital</span></div>
+        <div class="mentoria-pilar">
+          <span class="mentoria-pilar-num">Pilar 01</span>
+          <span class="mentoria-pilar-nome">Investigação de Essência</span>
+        </div>
+        <div class="mentoria-pilar">
+          <span class="mentoria-pilar-num">Pilar 02</span>
+          <span class="mentoria-pilar-nome">Arquitetura de Identidade</span>
+        </div>
+        <div class="mentoria-pilar">
+          <span class="mentoria-pilar-num">Pilar 03</span>
+          <span class="mentoria-pilar-nome">Império Digital</span>
+        </div>
       </div>
       <div class="mentoria-divider"><div class="mentoria-divider-line"></div><span class="mentoria-divider-sym">✦</span><div class="mentoria-divider-line"></div></div>
       <ul class="mentoria-incluso">
@@ -730,16 +856,17 @@
         <li>Site profissional, logo e Instagram configurados e prontos</li>
         <li>Plano de campanha de 30 dias — você não precisa aparecer para vender</li>
         <li>Estrutura de venda digital: plataforma, funil e entrega automatizados</li>
+        <li>Gmail profissional + backup de todos os arquivos e gravações das calls</li>
         <li>Você pode usar pseudônimo — sua identidade real é protegida</li>
       </ul>
       <div class="mentoria-price-row">
         <div>
           <div class="mentoria-price">R$ 2.000</div>
-          <div class="mentoria-price-note">6 encontros individuais · resultado completo</div>
+          <div class="mentoria-price-note">6 encontros individuais · entrega completa</div>
         </div>
         <span class="mentoria-vagas">● Vagas limitadas</span>
       </div>
-      <a href="https://wa.me/5571983448621?text=Quero%20agendar%20minha%20Mentoria%20Individual%20Akasha%20Hub%20%E2%9C%A6"
+      <a href="https://wa.me/5571983448621?text=Quero%20agendar%20minha%20Mentoria%20Individual%20Akasha%20Hub%20✦"
          class="mentoria-cta" target="_blank" rel="noopener">
         <span>Quero construir meu império</span>
         <span class="mentoria-cta-main">Falar no WhatsApp → Garantir minha vaga ›</span>
@@ -747,7 +874,22 @@
     </div>
   </div>
 
-  <!-- Mentoria Quântica -->
+  <!-- ═══ LEITURA EXPRESS — TICKET RÁPIDO ═══ -->
+  <a href="https://wa.me/5571983448621?text=Olá!%20Quero%20agendar%20minha%20Leitura%20Energética%20Express%20de%2015%20minutos%20✦"
+     class="card-leitura" target="_blank" rel="noopener">
+    <div class="card-badge">Disponível agora</div>
+    <div class="card-left">
+      <i class="card-icon" style="font-size:1.2rem">◈</i>
+      <div>
+        <div class="card-title">Leitura Energética Express</div>
+        <div class="card-sub">Sessão de 15 min · Análise do seu campo atual</div>
+        <div class="card-price">R$ 47 · Agendamento via WhatsApp →</div>
+      </div>
+    </div>
+    <span class="card-arrow" style="opacity:.7">›</span>
+  </a>
+
+  <!-- ═══ MENTORIA QUÂNTICA ═══ -->
   <a href="https://akashahub.com.br/mentoriaquantica/" class="card-mentoria-q">
     <div class="card-left">
       <i class="card-icon" style="color:var(--purple-lt)">✦</i>
@@ -760,22 +902,7 @@
     <span class="card-arrow" style="opacity:.6;color:var(--purple-lt)">›</span>
   </a>
 
-  <!-- Leitura Energética -->
-  <a href="https://wa.me/5571983448621?text=Olá!%20Quero%20agendar%20minha%20Leitura%20Energética%20Express%20de%2015%20minutos%20%E2%9C%A6"
-     class="card-leitura" target="_blank" rel="noopener">
-    <div class="card-badge">Disponível agora</div>
-    <div class="card-left">
-      <i class="card-icon" style="font-size:1.1rem">◈</i>
-      <div>
-        <div class="card-title">Leitura Energética Express</div>
-        <div class="card-sub">Sessão de 15 minutos · Análise do seu campo atual</div>
-        <div class="card-price">R$ 47 · Agendamento via WhatsApp →</div>
-      </div>
-    </div>
-    <span class="card-arrow" style="opacity:.7">›</span>
-  </a>
-
-  <!-- Campo Vivo -->
+  <!-- ═══ CAMPO VIVO ═══ -->
   <div class="section-label d3"><span>Transmissão Diária</span></div>
 
   <a href="/campovivo/" class="card-campo-vivo">
@@ -791,7 +918,7 @@
     <span class="card-arrow" style="opacity:.6">›</span>
   </a>
 
-  <!-- Livro -->
+  <!-- ═══ LIVRO ═══ -->
   <div class="section-label d4"><span>Leitura Essencial</span></div>
 
   <div class="book-hero">
@@ -818,16 +945,15 @@
     </div>
   </div>
 
-  <!-- Akasha Universe -->
+  <!-- ═══ AKASHA UNIVERSE ═══ -->
   <div class="section-label d6"><span>Akasha Universe</span></div>
-
   <div class="grid d7">
     <a href="/guardião/" class="mini span2 highlight">O Guardião</a>
     <a href="/doutrina/" class="mini span2">A Doutrina</a>
   </div>
 
+  <!-- ═══ CURSOS ═══ -->
   <div class="section-label d8"><span>Cursos & Expansão</span></div>
-
   <div class="grid d9">
     <a href="/alignmentcourse/" class="mini">Alignment</a>
     <a href="/blindagem/" class="mini">Blindagem</a>
@@ -836,6 +962,7 @@
     <a href="/triplex/" class="mini span2">Triplex</a>
   </div>
 
+  <!-- ═══ ACERVO ═══ -->
   <div class="section-label d10"><span>Acervo & Comunidade</span></div>
 
   <a href="/livros/" class="card d11">
@@ -877,38 +1004,28 @@
   </footer>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- ═══════════════ SCRIPTS ═══════════════ -->
 <script>
-  const EMAILJS_SERVICE_ID  = 'SEU_SERVICE_ID';
-  const EMAILJS_TEMPLATE_ID = 'SEU_TEMPLATE_ID';
-  const EMAILJS_PUBLIC_KEY  = 'SUA_PUBLIC_KEY';
-  emailjs.init(EMAILJS_PUBLIC_KEY);
-
+  /* ─── QUIZ ─── */
   let currentQ = 0;
   const totalQ = 6;
   const answers = new Array(totalQ).fill(null);
   const answerTexts = new Array(totalQ).fill('');
 
-  const questions = [
-    'Quando você precisa tomar uma decisão importante, como costuma agir?',
-    'Como você se sente quando está em lugares com muitas pessoas ao mesmo tempo?',
-    'Quando você pensa na sua relação com o dinheiro e abundância, o que mais ressoa?',
-    'Qual dessas experiências você já teve com mais frequência?',
-    'Como você lida com períodos de dificuldade ou crise?',
-    'O que mais descreve sua relação com práticas espirituais ou de consciência?'
-  ];
-
   const perfis = [
-    { range:[6,10], nome:'O Arquiteto Racional', desc:'Você é alguém que valoriza evidências, lógica e resultados concretos. Sua relação com o campo quântico está começando — e isso é perfeito. A física quântica vai fazer muito sentido para você porque é ciência verificável, não crença.', missao:'Começar a registrar sincronicidades e "coincidências" que acontecem ao seu redor. O ceticismo saudável vai se transformar em curiosidade ativa.' },
-    { range:[11,16], nome:'O Explorador Desperto', desc:'Você está em uma fase de transição — já percebe que existe algo além do que os olhos veem, mas ainda está aprendendo a navegar por esse campo. Sua sensibilidade está crescendo.', missao:'Criar uma prática consistente, mesmo que pequena. 18 minutos por dia vão revelar em 21 dias o que anos de busca esporádica não revelaram.' },
-    { range:[17,21], nome:'O Canal Quântico', desc:'Você tem uma sensibilidade natural ao campo. Absorve energias, percebe padrões, tem intuições frequentes. O desafio é aprender a trabalhar com isso de forma estruturada — sem se perder no excesso de input.', missao:'Desenvolver limites energéticos claros e uma prática de ancoragem diária. Você tem o dom — precisa da técnica.' },
-    { range:[22,24], nome:'O Transmutador', desc:'Você carrega padrões profundos que ainda não foram completamente transformados. A boa notícia: quem chega a esse ponto de autoconhecimento tem um potencial extraordinário de transformação.', missao:'Não fazer essa jornada sozinho. O trabalho profundo de reprogramação é mais poderoso quando feito em campo compartilhado.' }
+    { range:[6,10],  nome:'O Arquiteto Racional',  desc:'Você é alguém que valoriza evidências, lógica e resultados concretos. Sua relação com o campo quântico está começando — e isso é perfeito. A física quântica vai fazer muito sentido para você porque é ciência verificável, não crença.', missao:'Começar a registrar sincronicidades e "coincidências" que acontecem ao seu redor. O ceticismo saudável vai se transformar em curiosidade ativa.' },
+    { range:[11,16], nome:'O Explorador Desperto',  desc:'Você está em uma fase de transição — já percebe que existe algo além do que os olhos veem, mas ainda está aprendendo a navegar por esse campo. Sua sensibilidade está crescendo.',                                  missao:'Criar uma prática consistente, mesmo que pequena. 18 minutos por dia vão revelar em 21 dias o que anos de busca esporádica não revelaram.' },
+    { range:[17,21], nome:'O Canal Quântico',        desc:'Você tem uma sensibilidade natural ao campo. Absorve energias, percebe padrões, tem intuições frequentes. O desafio é aprender a trabalhar com isso de forma estruturada — sem se perder no excesso de input.',       missao:'Desenvolver limites energéticos claros e uma prática de ancoragem diária. Você tem o dom — precisa da técnica.' },
+    { range:[22,24], nome:'O Transmutador',          desc:'Você carrega padrões profundos que ainda não foram completamente transformados. A boa notícia: quem chega a esse ponto de autoconhecimento tem um potencial extraordinário de transformação.',                         missao:'Não fazer essa jornada sozinho. O trabalho profundo de reprogramação é mais poderoso quando feito em campo compartilhado.' }
   ];
 
-  function getPerfil(score) { return perfis.find(p => score >= p.range[0] && score <= p.range[1]) || perfis[0]; }
+  function getPerfil(score) {
+    return perfis.find(p => score >= p.range[0] && score <= p.range[1]) || perfis[0];
+  }
 
-  function openQuiz() { document.getElementById('quizOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
+  function openQuiz()  { document.getElementById('quizOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
   function closeQuiz() { document.getElementById('quizOverlay').classList.remove('open'); document.body.style.overflow=''; }
+
   document.getElementById('quizOverlay').addEventListener('click', function(e){ if(e.target===this) closeQuiz(); });
   document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeQuiz(); });
 
@@ -918,121 +1035,113 @@
     answers[qIdx] = parseInt(el.dataset.pts);
     answerTexts[qIdx] = el.querySelector('.quiz-opt-text').textContent.trim();
     const btn = document.getElementById('nextBtn'+qIdx);
-    if(btn) btn.disabled=false;
+    if(btn) btn.disabled = false;
   }
 
   function updateProgress(qIdx) {
     const pct = Math.round((qIdx/totalQ)*100);
     document.getElementById('progressFill').style.width = pct+'%';
     document.getElementById('progressPct').textContent = pct+'%';
-    document.getElementById('progressLabel').textContent = `Pergunta ${qIdx+1} de ${totalQ}`;
+    document.getElementById('progressLabel').textContent = 'Pergunta '+(qIdx+1)+' de '+totalQ;
   }
 
   function showQ(idx) {
     document.querySelectorAll('.quiz-question').forEach(q=>q.classList.remove('active'));
-    const t = document.querySelector(`.quiz-question[data-q="${idx}"]`);
+    const t = document.querySelector('.quiz-question[data-q="'+idx+'"]');
     if(t) t.classList.add('active');
     updateProgress(idx);
-    document.querySelector('.quiz-modal').scrollTop=0;
+    document.querySelector('.quiz-modal').scrollTop = 0;
   }
 
-  function nextQ() { if(currentQ<totalQ-1){ currentQ++; showQ(currentQ); } }
-  function prevQ() { if(currentQ>0){ currentQ--; showQ(currentQ); } }
+  function nextQ() { if(currentQ < totalQ-1){ currentQ++; showQ(currentQ); } }
+  function prevQ() { if(currentQ > 0){ currentQ--; showQ(currentQ); } }
 
-  function goToEmail() {
+  function showResult() {
+    const score = answers.reduce((a,b) => a + (b||0), 0);
+    const perfil = getPerfil(score);
+
     document.querySelectorAll('.quiz-question').forEach(q=>q.classList.remove('active'));
-    document.getElementById('quizProgressWrap').style.display='none';
-    document.getElementById('quizEmailScreen').classList.add('active');
-    document.querySelector('.quiz-modal').scrollTop=0;
-  }
+    document.getElementById('quizProgressWrap').style.display = 'none';
 
-  async function submitQuiz() {
-    const name=document.getElementById('quizName').value.trim();
-    const email=document.getElementById('quizEmail').value.trim();
-    if(!name||!email||!/\S+@\S+\.\S+/.test(email)){ document.getElementById('quizEmail').style.borderColor='rgba(201,162,39,0.8)'; document.getElementById('quizEmail').focus(); return; }
-    const score=answers.reduce((a,b)=>a+(b||0),0);
-    const perfil=getPerfil(score);
-    const answersHTML=questions.map((q,i)=>`<strong>P${i+1}:</strong> ${q}<br><em>Resposta (${answers[i]} pt):</em> ${answerTexts[i]}`).join('<br><br>');
-    document.getElementById('quizEmailScreen').classList.remove('active');
-    document.getElementById('quizSending').style.display='block';
-    try {
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email:'akashaguardia@gmail.com', from_name:name, from_email:email, score:score, perfil:perfil.nome, answers_html:answersHTML, reply_to:email });
-    } catch(err){ console.warn('EmailJS error:',err); }
-    document.getElementById('quizSending').style.display='none';
-    mostrarResultado(score,perfil);
-  }
+    document.getElementById('resultTitle').textContent = perfil.nome;
+    document.getElementById('resultScore').textContent = 'Pontuação: '+score+' pontos';
+    document.getElementById('resultDesc').textContent = perfil.desc;
+    document.getElementById('resultMissao').textContent = perfil.missao;
 
-  function mostrarResultado(score,perfil) {
-    document.getElementById('resultTitle').textContent=perfil.nome;
-    document.getElementById('resultScore').textContent=`Pontuação: ${score} pontos`;
-    document.getElementById('resultDesc').textContent=perfil.desc;
-    document.getElementById('resultMissao').textContent=perfil.missao;
+    /* Monta link WPP com perfil no texto */
+    const msg = encodeURIComponent(
+      'Olá! Fiz o quiz do Akasha Hub e descobri que sou "'+perfil.nome+'" ('+score+' pts). Quero aprofundar minha jornada ✦'
+    );
+    document.getElementById('wppResultCta').href = 'https://wa.me/5571983448621?text='+msg;
+
     document.getElementById('quizResultScreen').classList.add('active');
-    document.querySelector('.quiz-modal').scrollTop=0;
+    document.querySelector('.quiz-modal').scrollTop = 0;
   }
 </script>
 
 <script>
-(function(){
-  let audioCtx,gainNode,started=false;
-  function init432(){
-    if(started) return;
-    try{ audioCtx=new(window.AudioContext||window.webkitAudioContext)(); }catch(e){return;}
-    if(audioCtx.state==='suspended') audioCtx.resume().catch(()=>{});
-    started=true;
-    gainNode=audioCtx.createGain();
-    gainNode.gain.setValueAtTime(0,audioCtx.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.04,audioCtx.currentTime+4);
-    gainNode.connect(audioCtx.destination);
-    [432,864,216].forEach(function(freq,i){
-      const osc=audioCtx.createOscillator(),g=audioCtx.createGain();
-      osc.type='sine'; osc.frequency.setValueAtTime(freq,audioCtx.currentTime);
-      g.gain.setValueAtTime(i===0?0.6:0.2,audioCtx.currentTime);
-      osc.connect(g); g.connect(gainNode); osc.start();
-    });
-    const lfo=audioCtx.createOscillator(),lfoGain=audioCtx.createGain();
-    lfo.frequency.setValueAtTime(0.08,audioCtx.currentTime);
-    lfoGain.gain.setValueAtTime(0.008,audioCtx.currentTime);
-    lfo.connect(lfoGain); lfoGain.connect(gainNode.gain); lfo.start();
-  }
-  window.addEventListener('load',function(){ try{init432();}catch(e){} });
-  var evts=['click','touchstart','keydown','scroll','pointerdown'];
-  function onInteraction(){
-    init432();
-    if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume().catch(()=>{});
-    evts.forEach(function(e){document.removeEventListener(e,onInteraction,true);});
-  }
-  evts.forEach(function(e){document.addEventListener(e,onInteraction,true);});
-})();
+  /* ─── ÁUDIO 432hz ─── */
+  (function(){
+    let audioCtx, gainNode, started = false;
+    function init432(){
+      if(started) return;
+      try{ audioCtx = new(window.AudioContext||window.webkitAudioContext)(); }catch(e){return;}
+      if(audioCtx.state==='suspended') audioCtx.resume().catch(()=>{});
+      started = true;
+      gainNode = audioCtx.createGain();
+      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime+4);
+      gainNode.connect(audioCtx.destination);
+      [432,864,216].forEach(function(freq,i){
+        const osc=audioCtx.createOscillator(), g=audioCtx.createGain();
+        osc.type='sine'; osc.frequency.setValueAtTime(freq,audioCtx.currentTime);
+        g.gain.setValueAtTime(i===0?0.6:0.2, audioCtx.currentTime);
+        osc.connect(g); g.connect(gainNode); osc.start();
+      });
+      const lfo=audioCtx.createOscillator(), lfoGain=audioCtx.createGain();
+      lfo.frequency.setValueAtTime(0.08, audioCtx.currentTime);
+      lfoGain.gain.setValueAtTime(0.008, audioCtx.currentTime);
+      lfo.connect(lfoGain); lfoGain.connect(gainNode.gain); lfo.start();
+    }
+    window.addEventListener('load',function(){ try{init432();}catch(e){} });
+    var evts=['click','touchstart','keydown','scroll','pointerdown'];
+    function onInteraction(){
+      init432();
+      if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume().catch(()=>{});
+      evts.forEach(function(e){document.removeEventListener(e,onInteraction,true);});
+    }
+    evts.forEach(function(e){document.addEventListener(e,onInteraction,true);});
+  })();
 </script>
 
 <script>
-  const container=document.getElementById('particles');
-  const runes=['✦','◈','⬡','△','◎','✧','⊕','⊗'];
+  /* ─── PARTÍCULAS ─── */
+  const container = document.getElementById('particles');
   for(let i=0;i<32;i++){
-    const p=document.createElement('div');
-    p.className='p '+(Math.random()>.5?'gold':'teal');
-    p.style.cssText=`left:${Math.random()*100}%;top:${15+Math.random()*78}%;--dur:${5+Math.random()*10}s;--delay:${Math.random()*14}s;`;
+    const p = document.createElement('div');
+    p.className = 'p '+(Math.random()>.5?'gold':'teal');
+    p.style.cssText = 'left:'+Math.random()*100+'%;top:'+(15+Math.random()*78)+'%;--dur:'+(5+Math.random()*10)+'s;--delay:'+Math.random()*14+'s;';
     container.appendChild(p);
   }
-  runes.forEach((r,i)=>{
-    const el=document.createElement('div');
-    el.className='rune';
-    el.textContent=r;
-    el.style.cssText=`left:${5+Math.random()*90}%;top:${10+Math.random()*80}%;--dur:${12+Math.random()*20}s;--delay:${Math.random()*18}s;`;
-    document.body.appendChild(el);
-  });
 </script>
 
 <script type="module">
+  /* ─── FIREBASE AUTH ─── */
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  const app=initializeApp({ apiKey:"AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4", authDomain:"hub-akasha.firebaseapp.com", projectId:"hub-akasha", storageBucket:"hub-akasha.firebasestorage.app", messagingSenderId:"370851875474", appId:"1:370851875474:web:29b1ba3a76b0fed7d9344b" });
-  const auth=getAuth(app);
-  onAuthStateChanged(auth,user=>{
-    const btn=document.getElementById('accessBtn');
+  const app = initializeApp({
+    apiKey:"AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+    authDomain:"hub-akasha.firebaseapp.com",
+    projectId:"hub-akasha",
+    storageBucket:"hub-akasha.firebasestorage.app",
+    messagingSenderId:"370851875474",
+    appId:"1:370851875474:web:29b1ba3a76b0fed7d9344b"
+  });
+  const auth = getAuth(app);
+  onAuthStateChanged(auth, user => {
+    const btn = document.getElementById('accessBtn');
     if(user){ btn.textContent='Dashboard →'; btn.href='/dashboard/'; }
   });
 </script>
 </body>
-</html>
+  </html>
