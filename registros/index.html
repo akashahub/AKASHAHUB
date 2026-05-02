@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Hub — Registros Akáshicos</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A96E;
+  --gold-light: #E8D5A8;
+  --gold-dim: #7A6240;
+  --ink: #0A0906;
+  --ink-soft: #1C1810;
+  --parchment: #F5F0E8;
+  --parchment-dim: #E8E0D0;
+  --stone: #2A2520;
+  --mist: rgba(201,169,110,0.08);
+  --mist2: rgba(201,169,110,0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--ink);
+  color: var(--parchment);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── PARTICLES ── */
+#cosmos {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--gold-light);
+  animation: twinkle var(--d) ease-in-out infinite alternate;
+}
+@keyframes twinkle {
+  from { opacity: var(--a1); transform: scale(1); }
+  to   { opacity: var(--a2); transform: scale(1.4); }
+}
+
+/* ── SACRED GEOMETRY BG ── */
+.sacred-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.04;
+}
+.sacred-bg svg { width: 100vmin; height: 100vmin; }
+
+/* ── LAYOUT ── */
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1.5rem 6rem;
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  padding: 4rem 0 3rem;
+  position: relative;
+}
+.sigil {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 2rem;
+  position: relative;
+  animation: rotateSlowly 40s linear infinite;
+}
+@keyframes rotateSlowly {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.sigil-inner {
+  animation: rotateSlowly 20s linear infinite reverse;
+}
+
+header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  line-height: 1.1;
+}
+header h1 em {
+  display: block;
+  font-style: italic;
+  font-size: 0.55em;
+  letter-spacing: 0.3em;
+  color: var(--gold-dim);
+  margin-bottom: 0.3em;
+  font-weight: 300;
+}
+.header-line {
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 1.5rem auto;
+}
+header p {
+  font-size: 0.85rem;
+  font-weight: 200;
+  letter-spacing: 0.12em;
+  color: rgba(232,213,168,0.6);
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+/* ── PROGRESS ORBS ── */
+.journey-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  margin: 2.5rem 0 3rem;
+}
+.step-orb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+}
+.orb {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--gold-dim);
+  transition: all 0.4s ease;
+  position: relative;
+  background: var(--ink-soft);
+}
+.orb::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  transition: all 0.4s;
+}
+.step-orb.active .orb {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--mist2);
+  box-shadow: 0 0 20px rgba(201,169,110,0.3), inset 0 0 20px rgba(201,169,110,0.05);
+}
+.step-orb.active .orb::after {
+  border-color: rgba(201,169,110,0.2);
+}
+.step-orb.done .orb {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 12px;
+}
+.orb-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.step-orb.active .orb-label { color: var(--gold); }
+.orb-connector {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold-dim), rgba(122,98,64,0.3));
+  margin-bottom: 22px;
+}
+
+/* ── PANELS ── */
+.panel {
+  display: none;
+  animation: fadeUp 0.5s ease;
+}
+.panel.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--ink-soft);
+  border: 1px solid rgba(201,169,110,0.15);
+  border-radius: 2px;
+  padding: 2rem;
+  margin-bottom: 1.2rem;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.5;
+}
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.6rem;
+}
+.card-subtitle {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 1.2rem;
+}
+
+/* ── INTRO PANEL ── */
+.intro-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--gold-light);
+  text-align: center;
+  line-height: 1.7;
+  margin: 2rem 0;
+  padding: 2rem;
+  border-left: 1px solid rgba(201,169,110,0.3);
+  border-right: 1px solid rgba(201,169,110,0.3);
+}
+.intro-body {
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: rgba(245,240,232,0.75);
+  line-height: 1.9;
+  margin-bottom: 1rem;
+}
+.intro-body strong {
+  color: var(--gold);
+  font-weight: 400;
+}
+
+/* ── BREATHING EXERCISE ── */
+.breath-ring {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.3);
+  margin: 2rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+.breath-ring::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.15);
+}
+.breath-ring::after {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  border-radius: 50%;
+  background: rgba(201,169,110,0.05);
+  transition: all 4s ease-in-out;
+}
+.breath-ring.inhale::after {
+  inset: 4px;
+  background: rgba(201,169,110,0.15);
+}
+.breath-ring.exhale::after {
+  inset: 28px;
+  background: rgba(201,169,110,0.03);
+}
+.breath-text {
+  position: relative;
+  z-index: 1;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+}
+.breath-count {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  color: var(--gold);
+  display: block;
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* ── QUESTIONS / INTENTIONS ── */
+.intention-set {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin: 1.2rem 0;
+}
+.intention-btn {
+  background: transparent;
+  border: 1px solid rgba(201,169,110,0.2);
+  color: rgba(245,240,232,0.7);
+  padding: 0.9rem 1.2rem;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  transition: all 0.3s;
+  position: relative;
+}
+.intention-btn::before {
+  content: '◈';
+  color: var(--gold-dim);
+  margin-right: 0.8rem;
+  font-style: normal;
+  font-size: 0.8rem;
+}
+.intention-btn:hover, .intention-btn.selected {
+  border-color: var(--gold);
+  color: var(--gold-light);
+  background: var(--mist);
+}
+.intention-btn.selected::before { color: var(--gold); }
+
+/* ── INPUT ── */
+.sacred-input {
+  width: 100%;
+  background: rgba(201,169,110,0.03);
+  border: none;
+  border-bottom: 1px solid rgba(201,169,110,0.25);
+  color: var(--parchment);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 300;
+  padding: 1rem 0.2rem;
+  outline: none;
+  transition: border-color 0.3s;
+  resize: none;
+  line-height: 1.6;
+}
+.sacred-input::placeholder {
+  color: rgba(201,169,110,0.3);
+  font-style: italic;
+}
+.sacred-input:focus { border-bottom-color: var(--gold); }
+.input-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* ── BUTTONS ── */
+.btn-primary {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 1rem 2.5rem;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: block;
+  margin: 2rem auto 0;
+  width: fit-content;
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  z-index: 0;
+}
+.btn-primary:hover::before { transform: scaleX(1); }
+.btn-primary:hover { color: var(--ink); }
+.btn-primary span { position: relative; z-index: 1; }
+
+.btn-secondary {
+  background: transparent;
+  border: none;
+  color: var(--gold-dim);
+  padding: 0.6rem 1rem;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.3s;
+  display: block;
+  margin: 0.8rem auto 0;
+}
+.btn-secondary:hover { color: var(--gold); }
+
+/* ── AKASHIC RESPONSE ── */
+.akashic-frame {
+  border: 1px solid rgba(201,169,110,0.25);
+  padding: 2.5rem;
+  margin: 1.5rem 0;
+  position: relative;
+  background: linear-gradient(135deg, rgba(201,169,110,0.03), transparent);
+}
+.akashic-frame::before, .akashic-frame::after {
+  content: '✦';
+  position: absolute;
+  color: var(--gold);
+  font-size: 0.6rem;
+  opacity: 0.6;
+}
+.akashic-frame::before { top: 0.8rem; left: 0.8rem; }
+.akashic-frame::after  { bottom: 0.8rem; right: 0.8rem; }
+
+.akashic-response {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 300;
+  line-height: 1.95;
+  color: var(--parchment);
+}
+.akashic-response p { margin-bottom: 1rem; }
+.akashic-response strong { color: var(--gold); font-weight: 500; }
+.akashic-response em { color: var(--gold-light); font-style: italic; }
+
+/* ── LOADING ── */
+.loading-sigil {
+  display: none;
+  text-align: center;
+  padding: 3rem;
+}
+.loading-sigil.active { display: block; }
+.loading-sigil svg {
+  width: 60px;
+  height: 60px;
+  animation: rotateSlowly 3s linear infinite;
+}
+.loading-sigil p {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--gold-dim);
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  letter-spacing: 0.1em;
+}
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s steps(3) infinite;
+}
+@keyframes dots {
+  0%   { content: '.'; }
+  33%  { content: '..'; }
+  66%  { content: '...'; }
+  100% { content: ''; }
+}
+
+/* ── PILLARS SECTION ── */
+.pillars-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.pillar-card {
+  border: 1px solid rgba(201,169,110,0.12);
+  padding: 1.5rem 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  background: var(--ink-soft);
+}
+.pillar-card:hover, .pillar-card.active {
+  border-color: rgba(201,169,110,0.5);
+  background: var(--mist);
+}
+.pillar-icon {
+  font-size: 1.4rem;
+  margin-bottom: 0.6rem;
+  display: block;
+}
+.pillar-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+}
+.pillar-desc {
+  font-size: 0.72rem;
+  color: rgba(245,240,232,0.5);
+  font-weight: 300;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+}
+
+/* ── PROSPERITY MAP ── */
+.prosperity-section {
+  margin: 1.5rem 0;
+}
+.prosperity-area {
+  border-left: 1px solid rgba(201,169,110,0.2);
+  padding: 0 0 1.5rem 1.5rem;
+  margin-bottom: 0.3rem;
+  position: relative;
+}
+.prosperity-area::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold);
+}
+.prosperity-area.revealed::before { background: var(--gold); }
+.prosperity-area-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.05em;
+}
+.prosperity-area-content {
+  font-size: 0.82rem;
+  color: rgba(245,240,232,0.65);
+  font-weight: 300;
+  line-height: 1.8;
+  display: none;
+}
+.prosperity-area.revealed .prosperity-area-content { display: block; }
+
+/* ── CTA SECTION ── */
+.cta-section {
+  text-align: center;
+  padding: 3rem 2rem;
+  border: 1px solid rgba(201,169,110,0.2);
+  margin-top: 2rem;
+  position: relative;
+  background: linear-gradient(180deg, rgba(201,169,110,0.03), transparent);
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.cta-eyebrow {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 1rem;
+}
+.cta-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 300;
+  color: var(--gold-light);
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+.cta-body {
+  font-size: 0.83rem;
+  color: rgba(245,240,232,0.6);
+  font-weight: 300;
+  line-height: 1.9;
+  max-width: 440px;
+  margin: 0 auto 2rem;
+  letter-spacing: 0.03em;
+}
+.btn-cta {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--ink);
+  padding: 1.1rem 3rem;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid var(--gold);
+}
+.btn-cta:hover {
+  background: transparent;
+  color: var(--gold);
+}
+.cta-guarantee {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: rgba(201,169,110,0.4);
+  margin-top: 1.5rem;
+}
+
+/* ── REFLECTION JOURNAL ── */
+.journal-entry {
+  background: rgba(201,169,110,0.03);
+  border-left: 1px solid rgba(201,169,110,0.3);
+  padding: 1rem 1.2rem;
+  margin-bottom: 0.8rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: rgba(245,240,232,0.7);
+  line-height: 1.7;
+}
+.journal-date {
+  font-family: 'Jost', sans-serif;
+  font-style: normal;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--gold-dim);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+/* ── SEPARATOR ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,169,110,0.2));
+}
+.divider::after {
+  background: linear-gradient(90deg, rgba(201,169,110,0.2), transparent);
+}
+.divider span {
+  color: var(--gold-dim);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+/* ── REFLECTION ── */
+.reflection-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+.rtag {
+  border: 1px solid rgba(201,169,110,0.2);
+  padding: 0.3rem 0.8rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.rtag:hover, .rtag.on { border-color: var(--gold); color: var(--gold); background: var(--mist); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 520px) {
+  .pillars-grid { grid-template-columns: 1fr; }
+  header { padding: 3rem 0 2rem; }
+  .card { padding: 1.5rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Cosmos -->
+<div id="cosmos"></div>
+
+<!-- Sacred geometry bg -->
+<div class="sacred-bg">
+  <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="200" cy="200" r="190" stroke="#C9A96E" stroke-width="0.5"/>
+    <circle cx="200" cy="200" r="130" stroke="#C9A96E" stroke-width="0.5"/>
+    <circle cx="200" cy="200" r="70"  stroke="#C9A96E" stroke-width="0.5"/>
+    <circle cx="200" cy="130" r="70"  stroke="#C9A96E" stroke-width="0.5"/>
+    <circle cx="200" cy="270" r="70"  stroke="#C9A96E" stroke-width="0.5"/>
+    <circle cx="139" cy="165" r="70"  stroke="#C9A96E" stroke-width="0.5"/>
+    <circle cx="261" cy="165" r="70"  stroke="#C9A96E" stroke-width="0.5"/>
+    <circle cx="139" cy="235" r="70"  stroke="#C9A96E" stroke-width="0.5"/>
+    <circle cx="261" cy="235" r="70"  stroke="#C9A96E" stroke-width="0.5"/>
+    <line x1="10" y1="200" x2="390" y2="200" stroke="#C9A96E" stroke-width="0.5"/>
+    <line x1="200" y1="10" x2="200" y2="390" stroke="#C9A96E" stroke-width="0.5"/>
+    <line x1="45" y1="45" x2="355" y2="355" stroke="#C9A96E" stroke-width="0.5"/>
+    <line x1="355" y1="45" x2="45" y2="355" stroke="#C9A96E" stroke-width="0.5"/>
+  </svg>
+</div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="sigil">
+      <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="36" cy="36" r="34" stroke="#C9A96E" stroke-width="0.7" opacity="0.6"/>
+        <circle cx="36" cy="36" r="22" stroke="#C9A96E" stroke-width="0.7" opacity="0.8"/>
+        <circle cx="36" cy="36" r="8"  stroke="#C9A96E" stroke-width="1" fill="rgba(201,169,110,0.15)"/>
+        <polygon points="36,6 62,54 10,54" stroke="#C9A96E" stroke-width="0.7" fill="none" opacity="0.7"/>
+        <polygon points="36,66 62,18 10,18" stroke="#C9A96E" stroke-width="0.7" fill="none" opacity="0.7"/>
+        <g class="sigil-inner">
+          <circle cx="36" cy="14" r="2.5" fill="#C9A96E" opacity="0.8"/>
+          <circle cx="56" cy="50" r="2.5" fill="#C9A96E" opacity="0.8"/>
+          <circle cx="16" cy="50" r="2.5" fill="#C9A96E" opacity="0.8"/>
+        </g>
+      </svg>
+    </div>
+    <h1>
+      <em>Akasha Hub</em>
+      Registros Akáshicos
+    </h1>
+    <div class="header-line"></div>
+    <p>Uma jornada interior para compreender quem você é e como florescer</p>
+  </header>
+
+  <!-- NAVIGATION -->
+  <nav class="journey-nav" id="journeyNav">
+    <div class="step-orb active" data-step="0" onclick="goToStep(0)">
+      <div class="orb">I</div>
+      <div class="orb-label">Preparo</div>
+    </div>
+    <div class="orb-connector"></div>
+    <div class="step-orb" data-step="1" onclick="goToStep(1)">
+      <div class="orb">II</div>
+      <div class="orb-label">Intenção</div>
+    </div>
+    <div class="orb-connector"></div>
+    <div class="step-orb" data-step="2" onclick="goToStep(2)">
+      <div class="orb">III</div>
+      <div class="orb-label">Acesso</div>
+    </div>
+    <div class="orb-connector"></div>
+    <div class="step-orb" data-step="3" onclick="goToStep(3)">
+      <div class="orb">IV</div>
+      <div class="orb-label">Revelação</div>
+    </div>
+    <div class="orb-connector"></div>
+    <div class="step-orb" data-step="4" onclick="goToStep(4)">
+      <div class="orb">V</div>
+      <div class="orb-label">Prósperar</div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- STEP 0 — PREPARO -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="panel active" id="step0">
+
+    <div class="card">
+      <div class="card-subtitle">Passo I · Preparo Sagrado</div>
+      <div class="card-title">Antes de abrir os Registros</div>
+      <p class="intro-body">Os Registros Akáshicos são compreendidos como o campo de memória da alma — um repositório de toda experiência, padrão e potencial que existe além do tempo linear. <strong>Acessar esse espaço requer presença, não pressa.</strong></p>
+      <p class="intro-body" style="margin-top:0.8rem">Reserve os próximos minutos apenas para você. Desligue notificações. Respire.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-subtitle">Exercício de Ancoragem</div>
+      <div class="card-title">Respiração Consciente</div>
+      <p style="font-size:0.8rem;color:rgba(245,240,232,0.5);font-weight:300;text-align:center;letter-spacing:0.1em;margin-bottom:0.5rem">Clique no círculo para iniciar</p>
+      
+      <div class="breath-ring" id="breathRing" onclick="startBreath()">
+        <div class="breath-text">
+          <span id="breathPhase">Iniciar</span>
+          <span class="breath-count" id="breathNum" style="display:none"></span>
+        </div>
+      </div>
+
+      <p style="font-size:0.75rem;color:rgba(201,169,110,0.4);text-align:center;font-weight:300;letter-spacing:0.08em" id="breathInstruction">4 ciclos de respiração profunda para centrar sua energia</p>
+
+      <div id="breathComplete" style="display:none;text-align:center;margin-top:1rem">
+        <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--gold-dim);font-size:0.95rem">Você está centrado. Os Registros aguardam.</p>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="nextStep()"><span>Continuar a Jornada</span></button>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- STEP 1 — INTENÇÃO -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="panel" id="step1">
+    <div class="card">
+      <div class="card-subtitle">Passo II · Intenção</div>
+      <div class="card-title">O que sua alma busca?</div>
+      <p class="intro-body">Toda consulta aos Registros começa com uma intenção clara. Não é uma pergunta de sim ou não — é uma abertura, um convite à compreensão mais profunda.</p>
+      
+      <div class="divider"><span>Escolha sua intenção</span></div>
+
+      <div class="intention-set">
+        <button class="intention-btn" onclick="selectIntention(this, 'Quero compreender meu propósito de alma e o que vim fazer nesta encarnação')">Quero compreender meu propósito de alma nesta vida</button>
+        <button class="intention-btn" onclick="selectIntention(this, 'Quero entender os padrões que se repetem na minha vida e como transformá-los')">Quero entender padrões que se repetem na minha vida</button>
+        <button class="intention-btn" onclick="selectIntention(this, 'Quero compreender meus dons naturais e como usá-los para prosperar')">Quero descobrir meus dons e como usá-los para prosperar</button>
+        <button class="intention-btn" onclick="selectIntention(this, 'Quero entender o que bloqueia minha abundância e como remover esses bloqueios')">Quero entender o que bloqueia minha abundância</button>
+        <button class="intention-btn" onclick="selectIntention(this, 'Quero compreender meus relacionamentos e o que eles espelham sobre mim')">Quero compreender meus relacionamentos e seus espelhos</button>
+      </div>
+
+      <div class="divider"><span>ou escreva a sua</span></div>
+
+      <label class="input-label">Sua intenção pessoal</label>
+      <textarea class="sacred-input" id="customIntention" rows="3" placeholder="Escreva aqui o que sua alma deseja compreender..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-subtitle">Seu Nome Sagrado</div>
+      <div class="card-title">Como você se chama?</div>
+      <p class="intro-body" style="margin-bottom:1.2rem">O nome carrega a vibração da alma. Ele será usado para personalizar sua leitura akáshica.</p>
+      <label class="input-label">Seu nome completo</label>
+      <input class="sacred-input" id="userName" type="text" placeholder="Nome completo...">
+    </div>
+
+    <button class="btn-primary" onclick="prepareAccess()"><span>Abrir os Registros</span></button>
+    <button class="btn-secondary" onclick="prevStep()">← Voltar ao Preparo</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- STEP 2 — ACESSO -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="panel" id="step2">
+    <div class="card">
+      <div class="card-subtitle">Passo III · Acesso</div>
+      <div class="card-title">Abrindo os Registros de <span id="nameDisplay">sua alma</span></div>
+
+      <div class="intro-quote" id="openingPrayer" style="font-size:1rem;line-height:1.9">
+        "Aos Guardiões dos Registros Akáshicos, peço com amor e reverência que abram os registros de <strong id="namePrayer">esta alma</strong>. Que toda informação recebida seja para o seu maior bem, crescimento e prosperidade. Que assim seja."
+      </div>
+
+      <div class="divider"><span>Pilares de Leitura</span></div>
+      <p class="intro-body">Escolha os pilares que deseja explorar nesta sessão:</p>
+
+      <div class="pillars-grid">
+        <div class="pillar-card active" data-pillar="purpose" onclick="togglePillar(this)">
+          <span class="pillar-icon">🜂</span>
+          <div class="pillar-name">Propósito de Alma</div>
+          <div class="pillar-desc">O que vim realizar nesta vida</div>
+        </div>
+        <div class="pillar-card active" data-pillar="gifts" onclick="togglePillar(this)">
+          <span class="pillar-icon">✦</span>
+          <div class="pillar-name">Dons e Talentos</div>
+          <div class="pillar-desc">Habilidades que a alma traz</div>
+        </div>
+        <div class="pillar-card" data-pillar="blocks" onclick="togglePillar(this)">
+          <span class="pillar-icon">◈</span>
+          <div class="pillar-name">Padrões e Bloqueios</div>
+          <div class="pillar-desc">O que impede o florescimento</div>
+        </div>
+        <div class="pillar-card" data-pillar="prosperity" onclick="togglePillar(this)">
+          <span class="pillar-icon">⚜</span>
+          <div class="pillar-name">Caminhos de Prosperidade</div>
+          <div class="pillar-desc">Como manifestar abundância</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-subtitle">Aprofunde a Leitura</div>
+      <div class="card-title">Algo que queira revelar?</div>
+      <p class="intro-body" style="margin-bottom:1.2rem">Compartilhe brevemente algo sobre você — um desafio atual, uma dúvida que carrega, um sonho que não anda. Isso aprofunda e personaliza sua leitura.</p>
+      <label class="input-label">Contexto adicional (opcional)</label>
+      <textarea class="sacred-input" id="additionalContext" rows="4" placeholder="Há algo específico que queira que os Registros iluminem? Um padrão, uma escolha, um momento de sua vida..."></textarea>
+    </div>
+
+    <button class="btn-primary" id="channelBtn" onclick="channelReading()"><span>✦ Receber a Leitura</span></button>
+    <button class="btn-secondary" onclick="prevStep()">← Voltar</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- STEP 3 — REVELAÇÃO -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="panel" id="step3">
+    <div class="card">
+      <div class="card-subtitle">Passo IV · Revelação Akáshica</div>
+      <div class="card-title">Os Registros de <span id="nameDisplay2">sua alma</span> falam</div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-sigil" id="loadingSigil">
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="28" stroke="#C9A96E" stroke-width="0.7" stroke-dasharray="4 3"/>
+        <circle cx="30" cy="30" r="18" stroke="#C9A96E" stroke-width="0.7"/>
+        <circle cx="30" cy="30" r="6"  fill="rgba(201,169,110,0.3)" stroke="#C9A96E" stroke-width="0.7"/>
+        <line x1="30" y1="2" x2="30" y2="12"  stroke="#C9A96E" stroke-width="0.7"/>
+        <line x1="30" y1="48" x2="30" y2="58" stroke="#C9A96E" stroke-width="0.7"/>
+        <line x1="2"  y1="30" x2="12" y2="30" stroke="#C9A96E" stroke-width="0.7"/>
+        <line x1="48" y1="30" x2="58" y2="30" stroke="#C9A96E" stroke-width="0.7"/>
+      </svg>
+      <p>Acessando os Registros<span class="loading-dots"></span></p>
+    </div>
+
+    <!-- Response -->
+    <div id="akashicOutput" style="display:none">
+      <div class="akashic-frame">
+        <div class="akashic-response" id="responseText"></div>
+      </div>
+
+      <div class="card" style="margin-top:1.5rem">
+        <div class="card-subtitle">Sua Reflexão</div>
+        <div class="card-title">O que ressoa em você?</div>
+        <p class="intro-body" style="margin-bottom:1rem">Marque o que tocou sua alma nesta leitura:</p>
+        <div class="reflection-tags" id="reflectionTags">
+          <span class="rtag" onclick="this.classList.toggle('on')">Propósito</span>
+          <span class="rtag" onclick="this.classList.toggle('on')">Padrão revelado</span>
+          <span class="rtag" onclick="this.classList.toggle('on')">Dom reconhecido</span>
+          <span class="rtag" onclick="this.classList.toggle('on')">Bloqueio identificado</span>
+          <span class="rtag" onclick="this.classList.toggle('on')">Direção clara</span>
+          <span class="rtag" onclick="this.classList.toggle('on')">Emoção profunda</span>
+          <span class="rtag" onclick="this.classList.toggle('on')">Confirmação interior</span>
+          <span class="rtag" onclick="this.classList.toggle('on')">Surpresa</span>
+        </div>
+        <label class="input-label" style="margin-top:1.2rem">Escreva o que sentiu</label>
+        <textarea class="sacred-input" id="journalText" rows="3" placeholder="O que esta leitura despertou em você..."></textarea>
+        <button class="btn-secondary" onclick="saveJournal()" style="margin-top:0.5rem">✦ Salvar no Diário da Alma</button>
+      </div>
+    </div>
+
+    <div id="nextAfterReading" style="display:none">
+      <button class="btn-primary" onclick="nextStep()"><span>Explorar os Caminhos de Prosperidade →</span></button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- STEP 4 — PRÓSPERAR -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="panel" id="step4">
+    <div class="card">
+      <div class="card-subtitle">Passo V · Mapa de Prosperidade</div>
+      <div class="card-title">Como sua alma floresce no mundo</div>
+      <p class="intro-body">Com base em sua leitura, os Registros revelam os caminhos pelos quais sua alma está mais alinhada para prosperar. Cada área abaixo foi sintonizada com sua vibração única.</p>
+    </div>
+
+    <div class="prosperity-section" id="prosperityMap">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="card" id="journalSection" style="display:none">
+      <div class="card-subtitle">Diário da Alma</div>
+      <div class="card-title">Suas Reflexões</div>
+      <div id="journalEntries"></div>
+    </div>
+
+    <div class="divider"><span>✦ ✦ ✦</span></div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <p class="cta-eyebrow">Aprofunde sua Jornada</p>
+      <h2 class="cta-title">Esta foi apenas a abertura.<br>A transformação acontece na mentoria.</h2>
+      <p class="cta-body">Na <strong style="color:var(--gold)">Mentoria Akasha Hub</strong>, você trabalha diretamente comigo para decodificar sua missão de alma, remover bloqueios de encarnações anteriores e construir uma vida alinhada com sua prosperidade verdadeira — não a que o mundo define, mas a que sua alma veio viver.</p>
+      <a href="https://akashahub.com.br/mentoria" class="btn-cta" target="_blank">Quero a Mentoria Completa</a>
+      <p class="cta-guarantee">✦ Sessão de alinhamento gratuita para novos alunos ✦</p>
+    </div>
+
+    <button class="btn-secondary" onclick="restartJourney()" style="margin-top:1rem">↺ Iniciar Nova Jornada</button>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ── STATE ──
+let state = {
+  currentStep: 0,
+  intention: '',
+  userName: '',
+  pillars: ['purpose','gifts'],
+  additionalContext: '',
+  journalEntries: [],
+  breathDone: false
+};
+
+// ── STARS ──
+(function createStars(){
+  const cosmos = document.getElementById('cosmos');
+  for(let i=0;i<90;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random()*2+0.5;
+    const x = Math.random()*100;
+    const y = Math.random()*100;
+    const dur = (Math.random()*4+3).toFixed(1);
+    const a1 = (Math.random()*0.3+0.05).toFixed(2);
+    const a2 = (Math.random()*0.5+0.2).toFixed(2);
+    s.style.cssText = `width:${size}px;height:${size}px;left:${x}%;top:${y}%;--d:${dur}s;--a1:${a1};--a2:${a2};animation-delay:${(Math.random()*4).toFixed(1)}s`;
+    cosmos.appendChild(s);
+  }
+})();
+
+// ── NAVIGATION ──
+function goToStep(n){
+  document.querySelectorAll('.panel').forEach((p,i)=>{
+    p.classList.toggle('active', i===n);
+  });
+  document.querySelectorAll('.step-orb').forEach((o,i)=>{
+    o.classList.remove('active','done');
+    if(i<n) o.classList.add('done');
+    if(i===n) o.classList.add('active');
+  });
+  state.currentStep = n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function nextStep(){ goToStep(state.currentStep+1); }
+function prevStep(){ goToStep(state.currentStep-1); }
+
+// ── BREATHING ──
+let breathInterval, breathPhase=0, breathCount=0, breathCycles=0;
+const phases=[
+  {label:'Inspire',duration:4,class:'inhale'},
+  {label:'Segure',duration:4,class:''},
+  {label:'Expire',duration:6,class:'exhale'},
+  {label:'Pause',duration:2,class:''}
+];
+function startBreath(){
+  if(breathInterval) return;
+  const ring=document.getElementById('breathRing');
+  const phaseEl=document.getElementById('breathPhase');
+  const numEl=document.getElementById('breathNum');
+  const instr=document.getElementById('breathInstruction');
+  numEl.style.display='block';
+  instr.textContent='Siga o ritmo... 4 ciclos completos';
+  let tick=0;
+  breathPhase=0; breathCount=phases[0].duration; breathCycles=0;
+  function doPhase(){
+    const p=phases[breathPhase];
+    ring.className='breath-ring '+(p.class||'');
+    phaseEl.textContent=p.label;
+    breathCount=p.duration;
+    numEl.textContent=breathCount;
+    clearInterval(breathInterval);
+    breathInterval=setInterval(()=>{
+      breathCount--;
+      numEl.textContent=breathCount;
+      if(breathCount<=0){
+        clearInterval(breathInterval);
+        breathPhase=(breathPhase+1)%4;
+        if(breathPhase===0){ breathCycles++; }
+        if(breathCycles>=4){
+          clearInterval(breathInterval);
+          ring.className='breath-ring';
+          phaseEl.textContent='✦';
+          numEl.style.display='none';
+          document.getElementById('breathComplete').style.display='block';
+          instr.textContent='';
+          state.breathDone=true;
+          return;
+        }
+        doPhase();
+      }
+    },1000);
+  }
+  doPhase();
+}
+
+// ── INTENTIONS ──
+function selectIntention(btn, text){
+  document.querySelectorAll('.intention-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.intention = text;
+  document.getElementById('customIntention').value='';
+}
+
+// ── PREPARE ACCESS ──
+function prepareAccess(){
+  const custom = document.getElementById('customIntention').value.trim();
+  const name = document.getElementById('userName').value.trim();
+  if(custom) state.intention = custom;
+  if(!state.intention){ alert('Por favor, escolha ou escreva sua intenção.'); return; }
+  if(!name){ alert('Por favor, insira seu nome.'); return; }
+  state.userName = name;
+  document.getElementById('nameDisplay').textContent = name;
+  document.getElementById('nameDisplay2').textContent = name;
+  document.getElementById('namePrayer').textContent = name;
+  nextStep();
+}
+
+// ── PILLARS ──
+function togglePillar(el){
+  const pillar = el.dataset.pillar;
+  el.classList.toggle('active');
+  if(el.classList.contains('active')){
+    if(!state.pillars.includes(pillar)) state.pillars.push(pillar);
+  } else {
+    state.pillars = state.pillars.filter(p=>p!==pillar);
+  }
+}
+
+// ── CHANNEL READING ──
+async function channelReading(){
+  state.additionalContext = document.getElementById('additionalContext').value.trim();
+  if(state.pillars.length===0){ alert('Escolha ao menos um pilar para a leitura.'); return; }
+  document.getElementById('channelBtn').disabled=true;
+  nextStep();
+  document.getElementById('loadingSigil').classList.add('active');
+  document.getElementById('akashicOutput').style.display='none';
+  document.getElementById('nextAfterReading').style.display='none';
+
+  const pillarNames={purpose:'Propósito de Alma',gifts:'Dons e Talentos',blocks:'Padrões e Bloqueios',prosperity:'Caminhos de Prosperidade'};
+  const selectedPillars = state.pillars.map(p=>pillarNames[p]).join(', ');
+
+  const prompt = `Você é um canal de Registros Akáshicos — sábio, eloquente, profundo e amoroso. Você canaliza leituras akáshicas escritas em português brasileiro com beleza literária, profundidade espiritual e insights práticos transformadores.
+
+CONTEXTO DA LEITURA:
+- Nome da alma: ${state.userName}
+- Intenção declarada: ${state.intention}
+- Pilares solicitados: ${selectedPillars}
+${state.additionalContext ? `- Contexto pessoal compartilhado: ${state.additionalContext}` : ''}
+
+Realize uma leitura akáshica completa e personalizada para ${state.userName}. A leitura deve:
+
+1. Começar com uma saudação poética e acolhedora à alma de ${state.userName}
+2. Abordar cada um dos pilares solicitados com profundidade e beleza: ${selectedPillars}
+3. Revelar padrões, dons ou missões com especificidade — nada genérico
+4. Incluir orientações práticas e espirituais de como ${state.userName} pode florescer
+5. Encerrar com uma afirmação ou prática simples para integrar
+
+Use linguagem elevada, poética mas acessível. Use parágrafos bem construídos, sem listas ou bullets. Alterne entre insights profundos e orientações concretas. A leitura deve ter entre 400 e 600 palavras.
+
+Formate usando apenas tags HTML simples: <p>, <strong>, <em>. Nada mais.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || 'Os Registros aguardam um momento mais propício. Tente novamente.';
+
+    document.getElementById('loadingSigil').classList.remove('active');
+    document.getElementById('responseText').innerHTML = text;
+    document.getElementById('akashicOutput').style.display='block';
+    document.getElementById('nextAfterReading').style.display='block';
+
+    // Build prosperity map
+    buildProsperityMap();
+
+  } catch(e) {
+    document.getElementById('loadingSigil').classList.remove('active');
+    document.getElementById('responseText').innerHTML = '<p>Os Registros aguardam conexão. Verifique sua internet e tente novamente.</p>';
+    document.getElementById('akashicOutput').style.display='block';
+  }
+}
+
+// ── PROSPERITY MAP ──
+function buildProsperityMap(){
+  const areas = [
+    {
+      title: 'Missão de Vida',
+      content: `${state.userName}, sua alma escolheu esta encarnação com um propósito específico de contribuição. A prosperidade que você busca está diretamente conectada à autenticidade com que vive essa missão. Quando trabalho e propósito se alinham, a abundância flui como consequência natural — não como meta.`
+    },
+    {
+      title: 'Expressão dos Dons',
+      content: `Os Registros indicam que seus dons naturais são sua maior moeda de troca com o universo. Não os seus diplomas, não suas habilidades aprendidas — mas aquilo que você faz com facilidade enquanto outros se esforçam. Identificar e monetizar esses dons é o atalho mais direto para sua prosperidade.`
+    },
+    {
+      title: 'Dissolução de Bloqueios',
+      content: `Padrões de escassez raramente são desta vida apenas. Os Registros revelam que certos votos de pobreza, traumas de visibilidade ou crenças coletivas herdadas podem estar limitando seu fluxo de abundância. Reconhecê-los conscientemente já inicia o processo de dissolução.`
+    },
+    {
+      title: 'Alinhamento Prático',
+      content: `Prosperidade akáshica não exclui ação no mundo material — ela a transforma. Sua alma pede que você construa estruturas concretas que sustentem seu propósito: negócio, voz pública, relacionamentos de valor. O espiritual e o material não são opostos — são os dois pés com que você caminha.`
+    }
+  ];
+
+  const container = document.getElementById('prosperityMap');
+  container.innerHTML = '';
+  areas.forEach((area, i) => {
+    const el = document.createElement('div');
+    el.className = 'prosperity-area';
+    el.innerHTML = `<div class="prosperity-area-title" onclick="revealArea(this.parentElement)">${area.title} <span style="color:var(--gold-dim);font-size:0.7rem">▾</span></div><div class="prosperity-area-content">${area.content}</div>`;
+    container.appendChild(el);
+    // Stagger reveal
+    setTimeout(()=>{ el.classList.add('revealed'); }, i*400);
+  });
+}
+
+function revealArea(el){
+  el.classList.toggle('revealed');
+}
+
+// ── JOURNAL ──
+function saveJournal(){
+  const text = document.getElementById('journalText').value.trim();
+  if(!text) return;
+  const tags = Array.from(document.querySelectorAll('.rtag.on')).map(t=>t.textContent);
+  const entry = {
+    date: new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'}),
+    text,
+    tags
+  };
+  state.journalEntries.push(entry);
+  renderJournal();
+  document.getElementById('journalText').value='';
+  document.querySelectorAll('.rtag').forEach(t=>t.classList.remove('on'));
+  alert('✦ Reflexão salva no Diário da Alma');
+}
+
+function renderJournal(){
+  const section = document.getElementById('journalSection');
+  const container = document.getElementById('journalEntries');
+  if(state.journalEntries.length===0){ section.style.display='none'; return; }
+  section.style.display='block';
+  container.innerHTML = state.journalEntries.map(e=>`
+    <div class="journal-entry">
+      <div class="journal-date">${e.date}${e.tags.length?'  ·  '+e.tags.join(' · '):''}</div>
+      ${e.text}
+    </div>
+  `).join('');
+}
+
+// ── RESTART ──
+function restartJourney(){
+  state = { currentStep:0, intention:'', userName:'', pillars:['purpose','gifts'], additionalContext:'', journalEntries:[], breathDone:false };
+  document.getElementById('customIntention').value='';
+  document.getElementById('userName').value='';
+  document.getElementById('additionalContext').value='';
+  document.getElementById('journalText').value='';
+  document.querySelectorAll('.intention-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('.pillar-card').forEach(p=>{ p.classList.remove('active'); });
+  document.querySelector('[data-pillar="purpose"]').classList.add('active');
+  document.querySelector('[data-pillar="gifts"]').classList.add('active');
+  document.getElementById('channelBtn').disabled=false;
+  document.getElementById('breathInstruction').textContent='4 ciclos de respiração profunda para centrar sua energia';
+  document.getElementById('breathComplete').style.display='none';
+  document.getElementById('breathPhase').textContent='Iniciar';
+  document.getElementById('breathNum').style.display='none';
+  document.getElementById('breathRing').className='breath-ring';
+  clearInterval(breathInterval); breathInterval=null;
+  goToStep(0);
+}
+</script>
+</body>
+      </html>
