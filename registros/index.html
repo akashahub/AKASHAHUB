@@ -937,28 +937,46 @@ header p {
         <div class="akashic-response" id="responseText"></div>
       </div>
 
-      <div class="card" style="margin-top:1.5rem">
-        <div class="card-subtitle">Sua Reflexão</div>
-        <div class="card-title">O que ressoa em você?</div>
-        <p class="intro-body" style="margin-bottom:1rem">Marque o que tocou sua alma nesta leitura:</p>
-        <div class="reflection-tags" id="reflectionTags">
-          <span class="rtag" onclick="this.classList.toggle('on')">Propósito</span>
-          <span class="rtag" onclick="this.classList.toggle('on')">Padrão revelado</span>
-          <span class="rtag" onclick="this.classList.toggle('on')">Dom reconhecido</span>
-          <span class="rtag" onclick="this.classList.toggle('on')">Bloqueio identificado</span>
-          <span class="rtag" onclick="this.classList.toggle('on')">Direção clara</span>
-          <span class="rtag" onclick="this.classList.toggle('on')">Emoção profunda</span>
-          <span class="rtag" onclick="this.classList.toggle('on')">Confirmação interior</span>
-          <span class="rtag" onclick="this.classList.toggle('on')">Surpresa</span>
+      <!-- WhatsApp capture card -->
+      <div class="card" style="margin-top:1.5rem;border-color:rgba(201,169,110,0.35)" id="whatsappCard">
+        <div class="card-subtitle">Presente da Alma</div>
+        <div class="card-title">Receba sua Mensagem Completa em PDF</div>
+        <p class="intro-body" style="margin-bottom:0.6rem">Os Registros têm mais a revelar para você. Vou preparar um <strong>PDF exclusivo com a Mensagem Completa da sua Alma</strong> — personalizado com seu nome, sua intenção e os padrões revelados nesta sessão.</p>
+        <p class="intro-body" style="margin-bottom:1.4rem;font-size:0.8rem;color:rgba(201,169,110,0.5)">✦ Totalmente gratuito · Enviado diretamente no seu WhatsApp</p>
+
+        <div id="whatsappFormSection">
+          <label class="input-label">Seu WhatsApp (com DDD)</label>
+          <input class="sacred-input" id="userPhone" type="tel" placeholder="Ex: 71 99999-9999" style="margin-bottom:1.2rem">
+
+          <label class="input-label" style="margin-top:0.8rem">O que mais te tocou nesta leitura?</label>
+          <div class="reflection-tags" id="reflectionTags" style="margin-bottom:1rem">
+            <span class="rtag" onclick="this.classList.toggle('on')">Meu Propósito</span>
+            <span class="rtag" onclick="this.classList.toggle('on')">Padrão revelado</span>
+            <span class="rtag" onclick="this.classList.toggle('on')">Dom reconhecido</span>
+            <span class="rtag" onclick="this.classList.toggle('on')">Bloqueio identificado</span>
+            <span class="rtag" onclick="this.classList.toggle('on')">Direção clara</span>
+            <span class="rtag" onclick="this.classList.toggle('on')">Emoção profunda</span>
+            <span class="rtag" onclick="this.classList.toggle('on')">Confirmação interior</span>
+            <span class="rtag" onclick="this.classList.toggle('on')">Surpresa</span>
+          </div>
+
+          <label class="input-label">O que esta leitura despertou em você? <span style="color:var(--gold-dim)">(opcional)</span></label>
+          <textarea class="sacred-input" id="journalText" rows="3" placeholder="Compartilhe o que sentiu..."></textarea>
+
+          <button class="btn-primary" onclick="sendToWhatsApp()" style="margin-top:1.5rem"><span>✦ Quero Receber meu PDF Gratuitamente</span></button>
         </div>
-        <label class="input-label" style="margin-top:1.2rem">Escreva o que sentiu</label>
-        <textarea class="sacred-input" id="journalText" rows="3" placeholder="O que esta leitura despertou em você..."></textarea>
-        <button class="btn-secondary" onclick="saveJournal()" style="margin-top:0.5rem">✦ Salvar no Diário da Alma</button>
+
+        <!-- Confirmation state -->
+        <div id="whatsappConfirm" style="display:none;text-align:center;padding:1.5rem 0">
+          <div style="font-size:2rem;margin-bottom:1rem">✦</div>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold);font-style:italic;margin-bottom:0.8rem">Mensagem enviada aos Guardiões</p>
+          <p style="font-size:0.82rem;color:rgba(245,240,232,0.6);font-weight:300;line-height:1.8;max-width:340px;margin:0 auto">Seu PDF personalizado será enviado em breve pelo WhatsApp. Fique atento — ele carrega informações únicas sobre sua alma.</p>
+        </div>
       </div>
     </div>
 
     <div id="nextAfterReading" style="display:none">
-      <button class="btn-primary" onclick="nextStep()"><span>Explorar os Caminhos de Prosperidade →</span></button>
+      <button class="btn-primary" onclick="nextStep()"><span>Ver os Caminhos de Prosperidade →</span></button>
     </div>
   </div>
 
@@ -972,24 +990,25 @@ header p {
       <p class="intro-body">Com base em sua leitura, os Registros revelam os caminhos pelos quais sua alma está mais alinhada para prosperar. Cada área abaixo foi sintonizada com sua vibração única.</p>
     </div>
 
-    <div class="prosperity-section" id="prosperityMap">
-      <!-- Populated by JS -->
-    </div>
-
-    <div class="card" id="journalSection" style="display:none">
-      <div class="card-subtitle">Diário da Alma</div>
-      <div class="card-title">Suas Reflexões</div>
-      <div id="journalEntries"></div>
-    </div>
+    <div class="prosperity-section" id="prosperityMap"></div>
 
     <div class="divider"><span>✦ ✦ ✦</span></div>
 
     <!-- CTA -->
     <div class="cta-section">
-      <p class="cta-eyebrow">Aprofunde sua Jornada</p>
-      <h2 class="cta-title">Esta foi apenas a abertura.<br>A transformação acontece na mentoria.</h2>
-      <p class="cta-body">Na <strong style="color:var(--gold)">Mentoria Akasha Hub</strong>, você trabalha diretamente comigo para decodificar sua missão de alma, remover bloqueios de encarnações anteriores e construir uma vida alinhada com sua prosperidade verdadeira — não a que o mundo define, mas a que sua alma veio viver.</p>
-      <a href="https://akashahub.com.br/mentoria" class="btn-cta" target="_blank">Quero a Mentoria Completa</a>
+      <p class="cta-eyebrow">O próximo passo da sua jornada</p>
+      <h2 class="cta-title">Esta leitura foi a faísca.<br>A Mentoria é a chama.</h2>
+      <p class="cta-body">Na <strong style="color:var(--gold)">Mentoria Akasha Hub</strong>, trabalhamos juntos para decodificar sua missão de alma em profundidade, dissolver bloqueios de encarnações anteriores e construir, passo a passo, uma vida que reflete quem você veio ser — com propósito, clareza e abundância real.</p>
+
+      <div style="display:flex;flex-direction:column;gap:0.6rem;max-width:360px;margin:0 auto 2rem;text-align:left">
+        <div style="font-size:0.78rem;color:rgba(245,240,232,0.6);font-weight:300;letter-spacing:0.04em">✦ &nbsp;Leitura akáshica aprofundada ao vivo</div>
+        <div style="font-size:0.78rem;color:rgba(245,240,232,0.6);font-weight:300;letter-spacing:0.04em">✦ &nbsp;Mapa de missão e dons da sua alma</div>
+        <div style="font-size:0.78rem;color:rgba(245,240,232,0.6);font-weight:300;letter-spacing:0.04em">✦ &nbsp;Dissolução de padrões e votos de encarnações</div>
+        <div style="font-size:0.78rem;color:rgba(245,240,232,0.6);font-weight:300;letter-spacing:0.04em">✦ &nbsp;Ativação de seus caminhos de prosperidade</div>
+        <div style="font-size:0.78rem;color:rgba(245,240,232,0.6);font-weight:300;letter-spacing:0.04em">✦ &nbsp;Acompanhamento personalizado</div>
+      </div>
+
+      <a href="https://akashahub.com.br/mentoria" class="btn-cta" target="_blank">Quero Entrar na Mentoria</a>
       <p class="cta-guarantee">✦ Sessão de alinhamento gratuita para novos alunos ✦</p>
     </div>
 
@@ -1006,7 +1025,7 @@ let state = {
   userName: '',
   pillars: ['purpose','gifts'],
   additionalContext: '',
-  journalEntries: [],
+  readingPlainText: '',
   breathDone: false
 };
 
@@ -1171,19 +1190,75 @@ Formate usando apenas tags HTML simples: <p>, <strong>, <em>. Nada mais.`;
     const data = await res.json();
     const text = data.content?.[0]?.text || 'Os Registros aguardam um momento mais propício. Tente novamente.';
 
+    // Strip HTML tags to store plain text version for WhatsApp
+    const tmp = document.createElement('div');
+    tmp.innerHTML = text;
+    state.readingPlainText = tmp.innerText || tmp.textContent;
+    state.readingHTML = text;
+
     document.getElementById('loadingSigil').classList.remove('active');
     document.getElementById('responseText').innerHTML = text;
     document.getElementById('akashicOutput').style.display='block';
     document.getElementById('nextAfterReading').style.display='block';
 
-    // Build prosperity map
     buildProsperityMap();
 
   } catch(e) {
     document.getElementById('loadingSigil').classList.remove('active');
     document.getElementById('responseText').innerHTML = '<p>Os Registros aguardam conexão. Verifique sua internet e tente novamente.</p>';
     document.getElementById('akashicOutput').style.display='block';
+    document.getElementById('nextAfterReading').style.display='block';
   }
+}
+
+// ── SEND TO WHATSAPP ──
+function sendToWhatsApp(){
+  const phone = document.getElementById('userPhone').value.trim().replace(/\D/g,'');
+  if(phone.length < 10){ alert('Por favor, insira um número de WhatsApp válido com DDD.'); return; }
+
+  const tags = Array.from(document.querySelectorAll('.rtag.on')).map(t=>t.textContent);
+  const reflection = document.getElementById('journalText').value.trim();
+  const pillarNames={purpose:'Propósito de Alma',gifts:'Dons e Talentos',blocks:'Padrões e Bloqueios',prosperity:'Caminhos de Prosperidade'};
+  const selectedPillars = state.pillars.map(p=>pillarNames[p]).join(', ');
+
+  state.userPhone = phone;
+  state.userTags = tags;
+  state.userReflection = reflection;
+
+  // Build the WhatsApp message to YOU (the mentor)
+  const adminPhone = '71983448621';
+  const now = new Date().toLocaleString('pt-BR');
+
+  const adminMsg =
+`✦ NOVA LEITURA AKÁSHICA ✦
+━━━━━━━━━━━━━━━━━━━━━
+👤 *Nome:* ${state.userName}
+📱 *WhatsApp:* ${phone}
+🕐 *Data/hora:* ${now}
+
+🎯 *Intenção declarada:*
+${state.intention}
+
+🏛️ *Pilares escolhidos:*
+${selectedPillars}
+
+${state.additionalContext ? `💬 *Contexto compartilhado:*\n${state.additionalContext}\n` : ''}
+${tags.length ? `✨ *O que resonou:*\n${tags.join(' · ')}\n` : ''}
+${reflection ? `📝 *Reflexão pessoal:*\n${reflection}\n` : ''}
+━━━━━━━━━━━━━━━━━━━━━
+📖 *LEITURA AKÁSHICA GERADA:*
+━━━━━━━━━━━━━━━━━━━━━
+${state.readingPlainText || '(leitura não disponível)'}
+━━━━━━━━━━━━━━━━━━━━━
+👆 Enviar PDF personalizado para este número.`;
+
+  const adminURL = 'https://wa.me/' + adminPhone + '?text=' + encodeURIComponent(adminMsg);
+  window.open(adminURL, '_blank');
+
+  // Show confirmation
+  document.getElementById('whatsappFormSection').style.display='none';
+  document.getElementById('whatsappConfirm').style.display='block';
+  document.getElementById('nextAfterReading').style.display='block';
 }
 
 // ── PROSPERITY MAP ──
@@ -1212,59 +1287,27 @@ function buildProsperityMap(){
   areas.forEach((area, i) => {
     const el = document.createElement('div');
     el.className = 'prosperity-area';
-    el.innerHTML = `<div class="prosperity-area-title" onclick="revealArea(this.parentElement)">${area.title} <span style="color:var(--gold-dim);font-size:0.7rem">▾</span></div><div class="prosperity-area-content">${area.content}</div>`;
+    el.innerHTML = `<div class="prosperity-area-title" onclick="this.parentElement.classList.toggle('revealed')">${area.title} <span style="color:var(--gold-dim);font-size:0.7rem">▾</span></div><div class="prosperity-area-content">${area.content}</div>`;
     container.appendChild(el);
-    // Stagger reveal
     setTimeout(()=>{ el.classList.add('revealed'); }, i*400);
   });
 }
 
-function revealArea(el){
-  el.classList.toggle('revealed');
-}
-
-// ── JOURNAL ──
-function saveJournal(){
-  const text = document.getElementById('journalText').value.trim();
-  if(!text) return;
-  const tags = Array.from(document.querySelectorAll('.rtag.on')).map(t=>t.textContent);
-  const entry = {
-    date: new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'}),
-    text,
-    tags
-  };
-  state.journalEntries.push(entry);
-  renderJournal();
-  document.getElementById('journalText').value='';
-  document.querySelectorAll('.rtag').forEach(t=>t.classList.remove('on'));
-  alert('✦ Reflexão salva no Diário da Alma');
-}
-
-function renderJournal(){
-  const section = document.getElementById('journalSection');
-  const container = document.getElementById('journalEntries');
-  if(state.journalEntries.length===0){ section.style.display='none'; return; }
-  section.style.display='block';
-  container.innerHTML = state.journalEntries.map(e=>`
-    <div class="journal-entry">
-      <div class="journal-date">${e.date}${e.tags.length?'  ·  '+e.tags.join(' · '):''}</div>
-      ${e.text}
-    </div>
-  `).join('');
-}
-
 // ── RESTART ──
 function restartJourney(){
-  state = { currentStep:0, intention:'', userName:'', pillars:['purpose','gifts'], additionalContext:'', journalEntries:[], breathDone:false };
+  state = { currentStep:0, intention:'', userName:'', pillars:['purpose','gifts'], additionalContext:'', breathDone:false, readingPlainText:'', readingHTML:'', userPhone:'', userTags:[], userReflection:'' };
   document.getElementById('customIntention').value='';
   document.getElementById('userName').value='';
   document.getElementById('additionalContext').value='';
-  document.getElementById('journalText').value='';
+  try{ document.getElementById('journalText').value=''; }catch(e){}
+  try{ document.getElementById('userPhone').value=''; }catch(e){}
   document.querySelectorAll('.intention-btn').forEach(b=>b.classList.remove('selected'));
-  document.querySelectorAll('.pillar-card').forEach(p=>{ p.classList.remove('active'); });
+  document.querySelectorAll('.pillar-card').forEach(p=>p.classList.remove('active'));
   document.querySelector('[data-pillar="purpose"]').classList.add('active');
   document.querySelector('[data-pillar="gifts"]').classList.add('active');
   document.getElementById('channelBtn').disabled=false;
+  document.getElementById('whatsappFormSection').style.display='block';
+  document.getElementById('whatsappConfirm').style.display='none';
   document.getElementById('breathInstruction').textContent='4 ciclos de respiração profunda para centrar sua energia';
   document.getElementById('breathComplete').style.display='none';
   document.getElementById('breathPhase').textContent='Iniciar';
