@@ -202,31 +202,47 @@
     .mini.highlight { border-color:rgba(201,162,39,0.2); color:var(--gold); }
 
     /* ═══════════════════════════════════════
-       MENTORIA HERO
+       MENTORIA TRIGGER BUTTON (substitui o bloco hero)
     ═══════════════════════════════════════ */
-    .mentoria-hero {
+    .mentoria-trigger {
       width:100%; position:relative; border-radius:3px; overflow:hidden;
       opacity:0; animation:fadeIn 1s 0.3s ease forwards; margin-bottom:10px;
+      cursor:pointer; border:none; background:none; padding:0; text-align:left;
+      display:block;
     }
-    .mentoria-hero-bg {
+    .mentoria-trigger-bg {
       position:absolute; inset:0;
       background:
         radial-gradient(ellipse at 20% 50%, rgba(107,63,160,0.4) 0%, transparent 60%),
         radial-gradient(ellipse at 85% 20%, rgba(201,162,39,0.14) 0%, transparent 50%),
         linear-gradient(135deg, rgba(107,63,160,0.1) 0%, rgba(201,162,39,0.05) 100%);
-      z-index:0;
+      z-index:0; transition:opacity .4s ease;
     }
-    .mentoria-hero-grid {
+    .mentoria-trigger-grid {
       position:absolute; inset:0; z-index:0; opacity:0.05;
       background-image: linear-gradient(rgba(155,111,212,1) 1px, transparent 1px), linear-gradient(90deg, rgba(155,111,212,1) 1px, transparent 1px);
       background-size:28px 28px;
     }
-    .mentoria-hero-border { position:absolute; inset:0; border:1px solid rgba(155,111,212,0.45); border-radius:3px; z-index:1; pointer-events:none; }
-    .mentoria-hero-border::before, .mentoria-hero-border::after { content:''; position:absolute; width:16px; height:16px; border-color:var(--purple-lt); border-style:solid; opacity:.8; }
-    .mentoria-hero-border::before { top:-1px; left:-1px; border-width:2px 0 0 2px; border-radius:2px 0 0 0; }
-    .mentoria-hero-border::after { bottom:-1px; right:-1px; border-width:0 2px 2px 0; border-radius:0 0 2px 0; }
-    .mentoria-hero-inner { position:relative; z-index:2; padding:28px 24px 24px; }
-
+    .mentoria-trigger-border {
+      position:absolute; inset:0; border:1px solid rgba(155,111,212,0.45); border-radius:3px;
+      z-index:1; pointer-events:none; transition:border-color .4s ease;
+    }
+    .mentoria-trigger-border::before, .mentoria-trigger-border::after {
+      content:''; position:absolute; width:16px; height:16px;
+      border-color:var(--purple-lt); border-style:solid; opacity:.8;
+      transition:width .4s ease, height .4s ease;
+    }
+    .mentoria-trigger-border::before { top:-1px; left:-1px; border-width:2px 0 0 2px; border-radius:2px 0 0 0; }
+    .mentoria-trigger-border::after  { bottom:-1px; right:-1px; border-width:0 2px 2px 0; border-radius:0 0 2px 0; }
+    .mentoria-trigger:hover .mentoria-trigger-border { border-color:rgba(155,111,212,0.75); }
+    .mentoria-trigger:hover .mentoria-trigger-border::before,
+    .mentoria-trigger:hover .mentoria-trigger-border::after { width:24px; height:24px; }
+    .mentoria-trigger-inner {
+      position:relative; z-index:2;
+      padding:28px 24px 26px;
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+    }
+    .mentoria-trigger-left { flex:1; }
     .mentoria-badge {
       display:inline-flex; align-items:center; gap:8px;
       font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase;
@@ -234,6 +250,143 @@
       padding:5px 14px; border-radius:1px; margin-bottom:14px;
       background:rgba(107,63,160,0.1);
     }
+    .mentoria-trigger-title {
+      font-family:'Cormorant Garamond',serif; font-weight:300;
+      font-size:2rem; letter-spacing:2px; line-height:1.15;
+      color:var(--white); margin-bottom:4px;
+    }
+    .mentoria-trigger-title em { font-style:italic; color:var(--purple-lt); }
+    .mentoria-trigger-sub {
+      font-size:var(--fs-sub); letter-spacing:2px; text-transform:uppercase;
+      color:rgba(155,111,212,0.7);
+    }
+    .mentoria-trigger-cta {
+      display:flex; flex-direction:column; align-items:center; gap:6px;
+      flex-shrink:0;
+    }
+    .mentoria-trigger-arrow {
+      width:44px; height:44px; border-radius:50%;
+      border:1px solid rgba(155,111,212,0.4);
+      background:rgba(107,63,160,0.15);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.2rem; color:var(--purple-lt);
+      transition:all .4s cubic-bezier(0.25,1,0.5,1);
+    }
+    .mentoria-trigger:hover .mentoria-trigger-arrow {
+      background:rgba(107,63,160,0.35);
+      border-color:rgba(155,111,212,0.8);
+      transform:scale(1.1);
+      box-shadow:0 0 20px rgba(155,111,212,0.3);
+    }
+    .mentoria-trigger-hint {
+      font-size:11px; letter-spacing:2px; text-transform:uppercase;
+      color:rgba(155,111,212,0.45); white-space:nowrap;
+    }
+
+    /* ═══════════════════════════════════════
+       MODAL DA MENTORIA
+    ═══════════════════════════════════════ */
+    .mentoria-overlay {
+      position:fixed; inset:0; z-index:400;
+      background:rgba(4,3,10,0.88); backdrop-filter:blur(16px);
+      display:flex; align-items:flex-end; justify-content:center;
+      padding:0;
+      opacity:0; pointer-events:none;
+      transition:opacity .4s ease;
+    }
+    .mentoria-overlay.open {
+      opacity:1; pointer-events:all;
+    }
+    .mentoria-modal {
+      width:100%; max-width:560px;
+      max-height:92vh;
+      background:linear-gradient(170deg, #0d0a1a 0%, #080611 100%);
+      border:1px solid rgba(155,111,212,0.3);
+      border-bottom:none;
+      border-radius:16px 16px 0 0;
+      position:relative;
+      transform:translateY(100%);
+      transition:transform .5s cubic-bezier(0.16,1,0.3,1);
+      overflow:hidden;
+      display:flex; flex-direction:column;
+    }
+    .mentoria-overlay.open .mentoria-modal {
+      transform:translateY(0);
+    }
+
+    /* Decorative corners */
+    .mentoria-modal::before {
+      content:''; position:absolute; top:0; left:0;
+      width:24px; height:24px;
+      border-top:2px solid rgba(155,111,212,0.6);
+      border-left:2px solid rgba(155,111,212,0.6);
+      border-radius:14px 0 0 0;
+      z-index:1; pointer-events:none;
+    }
+    .mentoria-modal::after {
+      content:''; position:absolute; top:0; right:0;
+      width:24px; height:24px;
+      border-top:2px solid rgba(155,111,212,0.6);
+      border-right:2px solid rgba(155,111,212,0.6);
+      border-radius:0 14px 0 0;
+      z-index:1; pointer-events:none;
+    }
+
+    /* Modal bg glow */
+    .mentoria-modal-bg {
+      position:absolute; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(107,63,160,0.35) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 100%, rgba(201,162,39,0.08) 0%, transparent 50%);
+    }
+    .mentoria-modal-grid {
+      position:absolute; inset:0; z-index:0; pointer-events:none; opacity:0.04;
+      background-image: linear-gradient(rgba(155,111,212,1) 1px, transparent 1px), linear-gradient(90deg, rgba(155,111,212,1) 1px, transparent 1px);
+      background-size:28px 28px;
+    }
+
+    /* Handle bar */
+    .mentoria-modal-handle {
+      position:relative; z-index:2;
+      display:flex; flex-direction:column; align-items:center; gap:0;
+      padding:14px 24px 0;
+      flex-shrink:0;
+    }
+    .mentoria-modal-pill {
+      width:40px; height:4px; border-radius:2px;
+      background:rgba(155,111,212,0.3); margin-bottom:12px;
+    }
+    .mentoria-modal-toprow {
+      width:100%; display:flex; align-items:center; justify-content:space-between;
+      padding-bottom:14px;
+      border-bottom:1px solid rgba(155,111,212,0.12);
+    }
+    .mentoria-modal-topbadge {
+      font-size:11px; letter-spacing:3px; text-transform:uppercase;
+      color:rgba(155,111,212,0.6);
+    }
+    .mentoria-close {
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+      border-radius:50%; width:32px; height:32px;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; color:var(--muted); font-size:.85rem;
+      transition:all .25s ease; line-height:1;
+    }
+    .mentoria-close:hover { background:rgba(155,111,212,0.15); border-color:rgba(155,111,212,0.4); color:var(--purple-lt); }
+
+    /* Scrollable body */
+    .mentoria-modal-body {
+      position:relative; z-index:2;
+      overflow-y:auto; flex:1;
+      padding:24px 24px 36px;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(155,111,212,0.2) transparent;
+    }
+    .mentoria-modal-body::-webkit-scrollbar { width:4px; }
+    .mentoria-modal-body::-webkit-scrollbar-track { background:transparent; }
+    .mentoria-modal-body::-webkit-scrollbar-thumb { background:rgba(155,111,212,0.2); border-radius:2px; }
+
+    /* Modal content — reuse existing mentoria styles */
     .mentoria-title {
       font-family:'Cormorant Garamond',serif; font-weight:300;
       font-size:2rem; letter-spacing:2px; line-height:1.15;
@@ -262,14 +415,11 @@
     .mentoria-divider-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(155,111,212,0.25),transparent); }
     .mentoria-divider-sym { font-size:.6rem; color:var(--purple-lt); opacity:.4; }
 
-    /* ── PLANS ENTRY ── */
     .mentoria-plans-label {
       font-size:var(--fs-label); letter-spacing:var(--ls-xwide); text-transform:uppercase;
       color:rgba(155,111,212,0.5); margin-bottom:10px; display:block;
     }
-    .mentoria-plans-entry {
-      display:flex; gap:8px; margin-bottom:20px;
-    }
+    .mentoria-plans-entry { display:flex; gap:8px; margin-bottom:20px; }
     .mentoria-plan-mini {
       flex:1; border:1px solid rgba(155,111,212,0.2); border-radius:2px;
       padding:14px 8px 12px; background:rgba(107,63,160,0.06);
@@ -294,10 +444,7 @@
       color:rgba(155,111,212,0.65); display:block; line-height:1.3;
     }
 
-    /* ── HIGH TICKET PLANS ── */
-    .mentoria-ht-sep {
-      display:flex; align-items:center; gap:10px; margin:20px 0 12px;
-    }
+    .mentoria-ht-sep { display:flex; align-items:center; gap:10px; margin:20px 0 12px; }
     .mentoria-ht-sep-line { flex:1; height:1px; background:linear-gradient(90deg, rgba(201,162,39,0.25), transparent); }
     .mentoria-ht-sep-text {
       font-size:11px; letter-spacing:3px; text-transform:uppercase;
@@ -314,8 +461,7 @@
     .mentoria-plan-ht {
       border:1px solid rgba(155,111,212,0.2); border-radius:2px;
       padding:18px 18px 16px; margin-bottom:10px;
-      background:rgba(0,0,0,0.18);
-      transition:border-color .3s;
+      background:rgba(0,0,0,0.18); transition:border-color .3s;
     }
     .mentoria-plan-ht:hover { border-color:rgba(155,111,212,0.45); }
     .mentoria-plan-ht.ultra {
@@ -323,33 +469,16 @@
       background:linear-gradient(135deg, rgba(201,162,39,0.05), rgba(107,63,160,0.04));
     }
     .mentoria-plan-ht.ultra:hover { border-color:rgba(201,162,39,0.55); }
-    .mht-header {
-      display:flex; justify-content:space-between; align-items:flex-start;
-      margin-bottom:14px; gap:10px;
-    }
+    .mht-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; gap:10px; }
     .mht-name-wrap { flex:1; }
-    .mht-tag {
-      font-size:10px; letter-spacing:2px; text-transform:uppercase;
-      color:rgba(226,75,74,0.7); display:block; margin-bottom:4px;
-    }
-    .mht-name {
-      font-family:'Cormorant Garamond',serif; font-size:1.2rem;
-      letter-spacing:1.5px; color:var(--white); display:block;
-    }
-    .mht-price {
-      font-family:'Cormorant Garamond',serif; font-size:1.55rem;
-      font-weight:600; color:var(--gold-light); letter-spacing:1px; white-space:nowrap;
-    }
+    .mht-tag { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:rgba(226,75,74,0.7); display:block; margin-bottom:4px; }
+    .mht-name { font-family:'Cormorant Garamond',serif; font-size:1.2rem; letter-spacing:1.5px; color:var(--white); display:block; }
+    .mht-price { font-family:'Cormorant Garamond',serif; font-size:1.55rem; font-weight:600; color:var(--gold-light); letter-spacing:1px; white-space:nowrap; }
     .mht-items { list-style:none; display:flex; flex-direction:column; gap:8px; }
-    .mht-items li {
-      display:flex; align-items:flex-start; gap:8px;
-      font-size:13px; letter-spacing:0.3px; color:rgba(245,240,232,0.65); line-height:1.5;
-    }
+    .mht-items li { display:flex; align-items:flex-start; gap:8px; font-size:13px; letter-spacing:0.3px; color:rgba(245,240,232,0.65); line-height:1.5; }
     .mht-items li::before { content:'›'; color:var(--gold); opacity:.6; flex-shrink:0; font-size:.9rem; }
     .mht-items li strong { color:rgba(245,240,232,0.85); font-weight:400; }
 
-    /* ── MENTORIA VAGAS + CTA ── */
-    .mentoria-price-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
     .mentoria-vagas {
       display:inline-flex; align-items:center; gap:6px;
       font-size:var(--fs-label); letter-spacing:3px; text-transform:uppercase;
@@ -724,6 +853,139 @@
   </div>
 </div>
 
+<!-- ═══════════════ MODAL MENTORIA ═══════════════ -->
+<div class="mentoria-overlay" id="mentoriaOverlay" role="dialog" aria-modal="true" aria-label="Mentoria Arquitetura de Essência e Império">
+  <div class="mentoria-modal" id="mentoriaModal">
+    <div class="mentoria-modal-bg"></div>
+    <div class="mentoria-modal-grid"></div>
+
+    <!-- Handle + close -->
+    <div class="mentoria-modal-handle">
+      <div class="mentoria-modal-pill"></div>
+      <div class="mentoria-modal-toprow">
+        <span class="mentoria-modal-topbadge">✦ Mentoria Individual · Execução Real</span>
+        <button class="mentoria-close" onclick="closeMentoria()" aria-label="Fechar">✕</button>
+      </div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="mentoria-modal-body">
+      <h2 class="mentoria-title" style="margin-top:4px">Arquitetura de<br><em>Essência & Império</em></h2>
+      <p class="mentoria-sub">Estratégia real. Execução concreta. Para qualquer nicho.</p>
+
+      <p class="mentoria-desc">
+        Esta mentoria não tem nada de místico, é execução real. Estratégia, construção e acompanhamento concreto para qualquer pessoa, de qualquer nicho. Do padeiro ao dono de multinacional. Da terapeuta à criadora de conteúdo adulto. Do professor de jiu-jítsu à escritora. De quem quer publicar uma autobiografia a quem está começando agora no digital. Se você tem algo a oferecer ao mundo, um produto, um serviço, um conhecimento, um talento, construímos seu império digital a partir disso.
+      </p>
+
+      <div class="mentoria-pilares">
+        <div class="mentoria-pilar">
+          <span class="mentoria-pilar-num">Pilar 01</span>
+          <span class="mentoria-pilar-nome">Investigação de Essência</span>
+        </div>
+        <div class="mentoria-pilar">
+          <span class="mentoria-pilar-num">Pilar 02</span>
+          <span class="mentoria-pilar-nome">Arquitetura de Identidade</span>
+        </div>
+        <div class="mentoria-pilar">
+          <span class="mentoria-pilar-num">Pilar 03</span>
+          <span class="mentoria-pilar-nome">Império Digital</span>
+        </div>
+      </div>
+
+      <div class="mentoria-divider"><div class="mentoria-divider-line"></div><span class="mentoria-divider-sym">✦</span><div class="mentoria-divider-line"></div></div>
+
+      <ul class="mentoria-incluso">
+        <li>Mapeamento completo da sua essência, do superficial ao akáshico</li>
+        <li>Construção da sua narrativa de marca, identidade visual e tom de voz</li>
+        <li>Site profissional, logo e Instagram configurados e prontos</li>
+        <li>Plano de campanha de 30 dias, você não precisa aparecer para vender</li>
+        <li>Estrutura de venda digital: plataforma, funil e entrega automatizados</li>
+        <li>Gmail profissional + backup de todos os arquivos e gravações das calls</li>
+        <li>Você pode usar pseudônimo, sua identidade real é protegida</li>
+      </ul>
+
+      <div class="mentoria-divider"><div class="mentoria-divider-line"></div><span class="mentoria-divider-sym">✦</span><div class="mentoria-divider-line"></div></div>
+
+      <!-- PLANOS DE ENTRADA -->
+      <span class="mentoria-plans-label">Escolha seu plano de entrada</span>
+      <div class="mentoria-plans-entry">
+        <div class="mentoria-plan-mini">
+          <span class="mpm-price">R$ 495</span>
+          <span class="mpm-period">por semana</span>
+        </div>
+        <div class="mentoria-plan-mini">
+          <span class="mpm-price">R$ 1.500</span>
+          <span class="mpm-period">mensal</span>
+        </div>
+        <div class="mentoria-plan-mini featured">
+          <span class="mpm-tag">+ completo</span>
+          <span class="mpm-price">R$ 3.500</span>
+          <span class="mpm-period">3 meses</span>
+        </div>
+      </div>
+
+      <!-- PLANOS HIGH TICKET -->
+      <div class="mentoria-ht-sep">
+        <div class="mentoria-ht-sep-line"></div>
+        <span class="mentoria-ht-sep-text">Alto Nível · Vagas Mínimas</span>
+        <div class="mentoria-ht-sep-line" style="background:linear-gradient(270deg,rgba(201,162,39,0.25),transparent)"></div>
+      </div>
+
+      <div class="mentoria-ht-note">
+        <p>Os planos abaixo são para quem já decidiu que quer resultado real, rápido e com o mentor presente em cada passo. Não são para todo mundo — e isso é proposital. Se você tem o perfil, você já sabe.</p>
+      </div>
+
+      <div class="mentoria-plan-ht">
+        <div class="mht-header">
+          <div class="mht-name-wrap">
+            <span class="mht-tag">● Atenção Máxima</span>
+            <span class="mht-name">Estratégia & Execução</span>
+          </div>
+          <span class="mht-price">R$ 10.000</span>
+        </div>
+        <ul class="mht-items">
+          <li><strong>Call toda semana</strong> 𓂀 acompanhamento constante e direcionado</li>
+          <li><strong>Mensagens diárias</strong> com o mentor 𓂀 você nunca fica sozinho</li>
+          <li>Plano de estratégia e execução personalizado para o seu negócio</li>
+          <li>Direcionamento diário 𓂀 cada ação tem um propósito claro</li>
+          <li>Atenção plena 𓂀 trabalho lado a lado no digital</li>
+          <li>App de execução e acompanhamento semanal</li>
+        </ul>
+      </div>
+
+      <div class="mentoria-plan-ht ultra">
+        <div class="mht-header">
+          <div class="mht-name-wrap">
+            <span class="mht-tag">● Execução Total · 6 Meses</span>
+            <span class="mht-name">Imersão Completa</span>
+          </div>
+          <span class="mht-price">R$ 25.000</span>
+        </div>
+        <ul class="mht-items">
+          <li>Tudo do plano Estratégia & Execução</li>
+          <li><strong>R$ 3.000 em tráfego pago</strong> investidos do bolso do mentor</li>
+          <li><strong>6 meses completos</strong> de mentoria e acompanhamento</li>
+          <li>Acesso ao mentor todos os dias 𓂀 disponibilidade real</li>
+          <li>App checklist de execução 𓂀 lado a lado no digital</li>
+          <li><strong>Campanhas geridas com disciplina</strong> 𓂀 não só orientação, execução</li>
+          <li>Mapeamento total do digital 𓂀 funil, tráfego, copy, entrega</li>
+          <li>Execução total: do zero ao resultado com o mentor na trincheira</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+        <span class="mentoria-vagas">● Vagas limitadas</span>
+      </div>
+
+      <a href="https://akashahub.com.br/mentoria"
+         class="mentoria-cta" target="_blank" rel="noopener">
+        <span>Quero conhecer os planos completos</span>
+        <span class="mentoria-cta-main">Ver a página da Mentoria ›</span>
+      </a>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════ BACKGROUNDS ═══════════════ -->
 <div class="bg-canvas"></div>
 <div class="bg-grid"></div>
@@ -783,130 +1045,25 @@
     <div class="ornament-line"></div>
   </div>
 
-  <!-- ═══ MENTORIA PRINCIPAL ═══ -->
+  <!-- ═══ MENTORIA — BOTÃO TRIGGER ═══ -->
   <div class="section-label d2"><span>Transformação Profunda</span></div>
 
-  <div class="mentoria-hero d2">
-    <div class="mentoria-hero-bg"></div>
-    <div class="mentoria-hero-grid"></div>
-    <div class="mentoria-hero-border"></div>
-    <div class="mentoria-hero-inner">
-
-      <div class="mentoria-badge">✦ Mentoria Individual · Execução Real</div>
-      <h2 class="mentoria-title">Arquitetura de<br><em>Essência & Império</em></h2>
-      <p class="mentoria-sub">Estratégia real. Execução concreta. Para qualquer nicho.</p>
-
-      <p class="mentoria-desc">
-        Esta mentoria não tem nada de místico — é execução real. Estratégia, construção e acompanhamento concreto para qualquer pessoa, de qualquer nicho. Do padeiro ao dono de multinacional. Da terapeuta à criadora de conteúdo adulto. Do professor de jiu-jítsu à escritora. De quem quer publicar uma autobiografia a quem está começando agora no digital. Se você tem algo a oferecer ao mundo — um produto, um serviço, um conhecimento, um talento — construímos seu império digital a partir disso.
-      </p>
-
-      <div class="mentoria-pilares">
-        <div class="mentoria-pilar">
-          <span class="mentoria-pilar-num">Pilar 01</span>
-          <span class="mentoria-pilar-nome">Investigação de Essência</span>
-        </div>
-        <div class="mentoria-pilar">
-          <span class="mentoria-pilar-num">Pilar 02</span>
-          <span class="mentoria-pilar-nome">Arquitetura de Identidade</span>
-        </div>
-        <div class="mentoria-pilar">
-          <span class="mentoria-pilar-num">Pilar 03</span>
-          <span class="mentoria-pilar-nome">Império Digital</span>
-        </div>
+  <button class="mentoria-trigger d2" onclick="openMentoria()" aria-haspopup="dialog">
+    <div class="mentoria-trigger-bg"></div>
+    <div class="mentoria-trigger-grid"></div>
+    <div class="mentoria-trigger-border"></div>
+    <div class="mentoria-trigger-inner">
+      <div class="mentoria-trigger-left">
+        <div class="mentoria-badge">✦ Mentoria Individual · Execução Real</div>
+        <div class="mentoria-trigger-title">Arquitetura de<br><em>Essência & Império</em></div>
+        <div class="mentoria-trigger-sub">Estratégia real. Execução concreta. Para qualquer nicho.</div>
       </div>
-
-      <div class="mentoria-divider"><div class="mentoria-divider-line"></div><span class="mentoria-divider-sym">✦</span><div class="mentoria-divider-line"></div></div>
-
-      <ul class="mentoria-incluso">
-        <li>Mapeamento completo da sua essência — do superficial ao akáshico</li>
-        <li>Construção da sua narrativa de marca, identidade visual e tom de voz</li>
-        <li>Site profissional, logo e Instagram configurados e prontos</li>
-        <li>Plano de campanha de 30 dias — você não precisa aparecer para vender</li>
-        <li>Estrutura de venda digital: plataforma, funil e entrega automatizados</li>
-        <li>Gmail profissional + backup de todos os arquivos e gravações das calls</li>
-        <li>Você pode usar pseudônimo — sua identidade real é protegida</li>
-      </ul>
-
-      <div class="mentoria-divider"><div class="mentoria-divider-line"></div><span class="mentoria-divider-sym">✦</span><div class="mentoria-divider-line"></div></div>
-
-      <!-- PLANOS DE ENTRADA -->
-      <span class="mentoria-plans-label">Escolha seu plano de entrada</span>
-      <div class="mentoria-plans-entry">
-        <div class="mentoria-plan-mini">
-          <span class="mpm-price">R$ 495</span>
-          <span class="mpm-period">por semana</span>
-        </div>
-        <div class="mentoria-plan-mini">
-          <span class="mpm-price">R$ 1.500</span>
-          <span class="mpm-period">mensal</span>
-        </div>
-        <div class="mentoria-plan-mini featured">
-          <span class="mpm-tag">+ completo</span>
-          <span class="mpm-price">R$ 3.500</span>
-          <span class="mpm-period">3 meses</span>
-        </div>
+      <div class="mentoria-trigger-cta">
+        <div class="mentoria-trigger-arrow">›</div>
+        <span class="mentoria-trigger-hint">Ver detalhes</span>
       </div>
-
-      <!-- PLANOS HIGH TICKET -->
-      <div class="mentoria-ht-sep">
-        <div class="mentoria-ht-sep-line"></div>
-        <span class="mentoria-ht-sep-text">Alto Nível · Vagas Mínimas</span>
-        <div class="mentoria-ht-sep-line" style="background:linear-gradient(270deg,rgba(201,162,39,0.25),transparent)"></div>
-      </div>
-
-      <div class="mentoria-ht-note">
-        <p>Os planos abaixo são para quem já decidiu que quer resultado real, rápido e com o mentor presente em cada passo. Não são para todo mundo — e isso é proposital. Se você tem o perfil, você já sabe.</p>
-      </div>
-
-      <div class="mentoria-plan-ht">
-        <div class="mht-header">
-          <div class="mht-name-wrap">
-            <span class="mht-tag">● Atenção Máxima</span>
-            <span class="mht-name">Estratégia & Execução</span>
-          </div>
-          <span class="mht-price">R$ 10.000</span>
-        </div>
-        <ul class="mht-items">
-          <li><strong>Call toda semana</strong> — acompanhamento constante e direcionado</li>
-          <li><strong>Mensagens diárias</strong> com o mentor — você nunca fica sozinho</li>
-          <li>Plano de estratégia e execução personalizado para o seu negócio</li>
-          <li>Direcionamento diário — cada ação tem um propósito claro</li>
-          <li>Atenção plena — trabalho lado a lado no digital</li>
-          <li>App de execução e acompanhamento semanal</li>
-        </ul>
-      </div>
-
-      <div class="mentoria-plan-ht ultra">
-        <div class="mht-header">
-          <div class="mht-name-wrap">
-            <span class="mht-tag">● Execução Total · 6 Meses</span>
-            <span class="mht-name">Imersão Completa</span>
-          </div>
-          <span class="mht-price">R$ 25.000</span>
-        </div>
-        <ul class="mht-items">
-          <li>Tudo do plano Estratégia & Execução</li>
-          <li><strong>R$ 3.000 em tráfego pago</strong> investidos do bolso do mentor</li>
-          <li><strong>6 meses completos</strong> de mentoria e acompanhamento</li>
-          <li>Acesso ao mentor todos os dias — disponibilidade real</li>
-          <li>App checklist de execução — lado a lado no digital</li>
-          <li><strong>Campanhas geridas com disciplina</strong> — não só orientação, execução</li>
-          <li>Mapeamento total do digital — funil, tráfego, copy, entrega</li>
-          <li>Execução total: do zero ao resultado com o mentor na trincheira</li>
-        </ul>
-      </div>
-
-      <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
-        <span class="mentoria-vagas">● Vagas limitadas</span>
-      </div>
-
-      <a href="https://akashahub.com.br/mentoria"
-         class="mentoria-cta" target="_blank" rel="noopener">
-        <span>Quero conhecer os planos completos</span>
-        <span class="mentoria-cta-main">Ver a página da Mentoria ›</span>
-      </a>
     </div>
-  </div>
+  </button>
 
   <!-- ═══ LEITURA EXPRESS ═══ -->
   <a href="https://akashahub.com.br/leituracall"
@@ -1040,12 +1197,55 @@
     <div class="footer-ornament">
       <div class="footer-dot"></div><div class="footer-dot big"></div><div class="footer-dot"></div>
     </div>
-    <p class="footer-text">© 2026 Akasha Hub — Todos os direitos reservados</p>
+    <p class="footer-text">© 2026 Akasha Hub 𓂀 Todos os direitos reservados</p>
   </footer>
 </div>
 
 <!-- ═══════════════ SCRIPTS ═══════════════ -->
 <script>
+  /* ── MENTORIA MODAL ── */
+  function openMentoria() {
+    const overlay = document.getElementById('mentoriaOverlay');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // reset scroll
+    document.getElementById('mentoriaModal').querySelector('.mentoria-modal-body').scrollTop = 0;
+  }
+  function closeMentoria() {
+    document.getElementById('mentoriaOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('mentoriaOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeMentoria();
+  });
+
+  /* swipe-down to close on mobile */
+  (function() {
+    const modal = document.getElementById('mentoriaModal');
+    let startY = 0, isDragging = false;
+    modal.addEventListener('touchstart', function(e) {
+      const body = modal.querySelector('.mentoria-modal-body');
+      if (body.scrollTop > 0) return;
+      startY = e.touches[0].clientY;
+      isDragging = true;
+    }, { passive: true });
+    modal.addEventListener('touchmove', function(e) {
+      if (!isDragging) return;
+      const dy = e.touches[0].clientY - startY;
+      if (dy > 0) modal.style.transform = 'translateY(' + dy + 'px)';
+    }, { passive: true });
+    modal.addEventListener('touchend', function(e) {
+      if (!isDragging) return;
+      isDragging = false;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (dy > 80) {
+        closeMentoria();
+      }
+      modal.style.transform = '';
+    });
+  })();
+
+  /* ── QUIZ ── */
   let currentQ = 0;
   const totalQ = 6;
   const answers = new Array(totalQ).fill(null);
@@ -1053,8 +1253,8 @@
 
   const perfis = [
     { range:[6,10],  nome:'O Arquiteto Racional',  desc:'Você é alguém que valoriza evidências, lógica e resultados concretos. Sua relação com o campo quântico está começando — e isso é perfeito. A física quântica vai fazer muito sentido para você porque é ciência verificável, não crença.', missao:'Começar a registrar sincronicidades e "coincidências" que acontecem ao seu redor. O ceticismo saudável vai se transformar em curiosidade ativa.' },
-    { range:[11,16], nome:'O Explorador Desperto',  desc:'Você está em uma fase de transição — já percebe que existe algo além do que os olhos veem, mas ainda está aprendendo a navegar por esse campo. Sua sensibilidade está crescendo.',                                  missao:'Criar uma prática consistente, mesmo que pequena. 18 minutos por dia vão revelar em 21 dias o que anos de busca esporádica não revelaram.' },
-    { range:[17,21], nome:'O Canal Quântico',        desc:'Você tem uma sensibilidade natural ao campo. Absorve energias, percebe padrões, tem intuições frequentes. O desafio é aprender a trabalhar com isso de forma estruturada — sem se perder no excesso de input.',       missao:'Desenvolver limites energéticos claros e uma prática de ancoragem diária. Você tem o dom — precisa da técnica.' },
+    { range:[11,16], nome:'O Explorador Desperto',  desc:'Você está em uma fase de transição 𓂀 já percebe que existe algo além do que os olhos veem, mas ainda está aprendendo a navegar por esse campo. Sua sensibilidade está crescendo.',                                  missao:'Criar uma prática consistente, mesmo que pequena. 18 minutos por dia vão revelar em 21 dias o que anos de busca esporádica não revelaram.' },
+    { range:[17,21], nome:'O Canal Quântico',        desc:'Você tem uma sensibilidade natural ao campo. Absorve energias, percebe padrões, tem intuições frequentes. O desafio é aprender a trabalhar com isso de forma estruturada 𓂀 sem se perder no excesso de input.',       missao:'Desenvolver limites energéticos claros e uma prática de ancoragem diária. Você tem o dom 𓂀 precisa da técnica.' },
     { range:[22,24], nome:'O Transmutador',          desc:'Você carrega padrões profundos que ainda não foram completamente transformados. A boa notícia: quem chega a esse ponto de autoconhecimento tem um potencial extraordinário de transformação.',                         missao:'Não fazer essa jornada sozinho. O trabalho profundo de reprogramação é mais poderoso quando feito em campo compartilhado.' }
   ];
 
@@ -1066,7 +1266,7 @@
   function closeQuiz() { document.getElementById('quizOverlay').classList.remove('open'); document.body.style.overflow=''; }
 
   document.getElementById('quizOverlay').addEventListener('click', function(e){ if(e.target===this) closeQuiz(); });
-  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeQuiz(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeQuiz(); closeMentoria(); } });
 
   function selectOpt(el, qIdx) {
     el.closest('.quiz-options').querySelectorAll('.quiz-option').forEach(o=>o.classList.remove('selected'));
@@ -1112,16 +1312,6 @@
 </script>
 
 <script>
-  /*
-   * FREQUÊNCIAS DE ABUNDÂNCIA E PROSPERIDADE
-   * 528 Hz — transformação, atração de abundância (Solfeggio)
-   * 396 Hz — liberação de bloqueios e medos (Solfeggio)
-   * 888 Hz — vibração numerológica de prosperidade e dinheiro
-   * LFO 0.07 Hz — respiração lenta, modulação de campo
-   *
-   * Garante autoplay em desktop e mobile:
-   * tenta iniciar no load, e novamente no primeiro toque/clique/scroll.
-   */
   (function(){
     var audioCtx, masterGain, started = false;
 
@@ -1133,22 +1323,19 @@
 
       started = true;
 
-      /* Resume imediato se suspenso (iOS/Safari) */
       if (audioCtx.state === 'suspended') {
         audioCtx.resume().catch(function(){});
       }
 
       masterGain = audioCtx.createGain();
       masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-      /* Fade-in suave em 5 segundos — muito baixo, ambiente */
       masterGain.gain.linearRampToValueAtTime(0.035, audioCtx.currentTime + 5);
       masterGain.connect(audioCtx.destination);
 
-      /* Frequências e volumes relativos */
       var layers = [
-        { freq: 528,  gain: 0.55 },  /* abundância / transformação */
-        { freq: 396,  gain: 0.28 },  /* remove bloqueios */
-        { freq: 888,  gain: 0.17 }   /* prosperidade / dinheiro */
+        { freq: 528,  gain: 0.55 },
+        { freq: 396,  gain: 0.28 },
+        { freq: 888,  gain: 0.17 }
       ];
 
       layers.forEach(function(layer) {
@@ -1162,7 +1349,6 @@
         osc.start();
       });
 
-      /* LFO de modulação — respiração de campo */
       var lfo     = audioCtx.createOscillator();
       var lfoGain = audioCtx.createGain();
       lfo.frequency.setValueAtTime(0.07, audioCtx.currentTime);
@@ -1172,12 +1358,10 @@
       lfo.start();
     }
 
-    /* Tenta no load — funciona em desktop e alguns Android */
     window.addEventListener('load', function() {
       try { initAudio(); } catch(e) {}
     });
 
-    /* Fallback: qualquer primeiro evento do usuário desbloqueia o áudio no iOS */
     var unlockEvents = ['touchstart','touchend','click','pointerdown','keydown','scroll'];
     function onFirstInteraction() {
       initAudio();
@@ -1222,4 +1406,4 @@
   });
 </script>
 </body>
-</html>
+  </html>
