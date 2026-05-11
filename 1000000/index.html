@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Hub — YouTube Strategy Bible</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8B6E2E;
+    --purple: #7B5EA7;
+    --purple-light: #A07CC5;
+    --bg: #0A0A0B;
+    --bg2: #111114;
+    --bg3: #17171B;
+    --border: rgba(201,168,76,0.15);
+    --border2: rgba(201,168,76,0.08);
+    --text: #E8E4DC;
+    --text-muted: #8A8480;
+    --text-dim: #5A5650;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,11,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 52px;
+    z-index: 100;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    white-space: nowrap;
+    margin-right: 24px;
+    padding-right: 24px;
+    border-right: 0.5px solid var(--border);
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    color: var(--gold);
+    background: rgba(201,168,76,0.08);
+  }
+
+  /* SECTIONS */
+  .section { display: none; padding: 32px 24px 80px; max-width: 680px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 48px 0 40px;
+    border-bottom: 0.5px solid var(--border2);
+    margin-bottom: 40px;
+  }
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 300;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .hero p {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* SECTION TITLE */
+  .sec-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .sec-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 0.5px solid var(--border2);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-weight: 400;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold-dim);
+    border: 0.5px solid var(--gold-dim);
+    border-radius: 3px;
+    padding: 2px 6px;
+    letter-spacing: 0.1em;
+  }
+  .card p { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; margin-bottom: 10px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* TAGS */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border: 0.5px solid var(--border);
+    color: var(--text-dim);
+  }
+  .tag.gold { border-color: var(--gold-dim); color: var(--gold); }
+  .tag.purple { border-color: rgba(123,94,167,0.4); color: var(--purple-light); }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: 0;
+    width: 0.5px;
+    background: linear-gradient(to bottom, var(--gold-dim), transparent);
+  }
+  .tl-item { position: relative; margin-bottom: 24px; }
+  .tl-dot {
+    position: absolute;
+    left: -21px;
+    top: 5px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    border: 1.5px solid var(--bg);
+  }
+  .tl-item.active .tl-dot { background: var(--gold); }
+  .tl-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .tl-text { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+
+  /* QUOTE BLOCK */
+  .quote {
+    border-left: 2px solid var(--gold-dim);
+    padding: 12px 16px;
+    margin: 16px 0;
+    background: rgba(201,168,76,0.04);
+    border-radius: 0 6px 6px 0;
+  }
+  .quote p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--gold-light);
+    line-height: 1.5;
+  }
+
+  /* TWO-COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .mini-card {
+    background: var(--bg3);
+    border: 0.5px solid var(--border2);
+    border-radius: 6px;
+    padding: 14px;
+  }
+  .mini-card .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .mini-card .val {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* STRUCTURE BLOCK */
+  .structure { background: var(--bg3); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .struct-step {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 0.5px solid var(--border2);
+    align-items: flex-start;
+  }
+  .struct-step:last-child { border-bottom: none; padding-bottom: 0; }
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold-dim);
+    min-width: 24px;
+    margin-top: 2px;
+  }
+  .step-content .step-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .step-content .step-desc {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--border2);
+    margin: 28px 0;
+  }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: rgba(201,168,76,0.06);
+    border: 0.5px solid rgba(201,168,76,0.25);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .highlight .hl-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .highlight p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  /* VIDEO TYPE CARDS */
+  .vtype {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .vtype-header {
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 0.5px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .vtype-header.open { border-bottom-color: var(--border2); }
+  .vtype-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .vtype-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold-dim);
+    border: 0.5px solid var(--gold-dim);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+  .vtype-body { padding: 14px 18px; display: none; }
+  .vtype-body.open { display: block; }
+  .vtype-body p { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 8px; }
+  .vtype-body .examples {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold-dim);
+    line-height: 1.9;
+  }
+
+  /* BORDAO LIST */
+  .bordao-item {
+    padding: 13px 16px;
+    border-left: 2px solid var(--border);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    border-radius: 0 6px 6px 0;
+    background: var(--bg2);
+  }
+  .bordao-item:hover { border-left-color: var(--gold-dim); }
+  .bordao-item.fav { border-left-color: var(--gold); }
+  .bordao-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+  }
+  .bordao-context { font-size: 11.5px; color: var(--text-dim); }
+  .fav-star { float: right; color: var(--gold); font-size: 14px; }
+
+  /* SCRIPT TEMPLATE */
+  .script-block {
+    background: var(--bg3);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border-left: 2px solid var(--purple-light);
+  }
+  .script-block .sb-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--purple-light);
+    margin-bottom: 6px;
+  }
+  .script-block .sb-time {
+    float: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .script-block p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .script-block.gold-block { border-left-color: var(--gold-dim); }
+  .script-block.gold-block .sb-label { color: var(--gold); }
+
+  @media(max-width:600px) {
+    .two-col { grid-template-columns: 1fr; }
+    nav { padding: 0 16px; }
+    .section { padding: 24px 16px 80px; }
+    .hero h1 { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">AKASHA HUB</div>
+  <button class="nav-btn active" onclick="showSection('overview')">Visão</button>
+  <button class="nav-btn" onclick="showSection('identidade')">DNA</button>
+  <button class="nav-btn" onclick="showSection('estrutura')">Estrutura</button>
+  <button class="nav-btn" onclick="showSection('videos')">Vídeos</button>
+  <button class="nav-btn" onclick="showSection('script')">Script</button>
+  <button class="nav-btn" onclick="showSection('bordoes')">Bordões</button>
+  <button class="nav-btn" onclick="showSection('lugares')">Lugares</button>
+  <button class="nav-btn" onclick="showSection('patrocinio')">Patrocínio</button>
+</nav>
+
+<!-- VISÃO GERAL -->
+<div id="overview" class="section active">
+  <div class="hero">
+    <div class="hero-tag">YouTube Strategy Bible · Akasha Hub</div>
+    <h1>Documentando<br>a Realidade<br>Arquitetada</h1>
+    <p>Começando do zero. Com excelência desde o primeiro segundo.</p>
+  </div>
+
+  <div class="sec-title">O que é este canal</div>
+  <div class="sec-sub">Posicionamento central</div>
+
+  <div class="quote">
+    <p>"Parecer espontâneo, mas ser estrategicamente arquitetado em cada segundo."</p>
+  </div>
+
+  <p style="font-size:13.5px;color:var(--text-muted);line-height:1.75;margin-bottom:20px;">
+    Não é um vlog comum. Não é um canal de guru. É um <strong style="color:var(--text)">documentário vivo</strong> de alguém que vive uma vida inteligente, estética e estratégica — e que compartilha os bastidores da percepção enquanto isso.
+  </p>
+
+  <div class="highlight">
+    <div class="hl-label">A sensação que o público precisa ter</div>
+    <p>Estou acompanhando alguém que entende coisas que eu ainda não vi. Quero continuar vendo isso.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sec-title" style="margin-top:0">Os 7 papéis que você representa</div>
+  <div class="sec-sub">Não escolha um. Use todos.</div>
+
+  <div class="two-col">
+    <div class="mini-card"><div class="label">Papel</div><div class="val">Protagonista da narrativa</div></div>
+    <div class="mini-card"><div class="label">Papel</div><div class="val">Arquiteto digital</div></div>
+    <div class="mini-card"><div class="label">Papel</div><div class="val">Explorador cultural</div></div>
+    <div class="mini-card"><div class="label">Papel</div><div class="val">Observador filosófico</div></div>
+    <div class="mini-card"><div class="label">Papel</div><div class="val">Estrategista de percepção</div></div>
+    <div class="mini-card"><div class="label">Papel</div><div class="val">Artista de conteúdo</div></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sec-title" style="margin-top:0">Referências de estilo</div>
+  <div class="sec-sub">Para misturar e criar algo próprio</div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">REF</span> Casey Neistat</div>
+    <p>IRL cinematográfico. Rotina transformada em narrativa visual. Pacing rápido com momentos de pausa estratégica.</p>
+    <div class="tags"><span class="tag gold">edição rítmica</span><span class="tag">texto na tela</span><span class="tag">voz off</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">REF</span> Johnny Harris</div>
+    <p>Jornalismo + reflexão + estética. Cada vídeo é um ensaio visual. Mistura dados com percepção humana profunda.</p>
+    <div class="tags"><span class="tag gold">narrativa profunda</span><span class="tag">cinematografia</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">REF</span> Yes Theory</div>
+    <p>Experiências reais, conversas com desconhecidos, presença em lugares inesperados. Gera pertencimento.</p>
+    <div class="tags"><span class="tag gold">aventura</span><span class="tag">network orgânico</span><span class="tag">comunidade</span></div>
+  </div>
+</div>
+
+<!-- IDENTIDADE / DNA -->
+<div id="identidade" class="section">
+  <div class="sec-title">DNA do Canal</div>
+  <div class="sec-sub">Os 5 pilares de conteúdo</div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">01</span> Vida Real · IRL</div>
+    <p>Tudo que você já faz vira conteúdo. Café, academia, Uber, aeroporto, bastidores, calls, caminhada, praia, coworking.</p>
+    <p>A magia está em <strong style="color:var(--text)">narrar o que os outros só vivem sem perceber</strong>. Você vai ao mesmo café que todo mundo mas enxerga o branding, a psicologia, a arquitetura do ambiente.</p>
+    <div class="tags"><span class="tag gold">rotina</span><span class="tag">bastidores</span><span class="tag">viagem</span><span class="tag">real</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">02</span> Autoconhecimento</div>
+    <p>Mas nunca no tom de guru. No tom de observador. Percepções que surgem naturalmente durante o dia — ambientes, pessoas, padrões, silêncio, disciplina, atenção.</p>
+    <div class="quote"><p>"Percebe como todo ambiente tenta programar teu comportamento?"</p></div>
+    <div class="tags"><span class="tag gold">filosofia prática</span><span class="tag purple">consciência</span><span class="tag">magnetismo</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">03</span> Arquitetura Digital</div>
+    <p>Sites, apps, branding, funis, automações, design de identidade — mas de forma humana e cinematográfica. Não tutorial. Revelação.</p>
+    <div class="quote"><p>"Olha como uma estrutura digital muda completamente a percepção de valor."</p></div>
+    <div class="tags"><span class="tag gold">akashahub.com.br</span><span class="tag">projetos</span><span class="tag">processo</span><span class="tag">clientes</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">04</span> Experiências</div>
+    <p>Restaurantes temáticos, academias únicas, rooftops, eventos culturais, viagens, exposições, cafés especiais. Gold para patrocínio. Cada lugar é uma narrativa.</p>
+    <div class="tags"><span class="tag gold">network</span><span class="tag">lifestyle</span><span class="tag">cultura</span><span class="tag">gastronomia</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">05</span> Performance · Corpo</div>
+    <p>Calistenia, treinos na praia, academias diferentes, biohacking leve, alimentação real. Sempre no tom de experiência — não de professor.</p>
+    <div class="tags"><span class="tag gold">energia</span><span class="tag">movimento</span><span class="tag">saúde real</span></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sec-title" style="margin-top:0">Nome para a audiência</div>
+  <div class="sec-sub">Escolha um e use sempre</div>
+
+  <div class="two-col">
+    <div class="mini-card" style="border-color:rgba(201,168,76,0.3)"><div class="label">Favorito</div><div class="val" style="color:var(--gold)">Arquitetos</div></div>
+    <div class="mini-card"><div class="label">Opção</div><div class="val">Hub Members</div></div>
+    <div class="mini-card"><div class="label">Opção</div><div class="val">Observadores</div></div>
+    <div class="mini-card"><div class="label">Opção</div><div class="val">Frequência Akasha</div></div>
+  </div>
+
+  <div class="highlight">
+    <div class="hl-label">Como usar</div>
+    <p>Sempre no início ou final do vídeo: <em style="color:var(--gold-light)">"Vocês que são Arquitetos já perceberam isso..."</em> — cria senso de tribo, pertencimento e retenção.</p>
+  </div>
+</div>
+
+<!-- ESTRUTURA DE VÍDEO -->
+<div id="estrutura" class="section">
+  <div class="sec-title">Estrutura de Vídeo</div>
+  <div class="sec-sub">Anatomia de cada conteúdo</div>
+
+  <div class="structure">
+    <div class="struct-step">
+      <div class="step-num">00</div>
+      <div class="step-content">
+        <div class="step-title">Cold Open — 0 a 15 segundos</div>
+        <div class="step-desc">Frase forte, cena impactante ou pergunta que paralisa o scroll. Nunca "fala galera". O algoritmo decide aqui se o vídeo vai ou não.</div>
+      </div>
+    </div>
+    <div class="struct-step">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <div class="step-title">Vinheta — 3 a 6 segundos</div>
+        <div class="step-desc">Logo Akasha Hub. Som marcante. Visual minimalista e sofisticado. Cria identidade e familiaridade ao longo do tempo.</div>
+      </div>
+    </div>
+    <div class="struct-step">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <div class="step-title">Contexto — 30 a 90 segundos</div>
+        <div class="step-desc">Onde você está, o que está fazendo. Natural, real, cinematográfico. Aqui a câmera "acompanha" sem forçar.</div>
+      </div>
+    </div>
+    <div class="struct-step">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <div class="step-title">Desenvolvimento IRL</div>
+        <div class="step-desc">O corpo do vídeo. Cenas do lugar, conversas, observações, bastidores, reflexões. Micro hooks a cada 30–60s para manter retenção.</div>
+      </div>
+    </div>
+    <div class="struct-step">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <div class="step-title">Insight Central</div>
+        <div class="step-desc">A percepção principal do vídeo. Pode ser falada, narrada, ou aparecer como texto na tela. É o que as pessoas vão compartilhar.</div>
+      </div>
+    </div>
+    <div class="struct-step">
+      <div class="step-num">05</div>
+      <div class="step-content">
+        <div class="step-title">Encerramento — sem "valeu falou"</div>
+        <div class="step-desc">Deixa uma reflexão aberta, uma continuação ou uma sensação de jornada. O público deve sair querendo o próximo capítulo.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sec-title" style="margin-top:0">Regra dos 5 Blocos</div>
+  <div class="sec-sub">Como gravar qualquer lugar de forma modular</div>
+
+  <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:16px;line-height:1.7">Em todo lugar que você for, grave os 5 blocos abaixo. Um passeio vira vídeo longo, shorts, reels e teasers.</p>
+
+  <div class="two-col">
+    <div class="mini-card"><div class="label">Bloco A</div><div class="val">Ambiente — entrada, detalhes, estética, pessoas</div></div>
+    <div class="mini-card"><div class="label">Bloco B</div><div class="val">Você vivendo — andando, comendo, treinando</div></div>
+    <div class="mini-card"><div class="label">Bloco C</div><div class="val">Reflexões — falando com câmera ou voz off</div></div>
+    <div class="mini-card"><div class="label">Bloco D</div><div class="val">Interações — conversa, perguntas, reações</div></div>
+  </div>
+  <div class="mini-card" style="margin-bottom:16px"><div class="label">Bloco E</div><div class="val">Bastidores — setup, notebook, edição, câmera, celular</div></div>
+
+  <div class="highlight">
+    <div class="hl-label">Micro Hooks — obrigatórios a cada 30–60 segundos</div>
+    <p>Nova ideia, nova curiosidade, nova percepção, frase forte ou transição visual. Isso mantém a retenção alta e o algoritmo feliz.</p>
+  </div>
+</div>
+
+<!-- TIPOS DE VÍDEOS -->
+<div id="videos" class="section">
+  <div class="sec-title">Tipos de Vídeo</div>
+  <div class="sec-sub">Clique para ver detalhes e ideias de script</div>
+
+  <div class="vtype">
+    <div class="vtype-header" onclick="toggleVtype(this)">
+      <div class="vtype-name">O Significado Invisível dos Lugares</div>
+      <div class="vtype-tag">CULTURA</div>
+    </div>
+    <div class="vtype-body">
+      <p>Você vai a um café, restaurante, museu, bairro histórico — e revela o que a maioria não vê: o branding, a psicologia, a narrativa cultural e histórica por trás.</p>
+      <p>Em Salvador: Pelourinho, Rio Vermelho, Santo Antônio Além do Carmo, Mercado do Rio Vermelho, Farol da Barra.</p>
+      <p>Tom: artístico, pessoal, curioso. Como alguém apaixonado pelo lugar — não um guia turístico.</p>
+      <div class="examples">
+        → "Esse bar tem 80 anos e ninguém sabe por quê ele ainda está de pé."<br>
+        → "Esse prédio colonial guarda uma história que a história oficial omitiu."<br>
+        → "Por que os azulejos portugueses estão por toda Salvador?"
+      </div>
+    </div>
+  </div>
+
+  <div class="vtype">
+    <div class="vtype-header" onclick="toggleVtype(this)">
+      <div class="vtype-name">Construindo o Akasha Hub</div>
+      <div class="vtype-tag">DIGITAL</div>
+    </div>
+    <div class="vtype-body">
+      <p>Mostra o processo real de criar, vender, estruturar e entregar. Sites, branding, calls com clientes, bastidores de projeto, automações.</p>
+      <p>Isso gera autoridade, atrai clientes e chama atenção de parceiros e patrocinadores.</p>
+      <div class="examples">
+        → "Mostrei 3 opções de logo. O cliente escolheu a errada. Vou te mostrar por quê."<br>
+        → "Essa estrutura de site fechou R$12k em 48h."<br>
+        → "O processo que uso para criar um site em 7 dias."
+      </div>
+    </div>
+  </div>
+
+  <div class="vtype">
+    <div class="vtype-header" onclick="toggleVtype(this)">
+      <div class="vtype-name">Treino Fora do Óbvio</div>
+      <div class="vtype-tag">CORPO</div>
+    </div>
+    <div class="vtype-body">
+      <p>Calistenia na praia, academia diferente, treino em local inesperado. Pode entrevistar o dono da academia, um atleta, ou só gravar tranquilo enquanto narra.</p>
+      <p>Estratégia de network: chegue em academias ou studios e ofereça aparecer no vídeo. Isso cria parceria natural para patrocínio.</p>
+      <div class="examples">
+        → "Fui treinar na academia mais estranha de Salvador."<br>
+        → "30 dias de calistenia na praia. O que mudou de verdade."<br>
+        → "Treino experimental com método que aprendi em [lugar]."
+      </div>
+    </div>
+  </div>
+
+  <div class="vtype">
+    <div class="vtype-header" onclick="toggleVtype(this)">
+      <div class="vtype-name">Experiência Gastronômica</div>
+      <div class="vtype-tag">LIFESTYLE</div>
+    </div>
+    <div class="vtype-body">
+      <p>Rodízio de vinho, tasting, restaurante temático, jantar especial, algo diferenciado. A narrativa gira em torno da experiência — não do prato.</p>
+      <p>Como conseguir grátis: entre em contato com o restaurante antes e ofereça aparecer no vídeo. A maioria aceita para exposição.</p>
+      <div class="examples">
+        → "Esse restaurante usa psicologia para fazer você gastar mais — e é genial."<br>
+        → "Rodízio de vinhos naturais: o que aprendi sobre percepção e paladar."<br>
+        → "O chef de cozinha me explicou como a experiência é desenhada antes do cliente chegar."
+      </div>
+    </div>
+  </div>
+
+  <div class="vtype">
+    <div class="vtype-header" onclick="toggleVtype(this)">
+      <div class="vtype-name">Reflexões Cinematográficas</div>
+      <div class="vtype-tag">FILOSÓFICO</div>
+    </div>
+    <div class="vtype-body">
+      <p>Você caminhando, chuva, praia, noite, aeroporto — e narrando percepções profundas. Sem estrutura rígida. Muito poderoso para criar fandom.</p>
+      <div class="examples">
+        → "Talvez o problema nunca foi falta de oportunidade. Foi falta de percepção."<br>
+        → "Toda cidade tem um ritual invisível. Você já percebeu o de Salvador?"<br>
+        → "Às 3 da manhã, a cidade mostra quem ela realmente é."
+      </div>
+    </div>
+  </div>
+
+  <div class="vtype">
+    <div class="vtype-header" onclick="toggleVtype(this)">
+      <div class="vtype-name">Conversas Reais</div>
+      <div class="vtype-tag">NETWORK</div>
+    </div>
+    <div class="vtype-body">
+      <p>Você entrevistando donos de restaurante, artistas, empreendedores, atletas, arquitetos, estrangeiros — qualquer pessoa interessante que você encontrar.</p>
+      <p>Estratégia: nunca chame de entrevista. Chame de conversa. Diminui a pressão e sai mais natural.</p>
+      <div class="examples">
+        → "Conversa com o cara que abriu um bar sem dinheiro no Pelourinho."<br>
+        → "Perguntei a 5 pessoas o que elas fariam diferente. As respostas me surpreenderam."<br>
+        → "O arquiteto que restaura casas coloniais em Salvador me contou o que ninguém sabe."
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPT MODELO -->
+<div id="script" class="section">
+  <div class="sec-title">Modelo de Script</div>
+  <div class="sec-sub">Pilares — não roteiro engessado</div>
+
+  <div class="highlight">
+    <div class="hl-label">Como usar</div>
+    <p>O script não define o que falar. Define <strong style="color:var(--text)">o que não pode faltar</strong>. Fale naturalmente mas tenha os pilares na cabeça antes de gravar.</p>
+  </div>
+
+  <div class="script-block gold-block">
+    <div class="sb-label">Cold Open <span class="sb-time">0–15s</span></div>
+    <p>A frase de abertura. Impactante, sem introdução. Pode ser uma observação, uma provocação ou uma cena visual forte sem áudio.</p>
+  </div>
+
+  <div class="script-block">
+    <div class="sb-label">Contexto / Setup <span class="sb-time">15s–1min</span></div>
+    <p>Onde você está, por que está lá, o que vai acontecer. Curto, natural, sem exagero.</p>
+  </div>
+
+  <div class="script-block">
+    <div class="sb-label">Pilar 1 — O lugar / experiência <span class="sb-time">1–4min</span></div>
+    <p>Mostre o ambiente. Cenas, detalhes, estética. Você explorando. Comente o que está vendo de forma espontânea.</p>
+  </div>
+
+  <div class="script-block">
+    <div class="sb-label">Micro Hook <span class="sb-time">gancho</span></div>
+    <p>Frase curta que cria curiosidade para o que vem a seguir. Ex: <em style="color:var(--gold-light)">"Mas o que me surpreendeu mesmo foi outra coisa..."</em></p>
+  </div>
+
+  <div class="script-block">
+    <div class="sb-label">Pilar 2 — A percepção / insight <span class="sb-time">4–8min</span></div>
+    <p>A reflexão central do vídeo. Pode ser falada diretamente pra câmera, em voz off, ou como texto na tela.</p>
+  </div>
+
+  <div class="script-block">
+    <div class="sb-label">Pilar 3 — Conexão com o maior <span class="sb-time">8–12min</span></div>
+    <p>Como esse insight conecta com autoconhecimento, arquitetura digital, estratégia, vida real. O Akasha Hub como lente de interpretação do mundo.</p>
+  </div>
+
+  <div class="script-block gold-block">
+    <div class="sb-label">Frase Salva — Bordão ou Insight Final <span class="sb-time">sempre</span></div>
+    <p>A frase que o vídeo inteiro constrói pra chegar. Memorável, curta, forte. É o que vai para o corte do Reels e para o comentário mais curtido.</p>
+  </div>
+
+  <div class="script-block">
+    <div class="sb-label">Encerramento <span class="sb-time">30s</span></div>
+    <p>Reflexão aberta. Teaser do próximo vídeo se possível. Sem "se inscreve e deixa o like" robótico — faz parte da narrativa.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sec-title" style="margin-top:0">Primeiro Vídeo</div>
+  <div class="sec-sub">O vídeo mais importante do canal</div>
+
+  <div class="structure">
+    <div class="struct-step">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <div class="step-title">Quem você é — sem currículo</div>
+        <div class="step-desc">Não lista de formações. Uma frase que define sua percepção de mundo. "Sou alguém que construiu sistemas digitais e sistemas internos ao mesmo tempo."</div>
+      </div>
+    </div>
+    <div class="struct-step">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <div class="step-title">O que é o Akasha Hub</div>
+        <div class="step-desc">A narrativa da marca, não o produto. "Um espaço onde tecnologia ancestral e execução moderna se encontram."</div>
+      </div>
+    </div>
+    <div class="struct-step">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <div class="step-title">Por que documentar agora</div>
+        <div class="step-desc">A motivação real, pessoal, honesta. Isso cria conexão imediata com quem está assistindo desde o início.</div>
+      </div>
+    </div>
+    <div class="struct-step">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <div class="step-title">A promessa da série</div>
+        <div class="step-desc">"Eu vou transformar experiências comuns em percepções que você não vai mais ignorar." Dá motivo para voltar.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BORDÕES -->
+<div id="bordoes" class="section">
+  <div class="sec-title">Bordões & Frases</div>
+  <div class="sec-sub">Clique para favoritar — use os favoritos sempre</div>
+
+  <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Identidade de linguagem. Quanto mais repetir, mais vira assinatura do canal.</p>
+
+  <div id="bordao-list">
+    <div class="bordao-item" onclick="toggleFav(this)">
+      <div class="bordao-text">"Tudo comunica."</div>
+      <div class="bordao-context">Usar ao observar qualquer ambiente, design ou comportamento</div>
+    </div>
+    <div class="bordao-item" onclick="toggleFav(this)">
+      <div class="bordao-text">"Nada aqui é por acaso."</div>
+      <div class="bordao-context">Ao revelar a arquitetura invisível de lugares ou sistemas</div>
+    </div>
+    <div class="bordao-item" onclick="toggleFav(this)">
+      <div class="bordao-text">"Percepção é poder."</div>
+      <div class="bordao-context">Encerramento de reflexões sobre consciência e estratégia</div>
+    </div>
+    <div class="bordao-item" onclick="toggleFav(this)">
+      <div class="bordao-text">"O ambiente sempre molda a consciência."</div>
+      <div class="bordao-context">Ao visitar novos lugares, academias, restaurantes, cidades</div>
+    </div>
+    <div class="bordao-item" onclick="toggleFav(this)">
+      <div class="bordao-text">"Isso aqui é engenharia de percepção."</div>
+      <div class="bordao-context">Ao analisar marketing, design, arquitetura ou narrativas</div>
+    </div>
+    <div class="bordao-item" onclick="toggleFav(this)">
+      <div class="bordao-text">"A realidade é uma arquitetura. Quem entende isso, constrói."</div>
+      <div class="bordao-context">Frase de encerramento forte — pode virar a tagline do canal</div>
+    </div>
+    <div class="bordao-item" onclick="toggleFav(this)">
+      <div class="bordao-text">"Bem-vindos ao Akasha."</div>
+      <div class="bordao-context">Abertura após a vinheta — marca o início do espaço</div>
+    </div>
+    <div class="bordao-item" onclick="toggleFav(this)">
+      <div class="bordao-text">"Toda estrutura gera comportamento."</div>
+      <div class="bordao-context">Ao falar de sistemas digitais, arquitetura, espaços físicos</div>
+    </div>
+    <div class="bordao-item" onclick="toggleFav(this)">
+      <div class="bordao-text">"Você está dentro do sistema. Eu só vou te mostrar as paredes."</div>
+      <div class="bordao-context">Para momentos de revelação — engenharia do consentimento</div>
+    </div>
+    <div class="bordao-item" onclick="toggleFav(this)">
+      <div class="bordao-text">"Vocês que são Arquitetos já perceberam isso..."</div>
+      <div class="bordao-context">Para se referir à audiência com senso de tribo e exclusividade</div>
+    </div>
+  </div>
+</div>
+
+<!-- LUGARES -->
+<div id="lugares" class="section">
+  <div class="sec-title">Lugares Estratégicos</div>
+  <div class="sec-sub">Salvador e além — sem precisar gastar</div>
+
+  <div class="highlight">
+    <div class="hl-label">Estratégia de acesso gratuito</div>
+    <p>Antes de ir a qualquer lugar pago, entre em contato. Ofereça aparecer no vídeo com crédito e menção. A maioria dos estabelecimentos aceita — é exposição para eles também.</p>
+  </div>
+
+  <div class="sec-title" style="font-size:20px;margin-top:16px">Salvador</div>
+
+  <div class="card">
+    <div class="card-title">Pelourinho</div>
+    <p>Ouro para narrativa cultural. Arquitetura colonial, história, contradições, arte de rua, boêmia, história da resistência. Conteúdo praticamente pronto — só gravar e narrar.</p>
+    <div class="tags"><span class="tag gold">arquitetura</span><span class="tag">cultura</span><span class="tag">história</span><span class="tag">gratuito</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Rio Vermelho</div>
+    <p>Boêmio, gastronômico, artístico. Bares com história, pescadores, festa de Iemanjá, vida noturna com cultura. Contraste entre tradicional e contemporâneo.</p>
+    <div class="tags"><span class="tag gold">gastronomia</span><span class="tag">noturno</span><span class="tag">arte</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Farol da Barra</div>
+    <p>Pôr do sol mais famoso da cidade. Ideal para reflexões cinematográficas, treino outdoor, lifestyle. Visualmente poderoso sem nenhum custo.</p>
+    <div class="tags"><span class="tag gold">cinematográfico</span><span class="tag">treino</span><span class="tag">lifestyle</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Santo Antônio Além do Carmo</div>
+    <p>Um dos bairros mais preservados e menos explorados em conteúdo digital. Casarões históricos, ladeiras, vista panorâmica. Diferencial visual imenso.</p>
+    <div class="tags"><span class="tag gold">exclusivo</span><span class="tag">arquitetura</span><span class="tag">história</span></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sec-title" style="font-size:20px;margin-top:0">Tipos de Lugar → Estratégia</div>
+
+  <div class="two-col">
+    <div class="mini-card"><div class="label">Academias únicas</div><div class="val">Network + patrocínio fitness</div></div>
+    <div class="mini-card"><div class="label">Restaurantes temáticos</div><div class="val">Collab + gastronomia</div></div>
+    <div class="mini-card"><div class="label">Coworkings</div><div class="val">Business + comunidade</div></div>
+    <div class="mini-card"><div class="label">Eventos culturais</div><div class="val">Network orgânico</div></div>
+    <div class="mini-card"><div class="label">Livrarias</div><div class="val">Autoridade intelectual</div></div>
+    <div class="mini-card"><div class="label">Praias diferentes</div><div class="val">Treino + lifestyle</div></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sec-title" style="font-size:20px;margin-top:0">Viajando</div>
+
+  <div class="card">
+    <div class="card-title">Estratégia de viagem</div>
+    <p>Antes de qualquer viagem, mapeie: 3 lugares com narrativa forte, 1 experiência gastronômica, 1 lugar para treinar, 1 pessoa interessante para conversar.</p>
+    <p>Grave os 5 blocos em cada local. Uma viagem de 3 dias vira 2–3 vídeos longos + 10–15 shorts.</p>
+    <div class="tags"><span class="tag gold">planejamento antecipado</span><span class="tag">bloco modular</span></div>
+  </div>
+</div>
+
+<!-- PATROCÍNIO -->
+<div id="patrocinio" class="section">
+  <div class="sec-title">Patrocínio no Canal</div>
+  <div class="sec-sub">Como integrar desde o primeiro vídeo</div>
+
+  <div class="highlight">
+    <div class="hl-label">Princípio central</div>
+    <p>Nunca pareça anúncio. A marca entra como parte da experiência. Você usa, você vive, você menciona. Naturalidade gera conversão. Interrupção gera abandono.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Como integrar nos vídeos</div>
+    <p>Mencione o patrocinador no meio do vídeo, após um momento de engajamento alto — nunca no início nem no final. A integração precisa fazer sentido com o contexto do vídeo.</p>
+    <div class="quote"><p>"Falando em estrutura digital, a ferramenta que tenho usado para isso é..."</p></div>
+  </div>
+
+  <div class="sec-title" style="font-size:20px;margin-top:8px">Marcas para abordar agora</div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">FIT</span> Plataformas digitais</div>
+    <p>Hotmart, Kiwify, Eduzz — seu público compra cursos. Alto ticket de patrocínio. R$2k–5k por vídeo.</p>
+    <div class="tags"><span class="tag gold">alto ticket</span><span class="tag">fit perfeito</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">FIT</span> Ferramentas de IA e produtividade</div>
+    <p>Notion, ferramentas de automação, apps de IA, softwares de design. Seu público usa e precisa disso.</p>
+    <div class="tags"><span class="tag gold">tech</span><span class="tag">recorrente</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="card-num">LOCAL</span> Restaurantes e experiências em Salvador</div>
+    <p>Comece localmente. Ofereça aparecer em troca de experiência grátis. Isso gera vídeo, gera network, e vira portfólio para marcas maiores.</p>
+    <div class="tags"><span class="tag">baixo custo</span><span class="tag gold">portfólio</span><span class="tag">network</span></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sec-title" style="font-size:20px;margin-top:0">O Media Kit para YouTube</div>
+
+  <div class="two-col">
+    <div class="mini-card" style="border-color:rgba(201,168,76,0.3)"><div class="label">Views/mês</div><div class="val" style="color:var(--gold);font-size:18px;font-weight:600">2,4M</div></div>
+    <div class="mini-card"><div class="label">Contas alcançadas</div><div class="val">1,67M</div></div>
+    <div class="mini-card"><div class="label">Crescimento</div><div class="val">+169,8%</div></div>
+    <div class="mini-card"><div class="label">Canal</div><div class="val">Akasha Hub</div></div>
+  </div>
+
+  <div class="highlight">
+    <div class="hl-label">Abordagem que funciona</div>
+    <p><em style="color:var(--gold-light)">"Oi [nome], tive 2,4 milhões de views no último mês no Instagram. Estou lançando um canal no YouTube com conteúdo cinematográfico de lifestyle, tecnologia e autoconhecimento. Seu produto se encaixa perfeitamente na narrativa. Posso enviar o media kit e uma proposta rápida?"</em></p>
+  </div>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function toggleVtype(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.vtype-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.vtype-header').forEach(h => h.classList.remove('open'));
+  if (!isOpen) {
+    body.classList.add('open');
+    header.classList.add('open');
+  }
+}
+
+function toggleFav(item) {
+  item.classList.toggle('fav');
+  const star = item.querySelector('.fav-star');
+  if (item.classList.contains('fav')) {
+    if (!star) {
+      const s = document.createElement('div');
+      s.className = 'fav-star';
+      s.textContent = '★';
+      item.appendChild(s);
+    }
+  } else {
+    if (star) star.remove();
+  }
+}
+</script>
+</body>
+  </html>
