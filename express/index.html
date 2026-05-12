@@ -196,6 +196,7 @@ nav a:hover{color:var(--gold);}
 }
 .hero-sub strong{color:var(--text);}
 
+/* ── COUNTDOWN (ativo) ─────────────────────────────── */
 .countdown-wrap{
   display:flex;gap:24px;justify-content:center;margin:32px 0;
 }
@@ -213,6 +214,60 @@ nav a:hover{color:var(--gold);}
   color:var(--gold);line-height:1;
 }
 .cd-label{font-size:0.65rem;letter-spacing:2px;color:var(--muted);margin-top:4px;text-transform:uppercase;}
+
+/* ── ESTADO EXPIRADO ────────────────────────────────── */
+.countdown-expired{
+  display:none; /* mostrado via JS quando expirar */
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  margin:32px 0;
+  padding:28px 36px;
+  background:rgba(80,20,20,0.35);
+  border:1px solid rgba(220,60,60,0.3);
+  border-radius:16px;
+  backdrop-filter:blur(12px);
+  max-width:520px;
+  text-align:center;
+}
+.expired-icon{font-size:2.2rem;line-height:1;}
+.expired-title{
+  font-family:'Cinzel',serif;
+  font-size:1.1rem;letter-spacing:2px;
+  color:#e07070;
+  text-transform:uppercase;
+}
+.expired-body{
+  font-size:0.9rem;color:var(--muted);line-height:1.7;
+  letter-spacing:0.3px;
+}
+.expired-body strong{color:var(--text);}
+.expired-insta{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:0.8rem;letter-spacing:2px;
+  color:var(--violet);
+  border:1px solid rgba(192,132,252,0.3);
+  border-radius:40px;
+  padding:7px 18px;
+  background:rgba(91,33,182,0.1);
+  text-decoration:none;
+  transition:all var(--transition);
+}
+.expired-insta:hover{background:rgba(91,33,182,0.25);color:#d4b0ff;}
+
+/* botão desabilitado (expirado) */
+.btn-hero-disabled{
+  display:inline-block;
+  font-family:'Rajdhani',sans-serif;font-weight:700;
+  font-size:1rem;letter-spacing:3px;text-transform:uppercase;
+  padding:20px 50px;border-radius:50px;
+  background:rgba(80,60,80,0.4);
+  color:rgba(200,180,220,0.35);
+  border:1px solid rgba(140,100,160,0.2);
+  cursor:not-allowed;
+  pointer-events:none;
+  filter:grayscale(0.6);
+}
 
 .vagas-indicator{
   display:flex;align-items:center;gap:10px;
@@ -602,6 +657,21 @@ nav a:hover{color:var(--gold);}
   margin-top:14px;
 }
 
+/* preço expirado */
+.price-expired-notice{
+  display:none;
+  margin:0 auto 30px;
+  max-width:500px;
+  padding:20px 24px;
+  background:rgba(80,20,20,0.3);
+  border:1px solid rgba(220,80,80,0.25);
+  border-radius:12px;
+  font-size:0.9rem;color:rgba(220,160,160,0.8);
+  line-height:1.7;
+  letter-spacing:0.3px;
+}
+.price-expired-notice strong{color:#e07070;}
+
 /* TESTIMONIALS / PROOF */
 .proof-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
 .proof-card{
@@ -793,6 +863,22 @@ footer{
   background:#000;animation:blink 1s infinite;
 }
 
+/* botão flutuante expirado */
+.float-cta-expired{
+  position:fixed;bottom:28px;right:24px;z-index:90;
+  background:rgba(40,25,55,0.85);
+  color:rgba(180,160,210,0.45);
+  border:1px solid rgba(140,100,160,0.2);
+  border-radius:50px;
+  padding:14px 26px;
+  font-family:'Rajdhani',sans-serif;font-weight:700;
+  font-size:0.85rem;letter-spacing:2px;text-transform:uppercase;
+  cursor:default;
+  display:none;
+  align-items:center;gap:8px;
+  pointer-events:none;
+}
+
 /* RESPONSIVE */
 @media(max-width:768px){
   header{padding:14px 20px;}
@@ -844,7 +930,7 @@ footer{
     <a href="#mentor">Mentor</a>
     <a href="#preco">Investimento</a>
   </nav>
-  <button class="btn-nav" onclick="openModal()">Garantir Vaga</button>
+  <button class="btn-nav" id="header-cta-btn" onclick="openModal()">Garantir Vaga</button>
 </header>
 
 <!-- ===== HERO ===== -->
@@ -873,21 +959,36 @@ footer{
       Para quem está pronto para ir <strong>além da matrix.</strong>
     </p>
 
+    <!-- CONTADOR REAL — ativo enquanto não expirar -->
     <div class="countdown-wrap" id="countdown">
       <div class="cd-box"><span class="cd-num" id="cd-d">00</span><span class="cd-label">Dias</span></div>
       <div class="cd-box"><span class="cd-num" id="cd-h">00</span><span class="cd-label">Horas</span></div>
       <div class="cd-box"><span class="cd-num" id="cd-m">00</span><span class="cd-label">Min</span></div>
       <div class="cd-box"><span class="cd-num" id="cd-s">00</span><span class="cd-label">Seg</span></div>
     </div>
-    <p style="font-size:0.7rem;letter-spacing:2px;color:var(--muted);margin-top:-16px;margin-bottom:20px;">INSCRIÇÕES ENCERRAM EM</p>
+    <p id="cd-label-text" style="font-size:0.7rem;letter-spacing:2px;color:var(--muted);margin-top:-16px;margin-bottom:20px;">INSCRIÇÕES ENCERRAM EM</p>
+
+    <!-- ESTADO EXPIRADO — oculto, revelado pelo JS -->
+    <div class="countdown-expired" id="countdown-expired">
+      <div class="expired-icon">🔒</div>
+      <div class="expired-title">Desconto Indisponível por Tempo Indeterminado</div>
+      <div class="expired-body">
+        O ciclo atual foi encerrado.<br>
+        <strong>Em breve divulgaremos as novidades e novas vagas</strong> — fique de olho no Instagram e aqui nesta página para não perder o próximo ciclo.
+      </div>
+      <a href="https://instagram.com/akashahub" target="_blank" class="expired-insta">
+        📲 Seguir no Instagram para novidades
+      </a>
+    </div>
 
     <div class="vagas-indicator">
       <div class="vaga-dots" id="vaga-dots"></div>
       <span id="vagas-text">3 vagas preenchidas · 6 disponíveis</span>
     </div>
 
-    <button class="btn-hero" onclick="openModal()">⚡ Quero Meu Império Digital</button>
-    <p class="btn-hero-note">Sem taxa oculta · Acesso imediato ao processo · Suporte direto com o mentor</p>
+    <!-- Botão hero — substituído quando expirar -->
+    <button class="btn-hero" id="hero-main-btn" onclick="openModal()">⚡ Quero Meu Império Digital</button>
+    <p class="btn-hero-note" id="hero-btn-note">Sem taxa oculta · Acesso imediato ao processo · Suporte direto com o mentor</p>
   </div>
 
   <div class="scroll-down"><div class="scroll-arrow"></div>Explorar</div>
@@ -1232,7 +1333,7 @@ footer{
       <p class="scar-text">Para garantir a profundidade que cada mentorado merece, o ciclo é limitado a <strong style="color:var(--text);">9 pessoas</strong>. Não é estratégia de marketing — é compromisso com a qualidade. Quando as vagas acabam, o ciclo fecha.</p>
       <div class="spots-visual" id="spots-grid"></div>
       <p class="scar-text" style="color:var(--gold);font-weight:600;">Ciclo atual: <span id="taken-count">3</span> vagas preenchidas · <span id="open-count">6</span> disponíveis</p>
-      <button class="btn-hero" onclick="openModal()" style="margin-top:20px;">Garantir Minha Vaga Agora</button>
+      <button class="btn-hero" id="scarcity-cta-btn" onclick="openModal()" style="margin-top:20px;">Garantir Minha Vaga Agora</button>
     </div>
   </div>
 </div>
@@ -1254,13 +1355,20 @@ footer{
       <div class="pf">Suporte direto com o mentor</div>
       <div class="pf">Perfil Akáshico mapeado</div>
     </div>
-    <div class="price-old">De R$ 2.997,00</div>
-    <div class="price-value">R$ 999,99</div>
-    <div class="price-period">Pagamento único · Acesso imediato</div>
-    <button class="btn-hero" onclick="openModal()" style="font-size:1.1rem;padding:22px 60px;">
+    <!-- aviso expirado (oculto inicialmente) -->
+    <div class="price-expired-notice" id="price-expired-notice">
+      <strong>🔒 Desconto indisponível por tempo indeterminado.</strong><br>
+      O ciclo atual foi encerrado. Acompanhe o Instagram e esta página para saber quando o próximo ciclo abrirá com novas condições.
+    </div>
+    <div id="price-active-block">
+      <div class="price-old">De R$ 2.997,00</div>
+      <div class="price-value">R$ 999,99</div>
+      <div class="price-period">Pagamento único · Acesso imediato</div>
+    </div>
+    <button class="btn-hero" id="price-cta-btn" onclick="openModal()" style="font-size:1.1rem;padding:22px 60px;">
       🚀 Iniciar Meu Império Agora
     </button>
-    <p class="price-guarantee">🔒 Pague somente após confirmar sua vaga via WhatsApp</p>
+    <p class="price-guarantee" id="price-guarantee-text">🔒 Pague somente após confirmar sua vaga via WhatsApp</p>
   </div>
 </div>
 
@@ -1305,7 +1413,7 @@ footer{
   <div class="kicker reveal">O Momento é Agora</div>
   <h2 class="final-title reveal">Você pode continuar<br>planejando por mais um ano.<br>Ou pode <em>construir agora.</em></h2>
   <p class="final-sub reveal">A diferença entre quem tem um império digital e quem tem um sonho é uma decisão. Esta página existe porque você chegou até aqui. Isso já diz algo sobre você.</p>
-  <button class="btn-hero reveal" onclick="openModal()" style="font-size:1.05rem;padding:22px 56px;">
+  <button class="btn-hero reveal" id="final-cta-btn" onclick="openModal()" style="font-size:1.05rem;padding:22px 56px;">
     ✦ Garantir Minha Vaga — R$ 999,99
   </button>
   <p style="font-size:0.75rem;color:var(--muted);margin-top:16px;letter-spacing:1px;" class="reveal">
@@ -1328,11 +1436,16 @@ footer{
   <p class="footer-tagline">CLAREZA · HONESTIDADE · RESULTADOS</p>
 </footer>
 
-<!-- FLOATING CTA -->
-<button class="float-cta" onclick="openModal()">
+<!-- FLOATING CTA (ativo) -->
+<button class="float-cta" id="float-cta-active" onclick="openModal()">
   <span class="float-pulse"></span>
   Garantir Vaga
 </button>
+
+<!-- FLOATING CTA (expirado) -->
+<div class="float-cta-expired" id="float-cta-expired">
+  🔒 Ciclo Encerrado
+</div>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal">
@@ -1367,118 +1480,183 @@ footer{
   const canvas = document.getElementById('starfield');
   const ctx = canvas.getContext('2d');
   let W, H, stars = [];
-  
-  function resize(){
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
   function initStars(){
-    stars = [];
-    const count = Math.floor((W * H) / 8000);
+    stars=[];const count=Math.floor((W*H)/8000);
     for(let i=0;i<count;i++){
-      stars.push({
-        x: Math.random()*W,
-        y: Math.random()*H,
-        r: Math.random()*1.2 + 0.2,
-        o: Math.random()*0.7 + 0.1,
-        speed: Math.random()*0.3 + 0.05,
-        twinkle: Math.random()*Math.PI*2
-      });
+      stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+0.2,
+        o:Math.random()*0.7+0.1,speed:Math.random()*0.3+0.05,twinkle:Math.random()*Math.PI*2});
     }
   }
-  
-  let frame = 0;
+  let frame=0;
   function draw(){
-    ctx.clearRect(0,0,W,H);
-    frame += 0.01;
-    stars.forEach(s => {
-      s.twinkle += 0.02;
-      const opacity = s.o * (0.7 + 0.3 * Math.sin(s.twinkle));
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-      const hue = Math.random() > 0.85 ? '260,220,255' : '255,255,255';
-      ctx.fillStyle = `rgba(${hue},${opacity})`;
-      ctx.fill();
+    ctx.clearRect(0,0,W,H);frame+=0.01;
+    stars.forEach(s=>{
+      s.twinkle+=0.02;
+      const opacity=s.o*(0.7+0.3*Math.sin(s.twinkle));
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      const hue=Math.random()>0.85?'260,220,255':'255,255,255';
+      ctx.fillStyle=`rgba(${hue},${opacity})`;ctx.fill();
     });
-    // Subtle nebula particles
     for(let i=0;i<3;i++){
-      const x = W/2 + Math.cos(frame*0.3+i*2.1)*W*0.3;
-      const y = H/2 + Math.sin(frame*0.2+i*1.7)*H*0.3;
-      const g = ctx.createRadialGradient(x,y,0,x,y,150);
-      g.addColorStop(0, `rgba(91,33,182,0.03)`);
-      g.addColorStop(1, 'transparent');
-      ctx.fillStyle = g;
-      ctx.fillRect(0,0,W,H);
+      const x=W/2+Math.cos(frame*0.3+i*2.1)*W*0.3;
+      const y=H/2+Math.sin(frame*0.2+i*1.7)*H*0.3;
+      const g=ctx.createRadialGradient(x,y,0,x,y,150);
+      g.addColorStop(0,'rgba(91,33,182,0.03)');g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
     }
     requestAnimationFrame(draw);
   }
-  
-  resize();
-  initStars();
-  draw();
-  window.addEventListener('resize', ()=>{ resize(); initStars(); });
+  resize();initStars();draw();
+  window.addEventListener('resize',()=>{resize();initStars();});
 })();
 
 // ─── SPOTS VISUAL ─────────────────────────────────────
 (function(){
-  const taken = 3;
-  const total = 9;
-  const grid = document.getElementById('spots-grid');
+  const taken=3,total=9;
+  const grid=document.getElementById('spots-grid');
   for(let i=1;i<=total;i++){
-    const s = document.createElement('div');
-    s.className = 'spot ' + (i <= taken ? 'taken' : 'open');
-    s.textContent = i;
-    grid.appendChild(s);
+    const s=document.createElement('div');
+    s.className='spot '+(i<=taken?'taken':'open');
+    s.textContent=i;grid.appendChild(s);
   }
-  // Vaga dots header
-  const dotsEl = document.getElementById('vaga-dots');
+  const dotsEl=document.getElementById('vaga-dots');
   for(let i=1;i<=total;i++){
-    const d = document.createElement('div');
-    d.className = 'vaga-dot ' + (i <= taken ? 'taken' : 'avail');
+    const d=document.createElement('div');
+    d.className='vaga-dot '+(i<=taken?'taken':'avail');
     dotsEl.appendChild(d);
   }
-  document.getElementById('vagas-text').textContent = `${taken} vagas preenchidas · ${total-taken} disponíveis`;
-  document.getElementById('spots-count').textContent = total - taken;
-  document.getElementById('taken-count').textContent = taken;
-  document.getElementById('open-count').textContent = total - taken;
+  document.getElementById('vagas-text').textContent=`${taken} vagas preenchidas · ${total-taken} disponíveis`;
+  document.getElementById('spots-count').textContent=total-taken;
+  document.getElementById('taken-count').textContent=taken;
+  document.getElementById('open-count').textContent=total-taken;
 })();
 
-// ─── COUNTDOWN ────────────────────────────────────────
+// ─── COUNTDOWN REAL ───────────────────────────────────
+// Prazo fixo: 12 dias a partir de 12/05/2025 = 24/05/2025 às 23:59:59
 (function(){
-  // Set deadline: 7 days from now
-  const deadline = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  function update(){
-    const diff = deadline - Date.now();
-    if(diff <= 0){
-      document.getElementById('cd-d').textContent='00';
-      document.getElementById('cd-h').textContent='00';
-      document.getElementById('cd-m').textContent='00';
-      document.getElementById('cd-s').textContent='00';
-      return;
+  // Data de início: 12 de maio de 2025
+  // Deadline: 24 de maio de 2025, fim do dia (horário de Brasília = UTC-3)
+  const DEADLINE = new Date('2025-05-24T23:59:59-03:00');
+
+  function applyExpiredState(){
+    // Esconde o contador e o label
+    document.getElementById('countdown').style.display='none';
+    document.getElementById('cd-label-text').style.display='none';
+
+    // Mostra bloco expirado no hero
+    const expEl = document.getElementById('countdown-expired');
+    expEl.style.display = 'flex';
+
+    // Troca botão hero por versão desabilitada
+    const heroBtn = document.getElementById('hero-main-btn');
+    heroBtn.className = 'btn-hero-disabled';
+    heroBtn.onclick = null;
+    heroBtn.textContent = '🔒 Ciclo Encerrado';
+
+    // Oculta nota abaixo do botão
+    const note = document.getElementById('hero-btn-note');
+    if(note) note.style.display='none';
+
+    // Urgency bar
+    const bar = document.querySelector('.urgency-bar');
+    if(bar){
+      bar.innerHTML = '<span style="display:inline-block;width:8px;height:8px;background:#666;border-radius:50%;margin-right:8px;vertical-align:middle;"></span>' +
+        'CICLO ENCERRADO · DESCONTO INDISPONÍVEL · ACOMPANHE O INSTAGRAM PARA NOVIDADES';
+      bar.style.color='rgba(180,160,210,0.5)';
+      bar.style.borderBottomColor='rgba(139,92,246,0.15)';
     }
-    const d = Math.floor(diff/86400000);
-    const h = Math.floor((diff%86400000)/3600000);
-    const m = Math.floor((diff%3600000)/60000);
-    const s = Math.floor((diff%60000)/1000);
+
+    // Troca botão da seção de escassez
+    const scarBtn = document.getElementById('scarcity-cta-btn');
+    if(scarBtn){
+      scarBtn.className = 'btn-hero-disabled';
+      scarBtn.onclick = null;
+      scarBtn.textContent = '🔒 Ciclo Encerrado';
+    }
+
+    // Preço: mostra aviso expirado, oculta preço ativo
+    const expNotice = document.getElementById('price-expired-notice');
+    const priceBlock = document.getElementById('price-active-block');
+    if(expNotice) expNotice.style.display='block';
+    if(priceBlock) priceBlock.style.display='none';
+
+    // Troca botão de preço
+    const priceBtn = document.getElementById('price-cta-btn');
+    if(priceBtn){
+      priceBtn.className = 'btn-hero-disabled';
+      priceBtn.onclick = null;
+      priceBtn.style.fontSize='1.1rem';
+      priceBtn.style.padding='22px 60px';
+      priceBtn.textContent = '🔒 Inscrições Encerradas';
+    }
+    const priceguarantee = document.getElementById('price-guarantee-text');
+    if(priceguarantee){
+      priceguarantee.textContent = 'Acompanhe o Instagram para saber quando o próximo ciclo abrirá';
+    }
+
+    // Troca botão final CTA
+    const finalBtn = document.getElementById('final-cta-btn');
+    if(finalBtn){
+      finalBtn.className = 'btn-hero-disabled reveal visible';
+      finalBtn.onclick = null;
+      finalBtn.style.fontSize='1.05rem';
+      finalBtn.style.padding='22px 56px';
+      finalBtn.textContent = '🔒 Aguardando Próximo Ciclo';
+    }
+
+    // Troca botão header
+    const headerBtn = document.getElementById('header-cta-btn');
+    if(headerBtn){
+      headerBtn.style.borderColor='rgba(139,92,246,0.2)';
+      headerBtn.style.color='rgba(180,160,210,0.4)';
+      headerBtn.style.cursor='default';
+      headerBtn.style.pointerEvents='none';
+      headerBtn.textContent='Ciclo Encerrado';
+    }
+
+    // Troca botão flutuante
+    const floatActive = document.getElementById('float-cta-active');
+    const floatExpired = document.getElementById('float-cta-expired');
+    if(floatActive) floatActive.style.display='none';
+    if(floatExpired) floatExpired.style.display='flex';
+  }
+
+  function tick(){
+    const now = Date.now();
+    const diff = DEADLINE.getTime() - now;
+
+    if(diff <= 0){
+      // Zera o contador e aplica estado expirado
+      ['cd-d','cd-h','cd-m','cd-s'].forEach(id=>{
+        document.getElementById(id).textContent='00';
+      });
+      applyExpiredState();
+      return; // para o setInterval chamado logo abaixo
+    }
+
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
     document.getElementById('cd-d').textContent = String(d).padStart(2,'0');
     document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
     document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
     document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
   }
-  update();
-  setInterval(update,1000);
+
+  tick(); // executa imediatamente para evitar flash de "00:00:00:00"
+  const timer = setInterval(()=>{
+    const diff = DEADLINE.getTime() - Date.now();
+    if(diff <= 0){ clearInterval(timer); applyExpiredState(); return; }
+    tick();
+  }, 1000);
 })();
 
 // ─── REVEAL ON SCROLL ─────────────────────────────────
 (function(){
-  const obs = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        e.target.classList.add('visible');
-        obs.unobserve(e.target);
-      }
-    });
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
   },{threshold:0.12});
   document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 })();
@@ -1486,8 +1664,8 @@ footer{
 // ─── FAQ ACCORDION ────────────────────────────────────
 document.querySelectorAll('.faq-q').forEach(q=>{
   q.addEventListener('click',()=>{
-    const item = q.parentElement;
-    const isOpen = item.classList.contains('open');
+    const item=q.parentElement;
+    const isOpen=item.classList.contains('open');
     document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
     if(!isOpen) item.classList.add('open');
   });
@@ -1502,30 +1680,16 @@ function closeModal(){
   document.getElementById('modal').classList.remove('active');
   document.body.style.overflow='';
 }
-document.getElementById('modal').addEventListener('click',function(e){
-  if(e.target===this) closeModal();
-});
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
 function sendToWhatsApp(){
-  const name = document.getElementById('m-name').value.trim();
-  const phone = document.getElementById('m-phone').value.trim();
-  const area = document.getElementById('m-area').value.trim();
-  const msg = document.getElementById('m-msg').value.trim();
-  
-  if(!name || !phone){
-    alert('Por favor, preencha pelo menos seu nome e WhatsApp.');
-    return;
-  }
-  
-  const text = `Olá, Yan! Sou ${name} e tenho interesse na Mentoria Express (9 dias · R$999,99).
-
-📱 Meu WhatsApp: ${phone}
-🎯 Minha área: ${area || 'Prefiro conversar'}
-💬 Meu desafio: ${msg || 'Prefiro falar na chamada'}
-
-Gostaria de garantir minha vaga no próximo ciclo!`;
-
+  const name=document.getElementById('m-name').value.trim();
+  const phone=document.getElementById('m-phone').value.trim();
+  const area=document.getElementById('m-area').value.trim();
+  const msg=document.getElementById('m-msg').value.trim();
+  if(!name||!phone){alert('Por favor, preencha pelo menos seu nome e WhatsApp.');return;}
+  const text=`Olá, Yan! Sou ${name} e tenho interesse na Mentoria Express (9 dias · R$999,99).\n\n📱 Meu WhatsApp: ${phone}\n🎯 Minha área: ${area||'Prefiro conversar'}\n💬 Meu desafio: ${msg||'Prefiro falar na chamada'}\n\nGostaria de garantir minha vaga no próximo ciclo!`;
   window.open(`https://wa.me/5571983448621?text=${encodeURIComponent(text)}`,'_blank');
   closeModal();
 }
@@ -1534,16 +1698,15 @@ Gostaria de garantir minha vaga no próximo ciclo!`;
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',e=>{
     e.preventDefault();
-    const t = document.querySelector(a.getAttribute('href'));
+    const t=document.querySelector(a.getAttribute('href'));
     if(t) t.scrollIntoView({behavior:'smooth'});
   });
 });
 
 // ─── PARALLAX SUBTLE ──────────────────────────────────
 window.addEventListener('scroll',()=>{
-  const y = window.scrollY;
-  document.querySelector('.nebula').style.transform = `translateY(${y*0.15}px)`;
+  document.querySelector('.nebula').style.transform=`translateY(${window.scrollY*0.15}px)`;
 });
 </script>
 </body>
-</html>
+        </html>
