@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akasha Hub | Blog</title>
+  <link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06050a; --gold: #c9a227; --gold-light: #f0d078;
+      --gold-border: rgba(201,162,39,.28); --white: #f5f0e8;
+      --muted: rgba(245,240,232,.38); --card: rgba(255,255,255,.022);
+      --admin-color: #a78bfa;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg); color: var(--white);
+      font-family: 'Josefin Sans', sans-serif; font-weight: 300;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    body::before {
+      content:''; position:fixed; top:-15%; left:50%; transform:translateX(-50%);
+      width:800px; height:700px;
+      background: radial-gradient(ellipse, rgba(201,162,39,.05) 0%, transparent 65%);
+      pointer-events:none; animation: breathe 10s ease-in-out infinite;
+    }
+    @keyframes breathe { 0%,100%{opacity:.5;} 50%{opacity:1;} }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 32px; background: rgba(6,5,10,.9);
+      backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.04);
+    }
+    .nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
+    .nav-logo img { width:34px; height:34px; border-radius:50%; filter:drop-shadow(0 0 6px rgba(201,162,39,.3)); }
+    .nav-logo span { font-family:'Cormorant Garamond',serif; font-size:1.05rem; letter-spacing:4px; color:var(--white); }
+    .nav-logo span b { color:var(--gold-light); font-weight:400; }
+    .nav-right { display:flex; align-items:center; gap:12px; }
+    .nav-back { font-size:.52rem; letter-spacing:4px; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color .3s; }
+    .nav-back:hover { color:var(--gold); }
+    .admin-badge {
+      font-size:.45rem; letter-spacing:4px; text-transform:uppercase;
+      color:var(--admin-color); border:1px solid rgba(167,139,250,.3);
+      padding:5px 12px; border-radius:20px; background:rgba(167,139,250,.06);
+      display:none;
+    }
+    .admin-badge.show { display:inline-block; }
+
+    /* MAIN */
+    main { max-width:720px; margin:0 auto; padding:110px 24px 80px; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+
+    /* HEADER */
+    .blog-header { margin-bottom:48px; animation:fadeUp .8s ease both; }
+    .blog-eyebrow { font-size:.5rem; letter-spacing:6px; text-transform:uppercase; color:var(--gold); opacity:.6; margin-bottom:12px; }
+    .blog-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:2.6rem; letter-spacing:3px; line-height:1.1; }
+    .blog-title em { font-style:italic; color:var(--gold-light); }
+    .blog-sub { font-size:.65rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-top:12px; }
+
+    /* ADMIN PANEL */
+    .admin-panel {
+      display:none; margin-bottom:40px;
+      background:linear-gradient(135deg, rgba(167,139,250,.06), rgba(201,162,39,.04));
+      border:1px solid rgba(167,139,250,.2); border-radius:2px;
+      padding:28px; animation:fadeUp .5s ease both;
+    }
+    .admin-panel.show { display:block; }
+    .admin-label { font-size:.48rem; letter-spacing:5px; text-transform:uppercase; color:var(--admin-color); opacity:.7; margin-bottom:20px; }
+    .field { display:flex; flex-direction:column; gap:7px; margin-bottom:14px; }
+    .field label { font-size:.5rem; letter-spacing:4px; text-transform:uppercase; color:var(--gold); opacity:.6; }
+    .field input, .field textarea, .field select {
+      background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08);
+      border-radius:2px; padding:12px 16px; color:var(--white);
+      font-family:'Josefin Sans',sans-serif; font-weight:300; font-size:.85rem;
+      letter-spacing:.5px; outline:none; transition:border-color .3s;
+    }
+    .field input:focus, .field textarea:focus { border-color:var(--gold-border); }
+    .field textarea { min-height:180px; resize:vertical; line-height:1.8; }
+    .field select { cursor:pointer; }
+    .field select option { background:var(--bg); }
+    .admin-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
+    .btn-publish {
+      background:linear-gradient(135deg, rgba(167,139,250,.2), rgba(167,139,250,.1));
+      border:1px solid rgba(167,139,250,.4); border-radius:2px;
+      padding:11px 26px; color:var(--admin-color);
+      font-family:'Josefin Sans',sans-serif; font-size:.55rem;
+      letter-spacing:4px; text-transform:uppercase; cursor:pointer; transition:all .3s;
+    }
+    .btn-publish:hover { background:rgba(167,139,250,.25); border-color:rgba(167,139,250,.7); }
+    .btn-cancel-edit {
+      background:none; border:1px solid rgba(255,255,255,.1); border-radius:2px;
+      padding:11px 22px; color:var(--muted);
+      font-family:'Josefin Sans',sans-serif; font-size:.55rem;
+      letter-spacing:4px; text-transform:uppercase; cursor:pointer; transition:all .3s;
+      display:none;
+    }
+    .btn-cancel-edit.show { display:inline-flex; }
+    .btn-cancel-edit:hover { border-color:rgba(255,255,255,.25); color:var(--white); }
+
+    /* CATEGORY FILTER */
+    .filters {
+      display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px;
+      animation:fadeUp .6s .1s ease both; opacity:0;
+    }
+    .filter-btn {
+      font-size:.48rem; letter-spacing:4px; text-transform:uppercase;
+      padding:7px 16px; border-radius:20px; border:1px solid rgba(255,255,255,.08);
+      background:none; color:var(--muted); cursor:pointer; transition:all .3s;
+    }
+    .filter-btn:hover { border-color:var(--gold-border); color:var(--gold); }
+    .filter-btn.active { border-color:var(--gold); color:var(--gold-light); background:rgba(201,162,39,.07); }
+
+    /* POSTS */
+    #postsContainer { display:flex; flex-direction:column; gap:2px; }
+
+    .post-card {
+      background:var(--card); border:1px solid rgba(255,255,255,.05);
+      border-radius:2px; overflow:hidden;
+      animation:fadeUp .6s ease both; opacity:0;
+      transition:border-color .35s, background .35s;
+      position:relative;
+    }
+    .post-card::after {
+      content:''; position:absolute; bottom:0; left:0;
+      width:0; height:1px;
+      background:linear-gradient(90deg, var(--gold), transparent);
+      transition:width .5s ease;
+    }
+    .post-card:hover { border-color:var(--gold-border); background:rgba(201,162,39,.025); }
+    .post-card:hover::after { width:100%; }
+
+    /* Post header (clickable toggle) */
+    .post-header {
+      display:flex; align-items:flex-start; justify-content:space-between;
+      padding:24px 28px; cursor:pointer; gap:16px;
+    }
+    .post-meta { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+    .post-cat {
+      font-size:.42rem; letter-spacing:4px; text-transform:uppercase;
+      color:var(--gold); border:1px solid var(--gold-border);
+      padding:3px 10px; border-radius:20px; background:rgba(201,162,39,.05);
+    }
+    .post-date { font-size:.45rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
+    .post-title {
+      font-family:'Cormorant Garamond',serif; font-weight:400;
+      font-size:1.35rem; letter-spacing:1.5px; line-height:1.25;
+    }
+    .post-excerpt {
+      font-size:.72rem; letter-spacing:.5px; line-height:1.8;
+      color:var(--muted); margin-top:6px;
+    }
+    .post-expand-icon {
+      color:var(--gold); opacity:.5; font-size:.9rem; flex-shrink:0;
+      margin-top:4px; transition:transform .35s;
+    }
+    .post-card.open .post-expand-icon { transform:rotate(90deg); }
+
+    /* Post body (expanded) */
+    .post-body {
+      max-height:0; overflow:hidden;
+      transition:max-height .5s cubic-bezier(.25,1,.5,1), opacity .4s;
+      opacity:0;
+    }
+    .post-card.open .post-body { max-height:2000px; opacity:1; }
+    .post-content {
+      padding:0 28px 28px;
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.1rem; line-height:1.9; letter-spacing:.4px;
+      color:rgba(245,240,232,.8);
+      border-top:1px solid rgba(255,255,255,.04);
+      padding-top:24px;
+      margin-top:0;
+      white-space:pre-wrap;
+    }
+
+    /* Admin actions on post */
+    .post-admin-actions {
+      display:none; padding:14px 28px;
+      border-top:1px solid rgba(167,139,250,.08);
+      gap:10px;
+    }
+    .post-admin-actions.show { display:flex; }
+    .btn-edit-post, .btn-delete-post {
+      font-size:.45rem; letter-spacing:3px; text-transform:uppercase;
+      padding:6px 14px; border-radius:2px; cursor:pointer; transition:all .3s;
+      font-family:'Josefin Sans',sans-serif;
+    }
+    .btn-edit-post {
+      background:none; border:1px solid rgba(167,139,250,.3); color:var(--admin-color);
+    }
+    .btn-edit-post:hover { background:rgba(167,139,250,.1); }
+    .btn-delete-post {
+      background:none; border:1px solid rgba(226,75,74,.25); color:#e24b4a;
+    }
+    .btn-delete-post:hover { background:rgba(226,75,74,.08); }
+
+    /* Empty state */
+    .empty-state {
+      text-align:center; padding:60px 0; opacity:0;
+      animation:fadeUp .6s .3s ease forwards;
+    }
+    .empty-icon { font-size:2rem; color:var(--gold); opacity:.2; margin-bottom:16px; }
+    .empty-txt {
+      font-family:'Cormorant Garamond',serif; font-style:italic;
+      font-size:1.1rem; letter-spacing:1.5px; color:var(--muted);
+    }
+
+    /* TOAST */
+    .toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+      background:rgba(10,9,16,.96); border:1px solid var(--gold-border);
+      padding:10px 24px; font-size:.5rem; letter-spacing:3px; text-transform:uppercase;
+      color:var(--white); opacity:0; transition:all .35s; pointer-events:none; z-index:9999;
+      white-space:nowrap;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* LOADING */
+    #ls {
+      position:fixed; inset:0; background:var(--bg);
+      display:flex; align-items:center; justify-content:center; z-index:999; transition:opacity .5s;
+    }
+    #ls.hide { opacity:0; pointer-events:none; }
+    #ls span {
+      font-size:.55rem; letter-spacing:6px; text-transform:uppercase;
+      color:var(--gold); opacity:.5; animation:pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:.3;} 50%{opacity:.8;} }
+
+    .d1{animation-delay:.05s} .d2{animation-delay:.1s} .d3{animation-delay:.15s}
+    .d4{animation-delay:.2s} .d5{animation-delay:.25s} .d6{animation-delay:.3s}
+  </style>
+</head>
+<body>
+
+<div id="ls"><span>Carregando...</span></div>
+
+<nav>
+  <a href="/dashboard/" class="nav-logo">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Logo">
+    <span>AK<b>A</b>SHA <b>HUB</b></span>
+  </a>
+  <div class="nav-right">
+    <span class="admin-badge" id="adminBadge">✦ Admin</span>
+    <a href="/dashboard/" class="nav-back">← Dashboard</a>
+  </div>
+</nav>
+
+<main>
+  <div class="blog-header">
+    <p class="blog-eyebrow">𓂀 Transmissões do Campo</p>
+    <h1 class="blog-title">Blog <em>Akasha</em></h1>
+    <p class="blog-sub">Artigos · Reflexões · Arquitetura de Essência</p>
+  </div>
+
+  <!-- ADMIN PANEL (só aparece pro admin) -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-label">✦ Painel Admin — Criar / Editar Post</div>
+    <input type="hidden" id="editPostId">
+    <div class="field">
+      <label>Título do Post</label>
+      <input type="text" id="postTitle" placeholder="Título do artigo ou reflexão...">
+    </div>
+    <div class="field">
+      <label>Categoria</label>
+      <select id="postCat">
+        <option value="Essência">Essência</option>
+        <option value="Império Digital">Império Digital</option>
+        <option value="Quantum">Quantum</option>
+        <option value="Mentoria">Mentoria</option>
+        <option value="Reflexão">Reflexão</option>
+        <option value="Akáshico">Akáshico</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Resumo (aparece na listagem)</label>
+      <input type="text" id="postExcerpt" placeholder="Uma frase que resume o post...">
+    </div>
+    <div class="field">
+      <label>Conteúdo completo</label>
+      <textarea id="postContent" placeholder="Escreva o conteúdo completo do artigo aqui..."></textarea>
+    </div>
+    <div class="admin-actions">
+      <button class="btn-publish" id="btnPublish" onclick="publicarPost()">✦ Publicar</button>
+      <button class="btn-cancel-edit" id="btnCancelEdit" onclick="cancelarEdicao()">Cancelar edição</button>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filters" id="filtersBar">
+    <button class="filter-btn active" data-cat="Todos" onclick="filtrar(this)">Todos</button>
+    <button class="filter-btn" data-cat="Essência" onclick="filtrar(this)">Essência</button>
+    <button class="filter-btn" data-cat="Império Digital" onclick="filtrar(this)">Império Digital</button>
+    <button class="filter-btn" data-cat="Quantum" onclick="filtrar(this)">Quantum</button>
+    <button class="filter-btn" data-cat="Mentoria" onclick="filtrar(this)">Mentoria</button>
+    <button class="filter-btn" data-cat="Reflexão" onclick="filtrar(this)">Reflexão</button>
+    <button class="filter-btn" data-cat="Akáshico" onclick="filtrar(this)">Akáshico</button>
+  </div>
+
+  <div id="postsContainer"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, doc, updateDoc,
+    deleteDoc, serverTimestamp, orderBy, query, getDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+    authDomain: "hub-akasha.firebaseapp.com",
+    projectId: "hub-akasha",
+    storageBucket: "hub-akasha.firebasestorage.app",
+    messagingSenderId: "370851875474",
+    appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+  });
+
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  // ══════════════════════════════════════════
+  // ⚠️ COLOQUE AQUI SEU UID DO FIREBASE
+  // Para descobrir: faça login e abra o console do navegador
+  // e rode: firebase.auth().currentUser.uid
+  // ══════════════════════════════════════════
+  const ADMIN_UID = "SEU_UID_AQUI"; // ex: "abc123XYZ456"
+
+  let isAdmin = false;
+  let allPosts = [];
+  let categoriaAtiva = "Todos";
+
+  // Auth
+  onAuthStateChanged(auth, async user => {
+    if (user && user.uid === ADMIN_UID) {
+      isAdmin = true;
+      document.getElementById('adminPanel').classList.add('show');
+      document.getElementById('adminBadge').classList.add('show');
+    }
+    await carregarPosts();
+    document.getElementById('ls').classList.add('hide');
+  });
+
+  // Sem auth, carrega os posts public mesmo
+  setTimeout(async () => {
+    if (!document.getElementById('ls').classList.contains('hide')) {
+      await carregarPosts();
+      document.getElementById('ls').classList.add('hide');
+    }
+  }, 3000);
+
+  // ── Carregar posts ──────────────────────────────────
+  async function carregarPosts() {
+    const q = query(collection(db, "blog_posts"), orderBy("criadoEm", "desc"));
+    const snap = await getDocs(q);
+    allPosts = [];
+    snap.forEach(d => allPosts.push({ id: d.id, ...d.data() }));
+    renderPosts();
+  }
+
+  // ── Renderizar posts com filtro ─────────────────────
+  function renderPosts() {
+    const container = document.getElementById('postsContainer');
+    container.innerHTML = '';
+    const filtrados = categoriaAtiva === "Todos"
+      ? allPosts
+      : allPosts.filter(p => p.categoria === categoriaAtiva);
+
+    if (filtrados.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">◈</div>
+          <p class="empty-txt">Nenhum post por aqui ainda...</p>
+        </div>`;
+      return;
+    }
+
+    filtrados.forEach((post, i) => {
+      const delay = Math.min(i * 0.05, 0.4);
+      const data = post.criadoEm?.toDate
+        ? post.criadoEm.toDate().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})
+        : '—';
+
+      const card = document.createElement('div');
+      card.className = 'post-card';
+      card.style.animationDelay = delay + 's';
+      card.dataset.id = post.id;
+
+      card.innerHTML = `
+        <div class="post-header" onclick="togglePost('${post.id}')">
+          <div style="flex:1">
+            <div class="post-meta">
+              <span class="post-cat">${post.categoria || 'Geral'}</span>
+              <span class="post-date">${data}</span>
+            </div>
+            <div class="post-title">${escHtml(post.titulo)}</div>
+            ${post.resumo ? `<div class="post-excerpt">${escHtml(post.resumo)}</div>` : ''}
+          </div>
+          <span class="post-expand-icon">›</span>
+        </div>
+        <div class="post-body">
+          <div class="post-content">${escHtml(post.conteudo)}</div>
+        </div>
+        ${isAdmin ? `
+        <div class="post-admin-actions show">
+          <button class="btn-edit-post" onclick="iniciarEdicao('${post.id}')">Editar</button>
+          <button class="btn-delete-post" onclick="deletarPost('${post.id}')">Excluir</button>
+        </div>` : ''}
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // ── Toggle post aberto/fechado ──────────────────────
+  window.togglePost = (id) => {
+    const card = document.querySelector(`.post-card[data-id="${id}"]`);
+    if (!card) return;
+    const isOpen = card.classList.contains('open');
+    document.querySelectorAll('.post-card.open').forEach(c => c.classList.remove('open'));
+    if (!isOpen) card.classList.add('open');
+  };
+
+  // ── Filtro de categoria ─────────────────────────────
+  window.filtrar = (btn) => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    categoriaAtiva = btn.dataset.cat;
+    renderPosts();
+  };
+
+  // ── Publicar / Atualizar post ───────────────────────
+  window.publicarPost = async () => {
+    if (!isAdmin) return;
+    const titulo   = document.getElementById('postTitle').value.trim();
+    const cat      = document.getElementById('postCat').value;
+    const resumo   = document.getElementById('postExcerpt').value.trim();
+    const conteudo = document.getElementById('postContent').value.trim();
+    const editId   = document.getElementById('editPostId').value;
+
+    if (!titulo || !conteudo) { toast('Preencha título e conteúdo ✦'); return; }
+
+    const dados = { titulo, categoria: cat, resumo, conteudo };
+
+    if (editId) {
+      await updateDoc(doc(db, "blog_posts", editId), { ...dados, atualizadoEm: serverTimestamp() });
+      toast('✓ Post atualizado');
+    } else {
+      await addDoc(collection(db, "blog_posts"), { ...dados, criadoEm: serverTimestamp(), autorUid: ADMIN_UID });
+      toast('✦ Post publicado com sucesso');
+    }
+    limparForm();
+    await carregarPosts();
+  };
+
+  // ── Editar post ─────────────────────────────────────
+  window.iniciarEdicao = async (id) => {
+    const post = allPosts.find(p => p.id === id);
+    if (!post) return;
+    document.getElementById('postTitle').value   = post.titulo || '';
+    document.getElementById('postCat').value     = post.categoria || 'Essência';
+    document.getElementById('postExcerpt').value = post.resumo || '';
+    document.getElementById('postContent').value = post.conteudo || '';
+    document.getElementById('editPostId').value  = id;
+    document.getElementById('btnPublish').textContent = '✦ Salvar alterações';
+    document.getElementById('btnCancelEdit').classList.add('show');
+    document.getElementById('adminPanel').scrollIntoView({ behavior:'smooth' });
+  };
+
+  // ── Cancelar edição ─────────────────────────────────
+  window.cancelarEdicao = () => { limparForm(); };
+
+  function limparForm() {
+    document.getElementById('postTitle').value   = '';
+    document.getElementById('postExcerpt').value = '';
+    document.getElementById('postContent').value = '';
+    document.getElementById('editPostId').value  = '';
+    document.getElementById('btnPublish').textContent = '✦ Publicar';
+    document.getElementById('btnCancelEdit').classList.remove('show');
+  }
+
+  // ── Deletar post ────────────────────────────────────
+  window.deletarPost = async (id) => {
+    if (!isAdmin) return;
+    if (!confirm('Excluir este post permanentemente?')) return;
+    await deleteDoc(doc(db, "blog_posts", id));
+    toast('Post excluído');
+    await carregarPosts();
+  };
+
+  // ── Helpers ─────────────────────────────────────────
+  function escHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function toast(msg, d=3000) {
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), d);
+  }
+</script>
+</body>
+</html>
