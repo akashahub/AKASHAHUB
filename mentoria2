@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akasha Hub | Mentoria — Apostilas</title>
+  <link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06050a; --gold: #c9a227; --gold-light: #f0d078;
+      --gold-border: rgba(201,162,39,.28); --white: #f5f0e8;
+      --muted: rgba(245,240,232,.38); --card: rgba(255,255,255,.022);
+      --purple: #7c4dbd; --purple-lt: #a67fdc;
+      --purple-border: rgba(166,127,220,.3);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background:var(--bg); color:var(--white);
+      font-family:'Josefin Sans',sans-serif; font-weight:300;
+      min-height:100vh; overflow-x:hidden;
+    }
+    body::before {
+      content:''; position:fixed; top:-10%; left:50%; transform:translateX(-50%);
+      width:800px; height:700px;
+      background:radial-gradient(ellipse, rgba(124,77,189,.08) 0%, rgba(201,162,39,.04) 50%, transparent 70%);
+      pointer-events:none; animation:breathe 12s ease-in-out infinite;
+    }
+    @keyframes breathe { 0%,100%{opacity:.6;} 50%{opacity:1;} }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 32px; background:rgba(6,5,10,.92);
+      backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.04);
+    }
+    .nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
+    .nav-logo img { width:34px; height:34px; border-radius:50%; filter:drop-shadow(0 0 6px rgba(201,162,39,.3)); }
+    .nav-logo span { font-family:'Cormorant Garamond',serif; font-size:1.05rem; letter-spacing:4px; color:var(--white); }
+    .nav-logo span b { color:var(--gold-light); font-weight:400; }
+    .nav-back { font-size:.52rem; letter-spacing:4px; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color .3s; }
+    .nav-back:hover { color:var(--gold); }
+
+    /* LOADING */
+    #ls {
+      position:fixed; inset:0; background:var(--bg);
+      display:flex; align-items:center; justify-content:center; z-index:999; transition:opacity .5s;
+    }
+    #ls.hide { opacity:0; pointer-events:none; }
+    #ls span {
+      font-size:.55rem; letter-spacing:6px; text-transform:uppercase;
+      color:var(--gold); opacity:.5; animation:pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:.3;} 50%{opacity:.8;} }
+
+    /* MAIN */
+    main { max-width:680px; margin:0 auto; padding:110px 24px 80px; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+
+    /* HEADER */
+    .page-header { margin-bottom:48px; animation:fadeUp .8s ease both; }
+    .page-eyebrow { font-size:.5rem; letter-spacing:6px; text-transform:uppercase; color:var(--purple-lt); opacity:.7; margin-bottom:12px; }
+    .page-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:2.4rem; letter-spacing:3px; line-height:1.1; }
+    .page-title em { font-style:italic; color:var(--gold-light); }
+    .page-sub { font-size:.62rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-top:14px; line-height:2; }
+
+    /* PROGRESS */
+    .progress-wrap { margin-bottom:40px; animation:fadeUp .6s .1s ease both; opacity:0; }
+    .progress-row {
+      display:flex; justify-content:space-between;
+      font-size:.5rem; letter-spacing:4px; text-transform:uppercase;
+      color:var(--muted); margin-bottom:8px;
+    }
+    .progress-bar { height:2px; background:rgba(255,255,255,.05); border-radius:2px; overflow:hidden; }
+    .progress-fill {
+      height:100%;
+      background:linear-gradient(90deg, var(--purple), var(--gold-light));
+      border-radius:2px; transition:width .8s cubic-bezier(.25,1,.5,1);
+    }
+
+    /* PILAR SECTIONS */
+    .pilar-section { margin-bottom:36px; animation:fadeUp .6s ease both; opacity:0; }
+    .pilar-label {
+      font-size:.5rem; letter-spacing:5px; text-transform:uppercase;
+      color:var(--purple-lt); opacity:.6; margin-bottom:14px;
+      display:flex; align-items:center; gap:12px;
+    }
+    .pilar-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg, var(--purple-border), transparent); }
+
+    /* APOSTILA BUTTON */
+    .apostila-btn {
+      width:100%; display:flex; align-items:center; justify-content:space-between;
+      padding:18px 22px; margin-bottom:6px; border-radius:2px;
+      background:var(--card); border:1px solid rgba(255,255,255,.05);
+      cursor:pointer; transition:all .3s ease; position:relative; overflow:hidden;
+      text-align:left;
+    }
+    .apostila-btn::after {
+      content:''; position:absolute; bottom:0; left:0;
+      width:0; height:1px;
+      background:linear-gradient(90deg, var(--purple-lt), var(--gold), transparent);
+      transition:width .5s;
+    }
+    .apostila-btn:hover { border-color:var(--purple-border); background:rgba(124,77,189,.04); }
+    .apostila-btn:hover::after { width:100%; }
+    .apostila-btn.concluida { border-color:rgba(74,222,128,.12); background:rgba(74,222,128,.02); }
+    .apostila-btn.concluida::before {
+      content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+      background:rgba(74,222,128,.5);
+    }
+
+    .ap-left { display:flex; align-items:center; gap:14px; }
+    .ap-num {
+      width:34px; height:34px; border-radius:50%; flex-shrink:0;
+      border:1px solid var(--purple-border);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Cormorant Garamond',serif; font-size:.9rem; color:var(--purple-lt);
+      background:rgba(124,77,189,.06);
+    }
+    .apostila-btn.concluida .ap-num {
+      border-color:rgba(74,222,128,.3); color:rgba(74,222,128,.8);
+      background:rgba(74,222,128,.05);
+    }
+    .ap-title { font-family:'Cormorant Garamond',serif; font-size:1rem; letter-spacing:1.5px; }
+    .ap-status {
+      font-size:.42rem; letter-spacing:3px; text-transform:uppercase;
+      margin-top:3px;
+    }
+    .ap-status.pending { color:var(--muted); }
+    .ap-status.done { color:rgba(74,222,128,.7); }
+    .ap-arrow { font-size:.8rem; color:var(--purple-lt); opacity:.5; flex-shrink:0; }
+
+    /* ═══════════════════════════════
+       MODAL APOSTILA
+    ═══════════════════════════════ */
+    .modal-overlay {
+      position:fixed; inset:0; z-index:500;
+      background:rgba(4,3,9,.88); backdrop-filter:blur(16px);
+      display:flex; align-items:flex-end; justify-content:center;
+      opacity:0; pointer-events:none; transition:opacity .4s;
+    }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+
+    .modal {
+      width:100%; max-width:640px; max-height:92vh;
+      background:linear-gradient(160deg, #0e0a1f 0%, #09071a 100%);
+      border:1px solid var(--purple-border); border-bottom:none;
+      border-radius:16px 16px 0 0; overflow:hidden;
+      display:flex; flex-direction:column;
+      transform:translateY(100%); transition:transform .5s cubic-bezier(.16,1,.3,1);
+    }
+    .modal-overlay.open .modal { transform:translateY(0); }
+
+    /* Corners */
+    .modal::before {
+      content:''; position:absolute; top:0; left:0; width:24px; height:24px;
+      border-top:2px solid rgba(166,127,220,.5); border-left:2px solid rgba(166,127,220,.5);
+      border-radius:14px 0 0 0; z-index:1; pointer-events:none;
+    }
+    .modal::after {
+      content:''; position:absolute; top:0; right:0; width:24px; height:24px;
+      border-top:2px solid rgba(166,127,220,.5); border-right:2px solid rgba(166,127,220,.5);
+      border-radius:0 14px 0 0; z-index:1; pointer-events:none;
+    }
+
+    /* BG glow */
+    .modal-glow {
+      position:absolute; inset:0; pointer-events:none; z-index:0;
+      background:radial-gradient(ellipse at 20% 0%, rgba(124,77,189,.28) 0%, transparent 55%),
+                 radial-gradient(ellipse at 80% 100%, rgba(201,162,39,.06) 0%, transparent 50%);
+    }
+
+    .modal-handle {
+      position:relative; z-index:2; display:flex; flex-direction:column; align-items:center;
+      padding:12px 24px 0; flex-shrink:0;
+    }
+    .modal-pill { width:40px; height:4px; border-radius:2px; background:rgba(166,127,220,.3); margin-bottom:14px; }
+    .modal-toprow {
+      width:100%; display:flex; align-items:center; justify-content:space-between;
+      padding-bottom:14px; border-bottom:1px solid rgba(166,127,220,.1);
+    }
+    .modal-badge { font-size:.42rem; letter-spacing:4px; text-transform:uppercase; color:rgba(166,127,220,.55); }
+    .modal-close {
+      width:32px; height:32px; border-radius:50%;
+      border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; color:var(--muted); font-size:.85rem; transition:all .25s;
+    }
+    .modal-close:hover { background:rgba(166,127,220,.14); border-color:rgba(166,127,220,.4); color:var(--purple-lt); }
+
+    /* Scrollable body */
+    .modal-body {
+      position:relative; z-index:2; overflow-y:auto; flex:1;
+      padding:24px 26px 36px;
+      scrollbar-width:thin; scrollbar-color:rgba(166,127,220,.2) transparent;
+    }
+    .modal-body::-webkit-scrollbar { width:4px; }
+    .modal-body::-webkit-scrollbar-thumb { background:rgba(166,127,220,.2); border-radius:2px; }
+
+    /* Modal num + title */
+    .modal-num { font-size:.45rem; letter-spacing:5px; text-transform:uppercase; color:var(--purple-lt); opacity:.55; display:block; margin-bottom:10px; }
+    .modal-title {
+      font-family:'Cormorant Garamond',serif; font-weight:400;
+      font-size:1.8rem; letter-spacing:2px; line-height:1.15;
+      color:var(--white); margin-bottom:20px;
+    }
+    .modal-title em { font-style:italic; color:var(--gold-light); }
+
+    /* Divider */
+    .modal-div { display:flex; align-items:center; gap:12px; margin-bottom:22px; }
+    .modal-div-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--gold-border),transparent); }
+    .modal-div-sym { font-size:.6rem; color:var(--gold); opacity:.4; }
+
+    /* Apostila text content */
+    .apostila-content {
+      font-family:'Cormorant Garamond',serif; font-size:1.05rem;
+      line-height:1.95; letter-spacing:.4px; color:rgba(245,240,232,.75);
+      margin-bottom:28px;
+    }
+    .apostila-content p { margin-bottom:14px; }
+    .apostila-content strong { color:var(--gold-light); font-weight:500; }
+
+    /* Perguntas da apostila */
+    .perguntas-label {
+      font-size:.48rem; letter-spacing:5px; text-transform:uppercase;
+      color:var(--gold); opacity:.6; margin-bottom:14px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .perguntas-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--gold-border),transparent); }
+
+    .pergunta-item { margin-bottom:18px; }
+    .pergunta-txt {
+      font-family:'Cormorant Garamond',serif; font-size:1rem;
+      letter-spacing:.5px; line-height:1.6; color:var(--white); margin-bottom:10px;
+    }
+    textarea.resposta {
+      width:100%; background:rgba(255,255,255,.025);
+      border:1px solid rgba(255,255,255,.07); border-radius:2px;
+      padding:14px 16px; color:var(--white);
+      font-family:'Josefin Sans',sans-serif; font-weight:300;
+      font-size:.8rem; line-height:1.8; letter-spacing:.3px;
+      resize:vertical; min-height:100px; outline:none; transition:border-color .3s;
+    }
+    textarea.resposta:focus { border-color:var(--purple-border); }
+
+    /* Actions */
+    .modal-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:26px; }
+    .btn-salvar {
+      background:none; border:1px solid var(--purple-border); border-radius:2px;
+      padding:12px 26px; color:var(--purple-lt);
+      font-family:'Josefin Sans',sans-serif; font-size:.55rem;
+      letter-spacing:4px; text-transform:uppercase; cursor:pointer; transition:all .3s;
+    }
+    .btn-salvar:hover { background:rgba(124,77,189,.15); border-color:rgba(166,127,220,.7); }
+    .btn-enviar-wpp {
+      background:linear-gradient(135deg,rgba(37,211,102,.18),rgba(37,211,102,.08));
+      border:1px solid rgba(37,211,102,.4); border-radius:2px;
+      padding:12px 26px; color:#25d366;
+      font-family:'Josefin Sans',sans-serif; font-size:.55rem;
+      letter-spacing:4px; text-transform:uppercase; cursor:pointer; transition:all .3s;
+      display:flex; align-items:center; gap:8px;
+    }
+    .btn-enviar-wpp:hover { background:rgba(37,211,102,.2); border-color:rgba(37,211,102,.7); }
+    .btn-enviar-wpp svg { width:14px; height:14px; fill:#25d366; }
+    .save-status { font-size:.5rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; }
+
+    /* TOAST */
+    .toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+      background:rgba(10,9,16,.96); border:1px solid var(--gold-border);
+      padding:10px 24px; font-size:.5rem; letter-spacing:3px; text-transform:uppercase;
+      color:var(--white); opacity:0; transition:all .35s; pointer-events:none; z-index:9999;
+      white-space:nowrap;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    .d1{animation-delay:.1s} .d2{animation-delay:.2s} .d3{animation-delay:.3s}
+    .d4{animation-delay:.4s} .d5{animation-delay:.5s}
+  </style>
+</head>
+<body>
+
+<div id="ls"><span>Carregando...</span></div>
+
+<nav>
+  <a href="/dashboard/" class="nav-logo">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Logo">
+    <span>AK<b>A</b>SHA <b>HUB</b></span>
+  </a>
+  <a href="/sessoes/" class="nav-back">← Sessões</a>
+</nav>
+
+<main>
+  <div class="page-header">
+    <p class="page-eyebrow">✦ Jornada Privada</p>
+    <h1 class="page-title">Apostilas da <em>Mentoria</em></h1>
+    <p class="page-sub">
+      25 apostilas · Acesso exclusivo do mentorando<br>
+      Responda, salve e envie suas reflexões ao mentor
+    </p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-row">
+      <span>Apostilas respondidas</span>
+      <span id="progressText">0 / 25</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div id="apostilasContainer"></div>
+</main>
+
+<!-- MODAL APOSTILA -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-glow"></div>
+    <div class="modal-handle">
+      <div class="modal-pill"></div>
+      <div class="modal-toprow">
+        <span class="modal-badge">✦ Apostila Privada · Akasha Hub</span>
+        <button class="modal-close" onclick="fecharModal()">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <!-- Conteúdo injetado por JS -->
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+    authDomain: "hub-akasha.firebaseapp.com",
+    projectId: "hub-akasha",
+    storageBucket: "hub-akasha.firebasestorage.app",
+    messagingSenderId: "370851875474",
+    appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+  });
+
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  // WhatsApp do Akasha Hub
+  const WPP_NUM = "5571983448621";
+
+  let currentUser = null;
+  let respostasGlobais = {}; // {apostila_N: {q1:"...", q2:"..."}}
+  let apostilaAtiva = null;
+  let saveTimer = null;
+
+  // ══════════════════════════════════════════
+  // 25 APOSTILAS — substitua o conteúdo e as perguntas
+  // Cada apostila tem: titulo, pilar, texto (HTML), perguntas[]
+  // ══════════════════════════════════════════
+  const APOSTILAS = [
+    // ── PILAR 1: INVESTIGAÇÃO DE ESSÊNCIA (1–8) ──
+    {
+      num:1, titulo:"Quem Você É Além do Nome",
+      pilar:"Pilar 1 — Investigação de Essência",
+      texto:`
+        <p><strong>Você já parou para perguntar quem você é além do papel social que desempenha?</strong></p>
+        <p>A maioria das pessoas se apresenta pelo que faz, pelo que tem, pelo que conquistou. Mas a essência — o que você é quando tudo isso é tirado — raramente é investigada.</p>
+        <p>Esta apostila inicia o mergulho mais profundo da jornada: a investigação do que está no seu campo akáshico antes de qualquer construção externa.</p>
+        <p>Não há resposta certa. Há apenas a sua resposta — honesta, sem filtros, sem performance.</p>
+      `,
+      perguntas:[
+        "Quem você é quando ninguém está olhando? Descreva sem usar sua profissão, seus títulos ou seus relacionamentos.",
+        "Qual é o sentimento que define você mais do que qualquer palavra? Por quê?"
+      ]
+    },
+    {
+      num:2, titulo:"O Mapa Familiar e Ancestral",
+      pilar:"Pilar 1 — Investigação de Essência",
+      texto:`
+        <p><strong>Nós somos o resumo consciente e inconsciente de todos que vieram antes de nós.</strong></p>
+        <p>Padrões, crenças, comportamentos e até formas de ganhar e perder dinheiro são transmitidos de geração em geração — não apenas pelo DNA, mas pela memória do campo.</p>
+        <p>Mapear sua ancestralidade não é se prender ao passado. É entender de onde vêm as correntes que ainda puxam você — para que você possa escolher o que carrega e o que libera.</p>
+      `,
+      perguntas:[
+        "Que padrões você percebe se repetindo na sua família (financeiros, emocionais, relacionais)?",
+        "Que qualidade de um ancestral você mais admira e quer amplificar na sua vida?"
+      ]
+    },
+    {
+      num:3, titulo:"Mapa Emocional e Padrões Ocultos",
+      pilar:"Pilar 1 — Investigação de Essência",
+      texto:`
+        <p><strong>As emoções são dados, não problemas.</strong></p>
+        <p>A maior parte das pessoas passa a vida reagindo emocionalmente sem jamais investigar o padrão por trás das reações. Raiva que esconde medo. Tristeza que esconde desejo. Ansiedade que esconde propósito não expressado.</p>
+        <p>Nesta apostila, você vai mapear seus padrões emocionais dominantes — não para julgá-los, mas para entender o que eles estão tentando comunicar.</p>
+      `,
+      perguntas:[
+        "Qual emoção você sente com mais frequência? Em que situações ela aparece?",
+        "Que emoção você mais evita sentir? O que acontece quando ela surge mesmo assim?"
+      ]
+    },
+    {
+      num:4, titulo:"Investigação Akáshica — Registros do Campo",
+      pilar:"Pilar 1 — Investigação de Essência",
+      texto:`
+        <p><strong>O campo akáshico guarda o registro de tudo que você já foi, é e pode ser.</strong></p>
+        <p>Não é uma crença religiosa — é uma estrutura de informação. Assim como a física quântica reconhece que a informação nunca desaparece, o campo akáshico é a biblioteca completa do seu ser.</p>
+        <p>Nesta apostila, você vai acessar intuições, imagens e sensações que seu campo projeta quando você faz as perguntas certas. Responda sem censura.</p>
+      `,
+      perguntas:[
+        "Se o seu campo de vida fosse um livro, qual seria o título? Qual seria o capítulo em que você está agora?",
+        "Que talento ou dom você sente que existe em você mas ainda não foi plenamente expresso? O que tem impedido isso?"
+      ]
+    },
+    {
+      num:5, titulo:"O Que Você Veio Fazer Aqui",
+      pilar:"Pilar 1 — Investigação de Essência",
+      texto:`
+        <p><strong>Propósito não é algo que você encontra. É algo que você reconhece.</strong></p>
+        <p>Ele já estava lá — escondido sob as camadas de expectativas externas, traumas não processados e crenças limitantes sobre o que é "realista".</p>
+        <p>Esta apostila vai te ajudar a decodificar os sinais que seu campo já enviou ao longo da vida — os momentos em que você se esqueceu do tempo, em que sentiu que estava exatamente onde deveria estar.</p>
+      `,
+      perguntas:[
+        "Em que momentos da sua vida você sentiu que estava completamente no lugar certo, fazendo exatamente o que devia? Descreva.",
+        "Se você soubesse que não poderia falhar, o que você escolheria criar, construir ou oferecer ao mundo?"
+      ]
+    },
+    {
+      num:6, titulo:"Sombra e Luz — Integração Total",
+      pilar:"Pilar 1 — Investigação de Essência",
+      texto:`
+        <p><strong>O que você rejeita em si mesmo tem mais poder sobre você do que o que você aceita.</strong></p>
+        <p>Jung chamou de "sombra" os aspectos de nós que consideramos inaceitáveis e por isso empurramos para o inconsciente. Mas eles não desaparecem — eles aparecem projetados nos outros, sabotando escolhas e bloqueando o fluxo.</p>
+        <p>Integrar a sombra não é se tornar "mau" — é recuperar energia que estava presa na repressão e transformá-la em força consciente.</p>
+      `,
+      perguntas:[
+        "O que você mais critica nos outros? Como essa característica se manifesta em você de forma que você raramente admite?",
+        "Que parte de si mesmo você esconde com mais frequência? O que aconteceria se você a expressasse?"
+      ]
+    },
+    {
+      num:7, titulo:"Valores Essenciais — A Bússola Interna",
+      pilar:"Pilar 1 — Investigação de Essência",
+      texto:`
+        <p><strong>Quando você não conhece seus valores, você vive pelos valores dos outros.</strong></p>
+        <p>Valores não são virtudes morais. São os critérios pelos quais você toma decisões quando ninguém está olhando — o que você protege, o que você prioriza, o que te faz sentir que sua vida tem sentido.</p>
+        <p>Conhecer seus valores essenciais é ter uma bússola que nunca mente — mesmo quando o GPS social diz outra coisa.</p>
+      `,
+      perguntas:[
+        "Cite 5 valores que, se violados, fazem você se sentir completamente fora de si. Explique cada um brevemente.",
+        "Existe algum valor que você diz ter, mas na prática suas escolhas mostram o oposto? Qual é?"
+      ]
+    },
+    {
+      num:8, titulo:"Revisão da Essência — Consolidação",
+      pilar:"Pilar 1 — Investigação de Essência",
+      texto:`
+        <p><strong>Você chegou ao fim do Pilar 1. Isso já é um ato de coragem raro.</strong></p>
+        <p>A maioria das pessoas nunca para para se investigar com essa profundidade. Você escolheu diferente.</p>
+        <p>Esta apostila final do primeiro pilar é de consolidação: olhar para o que emergiu nas 7 apostilas anteriores e sintetizar o que você descobriu sobre sua essência.</p>
+      `,
+      perguntas:[
+        "Das 7 apostilas anteriores, qual revelação foi mais surpreendente para você? Por quê?",
+        "Em uma frase, como você descreveria sua essência depois desta investigação? (Tente ir além do óbvio.)"
+      ]
+    },
+    // ── PILAR 2: ARQUITETURA DE IDENTIDADE (9–15) ──
+    {
+      num:9, titulo:"Narrativa de Marca Pessoal",
+      pilar:"Pilar 2 — Arquitetura de Identidade",
+      texto:`
+        <p><strong>Toda marca poderosa começa com uma história verdadeira.</strong></p>
+        <p>Não uma história inventada para parecer impressionante — uma história honesta sobre quem você é, o que você viveu, o que aprendeu com isso e como isso serve às pessoas que você quer ajudar.</p>
+        <p>Sua narrativa de marca é a ponte entre sua essência e o mundo. Quando bem construída, ela ressoa em silêncio — antes mesmo de você abrir a boca.</p>
+      `,
+      perguntas:[
+        "Qual é a experiência mais transformadora da sua vida — aquela que você reconhece que te tornou quem você é hoje?",
+        "Como essa experiência se conecta com o que você oferece ou quer oferecer ao mundo?"
+      ]
+    },
+    {
+      num:10, titulo:"Arquétipo e Identidade Visual",
+      pilar:"Pilar 2 — Arquitetura de Identidade",
+      texto:`
+        <p><strong>Seu arquétipo determina como você comunica, lidera e impacta — antes de qualquer palavra.</strong></p>
+        <p>Carl Jung identificou 12 arquétipos universais que habitam o inconsciente coletivo. As marcas mais poderosas do mundo se alinham a um (ou dois) arquétipos dominantes — e por isso criam conexão imediata e profunda com seu público.</p>
+        <p>Nesta apostila, você vai identificar seu arquétipo dominante e como ele deve se manifestar na sua identidade visual, tonalidade e posicionamento.</p>
+      `,
+      perguntas:[
+        "Com qual destes arquétipos você mais se identifica: Criador, Sábio, Herói, Rebelde, Mago, Cuidador, Explorador, Inocente, Governante, Amante, Bobo, Cara Comum? Por quê?",
+        "Como esse arquétipo se manifesta (ou deveria se manifestar) na sua comunicação e na forma como você aparece?"
+      ]
+    },
+    {
+      num:11, titulo:"Tom de Voz e Linguagem da Marca",
+      pilar:"Pilar 2 — Arquitetura de Identidade",
+      texto:`
+        <p><strong>A forma como você fala é tão importante quanto o que você fala.</strong></p>
+        <p>Tom de voz não é apenas estilo — é a vibração emocional que sua comunicação transmite. É o que faz alguém ler uma caption e pensar "isso é tão você". É o que cria reconhecimento instantâneo antes do logo, antes das cores.</p>
+        <p>Sua linguagem de marca deve ser uma extensão natural da sua fala — não uma performance, não um personagem. A autenticidade amplificada estrategicamente.</p>
+      `,
+      perguntas:[
+        "Como você naturalmente fala com pessoas que admira? Use 5 adjetivos para descrever esse tom.",
+        "O que você NUNCA diria na sua comunicação de marca? Quais linguagens ou abordagens te parecem completamente fora do seu campo?"
+      ]
+    },
+    {
+      num:12, titulo:"Nicho e Posicionamento Magnético",
+      pilar:"Pilar 2 — Arquitetura de Identidade",
+      texto:`
+        <p><strong>O paradoxo do nicho: quanto mais específico você é, mais pessoas você atrai.</strong></p>
+        <p>Tentar falar para todos é a fórmula para não falar com ninguém. As marcas que dominam mercados não são as mais genéricas — são as mais precisas na definição de para quem elas existem e do problema específico que resolvem.</p>
+        <p>Posicionamento magnético não é exclusão — é atração. Quando você é claro sobre para quem você serve, as pessoas certas reconhecem você de longe.</p>
+      `,
+      perguntas:[
+        "Para quem exatamente você quer trabalhar? Descreva essa pessoa com máximo de detalhes — não apenas demográficos, mas emocionais e comportamentais.",
+        "Qual problema específico essa pessoa tem que você resolve melhor do que qualquer outra pessoa? O que te torna singular nessa entrega?"
+      ]
+    },
+    {
+      num:13, titulo:"Oferta Irresistível — Construindo o Produto",
+      pilar:"Pilar 2 — Arquitetura de Identidade",
+      texto:`
+        <p><strong>Uma oferta irresistível não é aquela que promete tudo — é aquela que promete exatamente o que a pessoa certa precisa.</strong></p>
+        <p>A maioria dos empreendedores começa pela oferta. Na nossa metodologia, a oferta é a última coisa que se constrói — depois de investigar a essência, definir a identidade e mapear o público com precisão.</p>
+        <p>Quando você chega à oferta com esse nível de clareza, ela se escreve quase sozinha. E quando comunicada, ela ressoa — porque não é uma venda, é um encontro.</p>
+      `,
+      perguntas:[
+        "Qual seria o produto ou serviço inicial que melhor conecta sua essência com o problema do seu público? Descreva em detalhes.",
+        "O que está incluído nessa entrega? Qual é a transformação específica que o cliente experimenta depois de comprar?"
+      ]
+    },
+    {
+      num:14, titulo:"Precificação Consciente",
+      pilar:"Pilar 2 — Arquitetura de Identidade",
+      texto:`
+        <p><strong>O preço que você cobra revela o que você acredita que vale.</strong></p>
+        <p>Subprecificação não é humildade — é desvalorização. E o mercado trata você exatamente como você se trata. Quando você cobra pouco, você atrai clientes que questionam cada centavo e não valorizam a entrega.</p>
+        <p>Preço correto é aquele que cobre seu custo, remunera adequadamente seu tempo e energia, e ainda deixa espaço para você entregar com excelência — não com escassez ou ressentimento.</p>
+      `,
+      perguntas:[
+        "Qual é o primeiro pensamento que vem quando você pensa em cobrar pelo seu trabalho? Que crença está por trás desse pensamento?",
+        "Quanto você cobraria pela sua oferta se soubesse com certeza que ela gera o resultado prometido? O que te impede de cobrar esse valor hoje?"
+      ]
+    },
+    {
+      num:15, titulo:"Revisão da Identidade — Consolidação",
+      pilar:"Pilar 2 — Arquitetura de Identidade",
+      texto:`
+        <p><strong>Você agora tem uma identidade construída de dentro para fora.</strong></p>
+        <p>Não é uma identidade inventada por uma agência. Não é uma cópia do que funciona para outros. É a sua — investigada, mapeada, estruturada com precisão.</p>
+        <p>Esta apostila de consolidação é um convite para você sintetizar tudo o que emergiu no Pilar 2 e verificar a coerência entre essência e identidade.</p>
+      `,
+      perguntas:[
+        "Descreva sua marca em 3 linhas — como se você estivesse explicando para alguém que nunca te conheceu, em 30 segundos.",
+        "O que ainda parece 'forçado' ou inautêntico na sua identidade de marca? O que precisa de ajuste?"
+      ]
+    },
+    // ── PILAR 3: IMPÉRIO DIGITAL (16–25) ──
+    {
+      num:16, titulo:"Estrutura Digital — Site, Instagram e Ferramentas",
+      pilar:"Pilar 3 — Império Digital",
+      texto:`
+        <p><strong>Seu império digital começa com a infraestrutura — não com o conteúdo.</strong></p>
+        <p>Muita gente quer postar antes de ter um site. Quer vender antes de ter funil. Quer escalar antes de ter produto claro. O resultado é esforço sem retorno e frustração sem aprendizado.</p>
+        <p>A estrutura vem primeiro: um site profissional, um Instagram estratégico e as ferramentas certas conectadas. Quando a infraestrutura está sólida, cada peça de conteúdo tem para onde direcionar o tráfego.</p>
+      `,
+      perguntas:[
+        "Quais plataformas digitais você já tem hoje? O que está funcionando, o que não está?",
+        "Se você tivesse que escolher apenas um canal digital para começar, qual seria e por quê?"
+      ]
+    },
+    {
+      num:17, titulo:"Conteúdo que Vende Sem Aparecer",
+      pilar:"Pilar 3 — Império Digital",
+      texto:`
+        <p><strong>Você não precisa aparecer para vender — precisa que seu conteúdo apareça.</strong></p>
+        <p>Conteúdo estratégico é diferente de conteúdo de performance. Ele não existe para likes — existe para construir autoridade, gerar confiança e preparar o campo para a venda antes mesmo de a oferta aparecer.</p>
+        <p>Nesta apostila, você vai mapear os 3 tipos de conteúdo que seu negócio precisa e como criar sem depender da sua presença constante.</p>
+      `,
+      perguntas:[
+        "Quais são os 3 temas em que você poderia falar por horas sem pesquisar nada? Liste-os e escreva uma ideia de post para cada.",
+        "Que formato de conteúdo parece mais natural para você: texto, áudio, vídeo ou imagem? Por quê?"
+      ]
+    },
+    {
+      num:18, titulo:"Funil de Vendas — Da Atração à Conversão",
+      pilar:"Pilar 3 — Império Digital",
+      texto:`
+        <p><strong>Um funil de vendas não é manipulação — é respeito pelo processo de decisão humano.</strong></p>
+        <p>As pessoas raramente compram na primeira interação. Elas precisam conhecer, confiar, reconhecer o valor e então decidir. Um funil bem construído acompanha esse processo naturalmente — sem pressão, sem forçar.</p>
+        <p>Nesta apostila, você vai desenhar o funil básico do seu negócio: como pessoas chegam até você, como você constrói confiança e como a venda acontece de forma fluida.</p>
+      `,
+      perguntas:[
+        "Como as pessoas te descobrem hoje? Liste os caminhos que alguém percorre até se tornar seu cliente.",
+        "Qual é o maior ponto de abandono no seu processo de venda — onde as pessoas chegam, mas não compram? O que pode estar acontecendo?"
+      ]
+    },
+    {
+      num:19, titulo:"Tráfego Pago — Amplificando o que Funciona",
+      pilar:"Pilar 3 — Império Digital",
+      texto:`
+        <p><strong>Tráfego pago não é solução para um produto ruim — é acelerador de algo que já funciona.</strong></p>
+        <p>O erro mais comum é querer investir em anúncios antes de ter validado a oferta organicamente. Anúncio amplifica o que já existe: se o produto funciona, o anúncio acelera. Se não funciona, o anúncio apenas queima dinheiro mais rápido.</p>
+        <p>Nesta apostila, você vai mapear o momento certo de entrar no tráfego pago e os primeiros passos para estruturar uma campanha lucrativa.</p>
+      `,
+      perguntas:[
+        "Você já vendeu seu produto ou serviço organicamente (sem pagar por anúncio)? Quantas vezes? Qual foi a taxa de conversão?",
+        "Qual seria o primeiro anúncio que você rodaria? Descreva: para quem, qual mensagem, qual destino (página, WhatsApp, link)."
+      ]
+    },
+    {
+      num:20, titulo:"Estratégia de Instagram — Perfil que Atrai",
+      pilar:"Pilar 3 — Império Digital",
+      texto:`
+        <p><strong>Instagram não é rede social — para negócios, é uma vitrine 24h que trabalha enquanto você dorme.</strong></p>
+        <p>A diferença entre um perfil que atrai e um que só existe está em 3 elementos: clareza (quem é você e para quem), consistência (frequência previsível) e conteúdo estratégico (que educa, conecta e converte).</p>
+        <p>Nesta apostila, você vai auditar seu Instagram atual e definir a estratégia para os próximos 30 dias.</p>
+      `,
+      perguntas:[
+        "Um visitante novo chega no seu Instagram hoje. Em 5 segundos, o que ele entende sobre quem você é e o que você oferece?",
+        "Qual é a frequência de postagem que você consegue manter sem comprometer a qualidade? Qual seria seu calendário de conteúdo semanal?"
+      ]
+    },
+    {
+      num:21, titulo:"WhatsApp como Canal de Vendas",
+      pilar:"Pilar 3 — Império Digital",
+      texto:`
+        <p><strong>O WhatsApp tem a maior taxa de abertura de mensagens de qualquer canal digital — 98%.</strong></p>
+        <p>Enquanto e-mails ficam não abertos e stories somem, uma mensagem no WhatsApp é lida. Para negócios locais, serviços personalizados e vendas de alto valor, o WhatsApp é o canal mais poderoso disponível — quando usado estrategicamente.</p>
+        <p>Nesta apostila, você vai estruturar seu WhatsApp Business como canal de vendas profissional.</p>
+      `,
+      perguntas:[
+        "Como você usa o WhatsApp hoje para o seu negócio? O que funciona e o que poderia ser mais profissional?",
+        "Escreva a primeira mensagem que você enviaria para um lead que acabou de demonstrar interesse no seu produto."
+      ]
+    },
+    {
+      num:22, titulo:"Automação e Sistemas — Trabalhando Enquanto Você Dorme",
+      pilar:"Pilar 3 — Império Digital",
+      texto:`
+        <p><strong>Um negócio que só funciona quando você está presente não é liberdade — é um emprego disfarçado.</strong></p>
+        <p>Automação não significa frieza. Significa que as partes previsíveis e repetitivas do seu negócio acontecem sem depender da sua energia manual — para que você possa focar no que só você pode fazer: criar, conectar e aprofundar.</p>
+        <p>Nesta apostila, você vai mapear o que pode ser automatizado no seu negócio nos próximos 90 dias.</p>
+      `,
+      perguntas:[
+        "Quais tarefas do seu negócio você repete toda semana que poderiam ser automatizadas ou delegadas? Liste no mínimo 5.",
+        "Se você tivesse que sair por 15 dias sem internet, o que no seu negócio pararia completamente? Como resolver isso?"
+      ]
+    },
+    {
+      num:23, titulo:"Escala — Multiplicando Resultado Sem Multiplicar Esforço",
+      pilar:"Pilar 3 — Império Digital",
+      texto:`
+        <p><strong>Escalar não é trabalhar mais — é fazer com que cada unidade de esforço produza mais resultado.</strong></p>
+        <p>A transição de autônomo para empresário acontece quando você para de vender tempo e começa a vender resultado empacotado. Isso significa: produtos digitais, grupos, assinaturas, licenciamentos — formatos que não exigem sua presença a cada venda.</p>
+        <p>Nesta apostila, você vai explorar os modelos de negócio que permitem escalar a partir da sua oferta atual.</p>
+      `,
+      perguntas:[
+        "Como seu produto ou serviço atual poderia ser transformado em um formato digital (curso, ebook, comunidade, assinatura)? Explore as possibilidades.",
+        "Qual seria o próximo passo depois da primeira venda consistente? Desenhe sua visão para 12 meses."
+      ]
+    },
+    {
+      num:24, titulo:"Mentalidade de Abundância — Reprogramação Financeira",
+      pilar:"Pilar 3 — Império Digital",
+      texto:`
+        <p><strong>Nenhuma estratégia de negócios supera uma mentalidade de escassez.</strong></p>
+        <p>Você pode ter o melhor funil, o melhor produto e a melhor marca — e ainda assim sabotar o sucesso se, no fundo, acreditar que não merece, que dinheiro é sujo, que cobrar caro é errado ou que o mercado está saturado.</p>
+        <p>Reprogramação financeira não é pensamento positivo. É identificar as crenças que travam e substituí-las conscientemente por novas referências — com evidências, não com afirmações vazias.</p>
+      `,
+      perguntas:[
+        "Que crença sobre dinheiro você herdou da sua família que ainda influencia suas decisões financeiras hoje?",
+        "O que seria diferente na sua vida e no seu negócio se você tivesse absoluta certeza de que merece abundância? Descreva em detalhes."
+      ]
+    },
+    {
+      num:25, titulo:"Legado — O Que Você Está Construindo",
+      pilar:"Pilar 3 — Império Digital",
+      texto:`
+        <p><strong>Você chegou à apostila 25. Isso é mais do que a maioria das pessoas jamais fará por si mesma.</strong></p>
+        <p>Legado não é algo que você constrói no fim da vida — é a direção que você escolhe agora. É a razão pela qual vale a pena acordar cedo, estudar quando está cansado, fazer a call mesmo quando a ansiedade aparece.</p>
+        <p>Esta é a apostila mais importante. Não pela técnica — mas pela visão. Quando a visão é clara, os recursos aparecem. Quando o porquê é profundo, o como se revela.</p>
+        <p><strong>Que você construa algo que valha a pena lembrar. ✦</strong></p>
+      `,
+      perguntas:[
+        "Em 5 anos, como é o seu negócio? Como é a sua vida? Como você se sente toda manhã ao acordar?",
+        "O que você quer que as pessoas que trabalharam com você sintam ter recebido? Qual é a herança que você deixa em cada cliente, aluno ou mentorando?"
+      ]
+    }
+  ];
+
+  // ─────────────────────────────────────────
+  let currentUser = null;
+  let respostasGlobais = {};
+  let apostilaAtiva = null;
+  let saveTimer = null;
+
+  onAuthStateChanged(auth, async user => {
+    if (!user) { window.location.href = '/login/'; return; }
+    currentUser = user;
+
+    // Verificar se tem mentoria
+    const snapUser = await getDoc(doc(db, "users", user.uid));
+    const ud = snapUser.exists() ? snapUser.data() : {};
+    if (!ud.tem_mentoria) { window.location.href = '/sessoes/'; return; }
+
+    // Carregar respostas salvas
+    const snapResp = await getDoc(doc(db, `apostilas/${user.uid}/respostas/todas`));
+    if (snapResp.exists()) respostasGlobais = snapResp.data();
+
+    renderApostilas();
+    document.getElementById('ls').classList.add('hide');
+  });
+
+  // ── Renderizar apostilas ─────────────────────────────
+  function renderApostilas() {
+    const container = document.getElementById('apostilasContainer');
+    container.innerHTML = '';
+
+    let concluidas = 0;
+    const pilares = {};
+
+    APOSTILAS.forEach(ap => {
+      if (!pilares[ap.pilar]) pilares[ap.pilar] = [];
+      const respostas = getRespostas(ap.num);
+      const temResposta = ap.perguntas.every((_, i) => (respostas[`q${i+1}`] || '').trim());
+      if (temResposta) concluidas++;
+      pilares[ap.pilar].push({ ...ap, temResposta });
+    });
+
+    // Progress
+    document.getElementById('progressText').textContent = `${concluidas} / 25`;
+    document.getElementById('progressFill').style.width = `${(concluidas/25)*100}%`;
+
+    const delays = ['.d1','.d2','.d3','.d4','.d5'];
+    let pilarIdx = 0;
+
+    Object.entries(pilares).forEach(([pilarNome, aps]) => {
+      const sec = document.createElement('div');
+      sec.className = `pilar-section ${delays[pilarIdx % 5]}`;
+      pilarIdx++;
+
+      const label = document.createElement('div');
+      label.className = 'pilar-label';
+      label.textContent = pilarNome;
+      sec.appendChild(label);
+
+      aps.forEach(ap => {
+        const btn = document.createElement('button');
+        btn.className = `apostila-btn${ap.temResposta ? ' concluida' : ''}`;
+        btn.onclick = () => abrirApostila(ap.num);
+        btn.innerHTML = `
+          <div class="ap-left">
+            <div class="ap-num">${ap.num}</div>
+            <div>
+              <div class="ap-title">${ap.titulo}</div>
+              <div class="ap-status ${ap.temResposta ? 'done' : 'pending'}">
+                ${ap.temResposta ? '✓ Respondida' : 'Aguardando sua resposta'}
+              </div>
+            </div>
+          </div>
+          <span class="ap-arrow">›</span>
+        `;
+        sec.appendChild(btn);
+      });
+
+      container.appendChild(sec);
+    });
+  }
+
+  // ── Abrir modal apostila ─────────────────────────────
+  window.abrirApostila = (num) => {
+    const ap = APOSTILAS.find(a => a.num === num);
+    if (!ap) return;
+    apostilaAtiva = ap;
+
+    const respostas = getRespostas(num);
+    const body = document.getElementById('modalBody');
+
+    const perguntasHtml = ap.perguntas.map((q, i) => `
+      <div class="pergunta-item">
+        <div class="pergunta-txt">${i+1}. ${q}</div>
+        <textarea
+          class="resposta"
+          id="resp_q${i+1}"
+          placeholder="Escreva sua resposta aqui..."
+          oninput="autoSave()"
+        >${escHtml(respostas[`q${i+1}`] || '')}</textarea>
+      </div>
+    `).join('');
+
+    body.innerHTML = `
+      <span class="modal-num">Apostila ${num} de 25 · ${ap.pilar}</span>
+      <h2 class="modal-title">${ap.titulo}</h2>
+      <div class="modal-div">
+        <div class="modal-div-line"></div>
+        <span class="modal-div-sym">✦</span>
+        <div class="modal-div-line"></div>
+      </div>
+      <div class="apostila-content">${ap.texto}</div>
+      <div class="perguntas-label">✦ Suas Respostas</div>
+      ${perguntasHtml}
+      <div class="modal-actions">
+        <button class="btn-salvar" onclick="salvarRespostas()">Salvar respostas</button>
+        <button class="btn-enviar-wpp" onclick="enviarWpp()">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Enviar ao Mentor
+        </button>
+        <span class="save-status" id="saveStatus"></span>
+      </div>
+    `;
+
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('modal').querySelector('.modal-body').scrollTop = 0;
+  };
+
+  // ── Fechar modal ─────────────────────────────────────
+  window.fecharModal = () => {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    apostilaAtiva = null;
+    renderApostilas();
+  };
+
+  document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modalOverlay')) fecharModal();
+  });
+
+  // Swipe down para fechar
+  const modal = document.getElementById('modal');
+  let startY = 0;
+  modal.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive:true });
+  modal.addEventListener('touchmove', e => {
+    if (document.getElementById('modalBody').scrollTop > 0) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy > 0) modal.style.transform = `translateY(${dy}px)`;
+  }, { passive:true });
+  modal.addEventListener('touchend', e => {
+    const dy = e.changedTouches[0].clientY - startY;
+    if (dy > 80) fecharModal();
+    modal.style.transform = '';
+  });
+
+  // ── Auto-save com debounce ───────────────────────────
+  window.autoSave = () => {
+    clearTimeout(saveTimer);
+    const status = document.getElementById('saveStatus');
+    if (status) status.textContent = '...';
+    saveTimer = setTimeout(() => salvarRespostas(true), 1500);
+  };
+
+  // ── Salvar respostas ─────────────────────────────────
+  window.salvarRespostas = async (silencioso = false) => {
+    if (!currentUser || !apostilaAtiva) return;
+    const num = apostilaAtiva.num;
+    const respostas = {};
+    apostilaAtiva.perguntas.forEach((_, i) => {
+      const el = document.getElementById(`resp_q${i+1}`);
+      respostas[`q${i+1}`] = el ? el.value : '';
+    });
+
+    respostasGlobais[`apostila_${num}`] = respostas;
+
+    await setDoc(
+      doc(db, `apostilas/${currentUser.uid}/respostas/todas`),
+      { ...respostasGlobais, atualizado_em: serverTimestamp() },
+      { merge: true }
+    );
+
+    const status = document.getElementById('saveStatus');
+    if (status) status.textContent = '✓ Salvo';
+    if (!silencioso) toast('✓ Respostas salvas');
+    setTimeout(() => { if (status) status.textContent = ''; }, 2000);
+  };
+
+  // ── Enviar respostas ao WhatsApp ─────────────────────
+  window.enviarWpp = async () => {
+    if (!currentUser || !apostilaAtiva) return;
+    await salvarRespostas(true);
+
+    const ap = apostilaAtiva;
+    const nome = currentUser.displayName || currentUser.email || 'Mentorando';
+
+    let msg = `✦ APOSTILA ${ap.num} — ${ap.titulo.toUpperCase()}\n`;
+    msg += `Mentorando: ${nome}\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+    ap.perguntas.forEach((q, i) => {
+      const el = document.getElementById(`resp_q${i+1}`);
+      const resp = el ? el.value.trim() : '';
+      msg += `❓ ${q}\n`;
+      msg += `✍️ ${resp || '(sem resposta ainda)'}\n\n`;
+    });
+
+    msg += `━━━━━━━━━━━━━━━━━━━━━━\nakashahub.com.br ✦`;
+
+    window.open(`https://wa.me/${WPP_NUM}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
+
+  // ── Helpers ──────────────────────────────────────────
+  function getRespostas(num) {
+    return respostasGlobais[`apostila_${num}`] || {};
+  }
+  function escHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function toast(msg, d=3000) {
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), d);
+  }
+</script>
+</body>
+</html>
