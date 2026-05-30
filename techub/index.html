@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKASHA · CÓDIGO SUPREMO · Sistema de Produção do Curso</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C8A96E;
+    --gold-light: #E8D5A3;
+    --gold-dim: #7A6240;
+    --void: #04060A;
+    --deep: #080C14;
+    --surface: #0D1220;
+    --surface2: #131928;
+    --border: rgba(200,169,110,0.15);
+    --border-bright: rgba(200,169,110,0.4);
+    --text: #D4CAB8;
+    --text-dim: #7A7265;
+    --cyan: #4ECDC4;
+    --cyan-dim: rgba(78,205,196,0.15);
+    --red: #E05252;
+    --green: #52C89E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--void);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    border: 1px solid var(--border-bright);
+    padding: 4px 14px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    color: var(--gold-light);
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  h1 span { color: var(--cyan); }
+
+  .subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .header-desc {
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 300;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    background: rgba(4,6,10,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 0;
+  }
+
+  .nav-inner {
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+    scrollbar-width: none;
+  }
+
+  .nav-inner::-webkit-scrollbar { display: none; }
+
+  nav a {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 14px 16px;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  nav a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ── SECTIONS ── */
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(20px, 3vw, 30px);
+    font-weight: 600;
+    color: var(--gold-light);
+    margin-bottom: 28px;
+    letter-spacing: 0.03em;
+  }
+
+  h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  p { margin-bottom: 12px; color: var(--text); font-weight: 300; }
+
+  /* ── MODULES GRID ── */
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    position: relative;
+    transition: border-color 0.2s;
+    cursor: default;
+  }
+
+  .module-card:hover { border-color: var(--border-bright); }
+
+  .module-card::before {
+    content: attr(data-num);
+    position: absolute;
+    top: 16px; right: 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .module-tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    padding: 2px 8px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .tag-tech { background: rgba(78,205,196,0.1); color: var(--cyan); border: 1px solid rgba(78,205,196,0.2); }
+  .tag-essence { background: rgba(200,169,110,0.1); color: var(--gold); border: 1px solid var(--border); }
+  .tag-quantum { background: rgba(138,100,200,0.1); color: #B89AE0; border: 1px solid rgba(138,100,200,0.2); }
+  .tag-ancestral { background: rgba(200,100,80,0.1); color: #E0A08A; border: 1px solid rgba(200,100,80,0.2); }
+  .tag-marketing { background: rgba(82,200,158,0.1); color: var(--green); border: 1px solid rgba(82,200,158,0.2); }
+
+  .module-lessons {
+    margin-top: 10px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .module-lessons li {
+    font-size: 12px;
+    color: var(--text-dim);
+    padding-left: 14px;
+    position: relative;
+    font-weight: 300;
+  }
+
+  .module-lessons li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--gold-dim);
+    font-size: 10px;
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist-section { display: flex; flex-direction: column; gap: 10px; }
+
+  .check-group { background: var(--surface); border: 1px solid var(--border); }
+
+  .check-group-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .check-group-header:hover { background: var(--surface2); }
+
+  .check-group-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    flex: 1;
+  }
+
+  .progress-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    padding: 2px 8px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    min-width: 44px;
+    text-align: center;
+  }
+
+  .check-items { padding: 8px 0; display: none; }
+  .check-items.open { display: block; }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .check-item:hover { background: var(--surface2); }
+
+  .check-item input[type="checkbox"] {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--border-bright);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 3px;
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .check-item input[type="checkbox"]:checked {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .check-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -2px; left: 2px;
+    font-size: 10px;
+    color: var(--void);
+    font-weight: bold;
+  }
+
+  .check-item label {
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  .check-item.done label { color: var(--text-dim); text-decoration: line-through; }
+
+  /* ── PROMPTS VISUAIS ── */
+  .prompts-grid { display: flex; flex-direction: column; gap: 14px; }
+
+  .prompt-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+  }
+
+  .prompt-type {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .prompt-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--gold-light);
+    line-height: 1.8;
+    background: var(--deep);
+    padding: 14px 16px;
+    border-left: 2px solid var(--gold-dim);
+    margin-top: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .copy-btn {
+    margin-top: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+  /* ── REFERÊNCIAS ── */
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .ref-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px;
+  }
+
+  .ref-name {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+  }
+
+  .ref-area {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--cyan);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .ref-desc { font-size: 12px; color: var(--text-dim); font-weight: 300; }
+
+  /* ── FORMATO VÍDEO ── */
+  .video-guide { display: flex; flex-direction: column; gap: 16px; }
+
+  .video-format {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .video-time {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    text-align: center;
+    line-height: 1;
+    padding-top: 4px;
+  }
+
+  .video-time span {
+    display: block;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  /* ── PROGRESS BAR GLOBAL ── */
+  .global-progress {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .progress-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--deep);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  /* ── TIMELINE ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 100px 1px 1fr;
+    gap: 0 20px;
+    position: relative;
+  }
+
+  .timeline-week {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-align: right;
+    padding: 16px 0;
+    text-transform: uppercase;
+  }
+
+  .timeline-line {
+    width: 1px;
+    background: var(--border);
+    position: relative;
+  }
+
+  .timeline-line::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: -3px;
+    width: 7px; height: 7px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  .timeline-content {
+    padding: 16px 0 16px 4px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .timeline-content h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+  }
+
+  .timeline-content p { font-size: 12px; color: var(--text-dim); margin: 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 40px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  footer strong { color: var(--gold); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 28px 0;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .divider span {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--gold-dim);
+    letter-spacing: 0.2em;
+  }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: rgba(78,205,196,0.05);
+    border: 1px solid rgba(78,205,196,0.2);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+
+  .info-box p { color: var(--cyan); font-size: 13px; margin: 0; }
+
+  /* ── AULA FORMAT ── */
+  .aula-structure {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .aula-block {
+    background: var(--deep);
+    border: 1px solid var(--border);
+    padding: 14px;
+    text-align: center;
+  }
+
+  .aula-block-time {
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .aula-block-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .aula-block-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    font-weight: 300;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .video-format { grid-template-columns: 1fr; }
+    .timeline-item { grid-template-columns: 70px 1px 1fr; }
+    h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+<header>
+  <div class="badge">✦ Classificação: Diamante Supremo ✦</div>
+  <h1>AKASHA<br><span>CÓDIGO SUPREMO</span></h1>
+  <div class="subtitle">Sistema de Produção do Curso · akashahub.com.br</div>
+  <p class="header-desc">Documento operacional completo para produção, estrutura, conteúdo, visual e lançamento do curso. Use este sistema como painel de controle de toda a criação.</p>
+</header>
+</div>
+
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#progresso">Progresso</a>
+      <a href="#estrutura">Estrutura</a>
+      <a href="#modulos">Módulos</a>
+      <a href="#formato">Formato de Aula</a>
+      <a href="#checklist">Checklist</a>
+      <a href="#visual">Prompts Visuais</a>
+      <a href="#referencias">Referências</a>
+      <a href="#timeline">Timeline</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ══ PROGRESSO ══ -->
+<section id="progresso">
+  <div class="section-label">// 00 — Painel de Controle</div>
+  <h2>Progresso da Produção</h2>
+
+  <div class="global-progress">
+    <div style="font-family:'Space Mono',monospace; font-size:11px; color:var(--text-dim); white-space:nowrap;">PRODUÇÃO GERAL</div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="globalBar"></div>
+    </div>
+    <div class="progress-label" id="globalPct">0%</div>
+  </div>
+
+  <div class="info-box">
+    <p>→ Marque os checkboxes na seção Checklist para atualizar o progresso automaticamente em tempo real.</p>
+  </div>
+
+  <div class="aula-structure">
+    <div class="aula-block">
+      <div class="aula-block-time">7</div>
+      <div class="aula-block-label">Módulos</div>
+      <div class="aula-block-desc">Do fundamento ao supremo</div>
+    </div>
+    <div class="aula-block">
+      <div class="aula-block-time">63</div>
+      <div class="aula-block-label">Aulas</div>
+      <div class="aula-block-desc">Práticas + conceituais</div>
+    </div>
+    <div class="aula-block">
+      <div class="aula-block-time">~8–15</div>
+      <div class="aula-block-label">Min/Aula</div>
+      <div class="aula-block-desc">Direto, denso, valioso</div>
+    </div>
+    <div class="aula-block">
+      <div class="aula-block-time">R$0</div>
+      <div class="aula-block-label">Custo</div>
+      <div class="aula-block-desc">Só câmera + tecnologia</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ESTRUTURA ══ -->
+<section id="estrutura">
+  <div class="section-label">// 01 — Arquitetura do Curso</div>
+  <h2>Estrutura Suprema</h2>
+
+  <p>O curso opera em <strong style="color:var(--gold)">três camadas simultâneas</strong>: a camada prática (código, ferramentas, sistemas), a camada conceitual (física quântica, linguística, arquitetura da informação) e a camada de expansão (ancestralidade, espiritualidade, leis universais). O aluno acessa as três ao mesmo tempo — isso é o diferencial absoluto.</p>
+
+  <div class="divider"><span>NARRATIVA DO ALUNO</span></div>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-bottom:24px;">
+    <div style="background:var(--surface); border:1px solid var(--border); padding:16px;">
+      <div style="font-family:'Space Mono',monospace; font-size:9px; color:var(--text-dim); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:8px;">ENTRADA</div>
+      <p style="font-size:12px; color:var(--text); margin:0;">"Quero aprender tecnologia mas não sei por onde começar."</p>
+    </div>
+    <div style="background:var(--surface); border:1px solid var(--border); padding:16px;">
+      <div style="font-family:'Space Mono',monospace; font-size:9px; color:var(--cyan); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:8px;">MEIO</div>
+      <p style="font-size:12px; color:var(--text); margin:0;">"Estou construindo meu ecossistema. Entendo a lógica por trás de tudo."</p>
+    </div>
+    <div style="background:var(--surface); border:1px solid var(--border); padding:16px;">
+      <div style="font-family:'Space Mono',monospace; font-size:9px; color:var(--gold); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:8px;">SAÍDA</div>
+      <p style="font-size:12px; color:var(--text); margin:0;">"Sou soberano digital. Crio o que quero. Entendo o código da realidade."</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>NOME OFICIAL DO CURSO</span></div>
+
+  <div style="background:var(--deep); border:1px solid var(--border-bright); padding:28px; text-align:center; margin-bottom:20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--text-dim); letter-spacing:0.3em; text-transform:uppercase; margin-bottom:12px;">OPÇÃO A</div>
+    <div style="font-family:'Cinzel',serif; font-size:clamp(20px,4vw,36px); color:var(--gold-light); font-weight:900; letter-spacing:0.05em;">CÓDIGO SUPREMO</div>
+    <div style="font-family:'Space Mono',monospace; font-size:11px; color:var(--text-dim); letter-spacing:0.2em; margin-top:6px;">A Tecnologia Que Liberta · Akasha Hub</div>
+  </div>
+
+  <div style="background:var(--deep); border:1px solid var(--border); padding:20px; text-align:center; margin-bottom:20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--text-dim); letter-spacing:0.3em; text-transform:uppercase; margin-bottom:10px;">OPÇÃO B</div>
+    <div style="font-family:'Cinzel',serif; font-size:clamp(18px,3vw,28px); color:var(--gold-light); font-weight:600;">AKASHA TECH</div>
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--text-dim); letter-spacing:0.2em; margin-top:6px;">Do Wix ao Ecossistema Supremo</div>
+  </div>
+
+  <div style="background:var(--deep); border:1px solid var(--border); padding:20px; text-align:center;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--text-dim); letter-spacing:0.3em; text-transform:uppercase; margin-bottom:10px;">OPÇÃO C</div>
+    <div style="font-family:'Cinzel',serif; font-size:clamp(18px,3vw,28px); color:var(--gold-light); font-weight:600;">ARQUITETO DIGITAL</div>
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--text-dim); letter-spacing:0.2em; margin-top:6px;">Tecnologia, Consciência e Soberania</div>
+  </div>
+</section>
+
+<!-- ══ MÓDULOS ══ -->
+<section id="modulos">
+  <div class="section-label">// 02 — Grade Completa</div>
+  <h2>Os 7 Módulos · 63 Aulas</h2>
+
+  <div class="modules-grid">
+
+    <!-- M1 -->
+    <div class="module-card" data-num="M1">
+      <div class="module-tag tag-essence">Fundamento</div>
+      <h3>O Código da Realidade</h3>
+      <p style="font-size:12px; color:var(--text-dim); font-weight:300;">Entendendo a lógica por trás de tudo — tecnologia, informação e consciência.</p>
+      <ul class="module-lessons">
+        <li>O que é informação? Etimologia e física</li>
+        <li>Como a realidade é programada (física quântica básica)</li>
+        <li>O que é código — da DNA ao HTML</li>
+        <li>A arquitetura da internet explicada do zero</li>
+        <li>Engenharia da Informação: o mapa completo</li>
+        <li>Como o Instagram, TikTok e YouTube funcionam por dentro</li>
+        <li>Sua mente como sistema operacional</li>
+        <li>Neurolinguística: como palavras criam realidade</li>
+        <li>Tecnologia ancestral — o que civilizações já sabiam</li>
+      </ul>
+    </div>
+
+    <!-- M2 -->
+    <div class="module-card" data-num="M2">
+      <div class="module-tag tag-tech">Tecnologia</div>
+      <h3>Linguagens do Mundo Digital</h3>
+      <p style="font-size:12px; color:var(--text-dim); font-weight:300;">HTML, CSS, JavaScript — a trindade do frontend. Do zero ao domínio.</p>
+      <ul class="module-lessons">
+        <li>HTML: a estrutura de toda página do mundo</li>
+        <li>CSS: design sem limite — do Wix ao código puro</li>
+        <li>JavaScript: lógica, interação, poder</li>
+        <li>Diferença entre frontend e backend</li>
+        <li>Seu primeiro site do zero (prático)</li>
+        <li>Responsividade: mobile-first thinking</li>
+        <li>UI vs UX: o que cada um faz e por quê importa</li>
+        <li>Figma: desenhando antes de codar</li>
+        <li>Python: a linguagem da IA (introdução)</li>
+      </ul>
+    </div>
+
+    <!-- M3 -->
+    <div class="module-card" data-num="M3">
+      <div class="module-tag tag-tech">Sistemas</div>
+      <h3>Arquitetura Digital Completa</h3>
+      <p style="font-size:12px; color:var(--text-dim); font-weight:300;">De página estática a ecossistema vivo. Backend, banco de dados, autenticação.</p>
+      <ul class="module-lessons">
+        <li>O que é um backend e por que você precisa de um</li>
+        <li>Banco de dados: onde tudo é guardado (Firebase, Supabase)</li>
+        <li>Sistema de login — como funciona por dentro</li>
+        <li>APIs: como apps conversam entre si</li>
+        <li>Criando seu primeiro app funcional</li>
+        <li>Hospedagem: Vercel, Netlify, domínio próprio</li>
+        <li>SaaS — o que é e como criar o seu</li>
+        <li>Aplicativo mobile sem código nativo (React Native intro)</li>
+        <li>Jogos: lógica e construção básica</li>
+      </ul>
+    </div>
+
+    <!-- M4 -->
+    <div class="module-card" data-num="M4">
+      <div class="module-tag tag-quantum">IA + Criação</div>
+      <h3>Inteligência Artificial Aplicada</h3>
+      <p style="font-size:12px; color:var(--text-dim); font-weight:300;">Claude, ChatGPT, Midjourney — IA como extensão da sua mente criadora.</p>
+      <ul class="module-lessons">
+        <li>O mapa das IAs em 2025: quem faz o quê</li>
+        <li>Prompt engineering — a arte de comandar IAs</li>
+        <li>Criando sites completos com IA em minutos</li>
+        <li>Gerando imagens, vídeos e áudios profissionais</li>
+        <li>Automatizando tarefas com IA</li>
+        <li>Integrando IA ao seu produto digital</li>
+        <li>IA ancestral? O campo morfogenético e o aprendizado de máquina</li>
+        <li>Criando seu agente de IA personalizado</li>
+        <li>O futuro: AGI, consciência artificial e soberania digital</li>
+      </ul>
+    </div>
+
+    <!-- M5 -->
+    <div class="module-card" data-num="M5">
+      <div class="module-tag tag-marketing">Marketing</div>
+      <h3>Engenharia da Atenção e Vendas</h3>
+      <p style="font-size:12px; color:var(--text-dim); font-weight:300;">Bernays, Cialdini, Packard — os mestres. Aplicados ao mundo digital atual.</p>
+      <ul class="module-lessons">
+        <li>Edward Bernays: o pai da engenharia do consentimento</li>
+        <li>Cialdini: os 7 gatilhos de influência</li>
+        <li>Economia da atenção — o recurso mais escasso do séc. XXI</li>
+        <li>O funil mental Akasha (7 etapas)</li>
+        <li>Copywriting: a tecnologia das palavras que vendem</li>
+        <li>Estrutura de post que para o scroll (gancho, virada, CTA)</li>
+        <li>Técnicas de vendas + linguagem ancestral</li>
+        <li>Lançamento digital do zero: estratégia completa</li>
+        <li>Precificação premium — por que cobrar mais vende mais</li>
+      </ul>
+    </div>
+
+    <!-- M6 -->
+    <div class="module-card" data-num="M6">
+      <div class="module-tag tag-ancestral">Consciência</div>
+      <h3>Tecnologia Ancestral e Leis Universais</h3>
+      <p style="font-size:12px; color:var(--text-dim); font-weight:300;">O tempero supremo. Física quântica, espiritualidade e ciência em harmonia.</p>
+      <ul class="module-lessons">
+        <li>O Efeito Observador e como sua atenção cria realidade</li>
+        <li>Campo Morfogenético — Rupert Sheldrake</li>
+        <li>Memória epigenética: código ancestral no corpo</li>
+        <li>Registros Akáshicos: mitologia ou campo informacional?</li>
+        <li>Constelação Familiar como debugging de padrões</li>
+        <li>Leis Universais: causa e efeito, vibração, correspondência</li>
+        <li>Vidas passadas: perspectivas científicas e filosóficas</li>
+        <li>Linguística profunda: a palavra como tecnologia de criação</li>
+        <li>Civilizações antigas e tecnologia: o que foi esquecido</li>
+      </ul>
+    </div>
+
+    <!-- M7 -->
+    <div class="module-card" data-num="M7">
+      <div class="module-tag tag-essence">Legado</div>
+      <h3>Ecossistema Supremo e Soberania</h3>
+      <p style="font-size:12px; color:var(--text-dim); font-weight:300;">Juntando tudo. Produto, marca, sistema, monetização e legado permanente.</p>
+      <ul class="module-lessons">
+        <li>Desenhando seu ecossistema digital completo</li>
+        <li>Estrutura de vendas: landing page + funil + checkout</li>
+        <li>Criando seu produto digital na Hotmart / Amazon</li>
+        <li>Branding da essência: logo, paleta, voz, identidade</li>
+        <li>Posicionamento na Quinta Dimensão (sem concorrência)</li>
+        <li>Backup soberano: seu código é seu para sempre</li>
+        <li>Geopolítica digital: quem controla a internet e por quê</li>
+        <li>O novo paradigma: DAOs, tokenização, Web3 simplificados</li>
+        <li>Manifesto pessoal: seu código supremo como criador</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ FORMATO AULA ══ -->
+<section id="formato">
+  <div class="section-label">// 03 — Gravação e Formato</div>
+  <h2>Formato de Aula — Simples e Poderoso</h2>
+
+  <div class="info-box">
+    <p>→ Câmera simples (celular ou notebook), fundo escuro ou minimalista, iluminação frontal. Zero produção cara. 100% valor no conteúdo e na clareza.</p>
+  </div>
+
+  <h3>Anatomia de Uma Aula Perfeita</h3>
+
+  <div class="aula-structure">
+    <div class="aula-block">
+      <div class="aula-block-time">0:30</div>
+      <div class="aula-block-label">Gancho</div>
+      <div class="aula-block-desc">Uma frase que provoca. Paradoxo ou verdade incômoda.</div>
+    </div>
+    <div class="aula-block">
+      <div class="aula-block-time">1:00</div>
+      <div class="aula-block-label">Contexto</div>
+      <div class="aula-block-desc">Por que isso importa. O problema real.</div>
+    </div>
+    <div class="aula-block">
+      <div class="aula-block-time">6:00</div>
+      <div class="aula-block-label">Conteúdo</div>
+      <div class="aula-block-desc">Prático, direto, com exemplos visuais na tela.</div>
+    </div>
+    <div class="aula-block">
+      <div class="aula-block-time">1:00</div>
+      <div class="aula-block-label">Conexão</div>
+      <div class="aula-block-desc">Liga o conteúdo técnico à visão maior.</div>
+    </div>
+    <div class="aula-block">
+      <div class="aula-block-time">0:30</div>
+      <div class="aula-block-label">CTA</div>
+      <div class="aula-block-desc">Ação prática ou reflexão para o aluno.</div>
+    </div>
+  </div>
+
+  <div class="divider"><span>GUIA DE GRAVAÇÃO</span></div>
+
+  <div class="video-guide">
+    <div class="video-format">
+      <div>
+        <div class="video-time">A<span>CÂMERA</span></div>
+      </div>
+      <div>
+        <h3 style="font-size:14px; margin-bottom:8px;">Câmera Falando Para o Aluno</h3>
+        <p style="font-size:12px; margin:0;">Você na tela, direto no olho. Tom firme, pausado, autoridade. Use para: abertura, conceitos, reflexões, encerramento. <strong style="color:var(--gold)">Fundo escuro + iluminação frontal.</strong> Celular apoiado funciona perfeitamente.</p>
+      </div>
+    </div>
+    <div class="video-format">
+      <div>
+        <div class="video-time">B<span>TELA</span></div>
+      </div>
+      <div>
+        <h3 style="font-size:14px; margin-bottom:8px;">Gravação de Tela (Screen Recording)</h3>
+        <p style="font-size:12px; margin:0;">Use para toda parte prática: código, ferramentas, demonstrações. Ferramentas gratuitas: <strong style="color:var(--gold)">OBS Studio</strong> (Windows/Mac), <strong style="color:var(--gold)">QuickTime</strong> (Mac), <strong style="color:var(--gold)">Loom</strong> (online). Sua voz ao fundo enquanto mostra na tela.</p>
+      </div>
+    </div>
+    <div class="video-format">
+      <div>
+        <div class="video-time">C<span>SLIDES</span></div>
+      </div>
+      <div>
+        <h3 style="font-size:14px; margin-bottom:8px;">Slides Akasha (Conceitual)</h3>
+        <p style="font-size:12px; margin:0;">Para aulas de física quântica, ancestralidade, marketing. Slides escuros com tipografia forte. Crie no <strong style="color:var(--gold)">Canva</strong> usando paleta preta + dourado + ciano. Apresente na tela com sua voz.</p>
+      </div>
+    </div>
+    <div class="video-format">
+      <div>
+        <div class="video-time">D<span>MIX</span></div>
+      </div>
+      <div>
+        <h3 style="font-size:14px; margin-bottom:8px;">Abertura de Câmera + Corpo de Tela</h3>
+        <p style="font-size:12px; margin:0;">O formato ideal para a maioria das aulas. <strong style="color:var(--gold)">30s de câmera com o gancho</strong>, depois vai para a tela e executa. Encerra com câmera de novo. Edição simples no <strong style="color:var(--gold)">CapCut</strong> ou <strong style="color:var(--gold)">DaVinci Resolve</strong> (gratuito).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CHECKLIST ══ -->
+<section id="checklist">
+  <div class="section-label">// 04 — Sistema de Execução</div>
+  <h2>Checklist de Produção</h2>
+
+  <div class="checklist-section" id="checklistContainer">
+
+    <div class="check-group">
+      <div class="check-group-header" onclick="toggleGroup(this)">
+        <div class="check-group-title">PRÉ-PRODUÇÃO — Fundação</div>
+        <div class="progress-pill" id="pill-0">0/8</div>
+      </div>
+      <div class="check-items open" id="group-0">
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Definir nome final do curso</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Escrever manifesto de abertura (texto de apresentação do curso)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Criar conta no Hotmart ou Kiwify para hospedar o curso</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Configurar domínio próprio (akashahub.com.br)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Gerar identidade visual do curso (capa, paleta, fontes)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Criar capa oficial do curso com prompt de IA</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Preparar ambiente de gravação (fundo, luz, câmera)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Instalar OBS Studio ou ferramenta de gravação</label></div>
+      </div>
+    </div>
+
+    <div class="check-group">
+      <div class="check-group-header" onclick="toggleGroup(this)">
+        <div class="check-group-title">MÓDULO 1 — O Código da Realidade</div>
+        <div class="progress-pill" id="pill-1">0/9</div>
+      </div>
+      <div class="check-items" id="group-1">
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Roteiro: Aula 1 — O que é informação?</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Roteiro: Aula 2 — Como a realidade é programada</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Roteiro: Aula 3 — O que é código (DNA → HTML)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Roteiro: Aula 4 — A arquitetura da internet</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Roteiro: Aula 5 — Engenharia da Informação</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Gravação: Aulas 1–9 do Módulo 1</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Edição básica das aulas</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Upload no Hotmart/Kiwify</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Revisão final e publicação do módulo</label></div>
+      </div>
+    </div>
+
+    <div class="check-group">
+      <div class="check-group-header" onclick="toggleGroup(this)">
+        <div class="check-group-title">MÓDULO 2 — Linguagens do Mundo Digital</div>
+        <div class="progress-pill" id="pill-2">0/9</div>
+      </div>
+      <div class="check-items" id="group-2">
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Preparar ambiente de código (VS Code instalado)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Roteiro + gravação de tela: HTML completo</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Roteiro + gravação de tela: CSS completo</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Roteiro + gravação de tela: JavaScript básico</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula prática: Primeiro site do zero (ao vivo na tela)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: UI/UX e Figma</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Python introdução</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Edição e upload</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Criar arquivo de exercícios para o aluno</label></div>
+      </div>
+    </div>
+
+    <div class="check-group">
+      <div class="check-group-header" onclick="toggleGroup(this)">
+        <div class="check-group-title">MÓDULO 3 — Arquitetura Digital Completa</div>
+        <div class="progress-pill" id="pill-3">0/7</div>
+      </div>
+      <div class="check-items" id="group-3">
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Criar conta no Firebase/Supabase para demonstrações</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Backend e banco de dados (gravação de tela)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Sistema de login (demonstração real)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: APIs na prática</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Hospedagem no Vercel (do zero ao ar)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Jogo simples com JavaScript</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Edição e upload</label></div>
+      </div>
+    </div>
+
+    <div class="check-group">
+      <div class="check-group-header" onclick="toggleGroup(this)">
+        <div class="check-group-title">MÓDULO 4 — Inteligência Artificial Aplicada</div>
+        <div class="progress-pill" id="pill-4">0/7</div>
+      </div>
+      <div class="check-items" id="group-4">
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: O mapa das IAs (Claude, GPT, Gemini, Manus)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Prompt engineering avançado</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula prática: Criando site completo com IA</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Geração de imagens (Midjourney/Flux)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Integrando IA ao seu produto</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula conceitual: IA e campo morfogenético</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Edição e upload</label></div>
+      </div>
+    </div>
+
+    <div class="check-group">
+      <div class="check-group-header" onclick="toggleGroup(this)">
+        <div class="check-group-title">MÓDULO 5 — Engenharia da Atenção e Vendas</div>
+        <div class="progress-pill" id="pill-5">0/7</div>
+      </div>
+      <div class="check-items" id="group-5">
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Edward Bernays e a engenharia do consentimento</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Os 7 gatilhos de Cialdini</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: O funil mental Akasha (7 etapas)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Copywriting prático</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Estratégia de lançamento digital</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Técnicas de vendas + linguagem ancestral</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Edição e upload</label></div>
+      </div>
+    </div>
+
+    <div class="check-group">
+      <div class="check-group-header" onclick="toggleGroup(this)">
+        <div class="check-group-title">MÓDULO 6 — Tecnologia Ancestral e Leis Universais</div>
+        <div class="progress-pill" id="pill-6">0/7</div>
+      </div>
+      <div class="check-items" id="group-6">
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Efeito Observador e física quântica acessível</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Campo Morfogenético (Sheldrake)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Memória epigenética e padrões familiares</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Registros Akáshicos — ciência ou mito?</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Leis Universais na prática dos negócios</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Linguística como tecnologia de criação</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Edição e upload</label></div>
+      </div>
+    </div>
+
+    <div class="check-group">
+      <div class="check-group-header" onclick="toggleGroup(this)">
+        <div class="check-group-title">MÓDULO 7 — Ecossistema Supremo e Soberania</div>
+        <div class="progress-pill" id="pill-7">0/7</div>
+      </div>
+      <div class="check-items" id="group-7">
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Desenhando seu ecossistema completo</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula prática: Landing page de vendas do zero</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Produto digital na Hotmart (passo a passo)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Branding da essência</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Aula: Geopolítica digital e soberania</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Gravação: Manifesto final (câmera, emocional, poderoso)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Edição, upload e publicação final do curso</label></div>
+      </div>
+    </div>
+
+    <div class="check-group">
+      <div class="check-group-header" onclick="toggleGroup(this)">
+        <div class="check-group-title">LANÇAMENTO — Divulgação e Vendas</div>
+        <div class="progress-pill" id="pill-8">0/10</div>
+      </div>
+      <div class="check-items" id="group-8">
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Criar página de vendas (landing page) do curso</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Definir preço e estratégia de lançamento</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Criar 5 posts de aquecimento para o Instagram</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Criar 10 stories de contagem regressiva</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Gravar Reel de lançamento (60–90 segundos)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Criar banner de divulgação (prompt na seção Visual)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Ativar lista de espera no WhatsApp</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Configurar automação de e-mail (se houver lista)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Publicar data oficial de abertura de vagas</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"><label>Abrir vendas e monitorar métricas</label></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ PROMPTS VISUAIS ══ -->
+<section id="visual">
+  <div class="section-label">// 05 — Identidade Visual</div>
+  <h2>Prompts de IA para Visuais do Curso</h2>
+
+  <p>Use estes prompts no <strong style="color:var(--gold)">Midjourney</strong>, <strong style="color:var(--gold)">Flux</strong>, <strong style="color:var(--gold)">Adobe Firefly</strong> ou <strong style="color:var(--gold)">DALL-E 3</strong>. A estética é: sci-fi ancestral, futurista limpo, viajante do tempo, dourado + ciano + preto profundo.</p>
+
+  <div class="prompts-grid">
+
+    <div class="prompt-card">
+      <div class="prompt-type">→ Capa Principal do Curso</div>
+      <div class="prompt-text">Ultra-minimal dark digital book cover, deep black background (#04060A), golden geometric sacred geometry mandala dissolving into binary code streams, single glowing cyan line of horizon, title text area at center, cinematic lighting with god rays from above, ancient Egyptian / Mayan / Sumerian symbols subtly embedded in circuit board patterns, atmosphere of timeless knowledge meeting quantum technology, 8K, editorial grade, no people, ultra-clean, sci-fi mystical</div>
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar Prompt</button>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-type">→ Banner Instagram Feed (1:1)</div>
+      <div class="prompt-text">Square social media visual, black void background, a human silhouette made entirely of golden light threads and ancient glyphs, standing at the intersection of a digital city and ancient ruins (Machu Picchu + Tokyo skyline merged), quantum particle effects, floating data streams, deep teal and gold color palette, minimalist zen composition, wide negative space, text area at bottom, cinematic grade, no faces, 4K</div>
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar Prompt</button>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-type">→ Story / Vertical (9:16)</div>
+      <div class="prompt-text">Vertical 9:16 social story background, deep black to dark navy gradient, vertical stream of golden sacred geometry patterns transforming into code, small ancient pyramid at bottom reflecting in a digital mirror surface, aurora borealis in cyan and gold above, ultra-minimal, zen emptiness, particles floating, no text, cinematic mood, high contrast, editorial sci-fi aesthetic</div>
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar Prompt</button>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-type">→ Thumbnail de Aula (16:9)</div>
+      <div class="prompt-text">Wide 16:9 video thumbnail background, black void, horizontal golden code stream across center, left side: ancient stone tablet with glowing glyphs, right side: holographic UI interface with floating windows, center: empty space for face or text overlay, dramatic side lighting in gold and cyan, atmosphere of secret knowledge being revealed, ultra sharp, 4K cinematic</div>
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar Prompt</button>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-type">→ Post Carrossel — Slide de Abertura</div>
+      <div class="prompt-text">Square dark editorial poster, matte black background with subtle grain texture, single thin golden horizontal line at 1/3 from top, minimal sans-serif title area, bottom small glowing symbol (eye of horus inside circuit board), atmosphere: ancient secret society meets Silicon Valley, ultra clean typography space, dark luxury brand aesthetic, no humans, cinematic still</div>
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar Prompt</button>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-type">→ Logo / Símbolo do Curso</div>
+      <div class="prompt-text">Minimalist vector logo concept, single symbol combining: Akash field (infinity loop), circuit board trace, and ancient eye or star (Sirius), deep black background, glowing gold and cyan color scheme, ultra clean lines, sacred geometry proportions, no text, works at small size, timeless and modern simultaneously, spiritual tech aesthetic</div>
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar Prompt</button>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-type">→ Fundo para Slides de Aula</div>
+      <div class="prompt-text">Presentation slide background, pure deep black (#04060A), ultra subtle noise grain texture overlay, very faint golden geometric grid lines barely visible, one thin horizontal cyan glow line at bottom edge, massive empty center space for text, corner: tiny ancient glyph barely visible, atmosphere of deep space and ancient temples, non-distracting, professional, cinematic</div>
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar Prompt</button>
+    </div>
+
+  </div>
+
+  <div class="divider"><span>PALETA DE CORES OFICIAL</span></div>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap:10px; margin-top:8px;">
+    <div style="background:#04060A; border:1px solid var(--border); padding:16px 12px; text-align:center;">
+      <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--text-dim);">#04060A</div>
+      <div style="font-size:11px; color:var(--text-dim); margin-top:4px;">Void</div>
+    </div>
+    <div style="background:#C8A96E; border:1px solid var(--border); padding:16px 12px; text-align:center;">
+      <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--void);">#C8A96E</div>
+      <div style="font-size:11px; color:var(--void); margin-top:4px;">Ouro</div>
+    </div>
+    <div style="background:#4ECDC4; border:1px solid var(--border); padding:16px 12px; text-align:center;">
+      <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--void);">#4ECDC4</div>
+      <div style="font-size:11px; color:var(--void); margin-top:4px;">Ciano</div>
+    </div>
+    <div style="background:#E8D5A3; border:1px solid var(--border); padding:16px 12px; text-align:center;">
+      <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--void);">#E8D5A3</div>
+      <div style="font-size:11px; color:var(--void); margin-top:4px;">Ouro Claro</div>
+    </div>
+    <div style="background:#0D1220; border:1px solid var(--border); padding:16px 12px; text-align:center;">
+      <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--text-dim);">#0D1220</div>
+      <div style="font-size:11px; color:var(--text-dim); margin-top:4px;">Deep</div>
+    </div>
+    <div style="background:#D4CAB8; border:1px solid var(--border); padding:16px 12px; text-align:center;">
+      <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--void);">#D4CAB8</div>
+      <div style="font-size:11px; color:var(--void); margin-top:4px;">Areia</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ REFERÊNCIAS ══ -->
+<section id="referencias">
+  <div class="section-label">// 06 — Autoridades e Fontes</div>
+  <h2>Referências por Área</h2>
+
+  <h3>Marketing e Engenharia da Atenção</h3>
+  <div class="ref-grid" style="margin-bottom:24px;">
+    <div class="ref-card">
+      <div class="ref-name">Edward Bernays</div>
+      <div class="ref-area">Engenharia do Consentimento</div>
+      <div class="ref-desc">Criador das Relações Públicas modernas. Sobrinho de Freud. Obra: "Propaganda" (1928). Pai de tudo que você vê no marketing atual.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Robert Cialdini</div>
+      <div class="ref-area">Persuasão e Influência</div>
+      <div class="ref-desc">Os 6 (agora 7) gatilhos da persuasão. Obra: "As Armas da Persuasão". Base científica de todo copywriting.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Vance Packard</div>
+      <div class="ref-area">Consumo e Manipulação</div>
+      <div class="ref-desc">Obra: "The Hidden Persuaders" (1957). Revelou como publicidade manipula o inconsciente. Referência histórica.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Seth Godin</div>
+      <div class="ref-area">Marketing Moderno</div>
+      <div class="ref-desc">Marketing de permissão, tribos, "ser notável". O mais influente do marketing contemporâneo.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Alex Hormozi</div>
+      <div class="ref-area">Ofertas e Vendas</div>
+      <div class="ref-desc">$100M Offers. A matemática de criar ofertas irresistíveis. Grande referência atual.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Russell Brunson</div>
+      <div class="ref-area">Funis Digitais</div>
+      <div class="ref-desc">ClickFunnels. "DotCom Secrets", "Traffic Secrets". A bíblia dos funis de venda digitais.</div>
+    </div>
+  </div>
+
+  <h3>Física Quântica e Consciência</h3>
+  <div class="ref-grid" style="margin-bottom:24px;">
+    <div class="ref-card">
+      <div class="ref-name">David Bohm</div>
+      <div class="ref-area">Física Quântica</div>
+      <div class="ref-desc">Ordem implícita e explícita. Conceito de holomovimento. "Wholeness and the Implicate Order".</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Rupert Sheldrake</div>
+      <div class="ref-area">Campo Morfogenético</div>
+      <div class="ref-desc">Teoria dos campos morfogenéticos. Memória da natureza. Ponte entre biologia e espiritualidade.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Joe Dispenza</div>
+      <div class="ref-area">Neurociência Aplicada</div>
+      <div class="ref-desc">Como o cérebro cria realidade. Meditação + neurociência + física quântica. Grande alcance no Brasil.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Michio Kaku</div>
+      <div class="ref-area">Física Teórica</div>
+      <div class="ref-desc">Física do futuro, teoria das cordas, dimensões paralelas em linguagem acessível.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Carl Gustav Jung</div>
+      <div class="ref-area">Psicologia Profunda</div>
+      <div class="ref-desc">Inconsciente coletivo, arquétipos, sombra, sincronicidade. Base de todo autoconhecimento profundo.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Amit Goswami</div>
+      <div class="ref-area">Física e Consciência</div>
+      <div class="ref-desc">"O Universo Autoconsciente". Físico quântico que defende a consciência como base da realidade.</div>
+    </div>
+  </div>
+
+  <h3>Tecnologia e Inovação</h3>
+  <div class="ref-grid">
+    <div class="ref-card">
+      <div class="ref-name">Tim Berners-Lee</div>
+      <div class="ref-area">Criador da Web</div>
+      <div class="ref-desc">Inventor do HTML e da World Wide Web. Referência histórica obrigatória para contextualizar a internet.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Yuval Noah Harari</div>
+      <div class="ref-area">Filosofia Tech</div>
+      <div class="ref-desc">"Homo Deus", "21 Lições para o Séc. XXI". Visão macro de para onde a tecnologia nos leva.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Ray Kurzweil</div>
+      <div class="ref-area">Singularidade / IA</div>
+      <div class="ref-desc">Singularidade tecnológica. "A Singularidade Está Próxima". Diretor de engenharia do Google.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-name">Naval Ravikant</div>
+      <div class="ref-area">Filosofia Digital</div>
+      <div class="ref-desc">Leverage, código como alavanca infinita, construindo riqueza sem permissão. Altamente influente.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TIMELINE ══ -->
+<section id="timeline">
+  <div class="section-label">// 07 — Plano de Execução</div>
+  <h2>Timeline de Produção — 8 Semanas</h2>
+
+  <p style="margin-bottom:24px;">Cronograma para produzir e lançar o curso de forma enxuta, sem gastar dinheiro, usando apenas gravação simples e as ferramentas já disponíveis.</p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-week">Semana 1</div>
+      <div class="timeline-line"></div>
+      <div class="timeline-content">
+        <h4>Fundação e Pré-Produção</h4>
+        <p>Definir nome, criar conta Hotmart/Kiwify, configurar ambiente de gravação, gerar identidade visual (capa, banner) com prompts de IA, escrever manifesto de abertura do curso.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-week">Semana 2</div>
+      <div class="timeline-line"></div>
+      <div class="timeline-content">
+        <h4>Gravar Módulos 1 e 2</h4>
+        <p>18 aulas. Módulo 1 em câmera + slides. Módulo 2 em gravação de tela com código ao vivo. Edição básica no CapCut ou DaVinci.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-week">Semana 3</div>
+      <div class="timeline-line"></div>
+      <div class="timeline-content">
+        <h4>Gravar Módulos 3 e 4</h4>
+        <p>16 aulas. Backend, banco de dados, jogo simples, IA aplicada. Tudo em gravação de tela com demonstrações reais. Upload parcial para testar a plataforma.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-week">Semana 4</div>
+      <div class="timeline-line"></div>
+      <div class="timeline-content">
+        <h4>Gravar Módulo 5 — Marketing</h4>
+        <p>9 aulas. Mix de câmera e slides. Bernays, Cialdini, funil Akasha, copywriting. Preparar lista de espera no WhatsApp e aquecimento nas redes.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-week">Semana 5</div>
+      <div class="timeline-line"></div>
+      <div class="timeline-content">
+        <h4>Gravar Módulos 6 e 7</h4>
+        <p>16 aulas. As mais poderosas do curso. Física quântica, ancestralidade, ecossistema final. Gravar manifesto final em câmera — emocional, claro, poderoso.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-week">Semana 6</div>
+      <div class="timeline-line"></div>
+      <div class="timeline-content">
+        <h4>Edição Final e Upload Completo</h4>
+        <p>Revisar todas as aulas. Upload completo na plataforma. Criar thumbnails de cada módulo. Testar o acesso como aluno.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-week">Semana 7</div>
+      <div class="timeline-line"></div>
+      <div class="timeline-content">
+        <h4>Landing Page + Campanha de Lançamento</h4>
+        <p>Criar página de vendas com copywriting Akasha. 5 posts de aquecimento no Instagram. 10 stories. Reel de lançamento (60–90s). Ativar WhatsApp de vendas.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-week">Semana 8</div>
+      <div class="timeline-line"></div>
+      <div class="timeline-content">
+        <h4>Lançamento Oficial</h4>
+        <p>Abrir vagas. Publicar em todas as plataformas. Lives de apresentação. Primeiros alunos = primeiros casos de sucesso = próximo topo de funil.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>AKASHA HUB</strong> · Código Supremo · akashahub.com.br<br>
+  <span style="margin-top:6px; display:block;">Documento Operacional Confidencial · Classificação Diamante Supremo</span>
+</footer>
+
+</div><!-- /container -->
+
+<script>
+  // ── TOGGLE GROUPS ──
+  function toggleGroup(header) {
+    const id = header.nextElementSibling.id;
+    const content = document.getElementById(id);
+    content.classList.toggle('open');
+  }
+
+  // ── TOGGLE CHECKBOXES ──
+  function toggleCheck(item) {
+    const cb = item.querySelector('input[type="checkbox"]');
+    cb.checked = !cb.checked;
+    item.classList.toggle('done', cb.checked);
+    updateProgress();
+  }
+
+  // ── UPDATE PROGRESS ──
+  function updateProgress() {
+    const groups = document.querySelectorAll('.check-items');
+    let totalAll = 0, doneAll = 0;
+
+    groups.forEach((group, i) => {
+      const items = group.querySelectorAll('input[type="checkbox"]');
+      const done = group.querySelectorAll('input[type="checkbox"]:checked');
+      const pill = document.getElementById('pill-' + i);
+      if (pill) pill.textContent = done.length + '/' + items.length;
+      totalAll += items.length;
+      doneAll += done.length;
+    });
+
+    const pct = totalAll > 0 ? Math.round((doneAll / totalAll) * 100) : 0;
+    document.getElementById('globalBar').style.width = pct + '%';
+    document.getElementById('globalPct').textContent = pct + '%';
+  }
+
+  // ── COPY PROMPT ──
+  function copyPrompt(btn) {
+    const text = btn.previousElementSibling.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copiado ✓';
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
+  }
+
+  // Initialize
+  updateProgress();
+</script>
+
+</body>
+</html>
