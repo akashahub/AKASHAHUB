@@ -1103,22 +1103,36 @@ window.closeModalOnBackdrop = (e) => {
   if (e.target === document.getElementById('modalBackdrop')) fecharModal();
 };
 
-// Swipe down to close
-const drawer = document.getElementById('modalDrawer');
-let swipeStartY = 0;
-drawer.addEventListener('touchstart', e => {
+// Swipe down to close — só fecha se o scroll estiver no topo E
+// o gesto começou no handle (pill) ou na toprow do drawer
+const drawer       = document.getElementById('modalDrawer');
+const drawerHandle = drawer.querySelector('.drawer-handle');
+let swipeStartY    = 0;
+let swipeActive    = false;   // true apenas quando o toque iniciou no handle
+
+drawerHandle.addEventListener('touchstart', e => {
   swipeStartY = e.touches[0].clientY;
-}, { passive:true });
-drawer.addEventListener('touchmove', e => {
-  if (document.getElementById('drawerScroll').scrollTop > 0) return;
+  swipeActive = true;
+}, { passive: true });
+
+drawerHandle.addEventListener('touchmove', e => {
+  if (!swipeActive) return;
   const dy = e.touches[0].clientY - swipeStartY;
-  if (dy > 0) drawer.style.transform = `translateY(${dy}px)`;
-}, { passive:true });
-drawer.addEventListener('touchend', e => {
+  if (dy > 0) drawer.style.transform = `translateY(${Math.min(dy, 260)}px)`;
+}, { passive: true });
+
+drawerHandle.addEventListener('touchend', e => {
+  if (!swipeActive) return;
+  swipeActive = false;
   const dy = e.changedTouches[0].clientY - swipeStartY;
   drawer.style.transform = '';
-  if (dy > 80) fecharModal();
+  if (dy > 90) fecharModal();
 });
+
+// Garante que toques dentro do scroll nunca ativem o swipe-to-close
+document.getElementById('drawerScroll').addEventListener('touchstart', e => {
+  swipeActive = false;
+}, { passive: true });
 
 /* ─── Auto-save debounced ─── */
 window.autoSave = () => {
