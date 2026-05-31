@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════
-   TOKENS
+   TOKENS — DARK (padrão)
 ══════════════════════════════════════ */
 :root {
   --bg:      #06050a;
@@ -32,6 +32,44 @@
   --r:       4px;
   --r-lg:    10px;
   --nav-h:   62px;
+
+  /* Tema variáveis */
+  --theme-bg-body:    #06050a;
+  --theme-nav-bg:     rgba(6,5,10,.94);
+  --theme-surface:    rgba(255,255,255,.022);
+  --theme-border:     rgba(255,255,255,.05);
+  --theme-text:       #f5f0e8;
+  --theme-transition: background .35s ease, color .35s ease, border-color .35s ease;
+}
+
+/* ══════════════════════════════════════
+   TOKENS — LIGHT
+══════════════════════════════════════ */
+body.light-mode {
+  --bg:      #f8f4ec;
+  --sur:     #ede8dd;
+  --sur2:    #e6e0d2;
+  --gold:    #9a7208;
+  --gold-lt: #7a5800;
+  --gb:      rgba(154,114,8,.22);
+  --gb-soft: rgba(154,114,8,.06);
+  --white:   #1a1510;
+  --muted:   rgba(26,21,16,.50);
+  --dim:     rgba(26,21,16,.28);
+  --purple:  #6b3db0;
+  --pur-lt:  #5a2ea0;
+  --pur-b:   rgba(90,46,160,.25);
+  --pur-s:   rgba(90,46,160,.06);
+  --green:   #1a9e4c;
+  --done:    rgba(22,163,74,.85);
+  --done-b:  rgba(22,163,74,.22);
+  --done-bg: rgba(22,163,74,.05);
+
+  --theme-bg-body:    #f8f4ec;
+  --theme-nav-bg:     rgba(248,244,236,.95);
+  --theme-surface:    rgba(0,0,0,.028);
+  --theme-border:     rgba(0,0,0,.09);
+  --theme-text:       #1a1510;
 }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
@@ -40,6 +78,7 @@ body {
   background:var(--bg); color:var(--white);
   font-family:'Josefin Sans',sans-serif; font-weight:300;
   min-height:100vh; overflow-x:hidden;
+  transition:background .35s ease, color .35s ease;
 }
 
 /* ambient */
@@ -48,6 +87,9 @@ body::before {
   width:900px; height:700px;
   background:radial-gradient(ellipse,rgba(124,77,189,.07) 0%,rgba(201,162,39,.03) 55%,transparent 72%);
   pointer-events:none; animation:breathe 14s ease-in-out infinite; z-index:0;
+}
+body.light-mode::before {
+  background:radial-gradient(ellipse,rgba(124,77,189,.04) 0%,rgba(201,162,39,.02) 55%,transparent 72%);
 }
 @keyframes breathe { 0%,100%{opacity:.55;} 50%{opacity:1;} }
 
@@ -58,25 +100,89 @@ nav {
   position:fixed; top:0; left:0; right:0; z-index:300;
   height:var(--nav-h);
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 28px;
-  background:rgba(6,5,10,.94); backdrop-filter:blur(16px);
-  border-bottom:1px solid rgba(255,255,255,.05);
+  padding:0 20px;
+  background:var(--theme-nav-bg); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--theme-border);
+  transition:background .35s ease, border-color .35s ease;
 }
 .nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
 .nav-logo img { width:34px; height:34px; border-radius:50%; filter:drop-shadow(0 0 6px rgba(201,162,39,.35)); }
-.nav-logo-txt { font-family:'Cormorant Garamond',serif; font-size:1.05rem; letter-spacing:4px; color:var(--white); }
+.nav-logo-txt { font-family:'Cormorant Garamond',serif; font-size:1.05rem; letter-spacing:4px; color:var(--white); transition:color .35s; }
 .nav-logo-txt b { color:var(--gold-lt); font-weight:400; }
-.nav-right { display:flex; align-items:center; gap:12px; }
+
+/* ── Nav Right: agrupamento de controles ── */
+.nav-right {
+  display:flex; align-items:center; gap:8px;
+  flex-wrap:nowrap;
+}
+
+/* ── Separador visual ── */
+.nav-sep {
+  width:1px; height:18px;
+  background:var(--pur-b);
+  flex-shrink:0;
+}
+
+/* ── Grupo de botões ── */
+.ctrl-group {
+  display:flex; align-items:center; gap:3px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--pur-b);
+  border-radius:20px; padding:3px;
+  transition:border-color .35s;
+}
+body.light-mode .ctrl-group {
+  background:rgba(0,0,0,.03);
+}
+
+/* Botão genérico de controle */
+.ctrl-btn {
+  height:26px; padding:0 10px;
+  border-radius:16px; border:none;
+  font-family:'Josefin Sans',sans-serif;
+  font-size:.41rem; letter-spacing:3px; text-transform:uppercase;
+  cursor:pointer; transition:all .22s ease;
+  display:flex; align-items:center; gap:5px;
+  white-space:nowrap; flex-shrink:0;
+  color:var(--muted); background:transparent;
+}
+.ctrl-btn:hover { color:var(--white); background:rgba(166,127,220,.12); }
+.ctrl-btn.active {
+  color:var(--bg);
+  background:var(--white);
+}
+body.light-mode .ctrl-btn.active {
+  color:var(--white);
+  background:var(--purple);
+}
+
+/* Botão tema — ícone especial */
+.ctrl-btn-theme { width:26px; padding:0; justify-content:center; }
+
+/* ── Nav user / back ── */
 .nav-back {
-  font-size:.5rem; letter-spacing:4px; text-transform:uppercase;
+  font-size:.45rem; letter-spacing:3.5px; text-transform:uppercase;
   color:var(--muted); text-decoration:none; transition:color .25s;
-  padding:7px 14px; border-radius:20px; border:1px solid transparent;
+  padding:6px 12px; border-radius:20px; border:1px solid transparent;
+  white-space:nowrap; flex-shrink:0;
 }
 .nav-back:hover { color:var(--gold); border-color:var(--gb); background:var(--gb-soft); }
 .nav-user {
-  font-size:.48rem; letter-spacing:3px; text-transform:uppercase;
-  color:var(--pur-lt); border:1px solid var(--pur-b); padding:6px 14px;
+  font-size:.42rem; letter-spacing:2.5px; text-transform:uppercase;
+  color:var(--pur-lt); border:1px solid var(--pur-b); padding:5px 12px;
   border-radius:20px; background:var(--pur-s);
+  white-space:nowrap; flex-shrink:0;
+}
+
+/* Mobile: oculta user na nav para dar espaço */
+@media(max-width:640px) {
+  nav { padding:0 12px; }
+  .nav-user { display:none !important; }
+  .ctrl-btn { font-size:.38rem; letter-spacing:2px; padding:0 7px; }
+  .nav-back { font-size:.38rem; letter-spacing:2px; padding:5px 8px; }
+}
+@media(max-width:420px) {
+  .nav-back { display:none; }
 }
 
 /* ══════════════════════════════════════
@@ -110,15 +216,18 @@ main {
 .page-eyebrow {
   font-size:.48rem; letter-spacing:6px; text-transform:uppercase;
   color:var(--pur-lt); opacity:.7; margin-bottom:12px; display:block;
+  transition:color .35s;
 }
 .page-title {
   font-family:'Cormorant Garamond',serif; font-weight:300;
   font-size:2.5rem; letter-spacing:3px; line-height:1.05;
+  transition:color .35s;
 }
-.page-title em { font-style:italic; color:var(--gold-lt); }
+.page-title em { font-style:italic; color:var(--gold-lt); transition:color .35s; }
 .page-sub {
   font-size:.58rem; letter-spacing:3px; text-transform:uppercase;
   color:var(--muted); margin-top:12px; line-height:2.1;
+  transition:color .35s;
 }
 
 /* Progress */
@@ -127,11 +236,14 @@ main {
   display:flex; justify-content:space-between;
   font-size:.48rem; letter-spacing:4px; text-transform:uppercase;
   color:var(--muted); margin-bottom:9px;
+  transition:color .35s;
 }
 .progress-row span:last-child { color:var(--pur-lt); }
 .progress-track {
   height:3px; background:rgba(255,255,255,.06); border-radius:3px; overflow:hidden;
+  transition:background .35s;
 }
+body.light-mode .progress-track { background:rgba(0,0,0,.08); }
 .progress-fill {
   height:100%;
   background:linear-gradient(90deg,var(--purple),var(--pur-lt),var(--gold-lt));
@@ -149,13 +261,13 @@ main {
 }
 .pilar-num {
   font-size:.42rem; letter-spacing:4px; text-transform:uppercase;
-  color:var(--pur-lt); opacity:.55; white-space:nowrap;
+  color:var(--pur-lt); opacity:.55; white-space:nowrap; transition:color .35s;
 }
 .pilar-name {
   font-size:.48rem; letter-spacing:4px; text-transform:uppercase;
-  color:var(--pur-lt); opacity:.7; white-space:nowrap;
+  color:var(--pur-lt); opacity:.7; white-space:nowrap; transition:color .35s;
 }
-.pilar-line { flex:1; height:1px; background:linear-gradient(90deg,var(--pur-b),transparent); }
+.pilar-line { flex:1; height:1px; background:linear-gradient(90deg,var(--pur-b),transparent); transition:background .35s; }
 
 /* ══════════════════════════════════════
    ENCONTRO CARD (list item)
@@ -163,9 +275,9 @@ main {
 .enc-card {
   width:100%; display:flex; align-items:center; justify-content:space-between;
   padding:16px 20px; margin-bottom:6px;
-  background:rgba(255,255,255,.022); border:1px solid rgba(255,255,255,.05);
+  background:var(--theme-surface); border:1px solid var(--theme-border);
   border-radius:var(--r); cursor:pointer;
-  transition:all .28s cubic-bezier(.25,1,.5,1);
+  transition:all .28s cubic-bezier(.25,1,.5,1), background .35s, border-color .35s;
   position:relative; overflow:hidden; text-align:left;
 }
 .enc-card::before {
@@ -184,27 +296,26 @@ main {
   border:1px solid var(--pur-b); background:var(--pur-s);
   display:flex; align-items:center; justify-content:center;
   font-family:'Cormorant Garamond',serif; font-size:.95rem;
-  color:var(--pur-lt);
+  color:var(--pur-lt); transition:all .35s;
 }
 .enc-card.done .enc-num {
   border-color:var(--done-b); background:var(--done-bg); color:var(--done);
 }
-.enc-info {}
 .enc-title {
   font-family:'Cormorant Garamond',serif; font-size:1rem;
-  letter-spacing:1.5px; line-height:1.2; color:var(--white);
+  letter-spacing:1.5px; line-height:1.2; color:var(--white); transition:color .35s;
 }
 .enc-sub {
   font-size:.44rem; letter-spacing:3px; text-transform:uppercase;
-  margin-top:3px;
+  margin-top:3px; transition:color .35s;
 }
 .enc-sub.pending { color:var(--muted); }
 .enc-sub.done-lbl { color:var(--done); }
-.enc-arrow { font-size:.85rem; color:var(--pur-lt); opacity:.45; flex-shrink:0; }
+.enc-arrow { font-size:.85rem; color:var(--pur-lt); opacity:.45; flex-shrink:0; transition:color .35s; }
 .enc-card.done .enc-arrow { color:var(--done); opacity:.6; }
 
 /* ══════════════════════════════════════
-   MODAL — Drawer estilo WhatsApp
+   MODAL — Drawer
 ══════════════════════════════════════ */
 .modal-backdrop {
   position:fixed; inset:0; z-index:400;
@@ -217,16 +328,18 @@ main {
   position:fixed; bottom:0; left:0; right:0; z-index:401;
   max-width:680px; margin:0 auto;
   max-height:92vh;
-  background:linear-gradient(165deg, #0f0c1c 0%, #09071a 100%);
+  background:linear-gradient(165deg, var(--sur) 0%, var(--bg) 100%);
   border:1px solid var(--pur-b); border-bottom:none;
   border-radius:18px 18px 0 0;
   display:flex; flex-direction:column;
-  transform:translateY(100%); transition:transform .42s cubic-bezier(.16,1,.3,1);
+  transform:translateY(100%); transition:transform .42s cubic-bezier(.16,1,.3,1), background .35s;
   overflow:hidden;
+}
+body.light-mode .modal-drawer {
+  background:linear-gradient(165deg, #ede8dd 0%, #f8f4ec 100%);
 }
 .modal-backdrop.open .modal-drawer { transform:translateY(0); }
 
-/* Decorative corners */
 .modal-drawer::before {
   content:''; position:absolute; top:0; left:0; width:22px; height:22px;
   border-top:2px solid rgba(166,127,220,.45); border-left:2px solid rgba(166,127,220,.45);
@@ -238,15 +351,18 @@ main {
   border-radius:0 16px 0 0; pointer-events:none; z-index:1;
 }
 
-/* Glow BG */
 .drawer-glow {
   position:absolute; inset:0; pointer-events:none; z-index:0;
   background:
     radial-gradient(ellipse at 15% 0%, rgba(124,77,189,.3) 0%, transparent 55%),
     radial-gradient(ellipse at 85% 100%, rgba(201,162,39,.06) 0%, transparent 50%);
 }
+body.light-mode .drawer-glow {
+  background:
+    radial-gradient(ellipse at 15% 0%, rgba(124,77,189,.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 100%, rgba(201,162,39,.04) 0%, transparent 50%);
+}
 
-/* Handle */
 .drawer-handle {
   position:relative; z-index:2; flex-shrink:0;
   display:flex; flex-direction:column; align-items:center;
@@ -266,13 +382,13 @@ main {
 }
 .drawer-close {
   width:30px; height:30px; border-radius:8px;
-  border:1px solid rgba(255,255,255,.09); background:rgba(255,255,255,.04);
+  border:1px solid var(--theme-border); background:var(--theme-surface);
   display:flex; align-items:center; justify-content:center;
   cursor:pointer; color:var(--muted); font-size:13px; transition:all .2s;
 }
 .drawer-close:hover { border-color:rgba(255,255,255,.2); color:var(--white); background:rgba(255,255,255,.08); }
+body.light-mode .drawer-close:hover { border-color:rgba(0,0,0,.2); background:rgba(0,0,0,.06); }
 
-/* Scrollable body */
 .drawer-scroll {
   position:relative; z-index:2; flex:1; overflow-y:auto;
   padding:20px 22px 32px;
@@ -281,7 +397,7 @@ main {
 .drawer-scroll::-webkit-scrollbar { width:4px; }
 .drawer-scroll::-webkit-scrollbar-thumb { background:rgba(166,127,220,.2); border-radius:2px; }
 
-/* Encontro header inside modal */
+/* Modal content */
 .modal-enc-num {
   font-size:.42rem; letter-spacing:5px; text-transform:uppercase;
   color:var(--pur-lt); opacity:.6; display:block; margin-bottom:8px;
@@ -289,7 +405,7 @@ main {
 .modal-enc-title {
   font-family:'Cormorant Garamond',serif; font-weight:400;
   font-size:1.9rem; letter-spacing:2px; line-height:1.1; color:var(--white);
-  margin-bottom:6px;
+  margin-bottom:6px; transition:color .35s;
 }
 .modal-enc-title em { font-style:italic; color:var(--gold-lt); }
 .modal-enc-pilar {
@@ -297,76 +413,82 @@ main {
   color:var(--pur-lt); opacity:.55; margin-bottom:20px; display:block;
 }
 
-/* Divider */
 .modal-div {
   display:flex; align-items:center; gap:12px; margin-bottom:22px;
 }
 .modal-div-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(201,162,39,.2),transparent); }
 .modal-div-sym { font-size:.6rem; color:var(--gold); opacity:.4; }
 
-/* Section label */
 .sec-label {
   font-size:.45rem; letter-spacing:5px; text-transform:uppercase;
   color:var(--gold); opacity:.6; margin-bottom:14px;
   display:flex; align-items:center; gap:10px;
+  transition:color .35s;
 }
 .sec-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--gb),transparent); }
 
-/* Mergulho (intro text) */
 .mergulho-box {
   background:linear-gradient(105deg,rgba(201,162,39,.05) 0%,transparent 70%);
   border:1px solid rgba(201,162,39,.12); border-radius:var(--r);
   padding:16px 18px; margin-bottom:22px;
+  transition:background .35s, border-color .35s;
+}
+body.light-mode .mergulho-box {
+  background:linear-gradient(105deg,rgba(201,162,39,.06) 0%,transparent 70%);
+  border-color:rgba(154,114,8,.18);
 }
 .mergulho-txt {
   font-family:'Cormorant Garamond',serif; font-size:1rem;
-  letter-spacing:.5px; line-height:1.85; color:rgba(245,240,232,.72);
+  letter-spacing:.5px; line-height:1.85; color:var(--muted);
+  transition:color .35s;
 }
 
-/* Perguntas */
 .perguntas-list { display:flex; flex-direction:column; gap:14px; margin-bottom:24px; }
 .pergunta-item {}
 .pergunta-q {
   font-family:'Cormorant Garamond',serif; font-size:.98rem;
   letter-spacing:.5px; line-height:1.55; color:var(--white);
-  margin-bottom:8px; display:flex; gap:10px;
+  margin-bottom:8px; display:flex; gap:10px; transition:color .35s;
 }
 .pq-num {
   font-size:.55rem; letter-spacing:2px; color:var(--pur-lt);
   opacity:.6; flex-shrink:0; margin-top:3px; font-family:'Josefin Sans',sans-serif;
 }
 textarea.resp-input {
-  width:100%; background:rgba(255,255,255,.025);
-  border:1px solid rgba(255,255,255,.07); border-radius:var(--r);
+  width:100%; background:var(--theme-surface);
+  border:1px solid var(--theme-border); border-radius:var(--r);
   padding:12px 14px; color:var(--white);
   font-family:'Josefin Sans',sans-serif; font-weight:300;
   font-size:.78rem; line-height:1.8; letter-spacing:.3px;
   resize:vertical; min-height:90px;
-  transition:border-color .25s; outline:none;
+  transition:border-color .25s, background .35s, color .35s; outline:none;
 }
 textarea.resp-input:focus { border-color:var(--pur-b); }
 textarea.resp-input::placeholder { color:var(--dim); }
 
-/* Tarefas */
 .tarefas-box {
-  background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06);
+  background:var(--theme-surface); border:1px solid var(--theme-border);
   border-radius:var(--r); padding:16px 18px; margin-bottom:24px;
+  transition:background .35s, border-color .35s;
 }
 .tarefa-item {
   display:flex; align-items:flex-start; gap:10px;
   font-size:.78rem; letter-spacing:.4px; line-height:1.75;
-  color:var(--muted); margin-bottom:8px;
+  color:var(--muted); margin-bottom:8px; transition:color .35s;
 }
 .tarefa-item:last-child { margin-bottom:0; }
 .tarefa-bullet {
   color:var(--pur-lt); opacity:.7; flex-shrink:0; font-size:.55rem; margin-top:5px;
 }
 
-/* Insight akáshico */
 .insight-box {
   background:linear-gradient(105deg,rgba(124,77,189,.08) 0%,rgba(201,162,39,.03) 70%);
   border:1px solid var(--pur-b); border-radius:var(--r);
   padding:18px 20px; margin-bottom:28px; position:relative;
+  transition:background .35s, border-color .35s;
+}
+body.light-mode .insight-box {
+  background:linear-gradient(105deg,rgba(124,77,189,.06) 0%,rgba(201,162,39,.03) 70%);
 }
 .insight-box::before {
   content:'𓂀'; position:absolute; top:14px; right:16px;
@@ -375,22 +497,21 @@ textarea.resp-input::placeholder { color:var(--dim); }
 .insight-quote {
   font-family:'Cormorant Garamond',serif; font-style:italic;
   font-size:1rem; letter-spacing:.6px; line-height:1.85;
-  color:rgba(245,240,232,.62);
+  color:var(--muted); transition:color .35s;
 }
 .insight-source {
   font-size:.42rem; letter-spacing:4px; text-transform:uppercase;
   color:var(--pur-lt); opacity:.45; margin-top:10px; display:block;
 }
 
-/* Anotações pessoais */
 textarea.anotacoes-input {
-  width:100%; background:rgba(255,255,255,.025);
-  border:1px solid rgba(255,255,255,.07); border-radius:var(--r);
+  width:100%; background:var(--theme-surface);
+  border:1px solid var(--theme-border); border-radius:var(--r);
   padding:14px 16px; color:var(--white);
   font-family:'Josefin Sans',sans-serif; font-weight:300;
   font-size:.78rem; line-height:1.85; letter-spacing:.3px;
   resize:vertical; min-height:110px;
-  transition:border-color .25s; outline:none; margin-bottom:16px;
+  transition:border-color .25s, background .35s, color .35s; outline:none; margin-bottom:16px;
 }
 textarea.anotacoes-input:focus { border-color:var(--gb); }
 textarea.anotacoes-input::placeholder { color:var(--dim); }
@@ -433,6 +554,11 @@ textarea.anotacoes-input::placeholder { color:var(--dim); }
   color:var(--white); opacity:0; transition:all .28s;
   pointer-events:none; z-index:9999; white-space:nowrap;
 }
+body.light-mode .toast {
+  background:rgba(248,244,236,.97);
+  color:var(--white);
+  border-color:rgba(154,114,8,.22);
+}
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
 /* Delays */
@@ -442,7 +568,6 @@ textarea.anotacoes-input::placeholder { color:var(--dim); }
 /* Mobile */
 @media(max-width:600px) {
   main { padding-top:calc(var(--nav-h) + 20px); padding-left:14px; padding-right:14px; }
-  nav { padding:0 16px; }
   .modal-enc-title { font-size:1.55rem; }
   .drawer-scroll { padding:16px 16px 28px; }
 }
@@ -452,7 +577,7 @@ textarea.anotacoes-input::placeholder { color:var(--dim); }
 
 <div id="ls">
   <img id="ls-logo" src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="">
-  <span>Carregando...</span>
+  <span data-i18n="loading">Carregando...</span>
 </div>
 
 <nav>
@@ -461,31 +586,50 @@ textarea.anotacoes-input::placeholder { color:var(--dim); }
     <span class="nav-logo-txt">AK<b>A</b>SHA <b>HUB</b></span>
   </a>
   <div class="nav-right">
+
+    <!-- Grupo: Tema Dark / Light -->
+    <div class="ctrl-group" id="themeGroup" title="Alternar tema">
+      <button class="ctrl-btn ctrl-btn-theme active" id="btnDark" onclick="setTheme('dark')" aria-label="Tema escuro">
+        ◐
+      </button>
+      <button class="ctrl-btn ctrl-btn-theme" id="btnLight" onclick="setTheme('light')" aria-label="Tema claro">
+        ◑
+      </button>
+    </div>
+
+    <div class="nav-sep"></div>
+
+    <!-- Grupo: Idioma -->
+    <div class="ctrl-group" id="langGroup">
+      <button class="ctrl-btn active" id="btnPT" onclick="setLang('pt')" aria-label="Português">PT</button>
+      <button class="ctrl-btn" id="btnEN" onclick="setLang('en')" aria-label="English">EN</button>
+      <button class="ctrl-btn" id="btnES" onclick="setLang('es')" aria-label="Español">ES</button>
+    </div>
+
+    <div class="nav-sep"></div>
+
     <span class="nav-user" id="navUser" style="display:none"></span>
-    <a href="/sessoes/" class="nav-back">← Sessões</a>
+    <a href="/sessoes/" class="nav-back" data-i18n="nav_back">← Sessões</a>
   </div>
 </nav>
 
 <main>
-  <!-- Header -->
   <div class="page-header">
-    <span class="page-eyebrow">✦ Jornada Privada · Akasha Hub</span>
-    <h1 class="page-title">Mentoria <em>Arquitetura de<br>Essência & Império</em></h1>
-    <p class="page-sub">26 encontros · Acesso exclusivo do mentorando</p>
+    <span class="page-eyebrow" data-i18n="eyebrow">✦ Jornada Privada · Akasha Hub</span>
+    <h1 class="page-title" data-i18n="page_title">Mentoria <em>Arquitetura de<br>Essência & Império</em></h1>
+    <p class="page-sub" data-i18n="page_sub">26 encontros · Acesso exclusivo do mentorando</p>
   </div>
 
-  <!-- Progress -->
   <div class="progress-wrap">
     <div class="progress-row">
-      <span>Progresso da Jornada</span>
-      <span id="progressTxt">0 / 26 respondidos</span>
+      <span data-i18n="progress_label">Progresso da Jornada</span>
+      <span id="progressTxt">0 / 26</span>
     </div>
     <div class="progress-track">
       <div class="progress-fill" id="progressFill"></div>
     </div>
   </div>
 
-  <!-- Encontros injetados por JS -->
   <div id="encontrosContainer"></div>
 </main>
 
@@ -500,9 +644,7 @@ textarea.anotacoes-input::placeholder { color:var(--dim); }
         <button class="drawer-close" onclick="fecharModal()" title="Fechar">✕</button>
       </div>
     </div>
-    <div class="drawer-scroll" id="drawerScroll">
-      <!-- conteúdo injetado por JS -->
-    </div>
+    <div class="drawer-scroll" id="drawerScroll"></div>
   </div>
 </div>
 
@@ -527,381 +669,424 @@ const app = initializeApp({
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-const ADMIN_UID   = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";   // UID admin (mentor)
-const MENTOR_EMAIL = "yanfili.simon@gmail.com";          // e-mail mentor
-const WPP_NUM     = "5571983448621";                     // WhatsApp mentor
+const ADMIN_UID    = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+const MENTOR_EMAIL = "yanfili.simon@gmail.com";
+const WPP_NUM      = "5571983448621";
 
-/* ─── 26 ENCONTROS ─── */
-const ENCONTROS = [
-  {
-    num:1, titulo:"O Portal de Entrada",
-    pilar:"Pilar 1 — Investigação de Essência",
-    mergulho:"Abertura, acolhimento e o primeiro olhar sobre quem você é hoje.",
-    perguntas:[
-      "Como você se apresenta hoje?",
-      "Qual sua profissão principal?",
-      "Quais seus 3 maiores talentos?",
-      "O que você faz melhor que os outros?",
-      "Qual sua maior conquista?",
-      "O que ensinaria ao mundo?",
-      "O que o mundo precisa conhecer de você?",
-      "Por que buscar a mentoria agora?"
-    ],
-    tarefas:[
-      "Escrever apresentação de 3 parágrafos.",
-      "Listar 5 momentos de plenitude.",
-      "Escolher um pseudônimo (opcional)."
-    ]
+/* ══════════════════════════════════════
+   INTERNACIONALIZAÇÃO
+══════════════════════════════════════ */
+const I18N = {
+  pt: {
+    loading:        "Carregando...",
+    nav_back:       "← Sessões",
+    eyebrow:        "✦ Jornada Privada · Akasha Hub",
+    page_title_html:"Mentoria <em>Arquitetura de<br>Essência & Império</em>",
+    page_sub:       "26 encontros · Acesso exclusivo do mentorando",
+    progress_label: "Progresso da Jornada",
+    progress_txt:   (d,t) => `${d} / ${t} respondidos`,
+    pilar1:         "Investigação de Essência",
+    pilar2:         "Arquitetura de Identidade",
+    pilar3:         "Império Digital",
+    enc_pending:    "Aguardando resposta",
+    enc_done:       "Respondido ✓",
+    drawer_badge:   (n,t) => `✦ Encontro ${n} de ${t} · Akasha Hub`,
+    enc_of:         (n,t) => `Encontro ${n} de ${t}`,
+    sec_merge:      "◈ O Mergulho do Dia",
+    sec_pergs:      "✦ Investigação Profunda",
+    sec_tasks:      "◈ Tarefas da Camada",
+    sec_insight:    "𓂀 Insight Akáshico",
+    sec_notes:      "✍️ Minhas Anotações",
+    ph_resp:        "Escreva sua resposta aqui...",
+    ph_notes:       "Reflexões, insights e anotações livres sobre este encontro...",
+    btn_save:       "Salvar respostas",
+    btn_wpp:        "Enviar ao Mentor",
+    saved_ok:       "✓ Respostas salvas com sucesso",
+    save_ok_short:  "✓ Salvo",
+    save_err:       "Erro ao salvar. Verifique sua conexão.",
+    save_err_short: "✗ Erro ao salvar",
+    insight_src:    "Akasha Hub · akashahub.com.br/mentoria · @akasha.hub",
   },
-  {
-    num:2, titulo:"Raízes e Linhagem",
-    pilar:"Pilar 1 — Investigação de Essência",
-    mergulho:"Investigação ancestral. O talento que corre nas suas veias.",
-    perguntas:[
-      "Qual o talento da sua mãe?",
-      "Qual a força do seu pai?",
-      "Qual avô/avó você mais admira?",
-      "Qual dom se repete na família?",
-      "Qual padrão de luta se repete?",
-      "Quem 'ficou pra trás' na família?",
-      "O que a família proibiu você de ser?"
-    ],
-    tarefas:[
-      "Entrevistar o familiar mais velho.",
-      "Preencher a tabela de constelação familiar."
-    ]
+  en: {
+    loading:        "Loading...",
+    nav_back:       "← Sessions",
+    eyebrow:        "✦ Private Journey · Akasha Hub",
+    page_title_html:"Mentorship <em>Architecture of<br>Essence & Empire</em>",
+    page_sub:       "26 sessions · Exclusive mentee access",
+    progress_label: "Journey Progress",
+    progress_txt:   (d,t) => `${d} / ${t} answered`,
+    pilar1:         "Essence Investigation",
+    pilar2:         "Identity Architecture",
+    pilar3:         "Digital Empire",
+    enc_pending:    "Awaiting response",
+    enc_done:       "Answered ✓",
+    drawer_badge:   (n,t) => `✦ Session ${n} of ${t} · Akasha Hub`,
+    enc_of:         (n,t) => `Session ${n} of ${t}`,
+    sec_merge:      "◈ Today's Deep Dive",
+    sec_pergs:      "✦ Deep Investigation",
+    sec_tasks:      "◈ Layer Tasks",
+    sec_insight:    "𓂀 Akashic Insight",
+    sec_notes:      "✍️ My Notes",
+    ph_resp:        "Write your answer here...",
+    ph_notes:       "Reflections, insights and free notes about this session...",
+    btn_save:       "Save answers",
+    btn_wpp:        "Send to Mentor",
+    saved_ok:       "✓ Answers saved successfully",
+    save_ok_short:  "✓ Saved",
+    save_err:       "Error saving. Check your connection.",
+    save_err_short: "✗ Error saving",
+    insight_src:    "Akasha Hub · akashahub.com.br/mentoria · @akasha.hub",
   },
-  {
-    num:3, titulo:"A Árvore Genealógica do Dom",
-    pilar:"Pilar 1 — Investigação de Essência",
-    mergulho:"Mapeamento prático de padrões e forças ancestrais.",
-    perguntas:[
-      "Quais talentos ancestrais você deseja honrar?",
-      "Quais dores você decide encerrar hoje?",
-      "Como sua linhagem apoia seu império digital?"
-    ],
-    tarefas:[
-      "Desenhar sua árvore genealógica com os talentos de cada um."
-    ]
-  },
-  {
-    num:4, titulo:"Sombras e Espelhos",
-    pilar:"Pilar 1 — Investigação de Essência",
-    mergulho:"Identificando medos e bloqueios de visibilidade.",
-    perguntas:[
-      "Qual medo te paralisa ao pensar em aparecer?",
-      "O que sente ao imaginar ser famoso(a)?",
-      "Como diagnósticos impactam sua criatividade?",
-      "Qual história você conta sobre por que não deu certo?"
-    ],
-    tarefas:[
-      "Escrever uma carta para o seu medo.",
-      "Ouvir a meditação de abertura akáshica."
-    ]
-  },
-  {
-    num:5, titulo:"O Merecimento do Criador",
-    pilar:"Pilar 1 — Investigação de Essência",
-    mergulho:"Crenças sobre valor, dinheiro e a permissão para prosperar.",
-    perguntas:[
-      "O que você criou e nunca mostrou?",
-      "O que teme que digam do seu trabalho?",
-      "O que deseja que as pessoas sintam com sua obra?",
-      "Você se vê merecedor(a) de ser pago(a)?"
-    ],
-    tarefas:[
-      "Listar 3 preços possíveis para seu primeiro produto."
-    ]
-  },
-  {
-    num:6, titulo:"Abertura Akáshica",
-    pilar:"Pilar 1 — Investigação de Essência",
-    mergulho:"Sessão de meditação guiada e acesso aos Registros.",
-    perguntas:[
-      "Qual a forma, cor e som da sua alma?",
-      "Qual cultura ou civilização te atrai?",
-      "Quais talentos parecem 'naturais demais'?"
-    ],
-    tarefas:[
-      "Registrar as imagens e sensações da meditação."
-    ]
-  },
-  {
-    num:7, titulo:"A Missão de Alma",
-    pilar:"Pilar 1 — Investigação de Essência",
-    mergulho:"Decodificando as mensagens da Biblioteca Akáshica.",
-    perguntas:[
-      "Qual seu medo irracional?",
-      "Qual sua missão além desta vida?",
-      "Qual mensagem enviaria para sua alma antiga?",
-      "O que você veio trazer que ainda não foi feito?"
-    ],
-    tarefas:[
-      "Escrever seu manifesto de missão em 1 parágrafo."
-    ]
-  },
-  {
-    num:8, titulo:"Síntese da Essência",
-    pilar:"Pilar 1 — Investigação de Essência",
-    mergulho:"Consolidação das descobertas do primeiro mês.",
-    perguntas:[
-      "Qual a maior revelação deste mês?",
-      "Como sua visão de si mesmo mudou?",
-      "Qual o núcleo central da sua essência?"
-    ],
-    tarefas:[
-      "Criar um quadro visual (moodboard) da sua essência."
-    ]
-  },
-  {
-    num:9, titulo:"O Batismo Digital",
-    pilar:"Pilar 2 — Arquitetura de Identidade",
-    mergulho:"Definição do Nome/Pseudônimo e Núcleo da Identidade.",
-    perguntas:[
-      "Qual nome carrega sua essência?",
-      "Qual sua missão em 1 frase?",
-      "Qual seu arquétipo principal?"
-    ],
-    tarefas:[
-      "Registrar o domínio ou arroba do nome escolhido."
-    ]
-  },
-  {
-    num:10, titulo:"A Narrativa de Origem",
-    pilar:"Pilar 2 — Arquitetura de Identidade",
-    mergulho:"Construindo o Storytelling da sua marca.",
-    perguntas:[
-      "De onde você veio?",
-      "Qual foi o momento de virada?",
-      "Como sua história conecta com seu público?"
-    ],
-    tarefas:[
-      "Escrever o roteiro do seu vídeo de 'Quem Sou Eu'."
-    ]
-  },
-  {
-    num:11, titulo:"A Jornada do Herói Invisível",
-    pilar:"Pilar 2 — Arquitetura de Identidade",
-    mergulho:"Mapeando desafios e superações.",
-    perguntas:[
-      "Quais foram os maiores obstáculos?",
-      "O que você aprendeu no caminho?",
-      "Qual a grande revelação da sua jornada?"
-    ],
-    tarefas:[
-      "Listar 3 'lições de ouro' da sua vida."
-    ]
-  },
-  {
-    num:12, titulo:"O Manifesto da Marca",
-    pilar:"Pilar 2 — Arquitetura de Identidade",
-    mergulho:"Definindo Missão, Visão e o Convite ao público.",
-    perguntas:[
-      "Por que seu público deve confiar em você?",
-      "Qual a promessa da sua marca?",
-      "Qual legado você quer deixar?"
-    ],
-    tarefas:[
-      "Escrever o manifesto da marca para o site."
-    ]
-  },
-  {
-    num:13, titulo:"Alquimia Visual",
-    pilar:"Pilar 2 — Arquitetura de Identidade",
-    mergulho:"Cores, símbolos e a atmosfera da marca.",
-    perguntas:[
-      "Se sua essência fosse uma cor, qual seria?",
-      "Existe um símbolo que te representa?",
-      "Qual a energia visual da sua marca?"
-    ],
-    tarefas:[
-      "Escolher a paleta de 3 cores principais."
-    ]
-  },
-  {
-    num:14, titulo:"A Voz da Essência",
-    pilar:"Pilar 2 — Arquitetura de Identidade",
-    mergulho:"Tom de voz e comunicação autêntica.",
-    perguntas:[
-      "Como sua marca fala (amorosa, sábia, direta)?",
-      "Quais palavras são proibidas na sua comunicação?",
-      "Como você quer ser percebido ao falar?"
-    ],
-    tarefas:[
-      "Escrever 3 legendas de post no seu novo tom de voz."
-    ]
-  },
-  {
-    num:15, titulo:"Estética Digital Avançada",
-    pilar:"Pilar 2 — Arquitetura de Identidade",
-    mergulho:"Tipografia e estilo de imagem.",
-    perguntas:[
-      "Qual fonte transmite seu tom?",
-      "Qual o estilo das suas imagens (místico, minimalista)?",
-      "Como os elementos gráficos se repetem?"
-    ],
-    tarefas:[
-      "Selecionar 5 imagens de referência para o estilo visual."
-    ]
-  },
-  {
-    num:16, titulo:"O Livro da Identidade",
-    pilar:"Pilar 2 — Arquitetura de Identidade",
-    mergulho:"Finalização do Guia de Marca Akasha.",
-    perguntas:[
-      "Sua identidade está coerente com sua essência?",
-      "O que ainda precisa de ajuste?",
-      "Você se sente representado por esta marca?"
-    ],
-    tarefas:[
-      "Revisar o Guia de Marca completo."
-    ]
-  },
-  {
-    num:17, titulo:"A Casa Digital — Fundação",
-    pilar:"Pilar 3 — Império Digital",
-    mergulho:"Estruturação do Site e Bio do Instagram.",
-    perguntas:[
-      "Sua bio comunica sua missão?",
-      "O site é intuitivo para o visitante?",
-      "Onde está o link de venda?"
-    ],
-    tarefas:[
-      "Configurar a bio do Instagram e o link da árvore de links."
-    ]
-  },
-  {
-    num:18, titulo:"O Primeiro Ciclo de Conteúdo",
-    pilar:"Pilar 3 — Império Digital",
-    mergulho:"Planejamento dos primeiros 9 posts estratégicos.",
-    perguntas:[
-      "Quais os 3 pilares do seu conteúdo?",
-      "Como educar seu público sobre sua missão?",
-      "Qual o CTA (chamada para ação) de cada post?"
-    ],
-    tarefas:[
-      "Criar o calendário editorial para os primeiros 15 dias."
-    ]
-  },
-  {
-    num:19, titulo:"Estratégias de Venda Invisível",
-    pilar:"Pilar 3 — Império Digital",
-    mergulho:"Como vender sem aparecer — funis automáticos.",
-    perguntas:[
-      "Qual o produto de entrada?",
-      "Como automatizar a entrega?",
-      "Como atrair tráfego qualificado?"
-    ],
-    tarefas:[
-      "Desenhar o fluxo do funil: Post → Bio → Site → Compra."
-    ]
-  },
-  {
-    num:20, titulo:"A Primeira Campanha",
-    pilar:"Pilar 3 — Império Digital",
-    mergulho:"Estruturação do lançamento do primeiro produto.",
-    perguntas:[
-      "Qual a data do lançamento?",
-      "Qual a oferta irresistível?",
-      "Como criar antecipação no público?"
-    ],
-    tarefas:[
-      "Criar o cronograma de 7 dias de antecipação."
-    ]
-  },
-  {
-    num:21, titulo:"Operação e Delegação",
-    pilar:"Pilar 3 — Império Digital",
-    mergulho:"Como trabalhar com a equipe técnica.",
-    perguntas:[
-      "O que você ama fazer?",
-      "O que você precisa delegar?",
-      "Como garantir a qualidade da entrega?"
-    ],
-    tarefas:[
-      "Listar as tarefas que serão feitas pela equipe."
-    ]
-  },
-  {
-    num:22, titulo:"Escala e Multiplicação",
-    pilar:"Pilar 3 — Império Digital",
-    mergulho:"Audiobooks, cursos e expansão.",
-    perguntas:[
-      "Como transformar seu conhecimento em curso?",
-      "Qual o próximo formato da sua obra?",
-      "Onde mais seu público está?"
-    ],
-    tarefas:[
-      "Escrever o sumário do seu primeiro curso online."
-    ]
-  },
-  {
-    num:23, titulo:"O Império Global",
-    pilar:"Pilar 3 — Império Digital",
-    mergulho:"Internacionalização e monetização avançada.",
-    perguntas:[
-      "Sua mensagem funciona em outros idiomas?",
-      "Quais plataformas globais usar (Amazon, etc)?",
-      "Como escalar o faturamento?"
-    ],
-    tarefas:[
-      "Pesquisar 3 plataformas de venda internacional."
-    ]
-  },
-  {
-    num:24, titulo:"Aparição Gradual — Opcional",
-    pilar:"Pilar 3 — Império Digital",
-    mergulho:"Estratégia para quem deseja revelar o rosto.",
-    perguntas:[
-      "Você sente vontade de aparecer agora?",
-      "Como fazer isso de forma segura?",
-      "Qual o impacto na marca?"
-    ],
-    tarefas:[
-      "Planejar o post de 'revelação' (se aplicável)."
-    ]
-  },
-  {
-    num:25, titulo:"Revisão do Império",
-    pilar:"Pilar 3 — Império Digital",
-    mergulho:"Análise de métricas e ajustes de rota.",
-    perguntas:[
-      "O que funcionou melhor?",
-      "O que precisa ser descartado?",
-      "Quais os novos objetivos?"
-    ],
-    tarefas:[
-      "Analisar o relatório de vendas e engajamento."
-    ]
-  },
-  {
-    num:26, titulo:"O Legado Akáshico",
-    pilar:"Pilar 3 — Império Digital",
-    mergulho:"Encerramento, celebração e continuidade.",
-    perguntas:[
-      "Como você se sente após 90 dias?",
-      "Qual o tamanho do seu império hoje?",
-      "Qual o próximo passo da sua alma?"
-    ],
-    tarefas:[
-      "Escrever uma carta para você mesmo daqui a 1 ano."
-    ]
+  es: {
+    loading:        "Cargando...",
+    nav_back:       "← Sesiones",
+    eyebrow:        "✦ Viaje Privado · Akasha Hub",
+    page_title_html:"Mentoría <em>Arquitectura de<br>Esencia & Imperio</em>",
+    page_sub:       "26 encuentros · Acceso exclusivo del mentorando",
+    progress_label: "Progreso del Viaje",
+    progress_txt:   (d,t) => `${d} / ${t} respondidos`,
+    pilar1:         "Investigación de Esencia",
+    pilar2:         "Arquitectura de Identidad",
+    pilar3:         "Imperio Digital",
+    enc_pending:    "En espera de respuesta",
+    enc_done:       "Respondido ✓",
+    drawer_badge:   (n,t) => `✦ Encuentro ${n} de ${t} · Akasha Hub`,
+    enc_of:         (n,t) => `Encuentro ${n} de ${t}`,
+    sec_merge:      "◈ La Inmersión del Día",
+    sec_pergs:      "✦ Investigación Profunda",
+    sec_tasks:      "◈ Tareas de la Capa",
+    sec_insight:    "𓂀 Visión Akáshica",
+    sec_notes:      "✍️ Mis Notas",
+    ph_resp:        "Escribe tu respuesta aquí...",
+    ph_notes:       "Reflexiones, insights y notas libres sobre este encuentro...",
+    btn_save:       "Guardar respuestas",
+    btn_wpp:        "Enviar al Mentor",
+    saved_ok:       "✓ Respuestas guardadas con éxito",
+    save_ok_short:  "✓ Guardado",
+    save_err:       "Error al guardar. Verifica tu conexión.",
+    save_err_short: "✗ Error al guardar",
+    insight_src:    "Akasha Hub · akashahub.com.br/mentoria · @akasha.hub",
   }
-];
+};
 
-const INSIGHT = `"O que você veio trazer ao mundo já está dentro de você. Nós ajudamos você a encontrar, nomear e construir seu império a partir disso."`;
+/* Traduções dos encontros */
+const ENCONTROS_I18N = {
+  pt: {
+    1:  { titulo:"O Portal de Entrada",        pilar:"Pilar 1 — Investigação de Essência",   mergulho:"Abertura, acolhimento e o primeiro olhar sobre quem você é hoje.",
+          perguntas:["Como você se apresenta hoje?","Qual sua profissão principal?","Quais seus 3 maiores talentos?","O que você faz melhor que os outros?","Qual sua maior conquista?","O que ensinaria ao mundo?","O que o mundo precisa conhecer de você?","Por que buscar a mentoria agora?"],
+          tarefas:["Escrever apresentação de 3 parágrafos.","Listar 5 momentos de plenitude.","Escolher um pseudônimo (opcional)."] },
+    2:  { titulo:"Raízes e Linhagem",           pilar:"Pilar 1 — Investigação de Essência",   mergulho:"Investigação ancestral. O talento que corre nas suas veias.",
+          perguntas:["Qual o talento da sua mãe?","Qual a força do seu pai?","Qual avô/avó você mais admira?","Qual dom se repete na família?","Qual padrão de luta se repete?","Quem 'ficou pra trás' na família?","O que a família proibiu você de ser?"],
+          tarefas:["Entrevistar o familiar mais velho.","Preencher a tabela de constelação familiar."] },
+    3:  { titulo:"A Árvore Genealógica do Dom", pilar:"Pilar 1 — Investigação de Essência",   mergulho:"Mapeamento prático de padrões e forças ancestrais.",
+          perguntas:["Quais talentos ancestrais você deseja honrar?","Quais dores você decide encerrar hoje?","Como sua linhagem apoia seu império digital?"],
+          tarefas:["Desenhar sua árvore genealógica com os talentos de cada um."] },
+    4:  { titulo:"Sombras e Espelhos",          pilar:"Pilar 1 — Investigação de Essência",   mergulho:"Identificando medos e bloqueios de visibilidade.",
+          perguntas:["Qual medo te paralisa ao pensar em aparecer?","O que sente ao imaginar ser famoso(a)?","Como diagnósticos impactam sua criatividade?","Qual história você conta sobre por que não deu certo?"],
+          tarefas:["Escrever uma carta para o seu medo.","Ouvir a meditação de abertura akáshica."] },
+    5:  { titulo:"O Merecimento do Criador",   pilar:"Pilar 1 — Investigação de Essência",   mergulho:"Crenças sobre valor, dinheiro e a permissão para prosperar.",
+          perguntas:["O que você criou e nunca mostrou?","O que teme que digam do seu trabalho?","O que deseja que as pessoas sintam com sua obra?","Você se vê merecedor(a) de ser pago(a)?"],
+          tarefas:["Listar 3 preços possíveis para seu primeiro produto."] },
+    6:  { titulo:"Abertura Akáshica",           pilar:"Pilar 1 — Investigação de Essência",   mergulho:"Sessão de meditação guiada e acesso aos Registros.",
+          perguntas:["Qual a forma, cor e som da sua alma?","Qual cultura ou civilização te atrai?","Quais talentos parecem 'naturais demais'?"],
+          tarefas:["Registrar as imagens e sensações da meditação."] },
+    7:  { titulo:"A Missão de Alma",            pilar:"Pilar 1 — Investigação de Essência",   mergulho:"Decodificando as mensagens da Biblioteca Akáshica.",
+          perguntas:["Qual seu medo irracional?","Qual sua missão além desta vida?","Qual mensagem enviaria para sua alma antiga?","O que você veio trazer que ainda não foi feito?"],
+          tarefas:["Escrever seu manifesto de missão em 1 parágrafo."] },
+    8:  { titulo:"Síntese da Essência",         pilar:"Pilar 1 — Investigação de Essência",   mergulho:"Consolidação das descobertas do primeiro mês.",
+          perguntas:["Qual a maior revelação deste mês?","Como sua visão de si mesmo mudou?","Qual o núcleo central da sua essência?"],
+          tarefas:["Criar um quadro visual (moodboard) da sua essência."] },
+    9:  { titulo:"O Batismo Digital",           pilar:"Pilar 2 — Arquitetura de Identidade",  mergulho:"Definição do Nome/Pseudônimo e Núcleo da Identidade.",
+          perguntas:["Qual nome carrega sua essência?","Qual sua missão em 1 frase?","Qual seu arquétipo principal?"],
+          tarefas:["Registrar o domínio ou arroba do nome escolhido."] },
+    10: { titulo:"A Narrativa de Origem",       pilar:"Pilar 2 — Arquitetura de Identidade",  mergulho:"Construindo o Storytelling da sua marca.",
+          perguntas:["De onde você veio?","Qual foi o momento de virada?","Como sua história conecta com seu público?"],
+          tarefas:["Escrever o roteiro do seu vídeo de 'Quem Sou Eu'."] },
+    11: { titulo:"A Jornada do Herói Invisível",pilar:"Pilar 2 — Arquitetura de Identidade",  mergulho:"Mapeando desafios e superações.",
+          perguntas:["Quais foram os maiores obstáculos?","O que você aprendeu no caminho?","Qual a grande revelação da sua jornada?"],
+          tarefas:["Listar 3 'lições de ouro' da sua vida."] },
+    12: { titulo:"O Manifesto da Marca",        pilar:"Pilar 2 — Arquitetura de Identidade",  mergulho:"Definindo Missão, Visão e o Convite ao público.",
+          perguntas:["Por que seu público deve confiar em você?","Qual a promessa da sua marca?","Qual legado você quer deixar?"],
+          tarefas:["Escrever o manifesto da marca para o site."] },
+    13: { titulo:"Alquimia Visual",             pilar:"Pilar 2 — Arquitetura de Identidade",  mergulho:"Cores, símbolos e a atmosfera da marca.",
+          perguntas:["Se sua essência fosse uma cor, qual seria?","Existe um símbolo que te representa?","Qual a energia visual da sua marca?"],
+          tarefas:["Escolher a paleta de 3 cores principais."] },
+    14: { titulo:"A Voz da Essência",           pilar:"Pilar 2 — Arquitetura de Identidade",  mergulho:"Tom de voz e comunicação autêntica.",
+          perguntas:["Como sua marca fala (amorosa, sábia, direta)?","Quais palavras são proibidas na sua comunicação?","Como você quer ser percebido ao falar?"],
+          tarefas:["Escrever 3 legendas de post no seu novo tom de voz."] },
+    15: { titulo:"Estética Digital Avançada",   pilar:"Pilar 2 — Arquitetura de Identidade",  mergulho:"Tipografia e estilo de imagem.",
+          perguntas:["Qual fonte transmite seu tom?","Qual o estilo das suas imagens (místico, minimalista)?","Como os elementos gráficos se repetem?"],
+          tarefas:["Selecionar 5 imagens de referência para o estilo visual."] },
+    16: { titulo:"O Livro da Identidade",       pilar:"Pilar 2 — Arquitetura de Identidade",  mergulho:"Finalização do Guia de Marca Akasha.",
+          perguntas:["Sua identidade está coerente com sua essência?","O que ainda precisa de ajuste?","Você se sente representado por esta marca?"],
+          tarefas:["Revisar o Guia de Marca completo."] },
+    17: { titulo:"A Casa Digital — Fundação",   pilar:"Pilar 3 — Império Digital",            mergulho:"Estruturação do Site e Bio do Instagram.",
+          perguntas:["Sua bio comunica sua missão?","O site é intuitivo para o visitante?","Onde está o link de venda?"],
+          tarefas:["Configurar a bio do Instagram e o link da árvore de links."] },
+    18: { titulo:"O Primeiro Ciclo de Conteúdo",pilar:"Pilar 3 — Império Digital",            mergulho:"Planejamento dos primeiros 9 posts estratégicos.",
+          perguntas:["Quais os 3 pilares do seu conteúdo?","Como educar seu público sobre sua missão?","Qual o CTA (chamada para ação) de cada post?"],
+          tarefas:["Criar o calendário editorial para os primeiros 15 dias."] },
+    19: { titulo:"Estratégias de Venda Invisível",pilar:"Pilar 3 — Império Digital",          mergulho:"Como vender sem aparecer — funis automáticos.",
+          perguntas:["Qual o produto de entrada?","Como automatizar a entrega?","Como atrair tráfego qualificado?"],
+          tarefas:["Desenhar o fluxo do funil: Post → Bio → Site → Compra."] },
+    20: { titulo:"A Primeira Campanha",         pilar:"Pilar 3 — Império Digital",            mergulho:"Estruturação do lançamento do primeiro produto.",
+          perguntas:["Qual a data do lançamento?","Qual a oferta irresistível?","Como criar antecipação no público?"],
+          tarefas:["Criar o cronograma de 7 dias de antecipação."] },
+    21: { titulo:"Operação e Delegação",        pilar:"Pilar 3 — Império Digital",            mergulho:"Como trabalhar com a equipe técnica.",
+          perguntas:["O que você ama fazer?","O que você precisa delegar?","Como garantir a qualidade da entrega?"],
+          tarefas:["Listar as tarefas que serão feitas pela equipe."] },
+    22: { titulo:"Escala e Multiplicação",      pilar:"Pilar 3 — Império Digital",            mergulho:"Audiobooks, cursos e expansão.",
+          perguntas:["Como transformar seu conhecimento em curso?","Qual o próximo formato da sua obra?","Onde mais seu público está?"],
+          tarefas:["Escrever o sumário do seu primeiro curso online."] },
+    23: { titulo:"O Império Global",            pilar:"Pilar 3 — Império Digital",            mergulho:"Internacionalização e monetização avançada.",
+          perguntas:["Sua mensagem funciona em outros idiomas?","Quais plataformas globais usar (Amazon, etc)?","Como escalar o faturamento?"],
+          tarefas:["Pesquisar 3 plataformas de venda internacional."] },
+    24: { titulo:"Aparição Gradual — Opcional", pilar:"Pilar 3 — Império Digital",            mergulho:"Estratégia para quem deseja revelar o rosto.",
+          perguntas:["Você sente vontade de aparecer agora?","Como fazer isso de forma segura?","Qual o impacto na marca?"],
+          tarefas:["Planejar o post de 'revelação' (se aplicável)."] },
+    25: { titulo:"Revisão do Império",          pilar:"Pilar 3 — Império Digital",            mergulho:"Análise de métricas e ajustes de rota.",
+          perguntas:["O que funcionou melhor?","O que precisa ser descartado?","Quais os novos objetivos?"],
+          tarefas:["Analisar o relatório de vendas e engajamento."] },
+    26: { titulo:"O Legado Akáshico",           pilar:"Pilar 3 — Império Digital",            mergulho:"Encerramento, celebração e continuidade.",
+          perguntas:["Como você se sente após 90 dias?","Qual o tamanho do seu império hoje?","Qual o próximo passo da sua alma?"],
+          tarefas:["Escrever uma carta para você mesmo daqui a 1 ano."] }
+  },
+  en: {
+    1:  { titulo:"The Entry Portal",            pilar:"Pillar 1 — Essence Investigation",     mergulho:"Opening, welcome and the first look at who you are today.",
+          perguntas:["How do you introduce yourself today?","What is your main profession?","What are your 3 greatest talents?","What do you do better than others?","What is your greatest achievement?","What would you teach the world?","What does the world need to know about you?","Why seek mentorship now?"],
+          tarefas:["Write a 3-paragraph self-introduction.","List 5 moments of fullness.","Choose a pseudonym (optional)."] },
+    2:  { titulo:"Roots and Lineage",           pilar:"Pillar 1 — Essence Investigation",     mergulho:"Ancestral investigation. The talent that runs in your veins.",
+          perguntas:["What is your mother's talent?","What is your father's strength?","Which grandparent do you most admire?","What gift repeats in the family?","What struggle pattern repeats?","Who was 'left behind' in the family?","What did your family forbid you to be?"],
+          tarefas:["Interview the oldest family member.","Fill in the family constellation table."] },
+    3:  { titulo:"The Gift Genealogy Tree",     pilar:"Pillar 1 — Essence Investigation",     mergulho:"Practical mapping of ancestral patterns and strengths.",
+          perguntas:["Which ancestral talents do you want to honor?","Which pains do you decide to end today?","How does your lineage support your digital empire?"],
+          tarefas:["Draw your family tree with each person's talents."] },
+    4:  { titulo:"Shadows and Mirrors",         pilar:"Pillar 1 — Essence Investigation",     mergulho:"Identifying fears and visibility blocks.",
+          perguntas:["What fear paralyzes you when thinking about showing up?","What do you feel imagining being famous?","How do diagnoses impact your creativity?","What story do you tell about why it didn't work out?"],
+          tarefas:["Write a letter to your fear.","Listen to the akashic opening meditation."] },
+    5:  { titulo:"The Creator's Worthiness",   pilar:"Pillar 1 — Essence Investigation",     mergulho:"Beliefs about value, money and permission to prosper.",
+          perguntas:["What have you created and never shown?","What do you fear people will say about your work?","What do you want people to feel with your work?","Do you see yourself as deserving to be paid?"],
+          tarefas:["List 3 possible prices for your first product."] },
+    6:  { titulo:"Akashic Opening",             pilar:"Pillar 1 — Essence Investigation",     mergulho:"Guided meditation session and access to the Records.",
+          perguntas:["What is the form, color and sound of your soul?","Which culture or civilization attracts you?","Which talents seem 'too natural'?"],
+          tarefas:["Record the images and sensations from the meditation."] },
+    7:  { titulo:"The Soul Mission",            pilar:"Pillar 1 — Essence Investigation",     mergulho:"Decoding messages from the Akashic Library.",
+          perguntas:["What is your irrational fear?","What is your mission beyond this life?","What message would you send to your ancient soul?","What did you come to bring that hasn't been done yet?"],
+          tarefas:["Write your mission manifesto in 1 paragraph."] },
+    8:  { titulo:"Essence Synthesis",           pilar:"Pillar 1 — Essence Investigation",     mergulho:"Consolidation of the first month's discoveries.",
+          perguntas:["What was the greatest revelation this month?","How has your self-perception changed?","What is the core of your essence?"],
+          tarefas:["Create a visual board (moodboard) of your essence."] },
+    9:  { titulo:"The Digital Baptism",         pilar:"Pillar 2 — Identity Architecture",     mergulho:"Defining the Name/Pseudonym and Identity Core.",
+          perguntas:["What name carries your essence?","What is your mission in 1 sentence?","What is your main archetype?"],
+          tarefas:["Register the domain or handle of the chosen name."] },
+    10: { titulo:"The Origin Narrative",        pilar:"Pillar 2 — Identity Architecture",     mergulho:"Building your brand's Storytelling.",
+          perguntas:["Where did you come from?","What was the turning point?","How does your story connect with your audience?"],
+          tarefas:["Write the script for your 'Who I Am' video."] },
+    11: { titulo:"The Invisible Hero's Journey",pilar:"Pillar 2 — Identity Architecture",     mergulho:"Mapping challenges and overcomings.",
+          perguntas:["What were the greatest obstacles?","What did you learn along the way?","What is the great revelation of your journey?"],
+          tarefas:["List 3 'golden lessons' from your life."] },
+    12: { titulo:"The Brand Manifesto",         pilar:"Pillar 2 — Identity Architecture",     mergulho:"Defining Mission, Vision and the Invitation to the audience.",
+          perguntas:["Why should your audience trust you?","What is your brand's promise?","What legacy do you want to leave?"],
+          tarefas:["Write the brand manifesto for the website."] },
+    13: { titulo:"Visual Alchemy",              pilar:"Pillar 2 — Identity Architecture",     mergulho:"Colors, symbols and the brand atmosphere.",
+          perguntas:["If your essence were a color, what would it be?","Is there a symbol that represents you?","What is the visual energy of your brand?"],
+          tarefas:["Choose the 3 main colors palette."] },
+    14: { titulo:"The Voice of Essence",        pilar:"Pillar 2 — Identity Architecture",     mergulho:"Tone of voice and authentic communication.",
+          perguntas:["How does your brand speak (loving, wise, direct)?","Which words are forbidden in your communication?","How do you want to be perceived when you speak?"],
+          tarefas:["Write 3 post captions in your new tone of voice."] },
+    15: { titulo:"Advanced Digital Aesthetics", pilar:"Pillar 2 — Identity Architecture",     mergulho:"Typography and image style.",
+          perguntas:["Which font conveys your tone?","What is the style of your images (mystical, minimalist)?","How do graphic elements repeat?"],
+          tarefas:["Select 5 reference images for the visual style."] },
+    16: { titulo:"The Identity Book",           pilar:"Pillar 2 — Identity Architecture",     mergulho:"Completion of the Akasha Brand Guide.",
+          perguntas:["Is your identity coherent with your essence?","What still needs adjustment?","Do you feel represented by this brand?"],
+          tarefas:["Review the complete Brand Guide."] },
+    17: { titulo:"The Digital Home — Foundation",pilar:"Pillar 3 — Digital Empire",           mergulho:"Website and Instagram Bio structuring.",
+          perguntas:["Does your bio communicate your mission?","Is the website intuitive for the visitor?","Where is the sales link?"],
+          tarefas:["Set up the Instagram bio and the link tree link."] },
+    18: { titulo:"The First Content Cycle",     pilar:"Pillar 3 — Digital Empire",            mergulho:"Planning the first 9 strategic posts.",
+          perguntas:["What are the 3 pillars of your content?","How to educate your audience about your mission?","What is the CTA (call to action) of each post?"],
+          tarefas:["Create the editorial calendar for the first 15 days."] },
+    19: { titulo:"Invisible Sales Strategies",  pilar:"Pillar 3 — Digital Empire",            mergulho:"How to sell without appearing — automatic funnels.",
+          perguntas:["What is the entry product?","How to automate delivery?","How to attract qualified traffic?"],
+          tarefas:["Draw the funnel flow: Post → Bio → Website → Purchase."] },
+    20: { titulo:"The First Campaign",          pilar:"Pillar 3 — Digital Empire",            mergulho:"Structuring the launch of the first product.",
+          perguntas:["What is the launch date?","What is the irresistible offer?","How to create anticipation in the audience?"],
+          tarefas:["Create the 7-day anticipation schedule."] },
+    21: { titulo:"Operations and Delegation",   pilar:"Pillar 3 — Digital Empire",            mergulho:"How to work with the technical team.",
+          perguntas:["What do you love to do?","What do you need to delegate?","How to ensure delivery quality?"],
+          tarefas:["List the tasks that will be done by the team."] },
+    22: { titulo:"Scale and Multiplication",    pilar:"Pillar 3 — Digital Empire",            mergulho:"Audiobooks, courses and expansion.",
+          perguntas:["How to transform your knowledge into a course?","What is the next format of your work?","Where else is your audience?"],
+          tarefas:["Write the summary of your first online course."] },
+    23: { titulo:"The Global Empire",           pilar:"Pillar 3 — Digital Empire",            mergulho:"Internationalization and advanced monetization.",
+          perguntas:["Does your message work in other languages?","Which global platforms to use (Amazon, etc)?","How to scale revenue?"],
+          tarefas:["Research 3 international sales platforms."] },
+    24: { titulo:"Gradual Appearance — Optional",pilar:"Pillar 3 — Digital Empire",           mergulho:"Strategy for those who want to reveal their face.",
+          perguntas:["Do you feel like showing up now?","How to do it safely?","What is the impact on the brand?"],
+          tarefas:["Plan the 'reveal' post (if applicable)."] },
+    25: { titulo:"Empire Review",               pilar:"Pillar 3 — Digital Empire",            mergulho:"Metrics analysis and route adjustments.",
+          perguntas:["What worked best?","What needs to be discarded?","What are the new objectives?"],
+          tarefas:["Analyze the sales and engagement report."] },
+    26: { titulo:"The Akashic Legacy",          pilar:"Pillar 3 — Digital Empire",            mergulho:"Closing, celebration and continuity.",
+          perguntas:["How do you feel after 90 days?","What is the size of your empire today?","What is the next step for your soul?"],
+          tarefas:["Write a letter to yourself one year from now."] }
+  },
+  es: {
+    1:  { titulo:"El Portal de Entrada",        pilar:"Pilar 1 — Investigación de Esencia",   mergulho:"Apertura, bienvenida y la primera mirada sobre quién eres hoy.",
+          perguntas:["¿Cómo te presentas hoy?","¿Cuál es tu profesión principal?","¿Cuáles son tus 3 mayores talentos?","¿Qué haces mejor que los demás?","¿Cuál es tu mayor logro?","¿Qué enseñarías al mundo?","¿Qué necesita conocer el mundo de ti?","¿Por qué buscar la mentoría ahora?"],
+          tarefas:["Escribir una presentación de 3 párrafos.","Listar 5 momentos de plenitud.","Elegir un seudónimo (opcional)."] },
+    2:  { titulo:"Raíces y Linaje",             pilar:"Pilar 1 — Investigación de Esencia",   mergulho:"Investigación ancestral. El talento que corre por tus venas.",
+          perguntas:["¿Cuál es el talento de tu madre?","¿Cuál es la fuerza de tu padre?","¿A qué abuelo/abuela admiras más?","¿Qué don se repite en la familia?","¿Qué patrón de lucha se repite?","¿Quién 'se quedó atrás' en la familia?","¿Qué te prohibió ser la familia?"],
+          tarefas:["Entrevistar al familiar más anciano.","Completar la tabla de constelación familiar."] },
+    3:  { titulo:"El Árbol Genealógico del Don", pilar:"Pilar 1 — Investigación de Esencia",  mergulho:"Mapeo práctico de patrones y fuerzas ancestrales.",
+          perguntas:["¿Qué talentos ancestrales deseas honrar?","¿Qué dolores decides cerrar hoy?","¿Cómo apoya tu linaje a tu imperio digital?"],
+          tarefas:["Dibujar tu árbol genealógico con los talentos de cada uno."] },
+    4:  { titulo:"Sombras y Espejos",           pilar:"Pilar 1 — Investigación de Esencia",   mergulho:"Identificando miedos y bloqueos de visibilidad.",
+          perguntas:["¿Qué miedo te paraliza al pensar en aparecer?","¿Qué sientes al imaginarte famoso(a)?","¿Cómo los diagnósticos impactan tu creatividad?","¿Qué historia te cuentas sobre por qué no funcionó?"],
+          tarefas:["Escribir una carta a tu miedo.","Escuchar la meditación de apertura akáshica."] },
+    5:  { titulo:"El Merecimiento del Creador", pilar:"Pilar 1 — Investigación de Esencia",   mergulho:"Creencias sobre valor, dinero y el permiso para prosperar.",
+          perguntas:["¿Qué creaste y nunca mostraste?","¿Qué temes que digan de tu trabajo?","¿Qué deseas que la gente sienta con tu obra?","¿Te ves merecedor(a) de ser pagado(a)?"],
+          tarefas:["Listar 3 precios posibles para tu primer producto."] },
+    6:  { titulo:"Apertura Akáshica",           pilar:"Pilar 1 — Investigación de Esencia",   mergulho:"Sesión de meditación guiada y acceso a los Registros.",
+          perguntas:["¿Cuál es la forma, color y sonido de tu alma?","¿Qué cultura o civilización te atrae?","¿Qué talentos parecen 'demasiado naturales'?"],
+          tarefas:["Registrar las imágenes y sensaciones de la meditación."] },
+    7:  { titulo:"La Misión del Alma",          pilar:"Pilar 1 — Investigación de Esencia",   mergulho:"Decodificando los mensajes de la Biblioteca Akáshica.",
+          perguntas:["¿Cuál es tu miedo irracional?","¿Cuál es tu misión más allá de esta vida?","¿Qué mensaje enviarías a tu alma antigua?","¿Qué viniste a traer que aún no se ha hecho?"],
+          tarefas:["Escribir tu manifiesto de misión en 1 párrafo."] },
+    8:  { titulo:"Síntesis de la Esencia",      pilar:"Pilar 1 — Investigación de Esencia",   mergulho:"Consolidación de los descubrimientos del primer mes.",
+          perguntas:["¿Cuál fue la mayor revelación de este mes?","¿Cómo cambió tu visión de ti mismo?","¿Cuál es el núcleo central de tu esencia?"],
+          tarefas:["Crear un tablero visual (moodboard) de tu esencia."] },
+    9:  { titulo:"El Bautismo Digital",         pilar:"Pilar 2 — Arquitectura de Identidad",  mergulho:"Definición del Nombre/Seudónimo y Núcleo de Identidad.",
+          perguntas:["¿Qué nombre lleva tu esencia?","¿Cuál es tu misión en 1 frase?","¿Cuál es tu arquetipo principal?"],
+          tarefas:["Registrar el dominio o arroba del nombre elegido."] },
+    10: { titulo:"La Narrativa de Origen",      pilar:"Pilar 2 — Arquitectura de Identidad",  mergulho:"Construyendo el Storytelling de tu marca.",
+          perguntas:["¿De dónde vienes?","¿Cuál fue el momento de inflexión?","¿Cómo tu historia conecta con tu audiencia?"],
+          tarefas:["Escribir el guion de tu video '¿Quién Soy Yo?'."] },
+    11: { titulo:"El Viaje del Héroe Invisible", pilar:"Pilar 2 — Arquitectura de Identidad", mergulho:"Mapeando desafíos y superaciones.",
+          perguntas:["¿Cuáles fueron los mayores obstáculos?","¿Qué aprendiste en el camino?","¿Cuál es la gran revelación de tu viaje?"],
+          tarefas:["Listar 3 'lecciones de oro' de tu vida."] },
+    12: { titulo:"El Manifiesto de Marca",      pilar:"Pilar 2 — Arquitectura de Identidad",  mergulho:"Definiendo Misión, Visión y la Invitación al público.",
+          perguntas:["¿Por qué tu audiencia debería confiar en ti?","¿Cuál es la promesa de tu marca?","¿Qué legado quieres dejar?"],
+          tarefas:["Escribir el manifiesto de marca para el sitio web."] },
+    13: { titulo:"Alquimia Visual",             pilar:"Pilar 2 — Arquitectura de Identidad",  mergulho:"Colores, símbolos y la atmósfera de la marca.",
+          perguntas:["Si tu esencia fuera un color, ¿cuál sería?","¿Existe un símbolo que te represente?","¿Cuál es la energía visual de tu marca?"],
+          tarefas:["Elegir la paleta de 3 colores principales."] },
+    14: { titulo:"La Voz de la Esencia",        pilar:"Pilar 2 — Arquitectura de Identidad",  mergulho:"Tono de voz y comunicación auténtica.",
+          perguntas:["¿Cómo habla tu marca (amorosa, sabia, directa)?","¿Qué palabras están prohibidas en tu comunicación?","¿Cómo quieres ser percibido al hablar?"],
+          tarefas:["Escribir 3 leyendas de publicación en tu nuevo tono de voz."] },
+    15: { titulo:"Estética Digital Avanzada",   pilar:"Pilar 2 — Arquitectura de Identidad",  mergulho:"Tipografía y estilo de imagen.",
+          perguntas:["¿Qué fuente transmite tu tono?","¿Cuál es el estilo de tus imágenes (místico, minimalista)?","¿Cómo se repiten los elementos gráficos?"],
+          tarefas:["Seleccionar 5 imágenes de referencia para el estilo visual."] },
+    16: { titulo:"El Libro de Identidad",       pilar:"Pilar 2 — Arquitectura de Identidad",  mergulho:"Finalización de la Guía de Marca Akasha.",
+          perguntas:["¿Tu identidad es coherente con tu esencia?","¿Qué aún necesita ajuste?","¿Te sientes representado por esta marca?"],
+          tarefas:["Revisar la Guía de Marca completa."] },
+    17: { titulo:"El Hogar Digital — Fundación", pilar:"Pilar 3 — Imperio Digital",           mergulho:"Estructuración del Sitio web y Bio de Instagram.",
+          perguntas:["¿Tu bio comunica tu misión?","¿El sitio web es intuitivo para el visitante?","¿Dónde está el enlace de venta?"],
+          tarefas:["Configurar la bio de Instagram y el enlace del árbol de links."] },
+    18: { titulo:"El Primer Ciclo de Contenido", pilar:"Pilar 3 — Imperio Digital",           mergulho:"Planificación de las primeras 9 publicaciones estratégicas.",
+          perguntas:["¿Cuáles son los 3 pilares de tu contenido?","¿Cómo educar a tu audiencia sobre tu misión?","¿Cuál es el CTA (llamada a la acción) de cada publicación?"],
+          tarefas:["Crear el calendario editorial para los primeros 15 días."] },
+    19: { titulo:"Estrategias de Venta Invisible", pilar:"Pilar 3 — Imperio Digital",         mergulho:"Cómo vender sin aparecer — embudos automáticos.",
+          perguntas:["¿Cuál es el producto de entrada?","¿Cómo automatizar la entrega?","¿Cómo atraer tráfico calificado?"],
+          tarefas:["Dibujar el flujo del embudo: Publicación → Bio → Sitio → Compra."] },
+    20: { titulo:"La Primera Campaña",          pilar:"Pilar 3 — Imperio Digital",            mergulho:"Estructuración del lanzamiento del primer producto.",
+          perguntas:["¿Cuál es la fecha de lanzamiento?","¿Cuál es la oferta irresistible?","¿Cómo crear anticipación en la audiencia?"],
+          tarefas:["Crear el cronograma de 7 días de anticipación."] },
+    21: { titulo:"Operación y Delegación",      pilar:"Pilar 3 — Imperio Digital",            mergulho:"Cómo trabajar con el equipo técnico.",
+          perguntas:["¿Qué amas hacer?","¿Qué necesitas delegar?","¿Cómo garantizar la calidad de la entrega?"],
+          tarefas:["Listar las tareas que realizará el equipo."] },
+    22: { titulo:"Escala y Multiplicación",     pilar:"Pilar 3 — Imperio Digital",            mergulho:"Audiolibros, cursos y expansión.",
+          perguntas:["¿Cómo transformar tu conocimiento en un curso?","¿Cuál es el próximo formato de tu obra?","¿Dónde más está tu audiencia?"],
+          tarefas:["Escribir el índice de tu primer curso en línea."] },
+    23: { titulo:"El Imperio Global",           pilar:"Pilar 3 — Imperio Digital",            mergulho:"Internacionalización y monetización avanzada.",
+          perguntas:["¿Tu mensaje funciona en otros idiomas?","¿Qué plataformas globales usar (Amazon, etc)?","¿Cómo escalar la facturación?"],
+          tarefas:["Investigar 3 plataformas de venta internacional."] },
+    24: { titulo:"Aparición Gradual — Opcional", pilar:"Pilar 3 — Imperio Digital",           mergulho:"Estrategia para quienes desean revelar su rostro.",
+          perguntas:["¿Sientes ganas de aparecer ahora?","¿Cómo hacerlo de forma segura?","¿Cuál es el impacto en la marca?"],
+          tarefas:["Planear la publicación de 'revelación' (si aplica)."] },
+    25: { titulo:"Revisión del Imperio",        pilar:"Pilar 3 — Imperio Digital",            mergulho:"Análisis de métricas y ajustes de ruta.",
+          perguntas:["¿Qué funcionó mejor?","¿Qué necesita ser descartado?","¿Cuáles son los nuevos objetivos?"],
+          tarefas:["Analizar el informe de ventas y engagement."] },
+    26: { titulo:"El Legado Akáshico",          pilar:"Pilar 3 — Imperio Digital",            mergulho:"Cierre, celebración y continuidad.",
+          perguntas:["¿Cómo te sientes después de 90 días?","¿Cuál es el tamaño de tu imperio hoy?","¿Cuál es el próximo paso de tu alma?"],
+          tarefas:["Escribir una carta para ti mismo dentro de 1 año."] }
+  }
+};
+
+const INSIGHT_I18N = {
+  pt: `"O que você veio trazer ao mundo já está dentro de você. Nós ajudamos você a encontrar, nomear e construir seu império a partir disso."`,
+  en: `"What you came to bring to the world is already inside you. We help you find it, name it and build your empire from it."`,
+  es: `"Lo que viniste a traer al mundo ya está dentro de ti. Te ayudamos a encontrarlo, nombrarlo y construir tu imperio a partir de eso."`
+};
 
 /* ─── State ─── */
 let currentUser  = null;
-let respostas    = {};   // { enc_N: { q0:"...", q1:"...", anotacoes:"..." } }
+let respostas    = {};
 let encAtivo     = null;
 let saveTimer    = null;
+let currentLang  = localStorage.getItem('akasha_lang') || 'pt';
+let currentTheme = localStorage.getItem('akasha_theme') || 'dark';
+
+/* ─── Exposição ao escopo global ─── */
+window.setTheme     = setTheme;
+window.setLang      = setLang;
+window.fecharModal  = fecharModal;
+window.closeModalOnBackdrop = closeModalOnBackdrop;
+window.autoSave     = autoSave;
+window.salvar       = salvar;
+window.enviarWpp    = enviarWpp;
+
+/* ══════════════════════════════════════
+   TEMA
+══════════════════════════════════════ */
+function setTheme(t) {
+  currentTheme = t;
+  localStorage.setItem('akasha_theme', t);
+  document.body.classList.toggle('light-mode', t === 'light');
+  document.getElementById('btnDark').classList.toggle('active', t === 'dark');
+  document.getElementById('btnLight').classList.toggle('active', t === 'light');
+}
+
+/* ══════════════════════════════════════
+   IDIOMA
+══════════════════════════════════════ */
+function setLang(l) {
+  currentLang = l;
+  localStorage.setItem('akasha_lang', l);
+  ['btnPT','btnEN','btnES'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+  document.getElementById({ pt:'btnPT', en:'btnEN', es:'btnES' }[l]).classList.add('active');
+
+  // Atualiza atributo lang do html
+  document.documentElement.lang = { pt:'pt-br', en:'en', es:'es' }[l];
+
+  // Atualiza textos estáticos com data-i18n
+  const T = I18N[l];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (k === 'page_title') {
+      el.innerHTML = T.page_title_html;
+    } else if (T[k] !== undefined && typeof T[k] === 'string') {
+      el.textContent = T[k];
+    }
+  });
+
+  // Atualiza título do documento
+  const titles = { pt:'Akasha Hub | Mentoria — Encontros', en:'Akasha Hub | Mentorship — Sessions', es:'Akasha Hub | Mentoría — Encuentros' };
+  document.title = titles[l];
+
+  // Rerenderiza a lista (que usa os dados traduzidos)
+  if (currentUser) renderLista();
+
+  // Se modal aberto, re-renderiza conteúdo do modal
+  if (encAtivo) abrirEncontro(encAtivo.num);
+}
 
 /* ─── Auth guard ─── */
 onAuthStateChanged(auth, async user => {
   if (!user) { window.location.href = '/login/'; return; }
 
-  // Verifica acesso: admin ou tem_mentoria
   const snap = await getDoc(doc(db, "users", user.uid));
   const ud   = snap.exists() ? snap.data() : {};
   const isAdmin = user.uid === ADMIN_UID;
@@ -913,31 +1098,35 @@ onAuthStateChanged(auth, async user => {
 
   currentUser = user;
 
-  // Exibe nome na nav
   const nome = user.displayName || user.email || 'Mentorando';
   const navUser = document.getElementById('navUser');
   navUser.textContent = nome.split(' ')[0];
   navUser.style.display = 'inline-block';
 
-  // Carrega respostas salvas
   const rSnap = await getDoc(doc(db, `mentoria_respostas/${user.uid}/dados/tudo`));
   if (rSnap.exists()) respostas = rSnap.data() || {};
+
+  // Aplica preferências salvas
+  setTheme(currentTheme);
+  setLang(currentLang);
 
   renderLista();
   document.getElementById('ls').classList.add('hide');
 });
 
-/* ─── Render lista de encontros ─── */
+/* ─── Render lista ─── */
 function renderLista() {
   const container = document.getElementById('encontrosContainer');
   container.innerHTML = '';
+  const T   = I18N[currentLang];
+  const ENC = ENCONTROS_I18N[currentLang];
 
-  // Agrupar por pilar
   const pilares = {};
-  ENCONTROS.forEach(enc => {
+  for (let num = 1; num <= 26; num++) {
+    const enc = ENC[num];
     if (!pilares[enc.pilar]) pilares[enc.pilar] = [];
-    pilares[enc.pilar].push(enc);
-  });
+    pilares[enc.pilar].push({ ...enc, num });
+  }
 
   let totalDone = 0;
   const delays = ['d1','d2','d3','d4','d5'];
@@ -948,18 +1137,17 @@ function renderLista() {
     block.className = `pilar-block ${delays[dIdx % 5]}`;
     dIdx++;
 
-    // Pilar header
     const ph = document.createElement('div');
     ph.className = 'pilar-header';
-    const pilarNum  = pilarNome.split('—')[0].trim();
-    const pilarName = pilarNome.split('—')[1]?.trim() || pilarNome;
+    const parts = pilarNome.split('—');
+    const pilarNum  = parts[0].trim();
+    const pilarName = parts[1]?.trim() || pilarNome;
     ph.innerHTML = `
       <span class="pilar-num">${pilarNum}</span>
       <span class="pilar-name">${pilarName}</span>
       <div class="pilar-line"></div>`;
     block.appendChild(ph);
 
-    // Encontros
     encs.forEach(enc => {
       const key   = `enc_${enc.num}`;
       const saved = respostas[key] || {};
@@ -976,7 +1164,7 @@ function renderLista() {
           <div class="enc-info">
             <div class="enc-title">${enc.titulo}</div>
             <div class="enc-sub ${done ? 'done-lbl' : 'pending'}">
-              ${done ? 'Respondido ✓' : 'Aguardando resposta'}
+              ${done ? T.enc_done : T.enc_pending}
             </div>
           </div>
         </div>
@@ -987,23 +1175,27 @@ function renderLista() {
     container.appendChild(block);
   });
 
-  // Progress
-  document.getElementById('progressTxt').textContent = `${totalDone} / 26 respondidos`;
+  const progTxt = typeof T.progress_txt === 'function'
+    ? T.progress_txt(totalDone, 26)
+    : `${totalDone} / 26`;
+  document.getElementById('progressTxt').textContent = progTxt;
   document.getElementById('progressFill').style.width = `${(totalDone / 26) * 100}%`;
 }
 
-/* ─── Abrir encontro no modal ─── */
+/* ─── Abrir encontro ─── */
 function abrirEncontro(num) {
-  const enc   = ENCONTROS.find(e => e.num === num);
+  const T   = I18N[currentLang];
+  const ENC = ENCONTROS_I18N[currentLang];
+  const enc = { ...ENC[num], num };
   if (!enc) return;
   encAtivo = enc;
 
   const key   = `enc_${num}`;
   const saved = respostas[key] || {};
 
-  document.getElementById('drawerBadge').textContent = `✦ Encontro ${num} de 26 · Akasha Hub`;
+  document.getElementById('drawerBadge').textContent =
+    typeof T.drawer_badge === 'function' ? T.drawer_badge(num, 26) : `✦ ${num} / 26 · Akasha Hub`;
 
-  // Monta perguntas
   const perguntasHtml = enc.perguntas.map((q, i) => `
     <div class="pergunta-item">
       <div class="pergunta-q">
@@ -1013,21 +1205,21 @@ function abrirEncontro(num) {
       <textarea
         class="resp-input"
         id="resp_${num}_${i}"
-        placeholder="Escreva sua resposta aqui..."
+        placeholder="${T.ph_resp}"
         oninput="autoSave()"
       >${esc(saved[`q${i}`] || '')}</textarea>
     </div>`).join('');
 
-  // Monta tarefas
   const tarefasHtml = enc.tarefas.map(t => `
     <div class="tarefa-item">
       <span class="tarefa-bullet">◈</span>
       <span>${t}</span>
     </div>`).join('');
 
+  const encOf = typeof T.enc_of === 'function' ? T.enc_of(num, 26) : `Encontro ${num}`;
+
   document.getElementById('drawerScroll').innerHTML = `
-    <!-- Cabeçalho -->
-    <span class="modal-enc-num">Encontro ${num} de 26</span>
+    <span class="modal-enc-num">${encOf}</span>
     <h2 class="modal-enc-title">${enc.titulo}</h2>
     <span class="modal-enc-pilar">${enc.pilar}</span>
 
@@ -1037,78 +1229,70 @@ function abrirEncontro(num) {
       <div class="modal-div-line"></div>
     </div>
 
-    <!-- Mergulho do dia -->
-    <div class="sec-label">◈ O Mergulho do Dia</div>
+    <div class="sec-label">${T.sec_merge}</div>
     <div class="mergulho-box">
       <p class="mergulho-txt">${enc.mergulho}</p>
     </div>
 
-    <!-- Perguntas -->
-    <div class="sec-label">✦ Investigação Profunda</div>
+    <div class="sec-label">${T.sec_pergs}</div>
     <div class="perguntas-list">${perguntasHtml}</div>
 
-    <!-- Tarefas -->
-    <div class="sec-label">◈ Tarefas da Camada</div>
+    <div class="sec-label">${T.sec_tasks}</div>
     <div class="tarefas-box">${tarefasHtml}</div>
 
-    <!-- Insight akáshico -->
-    <div class="sec-label">𓂀 Insight Akáshico</div>
+    <div class="sec-label">${T.sec_insight}</div>
     <div class="insight-box">
-      <p class="insight-quote">${INSIGHT}</p>
-      <span class="insight-source">Akasha Hub · akashahub.com.br/mentoria · @akasha.hub</span>
+      <p class="insight-quote">${INSIGHT_I18N[currentLang]}</p>
+      <span class="insight-source">${T.insight_src}</span>
     </div>
 
-    <!-- Anotações pessoais -->
-    <div class="sec-label">✍️ Minhas Anotações</div>
+    <div class="sec-label">${T.sec_notes}</div>
     <textarea
       class="anotacoes-input"
       id="anotacoes_${num}"
-      placeholder="Reflexões, insights e anotações livres sobre este encontro..."
+      placeholder="${T.ph_notes}"
       oninput="autoSave()"
     >${esc(saved.anotacoes || '')}</textarea>
 
-    <!-- Ações -->
     <div class="modal-actions">
       <button class="btn-salvar" onclick="salvar()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
           <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
         </svg>
-        Salvar respostas
+        ${T.btn_save}
       </button>
       <button class="btn-wpp" onclick="enviarWpp()">
         <svg viewBox="0 0 24 24">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
         </svg>
-        Enviar ao Mentor
+        ${T.btn_wpp}
       </button>
       <span class="save-status" id="saveStatus"></span>
     </div>`;
 
-  // Abre modal
   document.getElementById('modalBackdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
   document.getElementById('drawerScroll').scrollTop = 0;
 }
 
 /* ─── Fechar modal ─── */
-window.fecharModal = () => {
+function fecharModal() {
   document.getElementById('modalBackdrop').classList.remove('open');
   document.body.style.overflow = '';
   encAtivo = null;
-  renderLista(); // atualiza progresso e badges
-};
+  renderLista();
+}
 
-window.closeModalOnBackdrop = (e) => {
+function closeModalOnBackdrop(e) {
   if (e.target === document.getElementById('modalBackdrop')) fecharModal();
-};
+}
 
-// Swipe down to close — só fecha se o scroll estiver no topo E
-// o gesto começou no handle (pill) ou na toprow do drawer
+/* Swipe down to close */
 const drawer       = document.getElementById('modalDrawer');
 const drawerHandle = drawer.querySelector('.drawer-handle');
 let swipeStartY    = 0;
-let swipeActive    = false;   // true apenas quando o toque iniciou no handle
+let swipeActive    = false;
 
 drawerHandle.addEventListener('touchstart', e => {
   swipeStartY = e.touches[0].clientY;
@@ -1129,40 +1313,36 @@ drawerHandle.addEventListener('touchend', e => {
   if (dy > 90) fecharModal();
 });
 
-// Garante que toques dentro do scroll nunca ativem o swipe-to-close
-document.getElementById('drawerScroll').addEventListener('touchstart', e => {
+document.getElementById('drawerScroll').addEventListener('touchstart', () => {
   swipeActive = false;
 }, { passive: true });
 
-/* ─── Auto-save debounced ─── */
-window.autoSave = () => {
+/* ─── Auto-save ─── */
+function autoSave() {
   clearTimeout(saveTimer);
   const s = document.getElementById('saveStatus');
   if (s) s.textContent = '...';
   saveTimer = setTimeout(() => salvar(true), 1500);
-};
+}
 
-/* ─── Salvar respostas ─── */
-window.salvar = async (silencioso = false) => {
+/* ─── Salvar ─── */
+async function salvar(silencioso = false) {
   if (!currentUser || !encAtivo) return;
+  const T   = I18N[currentLang];
   const num = encAtivo.num;
   const key = `enc_${num}`;
   const dados = {};
 
-  // Coleta perguntas
   encAtivo.perguntas.forEach((_, i) => {
     const el = document.getElementById(`resp_${num}_${i}`);
     dados[`q${i}`] = el ? el.value : '';
   });
 
-  // Coleta anotações
   const anotEl = document.getElementById(`anotacoes_${num}`);
   dados.anotacoes = anotEl ? anotEl.value : '';
 
-  // Merge local
   respostas[key] = dados;
 
-  // Persiste no Firestore (sem Storage, só Firestore)
   try {
     await setDoc(
       doc(db, `mentoria_respostas/${currentUser.uid}/dados/tudo`),
@@ -1170,18 +1350,18 @@ window.salvar = async (silencioso = false) => {
       { merge: true }
     );
     const s = document.getElementById('saveStatus');
-    if (s) s.textContent = '✓ Salvo';
-    if (!silencioso) toast('✓ Respostas salvas com sucesso');
+    if (s) s.textContent = T.save_ok_short;
+    if (!silencioso) toast(T.saved_ok);
     setTimeout(() => { const s = document.getElementById('saveStatus'); if (s) s.textContent = ''; }, 2500);
   } catch(e) {
     const s = document.getElementById('saveStatus');
-    if (s) s.textContent = '✗ Erro ao salvar';
-    toast('Erro ao salvar. Verifique sua conexão.');
+    if (s) s.textContent = T.save_err_short;
+    toast(T.save_err);
   }
-};
+}
 
-/* ─── Enviar ao WhatsApp do mentor ─── */
-window.enviarWpp = async () => {
+/* ─── Enviar WhatsApp ─── */
+async function enviarWpp() {
   if (!currentUser || !encAtivo) return;
   await salvar(true);
 
@@ -1189,24 +1369,26 @@ window.enviarWpp = async () => {
   const nome = currentUser.displayName || currentUser.email || 'Mentorando';
   const key  = `enc_${enc.num}`;
   const saved = respostas[key] || {};
+  const T = I18N[currentLang];
+  const encOf = typeof T.enc_of === 'function' ? T.enc_of(enc.num, 26) : `Encontro ${enc.num}`;
 
-  let msg = `✦ ENCONTRO ${enc.num} — ${enc.titulo.toUpperCase()}\n`;
-  msg += `Mentorando: ${nome} (${currentUser.email})\n`;
+  let msg = `✦ ${encOf.toUpperCase()} — ${enc.titulo.toUpperCase()}\n`;
+  msg += `${nome} (${currentUser.email})\n`;
   msg += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
   enc.perguntas.forEach((q, i) => {
     const resp = (saved[`q${i}`] || '').trim();
-    msg += `❓ ${q}\n✍️ ${resp || '(sem resposta)'}\n\n`;
+    msg += `❓ ${q}\n✍️ ${resp || '—'}\n\n`;
   });
 
   if ((saved.anotacoes || '').trim()) {
-    msg += `📝 ANOTAÇÕES PESSOAIS:\n${saved.anotacoes}\n\n`;
+    msg += `📝 ${T.sec_notes.replace(/[✍️\s]+/,'').trim()}:\n${saved.anotacoes}\n\n`;
   }
 
   msg += `━━━━━━━━━━━━━━━━━━━━━━\nakashahub.com.br ✦`;
 
   window.open(`https://wa.me/${WPP_NUM}?text=${encodeURIComponent(msg)}`, '_blank');
-};
+}
 
 /* ─── Helpers ─── */
 function esc(s) {
@@ -1217,6 +1399,10 @@ function toast(msg, d = 3000) {
   el.textContent = msg; el.classList.add('show');
   clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), d);
 }
+
+/* Aplica tema/idioma imediatamente antes da autenticação (sem flash) */
+setTheme(currentTheme);
+setLang(currentLang);
 </script>
 </body>
 </html>
