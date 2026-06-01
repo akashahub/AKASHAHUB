@@ -155,9 +155,9 @@ main{max-width:660px;margin:0 auto;padding:96px 20px 120px;position:relative;z-i
   transition:transform .4s ease;}
 .post-card:hover .post-media-img{transform:scale(1.02);}
 
-/* youtube */
+/* youtube — agora é botão, não link externo */
 .post-media-yt{position:relative;width:100%;cursor:pointer;display:block;
-  text-decoration:none;}
+  background:none;border:none;padding:0;text-align:left;}
 .post-media-yt img{width:100%;display:block;max-height:300px;object-fit:cover;
   transition:filter .3s,transform .4s;}
 .post-card:hover .post-media-yt img{filter:brightness(1.05);transform:scale(1.01);}
@@ -205,7 +205,7 @@ main{max-width:660px;margin:0 auto;padding:96px 20px 120px;position:relative;z-i
 .fab.show{display:flex;}
 
 /* ══════════════════════════════════════
-   MODAL POST
+   MODAL POST (criar/editar)
 ══════════════════════════════════════ */
 .overlay{position:fixed;inset:0;z-index:500;background:rgba(6,5,10,.88);
   backdrop-filter:blur(14px);display:none;align-items:flex-end;justify-content:center;}
@@ -247,12 +247,10 @@ main{max-width:660px;margin:0 auto;padding:96px 20px 120px;position:relative;z-i
 .form-select option{background:#0d0b1a;color:var(--white);}
 .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
 
-/* mídia section no modal */
 .form-media-hint{font-size:.62rem;letter-spacing:.4px;line-height:1.7;
   color:rgba(245,240,232,.3);margin-top:6px;}
 .form-media-hint b{color:rgba(201,162,39,.6);font-weight:400;}
 
-/* preview no modal */
 .media-preview{margin-top:10px;border-radius:2px;overflow:hidden;
   border:1px solid rgba(255,255,255,.06);display:none;}
 .media-preview img{width:100%;display:block;max-height:200px;object-fit:cover;}
@@ -285,8 +283,43 @@ main{max-width:660px;margin:0 auto;padding:96px 20px 120px;position:relative;z-i
   font-size:.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted);transition:all .3s;}
 .btn-cancelar:hover{border-color:rgba(255,255,255,.18);color:var(--white);}
 
+/* ══════════════════════════════════════
+   MODAL VÍDEO YOUTUBE
+══════════════════════════════════════ */
+.overlay-video{position:fixed;inset:0;z-index:600;
+  background:rgba(4,3,8,.96);backdrop-filter:blur(20px);
+  display:none;align-items:center;justify-content:center;padding:16px;}
+.overlay-video.open{display:flex;}
+.modal-video{width:100%;max-width:760px;position:relative;
+  animation:fadeUp .35s cubic-bezier(.16,1,.3,1) both;}
+/* borda dourada sutil */
+.modal-video::before{content:'';position:absolute;inset:-1px;border-radius:4px;
+  background:linear-gradient(135deg,rgba(201,162,39,.3),transparent 50%,rgba(201,162,39,.1));
+  z-index:-1;pointer-events:none;}
+.modal-video-inner{background:#000;border-radius:3px;overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.8);}
+.modal-video-frame{position:relative;width:100%;padding-top:56.25%;}
+.modal-video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.modal-video-bar{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;background:rgba(10,8,18,.95);border-top:1px solid rgba(255,255,255,.05);}
+.modal-video-title{font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:.95rem;letter-spacing:1.5px;color:rgba(245,240,232,.7);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;margin-right:14px;}
+.modal-video-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.btn-yt-external{display:flex;align-items:center;gap:6px;
+  font-size:.5rem;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(245,240,232,.35);text-decoration:none;
+  border:1px solid rgba(255,255,255,.07);border-radius:2px;padding:6px 12px;
+  transition:all .25s;}
+.btn-yt-external:hover{color:var(--gold-light);border-color:var(--gold-border);}
+.btn-yt-external svg{width:11px;height:11px;fill:currentColor;flex-shrink:0;}
+.modal-video-close{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--muted);font-size:.75rem;transition:all .25s;flex-shrink:0;}
+.modal-video-close:hover{background:rgba(201,162,39,.1);border-color:var(--gold-border);color:var(--gold);}
+
 /* ── CONFIRM DELETE ── */
-.overlay-confirm{position:fixed;inset:0;z-index:600;background:rgba(6,5,10,.9);
+.overlay-confirm{position:fixed;inset:0;z-index:700;background:rgba(6,5,10,.9);
   backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:20px;}
 .overlay-confirm.open{display:flex;}
 .modal-confirm{width:100%;max-width:380px;background:#0d0b1a;
@@ -309,7 +342,7 @@ main{max-width:660px;margin:0 auto;padding:96px 20px 120px;position:relative;z-i
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
-  z-index:700;background:#0d0b1a;border:1px solid rgba(201,162,39,.25);border-radius:2px;
+  z-index:800;background:#0d0b1a;border:1px solid rgba(201,162,39,.25);border-radius:2px;
   padding:10px 20px;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;
   color:var(--gold-light);opacity:0;transition:all .35s;pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -382,7 +415,6 @@ footer{margin-top:52px;text-align:center;padding:18px 0;border-top:1px solid rgb
         <textarea class="form-textarea" id="fConteudo" placeholder="Escreva aqui…"></textarea>
       </div>
 
-      <!-- CAMPO MÍDIA -->
       <div class="form-row">
         <label class="form-label">Mídia — URL de imagem ou link do YouTube</label>
         <input class="form-input" id="fMidia"
@@ -392,7 +424,6 @@ footer{margin-top:52px;text-align:center;padding:18px 0;border-top:1px solid rgb
           Cole uma <b>URL de imagem</b> (Cloudinary, Imgur…) ou um <b>link do YouTube</b>
           — o sistema detecta automaticamente. Deixe vazio para post só texto.
         </p>
-        <!-- preview live -->
         <div class="media-preview" id="midiaPreview"></div>
       </div>
 
@@ -428,6 +459,29 @@ footer{margin-top:52px;text-align:center;padding:18px 0;border-top:1px solid rgb
       <div class="modal-actions">
         <button class="btn-salvar" id="btnSalvarPost" onclick="salvarPost()">Publicar Post</button>
         <button class="btn-cancelar" onclick="fecharModalPost()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL VÍDEO YOUTUBE ══ -->
+<div class="overlay-video" id="overlayVideo">
+  <div class="modal-video">
+    <div class="modal-video-inner">
+      <div class="modal-video-frame">
+        <iframe id="videoIframe" src="" allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+        </iframe>
+      </div>
+      <div class="modal-video-bar">
+        <div class="modal-video-title" id="videoModalTitle"></div>
+        <div class="modal-video-actions">
+          <a id="videoExternalLink" href="#" target="_blank" rel="noopener" class="btn-yt-external">
+            <svg viewBox="0 0 24 24"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42L17.59 5H14V3zm-1 2H5a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-8h-2v8H5V7h8V5z"/></svg>
+            Abrir no YouTube
+          </a>
+          <button class="modal-video-close" onclick="fecharModalVideo()">✕</button>
+        </div>
       </div>
     </div>
   </div>
@@ -528,7 +582,7 @@ import { getFirestore, doc, getDoc, collection,
          serverTimestamp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ── CONFIG ── */
-const ADMIN_UID = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2"; // seu UID
+const ADMIN_UID = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
 
 const app  = initializeApp({
   apiKey:            "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
@@ -552,8 +606,6 @@ let destaqueAtivo  = false;
 let unsubFeed      = null;
 
 /* ── MÍDIA HELPERS ── */
-
-// extrai ID do YouTube de qualquer formato de URL
 function getYouTubeId(url) {
   if (!url) return null;
   const patterns = [
@@ -569,17 +621,14 @@ function getYouTubeId(url) {
   return null;
 }
 
-// detecta tipo de mídia a partir da URL
 function detectarMidia(url) {
   if (!url || !url.trim()) return null;
   const ytId = getYouTubeId(url);
   if (ytId) return { tipo: 'youtube', url: url.trim(), ytId };
-  // qualquer outra URL tratamos como imagem
   if (url.match(/^https?:\/\/.+/i)) return { tipo: 'imagem', url: url.trim() };
   return null;
 }
 
-// thumbnail URL a partir do ID do YouTube
 function ytThumb(ytId) {
   return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
 }
@@ -622,6 +671,29 @@ const TIPO_MAP = {
   artigo:   { label:'Artigo',   cls:'tipo-artigo',   sym:'✦' },
   pratica:  { label:'Prática',  cls:'tipo-pratica',  sym:'◈' },
   aviso:    { label:'Aviso',    cls:'tipo-aviso',    sym:'⬡' },
+};
+
+/* ══════════════════════════════════════
+   MODAL VÍDEO
+══════════════════════════════════════ */
+window.abrirModalVideo = function(ytId, titulo) {
+  const iframe = document.getElementById('videoIframe');
+  const extLink = document.getElementById('videoExternalLink');
+  const titleEl = document.getElementById('videoModalTitle');
+  // autoplay=1 inicia o vídeo automaticamente ao abrir o modal
+  iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`;
+  extLink.href = `https://www.youtube.com/watch?v=${ytId}`;
+  titleEl.textContent = titulo || '';
+  document.getElementById('overlayVideo').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.fecharModalVideo = function() {
+  const iframe = document.getElementById('videoIframe');
+  // limpa src para parar o vídeo imediatamente
+  iframe.src = '';
+  document.getElementById('overlayVideo').classList.remove('open');
+  document.body.style.overflow = '';
 };
 
 /* ── AUTH ── */
@@ -688,7 +760,7 @@ function iniciarFeed() {
 function criarPostCard(p, i) {
   const tipo  = TIPO_MAP[p.tipo] || TIPO_MAP.reflexao;
   const longo = (p.conteudo || '').length > 320;
-  const midia = p.midia || null;          // { tipo, url, ytId? }
+  const midia = p.midia || null;
 
   const div = document.createElement('div');
   div.className = 'post-card' + (p.destaque ? ' destaque' : '');
@@ -699,10 +771,10 @@ function criarPostCard(p, i) {
   if (midia) {
     if (midia.tipo === 'youtube' && midia.ytId) {
       const thumb = ytThumb(midia.ytId);
-      const ytUrl = `https://www.youtube.com/watch?v=${midia.ytId}`;
+      // botão que abre modal interno — sem href externo
       midiaHTML = `
         <div class="post-media">
-          <a class="post-media-yt" href="${esc(ytUrl)}" target="_blank" rel="noopener" aria-label="Assistir no YouTube">
+          <button class="post-media-yt" data-ytid="${esc(midia.ytId)}" data-titulo="${esc(p.titulo||'')}" aria-label="Assistir vídeo">
             <img src="${esc(thumb)}" alt="Thumbnail YouTube"
               onerror="this.parentNode.parentNode.innerHTML='<div class=media-error>Vídeo indisponível</div>'">
             <div class="yt-overlay">
@@ -710,8 +782,8 @@ function criarPostCard(p, i) {
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
               </div>
             </div>
-            <span class="yt-label">YouTube</span>
-          </a>
+            <span class="yt-label">▶ Assistir</span>
+          </button>
         </div>`;
     } else if (midia.tipo === 'imagem') {
       midiaHTML = `
@@ -752,14 +824,23 @@ function criarPostCard(p, i) {
     div.querySelector('.btn-edit').addEventListener('click', () => abrirEditar(p));
     div.querySelector('.btn-del').addEventListener('click',  () => abrirConfirmDelete(p.id));
   }
+
+  // clique no thumbnail YouTube → abre modal interno
+  const ytBtn = div.querySelector('.post-media-yt');
+  if (ytBtn) {
+    ytBtn.addEventListener('click', () => {
+      abrirModalVideo(ytBtn.dataset.ytid, ytBtn.dataset.titulo);
+    });
+  }
+
   const expandBtn = div.querySelector('.post-expand');
   if (expandBtn) {
     expandBtn.addEventListener('click', () => {
       const body = document.getElementById('body-' + p.id);
       const exp  = expandBtn.dataset.exp === 'true';
       body.classList.toggle('collapsed', exp);
-      expandBtn.textContent    = exp ? 'Ler mais ↓' : 'Recolher ↑';
-      expandBtn.dataset.exp    = String(!exp);
+      expandBtn.textContent = exp ? 'Ler mais ↓' : 'Recolher ↑';
+      expandBtn.dataset.exp = String(!exp);
     });
   }
   return div;
@@ -793,7 +874,7 @@ window.onMidiaInput = function(val) {
   wrap.style.display = 'block';
 };
 
-/* ── MODAL ABRIR / FECHAR ── */
+/* ── MODAL POST ABRIR / FECHAR ── */
 window.abrirModalPost = function() {
   editingId     = null;
   destaqueAtivo = false;
@@ -805,8 +886,8 @@ window.abrirModalPost = function() {
   document.getElementById('fDestaqueToggle').classList.remove('on');
   document.getElementById('midiaPreview').style.display = 'none';
   document.getElementById('midiaPreview').innerHTML = '';
-  document.getElementById('modalPostLabel').textContent  = 'Novo Post';
-  document.getElementById('btnSalvarPost').textContent   = 'Publicar Post';
+  document.getElementById('modalPostLabel').textContent = 'Novo Post';
+  document.getElementById('btnSalvarPost').textContent  = 'Publicar Post';
   document.getElementById('overlayPost').classList.add('open');
 };
 
@@ -821,7 +902,6 @@ function abrirEditar(p) {
   document.getElementById('fDestaqueToggle').classList.toggle('on', destaqueAtivo);
   document.getElementById('modalPostLabel').textContent = 'Editar Post';
   document.getElementById('btnSalvarPost').textContent  = 'Salvar Alterações';
-  // dispara preview se tiver mídia
   window.onMidiaInput(p.midia?.url || '');
   document.getElementById('overlayPost').classList.add('open');
 }
@@ -846,9 +926,8 @@ window.salvarPost = async function() {
   const btn = document.getElementById('btnSalvarPost');
   btn.disabled = true; btn.textContent = '…';
 
-  /* processa mídia */
   const midiaUrl = document.getElementById('fMidia').value.trim();
-  const midia    = detectarMidia(midiaUrl);  // null | { tipo, url, ytId? }
+  const midia    = detectarMidia(midiaUrl);
 
   const dados = {
     titulo,
@@ -902,13 +981,21 @@ document.getElementById('btnConfirmDel').addEventListener('click', async () => {
 
 /* ── ESC / backdrop ── */
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { fecharModalPost(); fecharConfirm(); }
+  if (e.key === 'Escape') {
+    fecharModalVideo();
+    fecharModalPost();
+    fecharConfirm();
+  }
 });
 document.getElementById('overlayPost').addEventListener('click', e => {
   if (e.target === document.getElementById('overlayPost')) fecharModalPost();
 });
 document.getElementById('overlayConfirm').addEventListener('click', e => {
   if (e.target === document.getElementById('overlayConfirm')) fecharConfirm();
+});
+// fecha modal de vídeo ao clicar fora
+document.getElementById('overlayVideo').addEventListener('click', e => {
+  if (e.target === document.getElementById('overlayVideo')) fecharModalVideo();
 });
 
 /* ── LOGOUT ── */
