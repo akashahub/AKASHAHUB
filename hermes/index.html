@@ -421,22 +421,20 @@
     padding: 0.9rem 1.2rem;
     border-radius: 3px;
     font-size: 0.95rem;
-    display: none;
+    display: none; /* JS controls visibility via inline style */
+    line-height: 1.5;
   }
   .msg.success {
-    display: block;
     background: rgba(26,107,74,0.2);
     border: 1px solid var(--emerald);
     color: #7FFFD4;
   }
   .msg.error {
-    display: block;
     background: rgba(180,40,40,0.15);
     border: 1px solid #802020;
     color: #FF9999;
   }
   .msg.loading {
-    display: block;
     background: rgba(201,168,76,0.08);
     border: 1px solid var(--gold-dim);
     color: var(--gold);
@@ -470,24 +468,39 @@
      PIX MODAL
   ═══════════════════════════════════════════ */
   .modal-overlay {
-    display: none;
     position: fixed; inset: 0; z-index: 1000;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(4px);
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
     align-items: center; justify-content: center;
     padding: 2rem;
+    /* Hidden by default via visibility + opacity for smooth transition */
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
   }
-  .modal-overlay.open { display: flex; }
+  .modal-overlay.open {
+    visibility: visible;
+    opacity: 1;
+  }
 
   .modal {
     background: #120F09;
     border: 1px solid var(--gold-dim);
     border-radius: 6px;
     padding: 2.5rem;
-    max-width: 420px;
+    max-width: 440px;
     width: 100%;
     text-align: center;
     position: relative;
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-overlay.open .modal {
+    transform: translateY(0) scale(1);
   }
 
   .modal-close {
@@ -562,6 +575,26 @@
     margin-top: 0.5rem;
   }
   .modal-check-btn:hover { background: var(--emerald-lit); }
+
+  /* ── PIX timer ── */
+  .pix-timer {
+    font-family: var(--ff-title);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--gold-dim);
+    margin-bottom: 1rem;
+  }
+  .pix-timer span {
+    color: var(--gold);
+    font-size: 0.9rem;
+  }
+  .pix-timer.expiring span { color: #FF9999; }
+
+  /* ── Modal status msg ── */
+  #modal-msg {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+  }
 
   /* ═══════════════════════════════════════════
      FOOTER
@@ -793,9 +826,9 @@
         </button>
       </div>
 
-      <div class="msg loading" id="msg-loading">⏳ Gerando seu PIX...</div>
-      <div class="msg error"   id="msg-error"></div>
-      <div class="msg success" id="msg-success">
+      <div class="msg loading" id="msg-loading" style="display:none">⏳ Gerando seu PIX...</div>
+      <div class="msg error"   id="msg-error"   style="display:none"></div>
+      <div class="msg success" id="msg-success" style="display:none">
         ✅ Pagamento confirmado! Seu e-book está pronto.
         <br><br>
         <a id="download-link" class="btn-download" href="#" download>
@@ -815,26 +848,36 @@
 </main>
 
 <!-- ══ MODAL PIX ══════════════════════════════ -->
-<div class="modal-overlay" id="modal-pix">
+<div class="modal-overlay" id="modal-pix" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="modal">
-    <button class="modal-close" onclick="fecharModal()">✕</button>
-    <h3>Pague com PIX</h3>
-    <p>Escaneie o QR Code ou copie o código abaixo.<br>O download libera automaticamente após a confirmação.</p>
+    <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">✕</button>
 
+    <h3 id="modal-title">Pague com PIX</h3>
+    <p>Escaneie o QR Code ou copie o código abaixo.<br>O download libera <strong style="color:var(--gold-light)">automaticamente</strong> após a confirmação.</p>
+
+    <!-- Timer de expiração -->
+    <div class="pix-timer" id="pix-timer">
+      PIX válido por <span id="timer-display">30:00</span>
+    </div>
+
+    <!-- QR Code -->
     <div id="qr-code">
       <img id="qr-img" src="" alt="QR Code PIX">
     </div>
 
+    <!-- Copia código PIX -->
     <div class="pix-copy">
-      <input type="text" id="pix-code-input" readonly>
+      <input type="text" id="pix-code-input" readonly placeholder="Código PIX sendo gerado...">
       <button class="btn-copy" onclick="copiarPix()">Copiar</button>
     </div>
 
-    <button class="modal-check-btn" id="check-btn" onclick="verificarPagamento()">
-      ✓ &nbsp; Já Paguei — Verificar
+    <!-- Botão verificar manualmente -->
+    <button class="modal-check-btn" id="check-btn" onclick="verificarPagamentoManual()">
+      ✓ &nbsp; Já Paguei — Verificar Agora
     </button>
 
-    <div class="msg" id="modal-msg"></div>
+    <!-- Status dentro do modal -->
+    <div class="msg" id="modal-msg" style="display:none"></div>
   </div>
 </div>
 
@@ -849,31 +892,27 @@
 ═══════════════════════════════════════════════════ -->
 <script>
 // ╔══════════════════════════════════════════╗
-// ║  CONFIGURAÇÃO — PREENCHA AQUI            ║
+// ║  CONFIGURAÇÃO — PREENCHA ANTES DE USAR   ║
 // ╚══════════════════════════════════════════╝
 const CONFIG = {
   // ── Supabase ──
-  SUPABASE_URL:    'https://jsonmxbuzagmwuucreem.supabase.co',
-  SUPABASE_ANON:   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ',
-
-  // ── Mercado Pago ──
-  // Atenção: o Access Token NÃO deve ficar no HTML em produção.
-  // Use a Edge Function do Supabase (veja o guia abaixo).
-  // Este campo é apenas para testes locais.
-  MP_ACCESS_TOKEN: 'SEU_ACCESS_TOKEN_AQUI',
+  SUPABASE_URL:  'https://jsonmxbuzagmwuucreem.supabase.co',
+  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ',
 
   // ── Produto ──
-  PRECO:           9.99,
-  PRODUTO_NOME:    'Hermes Trismegisto — O Três Vezes Grande (E-book)',
+  PRECO:        9.99,
+  PRODUTO_NOME: 'Hermes Trismegisto — O Três Vezes Grande (E-book)',
 
-  // ── Link do e-book (Cloudinary ou Drive) ──
-  // Use um link DIRETO de download. No Cloudinary: URL com fl_attachment
-  // No Google Drive: substitua /view por /uc?export=download
-  EBOOK_URL: 'https://collection.cloudinary.com/dcbarseus/070cb95aa83dc5d953d447149e6a4a99',
+  // ── Link direto do PDF ──
+  // Cloudinary: https://res.cloudinary.com/SEU_CLOUD/raw/upload/fl_attachment/hermes_ebook.pdf
+  // Google Drive: https://drive.google.com/uc?export=download&id=SEU_ID
+  EBOOK_URL: 'COLE_O_LINK_DIRETO_DO_PDF_AQUI',
 
-  // ── Supabase Edge Function URL (para produção) ──
-  // Após criar a Edge Function, cole a URL aqui:
+  // ── Edge Functions (criadas conforme o GUIA-CONFIGURACAO.md) ──
   EDGE_FUNCTION_URL: 'https://jsonmxbuzagmwuucreem.supabase.co/functions/v1',
+
+  // ── Expiração do PIX em segundos (30min = padrão Mercado Pago) ──
+  PIX_EXPIRY_SECONDS: 1800,
 };
 
 // ─────────────────────────────────────────
@@ -882,8 +921,13 @@ const CONFIG = {
 const { createClient } = supabase;
 const sb = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON);
 
+// ─────────────────────────────────────────
+// Estado global
+// ─────────────────────────────────────────
 let currentPaymentId = null;
-let checkInterval = null;
+let pollingInterval  = null;
+let timerInterval    = null;
+let pixSecondsLeft   = CONFIG.PIX_EXPIRY_SECONDS;
 
 // ─────────────────────────────────────────
 // INICIAR PAGAMENTO
@@ -892,45 +936,45 @@ async function iniciarPagamento() {
   const nome  = document.getElementById('buyer-name').value.trim();
   const email = document.getElementById('buyer-email').value.trim();
 
-  if (!nome || !email) {
-    mostrarErro('Preencha seu nome e e-mail para continuar.');
-    return;
-  }
-  if (!email.includes('@')) {
-    mostrarErro('Digite um e-mail válido.');
-    return;
+  esconderErro();
+
+  if (!nome) { mostrarErro('Preencha seu nome completo.'); return; }
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    mostrarErro('Digite um e-mail válido.'); return;
   }
 
   setLoading(true);
 
   try {
-    // ── Chama a Edge Function do Supabase para criar o PIX no Mercado Pago ──
     const res = await fetch(`${CONFIG.EDGE_FUNCTION_URL}/criar-pagamento`, {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, email, valor: CONFIG.PRECO, produto: CONFIG.PRODUTO_NOME }),
+      body: JSON.stringify({
+        nome, email,
+        valor:   CONFIG.PRECO,
+        produto: CONFIG.PRODUTO_NOME,
+      }),
     });
 
     const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Não foi possível gerar o PIX. Tente novamente.');
 
-    if (!res.ok || data.error) {
-      throw new Error(data.error || 'Erro ao gerar PIX.');
+    currentPaymentId = String(data.payment_id);
+
+    // ── Exibe QR Code ──
+    const qrImg = document.getElementById('qr-img');
+    if (data.qr_code_base64) {
+      qrImg.src = `data:image/png;base64,${data.qr_code_base64}`;
+    } else if (data.qr_code) {
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data.qr_code)}`;
     }
 
-    currentPaymentId = data.payment_id;
-
-    // Exibe o QR Code
-    document.getElementById('qr-img').src = data.qr_code_base64
-      ? `data:image/png;base64,${data.qr_code_base64}`
-      : `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data.qr_code)}`;
-
-    document.getElementById('pix-code-input').value = data.qr_code;
+    document.getElementById('pix-code-input').value = data.qr_code || '';
 
     setLoading(false);
     abrirModal();
-
-    // Polling a cada 5s para verificar pagamento
-    checkInterval = setInterval(verificarPagamento, 5000);
+    iniciarTimer();
+    iniciarPolling();
 
   } catch (err) {
     setLoading(false);
@@ -939,111 +983,236 @@ async function iniciarPagamento() {
 }
 
 // ─────────────────────────────────────────
-// VERIFICAR PAGAMENTO
+// POLLING AUTOMÁTICO (silencioso, a cada 5s)
+// ─────────────────────────────────────────
+function iniciarPolling() {
+  pararPolling();
+  pollingInterval = setInterval(verificarPagamento, 5000);
+}
+
+function pararPolling() {
+  if (pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
+}
+
+// ─────────────────────────────────────────
+// VERIFICAR PAGAMENTO — automático (silencioso)
 // ─────────────────────────────────────────
 async function verificarPagamento() {
   if (!currentPaymentId) return;
+  try {
+    const res  = await fetch(`${CONFIG.EDGE_FUNCTION_URL}/verificar-pagamento?id=${currentPaymentId}`);
+    const data = await res.json();
+    if (data.status === 'approved') await onPagamentoAprovado();
+  } catch (e) {
+    console.warn('Polling silencioso:', e.message);
+  }
+}
 
-  const msgEl = document.getElementById('modal-msg');
-  msgEl.className = 'msg loading';
-  msgEl.style.display = 'block';
-  msgEl.textContent = '⏳ Verificando pagamento...';
+// ─────────────────────────────────────────
+// VERIFICAR PAGAMENTO — manual (botão "Já Paguei")
+// ─────────────────────────────────────────
+async function verificarPagamentoManual() {
+  if (!currentPaymentId) return;
+
+  const btn = document.getElementById('check-btn');
+  btn.disabled    = true;
+  btn.textContent = '⏳ Verificando...';
+  mostrarMsgModal('loading', '⏳ Consultando o Mercado Pago...');
 
   try {
-    const res = await fetch(`${CONFIG.EDGE_FUNCTION_URL}/verificar-pagamento?id=${currentPaymentId}`);
+    const res  = await fetch(`${CONFIG.EDGE_FUNCTION_URL}/verificar-pagamento?id=${currentPaymentId}`);
     const data = await res.json();
 
     if (data.status === 'approved') {
-      clearInterval(checkInterval);
-
-      // ── Registra no Supabase ──
-      const email = document.getElementById('buyer-email').value.trim();
-      const nome  = document.getElementById('buyer-name').value.trim();
-
-      await sb.from('purchases').insert({
-        payment_id:  currentPaymentId,
-        buyer_name:  nome,
-        buyer_email: email,
-        amount:      CONFIG.PRECO,
-        status:      'approved',
-        ebook_url:   CONFIG.EBOOK_URL,
-      });
-
-      fecharModal();
-      liberarDownload();
-
+      await onPagamentoAprovado();
     } else {
-      msgEl.className = 'msg';
-      msgEl.style.display = 'block';
-      msgEl.style.background = 'rgba(201,168,76,0.08)';
-      msgEl.style.borderColor = 'var(--gold-dim)';
-      msgEl.style.color = 'var(--gold)';
-      msgEl.textContent = '⏳ Aguardando confirmação do pagamento...';
+      mostrarMsgModal('warning', '⏳ Pagamento ainda não confirmado. Aguarde alguns segundos e tente novamente.');
+      btn.disabled    = false;
+      btn.textContent = '✓  Já Paguei — Verificar Novamente';
     }
-
   } catch (err) {
-    msgEl.className = 'msg error';
-    msgEl.style.display = 'block';
-    msgEl.textContent = 'Erro ao verificar. Tente novamente em instantes.';
+    mostrarMsgModal('error', '⚠ Erro ao verificar. Verifique sua conexão e tente novamente.');
+    btn.disabled    = false;
+    btn.textContent = '✓  Já Paguei — Verificar Novamente';
   }
+}
+
+// ─────────────────────────────────────────
+// CALLBACK: PAGAMENTO APROVADO
+// ─────────────────────────────────────────
+async function onPagamentoAprovado() {
+  pararPolling();
+  pararTimer();
+
+  const email = document.getElementById('buyer-email').value.trim();
+  const nome  = document.getElementById('buyer-name').value.trim();
+
+  // Registra compra no Supabase
+  try {
+    await sb.from('purchases').insert({
+      payment_id:  currentPaymentId,
+      buyer_name:  nome,
+      buyer_email: email,
+      amount:      CONFIG.PRECO,
+      status:      'approved',
+      ebook_url:   CONFIG.EBOOK_URL,
+    });
+  } catch (dbErr) {
+    // Não bloqueia o download se o banco falhar
+    console.error('Supabase insert error:', dbErr);
+  }
+
+  fecharModal(false); // false = não reseta o currentPaymentId (não precisamos mais)
+  liberarDownload();
+}
+
+// ─────────────────────────────────────────
+// TIMER DE EXPIRAÇÃO DO PIX
+// ─────────────────────────────────────────
+function iniciarTimer() {
+  pixSecondsLeft = CONFIG.PIX_EXPIRY_SECONDS;
+  atualizarTimer();
+  timerInterval = setInterval(() => {
+    pixSecondsLeft--;
+    atualizarTimer();
+    if (pixSecondsLeft <= 0) { pararTimer(); pararPolling(); onPixExpirado(); }
+  }, 1000);
+}
+
+function pararTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function atualizarTimer() {
+  const min = String(Math.floor(pixSecondsLeft / 60)).padStart(2, '0');
+  const sec = String(pixSecondsLeft % 60).padStart(2, '0');
+  const elDisplay = document.getElementById('timer-display');
+  const elTimer   = document.getElementById('pix-timer');
+  if (elDisplay) elDisplay.textContent = `${min}:${sec}`;
+  if (elTimer)   elTimer.classList.toggle('expiring', pixSecondsLeft <= 120);
+}
+
+function onPixExpirado() {
+  mostrarMsgModal('error', '⚠ Seu PIX expirou. Feche este modal e gere um novo pagamento.');
+  const btn = document.getElementById('check-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'PIX Expirado'; }
+  const elTimer = document.getElementById('pix-timer');
+  if (elTimer) elTimer.innerHTML = '<span style="color:#FF9999">⚠ PIX expirado</span>';
 }
 
 // ─────────────────────────────────────────
 // LIBERAR DOWNLOAD
 // ─────────────────────────────────────────
 function liberarDownload() {
-  document.getElementById('pay-form').style.display = 'none';
+  document.getElementById('pay-form').style.display    = 'none';
   document.getElementById('msg-loading').style.display = 'none';
-  document.getElementById('msg-error').style.display = 'none';
+  document.getElementById('msg-error').style.display   = 'none';
 
   const successEl = document.getElementById('msg-success');
+  successEl.innerHTML = `
+    ✅ Pagamento confirmado! Seu e-book está pronto.<br><br>
+    <a class="btn-download" href="${CONFIG.EBOOK_URL}" target="_blank" rel="noopener noreferrer">
+      ⬇ &nbsp; Baixar E-book Agora
+    </a>
+  `;
   successEl.style.display = 'block';
-
-  document.getElementById('download-link').href = CONFIG.EBOOK_URL;
-
-  // Scroll suave até o botão
   successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // ─────────────────────────────────────────
-// HELPERS
+// ABRIR / FECHAR MODAL
+// ─────────────────────────────────────────
+function abrirModal() {
+  document.getElementById('modal-pix').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModal(resetState = true) {
+  if (resetState) {
+    pararPolling();
+    pararTimer();
+    currentPaymentId = null;
+  }
+
+  document.getElementById('modal-pix').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('modal-msg').style.display = 'none';
+
+  const btn = document.getElementById('check-btn');
+  if (btn) { btn.disabled = false; btn.textContent = '✓  Já Paguei — Verificar Agora'; }
+}
+
+// Fecha modal clicando no overlay (fora da caixa)
+document.getElementById('modal-pix').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal(true);
+});
+
+// ─────────────────────────────────────────
+// HELPERS DE UI
 // ─────────────────────────────────────────
 function setLoading(on) {
-  document.getElementById('btn-pay').disabled = on;
-  document.getElementById('msg-loading').style.display = on ? 'block' : 'none';
-  document.getElementById('msg-error').style.display = 'none';
+  document.getElementById('btn-pay').disabled           = on;
+  document.getElementById('msg-loading').style.display  = on ? 'block' : 'none';
 }
 
 function mostrarErro(msg) {
   const el = document.getElementById('msg-error');
-  el.textContent = '⚠ ' + msg;
+  el.textContent   = '⚠ ' + msg;
   el.style.display = 'block';
 }
 
-function abrirModal()  { document.getElementById('modal-pix').classList.add('open'); }
-function fecharModal() {
-  document.getElementById('modal-pix').classList.remove('open');
-  document.getElementById('modal-msg').style.display = 'none';
+function esconderErro() {
+  document.getElementById('msg-error').style.display = 'none';
+}
+
+function mostrarMsgModal(tipo, texto) {
+  const el = document.getElementById('modal-msg');
+  const temas = {
+    loading: { bg: 'rgba(201,168,76,0.08)', border: '#7A6030', color: '#C9A84C' },
+    warning: { bg: 'rgba(201,168,76,0.08)', border: '#7A6030', color: '#D9C99A' },
+    error:   { bg: 'rgba(180,40,40,0.15)',  border: '#802020', color: '#FF9999' },
+    success: { bg: 'rgba(26,107,74,0.2)',   border: '#1A6B4A', color: '#7FFFD4' },
+  };
+  const t = temas[tipo] || temas.warning;
+  el.style.cssText = `display:block; background:${t.bg}; border:1px solid ${t.border}; color:${t.color}; margin-top:0.8rem; padding:0.8rem 1rem; border-radius:3px; font-size:0.85rem; line-height:1.5;`;
+  el.textContent = texto;
 }
 
 function copiarPix() {
-  const input = document.getElementById('pix-code-input');
-  navigator.clipboard.writeText(input.value).then(() => {
-    const btn = document.querySelector('.btn-copy');
+  const val = document.getElementById('pix-code-input').value;
+  if (!val) return;
+  const btn = document.querySelector('.btn-copy');
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(val).then(() => {
+      btn.textContent = '✓ Copiado!';
+      setTimeout(() => btn.textContent = 'Copiar', 2500);
+    });
+  } else {
+    // Fallback para mobile/iOS
+    const inp = document.getElementById('pix-code-input');
+    inp.select();
+    inp.setSelectionRange(0, 99999);
+    document.execCommand('copy');
     btn.textContent = '✓ Copiado!';
-    setTimeout(() => btn.textContent = 'Copiar', 2000);
-  });
+    setTimeout(() => btn.textContent = 'Copiar', 2500);
+  }
 }
 
 // ─────────────────────────────────────────
 // SCROLL REVEAL
 // ─────────────────────────────────────────
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.12 });
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 </script>
 
 </body>
-              </html>
+</html>
