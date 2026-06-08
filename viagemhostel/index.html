@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Hub — Série: Vivência em Movimento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a08;
+    --bg2: #111109;
+    --surface: #161612;
+    --border: rgba(255,255,255,0.07);
+    --gold: #c9a84c;
+    --gold-soft: rgba(201,168,76,0.15);
+    --gold-faint: rgba(201,168,76,0.06);
+    --white: #f0ede6;
+    --muted: rgba(240,237,230,0.45);
+    --tag-bg: rgba(201,168,76,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(10,10,8,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+  }
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 60% 30%, rgba(201,168,76,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 10vw, 130px);
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    color: var(--white);
+    max-width: 900px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.35s forwards;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75em;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    margin-top: 32px;
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 560px;
+    font-style: italic;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards;
+  }
+
+  .hero-meta {
+    margin-top: 40px;
+    display: flex;
+    gap: 40px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.65s forwards;
+  }
+  .hero-meta-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .hero-meta-item span {
+    display: block;
+    color: var(--gold);
+    font-size: 18px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    letter-spacing: 0;
+    margin-top: 2px;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    right: 48px;
+    writing-mode: vertical-rl;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 96px 48px; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 6vw, 80px);
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 0;
+  }
+
+  /* ── INTRO BLOCK ── */
+  .intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    padding-top: 80px;
+  }
+
+  .intro-left h2 { color: var(--white); }
+  .intro-left h2 em {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.6em;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+  }
+
+  .intro-right {
+    padding-top: 12px;
+  }
+  .intro-right p {
+    color: var(--muted);
+    font-size: 17px;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .intro-right strong { color: var(--white); font-style: normal; }
+
+  .quote-block {
+    margin-top: 32px;
+    padding: 24px 28px;
+    border-left: 2px solid var(--gold);
+    background: var(--gold-faint);
+  }
+  .quote-block p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--white);
+    line-height: 1.5;
+  }
+
+  /* ── PILARES ── */
+  .pilares-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 56px;
+  }
+
+  .pilar-item {
+    background: var(--bg);
+    padding: 32px 28px;
+    transition: background 0.3s;
+  }
+  .pilar-item:hover { background: var(--bg2); }
+
+  .pilar-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+  }
+
+  .pilar-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .pilar-desc {
+    font-size: 14px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .pilar-tags {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    background: var(--tag-bg);
+    padding: 3px 8px;
+    text-transform: uppercase;
+  }
+
+  /* ── SÉRIES ── */
+  .series-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    margin-bottom: 2px;
+  }
+
+  .series-header {
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    align-items: center;
+    gap: 24px;
+    padding: 32px 36px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .series-header:hover { background: var(--surface); }
+
+  .series-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--gold);
+    opacity: 0.4;
+    line-height: 1;
+  }
+
+  .series-info {}
+  .series-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .series-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.03em;
+    color: var(--white);
+  }
+  .series-subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  .series-toggle {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    user-select: none;
+  }
+
+  .series-body {
+    display: none;
+    padding: 0 36px 36px;
+    border-top: 1px solid var(--border);
+  }
+  .series-body.open { display: block; }
+
+  .ep-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 28px;
+  }
+
+  .ep-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 24px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .ep-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  .ep-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 0.14em;
+    margin-bottom: 10px;
+  }
+
+  .ep-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .ep-concept {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+
+  .ep-frase {
+    padding: 12px 16px;
+    border-left: 1px solid var(--gold);
+    background: var(--gold-faint);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--white);
+    opacity: 0.85;
+  }
+
+  .ep-tags { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
+
+  /* ── SCRIPT SECTION ── */
+  .script-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+
+  .script-header {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 0;
+    cursor: pointer;
+  }
+
+  .script-time {
+    background: var(--gold-soft);
+    padding: 20px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  .script-meta {
+    padding: 20px 24px;
+    border-left: 1px solid var(--border);
+  }
+
+  .script-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .script-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .script-body-content {
+    display: none;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .script-body-content.open { display: block; }
+
+  .script-text {
+    font-size: 15px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.8;
+    white-space: pre-line;
+    margin-bottom: 16px;
+  }
+
+  .script-dir {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(201,168,76,0.6);
+    letter-spacing: 0.08em;
+    font-style: normal;
+    padding: 10px 14px;
+    background: var(--gold-faint);
+  }
+
+  /* ── BORDÕES ── */
+  .bordoes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 48px;
+  }
+
+  .bordao-item {
+    background: var(--bg);
+    padding: 28px 24px;
+    transition: background 0.3s;
+  }
+  .bordao-item:hover { background: var(--bg2); }
+
+  .bordao-frase {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--white);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .bordao-uso {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  /* ── LOCAIS ── */
+  .locais-list {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .local-item {
+    background: var(--bg);
+    padding: 28px 32px;
+    transition: background 0.3s;
+  }
+  .local-item:hover { background: var(--bg2); }
+
+  .local-place {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .local-desc {
+    font-size: 14px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  /* ── CONSISTÊNCIA CARD ── */
+  .consistencia-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 48px;
+  }
+
+  .cons-item {
+    background: var(--bg);
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  .cons-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    filter: saturate(0.8);
+  }
+
+  .cons-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .cons-desc {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 64px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--white);
+    letter-spacing: 0.04em;
+  }
+  .footer-brand span { color: var(--gold); }
+
+  .footer-meta {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    line-height: 1.8;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 0 24px 64px; }
+    section { padding: 64px 24px; }
+    .intro { grid-template-columns: 1fr; gap: 40px; }
+    .pilares-grid { grid-template-columns: repeat(2, 1fr); }
+    .ep-grid { grid-template-columns: 1fr; }
+    .bordoes-grid { grid-template-columns: 1fr 1fr; }
+    .locais-list { grid-template-columns: 1fr; }
+    .consistencia-grid { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+    .footer-meta { text-align: center; }
+    .series-header { grid-template-columns: 48px 1fr auto; gap: 16px; padding: 24px; }
+    .series-num { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://akashahub.com.br" class="nav-logo">Akasha Hub</a>
+  <ul class="nav-links">
+    <li><a href="#visao">Visão</a></li>
+    <li><a href="#pilares">Pilares</a></li>
+    <li><a href="#series">Séries</a></li>
+    <li><a href="#scripts">Scripts</a></li>
+    <li><a href="#bordoes">Bordões</a></li>
+    <li><a href="#lugares">Lugares</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-label">Akasha Hub · Série Vivência · 2026</div>
+  <h1>Vivendo<br><em>em</em><br>Movimento</h1>
+  <p class="hero-sub">
+    Dois universos. Uma câmera. A vida real documentada por quem escolheu não parar. Viagens, gastronomia, arte, filosofia e cultura vista por dentro — não de fora.
+  </p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">Plataforma<span>YouTube</span></div>
+    <div class="hero-meta-item">Formato<span>Série IRL</span></div>
+    <div class="hero-meta-item">Perfil<span>@akasha.hub</span></div>
+    <div class="hero-meta-item">Stories<span>Instagram</span></div>
+  </div>
+  <div class="hero-scroll">↓ &nbsp; Scroll</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VISÃO GERAL -->
+<section id="visao">
+  <div class="section-label">Visão Geral</div>
+  <div class="intro">
+    <div class="intro-left">
+      <h2>A Vida<br>Real<br><em>É o Conteúdo</em></h2>
+    </div>
+    <div class="intro-right">
+      <p>Não é um canal de viagem. Não é um canal de gastronomia. Não é um canal de filosofia.</p>
+      <p>É um <strong>canal de percepção</strong>. De alguém que atravessa lugares, conversas, sabores e experiências — e revela a arquitetura invisível por trás de tudo.</p>
+      <p>A consistência aqui não é postar todo dia. <strong>É aparecer com a mesma lente em qualquer circunstância</strong> — numa aldeia hippie, num restaurante sem menu, numa conversa com um desconhecido às 22h na praia.</p>
+      <div class="quote-block">
+        <p>"A câmera não muda o que eu vejo. Ela obriga a ver com mais cuidado."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PILARES -->
+<section id="pilares">
+  <div class="section-label">DNA do Canal</div>
+  <h2>Os 7 Pilares<br>de Conteúdo</h2>
+  <div class="pilares-grid">
+    <div class="pilar-item">
+      <div class="pilar-num">01</div>
+      <div class="pilar-title">Viagem & Lugar</div>
+      <p class="pilar-desc">O lugar como personagem. Não roteiro turístico — percepção estética, cultural e humana de cada destino.</p>
+      <div class="pilar-tags">
+        <span class="tag">IRL</span>
+        <span class="tag">cultura</span>
+        <span class="tag">voluntariado</span>
+      </div>
+    </div>
+    <div class="pilar-item">
+      <div class="pilar-num">02</div>
+      <div class="pilar-title">Gastronomia</div>
+      <p class="pilar-desc">Comer é um ato filosófico. A história do prato, a intenção do lugar, o que uma refeição revela sobre uma cultura inteira.</p>
+      <div class="pilar-tags">
+        <span class="tag">experiência</span>
+        <span class="tag">local</span>
+        <span class="tag">cultura</span>
+      </div>
+    </div>
+    <div class="pilar-item">
+      <div class="pilar-num">03</div>
+      <div class="pilar-title">Filosofia & Psicologia</div>
+      <p class="pilar-desc">Reflexões que nascem do movimento real. Não da leitura — da vivência. Comportamento humano observado em campo, não em teoria.</p>
+      <div class="pilar-tags">
+        <span class="tag">reflexão</span>
+        <span class="tag">observação</span>
+        <span class="tag">comportamento</span>
+      </div>
+    </div>
+    <div class="pilar-item">
+      <div class="pilar-num">04</div>
+      <div class="pilar-title">Arte & Música</div>
+      <p class="pilar-desc">Arte de rua, artesanato, artistas locais, sons de lugar. A estética como forma de conhecimento — não de consumo.</p>
+      <div class="pilar-tags">
+        <span class="tag">arte</span>
+        <span class="tag">música</span>
+        <span class="tag">artesanato</span>
+      </div>
+    </div>
+    <div class="pilar-item">
+      <div class="pilar-num">05</div>
+      <div class="pilar-title">Pessoas & Conversas</div>
+      <p class="pilar-desc">O desconhecido mais interessante que você vai encontrar. Pescadores, artistas, artesãos, estrangeiros, moradores locais — cada conversa é um episódio.</p>
+      <div class="pilar-tags">
+        <span class="tag">network</span>
+        <span class="tag">humanidade</span>
+        <span class="tag">entrevista</span>
+      </div>
+    </div>
+    <div class="pilar-item">
+      <div class="pilar-num">06</div>
+      <div class="pilar-title">Apps & Tecnologia</div>
+      <p class="pilar-desc">Como a tecnologia muda a forma de viver e de viajar. Apps, ferramentas, o Akasha Hub como ecossistema — revelado de forma humana, não técnica.</p>
+      <div class="pilar-tags">
+        <span class="tag">digital</span>
+        <span class="tag">akashahub</span>
+        <span class="tag">ferramentas</span>
+      </div>
+    </div>
+    <div class="pilar-item">
+      <div class="pilar-num">07</div>
+      <div class="pilar-title">Casal & Vivência a Dois</div>
+      <p class="pilar-desc">Dois mundos distintos — arquitetura digital e direito/design de interiores — viajando, criando e descobrindo juntos. A narrativa de quem constrói uma vida com intenção.</p>
+      <div class="pilar-tags">
+        <span class="tag">casal</span>
+        <span class="tag">vivência</span>
+        <span class="tag">autenticidade</span>
+      </div>
+    </div>
+    <div class="pilar-item" style="background: var(--gold-faint);">
+      <div class="pilar-num" style="opacity:1">★</div>
+      <div class="pilar-title" style="color:var(--gold)">A Lente Akasha</div>
+      <p class="pilar-desc" style="color: rgba(240,237,230,0.6)">Tudo que você vive passa pela lente do ecossistema. O mundo é um laboratório. O conteúdo é a observação feita em campo.</p>
+      <div class="pilar-tags">
+        <span class="tag">identidade</span>
+        <span class="tag">ecosistema</span>
+        <span class="tag">percepção</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONSISTÊNCIA -->
+<section>
+  <div class="section-label">Princípio Central</div>
+  <h2>Consistência<br>Na Circunstância</h2>
+  <p style="margin-top:20px; color:var(--muted); font-style:italic; font-size:17px; max-width:600px;">
+    Você não espera a situação ideal para criar. Você cria a partir da situação real. Isso é o que separa conteúdo autêntico de conteúdo fabricado.
+  </p>
+  <div class="consistencia-grid">
+    <div class="cons-item">
+      <div class="cons-icon">🌊</div>
+      <div class="cons-title">Contexto vira Conteúdo</div>
+      <p class="cons-desc">Praia, aldeia, praça, hostel, aldeia hippie — o lugar onde você está agora já é o set.</p>
+    </div>
+    <div class="cons-item">
+      <div class="cons-icon">🎥</div>
+      <div class="cons-title">A Câmera Como Lente</div>
+      <p class="cons-desc">Não como performance. Como ferramenta de percepção aguçada. Quem grava vê mais fundo.</p>
+    </div>
+    <div class="cons-item">
+      <div class="cons-icon">🧭</div>
+      <div class="cons-title">Narrativa Antes do Roteiro</div>
+      <p class="cons-desc">Você não sabe o que vai encontrar. Mas sabe que vai encontrar algo que vale documentar.</p>
+    </div>
+    <div class="cons-item">
+      <div class="cons-icon">🌀</div>
+      <div class="cons-title">Dois Pontos de Vista</div>
+      <p class="cons-desc">O arquiteto digital. A advogada-designer-artesã. Dois olhares sobre o mesmo mundo criam profundidade.</p>
+    </div>
+    <div class="cons-item">
+      <div class="cons-icon">📱</div>
+      <div class="cons-title">Cada Plataforma, um Formato</div>
+      <p class="cons-desc">YouTube vê o dia inteiro. Instagram Stories vê o momento. O mesmo lugar, dois recortes de consciência.</p>
+    </div>
+    <div class="cons-item">
+      <div class="cons-icon">🔁</div>
+      <div class="cons-title">Uma Viagem, Múltiplos Conteúdos</div>
+      <p class="cons-desc">Grave os 5 blocos em cada lugar. Um dia vira vídeo longo, shorts, reels e destaques de stories.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SÉRIES -->
+<section id="series">
+  <div class="section-label">Estrutura de Séries</div>
+  <h2>Duas Séries.<br>Um Ecossistema.</h2>
+  <p style="margin-top:20px; color:var(--muted); font-style:italic; max-width:580px; font-size:16px;">Clique para expandir cada série e ver os episódios.</p>
+
+  <!-- SÉRIE 1: YOUTUBE -->
+  <div style="margin-top: 48px;">
+    <div class="series-block">
+      <div class="series-header" onclick="toggleSeries('s1')">
+        <div class="series-num">01</div>
+        <div class="series-info">
+          <div class="series-type">YouTube · Vídeos Longos</div>
+          <div class="series-title">Toda Paisagem Tem um Nome que Ninguém Sabe</div>
+          <div class="series-subtitle">8 episódios IRL de viagem, cultura, gastronomia e filosofia — com a lente Akasha</div>
+        </div>
+        <div class="series-toggle" id="toggle-s1">+ ver episódios</div>
+      </div>
+      <div class="series-body" id="body-s1">
+        <div class="ep-grid">
+
+          <div class="ep-card">
+            <div class="ep-num">EP 01 · ABERTURA</div>
+            <div class="ep-title">Nós Decidimos Ir</div>
+            <p class="ep-concept">O episódio que conta tudo sem contar nada. Quem somos, por que estamos em movimento, o que significa escolher uma vida que não cabe em calendário fixo. A apresentação do canal que não parece apresentação.</p>
+            <div class="ep-frase">Não é viagem. É a escolha de viver do lado de fora do padrão.</div>
+            <div class="ep-tags">
+              <span class="tag">abertura</span>
+              <span class="tag">identidade</span>
+              <span class="tag">casal</span>
+            </div>
+          </div>
+
+          <div class="ep-card">
+            <div class="ep-num">EP 02 · LUGAR</div>
+            <div class="ep-title">O Que a Aldeia Hippie de Arembepe Ainda Preserva</div>
+            <p class="ep-concept">Não é um vídeo sobre hippies. É sobre o que acontece quando um lugar resiste ao tempo e ao mercado imobiliário. A aldeia como experimento social vivo. Arquitetura, comunidade, resistência cultural — com câmera na mão.</p>
+            <div class="ep-frase">Todo lugar que o turismo não destruiu ainda guarda algo que o mundo perdeu.</div>
+            <div class="ep-tags">
+              <span class="tag">arembepe</span>
+              <span class="tag">cultura</span>
+              <span class="tag">história</span>
+              <span class="tag">bahia</span>
+            </div>
+          </div>
+
+          <div class="ep-card">
+            <div class="ep-num">EP 03 · GASTRONOMIA</div>
+            <div class="ep-title">A Cozinha que Conta o Que a História Omitiu</div>
+            <p class="ep-concept">Um prato de comida regional como portal. A história da culinária baiana, a influência africana, o que a gastronomia preserva que os livros esqueceram. Com visita a um lugar local que você não encontra no Google Maps.</p>
+            <div class="ep-frase">Comer é um ato de memória coletiva. Cada tempero é um arquivo.</div>
+            <div class="ep-tags">
+              <span class="tag">gastronomia</span>
+              <span class="tag">cultura baiana</span>
+              <span class="tag">história</span>
+            </div>
+          </div>
+
+          <div class="ep-card">
+            <div class="ep-num">EP 04 · FILOSOFIA</div>
+            <div class="ep-title">Por Que Pessoas Escolhem Viver com Menos</div>
+            <p class="ep-concept">Conversas reais com pessoas que optaram por uma vida fora do fluxo padrão. Filosofia prática — não livro. Voluntariado, comunidade, minimalismo intencional. O que se ganha quando se abre mão do excesso.</p>
+            <div class="ep-frase">Minimalismo não é pobreza com estética. É escolha consciente de onde colocar energia.</div>
+            <div class="ep-tags">
+              <span class="tag">filosofia</span>
+              <span class="tag">voluntariado</span>
+              <span class="tag">escolha</span>
+            </div>
+          </div>
+
+          <div class="ep-card">
+            <div class="ep-num">EP 05 · ARTE</div>
+            <div class="ep-title">A Arte Que Não Pede Permissão Para Existir</div>
+            <p class="ep-concept">Arte de rua, artesanato local, músicos que tocam porque precisam — não porque estão vendendo. O que a arte espontânea revela sobre o pulso de um lugar. Com imagens, sons e uma conversa que você não vai esquecer.</p>
+            <div class="ep-frase">A arte que ninguém encomendou é a mais honesta que existe.</div>
+            <div class="ep-tags">
+              <span class="tag">arte</span>
+              <span class="tag">artesanato</span>
+              <span class="tag">música local</span>
+            </div>
+          </div>
+
+          <div class="ep-card">
+            <div class="ep-num">EP 06 · PSICOLOGIA</div>
+            <div class="ep-title">O Comportamento das Pessoas Muda Com o Lugar</div>
+            <p class="ep-concept">Observações comportamentais feitas durante a viagem. Como ambientes moldam comportamento. Como a Bahia, a praia, a aldeia reconfiguram o ritmo das pessoas. Psicologia comportamental vivida — não estudada.</p>
+            <div class="ep-frase">O ambiente sempre é mais forte do que a intenção. Observa as pessoas num lugar novo.</div>
+            <div class="ep-tags">
+              <span class="tag">psicologia</span>
+              <span class="tag">comportamento</span>
+              <span class="tag">ambiente</span>
+            </div>
+          </div>
+
+          <div class="ep-card">
+            <div class="ep-num">EP 07 · PESSOAS</div>
+            <div class="ep-title">Conversa Com Alguém Que Eu Não Devia Ter Parado Para Ouvir</div>
+            <p class="ep-concept">Uma conversa com um morador, artista, pescador ou viajante que cruzou o caminho. Sem roteiro. Sem pergunta preparada. O que acontece quando você para de ser produtor de conteúdo por 20 minutos e vira só uma pessoa.</p>
+            <div class="ep-frase">As melhores conversas são as que você não planejou ter.</div>
+            <div class="ep-tags">
+              <span class="tag">pessoas</span>
+              <span class="tag">conversa real</span>
+              <span class="tag">escuta</span>
+            </div>
+          </div>
+
+          <div class="ep-card">
+            <div class="ep-num">EP 08 · SÍNTESE</div>
+            <div class="ep-title">O Que o Movimento Ensina Que a Estabilidade Não Consegue</div>
+            <p class="ep-concept">O episódio que fecha a primeira série. A reflexão de tudo que foi vivido. Não como conclusão — como ponto de partida. O que mudou na percepção depois de estar em movimento. A promessa da próxima etapa.</p>
+            <div class="ep-frase">Você não precisa viajar longe. Precisa olhar de perto o que sempre esteve lá.</div>
+            <div class="ep-tags">
+              <span class="tag">síntese</span>
+              <span class="tag">reflexão</span>
+              <span class="tag">próxima jornada</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SÉRIE 2: INSTAGRAM STORIES -->
+    <div class="series-block">
+      <div class="series-header" onclick="toggleSeries('s2')">
+        <div class="series-num">02</div>
+        <div class="series-info">
+          <div class="series-type">Instagram Stories · Diário Visual</div>
+          <div class="series-title">Dia & Noite em Arembepe</div>
+          <div class="series-subtitle">Série de stories mostrando um dia completo — praça, praia, aldeia, pôr do sol e noite na região</div>
+        </div>
+        <div class="series-toggle" id="toggle-s2">+ ver estrutura</div>
+      </div>
+      <div class="series-body" id="body-s2">
+        <div class="ep-grid">
+
+          <div class="ep-card">
+            <div class="ep-num">STORIES · MANHÃ</div>
+            <div class="ep-title">Acorda em Arembepe</div>
+            <p class="ep-concept">Stories verticais da manhã — o barulho do mar, o café, a primeira caminhada. Sem filtro excessivo. Luz real, momento real. Texto simples na tela, estilo diário.</p>
+            <div class="ep-frase">Acordar sem alarme ainda é um ato de resistência.</div>
+            <div class="ep-tags">
+              <span class="tag">manhã</span>
+              <span class="tag">rotina real</span>
+              <span class="tag">luz natural</span>
+            </div>
+          </div>
+
+          <div class="ep-card">
+            <div class="ep-num">STORIES · TARDE</div>
+            <div class="ep-title">A Praça e a Praia às 14h</div>
+            <p class="ep-concept">A praça perto da praia de Arembepe — as pessoas, o comércio, os artesãos, o que acontece naquele espaço de encontro que o Google não mostra. Stories com observações rápidas e sinceras.</p>
+            <div class="ep-frase">Praça não é só ponto de passagem. É onde a cidade respira.</div>
+            <div class="ep-tags">
+              <span class="tag">praça</span>
+              <span class="tag">praia</span>
+              <span class="tag">IRL</span>
+            </div>
+          </div>
+
+          <div class="ep-card">
+            <div class="ep-num">STORIES · PÔR DO SOL</div>
+            <div class="ep-title">O Momento em Que Todo Mundo Para</div>
+            <p class="ep-concept">O pôr do sol em Arembepe documentado sem drama. A observação de como as pessoas ao redor reagem. Uma frase filosófica curta. Silêncio visual. O tipo de story que as pessoas salvam.</p>
+            <div class="ep-frase">O sol se põe igual para todo mundo. O que muda é quem para para ver.</div>
+            <div class="ep-tags">
+              <span class="tag">pôr do sol</span>
+              <span class="tag">contemplação</span>
+              <span class="tag">silêncio visual</span>
+            </div>
+          </div>
+
+          <div class="ep-card">
+            <div class="ep-num">STORIES · NOITE</div>
+            <div class="ep-title">Arembepe Depois das 19h</div>
+            <p class="ep-concept">O que a aldeia hippie e a região revelam quando a luz muda. Quem está lá. Que música toca. Que conversa acontece. A noite como último personagem do dia — com câmera discreta, tom íntimo.</p>
+            <div class="ep-frase">A noite mostra quem o lugar realmente é quando o turista já foi embora.</div>
+            <div class="ep-tags">
+              <span class="tag">noite</span>
+              <span class="tag">aldeia</span>
+              <span class="tag">atmosfera</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Estrutura de cada story -->
+        <div style="margin-top:28px; padding:24px; background:var(--bg); border:1px solid var(--border);">
+          <div class="section-label" style="margin-bottom:16px">Anatomia de Cada Story</div>
+          <div style="display:grid; grid-template-columns: repeat(4,1fr); gap:1px; background:var(--border);">
+            <div style="background:var(--bg2); padding:20px 16px;">
+              <div class="pilar-num">01</div>
+              <div class="pilar-title" style="font-size:16px">Cena Real</div>
+              <p class="pilar-desc">Vídeo de 3–8s do momento sem corte. Luz ambiente. Sem estabilizador forçado.</p>
+            </div>
+            <div style="background:var(--bg2); padding:20px 16px;">
+              <div class="pilar-num">02</div>
+              <div class="pilar-title" style="font-size:16px">Texto Curto</div>
+              <p class="pilar-desc">1 frase. Direta. Pode ser reflexão, observação ou pergunta. Fonte simples, sem excesso de efeito.</p>
+            </div>
+            <div style="background:var(--bg2); padding:20px 16px;">
+              <div class="pilar-num">03</div>
+              <div class="pilar-title" style="font-size:16px">Som Ambiente</div>
+              <p class="pilar-desc">O som do lugar. Mar, vento, música ao fundo. Nunca trilha genérica sobre o que é real.</p>
+            </div>
+            <div style="background:var(--bg2); padding:20px 16px;">
+              <div class="pilar-num">04</div>
+              <div class="pilar-title" style="font-size:16px">CTA Orgânico</div>
+              <p class="pilar-desc">Quando existir: "vídeo completo no YouTube" ou "arrasta pra ver o lugar". Nunca forçado.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SCRIPTS -->
+<section id="scripts">
+  <div class="section-label">Script por Pilares</div>
+  <h2>Modelo de<br>Script — EP01</h2>
+  <p style="margin-top:20px; color:var(--muted); font-style:italic; max-width:560px; font-size:16px; margin-bottom:40px;">O script não define o que falar. Define o que não pode faltar. Clique nos blocos para expandir.</p>
+
+  <div class="script-section">
+    <div class="script-header" onclick="toggleScript('sc1')">
+      <div class="script-time">0–15s<br>Cold<br>Open</div>
+      <div class="script-meta">
+        <div class="script-label">Abertura — sem "oi galera"</div>
+        <div class="script-title">A frase que para o scroll</div>
+      </div>
+    </div>
+    <div class="script-body-content" id="body-sc1">
+      <div class="script-text">A gente não decidiu viajar.
+
+A gente decidiu parar de esperar o momento certo para começar a viver.</div>
+      <div class="script-dir">Tom seco, câmera estável. Nenhuma trilha. O silêncio trabalha. Corte direto após a última palavra.</div>
+    </div>
+  </div>
+
+  <div class="script-section">
+    <div class="script-header" onclick="toggleScript('sc2')">
+      <div class="script-time">15s–1min<br>Contexto</div>
+      <div class="script-meta">
+        <div class="script-label">Setup — onde estamos, o que é isso</div>
+        <div class="script-title">Apresentação sem currículo</div>
+      </div>
+    </div>
+    <div class="script-body-content" id="body-sc2">
+      <div class="script-text">Eu construo sistemas digitais. Ela é advogada, designer de interiores e artesã.
+
+E há um tempo atrás a gente tomou uma decisão que parecia pequena mas mudou tudo: começar a documentar o que a gente já estava vivendo.
+
+Não pra parecer que tem uma vida incrível. Mas porque percebemos que cada lugar, cada conversa, cada prato de comida — tudo tinha uma arquitetura invisível que a maioria das pessoas passa reto sem ver.
+
+Esse canal é isso. A lente Akasha sobre o mundo real.</div>
+      <div class="script-dir">Pode ser em movimento — caminhando, no hostel, na praia. Natural. Não em frente à câmera fixa tipo apresentação corporativa.</div>
+    </div>
+  </div>
+
+  <div class="script-section">
+    <div class="script-header" onclick="toggleScript('sc3')">
+      <div class="script-time">1–4min<br>Lugar</div>
+      <div class="script-meta">
+        <div class="script-label">Pilar 1 — O ambiente como personagem</div>
+        <div class="script-title">Mostrar antes de explicar</div>
+      </div>
+    </div>
+    <div class="script-body-content" id="body-sc3">
+      <div class="script-text">Aqui tem uma praça que parece comum.
+
+Mercadinho de um lado, bar sem nome do outro, crianças no meio, e um senhor que está sentado no mesmo banco desde que eu cheguei há três dias e provavelmente desde muito antes disso.
+
+Mas quando você para para olhar — de verdade — você começa a ver a arquitetura do lugar.
+
+Esse bar sem placa existe porque o dono cresceu aqui. Esse artesanato na calçada foi feito em casa por alguém que aprendeu com a mãe. Essa praça não foi planejada pra ser bonita. Ela foi usada até virar bonita.</div>
+      <div class="script-dir">Câmera passeia pelo ambiente enquanto você narra. B-roll rico: detalhes, mãos, fachadas, pessoas (sem forçar). Sonoplastia ambiente: vozes, passos, mar ao fundo.</div>
+    </div>
+  </div>
+
+  <div class="script-section">
+    <div class="script-header" onclick="toggleScript('sc4')">
+      <div class="script-time">4–8min<br>Percepção</div>
+      <div class="script-meta">
+        <div class="script-label">Micro Hook + Pilar 2 — O insight central</div>
+        <div class="script-title">A observação que o vídeo todo construiu</div>
+      </div>
+    </div>
+    <div class="script-body-content" id="body-sc4">
+      <div class="script-text">E aqui tem algo que eu precisei viver pra entender. Não dá pra aprender lendo.
+
+O movimento não te ensina sobre o mundo. Ele te ensina sobre você.
+
+Porque quando você tira os seus contextos familiares — a sua casa, sua rotina, suas pessoas — o que sobra é quem você é quando não tem nada pra provar pra ninguém.
+
+A gente veio fazer voluntariado. E o que o voluntariado fez foi tirar a nossa identidade de produção por algumas horas por dia. Sem cliente, sem projeto, sem entregável.
+
+E no vazio disso surgiu a melhor clareza que eu tive nos últimos seis meses.</div>
+      <div class="script-dir">Câmera mais próxima do rosto. Tom mais íntimo. Pausa real entre os blocos — deixa a ideia pousar antes de continuar.</div>
+    </div>
+  </div>
+
+  <div class="script-section">
+    <div class="script-header" onclick="toggleScript('sc5')">
+      <div class="script-time">8–10min<br>Encerramento</div>
+      <div class="script-meta">
+        <div class="script-label">Frase salva — sem "valeu falou"</div>
+        <div class="script-title">A reflexão que fica</div>
+      </div>
+    </div>
+    <div class="script-body-content" id="body-sc5">
+      <div class="script-text">No próximo vídeo eu vou te mostrar o que a aldeia hippie de Arembepe preservou que o resto do mundo perdeu.
+
+E vai ter uma conversa que eu não planejei ter — mas que me fez repensar o que eu acho que sei sobre escolha e liberdade.
+
+Bem-vindos ao Akasha.</div>
+      <div class="script-dir">Fade out natural. Sem jingle, sem call-to-action forçado. O logo aparece ao final em silêncio. A curiosidade é o CTA.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BORDÕES -->
+<section id="bordoes">
+  <div class="section-label">Identidade de Linguagem</div>
+  <h2>Bordões &<br>Frases Assinatura</h2>
+  <div class="bordoes-grid">
+    <div class="bordao-item">
+      <div class="bordao-frase">"Tudo comunica."</div>
+      <div class="bordao-uso">ao observar qualquer ambiente, design, comportamento</div>
+    </div>
+    <div class="bordao-item">
+      <div class="bordao-frase">"O lugar é o personagem."</div>
+      <div class="bordao-uso">ao apresentar qualquer destino ou espaço</div>
+    </div>
+    <div class="bordao-item">
+      <div class="bordao-frase">"Bem-vindos ao Akasha."</div>
+      <div class="bordao-uso">encerramento de todo episódio — peso, silêncio, lento</div>
+    </div>
+    <div class="bordao-item">
+      <div class="bordao-frase">"Nada aqui é por acaso."</div>
+      <div class="bordao-uso">ao revelar a arquitetura invisível de lugares ou sistemas</div>
+    </div>
+    <div class="bordao-item">
+      <div class="bordao-frase">"A câmera obriga a ver."</div>
+      <div class="bordao-uso">ao falar sobre o ato de documentar e perceber</div>
+    </div>
+    <div class="bordao-item">
+      <div class="bordao-frase">"Isso aqui não tem no Maps."</div>
+      <div class="bordao-uso">ao mostrar lugares autênticos e escondidos</div>
+    </div>
+    <div class="bordao-item">
+      <div class="bordao-frase">"O movimento é o método."</div>
+      <div class="bordao-uso">ao falar sobre aprendizado via vivência, não teoria</div>
+    </div>
+    <div class="bordao-item">
+      <div class="bordao-frase">"Vocês que são Observadores..."</div>
+      <div class="bordao-uso">referência à audiência — tribo, pertencimento, exclusividade</div>
+    </div>
+    <div class="bordao-item">
+      <div class="bordao-frase">"O ambiente sempre molda a consciência."</div>
+      <div class="bordao-uso">ao visitar novos lugares, comunidades, espaços culturais</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LUGARES -->
+<section id="lugares">
+  <div class="section-label">Locais Estratégicos</div>
+  <h2>Arembepe &<br>Região — Mapeado</h2>
+  <p style="margin-top:16px; color:var(--muted); font-style:italic; font-size:15px; margin-bottom:8px;">Antes de ir a qualquer lugar pago, entre em contato. Ofereça aparecer no vídeo com crédito e menção. A maioria aceita — é exposição para eles também.</p>
+
+  <div class="locais-list">
+    <div class="local-item">
+      <div class="local-place">Aldeia Hippie de Arembepe</div>
+      <p class="local-desc">Comunidade que resiste desde os anos 60. Artesanato, histórias únicas, estética que não foi planejada — surgiu. Ouro para narrativa cultural.</p>
+      <div class="pilar-tags"><span class="tag">cultura</span><span class="tag">história</span><span class="tag">comunidade</span><span class="tag">gratuito</span></div>
+    </div>
+    <div class="local-item">
+      <div class="local-place">Praça de Arembepe</div>
+      <p class="local-desc">Ponto de encontro do cotidiano local. Manhã: rotina e mercado. Tarde: calor e artesanato. Noite: conversa e som. Três episódios de stories num só lugar.</p>
+      <div class="pilar-tags"><span class="tag">dia a dia</span><span class="tag">pessoas</span><span class="tag">stories</span><span class="tag">gratuito</span></div>
+    </div>
+    <div class="local-item">
+      <div class="local-place">Praia de Arembepe</div>
+      <p class="local-desc">Praia de água esverdeada, piscinas naturais, pescadores e caranguejos. Não é Ipanema. É mais honesta do que isso. Ideal para reflexões cinematográficas e B-roll poderoso.</p>
+      <div class="pilar-tags"><span class="tag">natureza</span><span class="tag">cinematográfico</span><span class="tag">reflexão</span></div>
+    </div>
+    <div class="local-item">
+      <div class="local-place">Praia do Forte (EP passado)</div>
+      <p class="local-desc">Primeiro voluntariado. Já tem material gravado ou vivência para narrar. Pode virar um episódio retroativo — como o lugar onde a série começou.</p>
+      <div class="pilar-tags"><span class="tag">início</span><span class="tag">memória</span><span class="tag">voluntariado</span></div>
+    </div>
+    <div class="local-item">
+      <div class="local-place">Restaurantes e Barracas Locais</div>
+      <p class="local-desc">Os sem nome, sem delivery, sem Instagram. Os que existem há anos porque os moradores vão. Gastronomia real, sem filtro, com história atrás.</p>
+      <div class="pilar-tags"><span class="tag">gastronomia</span><span class="tag">autêntico</span><span class="tag">local</span></div>
+    </div>
+    <div class="local-item">
+      <div class="local-place">Próximos Destinos — Estratégia</div>
+      <p class="local-desc">Antes de qualquer viagem: mapeie 3 lugares com narrativa, 1 gastronomia local, 1 pessoa interessante para conversar. Uma viagem de 2 dias vira 2 vídeos longos + 10–15 stories.</p>
+      <div class="pilar-tags"><span class="tag">planejamento</span><span class="tag">modular</span><span class="tag">escala</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- REGRA DOS 5 BLOCOS -->
+<section>
+  <div class="section-label">Método de Gravação</div>
+  <h2>A Regra dos<br>5 Blocos</h2>
+  <p style="margin-top:16px; color:var(--muted); font-style:italic; font-size:16px; max-width:520px; margin-bottom:40px;">Em todo lugar que você for, grave os 5 blocos. Um passeio vira vídeo longo, shorts, reels e stories.</p>
+  <div class="pilares-grid" style="grid-template-columns: repeat(5, 1fr);">
+    <div class="pilar-item">
+      <div class="pilar-num">A</div>
+      <div class="pilar-title">Ambiente</div>
+      <p class="pilar-desc">Entrada, detalhes, estética, pessoas ao fundo, texturas, luz</p>
+    </div>
+    <div class="pilar-item">
+      <div class="pilar-num">B</div>
+      <div class="pilar-title">Você Vivendo</div>
+      <p class="pilar-desc">Andando, comendo, observando, interagindo — com câmera discreta</p>
+    </div>
+    <div class="pilar-item">
+      <div class="pilar-num">C</div>
+      <div class="pilar-title">Reflexões</div>
+      <p class="pilar-desc">Falando com câmera ou voz off — o que o lugar te fez pensar</p>
+    </div>
+    <div class="pilar-item">
+      <div class="pilar-num">D</div>
+      <div class="pilar-title">Interações</div>
+      <p class="pilar-desc">Conversa, perguntas, reações — pessoas reais, momentos reais</p>
+    </div>
+    <div class="pilar-item">
+      <div class="pilar-num">E</div>
+      <div class="pilar-title">Bastidores</div>
+      <p class="pilar-desc">Setup, celular, caderno, a câmera dela — o processo de documentar</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">AKASHA<span>HUB</span></div>
+  <div class="footer-meta">
+    akashahub.com.br · @akasha.hub<br>
+    Série Vivência em Movimento · 2026<br>
+    YouTube + Instagram Stories
+  </div>
+</footer>
+
+<script>
+  function toggleSeries(id) {
+    const body = document.getElementById('body-' + id);
+    const toggle = document.getElementById('toggle-' + id);
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open');
+    toggle.textContent = isOpen ? '+ ver episódios' : '− fechar';
+  }
+
+  function toggleScript(id) {
+    const body = document.getElementById('body-' + id);
+    const isOpen = body.classList.contains('open');
+    // close all
+    document.querySelectorAll('.script-body-content').forEach(el => el.classList.remove('open'));
+    if (!isOpen) body.classList.add('open');
+  }
+
+  // Animate elements on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.ep-card, .pilar-item, .bordao-item, .local-item, .cons-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
