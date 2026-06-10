@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Série Aldeia — Roteiros Teleprompt · Akasha Hub</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --preto: #0a0a0f;
+    --grafite: #111118;
+    --roxo-deep: #1a1025;
+    --roxo-medio: #2d1b4e;
+    --roxo-vivo: #7c3aed;
+    --roxo-claro: #a78bfa;
+    --ouro: #c9a84c;
+    --ouro-claro: #e8c96d;
+    --ouro-suave: #f5e4a8;
+    --branco: #f5f0e8;
+    --cinza: #888899;
+    --linha: rgba(201,168,76,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--preto);
+    color: var(--branco);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--grafite);
+    border-bottom: 1px solid var(--linha);
+    padding: 2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--ouro);
+    text-transform: uppercase;
+  }
+
+  .serie-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--cinza);
+    text-transform: uppercase;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--roxo-deep) 0%, var(--preto) 60%);
+    padding: 6rem 3rem 5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--linha);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    color: var(--ouro);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--branco);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--ouro-claro);
+  }
+
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-style: italic;
+    color: var(--cinza);
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .meta-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--ouro);
+    border: 1px solid var(--linha);
+    padding: 0.4rem 1rem;
+    text-transform: uppercase;
+  }
+
+  /* INDEX */
+  .index {
+    background: var(--grafite);
+    padding: 3rem;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .index-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    color: var(--ouro);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .index-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--linha);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .index-item:hover {
+    background: rgba(201,168,76,0.04);
+    border-color: rgba(201,168,76,0.4);
+  }
+
+  .index-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--roxo-claro);
+    opacity: 0.5;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .index-info {}
+  .index-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--branco);
+    margin-bottom: 0.2rem;
+  }
+  .index-type {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: var(--ouro);
+    text-transform: uppercase;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+
+  /* VIDEO SECTION */
+  .video-section {
+    padding: 5rem 0 3rem;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .video-section:last-child {
+    border-bottom: none;
+  }
+
+  .video-header {
+    margin-bottom: 3rem;
+  }
+
+  .video-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .video-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--roxo-claro);
+    opacity: 0.25;
+    line-height: 1;
+  }
+
+  .video-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    display: inline-block;
+  }
+
+  .badge-tipo { background: rgba(124,58,237,0.2); color: var(--roxo-claro); border: 1px solid rgba(124,58,237,0.3); }
+  .badge-nivel { background: rgba(201,168,76,0.1); color: var(--ouro); border: 1px solid var(--linha); }
+
+  .video-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--branco);
+    margin-bottom: 0.5rem;
+  }
+
+  .video-title em {
+    font-style: italic;
+    color: var(--ouro-claro);
+  }
+
+  .video-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--cinza);
+  }
+
+  /* META TABLE */
+  .meta-table {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0;
+    border: 1px solid var(--linha);
+    margin-bottom: 3rem;
+  }
+
+  .meta-cell {
+    padding: 1rem 1.2rem;
+    border-right: 1px solid var(--linha);
+  }
+  .meta-cell:last-child { border-right: none; }
+
+  .meta-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    color: var(--cinza);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .meta-value {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ouro-claro);
+  }
+
+  /* SCRIPT BLOCKS */
+  .script-block {
+    margin-bottom: 2.5rem;
+  }
+
+  .block-label {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .block-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .block-icon.hook { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171; }
+  .block-icon.intro { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: var(--roxo-claro); }
+  .block-icon.dev { background: rgba(201,168,76,0.1); border: 1px solid var(--linha); color: var(--ouro); }
+  .block-icon.cta { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); color: #86efac; }
+  .block-icon.ref { background: rgba(148,163,184,0.1); border: 1px solid rgba(148,163,184,0.2); color: #94a3b8; }
+
+  .block-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--cinza);
+  }
+
+  /* THE ACTUAL TELEPROMPT TEXT */
+  .teletext {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    line-height: 1.85;
+    color: var(--branco);
+  }
+
+  .teletext p {
+    margin-bottom: 1.2rem;
+  }
+
+  .teletext strong {
+    color: var(--ouro-claro);
+    font-weight: 600;
+  }
+
+  .teletext em {
+    font-style: italic;
+    color: rgba(245,240,232,0.75);
+  }
+
+  .teletext .pausa {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: rgba(124,58,237,0.7);
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.2);
+    padding: 0.15rem 0.5rem;
+    margin: 0 0.3rem;
+    vertical-align: middle;
+    text-transform: uppercase;
+  }
+
+  .teletext .respira {
+    display: block;
+    text-align: center;
+    color: rgba(201,168,76,0.4);
+    font-size: 1rem;
+    letter-spacing: 0.5em;
+    margin: 0.8rem 0;
+  }
+
+  .hook-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.65rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--branco);
+    background: linear-gradient(135deg, var(--roxo-deep), rgba(10,10,15,0.8));
+    border-left: 3px solid var(--ouro);
+    padding: 1.5rem 2rem;
+    margin-bottom: 0;
+  }
+
+  .hook-text em {
+    color: var(--ouro-claro);
+    font-style: italic;
+  }
+
+  .cta-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    line-height: 1.75;
+    color: var(--branco);
+    background: rgba(34,197,94,0.04);
+    border: 1px solid rgba(34,197,94,0.15);
+    padding: 1.5rem 2rem;
+  }
+
+  .cta-text strong {
+    color: #86efac;
+  }
+
+  /* SUBBLOCK */
+  .subblock {
+    margin-bottom: 2rem;
+  }
+
+  .subblock-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    color: var(--ouro);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .subblock-title::before {
+    content: '◆';
+    font-size: 0.4rem;
+    color: var(--roxo-claro);
+  }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 4rem 0;
+  }
+
+  .divider::before,
+  .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--linha);
+  }
+
+  .divider-glyph {
+    font-size: 1rem;
+    color: var(--ouro);
+    opacity: 0.5;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--grafite);
+    border-top: 1px solid var(--linha);
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--ouro);
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    color: var(--cinza);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 600px) {
+    .site-header { padding: 1.2rem 1.5rem; }
+    .hero { padding: 4rem 1.5rem 3rem; }
+    .index { padding: 2rem 1.5rem; }
+    main { padding: 0 1.2rem 4rem; }
+    .meta-table { grid-template-columns: 1fr 1fr; }
+    .meta-cell:nth-child(2) { border-right: none; }
+    .hook-text { font-size: 1.3rem; padding: 1.2rem 1.5rem; }
+    .teletext { font-size: 1.15rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">✦ Akasha Hub</div>
+  <div class="serie-tag">Série · Aldeia · 6 Vídeos</div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">✦ Teleprompt Completo · P9 — Viagens & Lifestyle</div>
+  <h1>Série <em>Aldeia</em></h1>
+  <p class="hero-sub">Seis transmissões gravadas numa aldeia hippie — onde o código se revela no silêncio</p>
+  <div class="hero-meta">
+    <span class="meta-pill">6 Vídeos</span>
+    <span class="meta-pill">Talking Head</span>
+    <span class="meta-pill">YouTube + Blog</span>
+    <span class="meta-pill">Pilar P9 × Akasha</span>
+  </div>
+</section>
+
+<section class="index">
+  <div class="index-label">✦ Índice da Série</div>
+  <div class="index-grid">
+    <a href="#v1" class="index-item">
+      <div class="index-num">01</div>
+      <div class="index-info">
+        <div class="index-title">Por Que Eu Vim Para Cá</div>
+        <div class="index-type">Narrativa pessoal · Abertura de série</div>
+      </div>
+    </a>
+    <a href="#v2" class="index-item">
+      <div class="index-num">02</div>
+      <div class="index-info">
+        <div class="index-title">O Código da Aldeia</div>
+        <div class="index-type">Decodificação · Autoridade intelectual</div>
+      </div>
+    </a>
+    <a href="#v3" class="index-item">
+      <div class="index-num">03</div>
+      <div class="index-info">
+        <div class="index-title">O Que o Silêncio Ensina</div>
+        <div class="index-type">Retiro interno · Desenvolvimento pessoal</div>
+      </div>
+    </a>
+    <a href="#v4" class="index-item">
+      <div class="index-num">04</div>
+      <div class="index-info">
+        <div class="index-title">Trabalhando do Fim do Mundo</div>
+        <div class="index-type">Lifestyle · Império Digital · Conversão</div>
+      </div>
+    </a>
+    <a href="#v5" class="index-item">
+      <div class="index-num">05</div>
+      <div class="index-info">
+        <div class="index-title">O Que Essa Gente Sabe Que Você Esqueceu</div>
+        <div class="index-type">Civilizações · Antropologia · Alta autoridade</div>
+      </div>
+    </a>
+    <a href="#v6" class="index-item">
+      <div class="index-num">06</div>
+      <div class="index-info">
+        <div class="index-title">O Que Levo Daqui</div>
+        <div class="index-type">Fechamento de série · CTA máximo</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<main>
+
+<!-- ═══════════════════════════════════════ VÍDEO 1 ═══ -->
+<section class="video-section" id="v1">
+  <div class="video-header">
+    <div class="video-eyebrow">
+      <div class="video-num">01</div>
+      <div class="video-badges">
+        <span class="badge badge-tipo">Narrativa Pessoal · Abertura</span>
+        <span class="badge badge-nivel">Todos os Níveis · Topo de Funil</span>
+      </div>
+    </div>
+    <h2 class="video-title">Por Que Eu Vim Para Cá <em>— e o Que Isso Tem a Ver Com Você</em></h2>
+    <p class="video-desc">A transmissão de abertura. Estabelece o porquê da série, o contexto da aldeia e conecta o movimento físico à jornada interna.</p>
+  </div>
+
+  <div class="meta-table">
+    <div class="meta-cell"><div class="meta-label">Duração</div><div class="meta-value">8–10 min</div></div>
+    <div class="meta-cell"><div class="meta-label">CTA Final</div><div class="meta-value">Mentoria</div></div>
+    <div class="meta-cell"><div class="meta-label">Tipo Blog</div><div class="meta-value">Reflexão</div></div>
+    <div class="meta-cell"><div class="meta-label">Acesso</div><div class="meta-value">0 — Todos</div></div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon hook">▶</div>
+      <div class="block-name">Hook — Primeiros 8 Segundos</div>
+    </div>
+    <div class="hook-text">
+      Eu podia estar em qualquer lugar agora. Num escritório. Numa sala de reunião. E eu escolhi uma aldeia hippie. <em>Deixa eu te contar por quê.</em>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon intro">◎</div>
+      <div class="block-name">Introdução — Cena e Contexto</div>
+    </div>
+    <div class="teletext">
+      <p>Boa tarde. Ou bom dia. Ou boa noite — dependendo de quando você tá assistindo isso. <span class="pausa">respira</span></p>
+      <p>Eu tô numa aldeia hippie. E essa frase soa mais estranha do que parece, porque se você me conhece, você sabe que eu não sou o tipo de pessoa que "vai se encontrar". <strong>Eu já sei onde eu estou.</strong></p>
+      <p>Mas às vezes você precisa sair do lugar onde você construiu tudo pra conseguir ver o que você realmente construiu. <span class="pausa">pausa</span> E foi exatamente por isso que eu vim pra cá.</p>
+      <p>Essa é a abertura de uma série de seis vídeos que eu vou gravar aqui. Cada vídeo vai ser uma transmissão — não um vlog, não um tour turístico. Uma transmissão de tudo que esse lugar está me revelando sobre código, sobre presença, sobre negócio, sobre vida.</p>
+      <p>Começando agora.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 1 — Por Que Você Sai</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">Movimento como Diagnóstico</div>
+      <p>Existe uma coisa que o sedentarismo faz com a mente que a maioria das pessoas não percebe: ele normaliza o que não deveria ser normal.</p>
+      <p>Quando você fica no mesmo ambiente, no mesmo ritmo, com as mesmas referências visuais — seu cérebro começa a tratar aquilo como <strong>a única realidade possível.</strong> <span class="pausa">respira</span> E aí você começa a resolver os problemas com as mesmas ferramentas que criaram os problemas.</p>
+      <p>Viajar quebra esse loop. Não porque o destino tem a resposta. Mas porque a disrupção do ambiente reconfigura o sistema de percepção. <em>A neurociência chama isso de novidade como catalisador cognitivo.</em> Eu chamo de: sair do seu próprio código por tempo suficiente pra ver ele de fora.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 2 — Por Que a Aldeia</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">A Escolha do Ambiente</div>
+      <p>Eu podia ter ido pra Lisboa. Pra Tóquio. Pra um resort. <span class="pausa">pausa</span> E essas viagens vão acontecer. Mas eu escolhi uma aldeia hippie primeiro, e foi uma escolha consciente.</p>
+      <p>Por quê? <strong>Porque aldeias hippies são laboratórios de contrastes.</strong></p>
+      <p>Aqui tem gente que largou carreira de alto nível pra viver com menos. Tem gente que nunca teve carreira nenhuma. Tem artistas, filósofos, pessoas em crise, pessoas em paz. Tem tecnologia mínima e profundidade máxima nas conversas.</p>
+      <p>E quando você é alguém que trabalha com decodificação — com leitura de padrões, com essência, com o que está rodando por baixo da superfície — <em>esse tipo de ambiente é uma fonte inesgotável.</em></p>
+      <p>Além disso: simplicidade radical é um espelho. Quando você tira o ruído, o que fica é o que é real.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 3 — O Que Isso Tem a Ver Com Você</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">A Ponte Para o Espectador</div>
+      <p>Agora a pergunta que importa: <strong>o que um cara numa aldeia hippie tem a ver com a sua vida?</strong></p>
+      <p>Tudo. E deixa eu te explicar o porquê.</p>
+      <p>O Akasha Hub nasceu de uma premissa: que você pode construir um Império Digital sem abrir mão de quem você é. Que tecnologia ancestral e estratégia moderna não são opostos — são complementos.</p>
+      <p>Mas isso exige que você se conheça profundamente o suficiente pra saber <em>o que você realmente quer construir.</em> <span class="pausa">respira</span> E a maioria das pessoas que chega até mim ainda está construindo a vida que alguém planejou pra ela. Não a que nasceu da própria essência.</p>
+      <p>Então essa série não é sobre aldeia hippie. <strong>É sobre o que acontece quando você para de fingir que o barulho é clareza.</strong></p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon cta">✦</div>
+      <div class="block-name">CTA Final</div>
+    </div>
+    <div class="cta-text">
+      <p>Se você acompanhou até aqui, já sabe que o próximo vídeo vai ser sobre o que eu estou vendo nessa aldeia — os padrões, os códigos, o que esse lugar está me dizendo sobre consciência coletiva. Vale a pena esperar.</p>
+      <p>E se você quer entender o código que está rodando na sua vida agora — antes de esperar o próximo vídeo — a porta mais direta pra isso é a mentoria.</p>
+      <p><strong>akashahub.com.br/mentoria</strong></p>
+      <p>Me vejo no próximo.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><div class="divider-glyph">◆</div></div>
+
+<!-- ═══════════════════════════════════════ VÍDEO 2 ═══ -->
+<section class="video-section" id="v2">
+  <div class="video-header">
+    <div class="video-eyebrow">
+      <div class="video-num">02</div>
+      <div class="video-badges">
+        <span class="badge badge-tipo">Decodificação · Autoridade Intelectual</span>
+        <span class="badge badge-nivel">Todos os Níveis</span>
+      </div>
+    </div>
+    <h2 class="video-title">O Código da Aldeia <em>— O Sistema Invisível Por Trás de Tudo Aqui</em></h2>
+    <p class="video-desc">Leitura única do ambiente pelo olhar Akasha. Alta diferenciação. Conteúdo difícil de copiar.</p>
+  </div>
+
+  <div class="meta-table">
+    <div class="meta-cell"><div class="meta-label">Duração</div><div class="meta-value">10–13 min</div></div>
+    <div class="meta-cell"><div class="meta-label">CTA Final</div><div class="meta-value">Leitura Akáshica</div></div>
+    <div class="meta-cell"><div class="meta-label">Tipo Blog</div><div class="meta-value">Transmissão</div></div>
+    <div class="meta-cell"><div class="meta-label">Acesso</div><div class="meta-value">0 — Todos</div></div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon hook">▶</div>
+      <div class="block-name">Hook — Primeiros 8 Segundos</div>
+    </div>
+    <div class="hook-text">
+      Toda comunidade é um programa rodando. Os turistas veem a interface. <em>Eu fui atrás do código.</em>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon intro">◎</div>
+      <div class="block-name">Introdução</div>
+    </div>
+    <div class="teletext">
+      <p>Eu tô aqui há alguns dias. E o que eu faço quando chego num lugar novo é o que eu sempre faço: <strong>eu observo os padrões.</strong></p>
+      <p>Não o que as pessoas falam. O que elas fazem. Como elas se organizam no espaço. Que regras existem sem ninguém ter escrito. Que crenças estão rodando por baixo das ações.</p>
+      <p>Porque tudo que existe — toda comunidade, toda cultura, todo relacionamento, todo negócio — é código. É um conjunto de instruções que as pessoas seguem, às vezes conscientemente, na maioria das vezes sem perceber.</p>
+      <p>E quando você aprende a ler esse código? <em>Você para de ser governado por ele.</em></p>
+      <p>Então deixa eu te mostrar o que eu vi aqui.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 1 — Comportamento Social</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">Como as Pessoas Se Organizam</div>
+      <p>A primeira coisa que eu notei: <strong>aqui não tem hierarquia de status baseada em posse.</strong> <span class="pausa">pausa</span></p>
+      <p>No mundo "normal" — e eu uso esse termo com muito cuidado — o status é sinalizador. Você usa o que tem pra mostrar quem você é. Carro, roupa, título, seguidores.</p>
+      <p>Aqui o código é diferente. O status é conquistado por <em>clareza</em>. Por quem consegue falar mais verdadeiro. Por quem tem mais anos de processo interior. Por quem tem a história mais coerente.</p>
+      <p>É interessante porque é um sistema muito mais exigente. Porque roupa cara você compra. Clareza não tem atalho.</p>
+      <p>A neurociência chama isso de hierarquia de competência em vez de hierarquia de dominância. E os dados mostram que comunidades organizadas assim têm coesão maior, conflito menor, criatividade maior. <strong>O código determina o resultado.</strong></p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 2 — Arquitetura e Consciência</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">Como o Espaço Molda a Mente</div>
+      <p>Segunda observação: o espaço físico aqui é uma instrução.</p>
+      <p>Nas cidades, a arquitetura é otimizada pra fluxo — pra te mover de um ponto de consumo a outro. <span class="pausa">respira</span> As linhas são retas. As calçadas levam a lojas. Os espaços públicos são menores que os privados.</p>
+      <p>Aqui o espaço é organizado em torno de pontos de parada e de encontro. <strong>A geometria convida à permanência, não ao trânsito.</strong> E isso não é acidente — é intenção codificada em arquitetura.</p>
+      <p>O que um espaço convida, o cérebro executa. Isso é princípio básico de neurociência ambiental. Se o seu ambiente está te convidando pra pressa, pra comparação, pra ausência — <em>você vai viver em pressa, comparação e ausência.</em> Mesmo sem querer.</p>
+      <p>Pergunta que fica: que instruções tem o ambiente que você criou pra você mesmo?</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 3 — Economia e Identidade</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">O Que Essa Comunidade Valoriza</div>
+      <p>Terceira camada: a economia de uma aldeia hippie não é o oposto do capitalismo. <strong>É um capitalismo diferente.</strong></p>
+      <p>O que circula aqui tem valor — mas o valor é calculado de outro jeito. Tempo, habilidade, atenção genuína, comida partilhada. <span class="pausa">pausa</span> A moeda é mais sutil, mas ela existe. E quem entende como essa moeda funciona prospera nesse ecossistema.</p>
+      <p>Isso me diz algo sobre o inconsciente coletivo desse grupo: eles acreditam que o que você <em>é</em> tem mais valor do que o que você <em>tem</em>. E que a abundância genuína vem de contribuição autêntica, não de posicionamento.</p>
+      <p>Interessante que isso é exatamente o que eu ensino no Akasha Hub. Não é coincidência que eu me sinto em casa aqui.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Síntese Akasha</div>
+    </div>
+    <div class="teletext">
+      <p>Então qual o código da aldeia? <span class="pausa">respira</span></p>
+      <p><strong>Autenticidade como moeda. Presença como status. Espaço como instrução.</strong></p>
+      <p>E a pergunta que eu te deixo: que código está rodando na sua vida, na sua empresa, no seu relacionamento — sem você ter escolhido ele conscientemente? Quem escreveu esse programa? E você ainda quer segui-lo?</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon cta">✦</div>
+      <div class="block-name">CTA Final</div>
+    </div>
+    <div class="cta-text">
+      <p>Se essa pergunta te incomodou — ótimo. Desconforto com o que não está alinhado é o primeiro sinal de despertar.</p>
+      <p>A Leitura Akáshica é o processo que eu uso pra mapear os códigos que estão rodando na sua vida — os herdados, os criados, os que precisam ser reescritos.</p>
+      <p><strong>akashahub.com.br/leitura</strong></p>
+      <p>No próximo vídeo: o que o silêncio ensina que nenhum curso consegue.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><div class="divider-glyph">◆</div></div>
+
+<!-- ═══════════════════════════════════════ VÍDEO 3 ═══ -->
+<section class="video-section" id="v3">
+  <div class="video-header">
+    <div class="video-eyebrow">
+      <div class="video-num">03</div>
+      <div class="video-badges">
+        <span class="badge badge-tipo">Retiro Interno · Desenvolvimento Pessoal</span>
+        <span class="badge badge-nivel">Todos os Níveis</span>
+      </div>
+    </div>
+    <h2 class="video-title">O Que o Silêncio Ensina <em>— 48 Horas Sem Agenda, Sem Feed, Sem Desculpa</em></h2>
+    <p class="video-desc">Vulnerabilidade estratégica. Alta conexão emocional. Momento de aprofundamento da série.</p>
+  </div>
+
+  <div class="meta-table">
+    <div class="meta-cell"><div class="meta-label">Duração</div><div class="meta-value">10–12 min</div></div>
+    <div class="meta-cell"><div class="meta-label">CTA Final</div><div class="meta-value">Área de Membros</div></div>
+    <div class="meta-cell"><div class="meta-label">Tipo Blog</div><div class="meta-value">Reflexão</div></div>
+    <div class="meta-cell"><div class="meta-label">Acesso</div><div class="meta-value">0 — Todos</div></div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon hook">▶</div>
+      <div class="block-name">Hook — Primeiros 8 Segundos</div>
+    </div>
+    <div class="hook-text">
+      Eu passei 48 horas sem postar nada. Sem checar nada. Sem produzir nada. <em>E foi a coisa mais produtiva que eu fiz esse mês.</em>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon intro">◎</div>
+      <div class="block-name">Introdução</div>
+    </div>
+    <div class="teletext">
+      <p>Temos um problema coletivo com silêncio. <span class="pausa">pausa</span></p>
+      <p>E eu incluí eu mesmo nessa frase. Porque durante anos eu confundi movimento com progresso. Confundi barulho com clareza. Confundi agenda cheia com vida plena.</p>
+      <p>Até que esse lugar me colocou na parede de um jeito muito simples: <strong>tirou o barulho.</strong></p>
+      <p>Sem reunião. Sem post pra fazer. Sem mensagem urgente. Sem a próxima coisa.</p>
+      <p>E o que aparece quando o barulho vai embora? <em>Tudo que você estava evitando ouvir.</em></p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 1 — O Desconforto Inicial</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">Por Que o Silêncio Incomoda</div>
+      <p>As primeiras horas foram difíceis. Vou ser honesto sobre isso.</p>
+      <p>Porque o cérebro que foi treinado em estímulo constante entra em abstinência quando você tira o estímulo. Você começa a procurar o celular que não tá na mão. Começa a pensar em posts que poderia fazer. Começa a resolver problemas que nem existem ainda.</p>
+      <p>A neurociência chama isso de Default Mode Network — a rede que o cérebro ativa quando não tem tarefa imediata. E sabe o que ela faz? <strong>Ela ressuscita conflitos não resolvidos. Ela processa o que você postergou sentir.</strong></p>
+      <p>A maioria das pessoas trata isso como ansiedade e foge de volta pro feed. <span class="pausa">respira</span> Mas esse é exatamente o ponto onde o trabalho real começa.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 2 — O Que Apareceu</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">O Conteúdo do Silêncio</div>
+      <p>Depois que o desconforto passou — e ele passa, se você não fugir — o que apareceu foi algo diferente.</p>
+      <p>Primeiro: <strong>clareza sobre o que é realmente importante.</strong> Não o que está urgente na agenda. O que é importante de verdade. Tem uma diferença abissal entre essas duas coisas que a correria normalmente não deixa você ver.</p>
+      <p>Segundo: <em>criatividade que vem de dentro.</em> Não do que você consumiu. Não de referência de outro criador. De um lugar mais profundo — do que você genuinamente pensa e sente sobre o mundo. Esse é o tipo de conteúdo que ressoa diferente. Porque vem de uma camada que a maioria não acessa.</p>
+      <p>Terceiro — e esse foi o mais impactante: <strong>gratidão não performada.</strong> Sem audiência. Sem razão estratégica. Só um reconhecimento quieto de que o que eu tenho já é extraordinário. E que a correria pela próxima conquista às vezes me faz esquecer isso.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 3 — Aplicação Prática</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">Como Usar Isso na Sua Vida</div>
+      <p>Você não precisa de uma aldeia hippie pra ter acesso a isso. <span class="pausa">pausa</span> Mas precisa de intenção.</p>
+      <p>Três práticas que saem desse experimento:</p>
+      <p><strong>Um: Janelas de Silêncio Ativas.</strong> Não meditação necessariamente. Só tempo sem entrada — sem conteúdo, sem podcast, sem conversa. Trinta minutos por dia onde o único conteúdo disponível são seus próprios pensamentos.</p>
+      <p><strong>Dois: Diferenciação entre urgente e importante.</strong> Todo dia, antes de abrir qualquer ferramenta digital, escreva uma frase: o que seria mais significativo fazer hoje? Não o que está na lista. O que seria <em>significativo.</em></p>
+      <p><strong>Três: Retiros intencionais.</strong> Uma vez por mês, um dia ou meio dia de desconexão total. Não como castigo ou desintoxicação — como laboratório interno. O que você descobre sobre você nesses momentos vale mais que qualquer curso.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon cta">✦</div>
+      <div class="block-name">CTA Final</div>
+    </div>
+    <div class="cta-text">
+      <p>Na área de membros do Akasha Hub tem uma transmissão específica sobre isso — sobre como criar estrutura pra acessar esse nível de clareza sem precisar largar tudo e ir pra uma aldeia.</p>
+      <p>Se você ainda não é membro, esse pode ser o momento de entrar.</p>
+      <p><strong>akashahub.com.br/membros</strong></p>
+      <p>No próximo: como é possível fazer tudo isso e ainda ter um negócio funcionando. Spoiler — o negócio funciona <em>melhor</em> por causa disso, não apesar disso.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><div class="divider-glyph">◆</div></div>
+
+<!-- ═══════════════════════════════════════ VÍDEO 4 ═══ -->
+<section class="video-section" id="v4">
+  <div class="video-header">
+    <div class="video-eyebrow">
+      <div class="video-num">04</div>
+      <div class="video-badges">
+        <span class="badge badge-tipo">Lifestyle · Império Digital · Conversão</span>
+        <span class="badge badge-nivel">Todos os Níveis · Alta Conversão</span>
+      </div>
+    </div>
+    <h2 class="video-title">Trabalhando do Fim do Mundo <em>— Como o Império Digital Funciona na Prática</em></h2>
+    <p class="video-desc">Prova social de alto impacto. O vídeo de maior potencial de conversão da série. Lifestyle como demonstração do método.</p>
+  </div>
+
+  <div class="meta-table">
+    <div class="meta-cell"><div class="meta-label">Duração</div><div class="meta-value">9–11 min</div></div>
+    <div class="meta-cell"><div class="meta-label">CTA Final</div><div class="meta-value">Mentoria</div></div>
+    <div class="meta-cell"><div class="meta-label">Tipo Blog</div><div class="meta-value">Transmissão</div></div>
+    <div class="meta-cell"><div class="meta-label">Acesso</div><div class="meta-value">0 — Todos</div></div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon hook">▶</div>
+      <div class="block-name">Hook — Primeiros 8 Segundos</div>
+    </div>
+    <div class="hook-text">
+      Eu recebi um cliente hoje. Fiz uma sessão de mentoria. Fechei um contrato. <em>Tudo isso de uma aldeia hippie sem sinal de celular direito.</em> Isso é o Império Digital.
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon intro">◎</div>
+      <div class="block-name">Introdução</div>
+    </div>
+    <div class="teletext">
+      <p>Existe uma crença que eu vejo repetir o tempo todo: <strong>"eu não posso sair porque o negócio precisa de mim."</strong></p>
+      <p>E eu entendo de onde essa crença vem. Ela vem de um modelo de negócio que foi construído em torno da sua presença física constante. Em torno de você sendo o gargalo de tudo.</p>
+      <p>Mas existe outro modelo. E esse modelo permite que você esteja numa aldeia hippie e ainda assim entregue resultado, ainda assim receba, ainda assim cresça.</p>
+      <p>Não é teoria. É o que eu vivo. <span class="pausa">respira</span> E hoje eu vou te mostrar como funciona na prática.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 1 — O Modelo que Prende</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">Por Que a Maioria Não Consegue Sair</div>
+      <p>O negócio que prende é o negócio que depende 100% da sua presença em tempo real. Onde se você não responder em trinta minutos, o cliente some. Onde se você não postar hoje, o engajamento cai. Onde se você parar um dia, a receita para.</p>
+      <p>Esse modelo não é negócio. <strong>É emprego disfarçado de empreendedorismo.</strong> <span class="pausa">pausa</span> A diferença é que no emprego você tem pelo menos décimo terceiro.</p>
+      <p>O problema não é o mercado. Não é o nicho. É a arquitetura. É como o negócio foi construído — e um negócio pode ser reconstruído.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 2 — Os Três Pilares do Império</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">O Que Muda na Arquitetura</div>
+      <p>Existem três pilares que tornam um negócio digital geograficamente independente. E cada um exige trabalho pra construir — não é automático, não é fácil — mas é construível.</p>
+      <p><strong>Pilar 1: Autoridade Instalada.</strong> Quando o seu conteúdo trabalha por você enquanto você dorme — enquanto você viaja, enquanto você descansa. Isso significa que o seu posicionamento, a sua voz, o seu método precisam estar documentados, distribuídos, acessíveis. Um vídeo de dois anos atrás pode trazer um cliente hoje. Isso é autoridade instalada.</p>
+      <p><strong>Pilar 2: Produto que Não Precisa de Você em Tempo Real.</strong> <span class="pausa">respira</span> Área de membros, conteúdo gravado, materiais de processo. Quando alguém paga e acessa sem precisar da sua presença imediata, você tem assíncronia. E assíncronia é liberdade.</p>
+      <p><strong>Pilar 3: Processo Comercial Claro.</strong> Quando uma pessoa chega no seu trabalho, ela precisa saber o próximo passo sem você precisar explicar tudo de novo toda vez. Funil claro, comunicação clara, oferta clara. <em>Isso é sistema, não sorte.</em></p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 3 — Como Ficou o Meu Dia Aqui</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">Prova Social Concreta</div>
+      <p>Deixa eu ser específico sobre como foi o meu dia hoje nessa aldeia.</p>
+      <p>Acordei sem alarme. Caminhei. Fiz silêncio. Tomei café. <span class="pausa">pausa</span> Aí abri o computador por duas horas: uma sessão de mentoria, uma revisão de processo, uma mensagem estratégica.</p>
+      <p>Fechei o computador. Almocei com pessoas interessantes. Tive uma conversa que vai virar conteúdo por semanas. Andei. <strong>Vivi.</strong></p>
+      <p>E o negócio continuou existindo. Porque o negócio não precisa da minha presença constante — precisa da minha essência instalada nos processos que já construí.</p>
+      <p>Isso não aconteceu do dia pra noite. Foram anos de construção intencional. <em>Mas foi construído. E o que foi construído uma vez pode ser construído de novo — por qualquer pessoa com o mapa certo.</em></p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon cta">✦</div>
+      <div class="block-name">CTA Final</div>
+    </div>
+    <div class="cta-text">
+      <p>Se você quer construir essa arquitetura — não copiar a minha vida, mas criar a estrutura que libera a sua — a mentoria é onde isso começa.</p>
+      <p>Não é um curso. É um processo de construção junto. Você sai com o mapa do seu Império, não com o meu.</p>
+      <p><strong>akashahub.com.br/mentoria</strong></p>
+      <p>No próximo vídeo: o que os habitantes dessa aldeia sabem que o mundo urbano esqueceu — e como isso muda o que você pensa sobre produtividade, saúde e propósito.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><div class="divider-glyph">◆</div></div>
+
+<!-- ═══════════════════════════════════════ VÍDEO 5 ═══ -->
+<section class="video-section" id="v5">
+  <div class="video-header">
+    <div class="video-eyebrow">
+      <div class="video-num">05</div>
+      <div class="video-badges">
+        <span class="badge badge-tipo">Civilizações · Antropologia · Alta Autoridade</span>
+        <span class="badge badge-nivel">Todos os Níveis</span>
+      </div>
+    </div>
+    <h2 class="video-title">O Que Essa Gente Sabe Que Você Esqueceu <em>— Sabedoria Antiga em Código Vivo</em></h2>
+    <p class="video-desc">O vídeo de maior profundidade intelectual da série. Cruza P2 Civilizações com P9 Viagens. Máxima autoridade.</p>
+  </div>
+
+  <div class="meta-table">
+    <div class="meta-cell"><div class="meta-label">Duração</div><div class="meta-value">12–15 min</div></div>
+    <div class="meta-cell"><div class="meta-label">CTA Final</div><div class="meta-value">Leitura Akáshica</div></div>
+    <div class="meta-cell"><div class="meta-label">Tipo Blog</div><div class="meta-value">Transmissão</div></div>
+    <div class="meta-cell"><div class="meta-label">Acesso</div><div class="meta-value">0 — Todos</div></div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon hook">▶</div>
+      <div class="block-name">Hook — Primeiros 8 Segundos</div>
+    </div>
+    <div class="hook-text">
+      A humanidade passou 99% da sua história vivendo em comunidade, em ritmo com a natureza, com rituais que estruturavam o tempo. <em>Faz duzentos anos que paramos. E estamos pagando o preço.</em>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon intro">◎</div>
+      <div class="block-name">Introdução</div>
+    </div>
+    <div class="teletext">
+      <p>Quando a gente fala de culturas tradicionais, de aldeias, de comunidades alternativas — a narrativa dominante é que isso é o passado. <span class="pausa">pausa</span> Que é primitivo. Que é regressão.</p>
+      <p>Eu quero te oferecer uma hipótese diferente. Uma que vai de encontro a algumas coisas que você provavelmente aprendeu — mas que as evidências suportam de um jeito interessante.</p>
+      <p>Hipótese: <strong>não é que essas culturas não evoluíram. É que elas preservaram conhecimento que nós descartamos na pressa de "progredir".</strong> E esse conhecimento, quando você olha com lente de neurociência, de física quântica, de psicologia profunda — <em>faz sentido de um jeito que a modernidade ainda está tentando entender.</em></p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 1 — Ritual e Neurologia</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">Por Que Toda Cultura Criou Rituais</div>
+      <p>Toda cultura humana — sem exceção — criou rituais. Rituais de passagem, rituais sazonais, rituais diários. <strong>Isso não é coincidência. É função.</strong></p>
+      <p>A neurociência hoje entende o que os antigos sabiam intuitivamente: o cérebro humano precisa de marcadores de tempo e transição pra operar com saúde. Sem rituais, o tempo vira uma massa uniforme. E massa uniforme de tempo produz ansiedade difusa — aquela sensação de que os dias passam sem que nada de real aconteça.</p>
+      <p>As pessoas que vivem aqui — seja por escolha filosófica ou por herança cultural — mantêm rituais. Acordar de um jeito específico. Comer de uma forma presente. Celebrar transições. <span class="pausa">respira</span> Isso não é romantismo. É engenharia de sistema nervoso.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 2 — Comunidade e Saúde</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">O Que a Solidão Moderna Está Custando</div>
+      <p>Em 2023, o Surgeon General dos Estados Unidos declarou uma epidemia de solidão. <span class="pausa">pausa</span> Não de doença. <strong>De solidão.</strong></p>
+      <p>Os estudos mostram que isolamento crônico tem impacto comparável a fumar quinze cigarros por dia. Que a ausência de comunidade reduz expectativa de vida mais do que obesidade. Que o senso de pertencimento é uma necessidade biológica, não um luxo emocional.</p>
+      <p>Aqui nessa aldeia eu vejo pessoas que têm isso de forma natural. Não forçada. Não performada. <em>Há uma textura de vida coletiva que é rara de encontrar no mundo urbano moderno.</em> Refeições compartilhadas. Apoio espontâneo. Presença que não é mediada por tela.</p>
+      <p>Não estou dizendo que isso é ideal pra todo mundo. Estou dizendo que existe algo real aqui que nós perdemos — e que faz diferença mensurável na qualidade de vida.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 3 — Tecnologia Ancestral</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">O Que os Akáshicos Têm de Científico</div>
+      <p>Agora eu vou pro território que é o coração do que eu faço. <span class="pausa">respira</span></p>
+      <p>Registros Akáshicos — que é o fundamento do trabalho do Akasha Hub — é frequentemente tratado como esoterismo puro. Mas existe uma forma de entender esse conceito que dialoga com física de campo, com epigenética, com a biologia das crenças de Bruce Lipton.</p>
+      <p>A hipótese é: <strong>existe um campo de informação que armazena padrões de comportamento além do indivíduo.</strong> Heranças não genéticas. Padrões familiares. Programas coletivos. As culturas tradicionais chamam isso de ancestralidade, de campo, de memória viva.</p>
+      <p>A ciência está chegando em direções que tornam essa hipótese menos absurda do que parecia há cinquenta anos. Nassim Haramein, Lynne McTaggart, Rupert Sheldrake — cada um por um caminho diferente, chegando a conclusões que rhymam com o que tradições antigas já afirmavam.</p>
+      <p><em>Não estou dizendo que é comprovado. Estou dizendo que é uma hipótese séria que merece consideração séria.</em></p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon cta">✦</div>
+      <div class="block-name">CTA Final</div>
+    </div>
+    <div class="cta-text">
+      <p>Se você quer mapear os padrões ancestrais que estão influenciando a sua vida hoje — os códigos que você herdou e que ainda estão ativos — a Leitura Akáshica é o processo mais direto que eu conheço pra isso.</p>
+      <p>Não é misticismo. É mapeamento de sistema.</p>
+      <p><strong>akashahub.com.br/leitura</strong></p>
+      <p>No próximo vídeo — o último da série — o que eu levo daqui. E o que eu quero que você carregue.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><div class="divider-glyph">◆</div></div>
+
+<!-- ═══════════════════════════════════════ VÍDEO 6 ═══ -->
+<section class="video-section" id="v6">
+  <div class="video-header">
+    <div class="video-eyebrow">
+      <div class="video-num">06</div>
+      <div class="video-badges">
+        <span class="badge badge-tipo">Fechamento de Série · CTA Máximo</span>
+        <span class="badge badge-nivel">Todos os Níveis · Alta Emoção</span>
+      </div>
+    </div>
+    <h2 class="video-title">O Que Eu Levo Daqui <em>— e O Que Eu Quero Que Você Carregue</em></h2>
+    <p class="video-desc">Fechamento emocional e estratégico da série. Síntese de todas as transmissões. CTA duplo: Mentoria e Membros.</p>
+  </div>
+
+  <div class="meta-table">
+    <div class="meta-cell"><div class="meta-label">Duração</div><div class="meta-value">10–12 min</div></div>
+    <div class="meta-cell"><div class="meta-label">CTA Final</div><div class="meta-value">Mentoria + Membros</div></div>
+    <div class="meta-cell"><div class="meta-label">Tipo Blog</div><div class="meta-value">Reflexão</div></div>
+    <div class="meta-cell"><div class="meta-label">Acesso</div><div class="meta-value">0 — Todos</div></div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon hook">▶</div>
+      <div class="block-name">Hook — Primeiros 8 Segundos</div>
+    </div>
+    <div class="hook-text">
+      Esse é o último vídeo que eu grav aqui. <em>E eu não vou embora do mesmo jeito que cheguei.</em>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon intro">◎</div>
+      <div class="block-name">Introdução — Contexto de Fechamento</div>
+    </div>
+    <div class="teletext">
+      <p>Essa série começou com uma pergunta simples: o que acontece quando você tira o barulho?</p>
+      <p>Ao longo de cinco transmissões, eu tentei responder isso de ângulos diferentes. O código que toda comunidade carrega. O que o silêncio revela que a agenda esconde. Como um negócio pode funcionar de qualquer lugar. O que culturas tradicionais preservaram que a modernidade perdeu.</p>
+      <p>Agora eu quero fazer diferente. <span class="pausa">pausa</span> Agora eu quero ser pessoal.</p>
+      <p>Quero te contar o que eu <em>realmente</em> aprendi aqui. Não os conceitos. <strong>O que mudou em mim.</strong></p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 1 — Aprendizado 1</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">Velocidade É uma Escolha, Não uma Necessidade</div>
+      <p>Eu achava que a velocidade que eu vivo era a velocidade que o trabalho exigia. <span class="pausa">pausa</span></p>
+      <p>Aqui eu percebi que não. <strong>A velocidade que eu vivo é a velocidade que eu escolhi — e que em grande parte eu escolhi porque o ambiente que construí a pedia.</strong></p>
+      <p>E que posso reconstruir esse ambiente. Posso criar estruturas que me convidam à profundidade em vez de à reatividade. Não porque quero trabalhar menos — quero trabalhar mais, de forma mais intensa e mais focada. Mas em ritmo que sustenta, não em ritmo que esgota.</p>
+      <p>Isso parece simples quando você fala assim. Mas mudar o ritmo padrão de uma vida é um trabalho de engenharia. E começa com perceber que o ritmo atual foi <em>escolhido</em> — mesmo que inconscientemente.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 2 — Aprendizado 2</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">Simplicidade É a Mais Alta Sofisticação</div>
+      <p>Leonardo da Vinci disse isso. E eu sempre concordei intelectualmente. Mas aqui eu entendi de um jeito diferente — <em>no corpo, não só na cabeça.</em></p>
+      <p>Quando você tira o excesso, o que fica é o essencial. E o essencial, quando está bem construído, <strong>tem uma beleza que o complexo não consegue imitar.</strong></p>
+      <p>Isso tem implicação direta no negócio. Tenho estado simplificando. Menos ofertas, mais profundidade em cada uma. Menos conteúdo, mais densidade em cada peça. Menos clientes ao mesmo tempo, mais resultado pra cada um. <span class="pausa">respira</span> A qualidade sobe quando o volume cai.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Bloco 3 — Aprendizado 3</div>
+    </div>
+    <div class="teletext">
+      <div class="subblock-title">O Maior Presente Que Você Pode Dar É a Sua Presença Real</div>
+      <p>Esse aqui é o mais pessoal dos três. <span class="pausa">pausa</span></p>
+      <p>Eu trabalho com pessoas. Faço leitura, faço mentoria, faço sessões. E eu sou bom nisso. Mas eu percebi que às vezes — não sempre, mas às vezes — o que eu entregava era competência técnica e presença parcial. Porque parte de mim estava sempre no próximo compromisso, no próximo conteúdo, na próxima coisa.</p>
+      <p>Aqui, com menos agenda, eu vi como é quando a presença é total. <strong>E a diferença é abissal.</strong></p>
+      <p>Quando você está genuinamente presente — não gerenciando a conversa, não pensando no que vai responder, mas realmente lá — o que acontece entre duas pessoas muda de qualidade. Isso é o que as leituras mais profundas pedem. Isso é o que as melhores mentorias entregam.</p>
+      <p><em>Estou me comprometendo com isso de um jeito novo. E quero que as pessoas que trabalham comigo sintam essa diferença.</em></p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon dev">◈</div>
+      <div class="block-name">Síntese — O Que Eu Quero Que Você Carregue</div>
+    </div>
+    <div class="teletext">
+      <p>Se essa série deixou uma coisa em você, eu espero que seja essa:</p>
+      <p><strong>A vida que você tem é, em grande parte, o resultado de códigos que você escolheu — conscientemente ou não.</strong> O código do ambiente. O código da velocidade. O código do que você valoriza. O código herdado que você ainda não examinou.</p>
+      <p>Esses códigos podem ser reescritos. <span class="pausa">respira</span> Não de uma vez. Não sem trabalho. Mas podem.</p>
+      <p>E o primeiro passo pra reescrevê-los é o mesmo primeiro passo pra qualquer transformação real: <em>ver claramente o que está rodando agora.</em></p>
+      <p>Sem julgamento. Sem drama. Só clareza. É a partir daí que tudo muda.</p>
+    </div>
+  </div>
+
+  <div class="script-block">
+    <div class="block-label">
+      <div class="block-icon cta">✦</div>
+      <div class="block-name">CTA Final — Duplo</div>
+    </div>
+    <div class="cta-text">
+      <p>Dois caminhos pra quem chega até aqui e quer continuar:</p>
+      <p>Se você quer clareza profunda sobre os padrões que estão moldando sua vida — começa pela <strong>Leitura Akáshica</strong>. É o mapeamento mais direto que eu conheço.</p>
+      <p>Se você quer construir a estrutura que libera você — o negócio que funciona, a identidade que posiciona, o método que converte — esse é o trabalho da <strong>Mentoria</strong>.</p>
+      <p>Qualquer uma das duas começa aqui: <strong>akashahub.com.br</strong></p>
+      <p>Obrigado por ter viajado comigo nessa série. <em>Nos vemos no próximo portal.</em></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-logo">Akasha Hub</div>
+  <div class="footer-sub">✦ Série Aldeia — 6 Transmissões · Portal de Decodificação · akashahub.com.br</div>
+</footer>
+
+</body>
+      </html>
