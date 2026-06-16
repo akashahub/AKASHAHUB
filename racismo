@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Hub · Série: Código do Racismo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --terra:   #C17E3A;
+    --ouro:    #E8B96A;
+    --ouro2:   #F5D090;
+    --cobre:   #8B4A1A;
+    --preto:   #0A0A0A;
+    --fundo:   #0D0B08;
+    --fundo2:  #141009;
+    --cinza1:  #1A1610;
+    --cinza2:  #2A241A;
+    --texto:   #E8E2D4;
+    --texto2:  #A09070;
+    --vinho:   #5C1A1A;
+    --vermelho:#C0392B;
+    --verde:   #1A3A2A;
+    --verdeC:  #2ECC71;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── ASSINATURA VISUAL: fio dourado vertical esquerdo ── */
+  body::before {
+    content: '';
+    position: fixed;
+    left: 0; top: 0;
+    width: 3px; height: 100vh;
+    background: linear-gradient(to bottom, transparent, var(--ouro), var(--terra), transparent);
+    z-index: 100;
+    opacity: 0.6;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(10,10,8,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(232,185,106,0.12);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: var(--ouro);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .nav-serie {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--texto2);
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 3rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--terra);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 900;
+    line-height: 0.95;
+    max-width: 900px;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--ouro);
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--texto2);
+    max-width: 560px;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  /* Decoração: palavra PRETO em grande ao fundo */
+  .hero-bg-word {
+    position: absolute;
+    right: -2%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(12rem, 30vw, 22rem);
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(232,185,106,0.06);
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 1px solid rgba(232,185,106,0.25);
+    color: var(--texto2);
+    padding: 0.4rem 0.8rem;
+    border-radius: 2px;
+  }
+
+  .hero-stat-row {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat { }
+  .hero-stat .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--ouro);
+    display: block;
+    line-height: 1;
+  }
+  .hero-stat .label {
+    font-size: 0.7rem;
+    color: var(--texto2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── MANIFESTO ── */
+  .manifesto {
+    padding: 6rem 3rem;
+    background: var(--cinza1);
+    border-top: 1px solid rgba(232,185,106,0.1);
+    border-bottom: 1px solid rgba(232,185,106,0.1);
+    position: relative;
+  }
+
+  .manifesto-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .manifesto blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ouro2);
+    border-left: 3px solid var(--terra);
+    padding-left: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .manifesto p {
+    color: var(--texto2);
+    font-size: 1rem;
+    line-height: 1.9;
+    margin-bottom: 1rem;
+  }
+
+  .manifesto strong { color: var(--texto); }
+
+  /* ── SEÇÃO PALAVRA ── */
+  .secao-palavra {
+    padding: 6rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: center;
+  }
+
+  .palavra-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .palavra-card {
+    border: 1px solid rgba(232,185,106,0.15);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .palavra-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+  }
+
+  .palavra-card.negativo::before { background: var(--vermelho); }
+  .palavra-card.positivo::before { background: var(--verdeC); }
+  .palavra-card.neutro::before   { background: var(--ouro); }
+
+  .palavra-card .palavra-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .palavra-card.negativo .palavra-big { color: var(--vermelho); }
+  .palavra-card.positivo .palavra-big { color: var(--verdeC); }
+  .palavra-card.neutro .palavra-big   { color: var(--ouro); }
+
+  .palavra-card .denotacao {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--texto2);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .palavra-card p { font-size: 0.9rem; color: var(--texto2); }
+
+  .secao-texto h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    color: var(--ouro2);
+  }
+
+  .secao-texto p {
+    color: var(--texto2);
+    margin-bottom: 1rem;
+    line-height: 1.9;
+  }
+
+  .secao-texto strong { color: var(--texto); }
+
+  /* ── EPISÓDIOS GRID ── */
+  .episodios-section {
+    padding: 6rem 3rem;
+    background: var(--fundo2);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .section-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--terra);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 900;
+    color: var(--texto);
+    line-height: 1.1;
+  }
+
+  .episodios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5px;
+    background: rgba(232,185,106,0.08);
+    border: 1px solid rgba(232,185,106,0.08);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ep-card {
+    background: var(--fundo);
+    padding: 2.5rem;
+    position: relative;
+    transition: background 0.3s;
+  }
+
+  .ep-card:hover { background: var(--cinza1); }
+
+  .ep-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--terra);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .ep-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1rem;
+    color: var(--ouro2);
+  }
+
+  .ep-conceito {
+    font-size: 0.85rem;
+    color: var(--texto2);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  .ep-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .ep-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--terra);
+    border: 1px solid rgba(193,126,58,0.3);
+    padding: 0.25rem 0.5rem;
+  }
+
+  .ep-frase {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(232,185,106,0.1);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--ouro);
+    line-height: 1.5;
+  }
+
+  /* ── CAMADAS SISTÊMICAS ── */
+  .camadas-section {
+    padding: 6rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .camadas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(232,185,106,0.08);
+    margin-top: 3rem;
+  }
+
+  .camada {
+    background: var(--fundo);
+    padding: 2rem;
+    border-top: 3px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .camada:hover { border-top-color: var(--ouro); }
+
+  .camada-icone {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .camada h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--ouro2);
+    margin-bottom: 0.8rem;
+  }
+
+  .camada p {
+    font-size: 0.82rem;
+    color: var(--texto2);
+    line-height: 1.8;
+  }
+
+  /* ── JESUS / ESPIRITUAL ── */
+  .espiritual-section {
+    padding: 6rem 3rem;
+    background: linear-gradient(135deg, #0D0B08 0%, #1A0F00 50%, #0D0B08 100%);
+    border-top: 1px solid rgba(232,185,106,0.1);
+    border-bottom: 1px solid rgba(232,185,106,0.1);
+  }
+
+  .espiritual-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .espiritual-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 3rem;
+  }
+
+  .espi-card {
+    padding: 2rem;
+    border: 1px solid rgba(232,185,106,0.12);
+    position: relative;
+  }
+
+  .espi-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--ouro);
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(232,185,106,0.15);
+  }
+
+  .espi-card p {
+    font-size: 0.88rem;
+    color: var(--texto2);
+    line-height: 1.9;
+  }
+
+  .espi-card strong { color: var(--ouro2); }
+
+  /* ── POSTS DE AQUECIMENTO ── */
+  .posts-section {
+    padding: 6rem 3rem;
+    background: var(--cinza1);
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 3rem auto 0;
+  }
+
+  .post-card {
+    background: var(--fundo);
+    border: 1px solid rgba(232,185,106,0.1);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .post-ep {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    color: var(--terra);
+    text-transform: uppercase;
+  }
+
+  .post-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--ouro2);
+  }
+
+  .post-legenda {
+    font-size: 0.82rem;
+    color: var(--texto2);
+    line-height: 1.85;
+    flex: 1;
+  }
+
+  .post-tiktok {
+    background: var(--cinza2);
+    padding: 1rem;
+    border-left: 2px solid var(--terra);
+  }
+
+  .post-tiktok .tiktok-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: var(--terra);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .post-tiktok .tags-list {
+    font-size: 0.75rem;
+    color: var(--texto2);
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 4rem 3rem;
+    background: var(--preto);
+    border-top: 1px solid rgba(232,185,106,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: var(--ouro);
+    text-transform: uppercase;
+  }
+
+  .footer-text {
+    font-size: 0.8rem;
+    color: var(--texto2);
+    max-width: 400px;
+    line-height: 1.7;
+  }
+
+  /* ── DIVISORES ── */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(232,185,106,0.2), transparent);
+    margin: 0;
+  }
+
+  /* ── SCROLL REVEAL básico via CSS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── RESPONSIVO ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .hero { padding: 7rem 1.5rem 4rem; }
+    .manifesto, .episodios-section, .camadas-section,
+    .espiritual-section, .posts-section { padding: 4rem 1.5rem; }
+    .secao-palavra { grid-template-columns: 1fr; padding: 4rem 1.5rem; }
+    .espiritual-grid { grid-template-columns: 1fr; }
+    .camadas-grid { grid-template-columns: 1fr; }
+    footer { padding: 3rem 1.5rem; flex-direction: column; }
+    .hero-bg-word { display: none; }
+    .hero-stat-row { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="https://akashahub.com.br">Akasha Hub</a>
+  <span class="nav-serie">Série · Código do Racismo</span>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg-word">PRETO</div>
+
+  <p class="hero-eyebrow">Akasha Hub · Série Talking Head · 2026</p>
+
+  <h1 class="hero-title">
+    A Arquitetura<br>
+    <em>Invisível</em><br>
+    do Racismo
+  </h1>
+
+  <p class="hero-sub">
+    10 episódios. Uma dissecção sócio-econômico-político-neuro-físico-quântico-tecnológica 
+    do sistema mais antigo de controle da humanidade — e os códigos para desativá-lo.
+  </p>
+
+  <div class="hero-tags">
+    <span class="tag">Socioeconômico</span>
+    <span class="tag">Neurociência</span>
+    <span class="tag">Física Quântica</span>
+    <span class="tag">Linguística</span>
+    <span class="tag">Espiritualidade</span>
+    <span class="tag">Tecnologia</span>
+    <span class="tag">Geopolítica</span>
+    <span class="tag">Filosofia</span>
+    <span class="tag">Consciência</span>
+  </div>
+
+  <div class="hero-stat-row">
+    <div class="hero-stat">
+      <span class="num">10</span>
+      <span class="label">Episódios</span>
+    </div>
+    <div class="hero-stat">
+      <span class="num">7</span>
+      <span class="label">Camadas de análise</span>
+    </div>
+    <div class="hero-stat">
+      <span class="num">1</span>
+      <span class="label">Objetivo: descodificar</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     MANIFESTO
+══════════════════════════════════════════ -->
+<section class="manifesto">
+  <div class="manifesto-inner reveal">
+    <blockquote>
+      "Preto é cor. Negro é povo. E chamaram os dois de problema."
+    </blockquote>
+    <p>
+      Esta série não é sobre raiva. É sobre <strong>arquitetura</strong>. O racismo não é apenas um preconceito — 
+      é um sistema operacional instalado há séculos em linguagem, economia, neurobiologia, tecnologia 
+      e até em narrativas espirituais distorcidas.
+    </p>
+    <p>
+      Para desinstalar um sistema, você precisa primeiro <strong>ver o código</strong>. Linha por linha. 
+      Camada por camada. Do algoritmo das redes sociais ao algoritmo das crenças coletivas. 
+      Da geopolítica do colonialismo à física quântica da identidade.
+    </p>
+    <p>
+      Esta é a série mais profunda que o Akasha Hub já produziu. Não para chorar o passado — 
+      mas para <strong>mapear o presente e arquitetar o futuro</strong>.
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     PRETO vs NEGRO — A PALAVRA
+══════════════════════════════════════════ -->
+<section style="padding: 0 0 2rem 0;">
+  <div class="secao-palavra">
+    <div class="palavra-visual reveal">
+      <div class="palavra-card negativo">
+        <span class="palavra-big">NEGRO</span>
+        <span class="denotacao">Latim: niger · sinônimo histórico de "sombrio, maligno"</span>
+        <p>
+          Importado pelo colonizador como classificador racial com carga negativa 
+          embutida. Na semântica ocidental, "negro" carregou por séculos o peso 
+          de "impuro", "inferior", "primitivo". A cor da morte, do pecado, do mau-agouro. 
+          A palavra foi usada como gaiola linguística — e muitos ainda moram dentro dela.
+        </p>
+      </div>
+
+      <div class="palavra-card positivo">
+        <span class="palavra-big">PRETO</span>
+        <span class="denotacao">Descritor cromático · cor, não carga</span>
+        <p>
+          Preto é cor. Preto é matéria. Preto é o universo antes do Big Bang — 
+          o campo de todas as possibilidades. O espaço sideral é preto. 
+          O vácuo quântico é preto. A tinta que escreve toda a história é preta. 
+          Preto não é ausência de luz — é a soma de todas as frequências visíveis.
+        </p>
+      </div>
+
+      <div class="palavra-card neutro">
+        <span class="palavra-big">AURA</span>
+        <span class="denotacao">Campo energético · independe de cor de pele</span>
+        <p>
+          A aura "escura" na tradição esotérica não tem relação com melanina. 
+          Ela reflete estados de consciência, traumas acumulados, padrões emocionais. 
+          Um ser de aura luminosa pode habitar qualquer corpo — e Jesus, 
+          segundo os estudos históricos, habitava um preto.
+        </p>
+      </div>
+    </div>
+
+    <div class="secao-texto reveal">
+      <h2>A Gaiola<br>Está na<br><em>Palavra</em></h2>
+      <p>
+        Antes de qualquer câmera de vigilância, antes de qualquer algoritmo de viés racial, 
+        antes de qualquer segregação econômica — veio a <strong>engenharia linguística</strong>.
+      </p>
+      <p>
+        Nomear é criar realidade. É o Logos hermético em ação. Quando você nomeia uma pessoa 
+        com uma palavra que carrega cinco séculos de carga semântica negativa, 
+        você instala um código no sistema operacional da identidade dela.
+      </p>
+      <p>
+        E o mais sofisticado desse sistema: ele faz a própria vítima <strong>repetir o código</strong>. 
+        Internalizar a nomenclatura. Transferi-la para os filhos. 
+        Sem precisar de nenhum carrasco visível.
+      </p>
+      <p>
+        <strong>Isso é o racismo estrutural em sua camada mais profunda:</strong> 
+        não o ato de ódio explícito, mas o loop cognitivo que se autoexecuta.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     CAMADAS DO SISTEMA
+══════════════════════════════════════════ -->
+<section class="camadas-section">
+  <div class="section-header reveal">
+    <span class="section-eyebrow">O Sistema</span>
+    <h2 class="section-title">7 Camadas do<br>Código Racista</h2>
+  </div>
+
+  <div class="camadas-grid">
+    <div class="camada reveal">
+      <div class="camada-icone">🧠</div>
+      <h3>Neurológica</h3>
+      <p>
+        Estudos de neuroimagem mostram que o cérebro categoriza rostos em 
+        milissegundos com base em raça — antes da consciência entrar em cena. 
+        O preconceito implícito opera no sistema 1 de Kahneman: rápido, automático, 
+        invisível para quem o tem. A amígdala dispara antes do córtex prefrontal 
+        conseguir "raciocinar".
+      </p>
+    </div>
+
+    <div class="camada reveal">
+      <div class="camada-icone">💬</div>
+      <h3>Linguística</h3>
+      <p>
+        A engenharia da palavra como vetor de controle. Negro/preto, 
+        mercado negro, magia negra, lista negra, ovelha negra — 
+        o preto como metáfora universal do mal na língua portuguesa. 
+        Cada uso cotidiano reinstala o código no inconsciente coletivo.
+      </p>
+    </div>
+
+    <div class="camada reveal">
+      <div class="camada-icone">💰</div>
+      <h3>Econômica</h3>
+      <p>
+        Acumulação primitiva, trabalho não-remunerado por séculos, 
+        exclusão do crédito, gentrificação de territórios, 
+        subrepresentação em conselhos e cargos executivos. 
+        O racismo econômico não precisa de intenção — 
+        ele está codificado nas estruturas de herança e acesso.
+      </p>
+    </div>
+
+    <div class="camada reveal">
+      <div class="camada-icone">🏛️</div>
+      <h3>Político-Jurídica</h3>
+      <p>
+        Encarceramento em massa, abordagem policial seletiva, 
+        acesso desigual à Justiça, sub-representação parlamentar. 
+        O sistema não precisa ser explicitamente racista — 
+        basta que suas regras reproduzam as desigualdades históricas.
+      </p>
+    </div>
+
+    <div class="camada reveal">
+      <div class="camada-icone">📱</div>
+      <h3>Tecnológica</h3>
+      <p>
+        Algoritmos treinados em dados históricos perpetuam vieses. 
+        Reconhecimento facial com 35% mais erros em rostos negros. 
+        Feeds que amplificam conteúdo de ódio racial por engajamento. 
+        IA gerativa que embranquece resultados de buscas por "profissional" ou "CEO".
+      </p>
+    </div>
+
+    <div class="camada reveal">
+      <div class="camada-icone">🌍</div>
+      <h3>Geopolítica</h3>
+      <p>
+        Cadeias globais de produção que mantêm países de maioria negra 
+        como exportadores de matéria-prima e importadores de produto acabado. 
+        Dívidas geradas pelo colonialismo sendo pagas até hoje. 
+        A pobreza do Sul Global não é natural — é arquitetada.
+      </p>
+    </div>
+
+    <div class="camada reveal">
+      <div class="camada-icone">⚛️</div>
+      <h3>Quântica / Informacional</h3>
+      <p>
+        O campo morfogenético de Rupert Sheldrake sugere que padrões de comportamento 
+        se transmitem por campos informacionais. O trauma racial tem epigenética documentada — 
+        altera a expressão de genes por gerações. O racismo não é só social: 
+        está inscrito na biologia dos que sofreram e na frequência coletiva.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     JESUS PRETO / ESPIRITUAL
+══════════════════════════════════════════ -->
+<section class="espiritual-section">
+  <div class="espiritual-inner">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">A Inversão Espiritual</span>
+      <h2 class="section-title" style="font-size: clamp(1.8rem, 3.5vw, 3rem);">
+        O ser mais elevado da história<br>
+        <em>tinha pele preta.</em>
+      </h2>
+    </div>
+
+    <div class="espiritual-grid">
+      <div class="espi-card reveal">
+        <h3>Jesus Histórico</h3>
+        <p>
+          Jesus nasceu em Belém, região habitada por populações semitas de pele 
+          escura no séc. I. Os Evangelhos o descrevem com <strong>"cabelos como lã" 
+          e "pés como bronze polido"</strong> (Apocalipse 1:14-15). 
+          O "Jesus loiro de olhos azuis" é uma invenção do Renascimento europeu — 
+          uma ferramenta de identidade cultural, não um retrato histórico.
+          <br><br>
+          A branquização de Jesus é, em si, um ato político de enorme consequência: 
+          se o Cristo é branco, então o divino é branco. 
+          E se o divino é branco, o resto é hierarquia.
+        </p>
+      </div>
+
+      <div class="espi-card reveal">
+        <h3>Aura vs. Cor de Pele</h3>
+        <p>
+          Na tradição esotérica, a "aura escura" representa <strong>baixa vibração, 
+          traumas, ódio, hostilidade acumulada</strong> — não cor de pele. 
+          São dimensões completamente distintas.
+          <br><br>
+          Um Preto Velho, entidade de altíssima luz na Umbanda, 
+          tem uma das auras mais luminosas do panteão. 
+          Um colonizador que praticava escravidão poderia ter, segundo essa mesma tradição, 
+          uma aura densamente escurecida — independentemente de sua pele ser branca.
+          <br><br>
+          <strong>Usar "aura escura" como analogia para pele preta é 
+          uma das maiores confusões espirituais do Ocidente.</strong> 
+          E ela não é acidental.
+        </p>
+      </div>
+
+      <div class="espi-card reveal">
+        <h3>O Karma Inventado</h3>
+        <p>
+          A narrativa de que "ser preto é um karma" é uma das distorções 
+          espirituais mais cruéis já engendradas. Ela usa linguagem de autoconhecimento 
+          para <strong>privatizar uma responsabilidade coletiva e histórica</strong>.
+          <br><br>
+          Karma individual existe em muitas tradições — mas ele não explica 
+          nem justifica sistemas de opressão construídos por gerações de decisões 
+          políticas, econômicas e militares. 
+          Nenhuma espiritualidade saudável usa o sofrimento do oprimido 
+          como prova de sua inferioridade moral.
+          <br><br>
+          Isso não é espiritualidade. É racismo com vocabulário místico.
+        </p>
+      </div>
+
+      <div class="espi-card reveal">
+        <h3>Preto Como Portal</h3>
+        <p>
+          Na física: o corpo negro absorve toda a radiação eletromagnética — 
+          nenhuma é refletida. Ele não perde energia; ele a <strong>integra completamente</strong>.
+          <br><br>
+          No espaço: o buraco negro não é ausência — é a maior concentração 
+          de gravidade e informação do cosmos. 
+          As culturas originárias que foram chamadas de "das trevas" 
+          carregavam astronomia, medicina, filosofia e arquitetura 
+          que a ciência ocidental está começando a redescobrir.
+          <br><br>
+          <strong>Preto não é ausência. É soma. É integração total.</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     10 EPISÓDIOS
+══════════════════════════════════════════ -->
+<section class="episodios-section">
+  <div class="section-header reveal">
+    <span class="section-eyebrow">A Série Completa</span>
+    <h2 class="section-title">10 Episódios.<br>Um Mapa Completo.</h2>
+  </div>
+
+  <div class="episodios-grid">
+
+    <!-- EP 01 -->
+    <div class="ep-card reveal">
+      <span class="ep-num">EP 01 · ABERTURA</span>
+      <h3 class="ep-title">O Racismo Não É Opinião — É Arquitetura</h3>
+      <p class="ep-conceito">
+        A diferença entre racismo como ato individual e racismo como sistema operacional 
+        instalado em linguagem, economia, lei, tecnologia e cultura. 
+        Por que combater preconceito sem entender estrutura é como apagar incêndio com colher.
+      </p>
+      <div class="ep-tags">
+        <span class="ep-tag">estrutura</span>
+        <span class="ep-tag">sistema</span>
+        <span class="ep-tag">abertura</span>
+      </div>
+      <p class="ep-frase">"O racismo que você não vê é mais perigoso do que o que você reconhece."</p>
+    </div>
+
+    <!-- EP 02 -->
+    <div class="ep-card reveal">
+      <span class="ep-num">EP 02 · LINGUAGEM</span>
+      <h3 class="ep-title">A Palavra Como Arma — Engenharia do Nome</h3>
+      <p class="ep-conceito">
+        O poder do Logos hermético usado como ferramenta de controle. 
+        Negro vs. Preto. Lista negra, mercado negro, magia negra. 
+        Como a língua instala crenças no inconsciente sem que percebamos. 
+        E como reclamar a palavra é um ato de soberania.
+      </p>
+      <div class="ep-tags">
+        <span class="ep-tag">linguística</span>
+        <span class="ep-tag">semântica</span>
+        <span class="ep-tag">identidade</span>
+      </div>
+      <p class="ep-frase">"Nomear é criar realidade. Quem controla o nome, controla o ser."</p>
+    </div>
+
+    <!-- EP 03 -->
+    <div class="ep-card reveal">
+      <span class="ep-num">EP 03 · NEUROCIÊNCIA</span>
+      <h3 class="ep-title">O Preconceito que Ocorre Antes de Você Pensar</h3>
+      <p class="ep-conceito">
+        Como o cérebro processa raça em milissegundos antes da consciência agir. 
+        Viés implícito, amígdala, sistema 1 vs. sistema 2. 
+        Por que "eu não tenho preconceito" é uma afirmação neurocientificamente ingênua — 
+        e o que fazer com isso.
+      </p>
+      <div class="ep-tags">
+        <span class="ep-tag">neurociência</span>
+        <span class="ep-tag">viés implícito</span>
+        <span class="ep-tag">cognição</span>
+      </div>
+      <p class="ep-frase">"O preconceito não mora na sua opinião. Mora no seu sistema nervoso."</p>
+    </div>
+
+    <!-- EP 04 -->
+    <div class="ep-card reveal">
+      <span class="ep-num">EP 04 · ECONOMIA</span>
+      <h3 class="ep-title">A Conta que Nunca Foi Paga — Economia do Racismo</h3>
+      <p class="ep-conceito">
+        Acumulação primitiva, escravidão como base do capitalismo ocidental, 
+        exclusão do crédito e da herança, gentrificação, brecha salarial racial. 
+        A pobreza negra no Brasil e no mundo não é coincidência — tem balanço contábil.
+      </p>
+      <div class="ep-tags">
+        <span class="ep-tag">economia</span>
+        <span class="ep-tag">reparação</span>
+        <span class="ep-tag">acumulação</span>
+      </div>
+      <p class="ep-frase">"A desigualdade racial é um saldo. E alguém ficou com o crédito."</p>
+    </div>
+
+    <!-- EP 05 -->
+    <div class="ep-card reveal">
+      <span class="ep-num">EP 05 · TECNOLOGIA</span>
+      <h3 class="ep-title">Quando o Algoritmo É Racista — IA e Viés Digital</h3>
+      <p class="ep-conceito">
+        Reconhecimento facial com margem de erro 7x maior em rostos negros. 
+        Modelos de IA que associam palavras "negativas" a rostos escuros. 
+        Feeds que amplificam ódio racial. O futuro digital que pode 
+        escalar o racismo na velocidade da luz — ou desmantelá-lo.
+      </p>
+      <div class="ep-tags">
+        <span class="ep-tag">IA</span>
+        <span class="ep-tag">algoritmo</span>
+        <span class="ep-tag">viés digital</span>
+      </div>
+      <p class="ep-frase">"Se você treina uma IA com dados racistas, cria um racista que nunca dorme."</p>
+    </div>
+
+    <!-- EP 06 -->
+    <div class="ep-card reveal">
+      <span class="ep-num">EP 06 · GEOPOLÍTICA</span>
+      <h3 class="ep-title">O Mapa do Colonialismo Ainda Está Ativo</h3>
+      <p class="ep-conceito">
+        Por que os países mais ricos do mundo são os que mais colonizaram. 
+        Dívidas impagáveis impostas a Haiti, Congo, Angola. 
+        Cadeias globais de suprimento que extraem matéria-prima de territórios negros 
+        e vendem produto acabado de volta a eles com margem. 
+        O colonialismo não acabou — virou contrato.
+      </p>
+      <div class="ep-tags">
+        <span class="ep-tag">geopolítica</span>
+        <span class="ep-tag">colonialismo</span>
+        <span class="ep-tag">dívida global</span>
+      </div>
+      <p class="ep-frase">"O colonialismo não terminou. Ele trocou as correntes por cláusulas contratuais."</p>
+    </div>
+
+    <!-- EP 07 -->
+    <div class="ep-card reveal">
+      <span class="ep-num">EP 07 · ESPIRITUALIDADE</span>
+      <h3 class="ep-title">Jesus Era Preto — E Isso Muda Tudo</h3>
+      <p class="ep-conceito">
+        A branquização de Cristo como ferramenta política. 
+        A distinção entre aura e cor de pele. 
+        O mito do karma racial como distorção espiritual a serviço da opressão. 
+        O Preto Velho, Jesus, Kali — seres de máxima luz em corpos que a narrativa ocidental 
+        pintou de outro jeito.
+      </p>
+      <div class="ep-tags">
+        <span class="ep-tag">espiritualidade</span>
+        <span class="ep-tag">Jesus histórico</span>
+        <span class="ep-tag">aura</span>
+      </div>
+      <p class="ep-frase">"A luz não tem cor de pele. Mas eles pintaram ela de branco para ter poder."</p>
+    </div>
+
+    <!-- EP 08 -->
+    <div class="ep-card reveal">
+      <span class="ep-num">EP 08 · FÍSICA QUÂNTICA</span>
+      <h3 class="ep-title">O Trauma Tem Epigenética — A Física do Racismo</h3>
+      <p class="ep-conceito">
+        Epigenética do trauma racial: como o sofrimento altera marcadores genéticos 
+        por gerações. Campo morfogenético e memória coletiva. 
+        O conceito de campo de informação e como o racismo opera 
+        como frequência instalada no inconsciente coletivo. 
+        Desinstalar requer mais que intenção — requer reprogramação de campo.
+      </p>
+      <div class="ep-tags">
+        <span class="ep-tag">epigenética</span>
+        <span class="ep-tag">trauma geracional</span>
+        <span class="ep-tag">campo morfogenético</span>
+      </div>
+      <p class="ep-frase">"O racismo não está só na sociedade. Está inscrito na biologia de quem sofreu."</p>
+    </div>
+
+    <!-- EP 09 -->
+    <div class="ep-card reveal">
+      <span class="ep-num">EP 09 · IDENTIDADE</span>
+      <h3 class="ep-title">Preto Como Potência — A Descolonização da Identidade</h3>
+      <p class="ep-conceito">
+        O que acontece quando a frequência de um povo é sistematicamente suprimida. 
+        Representatividade como física, não política identitária. 
+        Preto como código de resistência, criação, ancestralidade e futuro. 
+        Construir uma identidade que não depende da validação do sistema que tentou apagá-la.
+      </p>
+      <div class="ep-tags">
+        <span class="ep-tag">identidade</span>
+        <span class="ep-tag">potência</span>
+        <span class="ep-tag">descolonização</span>
+      </div>
+      <p class="ep-frase">"Você não precisa pedir permissão pra existir no seu tamanho real."</p>
+    </div>
+
+    <!-- EP 10 -->
+    <div class="ep-card reveal">
+      <span class="ep-num">EP 10 · MANIFESTO</span>
+      <h3 class="ep-title">O Código Quebrado — O que Vem Depois</h3>
+      <p class="ep-conceito">
+        Síntese de todas as camadas. A diferença entre denunciar e desinstalar. 
+        O que cada pessoa pode fazer no nível neurológico, econômico, tecnológico e espiritual. 
+        O racismo como sistema com código — e a consciência coletiva como o único 
+        antivírus capaz de removê-lo de verdade.
+      </p>
+      <div class="ep-tags">
+        <span class="ep-tag">manifesto</span>
+        <span class="ep-tag">síntese</span>
+        <span class="ep-tag">ação</span>
+      </div>
+      <p class="ep-frase">"Ver o código não é suficiente. Você precisa decidir não rodá-lo mais."</p>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     POSTS DE AQUECIMENTO
+══════════════════════════════════════════ -->
+<section class="posts-section">
+  <div class="section-header reveal">
+    <span class="section-eyebrow">Posts de Aquecimento</span>
+    <h2 class="section-title">Instagram · Um post<br>por dia útil</h2>
+  </div>
+
+  <div class="posts-grid">
+
+    <!-- POST 1 -->
+    <div class="post-card reveal">
+      <span class="post-ep">EP 01 · Aquecimento</span>
+      <p class="post-headline">"Racismo não é só xingamento. É o sistema operacional que roda em silêncio — no banco, no algoritmo, na lei, na língua."</p>
+      <p class="post-legenda">
+        Quando a gente fala de racismo, a maioria pensa em um ato. Em alguém gritando uma ofensa.<br><br>
+        Mas o racismo que mais mata não faz barulho. Ele está nos juros que o banco cobra diferente. No algoritmo que reconhece seu rosto com 35% mais erro. Na palavra que você usa todo dia sem perceber o peso que carrega.<br><br>
+        Esta série não é sobre raiva. É sobre arquitetura. Sobre ver o código.<br><br>
+        Episódio 01 no ar. Link na bio.
+      </p>
+      <div class="post-tiktok">
+        <span class="tiktok-label">🎬 Tags TikTok para buscar vídeo</span>
+        <p class="tags-list">#racismo estrutural explicado · #sistema racista brasil · #arquitetura do racismo · #desigualdade racial estrutura · #racismo institucional</p>
+      </div>
+    </div>
+
+    <!-- POST 2 -->
+    <div class="post-card reveal">
+      <span class="post-ep">EP 02 · Aquecimento</span>
+      <p class="post-headline">"Lista negra. Magia negra. Mercado negro. Ovelha negra. Por que o preto é sempre a metáfora do problema?"</p>
+      <p class="post-legenda">
+        Isso não é coincidência linguística. É engenharia.<br><br>
+        Quando uma língua associa sistematicamente uma cor a tudo que é ruim, perigoso ou imoral — ela instala um código no inconsciente de todo mundo que fala essa língua. Inclusive de quem tem essa cor na pele.<br><br>
+        Nomear é criar realidade. Quem construiu esse vocabulário sabia o que estava fazendo.<br><br>
+        Episódio 02: A Palavra Como Arma. Link na bio.
+      </p>
+      <div class="post-tiktok">
+        <span class="tiktok-label">🎬 Tags TikTok para buscar vídeo</span>
+        <p class="tags-list">#linguagem e racismo · #negro vs preto palavra · #semântica racial · #poder da palavra identidade · #logos e linguagem</p>
+      </div>
+    </div>
+
+    <!-- POST 3 -->
+    <div class="post-card reveal">
+      <span class="post-ep">EP 03 · Aquecimento</span>
+      <p class="post-headline">"Seu cérebro categoriza o rosto de uma pessoa em 33 milissegundos. Antes de você pensar qualquer coisa."</p>
+      <p class="post-legenda">
+        Dizer "eu não tenho preconceito" é neurocientificamente ingênuo.<br><br>
+        Não porque você seja uma pessoa má — mas porque o preconceito implícito opera no sistema automático do cérebro. Na amígdala. Na camada que age antes do raciocínio consciente entrar em cena.<br><br>
+        O racismo não mora só nas suas opiniões. Mora nos seus reflexos. E isso é mais difícil de encarar — e mais importante de entender.<br><br>
+        Episódio 03: O Preconceito que Ocorre Antes de Você Pensar. Link na bio.
+      </p>
+      <div class="post-tiktok">
+        <span class="tiktok-label">🎬 Tags TikTok para buscar vídeo</span>
+        <p class="tags-list">#viés implícito neurociência · #inconsciente preconceito · #amígdala medo · #sistema 1 sistema 2 Kahneman · #cérebro preconceito estudo</p>
+      </div>
+    </div>
+
+    <!-- POST 4 -->
+    <div class="post-card reveal">
+      <span class="post-ep">EP 04 · Aquecimento</span>
+      <p class="post-headline">"A escravidão durou 388 anos no Brasil. A abolição tem 136. A conta ainda não fechou."</p>
+      <p class="post-legenda">
+        Herança gera herança. Ausência de herança gera ausência de herança.<br><br>
+        Séculos de trabalho não remunerado, exclusão do crédito, impossibilidade de acumular terra ou propriedade — isso não se corrige em uma geração. Não se corrige com boa vontade.<br><br>
+        A desigualdade racial no Brasil não é coincidência. Tem balanço contábil. Tem autores. Tem endereço.<br><br>
+        Episódio 04: A Conta que Nunca Foi Paga. Link na bio.
+      </p>
+      <div class="post-tiktok">
+        <span class="tiktok-label">🎬 Tags TikTok para buscar vídeo</span>
+        <p class="tags-list">#desigualdade racial brasil dados · #escravidão economia · #abolição consequências · #herança racial riqueza · #reparação histórica</p>
+      </div>
+    </div>
+
+    <!-- POST 5 -->
+    <div class="post-card reveal">
+      <span class="post-ep">EP 05 · Aquecimento</span>
+      <p class="post-headline">"A IA do seu celular erra o rosto de pessoas pretas 35% mais vezes. O futuro chegou — e trouxe o preconceito junto."</p>
+      <p class="post-legenda">
+        Isso não é teoria da conspiração. É o relatório do MIT de 2018 — e em 2026 o problema ainda existe.<br><br>
+        Quando você treina uma inteligência artificial com dados históricos produzidos por uma sociedade racista, você não cria uma IA neutra. Você cria um racista que nunca dorme, nunca cansa e escala infinitamente.<br><br>
+        A tecnologia não é o problema. Mas ela pode ser a arma mais poderosa que o racismo já teve — ou o instrumento de desmantelamento mais poderoso que já existiu.<br><br>
+        Episódio 05: Quando o Algoritmo É Racista. Link na bio.
+      </p>
+      <div class="post-tiktok">
+        <span class="tiktok-label">🎬 Tags TikTok para buscar vídeo</span>
+        <p class="tags-list">#inteligência artificial racismo · #algoritmo viés racial · #reconhecimento facial erro · #IA preconceito MIT · #tecnologia e discriminação</p>
+      </div>
+    </div>
+
+    <!-- POST 6 -->
+    <div class="post-card reveal">
+      <span class="post-ep">EP 06 · Aquecimento</span>
+      <p class="post-headline">"O Haiti pagou por sua liberdade durante 122 anos. Literalmente pagou — em dinheiro, para a França."</p>
+      <p class="post-legenda">
+        Em 1825, a França ameaçou invadir o Haiti — o único país fundado por uma revolta de escravizados bem-sucedida — caso não fosse "indenizada" pela perda de suas propriedades. Propriedades humanas.<br><br>
+        O Haiti pagou. E terminou de pagar em 1947.<br><br>
+        O colonialismo não é história. É fluxo de caixa. É dívida externa. É cláusula contratual. E os mapas de hoje ainda seguem os interesses de quem os desenhou ontem.<br><br>
+        Episódio 06: O Mapa do Colonialismo Ainda Está Ativo. Link na bio.
+      </p>
+      <div class="post-tiktok">
+        <span class="tiktok-label">🎬 Tags TikTok para buscar vídeo</span>
+        <p class="tags-list">#haiti dívida França história · #colonialismo geopolítica · #neocolonialismo atual · #dívida externa africa · #imperialismo econômico</p>
+      </div>
+    </div>
+
+    <!-- POST 7 -->
+    <div class="post-card reveal">
+      <span class="post-ep">EP 07 · Aquecimento</span>
+      <p class="post-headline">"Jesus tinha cabelos como lã e pés como bronze polido. Quem te ensinou que ele era loiro?"</p>
+      <p class="post-legenda">
+        Está escrito no Apocalipse 1:14-15. Não é opinião — é o próprio texto que o Ocidente diz seguir.<br><br>
+        A branquização de Cristo não foi um erro artístico. Foi uma decisão política de enorme consequência: se o divino é branco, então o branco é divino. E essa equação funcionou como justificativa para cinco séculos de dominação.<br><br>
+        E a aura? A aura "escura" na tradição esotérica não tem nada a ver com cor de pele. Um Preto Velho tem uma das auras mais luminosas do universo espiritual. Confundir as duas coisas não é espiritualidade — é racismo com vocabulário místico.<br><br>
+        Episódio 07: Jesus Era Preto. Link na bio.
+      </p>
+      <div class="post-tiktok">
+        <span class="tiktok-label">🎬 Tags TikTok para buscar vídeo</span>
+        <p class="tags-list">#jesus histórico raça · #branquização cristo arte · #preto velho espiritualidade · #aura e cor de pele · #racismo religioso espiritual</p>
+      </div>
+    </div>
+
+    <!-- POST 8 -->
+    <div class="post-card reveal">
+      <span class="post-ep">EP 08 · Aquecimento</span>
+      <p class="post-headline">"Filhos de sobreviventes do Holocausto têm marcadores genéticos de estresse. O trauma muda seu DNA."</p>
+      <p class="post-legenda">
+        Isso é epigenética. Ciência. Documentada.<br><br>
+        Se o trauma de uma geração altera a expressão dos genes da seguinte — o que acontece depois de 15 gerações de escravidão? Quanto dessa frequência ainda circula no campo coletivo?<br><br>
+        O racismo não está só nas leis e nas palavras. Ele está inscrito na biologia. No campo morfogenético. Na frequência que se transmite entre gerações antes mesmo de qualquer história ser contada.<br><br>
+        Desinstalar isso requer mais que lei. Requer cura de campo.<br><br>
+        Episódio 08: O Trauma Tem Epigenética. Link na bio.
+      </p>
+      <div class="post-tiktok">
+        <span class="tiktok-label">🎬 Tags TikTok para buscar vídeo</span>
+        <p class="tags-list">#epigenética trauma geracional · #campo morfogenético Sheldrake · #trauma ancestral ciência · #memória celular biologia · #física quântica consciência coletiva</p>
+      </div>
+    </div>
+
+    <!-- POST 9 -->
+    <div class="post-card reveal">
+      <span class="post-ep">EP 09 · Aquecimento</span>
+      <p class="post-headline">"Preto não é a ausência de cor. É a soma de todas elas. O universo antes do Big Bang era preto."</p>
+      <p class="post-legenda">
+        O corpo negro na física absorve toda a radiação eletromagnética. Nada é refletido — tudo é integrado.<br><br>
+        O espaço sideral é preto. O vácuo quântico — de onde toda a existência emerge — é preto. Os buracos negros são a maior concentração de informação e gravidade do cosmos.<br><br>
+        As culturas originárias chamadas de "das trevas" carregavam astronomia, medicina, arquitetura e filosofia que o Ocidente ainda está aprendendo a nomear.<br><br>
+        Preto não é falta. É potência.<br><br>
+        Episódio 09: Preto Como Potência. Link na bio.
+      </p>
+      <div class="post-tiktok">
+        <span class="tiktok-label">🎬 Tags TikTok para buscar vídeo</span>
+        <p class="tags-list">#preto como potência · #corpo negro física · #buraco negro informação · #identidade negra afrocentrismo · #cultura africana ciência</p>
+      </div>
+    </div>
+
+    <!-- POST 10 -->
+    <div class="post-card reveal">
+      <span class="post-ep">EP 10 · Manifesto Final</span>
+      <p class="post-headline">"Ver o código não é suficiente. Você precisa decidir não rodá-lo mais."</p>
+      <p class="post-legenda">
+        Dez episódios. Sete camadas. Uma única conclusão:<br><br>
+        O racismo não vai acabar porque as pessoas ficarem com raiva. Nem porque uma lei foi aprovada. Ele vai acabar quando o código for desinstalado — na linguagem que você usa, nos algoritmos que você alimenta, nas crenças que você repassa, no sistema nervoso que você reprograma.<br><br>
+        Consciência sem ação é apenas filosofia de café. E ação sem consciência repete o mesmo sistema com outras roupas.<br><br>
+        Esta série foi o mapa. O que você faz com ele — é a sua decisão.<br><br>
+        Episódio final da série. Link na bio. Bem-vindos ao Akasha.
+      </p>
+      <div class="post-tiktok">
+        <span class="tiktok-label">🎬 Tags TikTok para buscar vídeo</span>
+        <p class="tags-list">#antirracismo prático · #consciência e ação · #descolonização mental · #akasha hub série · #manifesto antiracismo</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer>
+  <span class="footer-logo">Akasha Hub · 2026</span>
+  <p class="footer-text">
+    Uma série produzida com a intenção de mapear, nomear e desinstalar — 
+    porque entender o sistema é o primeiro passo para não ser operado por ele.
+  </p>
+  <span class="footer-logo" style="color: var(--terra); font-size: 0.6rem;">akashahub.com.br</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('revealed');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
