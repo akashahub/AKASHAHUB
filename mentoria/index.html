@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mentoria Akasha Hub — Posicionamento, Identidade Digital e Escala</title>
+  <title data-i18n="page-title">Mentoria Akasha Hub, Posicionamento, Identidade Digital e Escala</title>
   <meta name="description" content="Mentoria individual para construir identidade de marca autêntica, posicionamento estratégico e um negócio digital sustentável.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +14,7 @@
       --bg2: #09080e;
       --gold: #c8a04a;
       --gold-lt: #e2c278;
+      --gold-bright: #ffdf91;
       --gold-dim: rgba(200,160,74,0.18);
       --gold-border: rgba(200,160,74,0.15);
       --white: #f2ede4;
@@ -23,6 +24,7 @@
       --card-hover: rgba(200,160,74,0.035);
       --accent: #6b4fa0;
       --accent-lt: rgba(107,79,160,0.15);
+      --matrix-green: #00ff41;
     }
 
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -37,20 +39,49 @@
       line-height: 1.6;
     }
 
+    #matrix-bg {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1; opacity: 0.12; pointer-events: none;
+    }
+
+    .lang-switcher { display: flex; gap: 8px; margin-right: 20px; }
+    .lang-btn {
+      background: transparent;
+      border: 1px solid var(--gold-border);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 1rem; padding: 4px 8px; cursor: pointer;
+      transition: all 0.3s; line-height: 1; border-radius: 3px;
+    }
+    .lang-btn.active { border-color: var(--gold); background: var(--gold-dim); }
+    .lang-btn:hover { border-color: var(--gold); transform: translateY(-1px); }
+
+    .matrix-glitch {
+      animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+      color: var(--matrix-green) !important;
+      text-shadow: 0 0 5px var(--matrix-green);
+    }
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
     .ambient {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      overflow: hidden;
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
     }
     .ambient::before {
-      content: '';
-      position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
+      content: ''; position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
       width: 1100px; height: 1100px;
       background: radial-gradient(ellipse, rgba(200,160,74,0.038) 0%, rgba(107,79,160,0.025) 42%, transparent 70%);
       animation: breathe 16s ease-in-out infinite;
     }
     .ambient::after {
-      content: '';
-      position: absolute; bottom: 0; right: 0;
+      content: ''; position: absolute; bottom: 0; right: 0;
       width: 800px; height: 600px;
       background: radial-gradient(ellipse at right bottom, rgba(107,79,160,0.04) 0%, transparent 65%);
     }
@@ -102,10 +133,7 @@
     }
     .nav-cta:hover { background: var(--gold-lt); transform: translateY(-2px); }
 
-    .wrap {
-      position: relative; z-index: 1;
-      max-width: 1100px; margin: 0 auto; padding: 0 48px;
-    }
+    .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 48px; }
 
     .hero {
       min-height: 100vh;
@@ -131,10 +159,7 @@
       color: var(--white); margin-bottom: 6px;
       opacity: 0; animation: fadeUp 1s .3s ease forwards;
     }
-    .hero-title em {
-      font-style: italic; color: var(--gold-lt);
-      display: block;
-    }
+    .hero-title em { font-style: italic; color: var(--gold-lt); display: block; }
 
     .hero-sub {
       font-size: .92rem; line-height: 1.95; letter-spacing: .4px;
@@ -153,11 +178,27 @@
       display: inline-block; padding: 17px 44px;
       font-family: 'DM Mono', monospace; font-size: .62rem;
       letter-spacing: 4px; text-transform: uppercase;
-      text-decoration: none;
-      color: var(--bg); background: linear-gradient(135deg, var(--gold-lt), var(--gold));
-      transition: all .35s;
+      text-decoration: none; color: #000;
+      background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      background-size: 400% 400%;
+      animation: gold-shimmer 8s ease infinite;
+      border: none;
+      box-shadow: 0 4px 15px rgba(191, 149, 63, 0.4);
+      transition: all .35s; position: relative; overflow: hidden; font-weight: bold;
     }
-    .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(200,160,74,0.28); }
+    @keyframes gold-shimmer {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .btn-gold:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 16px 48px rgba(200,160,74,0.5); filter: brightness(1.1); }
+    .btn-gold::after {
+      content: ''; position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    }
+    .btn-gold:hover::after { opacity: 1; }
 
     .btn-outline {
       display: inline-block; padding: 17px 44px;
@@ -181,99 +222,53 @@
       transition: all .35s;
     }
     .btn-videos:hover {
-      background: rgba(200,160,74,0.09);
-      border-color: var(--gold-border);
-      color: var(--gold-lt);
-      transform: translateY(-3px);
+      background: rgba(200,160,74,0.09); border-color: var(--gold-border);
+      color: var(--gold-lt); transform: translateY(-3px);
     }
     .btn-videos-icon {
-      width: 22px; height: 22px;
-      background: var(--gold);
-      border-radius: 50%;
+      width: 22px; height: 22px; background: var(--gold); border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: transform .3s;
+      flex-shrink: 0; transition: transform .3s;
     }
     .btn-videos:hover .btn-videos-icon { transform: scale(1.15); }
     .btn-videos-icon svg { width: 8px; height: 8px; fill: var(--bg); margin-left: 1px; }
 
-    .hero-visual {
-      position: relative;
-      opacity: 0; animation: fadeIn 1.4s .4s ease forwards;
-    }
-    .hero-img {
-      width: 100%; display: block;
-      aspect-ratio: 3/4; object-fit: cover;
-      filter: brightness(.88) saturate(1.1);
-    }
+    .hero-visual { position: relative; opacity: 0; animation: fadeIn 1.4s .4s ease forwards; }
+    .hero-img { width: 100%; display: block; aspect-ratio: 3/4; object-fit: cover; filter: brightness(.88) saturate(1.1); }
     .hero-img-overlay {
       position: absolute; inset: 0; pointer-events: none;
-      box-shadow:
-        inset 0 0 80px rgba(6,5,15,.5),
-        inset 0 -60px 80px rgba(6,5,15,.65);
+      box-shadow: inset 0 0 80px rgba(6,5,15,.5), inset 0 -60px 80px rgba(6,5,15,.65);
     }
-    .corner {
-      position: absolute; width: 24px; height: 24px; pointer-events: none;
-    }
+    .corner { position: absolute; width: 24px; height: 24px; pointer-events: none; }
     .corner-tr { top: -6px; right: -6px; border-top: 1px solid var(--gold); border-right: 1px solid var(--gold); }
     .corner-bl { bottom: -6px; left: -6px; border-bottom: 1px solid var(--gold); border-left: 1px solid var(--gold); }
 
     .trust-bar {
       border-top: 1px solid rgba(200,160,74,0.07);
       border-bottom: 1px solid rgba(200,160,74,0.07);
-      padding: 22px 0;
-      background: rgba(255,255,255,0.01);
+      padding: 22px 0; background: rgba(255,255,255,0.01);
     }
     .trust-inner {
       max-width: 1100px; margin: 0 auto; padding: 0 48px;
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px;
     }
     .trust-item { display: flex; align-items: center; gap: 14px; }
-    .trust-dot {
-      width: 6px; height: 6px; background: var(--gold); border-radius: 50%; flex-shrink: 0; opacity: .7;
-    }
-    .trust-text {
-      font-family: 'DM Mono', monospace;
-      font-size: .58rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase;
-    }
+    .trust-dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; flex-shrink: 0; opacity: .7; }
+    .trust-text { font-family: 'DM Mono', monospace; font-size: .58rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
     .trust-text strong { color: var(--gold-lt); font-weight: 400; display: block; margin-bottom: 1px; }
 
     .section { padding: 100px 0 0; }
-    .eyebrow {
-      display: flex; align-items: center; gap: 14px; margin-bottom: 30px;
-    }
+    .eyebrow { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; }
     .eyebrow-line { width: 28px; height: 1px; background: var(--gold); opacity: .35; }
-    .eyebrow span {
-      font-family: 'DM Mono', monospace;
-      font-size: .55rem; letter-spacing: 5px; text-transform: uppercase;
-      color: var(--gold); opacity: .6;
-    }
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 3.8vw, 3.2rem);
-      font-weight: 500; letter-spacing: 1px;
-      color: var(--white); margin-bottom: 14px; line-height: 1.1;
-    }
+    .eyebrow span { font-family: 'DM Mono', monospace; font-size: .55rem; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); opacity: .6; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 3.8vw, 3.2rem); font-weight: 500; letter-spacing: 1px; color: var(--white); margin-bottom: 14px; line-height: 1.1; }
     .section-title em { font-style: italic; color: var(--gold-lt); }
-    .section-sub {
-      font-size: .88rem; line-height: 2; letter-spacing: .4px;
-      color: var(--muted); max-width: 600px;
-    }
-    .sec-divider {
-      width: 100%; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold-border), transparent);
-      margin: 88px 0 0;
-    }
+    .section-sub { font-size: .88rem; line-height: 2; letter-spacing: .4px; color: var(--muted); max-width: 600px; }
+    .sec-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-border), transparent); margin: 88px 0 0; }
 
-    .section-2col {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 60px; align-items: center; margin-bottom: 16px;
-    }
+    .section-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 16px; }
 
-    .pilares-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 2px; margin-top: 48px;
-    }
+    .pilares-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 48px; }
     .pilar-card {
       padding: 38px 30px;
       background: var(--card); border: 1px solid rgba(255,255,255,0.04);
@@ -287,748 +282,257 @@
     }
     .pilar-card:hover { background: var(--card-hover); border-color: var(--gold-border); transform: translateY(-7px); box-shadow: 0 20px 50px rgba(200,160,74,0.07); }
     .pilar-card:hover::after { transform: scaleX(1); }
-
-    .pilar-n {
-      font-family: 'DM Mono', monospace;
-      font-size: .5rem; letter-spacing: 4px; color: var(--gold); opacity: .35;
-      margin-bottom: 18px; display: block;
-    }
+    .pilar-n { font-family: 'DM Mono', monospace; font-size: .5rem; letter-spacing: 4px; color: var(--gold); opacity: .35; margin-bottom: 18px; display: block; }
     .pilar-icon { font-size: 1.4rem; margin-bottom: 14px; display: block; }
-    .pilar-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem; font-weight: 400; letter-spacing: 1px;
-      color: var(--white); margin-bottom: 8px;
-    }
-    .pilar-sub {
-      font-family: 'DM Mono', monospace;
-      font-size: .5rem; letter-spacing: 3px; text-transform: uppercase;
-      color: var(--gold); opacity: .45; margin-bottom: 16px; display: block;
-    }
+    .pilar-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 400; letter-spacing: 1px; color: var(--white); margin-bottom: 8px; }
+    .pilar-sub { font-family: 'DM Mono', monospace; font-size: .5rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .45; margin-bottom: 16px; display: block; }
     .pilar-desc { font-size: .84rem; line-height: 1.9; color: var(--muted); letter-spacing: .3px; }
 
-    .process-split {
-      display: grid; grid-template-columns: 1.1fr 1fr;
-      gap: 2px; margin-top: 52px;
-    }
+    .process-split { display: grid; grid-template-columns: 1.1fr 1fr; gap: 2px; margin-top: 52px; }
     .camadas-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
-    .camada-card {
-      padding: 36px 28px;
-      background: var(--card); border: 1px solid rgba(255,255,255,0.04);
-      position: relative; transition: all .4s;
-    }
-    .camada-card.featured {
-      grid-column: span 2;
-      background: linear-gradient(108deg, rgba(200,160,74,0.05) 0%, rgba(107,79,160,0.05) 100%);
-      border-color: rgba(200,160,74,0.14);
-    }
+    .camada-card { padding: 36px 28px; background: var(--card); border: 1px solid rgba(255,255,255,0.04); position: relative; transition: all .4s; }
+    .camada-card.featured { grid-column: span 2; background: linear-gradient(108deg, rgba(200,160,74,0.05) 0%, rgba(107,79,160,0.05) 100%); border-color: rgba(200,160,74,0.14); }
     .camada-card:hover { background: var(--card-hover); border-color: var(--gold-border); transform: translateY(-5px); }
-    .camada-n {
-      font-family: 'DM Mono', monospace;
-      font-size: .5rem; letter-spacing: 4px; text-transform: uppercase;
-      color: var(--gold); opacity: .4; margin-bottom: 12px; display: block;
-    }
-    .camada-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.25rem; font-weight: 400; letter-spacing: 1px;
-      color: var(--white); margin-bottom: 10px;
-    }
+    .camada-n { font-family: 'DM Mono', monospace; font-size: .5rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); opacity: .4; margin-bottom: 12px; display: block; }
+    .camada-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 400; letter-spacing: 1px; color: var(--white); margin-bottom: 10px; }
     .camada-title em { font-style: italic; color: var(--gold-lt); }
     .camada-desc { font-size: .84rem; line-height: 1.9; color: var(--muted); letter-spacing: .3px; margin-bottom: 16px; }
     .camada-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-    .camada-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: .5rem; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--gold); background: rgba(200,160,74,0.07); padding: 4px 11px;
-    }
+    .camada-tag { font-family: 'DM Mono', monospace; font-size: .5rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); background: rgba(200,160,74,0.07); padding: 4px 11px; }
 
     .proc-img-side { position: relative; overflow: hidden; min-height: 500px; }
-    .proc-img-side img {
-      width: 100%; height: 100%; object-fit: cover;
-      filter: brightness(.78) saturate(1.1);
-    }
-    .proc-img-side::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(6,5,15,.65) 0%, transparent 50%);
-      box-shadow: inset 0 0 80px rgba(6,5,15,.4), inset 0 -55px 70px rgba(6,5,15,.5);
-    }
+    .proc-img-side img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.78) saturate(1.1); }
+    .proc-img-side::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6,5,15,.65) 0%, transparent 50%); box-shadow: inset 0 0 80px rgba(6,5,15,.4), inset 0 -55px 70px rgba(6,5,15,.5); }
 
-    .method-block {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 0; margin: 92px 0;
-      border: 1px solid rgba(200,160,74,0.12);
-    }
+    .method-block { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 92px 0; border: 1px solid rgba(200,160,74,0.12); }
     .method-img { position: relative; overflow: hidden; min-height: 460px; }
-    .method-img img {
-      width: 100%; height: 100%; object-fit: cover;
-      filter: brightness(.78) saturate(1.1);
-      transition: transform 1s;
-    }
+    .method-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.78) saturate(1.1); transition: transform 1s; }
     .method-block:hover .method-img img { transform: scale(1.04); }
-    .method-img::after {
-      content: ''; position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse at 30% 50%, transparent 35%, rgba(6,5,15,.5) 100%),
-        linear-gradient(90deg, transparent 45%, rgba(6,5,15,.88) 100%);
-    }
-    .method-copy {
-      padding: 58px 54px;
-      background: linear-gradient(135deg, rgba(200,160,74,0.04) 0%, rgba(107,79,160,0.04) 100%);
-      display: flex; flex-direction: column; justify-content: center;
-    }
-    .method-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: .55rem; letter-spacing: 5px; text-transform: uppercase;
-      color: var(--gold); opacity: .55; margin-bottom: 16px; display: block;
-    }
-    .method-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.1rem; font-weight: 400; letter-spacing: 1px;
-      color: var(--white); margin-bottom: 20px; line-height: 1.15;
-    }
+    .method-img::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, transparent 35%, rgba(6,5,15,.5) 100%), linear-gradient(90deg, transparent 45%, rgba(6,5,15,.88) 100%); }
+    .method-copy { padding: 58px 54px; background: linear-gradient(135deg, rgba(200,160,74,0.04) 0%, rgba(107,79,160,0.04) 100%); display: flex; flex-direction: column; justify-content: center; }
+    .method-eyebrow { font-family: 'DM Mono', monospace; font-size: .55rem; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); opacity: .55; margin-bottom: 16px; display: block; }
+    .method-title { font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 400; letter-spacing: 1px; color: var(--white); margin-bottom: 20px; line-height: 1.15; }
     .method-title em { font-style: italic; color: var(--gold-lt); }
     .method-steps { display: flex; flex-direction: column; margin-bottom: 34px; }
-    .mstep {
-      display: grid; grid-template-columns: 48px 1fr;
-      gap: 16px; align-items: flex-start;
-      padding: 17px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
+    .mstep { display: grid; grid-template-columns: 48px 1fr; gap: 16px; align-items: flex-start; padding: 17px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .mstep:last-child { border-bottom: none; }
-    .mstep-n {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem; font-weight: 400; color: var(--gold); opacity: .45; line-height: 1;
-    }
-    .mstep-title {
-      font-family: 'Playfair Display', serif;
-      font-size: .98rem; font-weight: 400; letter-spacing: 1px;
-      color: var(--white); margin-bottom: 5px;
-    }
+    .mstep-n { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 400; color: var(--gold); opacity: .45; line-height: 1; }
+    .mstep-title { font-family: 'Playfair Display', serif; font-size: .98rem; font-weight: 400; letter-spacing: 1px; color: var(--white); margin-bottom: 5px; }
     .mstep-desc { font-size: .8rem; line-height: 1.85; color: var(--muted); letter-spacing: .3px; }
 
-    .mentor-split {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 2px; margin-top: 52px;
-    }
+    .mentor-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 52px; }
     .mentor-img-side { position: relative; overflow: hidden; min-height: 540px; }
-    .mentor-img-side img {
-      width: 100%; height: 100%; object-fit: cover;
-      filter: brightness(.82) saturate(1.1);
-      transition: transform .9s ease;
-    }
+    .mentor-img-side img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.82) saturate(1.1); transition: transform .9s ease; }
     .mentor-img-side:hover img { transform: scale(1.03); }
-    .mentor-vignette {
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(6,5,15,.2) 0%, transparent 55%);
-      box-shadow: inset 0 0 90px rgba(6,5,15,.45), inset -70px 0 90px rgba(6,5,15,.4);
-    }
-    .mentor-img-tag {
-      position: absolute; bottom: 24px; left: 24px;
-      padding: 12px 18px;
-      background: rgba(6,5,15,.85); border: 1px solid var(--gold-border);
-      backdrop-filter: blur(12px);
-    }
-    .mentor-img-tag-label {
-      font-family: 'DM Mono', monospace;
-      font-size: .48rem; letter-spacing: 3px; text-transform: uppercase;
-      color: var(--gold); opacity: .7; margin-bottom: 4px;
-    }
-    .mentor-img-tag-val {
-      font-family: 'Playfair Display', serif;
-      font-size: .9rem; font-weight: 400; letter-spacing: 1px; color: var(--white);
-    }
-    .mentor-copy {
-      padding: 56px 50px;
-      background: var(--card); border: 1px solid rgba(255,255,255,0.04);
-      display: flex; flex-direction: column; justify-content: center;
-    }
-    .mentor-role {
-      font-family: 'DM Mono', monospace;
-      font-size: .52rem; letter-spacing: 4px; text-transform: uppercase;
-      color: var(--gold); opacity: .6; margin-bottom: 18px;
-    }
-    .mentor-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.4rem; font-weight: 400; letter-spacing: 1px;
-      color: var(--white); line-height: 1.1; margin-bottom: 6px;
-    }
+    .mentor-vignette { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(6,5,15,.2) 0%, transparent 55%); box-shadow: inset 0 0 90px rgba(6,5,15,.45), inset -70px 0 90px rgba(6,5,15,.4); }
+    .mentor-img-tag { position: absolute; bottom: 24px; left: 24px; padding: 12px 18px; background: rgba(6,5,15,.85); border: 1px solid var(--gold-border); backdrop-filter: blur(12px); }
+    .mentor-img-tag-label { font-family: 'DM Mono', monospace; font-size: .48rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .7; margin-bottom: 4px; }
+    .mentor-img-tag-val { font-family: 'Playfair Display', serif; font-size: .9rem; font-weight: 400; letter-spacing: 1px; color: var(--white); }
+    .mentor-copy { padding: 56px 50px; background: var(--card); border: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column; justify-content: center; }
+    .mentor-role { font-family: 'DM Mono', monospace; font-size: .52rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); opacity: .6; margin-bottom: 18px; }
+    .mentor-name { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 400; letter-spacing: 1px; color: var(--white); line-height: 1.1; margin-bottom: 6px; }
     .mentor-name em { font-style: italic; color: var(--gold-lt); }
-    .mentor-bio {
-      font-size: .86rem; letter-spacing: .4px; line-height: 2;
-      color: var(--muted); margin: 20px 0 32px;
-    }
+    .mentor-bio { font-size: .86rem; letter-spacing: .4px; line-height: 2; color: var(--muted); margin: 20px 0 32px; }
     .mentor-specs { display: flex; flex-direction: column; gap: 10px; }
-    .mentor-spec {
-      display: flex; align-items: flex-start; gap: 16px;
-      padding: 15px 18px;
-      border: 1px solid rgba(255,255,255,0.04); transition: border-color .3s;
-    }
+    .mentor-spec { display: flex; align-items: flex-start; gap: 16px; padding: 15px 18px; border: 1px solid rgba(255,255,255,0.04); transition: border-color .3s; }
     .mentor-spec:hover { border-color: var(--gold-border); }
     .mentor-spec-ico { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
     .mentor-spec-body { font-size: .78rem; letter-spacing: .4px; line-height: 1.75; color: var(--muted); }
     .mentor-spec-body strong { color: var(--gold-lt); font-weight: 400; display: block; margin-bottom: 3px; font-size: .8rem; }
 
-    .paraquem-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 2px; margin-top: 46px;
-    }
-    .paraquem-card {
-      padding: 30px 24px;
-      background: var(--card); border: 1px solid rgba(255,255,255,0.04);
-      position: relative; overflow: hidden; transition: all .4s;
-    }
-    .paraquem-card::after {
-      content: ''; position: absolute; bottom: 0; left: 0;
-      width: 100%; height: 2px;
-      background: linear-gradient(90deg, var(--gold), transparent);
-      transform: scaleX(0); transform-origin: left; transition: transform .4s;
-    }
+    .paraquem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 46px; }
+    .paraquem-card { padding: 30px 24px; background: var(--card); border: 1px solid rgba(255,255,255,0.04); position: relative; overflow: hidden; transition: all .4s; }
+    .paraquem-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s; }
     .paraquem-card:hover { background: var(--card-hover); border-color: var(--gold-border); transform: translateY(-5px); }
     .paraquem-card:hover::after { transform: scaleX(1); }
     .pq-icon { font-size: 1.1rem; margin-bottom: 12px; display: block; }
-    .pq-label {
-      font-family: 'DM Mono', monospace;
-      font-size: .55rem; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--gold); opacity: .7; margin-bottom: 10px; display: block;
-    }
+    .pq-label { font-family: 'DM Mono', monospace; font-size: .55rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); opacity: .7; margin-bottom: 10px; display: block; }
     .pq-desc { font-size: .84rem; line-height: 1.85; color: var(--muted); letter-spacing: .3px; }
 
-    .identidade-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr);
-      gap: 2px; margin-top: 46px;
-    }
-    .id-cell {
-      padding: 32px 30px;
-      background: var(--card); border: 1px solid rgba(255,255,255,0.04);
-      transition: all .4s;
-    }
+    .identidade-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; margin-top: 46px; }
+    .id-cell { padding: 32px 30px; background: var(--card); border: 1px solid rgba(255,255,255,0.04); transition: all .4s; }
     .id-cell:hover { background: var(--card-hover); border-color: var(--gold-border); transform: translateY(-4px); }
-    .id-field {
-      font-family: 'DM Mono', monospace;
-      font-size: .52rem; letter-spacing: 4px; text-transform: uppercase;
-      color: var(--gold); opacity: .55; display: block; margin-bottom: 10px;
-    }
-    .id-question {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem; font-weight: 400; letter-spacing: .5px;
-      color: var(--white); line-height: 1.6;
-    }
+    .id-field { font-family: 'DM Mono', monospace; font-size: .52rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); opacity: .55; display: block; margin-bottom: 10px; }
+    .id-question { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 400; letter-spacing: .5px; color: var(--white); line-height: 1.6; }
 
     .fases-wrap { display: flex; flex-direction: column; gap: 2px; margin-top: 46px; }
     .fase-row { display: grid; grid-template-columns: 175px 1fr; gap: 2px; }
-    .fase-label {
-      padding: 24px 16px;
-      background: rgba(200,160,74,0.05);
-      border: 1px solid rgba(200,160,74,0.1);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      transition: background .3s;
-    }
+    .fase-label { padding: 24px 16px; background: rgba(200,160,74,0.05); border: 1px solid rgba(200,160,74,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background .3s; }
     .fase-row:hover .fase-label { background: rgba(200,160,74,0.09); }
     .fase-n { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 400; color: var(--gold); line-height: 1; }
-    .fase-name {
-      font-family: 'DM Mono', monospace;
-      font-size: .5rem; letter-spacing: 3px; text-transform: uppercase;
-      color: var(--gold); opacity: .5; margin-top: 5px;
-    }
-    .fase-content {
-      padding: 26px 30px;
-      background: var(--card); border: 1px solid rgba(255,255,255,0.04);
-    }
-    .fase-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.08rem; font-weight: 400; letter-spacing: 1px;
-      color: var(--white); margin-bottom: 10px;
-    }
+    .fase-name { font-family: 'DM Mono', monospace; font-size: .5rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .5; margin-top: 5px; }
+    .fase-content { padding: 26px 30px; background: var(--card); border: 1px solid rgba(255,255,255,0.04); }
+    .fase-title { font-family: 'Playfair Display', serif; font-size: 1.08rem; font-weight: 400; letter-spacing: 1px; color: var(--white); margin-bottom: 10px; }
     .fase-desc { font-size: .82rem; letter-spacing: .4px; line-height: 1.9; color: var(--muted); }
 
+    /* ════ PLANOS, ESTILOS BASE ════ */
     .planos-section { padding: 100px 0 120px; }
-    .planos-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 2px; margin-bottom: 2px;
-    }
-    .plano-card {
-      padding: 46px 34px;
-      background: var(--card); border: 1px solid rgba(255,255,255,0.06);
-      position: relative; overflow: hidden;
-      transition: all .45s; display: flex; flex-direction: column;
-    }
-    .plano-card::before {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 100%; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      transform: scaleX(0); transition: transform .45s;
-    }
+    .planos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 2px; }
+    .plano-card { padding: 46px 34px; background: var(--card); border: 1px solid rgba(255,255,255,0.06); position: relative; overflow: hidden; transition: all .45s; display: flex; flex-direction: column; }
+    .plano-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); transform: scaleX(0); transition: transform .45s; }
     .plano-card:hover { background: var(--card-hover); border-color: var(--gold-border); transform: translateY(-9px); box-shadow: 0 24px 56px rgba(200,160,74,0.09); }
     .plano-card:hover::before { transform: scaleX(1); }
-
-    .plano-level {
-      font-family: 'DM Mono', monospace;
-      font-size: .5rem; letter-spacing: 4px; text-transform: uppercase;
-      color: var(--gold); opacity: .45; margin-bottom: 16px; display: block;
-    }
-    .plano-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem; font-weight: 400; letter-spacing: 1px;
-      color: var(--white); margin-bottom: 6px;
-    }
+    .plano-level { font-family: 'DM Mono', monospace; font-size: .5rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); opacity: .45; margin-bottom: 16px; display: block; }
+    .plano-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 400; letter-spacing: 1px; color: var(--white); margin-bottom: 6px; }
     .plano-name em { font-style: italic; color: var(--gold-lt); }
     .plano-price { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 400; color: var(--gold-lt); line-height: 1; margin: 24px 0 0; }
-    .plano-period {
-      font-family: 'DM Mono', monospace;
-      font-size: .52rem; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--muted); margin-top: 7px; display: block; margin-bottom: 22px;
-    }
+    .plano-period { font-family: 'DM Mono', monospace; font-size: .52rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 7px; display: block; margin-bottom: 22px; }
     .plano-div { width: 38px; height: 1px; background: var(--gold-border); margin: 0 0 22px; }
     .plano-desc { font-size: .82rem; letter-spacing: .4px; line-height: 1.9; color: var(--muted); margin-bottom: 22px; flex: 1; }
     .plano-items { list-style: none; padding: 0; margin-bottom: 30px; }
-    .plano-items li {
-      font-size: .8rem; letter-spacing: .4px; line-height: 1.75;
-      color: var(--muted); padding: 8px 0 8px 22px; position: relative;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-    }
+    .plano-items li { font-size: .8rem; letter-spacing: .4px; line-height: 1.75; color: var(--muted); padding: 8px 0 8px 22px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .plano-items li::before { content: '—'; position: absolute; left: 0; color: var(--gold); opacity: .5; font-size: .7rem; top: 9px; }
-    .plano-cta {
-      display: block; text-align: center; padding: 14px 28px;
-      font-family: 'DM Mono', monospace; font-size: .56rem; letter-spacing: 4px;
-      text-transform: uppercase; text-decoration: none;
-      color: var(--gold); border: 1px solid var(--gold-border);
-      transition: all .3s; margin-top: auto;
-    }
+    .plano-cta { display: block; text-align: center; padding: 14px 28px; font-family: 'DM Mono', monospace; font-size: .56rem; letter-spacing: 4px; text-transform: uppercase; text-decoration: none; color: var(--gold); border: 1px solid var(--gold-border); transition: all .3s; margin-top: auto; }
     .plano-cta:hover { background: rgba(200,160,74,0.09); border-color: var(--gold); transform: translateY(-2px); }
 
     .planos-ht { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 2px; }
-    .ht-card {
-      padding: 54px 48px; position: relative; overflow: hidden;
-      transition: all .5s; display: flex; flex-direction: column;
-    }
-    .ht-card:nth-child(1) {
-      background: linear-gradient(138deg, rgba(200,160,74,0.06) 0%, rgba(107,79,160,0.06) 100%);
-      border: 1px solid rgba(200,160,74,0.2);
-    }
-    .ht-card:nth-child(2) {
-      background: linear-gradient(138deg, rgba(107,79,160,0.09) 0%, rgba(200,160,74,0.06) 100%);
-      border: 1px solid rgba(155,111,212,0.22);
-    }
+    .ht-card { padding: 54px 48px; position: relative; overflow: hidden; transition: all .5s; display: flex; flex-direction: column; }
+    .ht-card:nth-child(1) { background: linear-gradient(138deg, rgba(200,160,74,0.06) 0%, rgba(107,79,160,0.06) 100%); border: 1px solid rgba(200,160,74,0.2); }
+    .ht-card:nth-child(2) { background: linear-gradient(138deg, rgba(107,79,160,0.09) 0%, rgba(200,160,74,0.06) 100%); border: 1px solid rgba(155,111,212,0.22); }
     .ht-card:hover { transform: translateY(-10px); box-shadow: 0 34px 72px rgba(200,160,74,0.1); }
-
-    .ht-tier {
-      font-family: 'DM Mono', monospace;
-      font-size: .52rem; letter-spacing: 5px; text-transform: uppercase;
-      color: #a87ee0; margin-bottom: 14px; display: block;
-    }
-    .ht-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.9rem; font-weight: 400; letter-spacing: 1px;
-      color: var(--white); margin-bottom: 6px; line-height: 1.2;
-    }
+    .ht-tier { font-family: 'DM Mono', monospace; font-size: .52rem; letter-spacing: 5px; text-transform: uppercase; color: #a87ee0; margin-bottom: 14px; display: block; }
+    .ht-name { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 400; letter-spacing: 1px; color: var(--white); margin-bottom: 6px; line-height: 1.2; }
     .ht-name em { font-style: italic; color: var(--gold-lt); }
     .ht-price { font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 400; color: var(--gold-lt); line-height: 1; margin: 24px 0 7px; }
-    .ht-period {
-      font-family: 'DM Mono', monospace;
-      font-size: .52rem; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--muted); display: block; margin-bottom: 26px;
-    }
-    .ht-positioning {
-      font-size: .86rem; letter-spacing: .4px; line-height: 2;
-      color: rgba(242,237,228,0.58); font-style: italic;
-      padding: 18px 22px; border-left: 2px solid var(--gold-border);
-      background: rgba(200,160,74,0.035); margin-bottom: 28px;
-    }
+    .ht-period { font-family: 'DM Mono', monospace; font-size: .52rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 26px; }
+    .ht-positioning { font-size: .86rem; letter-spacing: .4px; line-height: 2; color: rgba(242,237,228,0.58); font-style: italic; padding: 18px 22px; border-left: 2px solid var(--gold-border); background: rgba(200,160,74,0.035); margin-bottom: 28px; }
     .ht-div { width: 48px; height: 1px; background: var(--gold-border); margin: 0 0 24px; }
     .ht-items { list-style: none; padding: 0; margin-bottom: 36px; flex: 1; }
-    .ht-items li {
-      font-size: .82rem; letter-spacing: .4px; line-height: 1.85;
-      color: var(--muted); padding: 10px 0 10px 24px; position: relative;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-    }
+    .ht-items li { font-size: .82rem; letter-spacing: .4px; line-height: 1.85; color: var(--muted); padding: 10px 0 10px 24px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .ht-items li::before { content: '—'; position: absolute; left: 0; color: var(--gold); opacity: .5; font-size: .7rem; top: 12px; }
-    .ht-cta {
-      display: block; text-align: center; padding: 16px 30px;
-      font-family: 'DM Mono', monospace; font-size: .58rem; letter-spacing: 4px;
-      text-transform: uppercase; text-decoration: none;
-      color: var(--bg); background: linear-gradient(135deg, var(--gold-lt), var(--gold));
-      transition: all .3s; margin-top: auto;
-    }
+    .ht-cta { display: block; text-align: center; padding: 16px 30px; font-family: 'DM Mono', monospace; font-size: .58rem; letter-spacing: 4px; text-transform: uppercase; text-decoration: none; color: var(--bg); background: linear-gradient(135deg, var(--gold-lt), var(--gold)); transition: all .3s; margin-top: auto; }
     .ht-cta:hover { transform: translateY(-3px); box-shadow: 0 16px 44px rgba(200,160,74,0.3); }
 
-    .aviso-selecao {
-      border: 1px solid rgba(200,160,74,0.12);
-      padding: 36px 44px;
-      margin-top: 40px;
-      background: rgba(200,160,74,0.02);
-      text-align: center;
-    }
-    .aviso-selecao p {
-      font-size: .86rem; line-height: 1.9; color: var(--muted); letter-spacing: .4px;
-    }
+    .aviso-selecao { border: 1px solid rgba(200,160,74,0.12); padding: 36px 44px; margin-top: 40px; background: rgba(200,160,74,0.02); text-align: center; }
+    .aviso-selecao p { font-size: .86rem; line-height: 1.9; color: var(--muted); letter-spacing: .4px; }
     .aviso-selecao strong { color: var(--white); font-weight: 400; }
 
-    .garantia {
-      display: flex; align-items: flex-start; gap: 32px;
-      padding: 40px 44px;
-      border: 1px solid rgba(200,160,74,0.14);
-      background: rgba(200,160,74,0.02);
-      margin-top: 80px;
-    }
-    .garantia-symbol {
-      font-family: 'DM Mono', monospace;
-      font-size: .52rem; letter-spacing: 3px; text-transform: uppercase;
-      color: var(--gold); opacity: .6;
-      writing-mode: vertical-rl; transform: rotate(180deg);
-      flex-shrink: 0; padding: 4px 0;
-    }
-    .garantia-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.45rem; font-weight: 400; letter-spacing: 1px;
-      color: var(--white); margin-bottom: 10px; line-height: 1.3;
-    }
+    .garantia { display: flex; align-items: flex-start; gap: 32px; padding: 40px 44px; border: 1px solid rgba(200,160,74,0.14); background: rgba(200,160,74,0.02); margin-top: 80px; }
+    .garantia-symbol { font-family: 'DM Mono', monospace; font-size: .52rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .6; writing-mode: vertical-rl; transform: rotate(180deg); flex-shrink: 0; padding: 4px 0; }
+    .garantia-title { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 400; letter-spacing: 1px; color: var(--white); margin-bottom: 10px; line-height: 1.3; }
     .garantia-title em { font-style: italic; color: var(--gold-lt); }
     .garantia-desc { font-size: .86rem; line-height: 1.95; color: var(--muted); letter-spacing: .4px; }
 
-    /* CTA FINAL WHATSAPP */
-    .cta-final {
-      padding: 100px 0;
-      text-align: center;
-    }
-    .cta-final-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: .55rem; letter-spacing: 5px; text-transform: uppercase;
-      color: var(--gold); opacity: .55; display: block; margin-bottom: 20px;
-    }
-    .cta-final-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 500; letter-spacing: 1px;
-      color: var(--white); line-height: 1.1; margin-bottom: 16px;
-    }
+    .cta-final { padding: 100px 0; text-align: center; }
+    .cta-final-eyebrow { font-family: 'DM Mono', monospace; font-size: .55rem; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); opacity: .55; display: block; margin-bottom: 20px; }
+    .cta-final-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 500; letter-spacing: 1px; color: var(--white); line-height: 1.1; margin-bottom: 16px; }
     .cta-final-title em { font-style: italic; color: var(--gold-lt); }
-    .cta-final-sub {
-      font-size: .9rem; line-height: 1.9; color: var(--muted);
-      max-width: 520px; margin: 0 auto 44px;
-    }
-    .btn-wpp {
-      display: inline-flex; align-items: center; gap: 12px;
-      padding: 20px 52px;
-      font-family: 'DM Mono', monospace; font-size: .66rem;
-      letter-spacing: 4px; text-transform: uppercase;
-      text-decoration: none;
-      color: var(--bg);
-      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
-      transition: all .35s;
-    }
+    .cta-final-sub { font-size: .9rem; line-height: 1.9; color: var(--muted); max-width: 520px; margin: 0 auto 44px; }
+    .btn-wpp { display: inline-flex; align-items: center; gap: 12px; padding: 20px 52px; font-family: 'DM Mono', monospace; font-size: .66rem; letter-spacing: 4px; text-transform: uppercase; text-decoration: none; color: var(--bg); background: linear-gradient(135deg, var(--gold-lt), var(--gold)); transition: all .35s; }
     .btn-wpp:hover { transform: translateY(-3px); box-shadow: 0 20px 54px rgba(200,160,74,0.3); }
     .btn-wpp svg { width: 18px; height: 18px; fill: var(--bg); flex-shrink: 0; }
 
-    footer {
-      border-top: 1px solid rgba(200,160,74,0.07);
-      padding: 48px;
-      text-align: center;
-      margin-top: 0;
-    }
-    footer p {
-      font-family: 'DM Mono', monospace;
-      font-size: .55rem; letter-spacing: 3px; color: var(--muted);
-      text-transform: uppercase; margin-bottom: 10px;
-    }
+    footer { border-top: 1px solid rgba(200,160,74,0.07); padding: 48px; text-align: center; margin-top: 0; }
+    footer p { font-family: 'DM Mono', monospace; font-size: .55rem; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
     footer a { color: var(--gold); text-decoration: none; transition: color .3s; }
     footer a:hover { color: var(--gold-lt); }
-    footer .footer-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem; font-weight: 400; letter-spacing: 4px;
-      color: var(--gold); margin-bottom: 28px; display: block;
-    }
+    footer .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 400; letter-spacing: 4px; color: var(--gold); margin-bottom: 28px; display: block; }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(22px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+
+    .lang-fade { transition: opacity 0.25s ease; }
+    .lang-fade.fading { opacity: 0; }
+
+    /* ══ PLANO DESPERTAR ══ */
+    .despertar-wrap { margin-bottom: 40px; }
+    .despertar-card {
+      display: grid; grid-template-columns: 1fr 1.6fr 1fr; gap: 0;
+      border: 1px solid rgba(200,160,74,0.22);
+      background: linear-gradient(108deg, rgba(200,160,74,0.04) 0%, rgba(107,79,160,0.04) 100%);
+      position: relative; overflow: hidden; transition: all .45s;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; } to { opacity: 1; }
+    .despertar-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--gold-lt), transparent);
     }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(28px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .despertar-card:hover { border-color: rgba(200,160,74,0.42); box-shadow: 0 24px 64px rgba(200,160,74,0.1); transform: translateY(-5px); }
+    .despertar-left { padding: 42px 36px; border-right: 1px solid rgba(200,160,74,0.1); display: flex; flex-direction: column; justify-content: center; }
+    .despertar-center { padding: 42px 40px; border-right: 1px solid rgba(200,160,74,0.1); }
+    .despertar-right { padding: 42px 36px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .despertar-badge { font-family: 'DM Mono', monospace; font-size: .48rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); opacity: .55; display: block; margin-bottom: 14px; }
+    .despertar-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 400; letter-spacing: 1px; color: var(--white); line-height: 1.1; margin-bottom: 8px; }
+    .despertar-title em { font-style: italic; color: var(--gold-lt); }
+    .despertar-tagline { font-size: .82rem; line-height: 1.85; color: var(--muted); letter-spacing: .3px; margin-top: 12px; }
+    .despertar-items { list-style: none; padding: 0; margin: 0; }
+    .despertar-items li { font-size: .8rem; letter-spacing: .3px; line-height: 1.75; color: var(--muted); padding: 7px 0 7px 20px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .despertar-items li::before { content: '—'; position: absolute; left: 0; color: var(--gold); opacity: .5; font-size: .7rem; top: 8px; }
+    .despertar-price { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 400; color: var(--gold-lt); line-height: 1; margin-bottom: 6px; }
+    .despertar-period { font-family: 'DM Mono', monospace; font-size: .5rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 24px; }
+    .despertar-ideal { font-size: .76rem; line-height: 1.8; color: var(--muted); font-style: italic; padding: 14px 16px; border: 1px solid var(--gold-border); background: rgba(200,160,74,0.03); margin-bottom: 22px; text-align: left; }
+
+    /* Bloco "Ideal para" nos planos regulares */
+    .plano-card .plano-ideal { font-size: .76rem; line-height: 1.8; color: rgba(242,237,228,0.5); font-style: italic; padding: 14px 16px; border-left: 2px solid var(--gold-border); background: rgba(200,160,74,0.025); margin-bottom: 18px; }
+
+    /* Itens em destaque nas listas */
+    .plano-items li.highlight::before, .ht-items li.highlight::before { color: var(--gold-lt); opacity: 1; content: '◈'; font-size: .55rem; top: 10px; }
+    .plano-items li.highlight, .ht-items li.highlight { color: rgba(242,237,228,0.82); }
+
+    /* Separadores de categoria nas listas */
+    .list-category { font-family: 'DM Mono', monospace; font-size: .46rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .4; padding: 12px 0 4px 0; display: block; border-bottom: none !important; }
+    .list-category::before { display: none !important; }
+    .despertar-items li.list-category::before { display: none !important; }
 
     /* ══ MODAL ══ */
-    .vm-overlay {
-      position: fixed; inset: 0; z-index: 9000;
-      background: rgba(4,3,10,0.92);
-      backdrop-filter: blur(18px);
-      display: flex; align-items: center; justify-content: center;
-      padding: 24px;
-      opacity: 0; pointer-events: none;
-      transition: opacity .4s ease;
-    }
+    .vm-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(4,3,10,0.92); backdrop-filter: blur(18px); display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
     .vm-overlay.is-open { opacity: 1; pointer-events: all; }
-
-    .vm-panel {
-      position: relative;
-      width: 100%; max-width: 860px;
-      background: #08070f;
-      border: 1px solid rgba(200,160,74,0.18);
-      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 80px rgba(200,160,74,0.04);
-      transform: translateY(28px) scale(0.97);
-      transition: transform .45s cubic-bezier(0.22,1,0.36,1);
-      overflow: hidden;
-    }
+    .vm-panel { position: relative; width: 100%; max-width: 860px; background: #08070f; border: 1px solid rgba(200,160,74,0.18); box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 80px rgba(200,160,74,0.04); transform: translateY(28px) scale(0.97); transition: transform .45s cubic-bezier(0.22,1,0.36,1); overflow: hidden; }
     .vm-overlay.is-open .vm-panel { transform: translateY(0) scale(1); }
-
-    .vm-panel::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-lt) 60%, transparent 100%);
-    }
-
-    .vm-header {
-      padding: 32px 36px 24px;
-      display: flex; align-items: flex-start; justify-content: space-between;
-      border-bottom: 1px solid rgba(200,160,74,0.07);
-    }
-    .vm-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: .52rem; letter-spacing: 5px; text-transform: uppercase;
-      color: var(--gold); opacity: .55; display: block; margin-bottom: 8px;
-    }
-    .vm-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem; font-weight: 400; letter-spacing: 1px;
-      color: var(--white); line-height: 1.2;
-    }
+    .vm-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-lt) 60%, transparent 100%); }
+    .vm-header { padding: 32px 36px 24px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid rgba(200,160,74,0.07); }
+    .vm-eyebrow { font-family: 'DM Mono', monospace; font-size: .52rem; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); opacity: .55; display: block; margin-bottom: 8px; }
+    .vm-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 400; letter-spacing: 1px; color: var(--white); line-height: 1.2; }
     .vm-title em { font-style: italic; color: var(--gold-lt); }
-
-    .vm-close {
-      width: 40px; height: 40px;
-      border: 1px solid rgba(200,160,74,0.18);
-      background: rgba(200,160,74,0.04);
-      color: var(--muted); cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; margin-top: 2px;
-      transition: all .25s; font-size: 1.1rem; line-height: 1;
-    }
-    .vm-close:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-      background: rgba(200,160,74,0.09);
-      transform: rotate(90deg);
-    }
-
-    .vm-carousel-wrap {
-      position: relative;
-      padding: 28px 36px 24px;
-      overflow: hidden;
-    }
-
-    .vm-track {
-      display: flex;
-      gap: 16px;
-      transition: transform .42s cubic-bezier(0.25,1,0.5,1);
-      will-change: transform;
-      cursor: grab;
-      user-select: none;
-    }
+    .vm-close { width: 40px; height: 40px; border: 1px solid rgba(200,160,74,0.18); background: rgba(200,160,74,0.04); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; transition: all .25s; font-size: 1.1rem; line-height: 1; }
+    .vm-close:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,160,74,0.09); transform: rotate(90deg); }
+    .vm-carousel-wrap { position: relative; padding: 28px 36px 24px; overflow: hidden; }
+    .vm-track { display: flex; gap: 16px; transition: transform .42s cubic-bezier(0.25,1,0.5,1); will-change: transform; cursor: grab; user-select: none; }
     .vm-track.is-dragging { cursor: grabbing; transition: none; }
-
-    .vm-card {
-      flex: 0 0 calc(50% - 8px);
-      border: 1px solid rgba(200,160,74,0.1);
-      background: rgba(255,255,255,0.018);
-      overflow: hidden;
-      transition: border-color .3s, transform .3s;
-      position: relative;
-    }
+    .vm-card { flex: 0 0 calc(50% - 8px); border: 1px solid rgba(200,160,74,0.1); background: rgba(255,255,255,0.018); overflow: hidden; transition: border-color .3s, transform .3s; position: relative; }
     .vm-card:hover { border-color: rgba(200,160,74,0.28); transform: translateY(-3px); }
-
-    .vm-thumb {
-      position: relative;
-      aspect-ratio: 16/9;
-      overflow: hidden;
-      cursor: pointer;
-      background: #0c0b16;
-    }
-    .vm-thumb img {
-      width: 100%; height: 100%; object-fit: cover;
-      filter: brightness(.75) saturate(1.05);
-      transition: filter .3s, transform .4s;
-    }
+    .vm-thumb { position: relative; aspect-ratio: 16/9; overflow: hidden; cursor: pointer; background: #0c0b16; }
+    .vm-thumb img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.75) saturate(1.05); transition: filter .3s, transform .4s; }
     .vm-card:hover .vm-thumb img { filter: brightness(.88) saturate(1.1); transform: scale(1.03); }
-    .vm-thumb-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(6,5,15,.7) 0%, transparent 55%);
-    }
-    .vm-play {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 52px; height: 52px;
-      border-radius: 50%;
-      background: rgba(200,160,74,0.92);
-      display: flex; align-items: center; justify-content: center;
-      transition: transform .3s, background .3s;
-      pointer-events: none;
-    }
+    .vm-thumb-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(6,5,15,.7) 0%, transparent 55%); }
+    .vm-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 52px; height: 52px; border-radius: 50%; background: rgba(200,160,74,0.92); display: flex; align-items: center; justify-content: center; transition: transform .3s, background .3s; pointer-events: none; }
     .vm-card:hover .vm-play { transform: translate(-50%, -50%) scale(1.12); background: var(--gold-lt); }
     .vm-play svg { width: 16px; height: 16px; fill: #06050f; margin-left: 3px; }
-
-    .vm-duration {
-      position: absolute; bottom: 8px; right: 10px;
-      font-family: 'DM Mono', monospace;
-      font-size: .48rem; letter-spacing: 2px;
-      color: var(--white); background: rgba(6,5,15,.75);
-      padding: 3px 8px;
-    }
-
+    .vm-duration { position: absolute; bottom: 8px; right: 10px; font-family: 'DM Mono', monospace; font-size: .48rem; letter-spacing: 2px; color: var(--white); background: rgba(6,5,15,.75); padding: 3px 8px; }
     .vm-card-info { padding: 16px 18px 18px; }
-    .vm-card-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: .45rem; letter-spacing: 3px; text-transform: uppercase;
-      color: var(--gold); opacity: .6; display: block; margin-bottom: 6px;
-    }
-    .vm-card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: .95rem; font-weight: 400; letter-spacing: .5px;
-      color: var(--white); line-height: 1.4; margin-bottom: 6px;
-    }
+    .vm-card-tag { font-family: 'DM Mono', monospace; font-size: .45rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .6; display: block; margin-bottom: 6px; }
+    .vm-card-title { font-family: 'Playfair Display', serif; font-size: .95rem; font-weight: 400; letter-spacing: .5px; color: var(--white); line-height: 1.4; margin-bottom: 6px; }
     .vm-card-desc { font-size: .76rem; letter-spacing: .3px; line-height: 1.7; color: var(--muted); }
-
-    .vm-nav {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 36px 20px;
-    }
-
+    .vm-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 36px 20px; }
     .vm-dots { display: flex; gap: 6px; align-items: center; }
-    .vm-dot {
-      width: 20px; height: 2px;
-      background: rgba(200,160,74,0.2);
-      cursor: pointer; transition: all .3s; border: none;
-    }
+    .vm-dot { width: 20px; height: 2px; background: rgba(200,160,74,0.2); cursor: pointer; transition: all .3s; border: none; }
     .vm-dot.active { background: var(--gold); width: 32px; }
-
     .vm-arrows { display: flex; gap: 8px; }
-    .vm-arrow {
-      width: 38px; height: 38px;
-      border: 1px solid rgba(200,160,74,0.15);
-      background: rgba(200,160,74,0.03);
-      color: var(--muted); cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all .25s; flex-shrink: 0;
-    }
+    .vm-arrow { width: 38px; height: 38px; border: 1px solid rgba(200,160,74,0.15); background: rgba(200,160,74,0.03); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .25s; flex-shrink: 0; }
     .vm-arrow:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); background: rgba(200,160,74,0.08); }
     .vm-arrow:disabled { opacity: .25; cursor: default; }
     .vm-arrow svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
-
-    .vm-footer {
-      padding: 20px 36px 28px;
-      border-top: 1px solid rgba(200,160,74,0.07);
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 20px; flex-wrap: wrap;
-    }
-    .vm-footer-text {
-      font-family: 'DM Mono', monospace;
-      font-size: .52rem; letter-spacing: 3px; text-transform: uppercase;
-      color: var(--muted);
-    }
-    .vm-ig-btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 12px 26px;
-      font-family: 'DM Mono', monospace; font-size: .54rem;
-      letter-spacing: 3px; text-transform: uppercase;
-      text-decoration: none;
-      color: var(--white);
-      background: linear-gradient(135deg, rgba(131,58,180,0.35) 0%, rgba(200,88,42,0.35) 60%, rgba(253,194,0,0.25) 100%);
-      border: 1px solid rgba(200,120,80,0.3);
-      transition: all .3s;
-    }
-    .vm-ig-btn:hover {
-      background: linear-gradient(135deg, rgba(131,58,180,0.55) 0%, rgba(200,88,42,0.55) 60%, rgba(253,194,0,0.4) 100%);
-      border-color: rgba(200,120,80,0.6);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(200,80,40,0.2);
-    }
+    .vm-footer { padding: 20px 36px 28px; border-top: 1px solid rgba(200,160,74,0.07); display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .vm-footer-text { font-family: 'DM Mono', monospace; font-size: .52rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+    .vm-ig-btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 26px; font-family: 'DM Mono', monospace; font-size: .54rem; letter-spacing: 3px; text-transform: uppercase; text-decoration: none; color: var(--white); background: linear-gradient(135deg, rgba(131,58,180,0.35) 0%, rgba(200,88,42,0.35) 60%, rgba(253,194,0,0.25) 100%); border: 1px solid rgba(200,120,80,0.3); transition: all .3s; }
+    .vm-ig-btn:hover { background: linear-gradient(135deg, rgba(131,58,180,0.55) 0%, rgba(200,88,42,0.55) 60%, rgba(253,194,0,0.4) 100%); border-color: rgba(200,120,80,0.6); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(200,80,40,0.2); }
     .vm-ig-btn svg { width: 16px; height: 16px; fill: var(--white); flex-shrink: 0; }
 
-    /* ── Modal fullscreen de vídeo ── */
-    .vp-overlay {
-      position: fixed; inset: 0; z-index: 9500;
-      background: rgba(2,1,8,0.96);
-      backdrop-filter: blur(22px);
-      display: flex; align-items: center; justify-content: center;
-      padding: 20px;
-      opacity: 0; pointer-events: none;
-      transition: opacity .35s ease;
-    }
+    .vp-overlay { position: fixed; inset: 0; z-index: 9500; background: rgba(2,1,8,0.96); backdrop-filter: blur(22px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .35s ease; }
     .vp-overlay.is-open { opacity: 1; pointer-events: all; }
-
-    .vp-panel {
-      position: relative;
-      width: 100%; max-width: 960px;
-      transform: scale(0.95);
-      transition: transform .4s cubic-bezier(0.22,1,0.36,1);
-    }
+    .vp-panel { position: relative; width: 100%; max-width: 960px; transform: scale(0.95); transition: transform .4s cubic-bezier(0.22,1,0.36,1); }
     .vp-overlay.is-open .vp-panel { transform: scale(1); }
-
-    /* linha dourada topo */
-    .vp-panel::before {
-      content: '';
-      position: absolute; top: -1px; left: 0; right: 0; height: 1px; z-index: 2;
-      background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-lt) 60%, transparent 100%);
-    }
-
-    /* barra superior com título e X */
-    .vp-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 18px 14px 22px;
-      background: #08070f;
-      border: 1px solid rgba(200,160,74,0.18);
-      border-bottom: none;
-    }
+    .vp-panel::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px; z-index: 2; background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-lt) 60%, transparent 100%); }
+    .vp-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 14px 22px; background: #08070f; border: 1px solid rgba(200,160,74,0.18); border-bottom: none; }
     .vp-bar-info { display: flex; flex-direction: column; gap: 2px; }
-    .vp-bar-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: .46rem; letter-spacing: 4px; text-transform: uppercase;
-      color: var(--gold); opacity: .6;
-    }
-    .vp-bar-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem; font-weight: 400; letter-spacing: .5px;
-      color: var(--white);
-    }
-    .vp-close {
-      width: 40px; height: 40px; flex-shrink: 0;
-      border: 1px solid rgba(200,160,74,0.22);
-      background: rgba(200,160,74,0.05);
-      color: var(--muted); cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; line-height: 1;
-      transition: all .25s;
-    }
-    .vp-close:hover {
-      border-color: var(--gold); color: var(--gold);
-      background: rgba(200,160,74,0.12);
-      transform: rotate(90deg);
-    }
+    .vp-bar-tag { font-family: 'DM Mono', monospace; font-size: .46rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); opacity: .6; }
+    .vp-bar-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 400; letter-spacing: .5px; color: var(--white); }
+    .vp-close { width: 40px; height: 40px; flex-shrink: 0; border: 1px solid rgba(200,160,74,0.22); background: rgba(200,160,74,0.05); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; line-height: 1; transition: all .25s; }
+    .vp-close:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,160,74,0.12); transform: rotate(90deg); }
+    .vp-video-wrap { position: relative; aspect-ratio: 16/9; background: #000; border: 1px solid rgba(200,160,74,0.18); border-top: none; overflow: hidden; }
+    .vp-video-wrap video { width: 100%; height: 100%; display: block; background: #000; }
 
-    /* player */
-    .vp-video-wrap {
-      position: relative;
-      aspect-ratio: 16/9;
-      background: #000;
-      border: 1px solid rgba(200,160,74,0.18);
-      border-top: none;
-      overflow: hidden;
-    }
-    .vp-video-wrap video {
-      width: 100%; height: 100%; display: block; background: #000;
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 700px) {
-      .vm-card { flex: 0 0 88%; }
-      .vm-header { padding: 24px 22px 18px; }
-      .vm-carousel-wrap { padding: 20px 22px 16px; }
-      .vm-nav { padding: 0 22px 16px; }
-      .vm-footer { padding: 16px 22px 22px; }
-    }
-
+    @media (max-width: 700px) { .vm-card { flex: 0 0 88%; } .vm-header { padding: 24px 22px 18px; } .vm-carousel-wrap { padding: 20px 22px 16px; } .vm-nav { padding: 0 22px 16px; } .vm-footer { padding: 16px 22px 22px; } }
     @media (max-width: 900px) {
       nav { padding: 18px 28px; }
       .nav-links { display: none; }
@@ -1049,30 +553,30 @@
       .trust-inner { gap: 16px; }
       .hero-btns { flex-direction: column; }
       .btn-gold, .btn-outline, .btn-videos { width: 100%; justify-content: center; text-align: center; }
+      .despertar-card { grid-template-columns: 1fr; }
+      .despertar-left, .despertar-center { border-right: none; border-bottom: 1px solid rgba(200,160,74,0.1); }
     }
   </style>
 </head>
 <body>
 
+<canvas id="matrix-bg"></canvas>
 <div class="ambient"></div>
 <div class="grid-bg"></div>
 <div id="particles" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
 
 <!-- ══════ MODAL DE VÍDEOS ══════ -->
-<div class="vm-overlay" id="videoModal" role="dialog" aria-modal="true" aria-label="Vídeos do Mentor">
+<div class="vm-overlay" id="videoModal" role="dialog" aria-modal="true">
   <div class="vm-panel" id="vmPanel">
-
     <div class="vm-header">
       <div class="vm-header-left">
-        <span class="vm-eyebrow">Vídeos do Mentor</span>
-        <h2 class="vm-title">O que você vai ouvir<br><em>antes de decidir</em></h2>
+        <span class="vm-eyebrow" data-i18n="modal-eyebrow">Vídeos do Mentor</span>
+        <h2 class="vm-title" data-i18n-html="modal-title">O que você vai ouvir<br><em>antes de decidir</em></h2>
       </div>
       <button class="vm-close" id="vmClose" aria-label="Fechar modal">&#10005;</button>
     </div>
-
     <div class="vm-carousel-wrap" id="vmCarouselWrap">
       <div class="vm-track" id="vmTrack">
-
         <div class="vm-card">
           <div class="vm-thumb" data-videourl="https://res.cloudinary.com/dcbarseus/video/upload/v1781545439/YTDown_YouTube_Mentoria-Imperio-Digital-Descubra-Sua-Id_Media_neZhgB4dSkk_001_1080p_iicora.mp4">
             <img src="https://res.cloudinary.com/dcbarseus/video/upload/v1781545439/YTDown_YouTube_Mentoria-Imperio-Digital-Descubra-Sua-Id_Media_neZhgB4dSkk_001_1080p_iicora.jpg" onerror="this.src='https://via.placeholder.com/1280x720/06050f/c8a04a?text=Video+1'" alt="O Chamado">
@@ -1081,70 +585,58 @@
             <span class="vm-duration">03:04</span>
           </div>
           <div class="vm-card-info">
-            <span class="vm-card-tag">Mentoria</span>
-            <div class="vm-card-title">O Chamado</div>
-            <p class="vm-card-desc">Uma visão rápida sobre o impacto da mentoria no seu posicionamento.</p>
+            <span class="vm-card-tag" data-i18n="v1-tag">Mentoria</span>
+            <div class="vm-card-title" data-i18n="v1-title">O Chamado</div>
+            <p class="vm-card-desc" data-i18n="v1-desc">Uma visão rápida sobre o impacto da mentoria no seu posicionamento.</p>
           </div>
         </div>
- 
-
         <div class="vm-card">
           <div class="vm-thumb" data-videourl="https://res.cloudinary.com/dcbarseus/video/upload/v1781545435/3_perguntas_que_revelam_por_que_voc%C3%AA_ainda_n%C3%A3o_chegou_l%C3%A1_Se_respondeu_n%C3%A3o_pra_qualquer_uma_vo_ujzoqv.mp4">
-            <img src="https://res.cloudinary.com/dcbarseus/video/upload/v1781545435/3_perguntas_que_revelam_por_que_voc%C3%AA_ainda_n%C3%A3o_chegou_l%C3%A1_Se_respondeu_n%C3%A3o_pra_qualquer_uma_vo_ujzoqv.jpg" onerror="this.src='https://via.placeholder.com/1280x720/06050f/c8a04a?text=Video+3'" alt="30s">
+            <img src="https://res.cloudinary.com/dcbarseus/video/upload/v1781545435/3_perguntas_que_revelam_por_que_voc%C3%AA_ainda_n%C3%A3o_chegou_l%C3%A1_Se_respondeu_n%C3%A3o_pra_qualquer_uma_vo_ujzoqv.jpg" onerror="this.src='https://via.placeholder.com/1280x720/06050f/c8a04a?text=Video+2'" alt="30s">
             <div class="vm-thumb-overlay"></div>
             <div class="vm-play"><svg viewBox="0 0 16 16"><polygon points="5,2 14,8 5,14"/></svg></div>
             <span class="vm-duration">00:33</span>
           </div>
           <div class="vm-card-info">
-            <span class="vm-card-tag">Clareza</span>
-            <div class="vm-card-title">30s</div>
-            <p class="vm-card-desc">3 perguntas que revelam por que você ainda não chegou lá.</p>
+            <span class="vm-card-tag" data-i18n="v2-tag">Clareza</span>
+            <div class="vm-card-title" data-i18n="v2-title">30s</div>
+            <p class="vm-card-desc" data-i18n="v2-desc">3 perguntas que revelam por que você ainda não chegou lá.</p>
           </div>
         </div>
-
         <div class="vm-card">
           <div class="vm-thumb" data-videourl="https://res.cloudinary.com/dcbarseus/video/upload/v1781545429/Site_profissional._Logo._Instagram_estrat%C3%A9gico._Funil_de_vendas._Tudo_criado_a_partir_do_que_voc_xvayvp.mp4">
-            <img src="https://res.cloudinary.com/dcbarseus/video/upload/v1781545429/Site_profissional._Logo._Instagram_estrat%C3%A9gico._Funil_de_vendas._Tudo_criado_a_partir_do_que_voc_xvayvp.jpg" onerror="this.src='https://via.placeholder.com/1280x720/06050f/c8a04a?text=Video+4'" alt="Uma marca que nasce do seu campo">
+            <img src="https://res.cloudinary.com/dcbarseus/video/upload/v1781545429/Site_profissional._Logo._Instagram_estrat%C3%A9gico._Funil_de_vendas._Tudo_criado_a_partir_do_que_voc_xvayvp.jpg" onerror="this.src='https://via.placeholder.com/1280x720/06050f/c8a04a?text=Video+3'" alt="Uma marca que nasce do seu campo">
             <div class="vm-thumb-overlay"></div>
             <div class="vm-play"><svg viewBox="0 0 16 16"><polygon points="5,2 14,8 5,14"/></svg></div>
             <span class="vm-duration">00:09</span>
           </div>
           <div class="vm-card-info">
-            <span class="vm-card-tag">Marca</span>
-            <div class="vm-card-title">Uma marca que nasce do seu campo</div>
-            <p class="vm-card-desc">Construindo toda a estrutura digital a partir da sua essência real.</p>
+            <span class="vm-card-tag" data-i18n="v3-tag">Marca</span>
+            <div class="vm-card-title" data-i18n="v3-title">Uma marca que nasce do seu campo</div>
+            <p class="vm-card-desc" data-i18n="v3-desc">Construindo toda a estrutura digital a partir da sua essência real.</p>
           </div>
         </div>
-
       </div>
     </div>
-
     <div class="vm-nav">
       <div class="vm-dots" id="vmDots"></div>
       <div class="vm-arrows">
-        <button class="vm-arrow" id="vmPrev" aria-label="Anterior">
-          <svg viewBox="0 0 14 14"><polyline points="9,2 4,7 9,12"/></svg>
-        </button>
-        <button class="vm-arrow" id="vmNext" aria-label="Próximo">
-          <svg viewBox="0 0 14 14"><polyline points="5,2 10,7 5,12"/></svg>
-        </button>
+        <button class="vm-arrow" id="vmPrev" aria-label="Anterior"><svg viewBox="0 0 14 14"><polyline points="9,2 4,7 9,12"/></svg></button>
+        <button class="vm-arrow" id="vmNext" aria-label="Próximo"><svg viewBox="0 0 14 14"><polyline points="5,2 10,7 5,12"/></svg></button>
       </div>
     </div>
-
     <div class="vm-footer">
-      <span class="vm-footer-text">Mais conteúdo no Instagram</span>
+      <span class="vm-footer-text" data-i18n="modal-footer-text">Mais conteúdo no Instagram</span>
       <a href="https://instagram.com/akasha.hub" target="_blank" rel="noopener" class="vm-ig-btn">
         <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        @akasha.hub no Instagram
+        @akasha.hub
       </a>
     </div>
-
   </div>
 </div>
 
-
-<!-- ══════ MODAL PLAYER FULLSCREEN ══════ -->
-<div class="vp-overlay" id="vpOverlay" role="dialog" aria-modal="true" aria-label="Player de vídeo">
+<!-- ══════ MODAL PLAYER ══════ -->
+<div class="vp-overlay" id="vpOverlay" role="dialog" aria-modal="true">
   <div class="vp-panel" id="vpPanel">
     <div class="vp-bar">
       <div class="vp-bar-info">
@@ -1163,45 +655,40 @@
 <nav>
   <a href="#" class="nav-logo">Akasha <span>Hub</span></a>
   <ul class="nav-links">
-    <li><a href="#metodo">Método</a></li>
-    <li><a href="#mentor">Mentor</a></li>
-    <li><a href="#planos">Planos</a></li>
+    <li><a href="#metodo" data-i18n="nav-metodo">Método</a></li>
+    <li><a href="#mentor" data-i18n="nav-mentor">Mentor</a></li>
+    <li><a href="#planos" data-i18n="nav-planos">Planos</a></li>
   </ul>
-  <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20saber%20mais%20sobre%20a%20Mentoria%20Akasha%20Hub" target="_blank" class="nav-cta">Falar com Mentor</a>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="pt" aria-label="Português" title="Português">🇧🇷</button>
+    <button class="lang-btn" data-lang="en" aria-label="English" title="English">🇺🇸</button>
+    <button class="lang-btn" data-lang="es" aria-label="Español" title="Español">🇪🇸</button>
+  </div>
+  <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20saber%20mais%20sobre%20a%20Mentoria%20Akasha%20Hub" target="_blank" class="nav-cta" data-i18n="nav-cta">Falar com Mentor</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-left">
-    <div class="hero-tag">Mentoria Individual · Estratégia e Posicionamento</div>
-
-    <h1 class="hero-title">
-      Construa a Marca<br>
+    <div class="hero-tag" data-i18n="hero-tag">Mentoria Individual · Estratégia e Posicionamento</div>
+    <h1 class="hero-title" data-i18n-html="hero-title">
+      <span>Construa a Marca</span><br>
       <em>que Representa Quem<br>Você Realmente É</em>
     </h1>
-
-    <p class="hero-sub">
+    <p class="hero-sub" data-i18n-html="hero-sub">
       Um processo profundo de mapeamento de essência, construção de identidade de marca e estruturação digital, para quem quer um negócio que <strong>cresce porque é autêntico</strong>, não apesar disso.
     </p>
-
     <div class="hero-btns">
-      <a href="#planos" class="btn-gold">Ver Planos</a>
-      <a href="#metodo" class="btn-outline">Conhecer o Método</a>
+      <a href="#planos" class="btn-gold" data-i18n="hero-btn-planos">Ver Planos</a>
+      <a href="#metodo" class="btn-outline" data-i18n="hero-btn-metodo">Conhecer o Método</a>
       <button class="btn-videos" id="openVideoModal">
-        <span class="btn-videos-icon">
-          <svg viewBox="0 0 16 16"><polygon points="5,2 14,8 5,14"/></svg>
-        </span>
-        Ver vídeos do mentor
+        <span class="btn-videos-icon"><svg viewBox="0 0 16 16"><polygon points="5,2 14,8 5,14"/></svg></span>
+        <span data-i18n="hero-btn-videos">Ver vídeos do mentor</span>
       </button>
     </div>
   </div>
-
   <div class="hero-visual">
-    <img
-      src="https://res.cloudinary.com/dcbarseus/image/upload/v1780593499/9f911ac5-1c18-45ac-a86a-0be8a4bd4593_lcyrau.png"
-      alt="Mentor Akasha Hub"
-      class="hero-img"
-    >
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1780593499/9f911ac5-1c18-45ac-a86a-0be8a4bd4593_lcyrau.png" alt="Mentor Akasha Hub" class="hero-img">
     <div class="hero-img-overlay"></div>
     <div class="corner corner-tr"></div>
     <div class="corner corner-bl"></div>
@@ -1211,53 +698,38 @@
 <!-- TRUST BAR -->
 <div class="trust-bar">
   <div class="trust-inner">
-    <div class="trust-item">
-      <div class="trust-dot"></div>
-      <div class="trust-text"><strong>Método Proprietário</strong>4 Camadas de Mapeamento</div>
-    </div>
-    <div class="trust-item">
-      <div class="trust-dot"></div>
-      <div class="trust-text"><strong>Mentoria 1:1</strong>Atenção Individual e Personalizada</div>
-    </div>
-    <div class="trust-item">
-      <div class="trust-dot"></div>
-      <div class="trust-text"><strong>Resultado Sustentável</strong>Estratégia com Raízes Reais</div>
-    </div>
-    <div class="trust-item">
-      <div class="trust-dot"></div>
-      <div class="trust-text"><strong>Garantia de 7 Dias</strong>Reembolso Integral</div>
-    </div>
+    <div class="trust-item"><div class="trust-dot"></div><div class="trust-text"><strong data-i18n="trust1-strong">Método Proprietário</strong><span data-i18n="trust1-span">4 Camadas de Mapeamento</span></div></div>
+    <div class="trust-item"><div class="trust-dot"></div><div class="trust-text"><strong data-i18n="trust2-strong">Mentoria 1:1</strong><span data-i18n="trust2-span">Atenção Individual e Personalizada</span></div></div>
+    <div class="trust-item"><div class="trust-dot"></div><div class="trust-text"><strong data-i18n="trust3-strong">Resultado Sustentável</strong><span data-i18n="trust3-span">Estratégia com Raízes Reais</span></div></div>
+    <div class="trust-item"><div class="trust-dot"></div><div class="trust-text"><strong data-i18n="trust4-strong">Garantia de 7 Dias</strong><span data-i18n="trust4-span">Reembolso Integral</span></div></div>
   </div>
 </div>
 
 <!-- PILARES -->
 <div class="wrap section" id="metodo">
-  <div class="eyebrow"><div class="eyebrow-line"></div><span>O Método</span></div>
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-metodo">O Método</span></div>
   <div class="section-2col">
-    <div><h2 class="section-title">Os Três Pilares<br><em>da Construção</em></h2></div>
-    <div><p class="section-sub">Cada pilar sustenta o seguinte. Não se trata de estratégias separadas, é uma arquitetura integrada que vai da essência ao negócio operacional.</p></div>
+    <div><h2 class="section-title" data-i18n-html="pilares-title"><span>Os Três Pilares</span><br><em>da Construção</em></h2></div>
+    <div><p class="section-sub" data-i18n="pilares-sub">Cada pilar sustenta o seguinte. Não se trata de estratégias separadas, é uma arquitetura integrada que vai da essência ao negócio operacional.</p></div>
   </div>
   <div class="pilares-grid">
     <div class="pilar-card">
-      <span class="pilar-n">Pilar 01</span>
-      <span class="pilar-icon">◈</span>
-      <h3 class="pilar-title">Investigação de Essência</h3>
-      <span class="pilar-sub">Quem você é de verdade</span>
-      <p class="pilar-desc">Antes de qualquer estratégia, precisamos saber com quem estamos trabalhando. O processo de investigação revela o que torna você único, insubstituível e magnético para as pessoas certas.</p>
+      <span class="pilar-n">Pilar 01</span><span class="pilar-icon">◈</span>
+      <h3 class="pilar-title" data-i18n="pilar1-title">Investigação de Essência</h3>
+      <span class="pilar-sub" data-i18n="pilar1-sub">Quem você é de verdade</span>
+      <p class="pilar-desc" data-i18n="pilar1-desc">Antes de qualquer estratégia, precisamos saber com quem estamos trabalhando. O processo de investigação revela o que torna você único, insubstituível e magnético para as pessoas certas.</p>
     </div>
     <div class="pilar-card">
-      <span class="pilar-n">Pilar 02</span>
-      <span class="pilar-icon">◈</span>
-      <h3 class="pilar-title">Arquitetura de Identidade</h3>
-      <span class="pilar-sub">A marca que você merece ter</span>
-      <p class="pilar-desc">Nome, missão, tom de voz, arquétipo e narrativa de origem, todos construídos a partir do que foi descoberto na investigação. Nada genérico. Tudo coerente com quem você é.</p>
+      <span class="pilar-n">Pilar 02</span><span class="pilar-icon">◈</span>
+      <h3 class="pilar-title" data-i18n="pilar2-title">Arquitetura de Identidade</h3>
+      <span class="pilar-sub" data-i18n="pilar2-sub">A marca que você merece ter</span>
+      <p class="pilar-desc" data-i18n="pilar2-desc">Nome, missão, tom de voz, arquétipo e narrativa de origem, tudo construído a partir do que foi descoberto na investigação. Nada genérico. Tudo coerente com quem você é.</p>
     </div>
     <div class="pilar-card">
-      <span class="pilar-n">Pilar 03</span>
-      <span class="pilar-icon">◈</span>
-      <h3 class="pilar-title">Estratégia e Escala Digital</h3>
-      <span class="pilar-sub">O negócio que você quer construir</span>
-      <p class="pilar-desc">Estrutura digital completa: presença, conteúdo, funil e tráfego. A identidade já construída guia cada decisão estratégica, o digital não é máscara, é extensão autêntica da sua marca.</p>
+      <span class="pilar-n">Pilar 03</span><span class="pilar-icon">◈</span>
+      <h3 class="pilar-title" data-i18n="pilar3-title">Estratégia e Escala Digital</h3>
+      <span class="pilar-sub" data-i18n="pilar3-sub">O negócio que você quer construir</span>
+      <p class="pilar-desc" data-i18n="pilar3-desc">Estrutura digital completa: presença, conteúdo, funil e tráfego. A identidade já construída guia cada decisão estratégica, o digital não é máscara, é extensão autêntica da sua marca.</p>
     </div>
   </div>
 </div>
@@ -1266,36 +738,36 @@
 
 <!-- CAMADAS -->
 <div class="wrap section">
-  <div class="eyebrow"><div class="eyebrow-line"></div><span>Pilar 1 • Investigação de Essência</span></div>
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-camadas">Pilar 1 • Investigação de Essência</span></div>
   <div class="section-2col">
-    <div><h2 class="section-title">As 4 Camadas<br><em>de Quem Você É</em></h2></div>
-    <div><p class="section-sub">O processo de investigação navega por quatro dimensões que, juntas, constroem um retrato completo e único da sua essência — a matéria-prima de toda a marca.</p></div>
+    <div><h2 class="section-title" data-i18n-html="camadas-title"><span>As 4 Camadas</span><br><em>de Quem Você É</em></h2></div>
+    <div><p class="section-sub" data-i18n="camadas-sub">O processo de investigação navega por quatro dimensões que, juntas, constroem um retrato completo e único da sua essência, a matéria-prima de toda a marca.</p></div>
   </div>
   <div class="process-split">
     <div class="camadas-wrap">
       <div class="camada-card featured">
         <span class="camada-n">Camada 01</span>
-        <h3 class="camada-title">Propósito <em>Profundo</em></h3>
-        <p class="camada-desc">A razão que vai além do produto ou serviço. O que move você quando ninguém está olhando? O que você defende no mundo?</p>
-        <div class="camada-tags"><span class="camada-tag">Valores</span><span class="camada-tag">Missão</span><span class="camada-tag">Legado</span></div>
+        <h3 class="camada-title" data-i18n-html="camada1-title"><span>Propósito</span> <em>Profundo</em></h3>
+        <p class="camada-desc" data-i18n="camada1-desc">A razão que vai além do produto ou serviço. O que move você quando ninguém está olhando? O que você defende no mundo?</p>
+        <div class="camada-tags"><span class="camada-tag" data-i18n="camada1-tag1">Valores</span><span class="camada-tag" data-i18n="camada1-tag2">Missão</span><span class="camada-tag" data-i18n="camada1-tag3">Legado</span></div>
       </div>
       <div class="camada-card">
         <span class="camada-n">Camada 02</span>
-        <h3 class="camada-title">Trajetória <em>Formadora</em></h3>
-        <p class="camada-desc">As experiências que moldaram sua visão de mundo e seu olhar único sobre o mercado em que atua.</p>
-        <div class="camada-tags"><span class="camada-tag">Experiência</span><span class="camada-tag">Autoridade</span></div>
+        <h3 class="camada-title" data-i18n-html="camada2-title"><span>Trajetória</span> <em>Formadora</em></h3>
+        <p class="camada-desc" data-i18n="camada2-desc">As experiências que moldaram sua visão de mundo e seu olhar único sobre o mercado em que atua.</p>
+        <div class="camada-tags"><span class="camada-tag" data-i18n="camada2-tag1">Experiência</span><span class="camada-tag" data-i18n="camada2-tag2">Autoridade</span></div>
       </div>
       <div class="camada-card">
         <span class="camada-n">Camada 03</span>
-        <h3 class="camada-title">Dons e <em>Diferenciais</em></h3>
-        <p class="camada-desc">O que você faz de forma natural que outros precisam se esforçar para alcançar. Sua vantagem competitiva real.</p>
-        <div class="camada-tags"><span class="camada-tag">Talento</span><span class="camada-tag">Método</span></div>
+        <h3 class="camada-title" data-i18n-html="camada3-title"><span>Dons e</span> <em>Diferenciais</em></h3>
+        <p class="camada-desc" data-i18n="camada3-desc">O que você faz de forma natural que outros precisam se esforçar para alcançar. Sua vantagem competitiva real.</p>
+        <div class="camada-tags"><span class="camada-tag" data-i18n="camada3-tag1">Talento</span><span class="camada-tag" data-i18n="camada3-tag2">Método</span></div>
       </div>
       <div class="camada-card">
         <span class="camada-n">Camada 04</span>
-        <h3 class="camada-title">Visão de <em>Futuro</em></h3>
-        <p class="camada-desc">Onde você quer chegar? Que mercado quer transformar? A clareza do destino define a direção de cada decisão.</p>
-        <div class="camada-tags"><span class="camada-tag">Escala</span><span class="camada-tag">Impacto</span></div>
+        <h3 class="camada-title" data-i18n-html="camada4-title"><span>Visão de</span> <em>Futuro</em></h3>
+        <p class="camada-desc" data-i18n="camada4-desc">Onde você quer chegar? Que mercado quer transformar? A clareza do destino define a direção de cada decisão.</p>
+        <div class="camada-tags"><span class="camada-tag" data-i18n="camada4-tag1">Escala</span><span class="camada-tag" data-i18n="camada4-tag2">Impacto</span></div>
       </div>
     </div>
     <div class="proc-img-side">
@@ -1311,37 +783,13 @@
       <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1781537120/c1fb9d54-a8bb-4095-b50c-99d1db9173ac_w1jkum_caqb4t_xtm72n.png" alt="Do mapeamento ao negócio real">
     </div>
     <div class="method-copy">
-      <span class="method-eyebrow">Como funciona na prática</span>
-      <h2 class="method-title">Do Mapeamento ao<br><em>Negócio Real</em></h2>
+      <span class="method-eyebrow" data-i18n="method-eyebrow">Como funciona na prática</span>
+      <h2 class="method-title" data-i18n-html="method-title"><span>Do Mapeamento ao</span><br><em>Negócio Real</em></h2>
       <div class="method-steps">
-        <div class="mstep">
-          <div class="mstep-n">01</div>
-          <div>
-            <div class="mstep-title">Sessão de Mapeamento Profundo</div>
-            <div class="mstep-desc">Investigamos sua essência nas 4 camadas. O que emerge é único e insubstituível — a base de tudo o que vem depois.</div>
-          </div>
-        </div>
-        <div class="mstep">
-          <div class="mstep-n">02</div>
-          <div>
-            <div class="mstep-title">Construção da Identidade de Marca</div>
-            <div class="mstep-desc">Nome, missão, tom de voz, posicionamento e narrativa de origem. Tudo integrado e coerente com quem você realmente é.</div>
-          </div>
-        </div>
-        <div class="mstep">
-          <div class="mstep-n">03</div>
-          <div>
-            <div class="mstep-title">Estrutura e Estratégia Digital</div>
-            <div class="mstep-desc">Presença digital, estratégia de conteúdo, funil e campanhas. Do zero ou reorganizando o que já existe com clareza.</div>
-          </div>
-        </div>
-        <div class="mstep">
-          <div class="mstep-n">04</div>
-          <div>
-            <div class="mstep-title">Acompanhamento e Escala</div>
-            <div class="mstep-desc">Ajustes em tempo real, crescimento consistente e resultado que se sustenta porque nasceu de base sólida.</div>
-          </div>
-        </div>
+        <div class="mstep"><div class="mstep-n">01</div><div><div class="mstep-title" data-i18n="mstep1-title">Sessão de Mapeamento Profundo</div><div class="mstep-desc" data-i18n="mstep1-desc">Investigamos sua essência nas 4 camadas. O que emerge é único e insubstituível, a base de tudo o que vem depois.</div></div></div>
+        <div class="mstep"><div class="mstep-n">02</div><div><div class="mstep-title" data-i18n="mstep2-title">Construção da Identidade de Marca</div><div class="mstep-desc" data-i18n="mstep2-desc">Nome, missão, tom de voz, posicionamento e narrativa de origem. Tudo integrado e coerente com quem você realmente é.</div></div></div>
+        <div class="mstep"><div class="mstep-n">03</div><div><div class="mstep-title" data-i18n="mstep3-title">Estrutura e Estratégia Digital</div><div class="mstep-desc" data-i18n="mstep3-desc">Presença digital, estratégia de conteúdo, funil e campanhas. Do zero ou reorganizando o que já existe com clareza.</div></div></div>
+        <div class="mstep"><div class="mstep-n">04</div><div><div class="mstep-title" data-i18n="mstep4-title">Acompanhamento e Escala</div><div class="mstep-desc" data-i18n="mstep4-desc">Ajustes em tempo real, crescimento consistente e resultado que se sustenta porque nasceu de base sólida.</div></div></div>
       </div>
     </div>
   </div>
@@ -1349,41 +797,15 @@
 
 <!-- PARA QUEM -->
 <div class="wrap section">
-  <div class="eyebrow"><div class="eyebrow-line"></div><span>Para Quem é</span></div>
-  <div style="text-align:center;margin-bottom:48px;">
-    <h2 class="section-title" style="text-align:center;">Esta Mentoria é Para Você<br><em>Se...</em></h2>
-  </div>
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-paraquem">Para Quem É</span></div>
+  <div style="text-align:center;margin-bottom:48px;"><h2 class="section-title" style="text-align:center;" data-i18n-html="paraquem-title"><span>Esta Mentoria é Para Você</span><br><em>Se...</em></h2></div>
   <div class="paraquem-grid">
-    <div class="paraquem-card">
-      <span class="pq-icon">◈</span>
-      <span class="pq-label">Profissional experiente</span>
-      <p class="pq-desc">Você tem autoridade no que faz, mas ainda não traduziu isso em um posicionamento claro e atrativo no mercado digital.</p>
-    </div>
-    <div class="paraquem-card">
-      <span class="pq-icon">◈</span>
-      <span class="pq-label">Empreendedor em transição</span>
-      <p class="pq-desc">Está migrando de carreira ou pivotando o negócio e precisa reconstruir a narrativa do zero com fundamentos sólidos.</p>
-    </div>
-    <div class="paraquem-card">
-      <span class="pq-icon">◈</span>
-      <span class="pq-label">Criador de conteúdo</span>
-      <p class="pq-desc">Produz conteúdo há algum tempo mas sente que falta consistência, diferenciação ou uma estratégia por trás do que faz.</p>
-    </div>
-    <div class="paraquem-card">
-      <span class="pq-icon">◈</span>
-      <span class="pq-label">Quem busca autenticidade</span>
-      <p class="pq-desc">Está cansado de seguir tendências que não combinam com você e quer construir uma marca que seja genuinamente sua.</p>
-    </div>
-    <div class="paraquem-card">
-      <span class="pq-icon">◈</span>
-      <span class="pq-label">Negócio sem clareza</span>
-      <p class="pq-desc">O negócio existe, mas a comunicação não converte e o posicionamento não gera diferenciação real no mercado.</p>
-    </div>
-    <div class="paraquem-card">
-      <span class="pq-icon">◈</span>
-      <span class="pq-label">Pronto para escalar</span>
-      <p class="pq-desc">Tem base e clareza, mas precisa de estratégia, estrutura e acompanhamento para levar o negócio ao próximo nível.</p>
-    </div>
+    <div class="paraquem-card"><span class="pq-icon">◈</span><span class="pq-label" data-i18n="pq1-label">Profissional experiente</span><p class="pq-desc" data-i18n="pq1-desc">Você tem autoridade no que faz, mas ainda não traduziu isso em um posicionamento claro e atrativo no mercado digital.</p></div>
+    <div class="paraquem-card"><span class="pq-icon">◈</span><span class="pq-label" data-i18n="pq2-label">Empreendedor em transição</span><p class="pq-desc" data-i18n="pq2-desc">Está migrando de carreira ou pivotando o negócio e precisa reconstruir a narrativa do zero com fundamentos sólidos.</p></div>
+    <div class="paraquem-card"><span class="pq-icon">◈</span><span class="pq-label" data-i18n="pq3-label">Criador de conteúdo</span><p class="pq-desc" data-i18n="pq3-desc">Produz conteúdo há algum tempo mas sente que falta consistência, diferenciação ou uma estratégia por trás do que faz.</p></div>
+    <div class="paraquem-card"><span class="pq-icon">◈</span><span class="pq-label" data-i18n="pq4-label">Quem busca autenticidade</span><p class="pq-desc" data-i18n="pq4-desc">Está cansado de seguir tendências que não combinam com você e quer construir uma marca que seja genuinamente sua.</p></div>
+    <div class="paraquem-card"><span class="pq-icon">◈</span><span class="pq-label" data-i18n="pq5-label">Negócio sem clareza</span><p class="pq-desc" data-i18n="pq5-desc">O negócio existe, mas a comunicação não converte e o posicionamento não gera diferenciação real no mercado.</p></div>
+    <div class="paraquem-card"><span class="pq-icon">◈</span><span class="pq-label" data-i18n="pq6-label">Pronto para escalar</span><p class="pq-desc" data-i18n="pq6-desc">Tem base e clareza, mas precisa de estratégia, estrutura e acompanhamento para levar o negócio ao próximo nível.</p></div>
   </div>
 </div>
 
@@ -1391,44 +813,24 @@
 
 <!-- MENTOR -->
 <div class="wrap section" id="mentor">
-  <div class="eyebrow"><div class="eyebrow-line"></div><span>O Mentor</span></div>
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-mentor">O Mentor</span></div>
   <div class="mentor-split">
     <div class="mentor-img-side">
       <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772516452/preview_image_29_ferzvu.jpg" alt="Mentor">
       <div class="mentor-vignette"></div>
       <div class="mentor-img-tag">
         <div class="mentor-img-tag-label">Akasha Hub</div>
-        <div class="mentor-img-tag-val">Fundador & Mentor</div>
+        <div class="mentor-img-tag-val" data-i18n="mentor-tag-val">Fundador &amp; Mentor</div>
       </div>
     </div>
     <div class="mentor-copy">
-      <div class="mentor-role">Fundador · Programador • Estrategista de Marca</div>
+      <div class="mentor-role" data-i18n="mentor-role">Fundador · Programador · Estrategista de Marca</div>
       <h2 class="mentor-name">Filipe<br><em>Klehn</em></h2>
-      <p class="mentor-bio">
-        Nos últimos anos, trabalhei com profissionais e empreendedores que tinham algo valioso para oferecer ao mundo, mas não sabiam como traduzir isso em posicionamento, presença e negócio real. Desenvolvi um método próprio que começa de dentro para fora: primeiro a essência, depois a estratégia.
-      </p>
+      <p class="mentor-bio" data-i18n="mentor-bio">Nos últimos anos, trabalhei com profissionais e empreendedores que tinham algo valioso para oferecer ao mundo, mas não sabiam como traduzir isso em posicionamento, presença e negócio real. Desenvolvi um método próprio que começa de dentro para fora: primeiro a essência, depois a estratégia.</p>
       <div class="mentor-specs">
-        <div class="mentor-spec">
-          <span class="mentor-spec-ico">◈</span>
-          <div class="mentor-spec-body">
-            <strong>Marcas de Excelência Absoluta e Qualidade Máxima</strong>
-            De profissionais liberais a empreendedores em escala, em diferentes mercados e nichos.
-          </div>
-        </div>
-        <div class="mentor-spec">
-          <span class="mentor-spec-ico">◈</span>
-          <div class="mentor-spec-body">
-            <strong>Método proprietário de 4 camadas</strong>
-            Desenvolvido ao longo de 7+ anos de prática, erro, aprendizado e resultado real.
-          </div>
-        </div>
-        <div class="mentor-spec">
-          <span class="mentor-spec-ico">◈</span>
-          <div class="mentor-spec-body">
-            <strong>Foco em resultado sustentável</strong>
-            Crescimento que não depende de sorte ou tendência, depende de quem você é.
-          </div>
-        </div>
+        <div class="mentor-spec"><span class="mentor-spec-ico">◈</span><div class="mentor-spec-body"><strong data-i18n="mspec1-strong">Marcas de Excelência Absoluta e Qualidade Máxima</strong><span data-i18n="mspec1-span">De profissionais liberais a empreendedores em escala, em diferentes mercados e nichos.</span></div></div>
+        <div class="mentor-spec"><span class="mentor-spec-ico">◈</span><div class="mentor-spec-body"><strong data-i18n="mspec2-strong">Método proprietário de 4 camadas</strong><span data-i18n="mspec2-span">Desenvolvido ao longo de 7+ anos de prática, erro, aprendizado e resultado real.</span></div></div>
+        <div class="mentor-spec"><span class="mentor-spec-ico">◈</span><div class="mentor-spec-body"><strong data-i18n="mspec3-strong">Foco em resultado sustentável</strong><span data-i18n="mspec3-span">Crescimento que não depende de sorte ou tendência, depende de quem você é.</span></div></div>
       </div>
     </div>
   </div>
@@ -1438,147 +840,262 @@
 
 <!-- IDENTIDADE -->
 <div class="wrap section" id="identidade">
-  <div class="eyebrow"><div class="eyebrow-line"></div><span>Pilar 2 • Arquitetura de Identidade</span></div>
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-identidade">Pilar 2 • Arquitetura de Identidade</span></div>
   <div class="section-2col">
-    <div><h2 class="section-title">O Núcleo da<br><em>Sua Marca</em></h2></div>
-    <div><p class="section-sub">Cada elemento da sua identidade é construído a partir do que foi descoberto na investigação. Nada é arbitrário. Tudo tem origem em quem você é.</p></div>
+    <div><h2 class="section-title" data-i18n-html="identidade-title"><span>O Núcleo da</span><br><em>Sua Marca</em></h2></div>
+    <div><p class="section-sub" data-i18n="identidade-sub">Cada elemento da sua identidade é construído a partir do que foi descoberto na investigação. Nada é arbitrário. Tudo tem origem em quem você é.</p></div>
   </div>
   <div class="identidade-grid">
-    <div class="id-cell"><span class="id-field">Nome e Posicionamento</span><p class="id-question">Qual nome e posição carregam a essência da sua missão no mercado?</p></div>
-    <div class="id-cell"><span class="id-field">Missão e Proposta de Valor</span><p class="id-question">O que você oferece que ninguém mais pode oferecer da mesma forma?</p></div>
-    <div class="id-cell"><span class="id-field">Tom de Voz e Comunicação</span><p class="id-question">Como você fala? Como seu público precisa ser alcançado e convertido?</p></div>
-    <div class="id-cell"><span class="id-field">Arquétipo e Diferencial</span><p class="id-question">O que torna sua marca inconfundível? Por que as pessoas escolhem você?</p></div>
-    <div class="id-cell"><span class="id-field">Autoridade e Trajetória</span><p class="id-question">Que experiência de vida deu a você o direito de servir as pessoas que serve?</p></div>
-    <div class="id-cell"><span class="id-field">Legado e Visão de Futuro</span><p class="id-question">Que impacto você quer deixar no mercado? Onde estará em 5 anos?</p></div>
+    <div class="id-cell"><span class="id-field" data-i18n="id1-field">Nome e Posicionamento</span><p class="id-question" data-i18n="id1-q">Qual nome e posição carregam a essência da sua missão no mercado?</p></div>
+    <div class="id-cell"><span class="id-field" data-i18n="id2-field">Missão e Proposta de Valor</span><p class="id-question" data-i18n="id2-q">O que você oferece que ninguém mais pode oferecer da mesma forma?</p></div>
+    <div class="id-cell"><span class="id-field" data-i18n="id3-field">Tom de Voz e Comunicação</span><p class="id-question" data-i18n="id3-q">Como você fala? Como seu público precisa ser alcançado e convertido?</p></div>
+    <div class="id-cell"><span class="id-field" data-i18n="id4-field">Arquétipo e Diferencial</span><p class="id-question" data-i18n="id4-q">O que torna sua marca inconfundível? Por que as pessoas escolhem você?</p></div>
+    <div class="id-cell"><span class="id-field" data-i18n="id5-field">Autoridade e Trajetória</span><p class="id-question" data-i18n="id5-q">Que experiência de vida deu a você o direito de servir as pessoas que serve?</p></div>
+    <div class="id-cell"><span class="id-field" data-i18n="id6-field">Legado e Visão de Futuro</span><p class="id-question" data-i18n="id6-q">Que impacto você quer deixar no mercado? Onde estará em 5 anos?</p></div>
   </div>
   <div class="fases-wrap">
-    <div class="fase-row">
-      <div class="fase-label"><div class="fase-n">01</div><div class="fase-name">Origem</div></div>
-      <div class="fase-content"><h4 class="fase-title">A história que te trouxe até aqui</h4><p class="fase-desc">O ponto de partida da narrativa da marca. O que aconteceu? Qual foi o momento de virada que mudou a trajetória e define quem você é hoje?</p></div>
-    </div>
-    <div class="fase-row">
-      <div class="fase-label"><div class="fase-n">02</div><div class="fase-name">Jornada</div></div>
-      <div class="fase-content"><h4 class="fase-title">Os desafios que te forjaram</h4><p class="fase-desc">O que você superou? O que aprendeu no caminho que ninguém mais poderia aprender da mesma forma?</p></div>
-    </div>
-    <div class="fase-row">
-      <div class="fase-label"><div class="fase-n">03</div><div class="fase-name">Descoberta</div></div>
-      <div class="fase-content"><h4 class="fase-title">O insight que mudou tudo</h4><p class="fase-desc">A percepção que te fez ver o mundo de outro ângulo e que agora você pode compartilhar com quem percorre o mesmo caminho.</p></div>
-    </div>
-    <div class="fase-row">
-      <div class="fase-label"><div class="fase-n">04</div><div class="fase-name">Missão</div></div>
-      <div class="fase-content"><h4 class="fase-title">O convite ao mercado</h4><p class="fase-desc">O que você faz com tudo isso? Como ajuda outros? Por que você, por que agora, e por que sua forma é única?</p></div>
-    </div>
+    <div class="fase-row"><div class="fase-label"><div class="fase-n">01</div><div class="fase-name" data-i18n="fase1-name">Origem</div></div><div class="fase-content"><h4 class="fase-title" data-i18n="fase1-title">A história que te trouxe até aqui</h4><p class="fase-desc" data-i18n="fase1-desc">O ponto de partida da narrativa da marca. O que aconteceu? Qual foi o momento de virada que mudou a trajetória e define quem você é hoje?</p></div></div>
+    <div class="fase-row"><div class="fase-label"><div class="fase-n">02</div><div class="fase-name" data-i18n="fase2-name">Jornada</div></div><div class="fase-content"><h4 class="fase-title" data-i18n="fase2-title">Os desafios que te forjaram</h4><p class="fase-desc" data-i18n="fase2-desc">O que você superou? O que aprendeu no caminho que ninguém mais poderia aprender da mesma forma?</p></div></div>
+    <div class="fase-row"><div class="fase-label"><div class="fase-n">03</div><div class="fase-name" data-i18n="fase3-name">Descoberta</div></div><div class="fase-content"><h4 class="fase-title" data-i18n="fase3-title">O insight que mudou tudo</h4><p class="fase-desc" data-i18n="fase3-desc">A percepção que te fez ver o mundo de outro ângulo e que agora você pode compartilhar com quem percorre o mesmo caminho.</p></div></div>
+    <div class="fase-row"><div class="fase-label"><div class="fase-n">04</div><div class="fase-name" data-i18n="fase4-name">Missão</div></div><div class="fase-content"><h4 class="fase-title" data-i18n="fase4-title">O convite ao mercado</h4><p class="fase-desc" data-i18n="fase4-desc">O que você faz com tudo isso? Como ajuda outros? Por que você, por que agora, e por que sua forma é única?</p></div></div>
   </div>
 </div>
 
-<!-- PLANOS -->
+<!-- ════════════════════════════════════════
+     PLANOS, VERSÃO ATUALIZADA COMPLETA
+════════════════════════════════════════ -->
 <div class="wrap planos-section" id="planos">
-  <div class="eyebrow"><div class="eyebrow-line"></div><span>Investimento</span></div>
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-investimento">Investimento</span></div>
   <div class="section-2col" style="margin-bottom:56px;">
-    <div><h2 class="section-title">Escolha Seu<br><em>Plano</em></h2></div>
-    <div><p class="section-sub">Cada modalidade oferece um nível diferente de proximidade e velocidade. O método é o mesmo, o que muda é a intensidade do acompanhamento.</p></div>
+    <div><h2 class="section-title" data-i18n-html="planos-title"><span>Escolha Seu</span><br><em>Plano</em></h2></div>
+    <div><p class="section-sub" data-i18n="planos-sub">Cada modalidade oferece um nível diferente de proximidade e profundidade. O método é o mesmo, o que muda é a intensidade do acompanhamento e o volume de entregáveis.</p></div>
   </div>
 
+  <!-- ── PLANO DESPERTAR (produto de entrada) ── -->
+  <div class="despertar-wrap">
+    <div class="despertar-card">
+      <div class="despertar-left">
+        <span class="despertar-badge" data-i18n="desp-badge">Produto de Entrada · Plano Despertar</span>
+        <h3 class="despertar-title" data-i18n-html="desp-title">Arquitetura<br>de <em>Essência</em></h3>
+        <div class="despertar-ideal" data-i18n="desp-ideal">Para quem sabe que tem algo valioso para oferecer ao mundo, mas ainda não encontrou as palavras, o posicionamento ou a estrutura para isso.</div>
+        <p class="despertar-tagline" data-i18n="desp-tagline">Uma sessão intensiva que transforma autoconhecimento em estratégia concreta. Ideal também para quem quer uma base sólida antes de investir em um plano maior.</p>
+      </div>
+      <div class="despertar-center">
+        <ul class="despertar-items">
+          <li class="list-category" data-i18n="desp-cat1">Sessão &amp; Diagnóstico</li>
+          <li data-i18n="desp-i1">2 sessões intensivas de 60 minutos (Scan + Investigação + Anamnese)</li>
+          <li data-i18n="desp-i2">Gravação das sessões para revisão futura</li>
+          <li class="list-category" data-i18n="desp-cat2">Identidade &amp; Marca</li>
+          <li data-i18n="desp-i3">Dossiê de Essência em PDF (arquétipo, missão, tom de voz)</li>
+          <li data-i18n="desp-i4">Blueprint de Identidade Digital (bio, headline, paleta de referências)</li>
+          <li data-i18n="desp-i5">Logo profissional da marca</li>
+          <li data-i18n="desp-i6">Posicionamento inicial nas redes sociais (bio + headline + link)</li>
+          <li class="list-category" data-i18n="desp-cat3">Estratégia &amp; Ação</li>
+          <li data-i18n="desp-i7">Script de apresentação pessoal, pitch e copy</li>
+          <li data-i18n="desp-i8">1 roteiro estratégico (5 posts + 1 carrossel ou 3 vídeos)</li>
+          <li data-i18n="desp-i9">Plano de ação escrito para 30 dias</li>
+        </ul>
+      </div>
+      <div class="despertar-right">
+        <div class="despertar-price">R$297</div>
+        <span class="despertar-period" data-i18n="desp-period">sessão única · entrega em 7 dias</span>
+        <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Plano%20Despertar%20-%20Arquitetura%20de%20Essência" target="_blank" class="btn-gold" style="font-size:.56rem;padding:14px 28px;" data-i18n="desp-cta">Quero Começar</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GRID 3 PLANOS INTERMEDIÁRIOS ── -->
   <div class="planos-grid">
+
+    <!-- Plano 01 · Digital Inicial -->
     <div class="plano-card">
-      <span class="plano-level">Plano 01 · Estruturação</span>
-      <h3 class="plano-name">Digital <em>Inicial</em></h3>
-      <div class="plano-price">R$ 3.500</div>
-      <span class="plano-period">3 meses · pagamento único</span>
+      <span class="plano-level" data-i18n="p1-level">Plano 01 · Estruturação</span>
+      <h3 class="plano-name" data-i18n-html="p1-name">Digital <em>Inicial</em></h3>
+      <div class="plano-price">R$ 3.000</div>
+      <span class="plano-period" data-i18n="p1-period">3 meses · pagamento único</span>
       <div class="plano-div"></div>
-      <p class="plano-desc">Ideal para quem quer estruturar o digital com estratégia clara. Três meses para sair do zero ou reorganizar o que já existe, com método e direcionamento real.</p>
+      <p class="plano-ideal" data-i18n="p1-ideal">Ideal para quem quer estrutura completa com estratégia real, saindo do caos para um negócio digital organizado, posicionado e operacional.</p>
       <ul class="plano-items">
-        <li>3 meses de mentoria individual</li>
-        <li>Mapeamento completo de essência e identidade</li>
-        <li>Estruturação do projeto digital</li>
-        <li>Estratégia de conteúdo e posicionamento</li>
-        <li>Direcionamento personalizado em cada sessão</li>
-        <li>Suporte por mensagem durante todo o período</li>
+        <li class="list-category" data-i18n="p1-cat1">Identidade &amp; Marca</li>
+        <li class="highlight" data-i18n="p1-i1">Arquitetura de Essência completa (4 camadas: Scan + Investigação + Anamnese)</li>
+        <li data-i18n="p1-i2">Dossiê de Marca em PDF profissional</li>
+        <li data-i18n="p1-i3">Identidade digital completa (bio, headline, arquétipo, paleta)</li>
+        <li data-i18n="p1-i4">Logo profissional da marca</li>
+        <li class="list-category" data-i18n="p1-cat2">Digital &amp; Presença</li>
+        <li class="highlight" data-i18n="p1-i5">Site profissional completo OU página de vendas estratégica</li>
+        <li data-i18n="p1-i6">Perfil do Instagram estruturado</li>
+        <li data-i18n="p1-i7">Criativos e posts estratégicos para Instagram (até 30 peças)</li>
+        <li data-i18n="p1-i8">Flyers digitais e imagens estratégicas da marca</li>
+        <li class="list-category" data-i18n="p1-cat3">Estratégia &amp; Conteúdo</li>
+        <li data-i18n="p1-i9">Estratégia de conteúdo para 90 dias</li>
+        <li data-i18n="p1-i10">Até 10 roteiros ou posts estratégicos</li>
+        <li data-i18n="p1-i11">Scripts de vendas e atendimento</li>
+        <li data-i18n="p1-i12">Funil de conversão estruturado</li>
+        <li data-i18n="p1-i13">Plano de conversão e monetização</li>
+        <li class="list-category" data-i18n="p1-cat4">Produto &amp; Monetização</li>
+        <li data-i18n="p1-i14">1 produto digital (e-book ou guia)</li>
+        <li data-i18n="p1-i15">Cadastro em plataformas de vendas (Hotmart, Kiwify, Monetizze etc.)</li>
+        <li class="list-category" data-i18n="p1-cat5">Acompanhamento</li>
+        <li data-i18n="p1-i16">1 call por semana de estratégia e alinhamento</li>
+        <li data-i18n="p1-i17">Suporte WhatsApp durante todo o período</li>
+        <li data-i18n="p1-i18">Relatórios quinzenais de progresso</li>
+        <li data-i18n="p1-i19">Melhoria de até 10 fotos com IA</li>
+        <li data-i18n="p1-i20">Configuração de automações básicas (e-mail/WhatsApp)</li>
+        <li data-i18n="p1-i21">Biblioteca de prompts de IA personalizada para a marca</li>
+        <li data-i18n="p1-i22">Entrega organizada com backup no Drive</li>
+        <li data-i18n="p1-i23">Divulgação estratégica no Instagram e blog do Akasha Hub</li>
+        <li data-i18n="p1-i24">Garantia de 7 dias (reembolso integral)</li>
       </ul>
-      <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Plano%20Digital%20Inicial%20(R%24%203.500)%20da%20Mentoria%20Akasha%20Hub" target="_blank" class="plano-cta">Quero Começar</a>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Plano%20Digital%20Inicial" target="_blank" class="plano-cta" data-i18n="p1-cta">Quero Começar</a>
     </div>
+
+    <!-- Plano 02 · Mentoria Mensal -->
     <div class="plano-card">
-      <span class="plano-level">Plano 02 · Continuidade</span>
-      <h3 class="plano-name">Mentoria <em>Mensal</em></h3>
+      <span class="plano-level" data-i18n="p2-level">Plano 02 · Continuidade</span>
+      <h3 class="plano-name" data-i18n-html="p2-name">Mentoria <em>Mensal</em></h3>
       <div class="plano-price">R$ 1.500</div>
-      <span class="plano-period">por mês · sem fidelidade</span>
+      <span class="plano-period" data-i18n="p2-period">por mês · sem fidelidade</span>
       <div class="plano-div"></div>
-      <p class="plano-desc">Para negócios em crescimento que precisam de ajuste contínuo. Acompanhamento estratégico próximo mês a mês, com total flexibilidade.</p>
+      <p class="plano-ideal" data-i18n="p2-ideal">Ideal para quem já tem uma base construída e precisa de ajuste contínuo, revisão de decisões estratégicas e presença de um mentor para não perder direção em meio à execução.</p>
       <ul class="plano-items">
-        <li>Calls mensais de estratégia e alinhamento</li>
-        <li>Revisão de campanhas e posicionamento</li>
-        <li>Ajustes e decisões em tempo real</li>
-        <li>Acesso a suporte por mensagem</li>
-        <li>Sem contrato de fidelidade</li>
-        <li>Cancelamento a qualquer momento</li>
+        <li class="list-category" data-i18n="p2-cat1">Sessões &amp; Acompanhamento</li>
+        <li class="highlight" data-i18n="p2-i1">4 calls de estratégia e alinhamento por mês</li>
+        <li data-i18n="p2-i2">Suporte WhatsApp (resposta em até 24h úteis)</li>
+        <li data-i18n="p2-i3">Cancelamento a qualquer momento, sem burocracia</li>
+        <li class="list-category" data-i18n="p2-cat2">Entregáveis Mensais</li>
+        <li class="highlight" data-i18n="p2-i4">1 entregável à escolha (roteiro, copy, ajuste de página ou landing page)</li>
+        <li data-i18n="p2-i5">4 criativos ou stories estratégicos por mês</li>
+        <li data-i18n="p2-i6">Atualização e ajustes de páginas, funis ou scripts ativos</li>
+        <li data-i18n="p2-i7">Revisão e atualização de scripts de funil mensalmente</li>
+        <li class="list-category" data-i18n="p2-cat3">Estratégia &amp; Crescimento</li>
+        <li data-i18n="p2-i8">Revisão de campanhas e posicionamento ativo</li>
+        <li data-i18n="p2-i9">Ajustes e decisões estratégicas em tempo real</li>
+        <li data-i18n="p2-i10">Orientação de posicionamento nas redes sociais</li>
+        <li data-i18n="p2-i11">Sugestões de novos serviços ou produtos para monetização</li>
+        <li data-i18n="p2-i12">Relatório mensal de progresso e métricas</li>
+        <li data-i18n="p2-i13">Perfil do Instagram estruturado e revisado</li>
+        <li data-i18n="p2-i14">Plano de conversão revisado mensalmente</li>
       </ul>
-      <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20na%20Mentoria%20Mensal%20(R%24%201.500%2Fmês)%20da%20Akasha%20Hub" target="_blank" class="plano-cta">Quero Começar</a>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20na%20Mentoria%20Mensal" target="_blank" class="plano-cta" data-i18n="p2-cta">Quero Começar</a>
     </div>
+
+    <!-- Plano 03 · Sessão Semanal -->
     <div class="plano-card">
-      <span class="plano-level">Plano 03 · Intensivo</span>
-      <h3 class="plano-name">Sessão <em>Semanal</em></h3>
+      <span class="plano-level" data-i18n="p3-level">Plano 03 · Intensivo</span>
+      <h3 class="plano-name" data-i18n-html="p3-name">Sessão <em>Semanal</em></h3>
       <div class="plano-price">R$ 495</div>
-      <span class="plano-period">por semana · alta frequência</span>
+      <span class="plano-period" data-i18n="p3-period">por semana · alta frequência</span>
       <div class="plano-div"></div>
-      <p class="plano-desc">Para quem precisa de velocidade. Uma sessão por semana para desbloquear, decidir e executar com o mentor presente a cada passo.</p>
+      <p class="plano-ideal" data-i18n="p3-ideal">Ideal para quem está em lançamento, passando por um pivô de negócio, ou tem decisões críticas que precisam de diagnóstico e ação imediata, sem esperar semanas por uma resposta.</p>
       <ul class="plano-items">
-        <li>1 sessão semanal individual</li>
-        <li>Foco em execução e desbloqueio imediato</li>
-        <li>Ajuste de estratégia semana a semana</li>
-        <li>Diagnóstico e ação na mesma sessão</li>
-        <li>Ritmo de crescimento acelerado</li>
-        <li>Ideal para lançamentos e pivôs</li>
+        <li class="list-category" data-i18n="p3-cat1">Sessões &amp; Diagnóstico</li>
+        <li class="highlight" data-i18n="p3-i1">2 sessões individuais de 60–90 minutos por semana</li>
+        <li data-i18n="p3-i2">Diagnóstico e plano de ação na mesma sessão</li>
+        <li data-i18n="p3-i3">Gravação de cada sessão para revisão futura</li>
+        <li data-i18n="p3-i4">Checklist de execução personalizado</li>
+        <li class="list-category" data-i18n="p3-cat2">Entregáveis Semanais</li>
+        <li class="highlight" data-i18n="p3-i5">1 micro-entregável por semana (copy, roteiro ou ajuste)</li>
+        <li data-i18n="p3-i6">3 criativos ou posts estratégicos por semana</li>
+        <li data-i18n="p3-i7">Script de vendas, pitch ou atendimento revisado semanalmente</li>
+        <li data-i18n="p3-i8">Plano de conversão semanal atualizado</li>
+        <li class="list-category" data-i18n="p3-cat3">Estratégia &amp; Execução</li>
+        <li data-i18n="p3-i9">Suporte WhatsApp durante toda a semana</li>
+        <li data-i18n="p3-i10">Ajuste de estratégia semana a semana</li>
+        <li data-i18n="p3-i11">Ajuste de funil, página ou posicionamento na mesma sessão</li>
+        <li data-i18n="p3-i12">Perfil do Instagram estruturado</li>
+        <li data-i18n="p3-i13">Ritmo de crescimento acelerado e consistente</li>
+        <li data-i18n="p3-i14">Ideal para lançamentos e momentos de pivô</li>
       </ul>
-      <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20na%20Sessão%20Semanal%20(R%24%20495%2Fsemana)%20da%20Mentoria%20Akasha%20Hub" target="_blank" class="plano-cta">Quero Começar</a>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20na%20Sessão%20Semanal" target="_blank" class="plano-cta" data-i18n="p3-cta">Quero Começar</a>
     </div>
   </div>
 
+  <!-- ── PLANOS HIGH TICKET ── -->
   <div class="planos-ht">
+
+    <!-- HT 1 · Estratégia e Execução Total -->
     <div class="ht-card">
-      <span class="ht-tier">Plano Premium · Atenção Máxima</span>
-      <h3 class="ht-name">Estratégia e<br><em>Execução Total</em></h3>
+      <span class="ht-tier" data-i18n="ht1-tier">Plano Premium · Atenção Máxima</span>
+      <h3 class="ht-name" data-i18n-html="ht1-name"><span>Estratégia e</span><br><em>Execução Total</em></h3>
       <div class="ht-price">R$ 10.000</div>
-      <span class="ht-period">Investimento único · Período negociado</span>
-      <div class="ht-positioning">
-        Para quem quer o mentor ao lado enquanto o negócio digital é construído. Direcionamento diário, atenção integral e execução conjunta. Para quem entende que resultados reais nascem de presença real.
-      </div>
+      <span class="ht-period" data-i18n="ht1-period">Investimento único · Até 6 meses</span>
+      <div class="ht-positioning" data-i18n="ht1-positioning">Não é consultoria, é presença real, direcionamento diário e execução conjunta. Para quem entende que resultados sérios nascem de atenção real e que construir sozinho tem um custo invisível muito maior.</div>
       <div class="ht-div"></div>
       <ul class="ht-items">
-        <li>Calls semanais com o mentor</li>
-        <li>Mensagens diárias de direcionamento e suporte</li>
-        <li>App de execução compartilhado para o projeto</li>
-        <li>Acompanhamento pleno do processo digital</li>
-        <li>Estratégia, execução e ajustes lado a lado</li>
-        <li>Checklist semanal de progresso e responsabilidade</li>
-        <li>Campanhas com disciplina e consistência</li>
+        <li class="list-category" data-i18n="ht1-cat1">Identidade &amp; Estrutura</li>
+        <li class="highlight" data-i18n="ht1-i1">Arquitetura de Essência completa (Scan + Dossiê de Marca Premium)</li>
+        <li data-i18n="ht1-i2">Logo profissional + identidade visual completa</li>
+        <li data-i18n="ht1-i3">Melhoria de fotos com IA + identidade visual digital</li>
+        <li class="list-category" data-i18n="ht1-cat2">Digital &amp; Produto</li>
+        <li class="highlight" data-i18n="ht1-i4">Site completo OU aplicativo (1 entrega) + 5 páginas de vendas</li>
+        <li data-i18n="ht1-i5">Funil de vendas completo (captura + vendas + obrigado)</li>
+        <li data-i18n="ht1-i6">Sistema de vendas configurado em plataforma</li>
+        <li data-i18n="ht1-i7">Até 3 produtos digitais (e-book, roteiro, membros básico)</li>
+        <li data-i18n="ht1-i8">Estratégia e estrutura de lançamento ou campanha</li>
+        <li data-i18n="ht1-i9">Configuração de blog estratégico para SEO</li>
+        <li data-i18n="ht1-i10">Automações de e-mail e WhatsApp integradas</li>
+        <li data-i18n="ht1-i11">Cadastro e configuração em plataformas de vendas</li>
+        <li class="list-category" data-i18n="ht1-cat3">Conteúdo &amp; Criativos</li>
+        <li data-i18n="ht1-i12">Pack de criativos estratégicos para Instagram (posts + stories + flyers)</li>
+        <li data-i18n="ht1-i13">Scripts completos de vendas, atendimento e funil</li>
+        <li data-i18n="ht1-i14">Roteiros de YouTube (formato longo + estratégico)</li>
+        <li data-i18n="ht1-i15">E-book ou livro de autoridade incluído</li>
+        <li data-i18n="ht1-i16">Curso digital completo estruturado e publicado</li>
+        <li data-i18n="ht1-i17">Estratégia de lançamento com cronograma</li>
+        <li class="list-category" data-i18n="ht1-cat4">Acompanhamento</li>
+        <li class="highlight" data-i18n="ht1-i18">2 calls semanais + mensagens diárias de direcionamento</li>
+        <li data-i18n="ht1-i19">App de execução compartilhado (checklist + mapeamento em tempo real)</li>
+        <li data-i18n="ht1-i20">Checklist semanal + relatório de progresso</li>
+        <li data-i18n="ht1-i21">Backup no Drive organizado com todos os entregáveis</li>
+        <li data-i18n="ht1-i22">Atualizações e ajustes contínuos durante todo o período</li>
+        <li data-i18n="ht1-i23">Divulgação estratégica no Instagram e blog do Akasha Hub</li>
       </ul>
-      <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20solicitar%20acesso%20ao%20Plano%20Estratégia%20e%20Execução%20Total%20(R%24%2010.000)%20da%20Akasha%20Hub" target="_blank" class="ht-cta">Solicitar Acesso</a>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20solicitar%20acesso%20ao%20Plano%20Estratégia%20e%20Execução%20Total" target="_blank" class="ht-cta" data-i18n="ht1-cta">Solicitar Acesso</a>
     </div>
+
+    <!-- HT 2 · Império Digital Completo -->
     <div class="ht-card">
-      <span class="ht-tier">Plano Máximo · Parceria Total</span>
-      <h3 class="ht-name">Império Digital<br><em>Completo</em></h3>
+      <span class="ht-tier" data-i18n="ht2-tier">Plano Máximo · Parceria Total · Seleção Pessoal</span>
+      <h3 class="ht-name" data-i18n-html="ht2-name"><span>Império Digital</span><br><em>Completo</em></h3>
       <div class="ht-price">R$ 25.000</div>
-      <span class="ht-period">6 meses · tráfego pago incluído</span>
-      <div class="ht-positioning">
-        Para quem quer escalar com tudo: mentor presente, capital investido junto, estrutura total montada. Não é mentoria. É uma parceria de construção real. Exclusivo para perfis selecionados.
-      </div>
+      <span class="ht-period" data-i18n="ht2-period">6 meses · tráfego pago incluído</span>
+      <div class="ht-positioning" data-i18n="ht2-positioning">Não é mentoria. É uma parceria de construção real. Mentor presente, capital investido junto, ecossistema total montado. Exclusivo para perfis selecionados pessoalmente. Este plano exige atenção, disposição e foco total do mentor durante os 6 meses.</div>
       <div class="ht-div"></div>
       <ul class="ht-items">
-        <li>Tudo do Plano Estratégia Total incluso</li>
-        <li><strong style="color:var(--gold-lt);font-weight:400;">R$ 3.000 em tráfego pago, investidos pelo mentor</strong></li>
-        <li>6 meses com acesso diário disponível</li>
-        <li>Call semanal + mensagens todos os dias</li>
-        <li>Campanhas de tráfego estruturadas com disciplina</li>
-        <li>Mapeamento total: presença, funil e escala</li>
-        <li>Seleção pessoal pelo mentor</li>
+        <li class="highlight" data-i18n="ht2-i0">Tudo do Plano Estratégia e Execução Total incluso</li>
+        <li class="list-category" data-i18n="ht2-cat1">Diferenciais Exclusivos</li>
+        <li class="highlight" data-i18n="ht2-i1"><strong style="color:var(--gold-lt);font-weight:400;">R$ 3.000 em tráfego pago estratégico investidos pelo mentor</strong></li>
+        <li data-i18n="ht2-i2">6 meses com acesso diário disponível ao mentor</li>
+        <li data-i18n="ht2-i3">Ecossistema digital completo (site + funil + área de membros + blog)</li>
+        <li data-i18n="ht2-i4">Autobiografia ou livro de autoridade completo</li>
+        <li data-i18n="ht2-i5">Criação ou estruturação de empresa ou startup</li>
+        <li data-i18n="ht2-i6">Criação de empresa + CNPJ estruturado (quando aplicável)</li>
+        <li class="list-category" data-i18n="ht2-cat2">Tráfego &amp; Escala</li>
+        <li data-i18n="ht2-i7">Campanhas de tráfego estruturadas e acompanhadas</li>
+        <li data-i18n="ht2-i8">Monetização completa em múltiplas plataformas</li>
+        <li data-i18n="ht2-i9">Funis de conversão avançados com automação</li>
+        <li data-i18n="ht2-i10">Estratégia de posicionamento para YouTube (longo prazo)</li>
+        <li class="list-category" data-i18n="ht2-cat3">Parcerias &amp; Visibilidade</li>
+        <li class="highlight" data-i18n="ht2-i11">3 meses de divulgação estratégica no Akasha Hub (3 menções/mês no Instagram + blog)</li>
+        <li data-i18n="ht2-i12">Estratégia de parceria e colabs estratégicos</li>
+        <li class="list-category" data-i18n="ht2-cat4">Entregáveis Completos</li>
+        <li data-i18n="ht2-i13">Páginas de vendas premium (múltiplas, conforme necessidade)</li>
+        <li data-i18n="ht2-i14">Pack completo de criativos: posts, stories, flyers e banners digitais</li>
+        <li data-i18n="ht2-i15">Scripts completos de vendas, funil e atendimento</li>
+        <li data-i18n="ht2-i16">Criação de curso digital completo (estrutura + plataforma)</li>
+        <li data-i18n="ht2-i17">Cadastro e configuração em todas as plataformas relevantes</li>
+        <li data-i18n="ht2-i18">Atualizações, ajustes e melhorias contínuas por 6 meses</li>
+        <li data-i18n="ht2-i19">Relatório trimestral de crescimento e ROI</li>
+        <li data-i18n="ht2-i20">Seleção pessoal pelo mentor, vagas extremamente limitadas</li>
       </ul>
-      <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20solicitar%20acesso%20ao%20Plano%20Império%20Digital%20Completo%20(R%24%2025.000)%20da%20Akasha%20Hub" target="_blank" class="ht-cta">Solicitar Acesso</a>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20solicitar%20acesso%20ao%20Plano%20Império%20Digital" target="_blank" class="ht-cta" data-i18n="ht2-cta">Solicitar Acesso</a>
     </div>
   </div>
 
+  <!-- Aviso de seleção -->
   <div class="aviso-selecao">
-    <p>
-      <strong>Os planos de R$ 10.000 e R$ 25.000 são para quem tem o comprometimento certo, não apenas o orçamento.</strong><br>
+    <p data-i18n-html="aviso-text">
+      <strong>Os planos de R$&nbsp;10.000 e R$&nbsp;25.000 são para quem tem o comprometimento certo, não apenas o orçamento.</strong><br>
       O mentor seleciona pessoalmente cada cliente nesses planos. Se você chegou até aqui e sente que é a hora, entre em contato para uma conversa direta.<br><br>
       <strong>Vagas limitadas. Atenção real é recurso escasso.</strong>
     </p>
@@ -1588,237 +1105,803 @@
 <!-- GARANTIA -->
 <div class="wrap">
   <div class="garantia">
-    <div class="garantia-symbol">Garantia</div>
+    <div class="garantia-symbol" data-i18n="garantia-symbol">Garantia</div>
     <div>
-      <h3 class="garantia-title">Garantia de <em>100% de Reembolso</em></h3>
-      <p class="garantia-desc">Nos primeiros 7 dias, se você não sentir que esta é a mentoria certa para o seu momento, devolvemos 100% do valor. Sem perguntas, sem burocracia. Porque confiança não se pede, se oferece.</p>
+      <h3 class="garantia-title" data-i18n-html="garantia-title">Garantia de <em>100% de Reembolso</em></h3>
+      <p class="garantia-desc" data-i18n="garantia-desc">Nos primeiros 7 dias, se você não sentir que esta é a mentoria certa para o seu momento, devolvemos 100% do valor. Sem perguntas, sem burocracia. Porque confiança não se pede, se oferece.</p>
     </div>
   </div>
 </div>
 
 <!-- CTA FINAL -->
 <div class="wrap cta-final">
-  <span class="cta-final-eyebrow">Próximo Passo</span>
-  <h2 class="cta-final-title">Pronto para<br><em>Começar?</em></h2>
-  <p class="cta-final-sub">Fale diretamente com o mentor. Uma conversa sem compromisso para entender seu momento e qual caminho faz mais sentido para você.</p>
+  <span class="cta-final-eyebrow" data-i18n="cta-final-eyebrow">Próximo Passo</span>
+  <h2 class="cta-final-title" data-i18n-html="cta-final-title"><span>Pronto para</span><br><em>Começar?</em></h2>
+  <p class="cta-final-sub" data-i18n="cta-final-sub">Fale diretamente com o mentor. Uma conversa sem compromisso para entender seu momento e qual caminho faz mais sentido para você.</p>
   <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20saber%20mais%20sobre%20a%20Mentoria%20Akasha%20Hub" target="_blank" class="btn-wpp">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-    </svg>
-    Falar com o Mentor
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <span data-i18n="cta-final-btn">Falar com o Mentor</span>
   </a>
 </div>
 
-<div class="wrap"><div class="sec-divider" style="margin:0 0 0;"></div></div>
+<div class="wrap"><div class="sec-divider" style="margin:0;"></div></div>
+
+<!-- DOWNLOAD SECTION -->
+<section style="padding: 100px 0; text-align: center; background: rgba(10,10,20,0.6); border-top: 1px solid rgba(200,160,74,0.15); margin-top: 50px;">
+  <div class="wrap">
+    <h2 class="section-title" style="margin-bottom: 10px;" data-i18n-html="download-title"><span>Download dos</span> <em>Planos</em></h2>
+    <p class="section-sub" style="text-align:center;margin-bottom:40px;" data-i18n="download-sub">Preencha os dados abaixo para baixar a apresentação completa em PowerPoint.</p>
+    <div id="leadForm" style="max-width:500px;margin:0 auto;display:flex;flex-direction:column;gap:15px;background:rgba(255,255,255,0.02);padding:30px;border:1px solid rgba(200,160,74,0.15);">
+      <input type="text" id="name" data-i18n-placeholder="ph-name" placeholder="Seu Nome" style="background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,74,0.15);padding:12px;color:white;font-family:'DM Sans',sans-serif;transition:all 0.3s;outline:none;">
+      <input type="email" id="email" data-i18n-placeholder="ph-email" placeholder="Seu E-mail" style="background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,74,0.15);padding:12px;color:white;font-family:'DM Sans',sans-serif;transition:all 0.3s;outline:none;">
+      <input type="tel" id="whatsapp" data-i18n-placeholder="ph-whatsapp" placeholder="Seu WhatsApp" style="background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,74,0.15);padding:12px;color:white;font-family:'DM Sans',sans-serif;transition:all 0.3s;outline:none;">
+      <button onclick="handleDownload()" class="btn-gold" style="width:100%;text-align:center;margin-top:10px;cursor:pointer;" data-i18n="download-btn">Baixar PowerPoint</button>
+    </div>
+  </div>
+</section>
 
 <!-- FOOTER -->
 <footer>
   <span class="footer-logo">Akasha Hub</span>
-  <p>© 2026 Akasha Hub · Todos os direitos reservados</p>
-  <p>Mentoria Individual · Identidade de Marca · Estratégia Digital</p>
+  <p data-i18n="footer-copyright">© 2026 Akasha Hub · Todos os direitos reservados</p>
+  <p data-i18n="footer-tagline">Mentoria Individual · Identidade de Marca · Estratégia Digital</p>
   <p><a href="https://akashahub.com.br">akashahub.com.br</a></p>
 </footer>
 
 <script>
-  // PARTICLES
-  const pc = document.getElementById('particles');
-  for (let i = 0; i < 22; i++) {
-    const p = document.createElement('div');
-    const isGold = Math.random() > 0.65;
-    p.style.cssText = `
-      position:absolute;border-radius:50%;opacity:0;
-      left:${Math.random()*100}%;
-      top:${8+Math.random()*84}%;
-      width:${0.8+Math.random()*1.4}px;
-      height:${0.8+Math.random()*1.4}px;
-      background:${isGold ? 'rgba(226,194,120,0.65)' : 'rgba(107,79,160,0.55)'};
-      animation: floatP ${7+Math.random()*12}s ${Math.random()*18}s ease-in infinite;
-    `;
-    pc.appendChild(p);
-  }
-  const pStyle = document.createElement('style');
-  pStyle.textContent = `@keyframes floatP{0%{opacity:0;transform:translateY(0) scale(0);}15%{opacity:.35;transform:translateY(-50px) scale(1);}85%{opacity:.07;}100%{opacity:0;transform:translateY(-200px) scale(0);}}`;
-  document.head.appendChild(pStyle);
+// PARTICLES
+const pc = document.getElementById('particles');
+for (let i = 0; i < 22; i++) {
+  const p = document.createElement('div');
+  const isGold = Math.random() > 0.65;
+  p.style.cssText = `position:absolute;border-radius:50%;opacity:0;left:${Math.random()*100}%;top:${8+Math.random()*84}%;width:${0.8+Math.random()*1.4}px;height:${0.8+Math.random()*1.4}px;background:${isGold ? 'rgba(226,194,120,0.65)' : 'rgba(107,79,160,0.55)'};animation:floatP ${7+Math.random()*12}s ${Math.random()*18}s ease-in infinite;`;
+  pc.appendChild(p);
+}
+const pStyle = document.createElement('style');
+pStyle.textContent = `@keyframes floatP{0%{opacity:0;transform:translateY(0) scale(0);}15%{opacity:.35;transform:translateY(-50px) scale(1);}85%{opacity:.07;}100%{opacity:0;transform:translateY(-200px) scale(0);}}`;
+document.head.appendChild(pStyle);
 
-  // SCROLL REVEAL
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.style.animation = 'fadeInUp 0.7s ease-out forwards';
-        obs.unobserve(e.target);
-      }
-    });
-  }, { threshold: .08, rootMargin: '0px 0px -40px 0px' });
-
-  document.querySelectorAll('.pilar-card,.camada-card,.id-cell,.fase-row,.plano-card,.paraquem-card,.mentor-spec,.mstep,.ht-card').forEach(el => {
-    el.style.opacity = '0'; obs.observe(el);
-  });
-
-  // SMOOTH SCROLL
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', e => {
-      e.preventDefault();
-      const t = document.querySelector(a.getAttribute('href'));
-      if (t) t.scrollIntoView({ behavior: 'smooth' });
-    });
-  });
-
-  // ══ MODAL ══
-  const modal    = document.getElementById('videoModal');
-  const panel    = document.getElementById('vmPanel');
-  const track    = document.getElementById('vmTrack');
-  const dotsWrap = document.getElementById('vmDots');
-  const btnPrev  = document.getElementById('vmPrev');
-  const btnNext  = document.getElementById('vmNext');
-  const btnClose = document.getElementById('vmClose');
-  const btnOpen  = document.getElementById('openVideoModal');
-
-  const cards     = Array.from(track.querySelectorAll('.vm-card'));
-  const CARDS_VIS = window.innerWidth <= 700 ? 1 : 2;
-  const TOTAL     = cards.length;
-  const STEPS     = Math.ceil(TOTAL / CARDS_VIS);
-
-  let currentStep = 0;
-  let isDragging  = false;
-  let startX      = 0;
-  let scrollStart = 0;
-
-  function buildDots() {
-    dotsWrap.innerHTML = '';
-    for (let i = 0; i < STEPS; i++) {
-      const d = document.createElement('button');
-      d.className = 'vm-dot' + (i === 0 ? ' active' : '');
-      d.setAttribute('aria-label', `Ir para grupo ${i+1}`);
-      d.addEventListener('click', () => goTo(i));
-      dotsWrap.appendChild(d);
-    }
-  }
-
-  function updateDots() {
-    dotsWrap.querySelectorAll('.vm-dot').forEach((d, i) => d.classList.toggle('active', i === currentStep));
-  }
-
-  function updateArrows() {
-    btnPrev.disabled = currentStep === 0;
-    btnNext.disabled = currentStep >= STEPS - 1;
-  }
-
-  function goTo(step) {
-    currentStep = Math.max(0, Math.min(step, STEPS - 1));
-    const cardW = cards[0].offsetWidth + 16;
-    const offset = currentStep * CARDS_VIS * cardW;
-    track.style.transform = `translateX(-${offset}px)`;
-    updateDots();
-    updateArrows();
-  }
-
-  btnPrev.addEventListener('click', () => goTo(currentStep - 1));
-  btnNext.addEventListener('click', () => goTo(currentStep + 1));
-
-  // DRAG / SWIPE
-  function dragStart(e) {
-    isDragging = true;
-    track.classList.add('is-dragging');
-    startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-    const matrix = new DOMMatrix(getComputedStyle(track).transform);
-    scrollStart = matrix.m41;
-  }
-  function dragMove(e) {
-    if (!isDragging) return;
-    const x = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-    track.style.transition = 'none';
-    track.style.transform = `translateX(${scrollStart + (x - startX)}px)`;
-  }
-  function dragEnd(e) {
-    if (!isDragging) return;
-    isDragging = false;
-    track.classList.remove('is-dragging');
-    track.style.transition = '';
-    const x = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
-    const dx = x - startX;
-    if (Math.abs(dx) > 60) { dx < 0 ? goTo(currentStep + 1) : goTo(currentStep - 1); }
-    else { goTo(currentStep); }
-  }
-
-  track.addEventListener('mousedown',  dragStart);
-  track.addEventListener('mousemove',  dragMove);
-  track.addEventListener('mouseup',    dragEnd);
-  track.addEventListener('mouseleave', dragEnd);
-  track.addEventListener('touchstart', dragStart, { passive: true });
-  track.addEventListener('touchmove',  dragMove,  { passive: true });
-  track.addEventListener('touchend',   dragEnd);
-
-  // ── MODAL DE VÍDEOS (carrossel) ──
-  function openModal() {
-    document.body.style.overflow = 'hidden';
-    modal.classList.add('is-open');
-    btnClose.focus();
-    buildDots();
-    updateArrows();
-    goTo(0);
-  }
-
-  function closeModal() {
-    document.body.style.overflow = '';
-    modal.classList.remove('is-open');
-    btnOpen.focus();
-  }
-
-  btnOpen.addEventListener('click', openModal);
-  btnClose.addEventListener('click', closeModal);
-  modal.addEventListener('click', e => { if (!panel.contains(e.target)) closeModal(); });
-
-  // ── MODAL PLAYER FULLSCREEN ──
-  const vpOverlay = document.getElementById('vpOverlay');
-  const vpPanel   = document.getElementById('vpPanel');
-  const vpClose   = document.getElementById('vpClose');
-  const vpVideo   = document.getElementById('vpVideo');
-  const vpTag     = document.getElementById('vpTag');
-  const vpTitle   = document.getElementById('vpTitle');
-
-  function openPlayer(videoUrl, tagText, titleText) {
-    vpVideo.src = videoUrl;
-    vpTag.textContent   = tagText   || '';
-    vpTitle.textContent = titleText || '';
-    vpOverlay.classList.add('is-open');
-    vpVideo.play().catch(() => {
-      setTimeout(() => vpVideo.play().catch(() => {}), 150);
-    });
-  }
-
-  function closePlayer() {
-    vpVideo.pause();
-    vpVideo.src = '';
-    vpOverlay.classList.remove('is-open');
-  }
-
-  vpClose.addEventListener('click', closePlayer);
-  vpOverlay.addEventListener('click', e => { if (!vpPanel.contains(e.target)) closePlayer(); });
-
-  // ESC fecha o player primeiro, depois o carrossel
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      if (vpOverlay.classList.contains('is-open')) { closePlayer(); return; }
-      if (modal.classList.contains('is-open')) closeModal();
+// SCROLL REVEAL
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.animation = 'fadeInUp 0.7s ease-out forwards';
+      obs.unobserve(e.target);
     }
   });
+}, { threshold: .08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.pilar-card,.camada-card,.id-cell,.fase-row,.plano-card,.paraquem-card,.mentor-spec,.mstep,.ht-card,.despertar-card').forEach(el => {
+  el.style.opacity = '0'; obs.observe(el);
+});
 
-  // Click em thumbnail abre o player fullscreen
-  track.addEventListener('click', (e) => {
-    if (isDragging) return;
-    const thumb = e.target.closest('.vm-thumb');
-    if (!thumb) return;
-
-    const videoUrl = thumb.dataset.videourl;
-    if (!videoUrl) return;
-
-    // Pega tag e título do card
-    const card  = thumb.closest('.vm-card');
-    const tag   = card ? (card.querySelector('.vm-card-tag')   || {}).textContent : '';
-    const title = card ? (card.querySelector('.vm-card-title') || {}).textContent : '';
-
-    openPlayer(videoUrl, tag, title);
+// SMOOTH SCROLL
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth' });
   });
+});
+
+// ══ CAROUSEL MODAL ══
+const modal    = document.getElementById('videoModal');
+const panel    = document.getElementById('vmPanel');
+const track    = document.getElementById('vmTrack');
+const dotsWrap = document.getElementById('vmDots');
+const btnPrev  = document.getElementById('vmPrev');
+const btnNext  = document.getElementById('vmNext');
+const btnClose = document.getElementById('vmClose');
+const btnOpen  = document.getElementById('openVideoModal');
+
+const cards     = Array.from(track.querySelectorAll('.vm-card'));
+const CARDS_VIS = window.innerWidth <= 700 ? 1 : 2;
+const TOTAL     = cards.length;
+const STEPS     = Math.ceil(TOTAL / CARDS_VIS);
+
+let currentStep = 0, isDragging = false, startX = 0, scrollStart = 0;
+
+function buildDots() {
+  dotsWrap.innerHTML = '';
+  for (let i = 0; i < STEPS; i++) {
+    const d = document.createElement('button');
+    d.className = 'vm-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+}
+function updateDots() { dotsWrap.querySelectorAll('.vm-dot').forEach((d, i) => d.classList.toggle('active', i === currentStep)); }
+function updateArrows() { btnPrev.disabled = currentStep === 0; btnNext.disabled = currentStep >= STEPS - 1; }
+function goTo(step) {
+  currentStep = Math.max(0, Math.min(step, STEPS - 1));
+  const cardW = cards[0].offsetWidth + 16;
+  track.style.transform = `translateX(-${currentStep * CARDS_VIS * cardW}px)`;
+  updateDots(); updateArrows();
+}
+
+btnPrev.addEventListener('click', () => goTo(currentStep - 1));
+btnNext.addEventListener('click', () => goTo(currentStep + 1));
+
+function dragStart(e) { isDragging = true; track.classList.add('is-dragging'); startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX; const m = new DOMMatrix(getComputedStyle(track).transform); scrollStart = m.m41; }
+function dragMove(e) { if (!isDragging) return; const x = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX; track.style.transition = 'none'; track.style.transform = `translateX(${scrollStart + (x - startX)}px)`; }
+function dragEnd(e) { if (!isDragging) return; isDragging = false; track.classList.remove('is-dragging'); track.style.transition = ''; const x = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX; const dx = x - startX; if (Math.abs(dx) > 60) { dx < 0 ? goTo(currentStep + 1) : goTo(currentStep - 1); } else { goTo(currentStep); } }
+track.addEventListener('mousedown', dragStart); track.addEventListener('mousemove', dragMove); track.addEventListener('mouseup', dragEnd); track.addEventListener('mouseleave', dragEnd);
+track.addEventListener('touchstart', dragStart, { passive: true }); track.addEventListener('touchmove', dragMove, { passive: true }); track.addEventListener('touchend', dragEnd);
+
+function openModal() { document.body.style.overflow = 'hidden'; modal.classList.add('is-open'); btnClose.focus(); buildDots(); updateArrows(); goTo(0); }
+function closeModal() { document.body.style.overflow = ''; modal.classList.remove('is-open'); }
+btnOpen.addEventListener('click', openModal);
+btnClose.addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (!panel.contains(e.target)) closeModal(); });
+
+// ── VIDEO PLAYER ──
+const vpOverlay = document.getElementById('vpOverlay');
+const vpPanel   = document.getElementById('vpPanel');
+const vpClose   = document.getElementById('vpClose');
+const vpVideo   = document.getElementById('vpVideo');
+const vpTag     = document.getElementById('vpTag');
+const vpTitle   = document.getElementById('vpTitle');
+
+function openPlayer(url, tag, title) {
+  vpVideo.src = url; vpTag.textContent = tag || ''; vpTitle.textContent = title || '';
+  vpOverlay.classList.add('is-open');
+  vpVideo.play().catch(() => setTimeout(() => vpVideo.play().catch(() => {}), 150));
+}
+function closePlayer() { vpVideo.pause(); vpVideo.src = ''; vpOverlay.classList.remove('is-open'); }
+vpClose.addEventListener('click', closePlayer);
+vpOverlay.addEventListener('click', e => { if (!vpPanel.contains(e.target)) closePlayer(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if (vpOverlay.classList.contains('is-open')) { closePlayer(); return; } if (modal.classList.contains('is-open')) closeModal(); }
+});
+track.addEventListener('click', e => {
+  if (isDragging) return;
+  const thumb = e.target.closest('.vm-thumb');
+  if (!thumb) return;
+  const url = thumb.dataset.videourl;
+  if (!url) return;
+  const card = thumb.closest('.vm-card');
+  const tag   = card ? (card.querySelector('.vm-card-tag')   || {}).textContent : '';
+  const title = card ? (card.querySelector('.vm-card-title') || {}).textContent : '';
+  openPlayer(url, tag, title);
+});
+
+// ── MATRIX EFFECT ──
+const canvas = document.getElementById('matrix-bg');
+if (canvas) {
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$@#%&*";
+  const fs = 16, cols = canvas.width / fs, drops = Array(Math.floor(cols)).fill(1);
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(6,5,15,0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00ff41"; ctx.font = fs + "px monospace";
+    drops.forEach((y, i) => { ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*fs, y*fs); if (y*fs > canvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++; });
+  }
+  setInterval(drawMatrix, 35);
+  window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+}
+
+// ── DOWNLOAD FORM ──
+function handleDownload() {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const wpp = document.getElementById('whatsapp').value.trim();
+  if (!name || !email || !wpp) {
+    alert(I18N[currentLang]['alert-fill'] || 'Por favor, preencha todos os campos.');
+    return;
+  }
+  document.querySelectorAll('h2, h1').forEach(h => h.classList.add('matrix-glitch'));
+  setTimeout(() => {
+    window.location.href = "https://res.cloudinary.com/dcbarseus/raw/upload/v1781808902/apresentacao_akasha_10_umv2yt.pptx";
+    document.querySelectorAll('h2, h1').forEach(h => h.classList.remove('matrix-glitch'));
+    setTimeout(() => alert((I18N[currentLang]['alert-thanks'] || 'Download iniciado! Obrigado, {name}').replace('{name}', name)), 300);
+  }, 1500);
+}
+
+// ── HOVER GLITCH ──
+document.querySelectorAll('.btn-gold, .plano-card').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    if (Math.random() > 0.7) { el.classList.add('matrix-glitch'); setTimeout(() => el.classList.remove('matrix-glitch'), 500); }
+  });
+});
+
+// ══════════════════════════════════════
+//   SISTEMA DE TRADUÇÃO (PT / EN / ES)
+// ══════════════════════════════════════
+const I18N = {
+  pt: {}, // PT usa o conteúdo original do HTML (sem alterações)
+  en: {
+    "page-title": "Akasha Hub Mentorship, Positioning, Digital Identity and Scale",
+    "modal-eyebrow": "Mentor Videos",
+    "modal-title": "What you'll hear<br><em>before deciding</em>",
+    "v1-tag": "Mentorship", "v1-title": "The Call", "v1-desc": "A quick look at how the mentorship impacts your positioning.",
+    "v2-tag": "Clarity", "v2-title": "30s", "v2-desc": "3 questions that reveal why you haven't gotten there yet.",
+    "v3-tag": "Brand", "v3-title": "A brand born from your field", "v3-desc": "Building the entire digital structure from your real essence.",
+    "modal-footer-text": "More content on Instagram",
+    "nav-metodo": "Method", "nav-mentor": "Mentor", "nav-planos": "Plans", "nav-cta": "Talk to the Mentor",
+    "hero-tag": "Individual Mentorship · Strategy and Positioning",
+    "hero-title": "<span>Build the Brand</span><br><em>that Represents Who<br>You Really Are</em>",
+    "hero-sub": "A deep process of essence mapping, brand identity building and digital structuring, for those who want a business that <strong>grows because it's authentic</strong>, not despite it.",
+    "hero-btn-planos": "View Plans", "hero-btn-metodo": "Get to Know the Method", "hero-btn-videos": "Watch mentor videos",
+    "trust1-strong": "Proprietary Method", "trust1-span": "4 Mapping Layers",
+    "trust2-strong": "1:1 Mentorship", "trust2-span": "Individual, Personalized Attention",
+    "trust3-strong": "Sustainable Result", "trust3-span": "Strategy with Real Roots",
+    "trust4-strong": "7-Day Guarantee", "trust4-span": "Full Refund",
+    "eyebrow-metodo": "The Method",
+    "pilares-title": "<span>The Three Pillars</span><br><em>of Construction</em>",
+    "pilares-sub": "Each pillar sustains the next. These aren't separate strategies, it's an integrated architecture that runs from essence to operational business.",
+    "pilar1-title": "Essence Investigation", "pilar1-sub": "Who you really are",
+    "pilar1-desc": "Before any strategy, we need to know who we're working with. The investigation process reveals what makes you unique, irreplaceable and magnetic to the right people.",
+    "pilar2-title": "Identity Architecture", "pilar2-sub": "The brand you deserve to have",
+    "pilar2-desc": "Name, mission, tone of voice, archetype and origin story, all built from what was discovered in the investigation. Nothing generic. Everything consistent with who you are.",
+    "pilar3-title": "Strategy and Digital Scale", "pilar3-sub": "The business you want to build",
+    "pilar3-desc": "Complete digital structure: presence, content, funnel and traffic. The identity already built guides every strategic decision, digital isn't a mask, it's an authentic extension of your brand.",
+    "eyebrow-camadas": "Pillar 1 • Essence Investigation",
+    "camadas-title": "<span>The 4 Layers</span><br><em>of Who You Are</em>",
+    "camadas-sub": "The investigation process moves through four dimensions that, together, build a complete and unique portrait of your essence, the raw material of the whole brand.",
+    "camada1-title": "<span>Deep</span> <em>Purpose</em>",
+    "camada1-desc": "The reason that goes beyond the product or service. What moves you when no one is watching? What do you stand for in the world?",
+    "camada1-tag1": "Values", "camada1-tag2": "Mission", "camada1-tag3": "Legacy",
+    "camada2-title": "<span>Formative</span> <em>Journey</em>",
+    "camada2-desc": "The experiences that shaped your worldview and your unique perspective on the market you operate in.",
+    "camada2-tag1": "Experience", "camada2-tag2": "Authority",
+    "camada3-title": "<span>Gifts and</span> <em>Differentials</em>",
+    "camada3-desc": "What you do naturally that others have to work hard to achieve. Your real competitive advantage.",
+    "camada3-tag1": "Talent", "camada3-tag2": "Method",
+    "camada4-title": "<span>Vision of</span> <em>the Future</em>",
+    "camada4-desc": "Where do you want to go? What market do you want to transform? Clarity of destination defines the direction of every decision.",
+    "camada4-tag1": "Scale", "camada4-tag2": "Impact",
+    "method-eyebrow": "How it works in practice",
+    "method-title": "<span>From Mapping to</span><br><em>Real Business</em>",
+    "mstep1-title": "Deep Mapping Session",
+    "mstep1-desc": "We investigate your essence across the 4 layers. What emerges is unique and irreplaceable, the foundation for everything that follows.",
+    "mstep2-title": "Brand Identity Construction",
+    "mstep2-desc": "Name, mission, tone of voice, positioning and origin story. All integrated and consistent with who you really are.",
+    "mstep3-title": "Digital Structure and Strategy",
+    "mstep3-desc": "Digital presence, content strategy, funnel and campaigns. From scratch or reorganizing what already exists with clarity.",
+    "mstep4-title": "Follow-up and Scale",
+    "mstep4-desc": "Real-time adjustments, consistent growth and results that hold up because they were born from a solid foundation.",
+    "eyebrow-paraquem": "Who It's For",
+    "paraquem-title": "<span>This Mentorship is For You</span><br><em>If...</em>",
+    "pq1-label": "Experienced professional",
+    "pq1-desc": "You have authority in what you do, but haven't yet translated that into a clear, attractive position in the digital market.",
+    "pq2-label": "Entrepreneur in transition",
+    "pq2-desc": "You're shifting careers or pivoting the business and need to rebuild the narrative from scratch on solid foundations.",
+    "pq3-label": "Content creator",
+    "pq3-desc": "You've been producing content for a while but feel it lacks consistency, differentiation or a strategy behind it.",
+    "pq4-label": "Seeking authenticity",
+    "pq4-desc": "You're tired of following trends that don't fit you and want to build a brand that's genuinely yours.",
+    "pq5-label": "Business without clarity",
+    "pq5-desc": "The business exists, but the communication doesn't convert and the positioning doesn't create real differentiation in the market.",
+    "pq6-label": "Ready to scale",
+    "pq6-desc": "You have the foundation and clarity, but need strategy, structure and follow-up to take the business to the next level.",
+    "eyebrow-mentor": "The Mentor",
+    "mentor-tag-val": "Founder &amp; Mentor",
+    "mentor-role": "Founder · Programmer · Brand Strategist",
+    "mentor-bio": "Over the past few years, I've worked with professionals and entrepreneurs who had something valuable to offer the world but didn't know how to translate that into positioning, presence and a real business. I developed my own method that starts from the inside out: essence first, then strategy.",
+    "mspec1-strong": "Brands of Absolute Excellence and Maximum Quality",
+    "mspec1-span": "From independent professionals to scaling entrepreneurs, across different markets and niches.",
+    "mspec2-strong": "Proprietary 4-layer method",
+    "mspec2-span": "Developed over 7+ years of practice, trial, learning and real results.",
+    "mspec3-strong": "Focus on sustainable results",
+    "mspec3-span": "Growth that doesn't depend on luck or trends, it depends on who you are.",
+    "eyebrow-identidade": "Pillar 2 • Identity Architecture",
+    "identidade-title": "<span>The Core of</span><br><em>Your Brand</em>",
+    "identidade-sub": "Every element of your identity is built from what was discovered in the investigation. Nothing is arbitrary. Everything originates from who you are.",
+    "id1-field": "Name and Positioning", "id1-q": "What name and position carry the essence of your mission in the market?",
+    "id2-field": "Mission and Value Proposition", "id2-q": "What do you offer that no one else can offer in the same way?",
+    "id3-field": "Tone of Voice and Communication", "id3-q": "How do you speak? How does your audience need to be reached and converted?",
+    "id4-field": "Archetype and Differentiator", "id4-q": "What makes your brand unmistakable? Why do people choose you?",
+    "id5-field": "Authority and Trajectory", "id5-q": "What life experience earned you the right to serve the people you serve?",
+    "id6-field": "Legacy and Vision of the Future", "id6-q": "What impact do you want to leave on the market? Where will you be in 5 years?",
+    "fase1-name": "Origin", "fase1-title": "The story that brought you here",
+    "fase1-desc": "The starting point of the brand narrative. What happened? What was the turning point that changed your trajectory and defines who you are today?",
+    "fase2-name": "Journey", "fase2-title": "The challenges that forged you",
+    "fase2-desc": "What did you overcome? What did you learn along the way that no one else could learn in the same way?",
+    "fase3-name": "Discovery", "fase3-title": "The insight that changed everything",
+    "fase3-desc": "The realization that made you see the world from another angle and that you can now share with those walking the same path.",
+    "fase4-name": "Mission", "fase4-title": "The invitation to the market",
+    "fase4-desc": "What do you do with all of this? How do you help others? Why you, why now, and why is your way unique?",
+    "eyebrow-investimento": "Investment",
+    "planos-title": "<span>Choose Your</span><br><em>Plan</em>",
+    "planos-sub": "Each modality offers a different level of closeness and depth. The method is the same, what changes is the intensity of the follow-up and the volume of deliverables.",
+    "desp-badge": "Entry Product · Awakening Plan",
+    "desp-title": "Essence<br><em>Architecture</em>",
+    "desp-ideal": "For those who know they have something valuable to offer the world, but haven't yet found the words, the positioning or the structure for it.",
+    "desp-tagline": "An intensive session that turns self-knowledge into concrete strategy. Also ideal for those who want a solid foundation before investing in a larger plan.",
+    "desp-cat1": "Session &amp; Diagnosis",
+    "desp-i1": "2 intensive 60-minute sessions (Scan + Investigation + Anamnesis)",
+    "desp-i2": "Session recordings for future review",
+    "desp-cat2": "Identity &amp; Brand",
+    "desp-i3": "Essence Dossier in PDF (archetype, mission, tone of voice)",
+    "desp-i4": "Digital Identity Blueprint (bio, headline, reference palette)",
+    "desp-i5": "Professional brand logo",
+    "desp-i6": "Initial social media positioning (bio + headline + link)",
+    "desp-cat3": "Strategy &amp; Action",
+    "desp-i7": "Personal pitch, presentation and copy script",
+    "desp-i8": "1 strategic roadmap (5 posts + 1 carousel or 3 videos)",
+    "desp-i9": "Written 30-day action plan",
+    "desp-period": "single session · delivered in 7 days",
+    "desp-cta": "I Want to Start",
+    "p1-level": "Plan 01 · Structuring", "p1-name": "Initial <em>Digital</em>",
+    "p1-period": "3 months · one-time payment",
+    "p1-ideal": "Ideal for those who want a complete structure with real strategy, moving from chaos to an organized, positioned and operational digital business.",
+    "p1-cat1": "Identity &amp; Brand",
+    "p1-i1": "Complete Essence Architecture (4 layers: Scan + Investigation + Anamnesis)",
+    "p1-i2": "Professional Brand Dossier in PDF",
+    "p1-i3": "Complete digital identity (bio, headline, archetype, palette)",
+    "p1-i4": "Professional brand logo",
+    "p1-cat2": "Digital &amp; Presence",
+    "p1-i5": "Complete professional website OR strategic sales page",
+    "p1-i6": "Structured Instagram profile",
+    "p1-i7": "Strategic Instagram creatives and posts (up to 30 pieces)",
+    "p1-i8": "Digital flyers and strategic brand images",
+    "p1-cat3": "Strategy &amp; Content",
+    "p1-i9": "90-day content strategy",
+    "p1-i10": "Up to 10 strategic scripts or posts",
+    "p1-i11": "Sales and customer service scripts",
+    "p1-i12": "Structured conversion funnel",
+    "p1-i13": "Conversion and monetization plan",
+    "p1-cat4": "Product &amp; Monetization",
+    "p1-i14": "1 digital product (e-book or guide)",
+    "p1-i15": "Registration on sales platforms (Hotmart, Kiwify, Monetizze, etc.)",
+    "p1-cat5": "Follow-up",
+    "p1-i16": "1 strategy and alignment call per week",
+    "p1-i17": "WhatsApp support throughout the entire period",
+    "p1-i18": "Biweekly progress reports",
+    "p1-i19": "AI enhancement of up to 10 photos",
+    "p1-i20": "Basic automation setup (email/WhatsApp)",
+    "p1-i21": "Brand-customized AI prompt library",
+    "p1-i22": "Organized delivery with Drive backup",
+    "p1-i23": "Strategic promotion on Akasha Hub's Instagram and blog",
+    "p1-i24": "7-day guarantee (full refund)",
+    "p1-cta": "I Want to Start",
+    "p2-level": "Plan 02 · Continuity", "p2-name": "Monthly <em>Mentorship</em>",
+    "p2-period": "per month · no commitment",
+    "p2-ideal": "Ideal for those who already have a foundation built and need ongoing adjustment, review of strategic decisions and a mentor's presence to stay on course during execution.",
+    "p2-cat1": "Sessions &amp; Follow-up",
+    "p2-i1": "4 strategy and alignment calls per month",
+    "p2-i2": "WhatsApp support (response within 24 business hours)",
+    "p2-i3": "Cancel anytime, no red tape",
+    "p2-cat2": "Monthly Deliverables",
+    "p2-i4": "1 deliverable of your choice (script, copy, page adjustment or landing page)",
+    "p2-i5": "4 strategic creatives or stories per month",
+    "p2-i6": "Updates and adjustments to active pages, funnels or scripts",
+    "p2-i7": "Monthly funnel script review and update",
+    "p2-cat3": "Strategy &amp; Growth",
+    "p2-i8": "Review of campaigns and active positioning",
+    "p2-i9": "Real-time strategic adjustments and decisions",
+    "p2-i10": "Social media positioning guidance",
+    "p2-i11": "Suggestions for new services or monetization products",
+    "p2-i12": "Monthly progress and metrics report",
+    "p2-i13": "Structured and reviewed Instagram profile",
+    "p2-i14": "Monthly reviewed conversion plan",
+    "p2-cta": "I Want to Start",
+    "p3-level": "Plan 03 · Intensive", "p3-name": "Weekly <em>Session</em>",
+    "p3-period": "per week · high frequency",
+    "p3-ideal": "Ideal for those launching, going through a business pivot, or facing critical decisions that need diagnosis and immediate action, without waiting weeks for a response.",
+    "p3-cat1": "Sessions &amp; Diagnosis",
+    "p3-i1": "2 individual 60–90 minute sessions per week",
+    "p3-i2": "Diagnosis and action plan in the same session",
+    "p3-i3": "Recording of every session for future review",
+    "p3-i4": "Personalized execution checklist",
+    "p3-cat2": "Weekly Deliverables",
+    "p3-i5": "1 micro-deliverable per week (copy, script or adjustment)",
+    "p3-i6": "3 strategic creatives or posts per week",
+    "p3-i7": "Weekly reviewed sales, pitch or service script",
+    "p3-i8": "Updated weekly conversion plan",
+    "p3-cat3": "Strategy &amp; Execution",
+    "p3-i9": "WhatsApp support all week long",
+    "p3-i10": "Week-by-week strategy adjustment",
+    "p3-i11": "Funnel, page or positioning adjustment in the same session",
+    "p3-i12": "Structured Instagram profile",
+    "p3-i13": "Accelerated, consistent growth pace",
+    "p3-i14": "Ideal for launches and pivot moments",
+    "p3-cta": "I Want to Start",
+    "ht1-tier": "Premium Plan · Maximum Attention",
+    "ht1-name": "<span>Total Strategy</span><br><em>and Execution</em>",
+    "ht1-period": "One-time investment · Up to 6 months",
+    "ht1-positioning": "This isn't consulting, it's real presence, daily direction and joint execution. For those who understand that serious results come from real attention and that building alone has a much greater invisible cost.",
+    "ht1-cat1": "Identity &amp; Structure",
+    "ht1-i1": "Complete Essence Architecture (Scan + Premium Brand Dossier)",
+    "ht1-i2": "Professional logo + complete visual identity",
+    "ht1-i3": "AI photo enhancement + digital visual identity",
+    "ht1-cat2": "Digital &amp; Product",
+    "ht1-i4": "Complete website OR app (1 delivery) + 5 sales pages",
+    "ht1-i5": "Complete sales funnel (capture + sales + thank you)",
+    "ht1-i6": "Sales system configured on a platform",
+    "ht1-i7": "Up to 3 digital products (e-book, script, basic membership)",
+    "ht1-i8": "Launch or campaign strategy and structure",
+    "ht1-i9": "Strategic SEO blog setup",
+    "ht1-i10": "Integrated email and WhatsApp automations",
+    "ht1-i11": "Registration and setup on sales platforms",
+    "ht1-cat3": "Content &amp; Creatives",
+    "ht1-i12": "Strategic Instagram creative pack (posts + stories + flyers)",
+    "ht1-i13": "Complete sales, service and funnel scripts",
+    "ht1-i14": "YouTube scripts (long-form + strategic)",
+    "ht1-i15": "E-book or authority book included",
+    "ht1-i16": "Complete digital course structured and published",
+    "ht1-i17": "Launch strategy with timeline",
+    "ht1-cat4": "Follow-up",
+    "ht1-i18": "2 weekly calls + daily direction messages",
+    "ht1-i19": "Shared execution app (real-time checklist + mapping)",
+    "ht1-i20": "Weekly checklist + progress report",
+    "ht1-i21": "Organized Drive backup with all deliverables",
+    "ht1-i22": "Continuous updates and adjustments throughout the period",
+    "ht1-i23": "Strategic promotion on Akasha Hub's Instagram and blog",
+    "ht1-cta": "Request Access",
+    "ht2-tier": "Maximum Plan · Total Partnership · Personal Selection",
+    "ht2-name": "<span>Complete Digital</span><br><em>Empire</em>",
+    "ht2-period": "6 months · paid traffic included",
+    "ht2-positioning": "This isn't mentorship. It's a real building partnership. Mentor present, capital invested together, a full ecosystem set up. Exclusive to personally selected profiles. This plan demands full attention, availability and focus from the mentor for the 6 months.",
+    "ht2-i0": "Everything from the Total Strategy and Execution Plan included",
+    "ht2-cat1": "Exclusive Differentials",
+    "ht2-i1": "<strong style=\"color:var(--gold-lt);font-weight:400;\">R$3,000 in strategic paid traffic invested by the mentor</strong>",
+    "ht2-i2": "6 months of daily access to the mentor",
+    "ht2-i3": "Complete digital ecosystem (site + funnel + membership area + blog)",
+    "ht2-i4": "Complete autobiography or authority book",
+    "ht2-i5": "Creation or structuring of a company or startup",
+    "ht2-i6": "Company formation + structured tax registration (when applicable)",
+    "ht2-cat2": "Traffic &amp; Scale",
+    "ht2-i7": "Structured and monitored traffic campaigns",
+    "ht2-i8": "Complete monetization across multiple platforms",
+    "ht2-i9": "Advanced conversion funnels with automation",
+    "ht2-i10": "Long-term YouTube positioning strategy",
+    "ht2-cat3": "Partnerships &amp; Visibility",
+    "ht2-i11": "3 months of strategic promotion on Akasha Hub (3 mentions/month on Instagram + blog)",
+    "ht2-i12": "Partnership and strategic collab strategy",
+    "ht2-cat4": "Complete Deliverables",
+    "ht2-i13": "Premium sales pages (multiple, as needed)",
+    "ht2-i14": "Complete creative pack: posts, stories, flyers and digital banners",
+    "ht2-i15": "Complete sales, funnel and service scripts",
+    "ht2-i16": "Complete digital course creation (structure + platform)",
+    "ht2-i17": "Registration and setup on all relevant platforms",
+    "ht2-i18": "Continuous updates, adjustments and improvements for 6 months",
+    "ht2-i19": "Quarterly growth and ROI report",
+    "ht2-i20": "Personal selection by the mentor, extremely limited spots",
+    "ht2-cta": "Request Access",
+    "aviso-text": "<strong>The R$10,000 and R$25,000 plans are for those with the right commitment, not just the budget.</strong><br>The mentor personally selects each client for these plans. If you've made it this far and feel it's the moment, get in touch for a direct conversation.<br><br><strong>Limited spots. Real attention is a scarce resource.</strong>",
+    "garantia-symbol": "Guarantee",
+    "garantia-title": "100% Refund <em>Guarantee</em>",
+    "garantia-desc": "In the first 7 days, if you don't feel this is the right mentorship for your moment, we'll refund 100% of the value. No questions, no red tape. Because trust isn't asked for, it's offered.",
+    "cta-final-eyebrow": "Next Step",
+    "cta-final-title": "<span>Ready to</span><br><em>Get Started?</em>",
+    "cta-final-sub": "Talk directly with the mentor. A no-commitment conversation to understand your moment and which path makes the most sense for you.",
+    "cta-final-btn": "Talk to the Mentor",
+    "download-title": "<span>Download the</span> <em>Plans</em>",
+    "download-sub": "Fill in the details below to download the complete presentation in PowerPoint.",
+    "ph-name": "Your Name", "ph-email": "Your Email", "ph-whatsapp": "Your WhatsApp",
+    "download-btn": "Download PowerPoint",
+    "footer-copyright": "© 2026 Akasha Hub · All rights reserved",
+    "footer-tagline": "Individual Mentorship · Brand Identity · Digital Strategy",
+    "alert-fill": "Please fill in all fields.",
+    "alert-thanks": "Download started! Thank you, {name}"
+  },
+  es: {
+    "page-title": "Mentoría Akasha Hub, Posicionamiento, Identidad Digital y Escala",
+    "modal-eyebrow": "Vídeos del Mentor",
+    "modal-title": "Lo que vas a escuchar<br><em>antes de decidir</em>",
+    "v1-tag": "Mentoría", "v1-title": "El Llamado", "v1-desc": "Una mirada rápida al impacto de la mentoría en tu posicionamiento.",
+    "v2-tag": "Claridad", "v2-title": "30s", "v2-desc": "3 preguntas que revelan por qué todavía no has llegado allí.",
+    "v3-tag": "Marca", "v3-title": "Una marca que nace de tu campo", "v3-desc": "Construyendo toda la estructura digital a partir de tu esencia real.",
+    "modal-footer-text": "Más contenido en Instagram",
+    "nav-metodo": "Método", "nav-mentor": "Mentor", "nav-planos": "Planes", "nav-cta": "Hablar con el Mentor",
+    "hero-tag": "Mentoría Individual · Estrategia y Posicionamiento",
+    "hero-title": "<span>Construye la Marca</span><br><em>que Representa Quién<br>Realmente Eres</em>",
+    "hero-sub": "Un proceso profundo de mapeo de esencia, construcción de identidad de marca y estructuración digital, para quien quiere un negocio que <strong>crece porque es auténtico</strong>, no a pesar de serlo.",
+    "hero-btn-planos": "Ver Planes", "hero-btn-metodo": "Conocer el Método", "hero-btn-videos": "Ver vídeos del mentor",
+    "trust1-strong": "Método Propio", "trust1-span": "4 Capas de Mapeo",
+    "trust2-strong": "Mentoría 1:1", "trust2-span": "Atención Individual y Personalizada",
+    "trust3-strong": "Resultado Sostenible", "trust3-span": "Estrategia con Raíces Reales",
+    "trust4-strong": "Garantía de 7 Días", "trust4-span": "Reembolso Total",
+    "eyebrow-metodo": "El Método",
+    "pilares-title": "<span>Los Tres Pilares</span><br><em>de la Construcción</em>",
+    "pilares-sub": "Cada pilar sostiene al siguiente. No son estrategias separadas, es una arquitectura integrada que va de la esencia al negocio operativo.",
+    "pilar1-title": "Investigación de Esencia", "pilar1-sub": "Quién eres de verdad",
+    "pilar1-desc": "Antes de cualquier estrategia, necesitamos saber con quién estamos trabajando. El proceso de investigación revela lo que te hace único, insustituible y magnético para las personas correctas.",
+    "pilar2-title": "Arquitectura de Identidad", "pilar2-sub": "La marca que mereces tener",
+    "pilar2-desc": "Nombre, misión, tono de voz, arquetipo y narrativa de origen, todo construido a partir de lo descubierto en la investigación. Nada genérico. Todo coherente con quién eres.",
+    "pilar3-title": "Estrategia y Escala Digital", "pilar3-sub": "El negocio que quieres construir",
+    "pilar3-desc": "Estructura digital completa: presencia, contenido, embudo y tráfico. La identidad ya construida guía cada decisión estratégica, lo digital no es una máscara, es una extensión auténtica de tu marca.",
+    "eyebrow-camadas": "Pilar 1 • Investigación de Esencia",
+    "camadas-title": "<span>Las 4 Capas</span><br><em>de Quién Eres</em>",
+    "camadas-sub": "El proceso de investigación recorre cuatro dimensiones que, juntas, construyen un retrato completo y único de tu esencia, la materia prima de toda la marca.",
+    "camada1-title": "<span>Propósito</span> <em>Profundo</em>",
+    "camada1-desc": "La razón que va más allá del producto o servicio. ¿Qué te mueve cuando nadie está mirando? ¿Qué defiendes en el mundo?",
+    "camada1-tag1": "Valores", "camada1-tag2": "Misión", "camada1-tag3": "Legado",
+    "camada2-title": "<span>Trayectoria</span> <em>Formativa</em>",
+    "camada2-desc": "Las experiencias que moldearon tu visión del mundo y tu mirada única sobre el mercado en el que actúas.",
+    "camada2-tag1": "Experiencia", "camada2-tag2": "Autoridad",
+    "camada3-title": "<span>Dones y</span> <em>Diferenciales</em>",
+    "camada3-desc": "Lo que haces de forma natural y que a otros les cuesta esfuerzo alcanzar. Tu ventaja competitiva real.",
+    "camada3-tag1": "Talento", "camada3-tag2": "Método",
+    "camada4-title": "<span>Visión de</span> <em>Futuro</em>",
+    "camada4-desc": "¿A dónde quieres llegar? ¿Qué mercado quieres transformar? La claridad del destino define la dirección de cada decisión.",
+    "camada4-tag1": "Escala", "camada4-tag2": "Impacto",
+    "method-eyebrow": "Cómo funciona en la práctica",
+    "method-title": "<span>Del Mapeo al</span><br><em>Negocio Real</em>",
+    "mstep1-title": "Sesión de Mapeo Profundo",
+    "mstep1-desc": "Investigamos tu esencia en las 4 capas. Lo que emerge es único e insustituible, la base de todo lo que viene después.",
+    "mstep2-title": "Construcción de la Identidad de Marca",
+    "mstep2-desc": "Nombre, misión, tono de voz, posicionamiento y narrativa de origen. Todo integrado y coherente con quién realmente eres.",
+    "mstep3-title": "Estructura y Estrategia Digital",
+    "mstep3-desc": "Presencia digital, estrategia de contenido, embudo y campañas. Desde cero o reorganizando lo que ya existe con claridad.",
+    "mstep4-title": "Acompañamiento y Escala",
+    "mstep4-desc": "Ajustes en tiempo real, crecimiento constante y un resultado que se sostiene porque nació de una base sólida.",
+    "eyebrow-paraquem": "Para Quién Es",
+    "paraquem-title": "<span>Esta Mentoría es Para Ti</span><br><em>Si...</em>",
+    "pq1-label": "Profesional con experiencia",
+    "pq1-desc": "Tienes autoridad en lo que haces, pero aún no lo has traducido en un posicionamiento claro y atractivo en el mercado digital.",
+    "pq2-label": "Emprendedor en transición",
+    "pq2-desc": "Estás cambiando de carrera o pivotando el negocio y necesitas reconstruir la narrativa desde cero con fundamentos sólidos.",
+    "pq3-label": "Creador de contenido",
+    "pq3-desc": "Produces contenido desde hace tiempo pero sientes que falta consistencia, diferenciación o una estrategia detrás de lo que haces.",
+    "pq4-label": "Buscas autenticidad",
+    "pq4-desc": "Estás cansado de seguir tendencias que no combinan contigo y quieres construir una marca que sea genuinamente tuya.",
+    "pq5-label": "Negocio sin claridad",
+    "pq5-desc": "El negocio existe, pero la comunicación no convierte y el posicionamiento no genera una diferenciación real en el mercado.",
+    "pq6-label": "Listo para escalar",
+    "pq6-desc": "Tienes base y claridad, pero necesitas estrategia, estructura y acompañamiento para llevar el negocio al siguiente nivel.",
+    "eyebrow-mentor": "El Mentor",
+    "mentor-tag-val": "Fundador &amp; Mentor",
+    "mentor-role": "Fundador · Programador · Estratega de Marca",
+    "mentor-bio": "En los últimos años, trabajé con profesionales y emprendedores que tenían algo valioso para ofrecer al mundo, pero no sabían cómo traducirlo en posicionamiento, presencia y un negocio real. Desarrollé un método propio que empieza de adentro hacia afuera: primero la esencia, luego la estrategia.",
+    "mspec1-strong": "Marcas de Excelencia Absoluta y Máxima Calidad",
+    "mspec1-span": "De profesionales independientes a emprendedores en escala, en diferentes mercados y nichos.",
+    "mspec2-strong": "Método propio de 4 capas",
+    "mspec2-span": "Desarrollado a lo largo de más de 7 años de práctica, error, aprendizaje y resultado real.",
+    "mspec3-strong": "Enfoque en resultado sostenible",
+    "mspec3-span": "Crecimiento que no depende de la suerte ni de tendencias, depende de quién eres.",
+    "eyebrow-identidade": "Pilar 2 • Arquitectura de Identidad",
+    "identidade-title": "<span>El Núcleo de</span><br><em>Tu Marca</em>",
+    "identidade-sub": "Cada elemento de tu identidad se construye a partir de lo descubierto en la investigación. Nada es arbitrario. Todo tiene origen en quién eres.",
+    "id1-field": "Nombre y Posicionamiento", "id1-q": "¿Qué nombre y posición llevan la esencia de tu misión en el mercado?",
+    "id2-field": "Misión y Propuesta de Valor", "id2-q": "¿Qué ofreces que nadie más puede ofrecer de la misma forma?",
+    "id3-field": "Tono de Voz y Comunicación", "id3-q": "¿Cómo hablas? ¿Cómo necesita ser alcanzado y convertido tu público?",
+    "id4-field": "Arquetipo y Diferencial", "id4-q": "¿Qué hace que tu marca sea inconfundible? ¿Por qué te eligen las personas?",
+    "id5-field": "Autoridad y Trayectoria", "id5-q": "¿Qué experiencia de vida te dio el derecho de servir a las personas a las que sirves?",
+    "id6-field": "Legado y Visión de Futuro", "id6-q": "¿Qué impacto quieres dejar en el mercado? ¿Dónde estarás en 5 años?",
+    "fase1-name": "Origen", "fase1-title": "La historia que te trajo hasta aquí",
+    "fase1-desc": "El punto de partida de la narrativa de la marca. ¿Qué pasó? ¿Cuál fue el momento de cambio que transformó tu trayectoria y define quién eres hoy?",
+    "fase2-name": "Recorrido", "fase2-title": "Los desafíos que te forjaron",
+    "fase2-desc": "¿Qué superaste? ¿Qué aprendiste en el camino que nadie más podría aprender de la misma forma?",
+    "fase3-name": "Descubrimiento", "fase3-title": "La idea que lo cambió todo",
+    "fase3-desc": "La percepción que te hizo ver el mundo desde otro ángulo y que ahora puedes compartir con quienes recorren el mismo camino.",
+    "fase4-name": "Misión", "fase4-title": "La invitación al mercado",
+    "fase4-desc": "¿Qué haces con todo esto? ¿Cómo ayudas a otros? ¿Por qué tú, por qué ahora, y por qué tu forma es única?",
+    "eyebrow-investimento": "Inversión",
+    "planos-title": "<span>Elige Tu</span><br><em>Plan</em>",
+    "planos-sub": "Cada modalidad ofrece un nivel diferente de cercanía y profundidad. El método es el mismo, lo que cambia es la intensidad del acompañamiento y el volumen de entregables.",
+    "desp-badge": "Producto de Entrada · Plan Despertar",
+    "desp-title": "Arquitectura<br>de <em>Esencia</em>",
+    "desp-ideal": "Para quien sabe que tiene algo valioso para ofrecer al mundo, pero todavía no ha encontrado las palabras, el posicionamiento o la estructura para ello.",
+    "desp-tagline": "Una sesión intensiva que transforma el autoconocimiento en estrategia concreta. Ideal también para quien quiere una base sólida antes de invertir en un plan mayor.",
+    "desp-cat1": "Sesión y Diagnóstico",
+    "desp-i1": "2 sesiones intensivas de 60 minutos (Escaneo + Investigación + Anamnesis)",
+    "desp-i2": "Grabación de las sesiones para revisión futura",
+    "desp-cat2": "Identidad y Marca",
+    "desp-i3": "Dosier de Esencia en PDF (arquetipo, misión, tono de voz)",
+    "desp-i4": "Blueprint de Identidad Digital (bio, titular, paleta de referencias)",
+    "desp-i5": "Logo profesional de la marca",
+    "desp-i6": "Posicionamiento inicial en redes sociales (bio + titular + enlace)",
+    "desp-cat3": "Estrategia y Acción",
+    "desp-i7": "Guion de presentación personal, pitch y copy",
+    "desp-i8": "1 guion estratégico (5 publicaciones + 1 carrusel o 3 vídeos)",
+    "desp-i9": "Plan de acción por escrito para 30 días",
+    "desp-period": "sesión única · entrega en 7 días",
+    "desp-cta": "Quiero Empezar",
+    "p1-level": "Plan 01 · Estructuración", "p1-name": "Digital <em>Inicial</em>",
+    "p1-period": "3 meses · pago único",
+    "p1-ideal": "Ideal para quien quiere una estructura completa con estrategia real, saliendo del caos hacia un negocio digital organizado, posicionado y operativo.",
+    "p1-cat1": "Identidad y Marca",
+    "p1-i1": "Arquitectura de Esencia completa (4 capas: Escaneo + Investigación + Anamnesis)",
+    "p1-i2": "Dosier de Marca en PDF profesional",
+    "p1-i3": "Identidad digital completa (bio, titular, arquetipo, paleta)",
+    "p1-i4": "Logo profesional de la marca",
+    "p1-cat2": "Digital y Presencia",
+    "p1-i5": "Sitio web profesional completo O página de ventas estratégica",
+    "p1-i6": "Perfil de Instagram estructurado",
+    "p1-i7": "Creativos y publicaciones estratégicas para Instagram (hasta 30 piezas)",
+    "p1-i8": "Flyers digitales e imágenes estratégicas de la marca",
+    "p1-cat3": "Estrategia y Contenido",
+    "p1-i9": "Estrategia de contenido para 90 días",
+    "p1-i10": "Hasta 10 guiones o publicaciones estratégicas",
+    "p1-i11": "Scripts de ventas y atención",
+    "p1-i12": "Embudo de conversión estructurado",
+    "p1-i13": "Plan de conversión y monetización",
+    "p1-cat4": "Producto y Monetización",
+    "p1-i14": "1 producto digital (e-book o guía)",
+    "p1-i15": "Registro en plataformas de venta (Hotmart, Kiwify, Monetizze, etc.)",
+    "p1-cat5": "Acompañamiento",
+    "p1-i16": "1 llamada semanal de estrategia y alineación",
+    "p1-i17": "Soporte por WhatsApp durante todo el período",
+    "p1-i18": "Informes quincenales de progreso",
+    "p1-i19": "Mejora de hasta 10 fotos con IA",
+    "p1-i20": "Configuración de automatizaciones básicas (e-mail/WhatsApp)",
+    "p1-i21": "Biblioteca de prompts de IA personalizada para la marca",
+    "p1-i22": "Entrega organizada con copia de seguridad en Drive",
+    "p1-i23": "Promoción estratégica en el Instagram y blog de Akasha Hub",
+    "p1-i24": "Garantía de 7 días (reembolso total)",
+    "p1-cta": "Quiero Empezar",
+    "p2-level": "Plan 02 · Continuidad", "p2-name": "Mentoría <em>Mensual</em>",
+    "p2-period": "por mes · sin permanencia",
+    "p2-ideal": "Ideal para quien ya tiene una base construida y necesita un ajuste continuo, revisión de decisiones estratégicas y la presencia de un mentor para no perder rumbo durante la ejecución.",
+    "p2-cat1": "Sesiones y Acompañamiento",
+    "p2-i1": "4 llamadas de estrategia y alineación por mes",
+    "p2-i2": "Soporte por WhatsApp (respuesta en hasta 24h hábiles)",
+    "p2-i3": "Cancelación en cualquier momento, sin trámites",
+    "p2-cat2": "Entregables Mensuales",
+    "p2-i4": "1 entregable a elección (guion, copy, ajuste de página o landing page)",
+    "p2-i5": "4 creativos o historias estratégicas por mes",
+    "p2-i6": "Actualización y ajustes de páginas, embudos o scripts activos",
+    "p2-i7": "Revisión y actualización mensual de los scripts del embudo",
+    "p2-cat3": "Estrategia y Crecimiento",
+    "p2-i8": "Revisión de campañas y posicionamiento activo",
+    "p2-i9": "Ajustes y decisiones estratégicas en tiempo real",
+    "p2-i10": "Orientación de posicionamiento en redes sociales",
+    "p2-i11": "Sugerencias de nuevos servicios o productos para monetizar",
+    "p2-i12": "Informe mensual de progreso y métricas",
+    "p2-i13": "Perfil de Instagram estructurado y revisado",
+    "p2-i14": "Plan de conversión revisado mensualmente",
+    "p2-cta": "Quiero Empezar",
+    "p3-level": "Plan 03 · Intensivo", "p3-name": "Sesión <em>Semanal</em>",
+    "p3-period": "por semana · alta frecuencia",
+    "p3-ideal": "Ideal para quien está en lanzamiento, pasando por un giro de negocio, o tiene decisiones críticas que necesitan diagnóstico y acción inmediata, sin esperar semanas por una respuesta.",
+    "p3-cat1": "Sesiones y Diagnóstico",
+    "p3-i1": "2 sesiones individuales de 60–90 minutos por semana",
+    "p3-i2": "Diagnóstico y plan de acción en la misma sesión",
+    "p3-i3": "Grabación de cada sesión para revisión futura",
+    "p3-i4": "Checklist de ejecución personalizado",
+    "p3-cat2": "Entregables Semanales",
+    "p3-i5": "1 micro-entregable por semana (copy, guion o ajuste)",
+    "p3-i6": "3 creativos o publicaciones estratégicas por semana",
+    "p3-i7": "Script de ventas, pitch o atención revisado semanalmente",
+    "p3-i8": "Plan de conversión semanal actualizado",
+    "p3-cat3": "Estrategia y Ejecución",
+    "p3-i9": "Soporte por WhatsApp durante toda la semana",
+    "p3-i10": "Ajuste de estrategia semana a semana",
+    "p3-i11": "Ajuste de embudo, página o posicionamiento en la misma sesión",
+    "p3-i12": "Perfil de Instagram estructurado",
+    "p3-i13": "Ritmo de crecimiento acelerado y constante",
+    "p3-i14": "Ideal para lanzamientos y momentos de giro",
+    "p3-cta": "Quiero Empezar",
+    "ht1-tier": "Plan Premium · Atención Máxima",
+    "ht1-name": "<span>Estrategia y</span><br><em>Ejecución Total</em>",
+    "ht1-period": "Inversión única · Hasta 6 meses",
+    "ht1-positioning": "No es consultoría, es presencia real, dirección diaria y ejecución conjunta. Para quien entiende que los resultados serios nacen de la atención real y que construir solo tiene un costo invisible mucho mayor.",
+    "ht1-cat1": "Identidad y Estructura",
+    "ht1-i1": "Arquitectura de Esencia completa (Escaneo + Dosier de Marca Premium)",
+    "ht1-i2": "Logo profesional + identidad visual completa",
+    "ht1-i3": "Mejora de fotos con IA + identidad visual digital",
+    "ht1-cat2": "Digital y Producto",
+    "ht1-i4": "Sitio web completo O aplicación (1 entrega) + 5 páginas de ventas",
+    "ht1-i5": "Embudo de ventas completo (captación + ventas + agradecimiento)",
+    "ht1-i6": "Sistema de ventas configurado en plataforma",
+    "ht1-i7": "Hasta 3 productos digitales (e-book, guion, membresía básica)",
+    "ht1-i8": "Estrategia y estructura de lanzamiento o campaña",
+    "ht1-i9": "Configuración de blog estratégico para SEO",
+    "ht1-i10": "Automatizaciones de e-mail y WhatsApp integradas",
+    "ht1-i11": "Registro y configuración en plataformas de venta",
+    "ht1-cat3": "Contenido y Creativos",
+    "ht1-i12": "Pack de creativos estratégicos para Instagram (posts + historias + flyers)",
+    "ht1-i13": "Scripts completos de ventas, atención y embudo",
+    "ht1-i14": "Guiones de YouTube (formato largo + estratégico)",
+    "ht1-i15": "E-book o libro de autoridad incluido",
+    "ht1-i16": "Curso digital completo estructurado y publicado",
+    "ht1-i17": "Estrategia de lanzamiento con cronograma",
+    "ht1-cat4": "Acompañamiento",
+    "ht1-i18": "2 llamadas semanales + mensajes diarios de dirección",
+    "ht1-i19": "App de ejecución compartida (checklist + mapeo en tiempo real)",
+    "ht1-i20": "Checklist semanal + informe de progreso",
+    "ht1-i21": "Copia de seguridad organizada en Drive con todos los entregables",
+    "ht1-i22": "Actualizaciones y ajustes continuos durante todo el período",
+    "ht1-i23": "Promoción estratégica en el Instagram y blog de Akasha Hub",
+    "ht1-cta": "Solicitar Acceso",
+    "ht2-tier": "Plan Máximo · Sociedad Total · Selección Personal",
+    "ht2-name": "<span>Imperio Digital</span><br><em>Completo</em>",
+    "ht2-period": "6 meses · tráfico pagado incluido",
+    "ht2-positioning": "No es mentoría. Es una sociedad de construcción real. Mentor presente, capital invertido en conjunto, ecosistema total montado. Exclusivo para perfiles seleccionados personalmente. Este plan exige atención, disponibilidad y enfoque total del mentor durante los 6 meses.",
+    "ht2-i0": "Todo lo del Plan Estrategia y Ejecución Total incluido",
+    "ht2-cat1": "Diferenciales Exclusivos",
+    "ht2-i1": "<strong style=\"color:var(--gold-lt);font-weight:400;\">R$3.000 en tráfico pagado estratégico invertidos por el mentor</strong>",
+    "ht2-i2": "6 meses con acceso diario disponible al mentor",
+    "ht2-i3": "Ecosistema digital completo (sitio + embudo + área de miembros + blog)",
+    "ht2-i4": "Autobiografía o libro de autoridad completo",
+    "ht2-i5": "Creación o estructuración de empresa o startup",
+    "ht2-i6": "Creación de empresa + registro fiscal estructurado (cuando aplique)",
+    "ht2-cat2": "Tráfico y Escala",
+    "ht2-i7": "Campañas de tráfico estructuradas y monitoreadas",
+    "ht2-i8": "Monetización completa en múltiples plataformas",
+    "ht2-i9": "Embudos de conversión avanzados con automatización",
+    "ht2-i10": "Estrategia de posicionamiento para YouTube (largo plazo)",
+    "ht2-cat3": "Alianzas y Visibilidad",
+    "ht2-i11": "3 meses de promoción estratégica en Akasha Hub (3 menciones/mes en Instagram + blog)",
+    "ht2-i12": "Estrategia de alianzas y colaboraciones estratégicas",
+    "ht2-cat4": "Entregables Completos",
+    "ht2-i13": "Páginas de ventas premium (múltiples, según necesidad)",
+    "ht2-i14": "Pack completo de creativos: posts, historias, flyers y banners digitales",
+    "ht2-i15": "Scripts completos de ventas, embudo y atención",
+    "ht2-i16": "Creación de curso digital completo (estructura + plataforma)",
+    "ht2-i17": "Registro y configuración en todas las plataformas relevantes",
+    "ht2-i18": "Actualizaciones, ajustes y mejoras continuas durante 6 meses",
+    "ht2-i19": "Informe trimestral de crecimiento y ROI",
+    "ht2-i20": "Selección personal por el mentor, plazas extremadamente limitadas",
+    "ht2-cta": "Solicitar Acceso",
+    "aviso-text": "<strong>Los planes de R$&nbsp;10.000 y R$&nbsp;25.000 son para quien tiene el compromiso correcto, no solo el presupuesto.</strong><br>El mentor selecciona personalmente a cada cliente en estos planes. Si llegaste hasta aquí y sientes que es el momento, ponte en contacto para una conversación directa.<br><br><strong>Plazas limitadas. La atención real es un recurso escaso.</strong>",
+    "garantia-symbol": "Garantía",
+    "garantia-title": "Garantía de <em>100% de Reembolso</em>",
+    "garantia-desc": "En los primeros 7 días, si no sientes que esta es la mentoría adecuada para tu momento, te devolvemos el 100% del valor. Sin preguntas, sin trámites. Porque la confianza no se pide, se ofrece.",
+    "cta-final-eyebrow": "Próximo Paso",
+    "cta-final-title": "<span>¿Listo para</span><br><em>Empezar?</em>",
+    "cta-final-sub": "Habla directamente con el mentor. Una conversación sin compromiso para entender tu momento y qué camino tiene más sentido para ti.",
+    "cta-final-btn": "Hablar con el Mentor",
+    "download-title": "<span>Descarga los</span> <em>Planes</em>",
+    "download-sub": "Completa los datos a continuación para descargar la presentación completa en PowerPoint.",
+    "ph-name": "Tu Nombre", "ph-email": "Tu Correo", "ph-whatsapp": "Tu WhatsApp",
+    "download-btn": "Descargar PowerPoint",
+    "footer-copyright": "© 2026 Akasha Hub · Todos los derechos reservados",
+    "footer-tagline": "Mentoría Individual · Identidad de Marca · Estrategia Digital",
+    "alert-fill": "Por favor, completa todos los campos.",
+    "alert-thanks": "¡Descarga iniciada! Gracias, {name}"
+  }
+};
+
+// Guarda o conteúdo original em PT antes de qualquer troca
+document.querySelectorAll('[data-i18n]').forEach(el => {
+  const key = el.getAttribute('data-i18n');
+  I18N.pt[key] = el.textContent;
+});
+document.querySelectorAll('[data-i18n-html]').forEach(el => {
+  const key = el.getAttribute('data-i18n-html');
+  I18N.pt[key] = el.innerHTML;
+});
+document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+  const key = el.getAttribute('data-i18n-placeholder');
+  I18N.pt[key] = el.getAttribute('placeholder');
+});
+I18N.pt['page-title'] = document.title;
+I18N.pt['alert-fill'] = 'Por favor, preencha todos os campos.';
+I18N.pt['alert-thanks'] = 'Download iniciado! Obrigado, {name}';
+
+let currentLang = 'pt';
+
+function applyLanguage(lang) {
+  const dict = I18N[lang];
+  if (!dict) return;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key] !== undefined) el.textContent = dict[key];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    if (dict[key] !== undefined) el.innerHTML = dict[key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
+  });
+  if (dict['page-title'] !== undefined) document.title = dict['page-title'];
+  else document.title = I18N.pt['page-title'];
+
+  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : (lang === 'en' ? 'en' : 'es');
+  currentLang = lang;
+
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const lang = btn.dataset.lang;
+    if (lang === currentLang) return;
+    document.body.classList.add('fading');
+    document.body.style.transition = 'opacity .2s ease';
+    document.body.style.opacity = '0.4';
+    setTimeout(() => {
+      applyLanguage(lang);
+      document.body.style.opacity = '1';
+    }, 180);
+  });
+});
 </script>
 </body>
-</html>
+          </html>
