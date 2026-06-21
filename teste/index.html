@@ -1,1 +1,1330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="page-title">Akasha Legacy — Transforme sua história em um ativo digital</title>
+  <meta name="description" content="Akasha Legacy: transforme sua história, conhecimento e essência em um ativo digital que gera autoridade, receita e legado.">
+  <link rel="icon" type="image/png" href="https://i.ibb.co/QvWy1TV5/Design-sem-nome-2.png">
+  <link rel="apple-touch-icon" href="https://i.ibb.co/QvWy1TV5/Design-sem-nome-2.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06050f;
+      --bg2: #09080e;
+      --gold: #c8a04a;
+      --gold-lt: #e8cd85;
+      --gold-bright: #ffdf91;
+      --gold-dim: rgba(200,160,74,0.18);
+      --gold-border: rgba(200,160,74,0.22);
+      --white: #f7f3ec;
+      --muted: rgba(247,243,236,0.74);
+      --muted2: rgba(247,243,236,0.4);
+      --card: rgba(255,255,255,0.028);
+      --card-hover: rgba(200,160,74,0.05);
+      --accent: #6b4fa0;
+      --accent-lt: rgba(107,79,160,0.15);
+      --matrix-green: #00ff41;
+      --radius: 4px;
+    }
 
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; background: var(--bg); }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      overflow-x: hidden;
+      line-height: 1.7;
+      font-size: 18px;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    ::selection { background: rgba(200,160,74,0.32); color: var(--white); }
+
+    #matrix-bg {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1; opacity: 0.1; pointer-events: none;
+    }
+
+    .lang-switcher { display: flex; gap: 8px; margin-right: 20px; }
+    .lang-btn {
+      background: transparent;
+      border: 1px solid var(--gold-border);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 1.05rem; padding: 5px 9px; cursor: pointer;
+      transition: all 0.3s; line-height: 1; border-radius: var(--radius);
+    }
+    .lang-btn.active { border-color: var(--gold); background: var(--gold-dim); }
+    .lang-btn:hover { border-color: var(--gold); transform: translateY(-1px); }
+
+    .matrix-glitch {
+      animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+      color: var(--matrix-green) !important;
+      text-shadow: 0 0 5px var(--matrix-green);
+    }
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    .ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .ambient::before {
+      content: ''; position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
+      width: 1100px; height: 1100px;
+      background: radial-gradient(ellipse, rgba(200,160,74,0.05) 0%, rgba(107,79,160,0.03) 42%, transparent 70%);
+      animation: breathe 16s ease-in-out infinite;
+    }
+    .ambient::after {
+      content: ''; position: absolute; bottom: 0; right: 0;
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse at right bottom, rgba(107,79,160,0.05) 0%, transparent 65%);
+    }
+    @keyframes breathe {
+      0%,100%{ transform:translateX(-50%) scale(1); opacity:.6; }
+      50%{ transform:translateX(-50%) scale(1.1); opacity:1; }
+    }
+
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(200,160,74,0.016) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,160,74,0.016) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, black 20%, transparent 100%);
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 56px;
+      background: rgba(6,5,15,0.9);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(200,160,74,0.08);
+      animation: navIn 0.6s ease-out;
+    }
+    @keyframes navIn { from{transform:translateY(-100%);opacity:0;} to{transform:translateY(0);opacity:1;} }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 500; letter-spacing: 5px;
+      color: var(--gold); text-decoration: none; text-transform: uppercase;
+    }
+    .nav-logo span { color: var(--muted); }
+
+    .nav-links { display: flex; gap: 38px; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: .74rem; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color .3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      font-family: 'DM Mono', monospace;
+      font-size: .7rem; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--bg); background: var(--gold);
+      padding: 12px 28px; text-decoration: none; transition: all .3s; border-radius: var(--radius);
+      font-weight: 500;
+    }
+    .nav-cta:hover { background: var(--gold-lt); transform: translateY(-2px); }
+
+    .wrap { position: relative; z-index: 1; max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+
+    /* ════ HERO ════ */
+    .hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1.12fr 0.88fr;
+      align-items: center; gap: 80px;
+      padding: 150px 48px 110px;
+      max-width: 1160px; margin: 0 auto;
+    }
+    .hero-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: .76rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 30px;
+      display: flex; align-items: center; gap: 14px;
+      opacity: 0; animation: fadeUp .9s .15s ease forwards;
+    }
+    .hero-tag::before { content:''; width:34px; height:1px; background:var(--gold); display:block; }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 5.2vw, 5rem);
+      font-weight: 600; line-height: 1.07; letter-spacing: 0.5px;
+      color: var(--white); margin-bottom: 6px;
+      opacity: 0; animation: fadeUp 1s .3s ease forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--gold-lt); display: block; }
+
+    .hero-sub {
+      font-size: 1.18rem; line-height: 1.75; letter-spacing: .2px;
+      color: var(--muted); max-width: 520px;
+      margin: 30px 0 44px;
+      opacity: 0; animation: fadeUp 1s .46s ease forwards;
+    }
+    .hero-sub strong { color: var(--white); font-weight: 600; }
+
+    .hero-btns {
+      display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+      opacity: 0; animation: fadeUp 1s .58s ease forwards;
+    }
+
+    .btn-gold {
+      display: inline-block; padding: 19px 46px;
+      font-family: 'DM Mono', monospace; font-size: .78rem;
+      letter-spacing: 3px; text-transform: uppercase;
+      text-decoration: none; color: #1a1407;
+      background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      background-size: 400% 400%;
+      animation: gold-shimmer 8s ease infinite;
+      border: none; border-radius: var(--radius);
+      box-shadow: 0 4px 20px rgba(191, 149, 63, 0.38);
+      transition: all .35s; position: relative; overflow: hidden; font-weight: 600; cursor: pointer;
+    }
+    @keyframes gold-shimmer {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .btn-gold:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 16px 48px rgba(200,160,74,0.5); filter: brightness(1.08); }
+    .btn-gold::after {
+      content: ''; position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 70%);
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    }
+    .btn-gold:hover::after { opacity: 1; }
+
+    .btn-outline {
+      display: inline-block; padding: 19px 44px;
+      font-family: 'DM Mono', monospace; font-size: .78rem;
+      letter-spacing: 3px; text-transform: uppercase;
+      text-decoration: none; cursor: pointer;
+      color: var(--gold); border: 1px solid var(--gold-border); border-radius: var(--radius);
+      transition: all .35s; background: transparent;
+    }
+    .btn-outline:hover { background: var(--gold-dim); border-color: var(--gold); transform: translateY(-3px); }
+
+    .btn-videos {
+      display: inline-flex; align-items: center; gap: 11px;
+      padding: 19px 40px;
+      font-family: 'DM Mono', monospace; font-size: .78rem;
+      letter-spacing: 3px; text-transform: uppercase;
+      text-decoration: none; cursor: pointer;
+      color: var(--white);
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.14); border-radius: var(--radius);
+      transition: all .35s;
+    }
+    .btn-videos:hover {
+      background: rgba(200,160,74,0.1); border-color: var(--gold-border);
+      color: var(--gold-lt); transform: translateY(-3px);
+    }
+    .btn-videos-icon {
+      width: 24px; height: 24px; background: var(--gold); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: transform .3s;
+    }
+    .btn-videos:hover .btn-videos-icon { transform: scale(1.15); }
+    .btn-videos-icon svg { width: 9px; height: 9px; fill: var(--bg); margin-left: 1px; }
+
+    .hero-visual { position: relative; opacity: 0; animation: fadeIn 1.4s .4s ease forwards; }
+    .hero-img { width: 100%; display: block; aspect-ratio: 3/4; object-fit: cover; filter: brightness(.9) saturate(1.1); border-radius: 2px; }
+    .hero-img-overlay {
+      position: absolute; inset: 0; pointer-events: none;
+      box-shadow: inset 0 0 80px rgba(6,5,15,.5), inset 0 -60px 80px rgba(6,5,15,.65);
+    }
+    .corner { position: absolute; width: 26px; height: 26px; pointer-events: none; }
+    .corner-tr { top: -7px; right: -7px; border-top: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+    .corner-bl { bottom: -7px; left: -7px; border-bottom: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+
+    /* ════ TRUST BAR ════ */
+    .trust-bar {
+      border-top: 1px solid rgba(200,160,74,0.08);
+      border-bottom: 1px solid rgba(200,160,74,0.08);
+      padding: 26px 0; background: rgba(255,255,255,0.012);
+    }
+    .trust-inner {
+      max-width: 1160px; margin: 0 auto; padding: 0 48px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px;
+    }
+    .trust-item { display: flex; align-items: center; gap: 14px; }
+    .trust-dot { width: 7px; height: 7px; background: var(--gold); border-radius: 50%; flex-shrink: 0; opacity: .8; }
+    .trust-text { font-family: 'DM Mono', monospace; font-size: .72rem; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; }
+    .trust-text strong { color: var(--gold-lt); font-weight: 500; display: block; margin-bottom: 2px; }
+
+    /* ════ SECTIONS ════ */
+    .section { padding: 110px 0 0; }
+    .eyebrow { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; }
+    .eyebrow-line { width: 30px; height: 1px; background: var(--gold); opacity: .5; }
+    .eyebrow span { font-family: 'DM Mono', monospace; font-size: .74rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); opacity: .85; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2.3rem, 4vw, 3.5rem); font-weight: 600; letter-spacing: 0.5px; color: var(--white); margin-bottom: 16px; line-height: 1.12; }
+    .section-title em { font-style: italic; color: var(--gold-lt); }
+    .section-sub { font-size: 1.12rem; line-height: 1.85; letter-spacing: .2px; color: var(--muted); max-width: 640px; }
+    .sec-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-border), transparent); margin: 96px 0 0; }
+    .section-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 16px; }
+
+    /* ════ PROBLEMA / OPORTUNIDADE ════ */
+    .statement {
+      padding: 120px 0; text-align: center; position: relative;
+    }
+    .statement .eyebrow { justify-content: center; }
+    .statement-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 4.5vw, 4rem);
+      font-weight: 600; line-height: 1.12; letter-spacing: 0.5px;
+      color: var(--white); margin: 0 auto 32px; max-width: 900px;
+    }
+    .statement-title em { font-style: italic; color: var(--gold-lt); }
+    .statement-text {
+      font-size: 1.3rem; line-height: 1.95; color: var(--muted);
+      max-width: 720px; margin: 0 auto; letter-spacing: .2px;
+    }
+    .statement-text strong { color: var(--white); font-weight: 600; }
+    .statement-lines p { margin-bottom: 8px; }
+    .statement-emph {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      color: var(--gold-lt); font-size: 1.55rem; margin-top: 18px; display: block;
+    }
+
+    /* ════ MÉTODO 4 FASES ════ */
+    .fases-akasha { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; margin-top: 56px; }
+    .fase-akasha {
+      padding: 48px 44px; background: var(--card); border: 1px solid rgba(255,255,255,0.05);
+      position: relative; overflow: hidden; transition: all .45s;
+    }
+    .fase-akasha::after {
+      content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      transform: scaleX(0); transform-origin: left; transition: transform .45s;
+    }
+    .fase-akasha:hover { background: var(--card-hover); border-color: var(--gold-border); transform: translateY(-8px); box-shadow: 0 24px 56px rgba(200,160,74,0.08); }
+    .fase-akasha:hover::after { transform: scaleX(1); }
+    .fase-akasha-head { display: flex; align-items: baseline; gap: 18px; margin-bottom: 18px; }
+    .fase-akasha-n { font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 500; color: var(--gold); opacity: .4; line-height: 1; }
+    .fase-akasha-label { font-family: 'DM Mono', monospace; font-size: .78rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
+    .fase-akasha-title { font-family: 'Playfair Display', serif; font-size: 1.85rem; font-weight: 500; letter-spacing: .5px; color: var(--white); margin-bottom: 12px; }
+    .fase-akasha-desc { font-size: 1.08rem; line-height: 1.8; color: var(--muted); letter-spacing: .2px; }
+
+    /* ════ OFERTA AKASHA LEGACY ════ */
+    .oferta-wrap { margin-top: 8px; }
+    .oferta-card {
+      border: 1px solid rgba(200,160,74,0.28);
+      background: linear-gradient(135deg, rgba(200,160,74,0.07) 0%, rgba(107,79,160,0.06) 100%);
+      padding: 70px 64px; position: relative; overflow: hidden; transition: all .5s;
+    }
+    .oferta-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--gold-lt), transparent);
+    }
+    .oferta-card:hover { box-shadow: 0 34px 90px rgba(200,160,74,0.12); }
+    .oferta-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: start; }
+    .oferta-badge { font-family: 'DM Mono', monospace; font-size: .76rem; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 20px; }
+    .oferta-title { font-family: 'Playfair Display', serif; font-size: clamp(2.1rem, 3.4vw, 3rem); font-weight: 600; letter-spacing: .5px; color: var(--white); line-height: 1.15; margin-bottom: 22px; }
+    .oferta-title em { font-style: italic; color: var(--gold-lt); }
+    .oferta-desc { font-size: 1.12rem; line-height: 1.85; color: var(--muted); margin-bottom: 30px; }
+    .oferta-price-row { display: flex; align-items: baseline; gap: 16px; margin-bottom: 8px; }
+    .oferta-price { font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 600; color: var(--gold-lt); line-height: 1; }
+    .oferta-price-tag { font-family: 'DM Mono', monospace; font-size: .8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+    .oferta-price-note { font-family: 'DM Mono', monospace; font-size: .78rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted2); margin-bottom: 34px; display: block; }
+    .oferta-incl-label { font-family: 'DM Mono', monospace; font-size: .72rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .7; margin-bottom: 18px; display: block; }
+    .oferta-incl { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(200,160,74,0.1); border: 1px solid rgba(200,160,74,0.12); }
+    .oferta-incl li {
+      font-size: 1rem; letter-spacing: .2px; color: var(--white); font-weight: 500;
+      padding: 18px 20px; background: rgba(6,5,15,0.55); display: flex; align-items: center; gap: 12px; transition: background .3s;
+    }
+    .oferta-incl li:hover { background: rgba(200,160,74,0.07); }
+    .oferta-incl li::before { content: '◈'; color: var(--gold); font-size: .8rem; flex-shrink: 0; }
+    .oferta-cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 38px; }
+
+    /* ════ ANTES x DEPOIS ════ */
+    .ad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 56px; }
+    .ad-card { padding: 52px 48px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
+    .ad-card.antes { background: rgba(255,255,255,0.015); }
+    .ad-card.depois { background: linear-gradient(135deg, rgba(200,160,74,0.07) 0%, rgba(107,79,160,0.05) 100%); border-color: rgba(200,160,74,0.22); }
+    .ad-label { font-family: 'DM Mono', monospace; font-size: .76rem; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 28px; display: block; }
+    .ad-card.antes .ad-label { color: var(--muted2); }
+    .ad-card.depois .ad-label { color: var(--gold); }
+    .ad-list { list-style: none; }
+    .ad-list li { font-size: 1.25rem; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 16px; font-family: 'Playfair Display', serif; letter-spacing: .3px; }
+    .ad-list li:last-child { border-bottom: none; }
+    .ad-card.antes .ad-list li { color: var(--muted); }
+    .ad-card.antes .ad-list li::before { content: '—'; color: var(--muted2); }
+    .ad-card.depois .ad-list li { color: var(--white); }
+    .ad-card.depois .ad-list li::before { content: '◈'; color: var(--gold); font-size: .85rem; }
+
+    /* ════ MÉTODO BLOCK / MENTOR (mantidos) ════ */
+    .mentor-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 56px; }
+    .mentor-img-side { position: relative; overflow: hidden; min-height: 560px; cursor: pointer; }
+    .mentor-img-side img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.86) saturate(1.1); transition: transform .9s ease; }
+    .mentor-img-side:hover img { transform: scale(1.03); }
+    .mentor-vignette { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(6,5,15,.2) 0%, transparent 55%); box-shadow: inset 0 0 90px rgba(6,5,15,.45), inset -70px 0 90px rgba(6,5,15,.4); }
+    .mentor-img-tag { position: absolute; bottom: 24px; left: 24px; padding: 14px 20px; background: rgba(6,5,15,.85); border: 1px solid var(--gold-border); backdrop-filter: blur(12px); }
+    .mentor-img-tag-label { font-family: 'DM Mono', monospace; font-size: .64rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); opacity: .85; margin-bottom: 5px; }
+    .mentor-img-tag-val { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 500; letter-spacing: .5px; color: var(--white); }
+    .mentor-img-hint { position: absolute; top: 24px; right: 24px; padding: 10px 18px; background: rgba(6,5,15,.85); border: 1px solid var(--gold-border); backdrop-filter: blur(12px); font-family: 'DM Mono', monospace; font-size: .64rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-lt); display: flex; align-items: center; gap: 8px; opacity: 0; transition: opacity .3s; }
+    .mentor-img-side:hover .mentor-img-hint { opacity: 1; }
+    .mentor-copy { padding: 60px 54px; background: var(--card); border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: center; }
+    .mentor-role { font-family: 'DM Mono', monospace; font-size: .72rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .8; margin-bottom: 20px; }
+    .mentor-name { font-family: 'Playfair Display', serif; font-size: 2.9rem; font-weight: 500; letter-spacing: .5px; color: var(--white); line-height: 1.05; margin-bottom: 6px; }
+    .mentor-name em { font-style: italic; color: var(--gold-lt); }
+    .mentor-bio { font-size: 1.08rem; letter-spacing: .2px; line-height: 1.85; color: var(--muted); margin: 22px 0 34px; }
+    .mentor-specs { display: flex; flex-direction: column; gap: 10px; }
+    .mentor-spec { display: flex; align-items: flex-start; gap: 16px; padding: 17px 20px; border: 1px solid rgba(255,255,255,0.05); transition: border-color .3s; }
+    .mentor-spec:hover { border-color: var(--gold-border); }
+    .mentor-spec-ico { font-size: 1.05rem; color: var(--gold); flex-shrink: 0; margin-top: 1px; }
+    .mentor-spec-body { font-size: 1rem; letter-spacing: .2px; line-height: 1.7; color: var(--muted); }
+    .mentor-spec-body strong { color: var(--gold-lt); font-weight: 500; display: block; margin-bottom: 4px; font-size: 1.04rem; }
+
+    /* ════ MENTOR — VERSÃO MINIMALISTA (ORB PREMIUM) ════ */
+    .mentor-split--minimal { align-items: center; }
+    .mentor-orb-side {
+      position: relative; aspect-ratio: 1/1; max-width: 420px; margin: 0 auto;
+      cursor: pointer; border-radius: 50%; overflow: visible;
+    }
+    .mentor-orb-img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+      filter: brightness(.92) saturate(1.12);
+      position: relative; z-index: 2;
+      transition: transform .6s ease, filter .4s ease;
+    }
+    .mentor-orb-side:hover .mentor-orb-img { transform: scale(1.035); filter: brightness(1) saturate(1.2); }
+    .mentor-orb-glow {
+      position: absolute; inset: -18px; border-radius: 50%; z-index: 0;
+      background: radial-gradient(circle, rgba(200,160,74,0.35) 0%, rgba(107,79,160,0.18) 45%, transparent 72%);
+      filter: blur(18px);
+      animation: orbPulse 4.5s ease-in-out infinite;
+    }
+    @keyframes orbPulse { 0%,100%{ opacity:.55; transform:scale(1); } 50%{ opacity:1; transform:scale(1.06); } }
+    .mentor-orb-ring {
+      position: absolute; inset: -6px; border-radius: 50%; z-index: 1; pointer-events: none;
+      border: 1px solid var(--gold-border);
+      background: conic-gradient(from 0deg, transparent 0%, rgba(232,205,133,0.55) 12%, transparent 24%, transparent 60%, rgba(155,111,212,0.4) 72%, transparent 84%);
+      animation: orbSpin 9s linear infinite;
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
+      mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
+    }
+    @keyframes orbSpin { to { transform: rotate(360deg); } }
+    .mentor-orb-particles { position: absolute; inset: -40px; z-index: 0; pointer-events: none; }
+    .mentor-orb-particles span {
+      position: absolute; width: 3px; height: 3px; border-radius: 50%;
+      background: var(--gold-lt); opacity: 0;
+      animation: orbParticle 5s ease-in infinite;
+    }
+    @keyframes orbParticle {
+      0% { opacity: 0; transform: translate(0,0) scale(0); }
+      15% { opacity: .9; transform: scale(1); }
+      100% { opacity: 0; transform: translate(var(--px,0), var(--py,-60px)) scale(0); }
+    }
+    .mentor-orb-side .mentor-vignette { border-radius: 50%; z-index: 2; }
+    .mentor-orb-side .mentor-img-hint { z-index: 3; left: 50%; bottom: -14px; transform: translateX(-50%); white-space: nowrap; opacity: 0; transition: opacity .3s, transform .3s; top: auto; right: auto; }
+    .mentor-orb-side:hover .mentor-img-hint { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+    .mentor-copy--minimal { padding: 20px 24px; background: transparent; border: none; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .mentor-teaser { font-size: 1.08rem; line-height: 1.8; color: var(--muted); font-style: italic; margin: 18px 0 26px; max-width: 380px; }
+    .btn-pulse--mentor { max-width: 280px; margin-top: 0; }
+    @media (max-width: 900px) { .mentor-orb-side { max-width: 280px; } }
+
+    /* ════ O QUE ESTAMOS CONSTRUINDO ════ */
+    .construindo { padding: 130px 0; text-align: center; }
+    .construindo-lines { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 400; line-height: 1.5; color: var(--muted2); max-width: 820px; margin: 0 auto; }
+    .construindo-lines .strike { display: block; margin-bottom: 6px; }
+    .construindo-final { display: block; margin-top: 40px; color: var(--white); font-weight: 500; }
+    .construindo-final em { font-style: italic; color: var(--gold-lt); }
+
+    /* ════ PLANOS ════ */
+    .planos-section { padding: 110px 0 130px; }
+    .planos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 2px; }
+    .plano-card { padding: 48px 36px; background: var(--card); border: 1px solid rgba(255,255,255,0.07); position: relative; overflow: hidden; transition: all .45s; display: flex; flex-direction: column; }
+    .plano-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); transform: scaleX(0); transition: transform .45s; }
+    .plano-card:hover { background: var(--card-hover); border-color: var(--gold-border); transform: translateY(-9px); box-shadow: 0 24px 56px rgba(200,160,74,0.1); }
+    .plano-card:hover::before { transform: scaleX(1); }
+    .plano-level { font-family: 'DM Mono', monospace; font-size: .68rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .65; margin-bottom: 18px; display: block; }
+    .plano-name { font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 500; letter-spacing: .5px; color: var(--white); margin-bottom: 6px; }
+    .plano-name em { font-style: italic; color: var(--gold-lt); }
+    .plano-price { font-family: 'Playfair Display', serif; font-size: 2.9rem; font-weight: 500; color: var(--gold-lt); line-height: 1; margin: 26px 0 0; }
+    .plano-period { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 9px; display: block; margin-bottom: 24px; }
+    .plano-div { width: 40px; height: 1px; background: var(--gold-border); margin: 0 0 24px; }
+    .plano-ideal { font-size: .96rem; line-height: 1.8; color: var(--muted); font-style: italic; padding: 16px 18px; border-left: 2px solid var(--gold-border); background: rgba(200,160,74,0.03); margin-bottom: 22px; }
+    .plano-items { list-style: none; padding: 0; margin-bottom: 32px; flex: 1; }
+    .plano-items li { font-size: .98rem; letter-spacing: .2px; line-height: 1.65; color: var(--muted); padding: 10px 0 10px 24px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .plano-items li::before { content: '—'; position: absolute; left: 0; color: var(--gold); opacity: .55; font-size: .8rem; top: 11px; }
+    .plano-items li.highlight { color: rgba(247,243,236,0.92); }
+    .plano-items li.highlight::before { content: '◈'; color: var(--gold-lt); opacity: 1; font-size: .65rem; top: 12px; }
+    .list-category { font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); opacity: .55; padding: 16px 0 6px 0 !important; display: block; border-bottom: none !important; }
+    .list-category::before { display: none !important; }
+    .plano-cta { display: block; text-align: center; padding: 15px 28px; font-family: 'DM Mono', monospace; font-size: .72rem; letter-spacing: 3px; text-transform: uppercase; text-decoration: none; color: var(--gold); border: 1px solid var(--gold-border); border-radius: var(--radius); transition: all .3s; margin-top: auto; }
+    .plano-cta:hover { background: rgba(200,160,74,0.1); border-color: var(--gold); transform: translateY(-2px); }
+
+    .planos-ht { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 2px; }
+    .ht-card { padding: 56px 50px; position: relative; overflow: hidden; transition: all .5s; display: flex; flex-direction: column; }
+    .ht-card:nth-child(1) { background: linear-gradient(138deg, rgba(200,160,74,0.07) 0%, rgba(107,79,160,0.06) 100%); border: 1px solid rgba(200,160,74,0.24); }
+    .ht-card:nth-child(2) { background: linear-gradient(138deg, rgba(107,79,160,0.11) 0%, rgba(200,160,74,0.07) 100%); border: 1px solid rgba(155,111,212,0.26); }
+    .ht-card:hover { transform: translateY(-10px); box-shadow: 0 34px 72px rgba(200,160,74,0.12); }
+    .ht-tier { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: 4px; text-transform: uppercase; color: #b89ae6; margin-bottom: 16px; display: block; }
+    .ht-name { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 500; letter-spacing: .5px; color: var(--white); margin-bottom: 6px; line-height: 1.18; }
+    .ht-name em { font-style: italic; color: var(--gold-lt); }
+    .ht-price { font-family: 'Playfair Display', serif; font-size: 3.6rem; font-weight: 600; color: var(--gold-lt); line-height: 1; margin: 26px 0 8px; }
+    .ht-period { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 28px; }
+    .ht-positioning { font-size: 1.02rem; letter-spacing: .2px; line-height: 1.85; color: rgba(247,243,236,0.7); font-style: italic; padding: 20px 24px; border-left: 2px solid var(--gold-border); background: rgba(200,160,74,0.04); margin-bottom: 30px; }
+    .ht-div { width: 50px; height: 1px; background: var(--gold-border); margin: 0 0 26px; }
+    .ht-items { list-style: none; padding: 0; margin-bottom: 38px; flex: 1; }
+    .ht-items li { font-size: 1rem; letter-spacing: .2px; line-height: 1.7; color: var(--muted); padding: 11px 0 11px 26px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .ht-items li::before { content: '—'; position: absolute; left: 0; color: var(--gold); opacity: .55; font-size: .8rem; top: 13px; }
+    .ht-items li.highlight { color: rgba(247,243,236,0.92); }
+    .ht-items li.highlight::before { content: '◈'; color: var(--gold-lt); opacity: 1; font-size: .65rem; top: 13px; }
+    .ht-cta { display: block; text-align: center; padding: 17px 30px; font-family: 'DM Mono', monospace; font-size: .74rem; letter-spacing: 3px; text-transform: uppercase; text-decoration: none; color: var(--bg); background: linear-gradient(135deg, var(--gold-lt), var(--gold)); border-radius: var(--radius); transition: all .3s; margin-top: auto; font-weight: 500; }
+    .ht-cta:hover { transform: translateY(-3px); box-shadow: 0 16px 44px rgba(200,160,74,0.3); }
+
+    /* PLANO ENTRADA */
+    .despertar-wrap { margin-bottom: 40px; }
+    .despertar-card {
+      display: grid; grid-template-columns: 1fr 1.6fr 1fr; gap: 0;
+      border: 1px solid rgba(200,160,74,0.24);
+      background: linear-gradient(108deg, rgba(200,160,74,0.05) 0%, rgba(107,79,160,0.04) 100%);
+      position: relative; overflow: hidden; transition: all .45s;
+    }
+    .despertar-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), var(--gold-lt), transparent); }
+    .despertar-card:hover { border-color: rgba(200,160,74,0.44); box-shadow: 0 24px 64px rgba(200,160,74,0.1); transform: translateY(-5px); }
+    .despertar-left { padding: 46px 38px; border-right: 1px solid rgba(200,160,74,0.12); display: flex; flex-direction: column; justify-content: center; }
+    .despertar-center { padding: 46px 42px; border-right: 1px solid rgba(200,160,74,0.12); }
+    .despertar-right { padding: 46px 38px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .despertar-badge { font-family: 'DM Mono', monospace; font-size: .66rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .7; display: block; margin-bottom: 16px; }
+    .despertar-title { font-family: 'Playfair Display', serif; font-size: 2.3rem; font-weight: 500; letter-spacing: .5px; color: var(--white); line-height: 1.1; margin-bottom: 8px; }
+    .despertar-title em { font-style: italic; color: var(--gold-lt); }
+    .despertar-tagline { font-size: .98rem; line-height: 1.8; color: var(--muted); letter-spacing: .2px; margin-top: 14px; }
+    .despertar-items { list-style: none; padding: 0; margin: 0; }
+    .despertar-items li { font-size: .96rem; letter-spacing: .2px; line-height: 1.6; color: var(--muted); padding: 9px 0 9px 22px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .despertar-items li::before { content: '—'; position: absolute; left: 0; color: var(--gold); opacity: .55; font-size: .8rem; top: 10px; }
+    .despertar-items li.list-category::before { display: none !important; }
+    .plano-summary, .ht-summary { list-style: none; padding: 0; margin-bottom: 28px; }
+    .plano-summary li, .ht-summary li { font-size: .98rem; color: var(--muted); padding: 9px 0 9px 24px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .plano-summary li::before, .ht-summary li::before { content: '◈'; position: absolute; left: 0; color: var(--gold-lt); font-size: .65rem; top: 12px; }
+    .despertar-price { font-family: 'Playfair Display', serif; font-size: 3.4rem; font-weight: 600; color: var(--gold-lt); line-height: 1; margin-bottom: 6px; }
+    .despertar-period { font-family: 'DM Mono', monospace; font-size: .66rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 26px; }
+    .despertar-ideal { font-size: .92rem; line-height: 1.75; color: var(--muted); font-style: italic; padding: 16px 18px; border: 1px solid var(--gold-border); background: rgba(200,160,74,0.03); margin-bottom: 24px; text-align: left; }
+
+    .aviso-selecao { border: 1px solid rgba(200,160,74,0.14); padding: 40px 46px; margin-top: 44px; background: rgba(200,160,74,0.025); text-align: center; }
+    .aviso-selecao p { font-size: 1.05rem; line-height: 1.85; color: var(--muted); letter-spacing: .2px; }
+    .aviso-selecao strong { color: var(--white); font-weight: 600; }
+
+    .garantia { display: flex; align-items: flex-start; gap: 34px; padding: 44px 46px; border: 1px solid rgba(200,160,74,0.16); background: rgba(200,160,74,0.025); margin-top: 88px; }
+    .garantia-symbol { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); opacity: .75; writing-mode: vertical-rl; transform: rotate(180deg); flex-shrink: 0; padding: 4px 0; }
+    .garantia-title { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 500; letter-spacing: .5px; color: var(--white); margin-bottom: 12px; line-height: 1.3; }
+    .garantia-title em { font-style: italic; color: var(--gold-lt); }
+    .garantia-desc { font-size: 1.05rem; line-height: 1.85; color: var(--muted); letter-spacing: .2px; }
+
+    /* ════ CTA FINAL ════ */
+    .cta-final { padding: 120px 0; text-align: center; }
+    .cta-final-eyebrow { font-family: 'DM Mono', monospace; font-size: .76rem; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); opacity: .8; display: block; margin-bottom: 24px; }
+    .cta-final-title { font-family: 'Playfair Display', serif; font-size: clamp(2.4rem, 4.5vw, 3.6rem); font-weight: 600; letter-spacing: .5px; color: var(--white); line-height: 1.1; margin-bottom: 20px; }
+    .cta-final-title em { font-style: italic; color: var(--gold-lt); }
+    .cta-final-sub { font-size: 1.18rem; line-height: 1.85; color: var(--muted); max-width: 600px; margin: 0 auto 48px; }
+    .cta-final-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-wpp { display: inline-flex; align-items: center; gap: 12px; padding: 21px 54px; font-family: 'DM Mono', monospace; font-size: .82rem; letter-spacing: 3px; text-transform: uppercase; text-decoration: none; color: var(--bg); background: linear-gradient(135deg, var(--gold-lt), var(--gold)); border-radius: var(--radius); transition: all .35s; font-weight: 500; }
+    .btn-wpp:hover { transform: translateY(-3px); box-shadow: 0 20px 54px rgba(200,160,74,0.3); }
+    .btn-wpp svg { width: 19px; height: 19px; fill: var(--bg); flex-shrink: 0; }
+
+    footer { border-top: 1px solid rgba(200,160,74,0.08); padding: 54px 48px; text-align: center; margin-top: 0; }
+    footer p { font-family: 'DM Mono', monospace; font-size: .72rem; letter-spacing: 2.5px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+    footer a { color: var(--gold); text-decoration: none; transition: color .3s; }
+    footer a:hover { color: var(--gold-lt); }
+    footer .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 500; letter-spacing: 4px; color: var(--gold); margin-bottom: 30px; display: block; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    .lang-fade { transition: opacity 0.25s ease; }
+    .lang-fade.fading { opacity: 0; }
+
+    /* ════ MODAL VÍDEOS ════ */
+    .vm-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(4,3,10,0.92); backdrop-filter: blur(18px); display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+    .vm-overlay.is-open { opacity: 1; pointer-events: all; }
+    .vm-panel { position: relative; width: 100%; max-width: 880px; background: #08070f; border: 1px solid rgba(200,160,74,0.2); box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 80px rgba(200,160,74,0.04); transform: translateY(28px) scale(0.97); transition: transform .45s cubic-bezier(0.22,1,0.36,1); overflow: hidden; }
+    .vm-overlay.is-open .vm-panel { transform: translateY(0) scale(1); }
+    .vm-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-lt) 60%, transparent 100%); }
+    .vm-header { padding: 34px 38px 26px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid rgba(200,160,74,0.08); }
+    .vm-eyebrow { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); opacity: .7; display: block; margin-bottom: 10px; }
+    .vm-title { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 500; letter-spacing: .5px; color: var(--white); line-height: 1.2; }
+    .vm-title em { font-style: italic; color: var(--gold-lt); }
+    .vm-close { width: 42px; height: 42px; border: 1px solid rgba(200,160,74,0.2); background: rgba(200,160,74,0.04); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; transition: all .25s; font-size: 1.2rem; line-height: 1; }
+    .vm-close:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,160,74,0.09); transform: rotate(90deg); }
+    .vm-carousel-wrap { position: relative; padding: 30px 38px 26px; overflow: hidden; }
+    .vm-track { display: flex; gap: 16px; transition: transform .42s cubic-bezier(0.25,1,0.5,1); will-change: transform; cursor: grab; user-select: none; }
+    .vm-track.is-dragging { cursor: grabbing; transition: none; }
+    .vm-card { flex: 0 0 calc(50% - 8px); border: 1px solid rgba(200,160,74,0.1); background: rgba(255,255,255,0.02); overflow: hidden; transition: border-color .3s, transform .3s; position: relative; }
+    .vm-card:hover { border-color: rgba(200,160,74,0.3); transform: translateY(-3px); }
+    .vm-thumb { position: relative; aspect-ratio: 16/9; overflow: hidden; cursor: pointer; background: #0c0b16; }
+    .vm-thumb img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.78) saturate(1.05); transition: filter .3s, transform .4s; }
+    .vm-card:hover .vm-thumb img { filter: brightness(.9) saturate(1.1); transform: scale(1.03); }
+    .vm-thumb-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(6,5,15,.7) 0%, transparent 55%); }
+    .vm-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 56px; height: 56px; border-radius: 50%; background: rgba(200,160,74,0.92); display: flex; align-items: center; justify-content: center; transition: transform .3s, background .3s; pointer-events: none; }
+    .vm-card:hover .vm-play { transform: translate(-50%, -50%) scale(1.12); background: var(--gold-lt); }
+    .vm-play svg { width: 17px; height: 17px; fill: #06050f; margin-left: 3px; }
+    .vm-duration { position: absolute; bottom: 8px; right: 10px; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: 1.5px; color: var(--white); background: rgba(6,5,15,.75); padding: 3px 8px; }
+    .vm-card-info { padding: 18px 20px 20px; }
+    .vm-card-tag { font-family: 'DM Mono', monospace; font-size: .6rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); opacity: .75; display: block; margin-bottom: 8px; }
+    .vm-card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 500; letter-spacing: .3px; color: var(--white); line-height: 1.4; margin-bottom: 8px; }
+    .vm-card-desc { font-size: .92rem; letter-spacing: .2px; line-height: 1.6; color: var(--muted); }
+    .vm-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 38px 22px; }
+    .vm-dots { display: flex; gap: 6px; align-items: center; }
+    .vm-dot { width: 22px; height: 2px; background: rgba(200,160,74,0.22); cursor: pointer; transition: all .3s; border: none; }
+    .vm-dot.active { background: var(--gold); width: 34px; }
+    .vm-arrows { display: flex; gap: 8px; }
+    .vm-arrow { width: 40px; height: 40px; border: 1px solid rgba(200,160,74,0.16); background: rgba(200,160,74,0.03); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .25s; flex-shrink: 0; }
+    .vm-arrow:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); background: rgba(200,160,74,0.08); }
+    .vm-arrow:disabled { opacity: .25; cursor: default; }
+    .vm-arrow svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+    .vm-footer { padding: 22px 38px 30px; border-top: 1px solid rgba(200,160,74,0.08); display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .vm-footer-text { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); }
+    .vm-ig-btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 28px; font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: 2.5px; text-transform: uppercase; text-decoration: none; color: var(--white); background: linear-gradient(135deg, rgba(131,58,180,0.35) 0%, rgba(200,88,42,0.35) 60%, rgba(253,194,0,0.25) 100%); border: 1px solid rgba(200,120,80,0.3); transition: all .3s; }
+    .vm-ig-btn:hover { background: linear-gradient(135deg, rgba(131,58,180,0.55) 0%, rgba(200,88,42,0.55) 60%, rgba(253,194,0,0.4) 100%); border-color: rgba(200,120,80,0.6); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(200,80,40,0.2); }
+    .vm-ig-btn svg { width: 17px; height: 17px; fill: var(--white); flex-shrink: 0; }
+
+    .vp-overlay { position: fixed; inset: 0; z-index: 9500; background: rgba(2,1,8,0.96); backdrop-filter: blur(22px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .35s ease; }
+    .vp-overlay.is-open { opacity: 1; pointer-events: all; }
+    .vp-panel { position: relative; width: 100%; max-width: 980px; transform: scale(0.95); transition: transform .4s cubic-bezier(0.22,1,0.36,1); }
+    .vp-overlay.is-open .vp-panel { transform: scale(1); }
+    .vp-panel::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px; z-index: 2; background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-lt) 60%, transparent 100%); }
+    .vp-bar { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px 15px 24px; background: #08070f; border: 1px solid rgba(200,160,74,0.2); border-bottom: none; }
+    .vp-bar-info { display: flex; flex-direction: column; gap: 3px; }
+    .vp-bar-tag { font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .75; }
+    .vp-bar-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 500; letter-spacing: .3px; color: var(--white); }
+    .vp-close { width: 42px; height: 42px; flex-shrink: 0; border: 1px solid rgba(200,160,74,0.22); background: rgba(200,160,74,0.05); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; line-height: 1; transition: all .25s; }
+    .vp-close:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,160,74,0.12); transform: rotate(90deg); }
+    .vp-video-wrap { position: relative; aspect-ratio: 16/9; background: #000; border: 1px solid rgba(200,160,74,0.2); border-top: none; overflow: hidden; }
+    .vp-video-wrap video { width: 100%; height: 100%; display: block; background: #000; }
+
+    /* ════ MODAL DETALHES DO PLANO ════ */
+    .pd-overlay { position: fixed; inset: 0; z-index: 9200; background: rgba(4,3,10,0.92); backdrop-filter: blur(18px); display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+    .pd-overlay.is-open { opacity: 1; pointer-events: all; }
+    .pd-panel { position: relative; width: 100%; max-width: 720px; max-height: 86vh; background: #08070f; border: 1px solid rgba(200,160,74,0.22); box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 80px rgba(200,160,74,0.04); transform: translateY(28px) scale(0.97); transition: transform .45s cubic-bezier(0.22,1,0.36,1); overflow: hidden; display: flex; flex-direction: column; }
+    .pd-overlay.is-open .pd-panel { transform: translateY(0) scale(1); }
+    .pd-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; z-index: 2; background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-lt) 60%, transparent 100%); }
+    .pd-header { padding: 32px 38px 24px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid rgba(200,160,74,0.1); flex-shrink: 0; gap: 20px; }
+    .pd-header-left { min-width: 0; }
+    .pd-eyebrow { font-family: 'DM Mono', monospace; font-size: .68rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: .75; display: block; margin-bottom: 10px; }
+    .pd-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 500; letter-spacing: .4px; color: var(--white); line-height: 1.25; }
+    .pd-title em { font-style: italic; color: var(--gold-lt); }
+    .pd-price-row { display: flex; align-items: baseline; gap: 10px; margin-top: 14px; }
+    .pd-price { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 600; color: var(--gold-lt); line-height: 1; }
+    .pd-period { font-family: 'DM Mono', monospace; font-size: .68rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+    .pd-close { width: 42px; height: 42px; border: 1px solid rgba(200,160,74,0.2); background: rgba(200,160,74,0.04); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .25s; font-size: 1.2rem; line-height: 1; }
+    .pd-close:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,160,74,0.09); transform: rotate(90deg); }
+    .pd-body { padding: 30px 38px; overflow-y: auto; flex: 1; }
+    .pd-ideal { font-size: .98rem; line-height: 1.85; color: var(--muted); font-style: italic; padding: 16px 20px; border-left: 2px solid var(--gold-border); background: rgba(200,160,74,0.04); margin-bottom: 26px; }
+    .pd-list { list-style: none; padding: 0; margin: 0; }
+    .pd-list li { font-size: .98rem; letter-spacing: .2px; line-height: 1.65; color: var(--muted); padding: 10px 0 10px 24px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .pd-list li::before { content: '—'; position: absolute; left: 0; color: var(--gold); opacity: .55; font-size: .8rem; top: 11px; }
+    .pd-list li.highlight { color: rgba(247,243,236,0.92); }
+    .pd-list li.highlight::before { content: '◈'; color: var(--gold-lt); opacity: 1; font-size: .65rem; top: 12px; }
+    .pd-list li.list-category { font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); opacity: .55; padding: 18px 0 6px 0; border-bottom: none; }
+    .pd-list li.list-category::before { display: none; }
+    .pd-list li.list-category:first-child { padding-top: 0; }
+    .pd-footer { padding: 24px 38px 30px; border-top: 1px solid rgba(200,160,74,0.1); display: flex; gap: 12px; flex-wrap: wrap; flex-shrink: 0; }
+    .pd-footer .btn-gold, .pd-footer .btn-outline { padding: 16px 30px; font-size: .72rem; flex: 1; text-align: center; }
+
+    /* ════ BOTÃO PULSANTE "VER DETALHES" ════ */
+    .btn-pulse {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      width: 100%; text-align: center; padding: 15px 24px; margin-top: 14px;
+      font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--gold-lt);
+      background: linear-gradient(135deg, rgba(200,160,74,0.1), rgba(107,79,160,0.08));
+      border: 1px solid var(--gold-border); border-radius: var(--radius);
+      cursor: pointer; transition: all .35s; position: relative; overflow: hidden;
+    }
+    .btn-pulse::before {
+      content: ''; position: absolute; inset: 0; border-radius: var(--radius);
+      border: 1px solid var(--gold); opacity: 0;
+      animation: pulseRing 2.2s ease-out infinite;
+    }
+    .btn-pulse::after {
+      content: ''; position: absolute; top: 0; left: -60%; width: 50%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.16), transparent);
+      transform: skewX(-20deg); animation: sheen 3.2s ease-in-out infinite; pointer-events: none;
+    }
+    @keyframes sheen { 0%{ left:-60%; } 50%{ left:120%; } 100%{ left:120%; } }
+    @keyframes pulseRing {
+      0% { opacity: .55; transform: scale(1); }
+      70% { opacity: 0; transform: scale(1.045); }
+      100% { opacity: 0; transform: scale(1.045); }
+    }
+    .btn-pulse:hover { background: linear-gradient(135deg, rgba(200,160,74,0.2), rgba(107,79,160,0.14)); border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(200,160,74,0.18); }
+    .btn-pulse .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; box-shadow: 0 0 0 0 rgba(200,160,74,0.7); animation: dotPulse 2.2s ease-out infinite; }
+    @keyframes dotPulse {
+      0% { box-shadow: 0 0 0 0 rgba(200,160,74,0.55); }
+      70% { box-shadow: 0 0 0 7px rgba(200,160,74,0); }
+      100% { box-shadow: 0 0 0 0 rgba(200,160,74,0); }
+    }
+
+    /* ════ MODAL MENTOR ════ */
+    .mn-overlay { position: fixed; inset: 0; z-index: 9300; background: rgba(4,3,10,0.93); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+    .mn-overlay.is-open { opacity: 1; pointer-events: all; }
+    .mn-panel { position: relative; width: 100%; max-width: 880px; max-height: 88vh; background: #08070f; border: 1px solid rgba(200,160,74,0.22); box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 80px rgba(200,160,74,0.04); transform: translateY(28px) scale(0.97); transition: transform .45s cubic-bezier(0.22,1,0.36,1); overflow: hidden; display: flex; flex-direction: column; }
+    .mn-overlay.is-open .mn-panel { transform: translateY(0) scale(1); }
+    .mn-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; z-index: 2; background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-lt) 60%, transparent 100%); }
+    .mn-close { position: absolute; top: 20px; right: 20px; z-index: 3; width: 42px; height: 42px; border: 1px solid rgba(200,160,74,0.25); background: rgba(6,5,15,.7); color: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .25s; font-size: 1.2rem; line-height: 1; backdrop-filter: blur(8px); }
+    .mn-close:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,160,74,0.12); transform: rotate(90deg); }
+    .mn-scroll { overflow-y: auto; flex: 1; }
+    .mn-hero { position: relative; width: 100%; aspect-ratio: 16/7; overflow: hidden; background: #0c0b16; }
+    .mn-hero img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.78) saturate(1.05); }
+    .mn-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,7,15,1) 0%, rgba(8,7,15,.2) 55%, transparent 100%); }
+    .mn-hero-info { position: absolute; bottom: 26px; left: 38px; right: 38px; }
+    .mn-hero-role { font-family: 'DM Mono', monospace; font-size: .7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-lt); opacity: .9; margin-bottom: 10px; }
+    .mn-hero-name { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 500; letter-spacing: .5px; color: var(--white); line-height: 1.1; }
+    .mn-hero-name em { font-style: italic; color: var(--gold-lt); }
+    .mn-body { padding: 36px 38px 10px; }
+    .mn-bio { font-size: 1.04rem; letter-spacing: .2px; line-height: 1.85; color: var(--muted); margin-bottom: 30px; }
+    .mn-specs { display: flex; flex-direction: column; gap: 10px; }
+    .mn-footer { padding: 24px 38px 32px; }
+    @media (max-width: 700px) {
+      .mn-hero-info { left: 24px; right: 24px; }
+      .mn-body { padding: 28px 24px 6px; }
+      .mn-footer { padding: 20px 24px 28px; }
+    }
+
+    @media (max-width: 700px) { .vm-card { flex: 0 0 88%; } .vm-header { padding: 26px 24px 20px; } .vm-carousel-wrap { padding: 22px 24px 18px; } .vm-nav { padding: 0 24px 18px; } .vm-footer { padding: 18px 24px 24px; } .pd-header { padding: 26px 24px 20px; } .pd-body { padding: 24px; } .pd-footer { padding: 20px 24px 26px; } }
+    @media (max-width: 900px) {
+      body { font-size: 17px; }
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 120px 24px 80px; gap: 48px; }
+      .hero-visual { order: -1; max-width: 380px; margin: 0 auto; }
+      .wrap { padding: 0 24px; }
+      .fases-akasha { grid-template-columns: 1fr; }
+      .oferta-card { padding: 44px 28px; }
+      .oferta-grid { grid-template-columns: 1fr; gap: 40px; }
+      .oferta-incl { grid-template-columns: 1fr; }
+      .ad-grid { grid-template-columns: 1fr; }
+      .mentor-split { grid-template-columns: 1fr; }
+      .mentor-img-side { min-height: 320px; }
+      .planos-grid { grid-template-columns: 1fr; }
+      .planos-ht { grid-template-columns: 1fr; }
+      .section-2col { grid-template-columns: 1fr; gap: 20px; }
+      .garantia { flex-direction: column; gap: 20px; }
+      .garantia-symbol { writing-mode: horizontal-tb; transform: none; }
+      .trust-inner { gap: 16px; }
+      .hero-btns, .oferta-cta-row, .cta-final-btns { flex-direction: column; align-items: stretch; }
+      .btn-gold, .btn-outline, .btn-videos, .btn-wpp { width: 100%; justify-content: center; text-align: center; }
+      .despertar-card { grid-template-columns: 1fr; }
+      .despertar-left, .despertar-center { border-right: none; border-bottom: 1px solid rgba(200,160,74,0.12); }
+      .ad-card, .fase-akasha { padding: 36px 28px; }
+      .statement-text { font-size: 1.12rem; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="matrix-bg"></canvas>
+<div class="ambient"></div>
+<div class="grid-bg"></div>
+<div id="particles" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+
+<!-- ══════ MODAL DE VÍDEOS ══════ -->
+<div class="vm-overlay" id="videoModal" role="dialog" aria-modal="true">
+  <div class="vm-panel" id="vmPanel">
+    <div class="vm-header">
+      <div class="vm-header-left">
+        <span class="vm-eyebrow" data-i18n="modal-eyebrow">Vídeos do Mentor</span>
+        <h2 class="vm-title" data-i18n-html="modal-title">O que você vai ouvir<br><em>antes de decidir</em></h2>
+      </div>
+      <button class="vm-close" id="vmClose" aria-label="Fechar modal">&#10005;</button>
+    </div>
+    <div class="vm-carousel-wrap" id="vmCarouselWrap">
+      <div class="vm-track" id="vmTrack">
+        <div class="vm-card">
+          <div class="vm-thumb" data-videourl="https://res.cloudinary.com/dcbarseus/video/upload/v1781545439/YTDown_YouTube_Mentoria-Imperio-Digital-Descubra-Sua-Id_Media_neZhgB4dSkk_001_1080p_iicora.mp4">
+            <img src="https://res.cloudinary.com/dcbarseus/video/upload/v1781545439/YTDown_YouTube_Mentoria-Imperio-Digital-Descubra-Sua-Id_Media_neZhgB4dSkk_001_1080p_iicora.jpg" onerror="this.src='https://via.placeholder.com/1280x720/06050f/c8a04a?text=Video+1'" alt="O Chamado">
+            <div class="vm-thumb-overlay"></div>
+            <div class="vm-play"><svg viewBox="0 0 16 16"><polygon points="5,2 14,8 5,14"/></svg></div>
+            <span class="vm-duration">03:04</span>
+          </div>
+          <div class="vm-card-info">
+            <span class="vm-card-tag" data-i18n="v1-tag">Akasha Legacy</span>
+            <div class="vm-card-title" data-i18n="v1-title">O Chamado</div>
+            <p class="vm-card-desc" data-i18n="v1-desc">Uma visão rápida sobre o impacto da construção da sua autoridade digital.</p>
+          </div>
+        </div>
+        <div class="vm-card">
+          <div class="vm-thumb" data-videourl="https://res.cloudinary.com/dcbarseus/video/upload/v1781545435/3_perguntas_que_revelam_por_que_voc%C3%AA_ainda_n%C3%A3o_chegou_l%C3%A1_Se_respondeu_n%C3%A3o_pra_qualquer_uma_vo_ujzoqv.mp4">
+            <img src="https://res.cloudinary.com/dcbarseus/video/upload/v1781545435/3_perguntas_que_revelam_por_que_voc%C3%AA_ainda_n%C3%A3o_chegou_l%C3%A1_Se_respondeu_n%C3%A3o_pra_qualquer_uma_vo_ujzoqv.jpg" onerror="this.src='https://via.placeholder.com/1280x720/06050f/c8a04a?text=Video+2'" alt="30s">
+            <div class="vm-thumb-overlay"></div>
+            <div class="vm-play"><svg viewBox="0 0 16 16"><polygon points="5,2 14,8 5,14"/></svg></div>
+            <span class="vm-duration">00:33</span>
+          </div>
+          <div class="vm-card-info">
+            <span class="vm-card-tag" data-i18n="v2-tag">Clareza</span>
+            <div class="vm-card-title" data-i18n="v2-title">30s</div>
+            <p class="vm-card-desc" data-i18n="v2-desc">3 perguntas que revelam por que você ainda não chegou lá.</p>
+          </div>
+        </div>
+        <div class="vm-card">
+          <div class="vm-thumb" data-videourl="https://res.cloudinary.com/dcbarseus/video/upload/v1781545429/Site_profissional._Logo._Instagram_estrat%C3%A9gico._Funil_de_vendas._Tudo_criado_a_partir_do_que_voc_xvayvp.mp4">
+            <img src="https://res.cloudinary.com/dcbarseus/video/upload/v1781545429/Site_profissional._Logo._Instagram_estrat%C3%A9gico._Funil_de_vendas._Tudo_criado_a_partir_do_que_voc_xvayvp.jpg" onerror="this.src='https://via.placeholder.com/1280x720/06050f/c8a04a?text=Video+3'" alt="Um ativo que nasce da sua essência">
+            <div class="vm-thumb-overlay"></div>
+            <div class="vm-play"><svg viewBox="0 0 16 16"><polygon points="5,2 14,8 5,14"/></svg></div>
+            <span class="vm-duration">00:09</span>
+          </div>
+          <div class="vm-card-info">
+            <span class="vm-card-tag" data-i18n="v3-tag">Ativo Digital</span>
+            <div class="vm-card-title" data-i18n="v3-title">Um ativo que nasce da sua essência</div>
+            <p class="vm-card-desc" data-i18n="v3-desc">Construindo toda a estrutura digital a partir de quem você realmente é.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="vm-nav">
+      <div class="vm-dots" id="vmDots"></div>
+      <div class="vm-arrows">
+        <button class="vm-arrow" id="vmPrev" aria-label="Anterior"><svg viewBox="0 0 14 14"><polyline points="9,2 4,7 9,12"/></svg></button>
+        <button class="vm-arrow" id="vmNext" aria-label="Próximo"><svg viewBox="0 0 14 14"><polyline points="5,2 10,7 5,12"/></svg></button>
+      </div>
+    </div>
+    <div class="vm-footer">
+      <span class="vm-footer-text" data-i18n="modal-footer-text">Mais conteúdo no Instagram</span>
+      <a href="https://instagram.com/akasha.hub" target="_blank" rel="noopener" class="vm-ig-btn">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        @akasha.hub
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL PLAYER ══════ -->
+<div class="vp-overlay" id="vpOverlay" role="dialog" aria-modal="true">
+  <div class="vp-panel" id="vpPanel">
+    <div class="vp-bar">
+      <div class="vp-bar-info">
+        <span class="vp-bar-tag" id="vpTag"></span>
+        <span class="vp-bar-title" id="vpTitle"></span>
+      </div>
+      <button class="vp-close" id="vpClose" aria-label="Fechar vídeo">&#10005;</button>
+    </div>
+    <div class="vp-video-wrap">
+      <video id="vpVideo" controls playsinline></video>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL DETALHES DO PLANO ══════ -->
+<div class="pd-overlay" id="planDetailModal" role="dialog" aria-modal="true">
+  <div class="pd-panel" id="pdPanel">
+    <div class="pd-header">
+      <div class="pd-header-left">
+        <span class="pd-eyebrow" id="pdEyebrow"></span>
+        <h2 class="pd-title" id="pdTitle"></h2>
+        <div class="pd-price-row">
+          <span class="pd-price" id="pdPrice"></span>
+          <span class="pd-period" id="pdPeriod"></span>
+        </div>
+      </div>
+      <button class="pd-close" id="pdClose" aria-label="Fechar detalhes">&#10005;</button>
+    </div>
+    <div class="pd-body" id="pdBody">
+      <div class="pd-ideal" id="pdIdeal"></div>
+      <ul class="pd-list" id="pdList"></ul>
+    </div>
+    <div class="pd-footer" id="pdFooter"></div>
+  </div>
+</div>
+
+<!-- ══════ MODAL MENTOR ══════ -->
+<div class="mn-overlay" id="mentorModal" role="dialog" aria-modal="true">
+  <div class="mn-panel" id="mnPanel">
+    <button class="mn-close" id="mnClose" aria-label="Fechar">&#10005;</button>
+    <div class="mn-scroll">
+      <div class="mn-hero">
+        <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772516452/preview_image_29_ferzvu.jpg" alt="Mentor Filipe Klehn">
+        <div class="mn-hero-overlay"></div>
+        <div class="mn-hero-info">
+          <div class="mn-hero-role" data-i18n="mentor-role">Fundador · Programador · Arquiteto de Marca</div>
+          <h2 class="mn-hero-name">Filipe <em>Klehn</em></h2>
+        </div>
+      </div>
+      <div class="mn-body">
+        <p class="mn-bio" data-i18n="mentor-bio">Nos últimos anos, trabalhei com profissionais e empreendedores que tinham algo valioso para oferecer ao mundo, mas não sabiam como traduzir isso em posicionamento, presença e receita real. Desenvolvi um método próprio que começa de dentro para fora: primeiro a essência, depois a arquitetura digital que a transforma em ativo.</p>
+        <div class="mn-specs">
+          <div class="mentor-spec"><span class="mentor-spec-ico">◈</span><div class="mentor-spec-body"><strong data-i18n="mspec1-strong">Construção de marcas de excelência</strong><span data-i18n="mspec1-span">De profissionais liberais a empreendedores em escala, em diferentes mercados e nichos.</span></div></div>
+          <div class="mentor-spec"><span class="mentor-spec-ico">◈</span><div class="mentor-spec-body"><strong data-i18n="mspec2-strong">Método proprietário de 4 fases</strong><span data-i18n="mspec2-span">Desenvolvido ao longo de 7+ anos de prática, erro, aprendizado e resultado real.</span></div></div>
+          <div class="mentor-spec"><span class="mentor-spec-ico">◈</span><div class="mentor-spec-body"><strong data-i18n="mspec3-strong">Foco em ativo digital sustentável</strong><span data-i18n="mspec3-span">Crescimento que não depende de sorte ou tendência, depende de quem você é.</span></div></div>
+        </div>
+      </div>
+      <div class="mn-footer">
+        <a href="https://wa.me/5571983448621?text=Olá%2C%20gostaria%20de%20falar%20com%20o%20mentor" target="_blank" class="btn-gold" style="width:100%;text-align:center;display:block;" data-i18n="mn-cta">Falar com o Mentor</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Akasha <span>Legacy</span></a>
+  <ul class="nav-links">
+    <li><a href="#metodo" data-i18n="nav-metodo">Método</a></li>
+    <li><a href="#oferta" data-i18n="nav-oferta">Programa</a></li>
+    <li><a href="#mentor" data-i18n="nav-mentor">Mentor</a></li>
+    <li><a href="#planos" data-i18n="nav-planos">Planos</a></li>
+  </ul>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="pt" aria-label="Português" title="Português">🇧🇷</button>
+    <button class="lang-btn" data-lang="en" aria-label="English" title="English">🇺🇸</button>
+    <button class="lang-btn" data-lang="es" aria-label="Español" title="Español">🇪🇸</button>
+  </div>
+  <a href="https://akashahub.com.br/leituracall" target="_blank" class="nav-cta" data-i18n="nav-cta">Agendar Leitura Call</a>
+</nav>
+
+<!-- ════ 1. HERO ════ -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag" data-i18n="hero-tag">Akasha Legacy · Autoridade · Receita · Legado</div>
+    <h1 class="hero-title" data-i18n-html="hero-title">
+      <span>Transforme sua história</span>
+      <em>em um ativo digital<br>que gera receita.</em>
+    </h1>
+    <p class="hero-sub" data-i18n-html="hero-sub">
+      Para especialistas, terapeutas, mentores, criadores e profissionais que <strong>sabem muito</strong>, mas ainda não transformaram seu conhecimento em autoridade.
+    </p>
+    <div class="hero-btns">
+      <a href="#oferta" class="btn-gold" data-i18n="hero-btn-aplicar">Aplicar para o Akasha Legacy</a>
+      <a href="https://akashahub.com.br/leituracall" target="_blank" class="btn-outline" data-i18n="hero-btn-leitura">Agendar Leitura Call</a>
+      <button class="btn-videos" id="openVideoModal">
+        <span class="btn-videos-icon"><svg viewBox="0 0 16 16"><polygon points="5,2 14,8 5,14"/></svg></span>
+        <span data-i18n="hero-btn-videos">Ver vídeos do mentor</span>
+      </button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1780593499/9f911ac5-1c18-45ac-a86a-0be8a4bd4593_lcyrau.png" alt="Mentor Akasha Legacy" class="hero-img">
+    <div class="hero-img-overlay"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-item"><div class="trust-dot"></div><div class="trust-text"><strong data-i18n="trust1-strong">Método Proprietário</strong><span data-i18n="trust1-span">4 Fases de Construção</span></div></div>
+    <div class="trust-item"><div class="trust-dot"></div><div class="trust-text"><strong data-i18n="trust2-strong">Construção 1:1</strong><span data-i18n="trust2-span">Atenção Individual e Estratégica</span></div></div>
+    <div class="trust-item"><div class="trust-dot"></div><div class="trust-text"><strong data-i18n="trust3-strong">Ativo Digital</strong><span data-i18n="trust3-span">Patrimônio que Cresce no Tempo</span></div></div>
+    <div class="trust-item"><div class="trust-dot"></div><div class="trust-text"><strong data-i18n="trust4-strong">Candidatura Estratégica</strong><span data-i18n="trust4-span">Vagas Selecionadas Pessoalmente</span></div></div>
+  </div>
+</div>
+
+<!-- ════ 2. PROBLEMA ════ -->
+<section class="statement">
+  <div class="wrap">
+    <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-problema">O Problema</span></div>
+    <h2 class="statement-title" data-i18n-html="problema-title">O mundo está cheio de <em>especialistas invisíveis.</em></h2>
+    <p class="statement-text" data-i18n-html="problema-text">
+      Você não precisa de mais um curso. Você não precisa de mais informação. Você precisa <strong>organizar quem você é</strong>. Seu conhecimento não gera valor enquanto permanece invisível.
+    </p>
+  </div>
+</section>
+
+<div class="wrap"><div class="sec-divider" style="margin:0;"></div></div>
+
+<!-- ════ 3. OPORTUNIDADE ════ -->
+<section class="statement">
+  <div class="wrap">
+    <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-oportunidade">A Oportunidade</span></div>
+    <h2 class="statement-title" data-i18n-html="oportunidade-title">Você já possui a <em>matéria-prima.</em></h2>
+    <p class="statement-text" data-i18n-html="oportunidade-text">
+      Experiências. Histórias. Conhecimentos. Métodos. Visão de mundo. O problema nunca foi falta de conteúdo. <strong>O problema é falta de estrutura.</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ════ 4. MÉTODO AKASHA — 4 FASES ════ -->
+<div class="wrap section" id="metodo">
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-metodo">O Método Akasha</span></div>
+  <div class="section-2col">
+    <div><h2 class="section-title" data-i18n-html="metodo-title"><span>Quatro Fases</span><br><em>da Construção</em></h2></div>
+    <div><p class="section-sub" data-i18n="metodo-sub">Não são estratégias soltas. É uma arquitetura integrada que vai da sua essência ao ativo digital que sustenta sua autoridade e sua receita ao longo do tempo.</p></div>
+  </div>
+  <div class="fases-akasha">
+    <div class="fase-akasha">
+      <div class="fase-akasha-head"><span class="fase-akasha-n">01</span><span class="fase-akasha-label" data-i18n="fase1-label">Fase 1 — Clareza</span></div>
+      <h3 class="fase-akasha-title" data-i18n="fase1-title">Clareza</h3>
+      <p class="fase-akasha-desc" data-i18n="fase1-desc">Descobrimos sua essência, seus diferenciais e seu posicionamento. Antes de construir qualquer coisa, é preciso saber exatamente quem você é e qual lugar ocupa no mercado.</p>
+    </div>
+    <div class="fase-akasha">
+      <div class="fase-akasha-head"><span class="fase-akasha-n">02</span><span class="fase-akasha-label" data-i18n="fase2-label">Fase 2 — Autoridade</span></div>
+      <h3 class="fase-akasha-title" data-i18n="fase2-title">Autoridade</h3>
+      <p class="fase-akasha-desc" data-i18n="fase2-desc">Transformamos sua história em marca, narrativa e presença digital. Sua trajetória deixa de ser invisível e passa a comunicar valor para as pessoas certas.</p>
+    </div>
+    <div class="fase-akasha">
+      <div class="fase-akasha-head"><span class="fase-akasha-n">03</span><span class="fase-akasha-label" data-i18n="fase3-label">Fase 3 — Receita</span></div>
+      <h3 class="fase-akasha-title" data-i18n="fase3-title">Receita</h3>
+      <p class="fase-akasha-desc" data-i18n="fase3-desc">Criamos os ativos digitais que permitem monetizar sua autoridade. Produtos, funis e estrutura de vendas que transformam reputação em receita real.</p>
+    </div>
+    <div class="fase-akasha">
+      <div class="fase-akasha-head"><span class="fase-akasha-n">04</span><span class="fase-akasha-label" data-i18n="fase4-label">Fase 4 — Legado</span></div>
+      <h3 class="fase-akasha-title" data-i18n="fase4-title">Legado</h3>
+      <p class="fase-akasha-desc" data-i18n="fase4-desc">Construímos uma estrutura que continua crescendo além da sua presença. Um patrimônio digital que gera oportunidades mesmo quando você não está olhando.</p>
+    </div>
+  </div>
+</div>
+
+<div class="wrap"><div class="sec-divider"></div></div>
+
+<!-- ════ 5. NOVA OFERTA — AKASHA LEGACY ════ -->
+<div class="wrap section" id="oferta">
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-oferta">O Programa</span></div>
+  <div class="oferta-wrap">
+    <div class="oferta-card">
+      <div class="oferta-grid">
+        <div>
+          <span class="oferta-badge" data-i18n="oferta-badge">Akasha Legacy · Construção Completa</span>
+          <h2 class="oferta-title" data-i18n-html="oferta-title">AKASHA SOVEREING LEGACY • Construção completa da <em>sua autoridade digital.</em></h2>
+          <p class="oferta-desc" data-i18n="oferta-desc">Um programa de construção completa do seu ecossistema digital. Da sua essência ao ativo que gera autoridade, receita e legado. Não é informação, é arquitetura aplicada ao que você já é.</p>
+          <div class="oferta-price-row">
+            <span class="oferta-price">R$ 25.000</span>
+          </div>
+          <span class="oferta-price-note" data-i18n="oferta-price-note">6 meses · tráfego pago incluído · seleção pessoal</span>
+          <div class="oferta-cta-row">
+            <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20aplicar%20para%20o%20Akasha%20Legacy" target="_blank" class="btn-gold" data-i18n="oferta-cta-aplicar">Aplicar para o Akasha Legacy</a>
+            <a href="https://akashahub.com.br/leituracall" target="_blank" class="btn-outline" data-i18n="oferta-cta-leitura">Agendar Leitura Call</a>
+          </div>
+        </div>
+        <div>
+          <span class="oferta-incl-label" data-i18n="oferta-incl-label">O que construímos juntos</span>
+          <ul class="oferta-incl">
+            <li data-i18n="oferta-incl-1">Posicionamento</li>
+            <li data-i18n="oferta-incl-2">Narrativa</li>
+            <li data-i18n="oferta-incl-3">Branding</li>
+            <li data-i18n="oferta-incl-4">Ecossistema digital</li>
+            <li data-i18n="oferta-incl-5">Estrutura de monetização</li>
+            <li data-i18n="oferta-incl-6">Ativos digitais</li>
+            <li data-i18n="oferta-incl-7">IA aplicada</li>
+            <li data-i18n="oferta-incl-8">Estratégia de crescimento</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap"><div class="sec-divider"></div></div>
+
+<!-- ════ 6. ANTES x DEPOIS ════ -->
+<div class="wrap section">
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-ad">A Transformação</span></div>
+  <div style="text-align:center;margin-bottom:8px;"><h2 class="section-title" style="text-align:center;" data-i18n-html="ad-title"><span>Antes</span> <em>×</em> <span>Depois</span></h2></div>
+  <div class="ad-grid">
+    <div class="ad-card antes">
+      <span class="ad-label" data-i18n="ad-antes-label">Antes do Akasha</span>
+      <ul class="ad-list">
+        <li data-i18n="ad-antes-1">Confuso</li>
+        <li data-i18n="ad-antes-2">Invisível</li>
+        <li data-i18n="ad-antes-3">Sem posicionamento</li>
+        <li data-i18n="ad-antes-4">Dependendo de indicação</li>
+      </ul>
+    </div>
+    <div class="ad-card depois">
+      <span class="ad-label" data-i18n="ad-depois-label">Depois do Akasha</span>
+      <ul class="ad-list">
+        <li data-i18n="ad-depois-1">Clareza</li>
+        <li data-i18n="ad-depois-2">Autoridade</li>
+        <li data-i18n="ad-depois-3">Presença</li>
+        <li data-i18n="ad-depois-4">Ecossistema digital</li>
+        <li data-i18n="ad-depois-5">Receita</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ════ 7. O QUE ESTAMOS CONSTRUINDO ════ -->
+<section class="construindo">
+  <div class="wrap">
+    <div class="eyebrow" style="justify-content:center;"><div class="eyebrow-line"></div><span data-i18n="eyebrow-construindo">A Verdade</span></div>
+    <p class="construindo-lines" data-i18n-html="construindo-text">
+      <span class="strike">Não estamos construindo um Instagram.</span>
+      <span class="strike">Não estamos construindo um site.</span>
+      <span class="strike">Não estamos construindo uma marca.</span>
+      <span class="construindo-final">Estamos construindo <em>um ativo digital</em> capaz de gerar oportunidades, clientes e legado.</span>
+    </p>
+  </div>
+</section>
+
+<div class="wrap"><div class="sec-divider" style="margin:0;"></div></div>
+
+<!-- ════ MENTOR — VERSÃO MINIMALISTA / PREMIUM ════ -->
+<div class="wrap section" id="mentor">
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-mentor">O Mentor</span></div>
+  <div class="mentor-split mentor-split--minimal">
+    <div class="mentor-orb-side" id="mentorImgTrigger">
+      <div class="mentor-orb-glow"></div>
+      <div class="mentor-orb-ring"></div>
+      <div class="mentor-orb-particles" id="mentorOrbParticles"></div>
+      <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772516452/preview_image_29_ferzvu.jpg" alt="Mentor Filipe Klehn" class="mentor-orb-img">
+      <div class="mentor-vignette"></div>
+      <div class="mentor-img-hint" data-i18n="mentor-img-hint"><span>◈</span> Ver perfil completo</div>
+    </div>
+    <div class="mentor-copy mentor-copy--minimal">
+      <div class="mentor-role" data-i18n="mentor-role">Fundador · Programador · Arquiteto de Marca</div>
+      <h2 class="mentor-name">Filipe<br><em>Klehn</em></h2>
+      <p class="mentor-teaser" data-i18n="mentor-teaser">O método que transforma essência em autoridade digital — e autoridade em receita.</p>
+      <button class="btn-pulse btn-pulse--mentor" id="mentorImgTriggerBtn" type="button">
+        <span class="pulse-dot"></span><span data-i18n="mentor-btn-detalhes">Conhecer o mentor</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PLANOS ════ -->
+<div class="wrap planos-section" id="planos">
+  <div class="eyebrow"><div class="eyebrow-line"></div><span data-i18n="eyebrow-investimento">Investimento</span></div>
+  <div class="section-2col" style="margin-bottom:56px;">
+    <div><h2 class="section-title" data-i18n-html="planos-title"><span>Escolha o</span><br><em>Ponto de Partida</em></h2></div>
+    <div><p class="section-sub" data-i18n="planos-sub">O método é o mesmo em todos os níveis. O que muda é a intensidade do acompanhamento, o volume de ativos entregues e a profundidade da construção. O Akasha Legacy é o programa completo.</p></div>
+  </div>
+
+  <!-- PLANO ENTRADA -->
+  <div class="despertar-wrap">
+    <div class="despertar-card">
+      <div class="despertar-left">
+        <span class="despertar-badge" data-i18n="desp-badge">Porta de Entrada</span>
+        <h3 class="despertar-title" data-i18n-html="desp-title">Arquitetura<br>de <em>Essência</em></h3>
+        <div class="despertar-ideal" data-i18n="desp-ideal">Para quem sabe que tem algo valioso para oferecer, mas ainda não encontrou as palavras, o posicionamento ou a estrutura para isso.</div>
+        <p class="despertar-tagline" data-i18n="desp-tagline">Uma sessão intensiva que transforma autoconhecimento em estratégia concreta. Ideal também como base sólida antes de um programa maior.</p>
+      </div>
+      <div class="despertar-center">
+        <ul class="despertar-items">
+          <li class="list-category" data-i18n="desp-cat1">Sessão &amp; Diagnóstico</li>
+          <li data-i18n="desp-i1">2 sessões intensivas de 60 minutos (Scan + Investigação + Anamnese)</li>
+          <li data-i18n="desp-i2">Gravação das sessões para revisão futura</li>
+          <li class="list-category" data-i18n="desp-cat2">Identidade &amp; Marca</li>
+          <li data-i18n="desp-i3">Dossiê de Essência em PDF (arquétipo, missão, tom de voz)</li>
+          <li data-i18n="desp-i4">Blueprint de Identidade Digital (bio, headline, paleta de referências)</li>
+          <li data-i18n="desp-i5">Logo profissional da marca</li>
+          <li data-i18n="desp-i6">Posicionamento inicial nas redes sociais (bio + headline + link)</li>
+          <li class="list-category" data-i18n="desp-cat3">Estratégia &amp; Ação</li>
+          <li data-i18n="desp-i7">Script de apresentação pessoal, pitch e copy</li>
+          <li data-i18n="desp-i8">1 roteiro estratégico (5 posts + 1 carrossel ou 3 vídeos)</li>
+          <li data-i18n="desp-i9">Plano de ação escrito para 30 dias</li>
+        </ul>
+      </div>
+      <div class="despertar-right">
+        <div class="despertar-price">R$ 297</div>
+        <span class="despertar-period" data-i18n="desp-period">sessão única · entrega em 7 dias</span>
+        <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20na%20Arquitetura%20de%20Essência" target="_blank" class="btn-gold" style="font-size:.7rem;padding:15px 30px;" data-i18n="desp-cta">Quero Começar</a>
+        <button class="btn-pulse" data-plan="desp"><span class="pulse-dot"></span><span data-i18n="desp-btn-detalhes">Ver detalhes do plano</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID 3 PLANOS -->
+  <div class="planos-grid">
+
+    <!-- Plano 01 -->
+    <div class="plano-card">
+      <span class="plano-level" data-i18n="p1-level">Plano 01 · Estruturação</span>
+      <h3 class="plano-name" data-i18n-html="p1-name">Arquitetura de Essência e <em>Império Digital</em><br><small style="font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:2px;color:var(--gold);opacity:.75;text-transform:uppercase;">(Avançada)</small></h3>
+      <div class="plano-price">R$ 3.000</div>
+      <span class="plano-period" data-i18n="p1-period">3 meses · pagamento único</span>
+      <div class="plano-div"></div>
+      <p class="plano-ideal" data-i18n="p1-ideal">Para quem quer estrutura completa com estratégia real, saindo do caos para um negócio digital organizado, posicionado e operacional.</p>
+      <ul class="plano-summary">
+        <li data-i18n="p1-i1">Arquitetura de Essência completa (4 camadas: Scan + Investigação + Anamnese)</li>
+        <li data-i18n="p1-i5">Site profissional completo OU página de vendas estratégica</li>
+        <li data-i18n="p1-i9">Estratégia de conteúdo para 90 dias</li>
+      </ul>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Plano%20Essência%20e%20Império%20Digital" target="_blank" class="plano-cta" data-i18n="p1-cta">Quero Começar</a>
+      <button class="btn-pulse" data-plan="p1"><span class="pulse-dot"></span><span data-i18n="p1-btn-detalhes">Ver detalhes do plano</span></button>
+    </div>
+
+    <!-- Plano 02 -->
+    <div class="plano-card">
+      <span class="plano-level" data-i18n="p2-level">Plano 02 · Continuidade</span>
+      <h3 class="plano-name" data-i18n-html="p2-name">Império <em>Digital</em></h3>
+      <div class="plano-price">R$ 1.500</div>
+      <span class="plano-period" data-i18n="p2-period">por mês · sem fidelidade</span>
+      <div class="plano-div"></div>
+      <p class="plano-ideal" data-i18n="p2-ideal">Para quem já tem uma base construída e precisa de ajuste contínuo, revisão de decisões estratégicas e presença de um mentor para não perder direção na execução.</p>
+      <ul class="plano-summary">
+        <li data-i18n="p2-i1">4 calls de estratégia e alinhamento por mês</li>
+        <li data-i18n="p2-i4">1 entregável à escolha por mês (roteiro, copy, ajuste de página ou landing page)</li>
+        <li data-i18n="p2-i8">Revisão de campanhas e posicionamento ativo</li>
+      </ul>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Plano%20Império%20Digital%20Mensal" target="_blank" class="plano-cta" data-i18n="p2-cta">Quero Começar</a>
+      <button class="btn-pulse" data-plan="p2"><span class="pulse-dot"></span><span data-i18n="p2-btn-detalhes">Ver detalhes do plano</span></button>
+    </div>
+
+    <!-- Plano 03 -->
+    <div class="plano-card">
+      <span class="plano-level" data-i18n="p3-level">Plano 03 · Intensivo</span>
+      <h3 class="plano-name" data-i18n-html="p3-name">Ecossistema de <em>Autoridade</em></h3>
+      <div class="plano-price">R$ 495</div>
+      <span class="plano-period" data-i18n="p3-period">por semana · alta frequência</span>
+      <div class="plano-div"></div>
+      <p class="plano-ideal" data-i18n="p3-ideal">Para quem está em lançamento, pivô de negócio ou tem decisões críticas que precisam de diagnóstico e ação imediata, sem esperar semanas por uma resposta.</p>
+      <ul class="plano-summary">
+        <li data-i18n="p3-i1">2 sessões individuais de 60–90 minutos por semana</li>
+        <li data-i18n="p3-i5">1 micro-entregável por semana (copy, roteiro ou ajuste)</li>
+        <li data-i18n="p3-i9">Suporte WhatsApp durante toda a semana</li>
+      </ul>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Ecossistema%20de%20Autoridade" target="_blank" class="plano-cta" data-i18n="p3-cta">Quero Começar</a>
+      <button class="btn-pulse" data-plan="p3"><span class="pulse-dot"></span><span data-i18n="p3-btn-detalhes">Ver detalhes do plano</span></button>
+    </div>
+  </div>
+
+  <!-- HIGH TICKET -->
+  <div class="planos-ht">
+
+    <!-- HT 1 -->
+    <div class="ht-card">
+      <span class="ht-tier" data-i18n="ht1-tier">Plano Premium · Atenção Máxima</span>
+      <h3 class="ht-name" data-i18n-html="ht1-name">Arquitetura de Essência e<br><em>Império Digital</em><br><small style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:2px;color:#b89ae6;text-transform:uppercase;">(Premium)</small></h3>
+      <div class="ht-price">R$ 10.000</div>
+      <span class="ht-period" data-i18n="ht1-period">Investimento único · Até 6 meses</span>
+      <div class="ht-positioning" data-i18n="ht1-positioning">Não é consultoria, é presença real, direcionamento diário e execução conjunta. Para quem entende que resultados sérios nascem de atenção real, e que construir sozinho tem um custo invisível muito maior.</div>
+      <div class="ht-div"></div>
+      <ul class="ht-summary">
+        <li data-i18n="ht1-i1">Arquitetura de Essência completa (Scan + Dossiê de Marca Premium)</li>
+        <li data-i18n="ht1-i4">Site completo OU aplicativo (1 entrega) + 5 páginas de vendas</li>
+        <li data-i18n="ht1-i18">2 calls semanais + mensagens diárias de direcionamento</li>
+      </ul>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20solicitar%20acesso%20ao%20Plano%20Estratégia%20e%20Execução%20Total" target="_blank" class="ht-cta" data-i18n="ht1-cta">Solicitar Acesso</a>
+      <button class="btn-pulse" data-plan="ht1"><span class="pulse-dot"></span><span data-i18n="ht1-btn-detalhes">Ver detalhes do plano</span></button>
+    </div>
+
+    <!-- HT 2 — AKASHA LEGACY MASTER -->
+    <div class="ht-card">
+      <span class="ht-tier" data-i18n="ht2-tier">Akasha Legacy · Sovereign Brand Legacy · Seleção Pessoal</span>
+      <h3 class="ht-name" data-i18n-html="ht2-name">Akasha Sovereing <em>Legacy</em></h3>
+      <div class="ht-price">R$ 25.000</div>
+      <span class="ht-period" data-i18n="ht2-period">6 meses · tráfego pago incluído</span>
+      <div class="ht-positioning" data-i18n="ht2-positioning">É uma parceria de construção real. Mentor presente, capital investido junto, ecossistema total montado. Exclusivo para perfis selecionados pessoalmente. Este programa exige atenção, disposição e foco total do mentor durante os 6 meses.</div>
+      <div class="ht-div"></div>
+      <ul class="ht-summary">
+        <li data-i18n="ht2-i0">Tudo do Plano Arquitetura de Essência e Império Digital (Premium) incluso</li>
+        <li data-i18n="ht2-i1">R$ 3.000 em tráfego pago estratégico investidos pelo mentor</li>
+        <li data-i18n="ht2-i3">Ecossistema digital completo (site + funil + área de membros + blog)</li>
+        <li data-i18n="ht2-i20">Seleção pessoal pelo mentor, vagas extremamente limitadas</li>
+      </ul>
+      </ul>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20aplicar%20para%20o%20Akasha%20Legacy%20-%20Herança%20e%20Legado%20da%20Marca" target="_blank" class="ht-cta" data-i18n="ht2-cta">Aplicar para o Akasha Legacy</a>
+      <button class="btn-pulse" data-plan="ht2"><span class="pulse-dot"></span><span data-i18n="ht2-btn-detalhes">Ver detalhes do plano</span></button>
+    </div>
+  </div>
+
+  <!-- Aviso de seleção -->
+  <div class="aviso-selecao">
+    <p data-i18n-html="aviso-text">
+      <strong>Os programas de R$&nbsp;10.000 e R$&nbsp;25.000 são para quem tem o comprometimento certo, não apenas o orçamento.</strong><br>
+      O mentor seleciona pessoalmente cada parceiro nesses programas. Se você chegou até aqui e sente que é a hora, agende uma Leitura Call.<br><br>
+      <strong>Vagas limitadas. Atenção real é recurso escasso.</strong>
+    </p>
+  </div>
+</div>
+
+<!-- GARANTIA -->
+<div class="wrap">
+  <div class="garantia">
+    <div class="garantia-symbol" data-i18n="garantia-symbol">Garantia</div>
+    <div>
+      <h3 class="garantia-title" data-i18n-html="garantia-title">Garantia de <em>100% de Reembolso</em></h3>
+      <p class="garantia-desc" data-i18n="garantia-desc">Nos primeiros 7 dias, se você não sentir que este é o programa certo para o seu momento, devolvemos 100% do valor. Sem perguntas, sem burocracia. Porque confiança não se pede, se oferece.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════ 8. CTA FINAL ════ -->
+<div class="wrap cta-final">
+  <span class="cta-final-eyebrow" data-i18n="cta-final-eyebrow">Candidatura Estratégica</span>
+  <h2 class="cta-final-title" data-i18n-html="cta-final-title"><span>Candidatura</span><br><em>Estratégica</em></h2>
+  <p class="cta-final-sub" data-i18n="cta-final-sub">Este programa não é para todos. Aceitamos apenas pessoas comprometidas em transformar conhecimento em patrimônio digital.</p>
+  <div class="cta-final-btns">
+    <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20aplicar%20para%20avaliação%20no%20Akasha%20Legacy" target="_blank" class="btn-wpp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <span data-i18n="cta-final-btn">Aplicar para avaliação</span>
+    </a>
+    <a href="https://akashahub.com.br/leituracall" target="_blank" class="btn-outline" data-i18n="cta-final-leitura">Agendar Leitura Call</a>
+  </div>
+</div>
+
+<div class="wrap"><div class="sec-divider" style="margin:0;"></div></div>
+
+<!-- DOWNLOAD SECTION -->
+<section style="padding: 110px 0; text-align: center; background: rgba(10,10,20,0.6); border-top: 1px solid rgba(200,160,74,0.15); margin-top: 50px;">
+  <div class="wrap">
+    <h2 class="section-title" style="margin-bottom: 10px;" data-i18n-html="download-title"><span>Download dos</span> <em>Planos</em></h2>
+    <p class="section-sub" style="text-align:center;margin:0 auto 40px;" data-i18n="download-sub">Preencha os dados abaixo para baixar a apresentação completa em PowerPoint.</p>
+    <div id="leadForm" style="max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:15px;background:rgba(255,255,255,0.02);padding:34px;border:1px solid rgba(200,160,74,0.15);">
+      <input type="text" id="name" data-i18n-placeholder="ph-name" placeholder="Seu Nome" style="background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,74,0.15);padding:14px;color:white;font-family:'DM Sans',sans-serif;font-size:1rem;transition:all 0.3s;outline:none;">
+      <input type="email" id="email" data-i18n-placeholder="ph-email" placeholder="Seu E-mail" style="background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,74,0.15);padding:14px;color:white;font-family:'DM Sans',sans-serif;font-size:1rem;transition:all 0.3s;outline:none;">
+      <input type="tel" id="whatsapp" data-i18n-placeholder="ph-whatsapp" placeholder="Seu WhatsApp" style="background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,74,0.15);padding:14px;color:white;font-family:'DM Sans',sans-serif;font-size:1rem;transition:all 0.3s;outline:none;">
+      <button onclick="handleDownload()" class="btn-gold" style="width:100%;text-align:center;margin-top:10px;cursor:pointer;" data-i18n="download-btn">Baixar PowerPoint</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Akasha Legacy</span>
+  <p data-i18n="footer-copyright">© 2026 Akasha Hub · Todos os direitos reservados</p>
+  <p data-i18n="footer-tagline">Autoridade · Ativo Digital · Legado</p>
+  <p><a href="https://akashahub.com.br">akashahub.com.br</a></p>
+</footer>
+
+<script>
+// ════ I18N ════
+const I18N = {
+  pt: {
+    "page-title": "Akasha Legacy — Transforme sua história em um ativo digital",
+    "nav-metodo": "Método", "nav-oferta": "Programa", "nav-mentor": "Mentor", "nav-planos": "Planos",
+    "nav-cta": "Agendar Leitura Call",
+    "hero-tag": "Akasha Legacy · Autoridade · Receita · Legado",
+    "hero-title": "<span>Transforme sua história</span><em>em um ativo digital<br>que gera receita.</em>",
+    "hero-sub": "Para especialistas, terapeutas, mentores, criadores e profissionais que <strong>sabem muito</strong>, mas ainda não transformaram seu conhecimento em autoridade.",
+    "hero-btn-aplicar": "Aplicar para o Akasha Legacy",
+    "hero-btn-leitura": "Agendar Leitura Call",
+    "hero-btn-videos": "Ver vídeos do mentor",
+    "trust1-strong": "Método Proprietário", "trust1-span": "4 Fases de Construção",
+    "trust2-strong": "Construção 1:1", "trust2-span": "Atenção Individual e Estratégica",
+    "trust3-strong": "Ativo Digital", "trust3-span": "Patrimônio que Cresce no Tempo",
+    "trust4-strong": "Candidatura Estratégica", "trust4-span": "Vagas Selecionadas Pessoalmente",
+    "eyebrow-problema": "O Problema",
+    "problema-title": "O mundo está cheio de <em>especialistas invisíveis.</em>",
+    "problema-text": "Você não precisa de mais um curso. Você não precisa de mais informação. Você precisa <strong>organizar quem você é</strong>. Seu conhecimento não gera valor enquanto permanece invisível.",
+    "eyebrow-oportunidade": "A Oportunidade",
+    "oportunidade-title": "Você já possui a <em>matéria-prima.</em>",
+    "oportunidade-text": "Experiências. Histórias. Conhecimentos. Métodos. Visão de mundo. O problema nunca foi falta de conteúdo. <strong>O problema é falta de estrutura.</strong>",
+    "eyebrow-metodo": "O Método Akasha",
+    "metodo-title": "<span>Quatro Fases</span><br><em>da Construção</em>",
+    "metodo-sub": "Não são estratégias soltas. É uma arquitetura integrada que vai da sua essência ao ativo digital que sustenta sua autoridade e sua receita ao longo do tempo.",
+    "fase1-label": "Fase 1 — Clareza", "fase1-title": "Clareza", "fase1-desc": "Descobrimos sua essência, seus diferenciais e seu posicionamento. Antes de construir qualquer coisa, é preciso saber exatamente quem você é e qual lugar ocupa no mercado.",
+    "fase2-label": "Fase 2 — Autoridade", "fase2-title": "Autoridade", "fase2-desc": "Transformamos sua história em marca, narrativa e presença digital. Sua trajetória deixa de ser invisível e passa a comunicar valor para as pessoas certas.",
+    "fase3-label": "Fase 3 — Receita", "fase3-title": "Receita", "fase3-desc": "Criamos os ativos digitais que permitem monetizar sua autoridade. Produtos, funis e estrutura de vendas que transformam reputação em receita real.",
+    "fase4-label": "Fase 4 — Legado", "fase4-title": "Legado", "fase4-desc": "Construímos uma estrutura que continua crescendo além da sua presença. Um patrimônio digital que gera oportunidades mesmo quando você não está olhando.",
+    "eyebrow-oferta": "O Programa",
+    "oferta-badge": "Akasha Legacy · Construção Completa",
+    "oferta-title": "AKASHA SOVEREING LEGACY • Construção completa da <em>sua autoridade digital.</em>",
+    "oferta-desc": "Um programa de construção completa do seu ecossistema digital. Da sua essência ao ativo que gera autoridade, receita e legado. Não é informação, é arquitetura aplicada ao que você já é.",
+    "oferta-price-note": "6 meses · tráfego pago incluído · seleção pessoal",
+    "oferta-cta-aplicar": "Aplicar para o Akasha Legacy",
+    "oferta-cta-leitura": "Agendar Leitura Call",
+    "oferta-incl-label": "O que construímos juntos",
+    "oferta-incl-1": "Posicionamento", "oferta-incl-2": "Narrativa", "oferta-incl-3": "Branding", "oferta-incl-4": "Ecossistema digital", "oferta-incl-5": "Estrutura de monetização", "oferta-incl-6": "Ativos digitais", "oferta-incl-7": "IA aplicada", "oferta-incl-8": "Estratégia de crescimento",
+    "eyebrow-ad": "A Transformação",
+    "ad-title": "<span>Antes</span> <em>×</em> <span>Depois</span>",
+    "ad-antes-label": "Antes do Akasha",
+    "ad-antes-1": "Confuso", "ad-antes-2": "Invisível", "ad-antes-3": "Sem posicionamento", "ad-antes-4": "Dependendo de indicação",
+    "ad-depois-label": "Depois do Akasha",
+    "ad-depois-1": "Clareza", "ad-depois-2": "Autoridade", "ad-depois-3": "Presença", "ad-depois-4": "Ecossistema digital", "ad-depois-5": "Receita",
+    "eyebrow-construindo": "A Verdade",
+    "construindo-text": "<span class='strike'>Não est
