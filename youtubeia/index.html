@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Hub — Série: Código da IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-dim: #7A6230;
+  --gold-glow: rgba(201,168,76,0.12);
+  --purple: #6B4FA0;
+  --purple-light: #9B79CC;
+  --cyan: #4FC9C9;
+  --cyan-glow: rgba(79,201,201,0.08);
+  --bg: #080809;
+  --bg2: #0F0F12;
+  --bg3: #141418;
+  --bg4: #1A1A1F;
+  --border: rgba(201,168,76,0.12);
+  --border2: rgba(201,168,76,0.06);
+  --border-cyan: rgba(79,201,201,0.12);
+  --text: #EAE6DE;
+  --text-muted: #8A867E;
+  --text-dim: #4E4A46;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.site-header {
+  padding: 48px 24px 36px;
+  max-width: 720px;
+  margin: 0 auto;
+  border-bottom: 0.5px solid var(--border2);
+}
+.series-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 14px;
+}
+.site-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px,7vw,52px);
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+  line-height: 1.12;
+  margin-bottom: 12px;
+}
+.site-header .sub {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+}
+.series-meta {
+  display: flex;
+  gap: 20px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+.meta-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  border: 0.5px solid var(--gold-dim);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* NAV */
+.ep-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,8,9,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 0.5px solid var(--border2);
+  padding: 0 24px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  height: 48px;
+  align-items: center;
+}
+.ep-nav::-webkit-scrollbar { display: none; }
+.ep-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.ep-btn:hover, .ep-btn.active {
+  color: var(--gold);
+  background: var(--gold-glow);
+}
+
+/* MAIN */
+.main { max-width: 720px; margin: 0 auto; padding: 0 24px 100px; }
+.episode { display: none; padding-top: 40px; }
+.episode.active { display: block; }
+
+/* EP HEADER */
+.ep-header { margin-bottom: 36px; }
+.ep-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.ep-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(24px,5vw,38px);
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.ep-hook {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+.ep-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.ep-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  border: 0.5px solid var(--border);
+  color: var(--text-dim);
+}
+.ep-tag.g { border-color: var(--gold-dim); color: var(--gold); }
+.ep-tag.p { border-color: rgba(107,79,160,0.4); color: var(--purple-light); }
+.ep-tag.c { border-color: rgba(79,201,201,0.3); color: var(--cyan); }
+
+/* CONCEPT BOX */
+.concept {
+  background: var(--gold-glow);
+  border: 0.5px solid rgba(201,168,76,0.2);
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin-bottom: 28px;
+}
+.concept-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.concept p { font-size: 13.5px; color: var(--text-muted); line-height: 1.72; }
+
+/* CASO REAL BOX */
+.case-box {
+  background: var(--cyan-glow);
+  border: 0.5px solid var(--border-cyan);
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin-bottom: 28px;
+}
+.case-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 12px;
+}
+.case-item {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid rgba(79,201,201,0.08);
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  align-items: flex-start;
+}
+.case-item:last-child { border: none; padding-bottom: 0; }
+.case-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--cyan);
+  min-width: 80px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* SCRIPT */
+.script-area { margin-bottom: 28px; }
+.script-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--border2);
+}
+.sb { margin-bottom: 12px; border-radius: 6px; overflow: hidden; }
+.sb-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--bg3);
+}
+.sb-type {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.sb-type.open-t  { background: rgba(201,168,76,0.15); color: var(--gold); }
+.sb-type.hook-t  { background: rgba(107,79,160,0.2);  color: var(--purple-light); }
+.sb-type.dev-t   { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+.sb-type.close-t { background: rgba(201,168,76,0.2);  color: var(--gold-light); }
+.sb-type.case-t  { background: rgba(79,201,201,0.12); color: var(--cyan); }
+.sb-type.prov-t  { background: rgba(107,79,160,0.12); color: var(--purple-light); }
+.sb-timing {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+.sb-body {
+  background: var(--bg2);
+  padding: 14px 16px;
+  border: 0.5px solid var(--border2);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+.sb-body p { font-size: 14px; color: var(--text); line-height: 1.72; }
+.sb-body .dir {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--border2);
+}
+.sb-body .quote-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px;
+  font-style: italic;
+  color: var(--gold-light);
+  display: block;
+  margin-top: 8px;
+}
+.sb-body .emphasis { color: var(--gold); font-weight: 500; }
+.sb-body .cyan { color: var(--cyan); }
+
+/* SAVE PHRASE */
+.save-phrase {
+  border: 0.5px solid rgba(201,168,76,0.35);
+  background: rgba(201,168,76,0.05);
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin: 24px 0;
+  position: relative;
+}
+.save-phrase::before {
+  content: '★';
+  position: absolute;
+  top: 16px; right: 18px;
+  color: var(--gold-dim);
+  font-size: 12px;
+}
+.save-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 10px;
+}
+.save-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-style: italic;
+  color: var(--gold-light);
+  line-height: 1.4;
+}
+
+/* VISUAL DIR */
+.visual-dir {
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+}
+.vd-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--purple-light);
+  margin-bottom: 12px;
+}
+.vd-item {
+  display: flex;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 0.5px solid var(--border2);
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.vd-item:last-child { border: none; padding-bottom: 0; }
+.vd-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  min-width: 70px;
+  margin-top: 1px;
+}
+
+/* THUMB */
+.thumb-box {
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-bottom: 28px;
+  border: 0.5px solid var(--border);
+}
+.thumb-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 14px;
+}
+.thumb-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.thumb-item:last-child { margin-bottom: 0; }
+.thumb-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  min-width: 60px;
+  padding-top: 1px;
+}
+.thumb-val { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+.thumb-val strong { color: var(--gold); font-weight: 500; }
+
+hr { border: none; border-top: 0.5px solid var(--border2); margin: 28px 0; }
+
+/* OVERVIEW GRID */
+.ep-grid { display: grid; gap: 12px; margin-top: 28px; }
+.ep-card {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.ep-card:hover { border-color: rgba(201,168,76,0.3); background: var(--bg3); }
+.ep-card-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 22px;
+  color: var(--gold-dim);
+  font-weight: 300;
+  line-height: 1;
+  min-width: 32px;
+}
+.ep-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  color: var(--gold-light);
+  margin-bottom: 4px;
+}
+.ep-card-hook { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
+
+@media(max-width:600px){
+  .main,.site-header { padding-left:16px; padding-right:16px; }
+  .ep-nav { padding: 0 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="series-tag">Akasha Hub · Série Talking Head · 2026</div>
+  <h1>Código da IA</h1>
+  <p class="sub">10 episódios. O que a Inteligência Artificial realmente significa para quem constrói negócios.<br>Não é hype. Não é medo. É arquitetura de vantagem competitiva.</p>
+  <div class="series-meta">
+    <span class="meta-pill">10 episódios</span>
+    <span class="meta-pill">inteligência artificial</span>
+    <span class="meta-pill">negócios</span>
+    <span class="meta-pill">akasha.hub</span>
+  </div>
+</div>
+
+<nav class="ep-nav">
+  <button class="ep-btn active" onclick="showEp('overview',this)">Visão Geral</button>
+  <button class="ep-btn" onclick="showEp('ep1',this)">EP 01</button>
+  <button class="ep-btn" onclick="showEp('ep2',this)">EP 02</button>
+  <button class="ep-btn" onclick="showEp('ep3',this)">EP 03</button>
+  <button class="ep-btn" onclick="showEp('ep4',this)">EP 04</button>
+  <button class="ep-btn" onclick="showEp('ep5',this)">EP 05</button>
+  <button class="ep-btn" onclick="showEp('ep6',this)">EP 06</button>
+  <button class="ep-btn" onclick="showEp('ep7',this)">EP 07</button>
+  <button class="ep-btn" onclick="showEp('ep8',this)">EP 08</button>
+  <button class="ep-btn" onclick="showEp('ep9',this)">EP 09</button>
+  <button class="ep-btn" onclick="showEp('ep10',this)">EP 10</button>
+</nav>
+
+<div class="main">
+
+<!-- OVERVIEW -->
+<div id="overview" class="episode active">
+  <div class="ep-header">
+    <div class="ep-num">VISÃO GERAL DA SÉRIE</div>
+    <div class="ep-title">10 Episódios.<br>Uma Virada.</div>
+    <div class="ep-hook">A IA não vai substituir você. Mas vai substituir quem não sabe usá-la. Essa série não é sobre tecnologia — é sobre como empreendedores que entendem o que está acontecendo estão construindo vantagens que os outros não conseguem nem enxergar.</div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">A lógica da série</div>
+    <p>Não é uma série de tutoriais. Não é "10 prompts que vão mudar sua vida". É uma série sobre <strong style="color:var(--text)">mentalidade estratégica em relação à IA</strong>. O que está mudando no mercado, no comportamento humano, nas estruturas de negócio — e como o empreendedor que enxerga isso antes dos outros posiciona a empresa para uma vantagem que dura décadas, não meses.</p>
+  </div>
+
+  <div class="ep-grid">
+    <div class="ep-card" onclick="showEp('ep1',document.querySelectorAll('.ep-btn')[1])">
+      <div class="ep-card-num">01</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">A IA Não É uma Ferramenta. É uma Mudança de Era.</div>
+        <div class="ep-card-hook">Por que comparar IA à internet de 1995 ainda subestima o que está acontecendo</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep2',document.querySelectorAll('.ep-btn')[2])">
+      <div class="ep-card-num">02</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">O Empreendedor que a IA Não Consegue Substituir</div>
+        <div class="ep-card-hook">Qual é o perfil humano que se torna mais valioso — não menos — à medida que a IA avança</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep3',document.querySelectorAll('.ep-btn')[3])">
+      <div class="ep-card-num">03</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">IA Como Alavanca, Não Como Atalho</div>
+        <div class="ep-card-hook">A diferença entre usar IA para crescer mais rápido e usar IA para não pensar — e por que essa diferença vai separar mercados inteiros</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep4',document.querySelectorAll('.ep-btn')[4])">
+      <div class="ep-card-num">04</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">O Negócio de Uma Pessoa Vale Mais do que Nunca</div>
+        <div class="ep-card-hook">Como a IA tornou possível o que antes precisava de uma equipe de 20 pessoas — e o que isso significa para quem está construindo sozinho</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep5',document.querySelectorAll('.ep-btn')[5])">
+      <div class="ep-card-num">05</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">Conteúdo na Era da IA: Quem Vai Sobreviver</div>
+        <div class="ep-card-hook">Quando qualquer um pode gerar texto, vídeo e imagem com IA — o que ainda é raro e valioso no mercado de conteúdo</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep6',document.querySelectorAll('.ep-btn')[6])">
+      <div class="ep-card-num">06</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">A Nova Anatomia de um Negócio Inteligente</div>
+        <div class="ep-card-hook">Como empresas que integraram IA na estrutura — não só nos processos — estão operando em outro nível de eficiência e escala</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep7',document.querySelectorAll('.ep-btn')[7])">
+      <div class="ep-card-num">07</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">IA e o Fim da Desculpa da Falta de Recurso</div>
+        <div class="ep-card-hook">Por que "não tenho equipe", "não tenho budget" e "não tenho tempo" deixaram de ser obstáculos reais</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep8',document.querySelectorAll('.ep-btn')[8])">
+      <div class="ep-card-num">08</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">O Risco Que Ninguém Fala: IA sem Estratégia</div>
+        <div class="ep-card-hook">Como a adoção acrítica de IA está criando negócios rápidos e frágeis — e o que diferencia automação de alavanca real</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep9',document.querySelectorAll('.ep-btn')[9])">
+      <div class="ep-card-num">09</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">Decisão Humana + Velocidade de Máquina</div>
+        <div class="ep-card-hook">O modelo de operação que combina intuição estratégica com execução automatizada — e por que essa combinação é imbatível</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep10',document.querySelectorAll('.ep-btn')[10])">
+      <div class="ep-card-num">10</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">O Empreendedor do Futuro Já Existe</div>
+        <div class="ep-card-hook">O episódio final. O manifesto. Quem vai construir os maiores negócios da próxima década — e como você se posiciona agora.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EP 01 -->
+<div id="ep1" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 01 · ABERTURA DA SÉRIE</div>
+    <div class="ep-title">A IA Não É uma Ferramenta.<br>É uma Mudança de Era.</div>
+    <div class="ep-hook">Toda geração tem um momento em que o chão muda debaixo dos pés. A imprensa. A eletricidade. A internet. Quem entendeu antes não foi mais inteligente — foi mais atento. Esse momento está acontecendo agora.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">abertura</span>
+      <span class="ep-tag g">contexto</span>
+      <span class="ep-tag c">história</span>
+      <span class="ep-tag p">filosofia</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>A maioria das pessoas está avaliando a IA como uma ferramenta nova dentro do sistema atual. O erro é esse: a IA não é uma ferramenta dentro do sistema — ela está mudando o sistema. E quem constrói negócios a partir dessa compreensão opera com uma vantagem de perspectiva que não tem preço.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Referências e dados do episódio</div>
+    <div class="case-item"><div class="case-key">ChatGPT</div>Atingiu 100 milhões de usuários em 2 meses. A internet levou 4 anos. O iPhone levou 3 anos. Nenhuma tecnologia na história da humanidade foi adotada nessa velocidade.</div>
+    <div class="case-item"><div class="case-key">Goldman Sachs</div>Relatório de 2023: IA pode automatizar 300 milhões de empregos em tempo integral globalmente. Mas o mesmo relatório aponta que pode criar equivalente a 97 milhões de novos tipos de função.</div>
+    <div class="case-item"><div class="case-key">Internet 1995</div>Em 1995, 93% dos executivos americanos acreditavam que a internet era uma moda passageira. Em 2000, os que não investiram tinham perdido posições de mercado inteiras para quem apostou cedo.</div>
+    <div class="case-item"><div class="case-key">OpenAI / 2024</div>GPT-4o, Sora, o2, Claude 3.5, Gemini Ultra — em 18 meses, o salto de capacidade foi equivalente a décadas de desenvolvimento de software tradicional. A curva não está desacelerando.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"100 milhões de usuários em 2 meses: o que isso realmente significa pro seu negócio"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Visual</div><div class="thumb-val">Você olhando para câmera com expressão de quem está prestes a revelar algo importante. Fundo escuro. Texto em dourado.</div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"MUDANÇA DE ERA"</strong> em branco · subtexto em dourado</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–25s</span></div>
+      <div class="sb-body">
+        <p>Em 1995, um executivo da IBM disse que a internet era uma moda passageira.<br><br>
+        Em 2007, um CEO de telecomunicações disse que o iPhone não ia funcionar porque não tinha teclado físico.<br><br>
+        Em 2022, a maioria dos empreendedores que conheço disse que a IA era "interessante mas ainda muito crua pra usar de verdade".<br><br>
+        Toda geração tem a sua versão dessa frase. E toda geração paga caro por ela.</p>
+        <div class="dir">Tom seco. Uma afirmação por vez. Deixa cada erro histórico pousar antes do próximo.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Gancho</span><span class="sb-timing">25s–50s</span></div>
+      <div class="sb-body">
+        <p>Eu não estou aqui pra te dizer que IA vai mudar tudo — todo mundo já sabe disso.<br><br>
+        Estou aqui pra te ajudar a entender <span class="emphasis">qual é a sua posição dentro dessa mudança</span>.<br><br>
+        Porque a pergunta não é "IA vai afetar meu mercado?". A resposta pra essa é sim, sempre.<br><br>
+        A pergunta é: você vai ser o que se adapta primeiro — ou o que tenta manter o modelo antigo até não ser mais possível?</p>
+        <div class="dir">Levemente mais próximo da câmera. Tom pessoal, direto.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento</span><span class="sb-timing">50s–5min</span></div>
+      <div class="sb-body">
+        <p>O ChatGPT atingiu 100 milhões de usuários em 2 meses. A internet levou 4 anos pra chegar ao mesmo número. O iPhone, 3 anos. Nenhuma tecnologia na história humana foi adotada nessa velocidade.<br><br>
+        Isso não é dado de curiosidade. É dado de urgência.<br><br>
+        Porque quando uma tecnologia é adotada dessa forma, as janelas de vantagem competitiva fecham muito mais rápido do que o normal. Quem entende e age em 2024 e 2025 tem uma vantagem que em 2027 vai ser muito mais cara de construir — ou impossível.<br><br>
+        Mas tem algo mais importante do que a velocidade.<br><br>
+        A IA não está automatizando tarefas dentro de um mercado estável. Ela está <span class="emphasis">redefinindo o que tem valor</span> dentro de cada mercado.<br><br>
+        O que era raro — produzir texto, imagem, código, análise — está se tornando commodity. E o que vai ser raro daqui pra frente é completamente diferente do que era raro antes.<br><br>
+        Essa série inteira é sobre entender essa redefinição — e posicionar o seu negócio do lado certo dela.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>E aqui está a distinção que vai guiar tudo que vem depois nessa série:<br><br>
+        <span class="emphasis">IA não é uma ferramenta que você adiciona ao seu negócio. É uma mudança de era que redefine o que é o seu negócio.</span><br><br>
+        Quem pensa em ferramenta vai usar IA para fazer as mesmas coisas mais rápido.<br><br>
+        Quem pensa em era vai usar IA para fazer coisas que antes eram impossíveis.</p>
+        <span class="quote-line">"A tecnologia não muda o que as pessoas fazem. Muda o que é possível fazer."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento 2</span><span class="sb-timing">5–9min</span></div>
+      <div class="sb-body">
+        <p>Pensa comigo: a imprensa de Gutenberg não tornou os escribas mais eficientes. Ela tornou os escribas obsoletos — e criou uma indústria editorial inteira que não existia antes.<br><br>
+        A eletricidade não tornou as fábricas a vapor mais rápidas. Ela redefiniu o que era uma fábrica.<br><br>
+        A internet não tornou os classificados de jornal digitais. Ela criou Google, Amazon, redes sociais — categorias que não existiam e que destruíram categorias que pareciam eternas.<br><br>
+        A IA está fazendo o mesmo. Não no prazo de décadas — no prazo de anos.<br><br>
+        E o empreendedor que entende isso não pergunta "como eu uso IA no meu processo atual?". Ele pergunta <span class="emphasis">"que negócio só é possível de existir por causa da IA — e que ainda não existe?"</span><br><br>
+        Essa pergunta, respondida com clareza, vale mais do que qualquer curso de prompt engineering.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span><span class="sb-timing">9–11min</span></div>
+      <div class="sb-body">
+        <p>No próximo episódio eu vou te mostrar algo que parece contradição mas não é:<br><br>
+        À medida que a IA fica mais poderosa, certos perfis humanos ficam <em>mais</em> valiosos — não menos.<br><br>
+        E o empreendedor que entende qual é esse perfil tem uma vantagem que nenhuma IA consegue construir sozinha.</p>
+        <div class="dir">Sem CTA forçado. A abertura do próximo tema é o CTA.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"IA não é uma ferramenta que você adiciona ao seu negócio. É uma mudança de era que redefine o que é o seu negócio."</div>
+  </div>
+
+  <div class="visual-dir">
+    <div class="vd-label">Direção visual</div>
+    <div class="vd-item"><div class="vd-key">Cenário</div>Ambiente escuro e limpo. Mesma linguagem das outras séries. Consistência visual do canal.</div>
+    <div class="vd-item"><div class="vd-key">Luz</div>Frontal suave + rim light dourado. Pode ter leve toque ciano para referenciar tecnologia sem clichê.</div>
+    <div class="vd-item"><div class="vd-key">Texto tela</div>"100M em 2 meses" — dado numérico grande na tela no momento em que cita. Impacto visual imediato.</div>
+    <div class="vd-item"><div class="vd-key">Ritmo</div>Firme e direto. Sem floreio. Esse episódio precisa transmitir urgência sem alarme.</div>
+    <div class="vd-item"><div class="vd-key">Corte</div>Cortes secos. Cada bloco é uma batida separada.</div>
+  </div>
+</div>
+
+<!-- EP 02 -->
+<div id="ep2" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 02</div>
+    <div class="ep-title">O Empreendedor que a IA<br>Não Consegue Substituir</div>
+    <div class="ep-hook">Todo mundo está com medo de ser substituído pela IA. Mas existe um perfil específico de empreendedor que está se tornando exponencialmente mais valioso à medida que a IA avança. A diferença não é técnica. É humana.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">perfil humano</span>
+      <span class="ep-tag g">vantagem</span>
+      <span class="ep-tag p">psicologia</span>
+      <span class="ep-tag">identidade</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>A IA é extraordinária em executar dentro de padrões conhecidos. O que ela não consegue fazer é criar novos padrões com base em visão, intuição e experiência encarnada. O empreendedor insubstituível não é o mais técnico — é o que combina visão estratégica com capacidade de orquestrar sistemas de IA em direção a resultados que a própria IA não consegue definir.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Referências e dados do episódio</div>
+    <div class="case-item"><div class="case-key">Sam Altman / OpenAI</div>Em entrevista de 2024, afirmou que os profissionais mais valiosos nos próximos anos serão aqueles que conseguem fazer perguntas que a IA não sabe que deveria responder. A arte de formular o problema certo é irreplaçável.</div>
+    <div class="case-item"><div class="case-key">McKinsey 2024</div>Estudo com 1.200 empresas: as que obtiveram maior ROI com IA não foram as que mais automatizaram — foram as que tinham líderes com clareza estratégica sobre onde aplicar a tecnologia.</div>
+    <div class="case-item"><div class="case-key">Paul Graham</div>Ensaio "How to Do Great Work" (2023): criatividade genuína exige a capacidade de suportar ambiguidade prolongada — algo que modelos de IA não fazem porque são treinados para resolver, não para habitar o desconhecido.</div>
+    <div class="case-item"><div class="case-key">Empreendedores BR</div>Nubank, iFood, VTEX — todas cresceram com fundadores que usavam dados e tecnologia como instrumento de visão, não como substituto dela. A IA amplifica quem já pensa bem. Não substitui quem não pensa.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"Esse perfil de empreendedor vai valer 10x mais com a IA (qual é o seu?)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"INSUBSTITUÍVEL"</strong> · você apontando para a câmera, expressão assertiva</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–25s</span></div>
+      <div class="sb-body">
+        <p>A IA escreve melhor que a maioria das pessoas. Programa melhor que a maioria dos programadores júnior. Analisa dados melhor que a maioria dos analistas.<br><br>
+        Mas existe algo que ela não consegue fazer.<br><br>
+        Ela não consegue saber o que vale a pena construir.</p>
+        <div class="dir">Pausa real após a última frase. Deixa o contraste estabelecer.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento</span><span class="sb-timing">25s–5min</span></div>
+      <div class="sb-body">
+        <p>A IA é uma máquina de padrões. Ela é extraordinária em identificar o que funcionou no passado e reproduzir variações disso com velocidade e escala impossíveis para humanos.<br><br>
+        Mas toda grande oportunidade de negócio existe exatamente onde os padrões do passado não se aplicam.<br><br>
+        Uber não cabia no padrão de táxi. Airbnb não cabia no padrão de hotel. Nubank não cabia no padrão de banco. Essas oportunidades existiram porque alguém teve a capacidade de imaginar uma realidade que ainda não havia padrão para descrever.<br><br>
+        <span class="emphasis">A IA otimiza dentro do jogo. O empreendedor muda o jogo.</span><br><br>
+        E isso não vai mudar. Pelo contrário — à medida que a IA fica melhor em otimizar jogos existentes, a capacidade de criar novos jogos fica mais rara e mais valiosa.<br><br>
+        Um estudo da McKinsey com 1.200 empresas mostrou que o maior ROI com IA veio não das empresas que mais automatizaram — mas das que tinham líderes com clareza sobre onde aplicar a tecnologia. A tecnologia executou. O humano definiu o alvo.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type prov-t">Provocação</span></div>
+      <div class="sb-body">
+        <p>Mas tem algo que precisa ser dito com honestidade:<br><br>
+        <span class="emphasis">A IA não vai substituir empreendedores. Mas empreendedores que usam IA vão substituir empreendedores que não usam.</span><br><br>
+        Não é sobre ser técnico. É sobre ser o orquestrador — a pessoa que tem visão suficiente para direcionar sistemas poderosos em direção a resultados reais.</p>
+        <span class="quote-line">"A IA amplifica quem já pensa bem. Ela não substitui quem não pensa."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Perfil do Empreendedor IA-Nativo</span><span class="sb-timing">5–9min</span></div>
+      <div class="sb-body">
+        <p>O empreendedor que a IA não substitui tem três características específicas:<br><br>
+        <span class="emphasis">Primeiro: sabe fazer as perguntas certas.</span> Sam Altman, CEO da OpenAI, disse em 2024 que os profissionais mais valiosos dos próximos anos serão os que conseguem formular problemas que a IA não sabe que deveria resolver. Prompt engineering não é sobre comando — é sobre clareza de pensamento.<br><br>
+        <span class="emphasis">Segundo: tolera ambiguidade.</span> IA precisa de problema definido para funcionar bem. O empreendedor que consegue operar em mercados ainda mal definidos, onde o problema certo ainda está emergindo, tem uma janela de vantagem que nenhuma ferramenta pode preencher.<br><br>
+        <span class="emphasis">Terceiro: tem contexto que não está no dado.</span> Experiência de mercado, relação de confiança com clientes, intuição construída sobre erros — isso não está em nenhum dataset. E é exatamente o que direciona onde a IA deve operar.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span><span class="sb-timing">9–11min</span></div>
+      <div class="sb-body">
+        <p>A questão não é se você vai ser substituído pela IA.<br><br>
+        A questão é: você está desenvolvendo as capacidades que a IA torna mais valiosas — ou as que ela torna obsoletas?<br><br>
+        No próximo episódio eu vou mostrar a diferença entre usar IA como atalho e usar IA como alavanca. E por que essa distinção vai separar mercados inteiros nos próximos anos.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"A IA amplifica quem já pensa bem. Ela não substitui quem não pensa."</div>
+  </div>
+
+  <div class="visual-dir">
+    <div class="vd-label">Direção visual</div>
+    <div class="vd-item"><div class="vd-key">Tom</div>Mais reflexivo que o EP01. Você não está entregando urgência — está entregando perspectiva. Ritmo levemente mais pausado.</div>
+    <div class="vd-item"><div class="vd-key">Texto tela</div>Os três atributos do empreendedor insubstituível podem aparecer em overlay no momento em que você os nomeia: "PERGUNTAS CERTAS" / "TOLERÂNCIA À AMBIGUIDADE" / "CONTEXTO".</div>
+    <div class="vd-item"><div class="vd-key">Câmera</div>Pode se mover levemente ao falar das três características — cria ritmo visual sem precisar de edição complexa.</div>
+  </div>
+</div>
+
+<!-- EP 03 -->
+<div id="ep3" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 03</div>
+    <div class="ep-title">IA Como Alavanca,<br>Não Como Atalho</div>
+    <div class="ep-hook">Tem dois tipos de empreendedor usando IA agora. Um está ficando mais rápido. O outro está ficando mais forte. A diferença entre os dois não está na ferramenta que usam — está na pergunta que fazem antes de abrir o ChatGPT.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">alavanca</span>
+      <span class="ep-tag g">estratégia</span>
+      <span class="ep-tag p">mentalidade</span>
+      <span class="ep-tag c">execução</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>Atalho comprime tempo dentro do mesmo nível. Alavanca muda de nível. Quem usa IA como atalho está acelerando processos que talvez não devessem existir. Quem usa IA como alavanca está construindo capacidades que ampliam o que é possível — não só o que é rápido.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Referências e dados do episódio</div>
+    <div class="case-item"><div class="case-key">Jasper AI</div>Empresa de geração de conteúdo com IA que captou $125M em 2022. Em 2023, demitiu 30% do time porque o ChatGPT tornou seu produto obsoleto. Construiu atalho — não vantagem estrutural.</div>
+    <div class="case-item"><div class="case-key">Klarna</div>Fintech sueca que usou IA para substituir 700 atendentes de suporte. O atendimento ficou mais rápido e mais eficiente. Isso não é atalho — é redesenho de estrutura de negócio usando IA como alavanca de modelo.</div>
+    <div class="case-item"><div class="case-key">Harvey AI</div>IA para advogados que não automatizou petições existentes — criou uma nova categoria de serviço jurídico de alta velocidade que antes era impossível pelo custo de horas de trabalho. Alavanca que criou novo mercado.</div>
+    <div class="case-item"><div class="case-key">Criadores BR</div>Criadores de conteúdo que usam IA para gerar posts genéricos estão perdendo engajamento. Os que usam IA para ampliar a distribuição de perspectivas genuínas estão crescendo. O conteúdo vazio ficou mais rápido — e mais vazio.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"A maioria usa IA errado (e está ficando mais ocupada, não mais rica)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"ATALHO vs ALAVANCA"</strong> · dois lados visuais · você no centro</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Tem empreendedor usando IA pra gerar 30 posts por dia.<br><br>
+        Tem empreendedor usando IA pra construir um negócio que antes precisaria de 30 pessoas.<br><br>
+        As duas pessoas usam as mesmas ferramentas. Só uma delas vai ter um negócio diferente daqui a dois anos.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento — A Distinção</span><span class="sb-timing">20s–4min</span></div>
+      <div class="sb-body">
+        <p>Atalho e alavanca parecem a mesma coisa mas são completamente diferentes.<br><br>
+        Um atalho te leva ao mesmo lugar mais rápido. Uma alavanca te leva a um lugar que você não chegaria sem ela.<br><br>
+        Quando você usa IA pra gerar conteúdo genérico mais rápido — você usou atalho. O conteúdo continua genérico, só saiu mais depressa.<br><br>
+        Quando você usa IA pra analisar 500 avaliações dos seus clientes e identificar o padrão de dor que você nunca teria tempo de mapear manualmente — você usou alavanca. Você chegou a um entendimento que antes era impossível.<br><br>
+        <span class="emphasis">A pergunta que separa os dois usos é: isso expande o que eu consigo fazer — ou só acelera o que eu já fazia?</span><br><br>
+        A Jasper AI captou $125 milhões em 2022 vendendo geração de conteúdo com IA. Em 2023 demitiu 30% do time porque o ChatGPT tornou o produto deles obsoleto. Eles construíram atalho. Quando apareceu um atalho mais rápido, o produto sumiu.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type case-t">Caso — Klarna</span><span class="sb-timing">4–7min</span></div>
+      <div class="sb-body">
+        <p>A Klarna, fintech sueca, usou IA para redesenhar completamente o setor de suporte ao cliente. O agente de IA deles faz o trabalho equivalente a 700 atendentes humanos — com mais velocidade e consistência.<br><br>
+        Isso não é atalho. É redefinição de estrutura de negócio.<br><br>
+        Eles não ficaram mais rápidos no mesmo modelo. Eles tornaram o custo de escala de atendimento praticamente zero — o que muda completamente como o negócio pode crescer.<br><br>
+        Harvey AI fez o mesmo para o direito. Não automatizou petições existentes. Criou uma categoria de serviço jurídico de alta velocidade e baixo custo que simplesmente não existia antes — porque o custo de horas de trabalho de advogado tornava inviável.<br><br>
+        <span class="emphasis">Alavanca de IA não é sobre fazer o mesmo mais rápido. É sobre fazer o que antes era impossível.</span></p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>A pergunta que vai mudar como você usa IA a partir de hoje:<br><br>
+        <span class="emphasis">Qual é a tarefa que eu nunca consigo fazer bem porque não tenho tempo, escala ou velocidade para isso?</span><br><br>
+        Essa é a tarefa onde IA vira alavanca. Não o que você já faz — o que você nunca conseguiu fazer.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span><span class="sb-timing">9–11min</span></div>
+      <div class="sb-body">
+        <p>No próximo episódio eu vou explorar uma das mudanças mais silenciosas e mais profundas que a IA está criando.<br><br>
+        O negócio de uma pessoa — que antes tinha um teto natural de escala — agora pode operar em nível que antes precisava de equipes inteiras.<br><br>
+        E o que isso significa pra quem está construindo.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"Alavanca de IA não é fazer o mesmo mais rápido. É fazer o que antes era impossível."</div>
+  </div>
+</div>
+
+<!-- EP 04 -->
+<div id="ep4" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 04</div>
+    <div class="ep-title">O Negócio de Uma Pessoa<br>Vale Mais do que Nunca</div>
+    <div class="ep-hook">Por décadas, escala exigia equipe. Distribuição exigia capital. Produção exigia estrutura. A IA está tornando tudo isso acessível para uma única pessoa com visão clara — e isso está criando uma nova categoria de negócio que não existia antes.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">solopreneur</span>
+      <span class="ep-tag g">escala</span>
+      <span class="ep-tag c">mercado</span>
+      <span class="ep-tag p">identidade</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>A IA está colapsando o custo de execução de operações que antes exigiam equipes especializadas. Isso não significa o fim das empresas — significa que o ponto de entrada para construir um negócio altamente produtivo mudou radicalmente. Uma pessoa com visão estratégica e domínio de IA pode operar com a capacidade que antes exigia 10 a 20 especialistas.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Referências e dados do episódio</div>
+    <div class="case-item"><div class="case-key">Pieter Levels</div>Desenvolvedor holandês, opera sozinho, fatura $3M/ano com múltiplos produtos digitais. Disse em 2024 que IA dobrou sua produtividade sem adicionar uma pessoa sequer ao time.</div>
+    <div class="case-item"><div class="case-key">Naval Ravikant</div>"O negócio de uma pessoa que usa alavancas — código, mídia, capital — não tem teto de escala." Escrito antes da IA. Com IA, a premissa ficou ainda mais verdadeira.</div>
+    <div class="case-item"><div class="case-key">Indie Hackers</div>Comunidade com 100k+ membros onde criadores solo constroem produtos de $10k a $500k MRR. Em 2024, o número de negócios solos que usaram IA como backbone operacional triplicou em relação a 2022.</div>
+    <div class="case-item"><div class="case-key">Brasil digital</div>Consultores, mentores, criadores de cursos e serviços premium no Brasil que operam com IA como extensão de capacidade estão conseguindo entregar qualidade de agência com estrutura de freelancer.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"Uma pessoa, $3M por ano: como a IA tornou isso possível agora"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"1 PESSOA"</strong> em destaque · você sozinho em frame, expressão confiante</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–25s</span></div>
+      <div class="sb-body">
+        <p>Pieter Levels é desenvolvedor. Opera sozinho. Fatura $3 milhões por ano.<br><br>
+        Não tem sócio. Não tem equipe. Tem visão, domínio de ferramenta — e IA como extensão da sua capacidade.<br><br>
+        Isso não era possível da mesma forma há 3 anos. Hoje é o modelo de negócio que mais cresce no mundo digital.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento</span><span class="sb-timing">25s–5min</span></div>
+      <div class="sb-body">
+        <p>Por muito tempo, o principal obstáculo para crescer um negócio sozinho era a capacidade de execução.<br><br>
+        Você tinha visão — mas não tinha designer, redator, programador, analista, gestor de tráfego. Então você ou contratava, ou crescia devagar, ou vendia serviço do seu tempo de forma linear.<br><br>
+        A IA colapsou essa barreira.<br><br>
+        Hoje, com domínio estratégico das ferramentas certas, uma pessoa consegue:<br><br>
+        Produzir conteúdo em escala. Criar produto digital. Montar funil automatizado. Analisar dados de comportamento de clientes. Construir atendimento automatizado. Escrever copy. Criar apresentações. Prototipar software.<br><br>
+        Não perfeitamente — mas em nível funcional e estratégico que antes exigia especialistas contratados.<br><br>
+        <span class="emphasis">O custo marginal de execução caiu perto de zero para quem sabe orquestrar.</span></p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>Naval Ravikant escreveu antes da IA existir: "o negócio de uma pessoa que domina alavancas — código, mídia, capital — não tem teto de escala."<br><br>
+        Ele estava certo. Com IA, a premissa ficou ainda mais poderosa.<br><br>
+        <span class="emphasis">O único teto do negócio de uma pessoa que domina IA é a clareza da sua visão.</span></p>
+        <span class="quote-line">"A IA não eliminou a necessidade de pessoas geniais. Eliminou a necessidade de pessoas geniais para tudo."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">O Novo Modelo</span><span class="sb-timing">5–9min</span></div>
+      <div class="sb-body">
+        <p>O modelo que está emergindo não é "empreendedor que usa algumas ferramentas de IA". É algo mais estrutural.<br><br>
+        É o empreendedor que pensa em si mesmo como o CEO de um sistema — onde a IA executa funções que antes seriam de um time. Esse empreendedor reserva sua energia para as decisões que exigem julgamento humano: estratégia, relacionamento, posicionamento, inovação.<br><br>
+        No Brasil especificamente, esse modelo tem um potencial enorme. O mercado de mentorias, consultorias, infoprodutos e serviços digitais premium está em expansão — e o profissional que consegue entregar qualidade de operação equivalente a uma empresa maior, com a agilidade e o custo de um solo, tem uma proposta de valor imbatível.<br><br>
+        Não é sobre trabalhar mais. É sobre <span class="emphasis">operar em um nível diferente com a mesma quantidade de horas</span>.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span><span class="sb-timing">9–11min</span></div>
+      <div class="sb-body">
+        <p>No próximo episódio eu vou entrar num tema que está dividindo o mercado de conteúdo.<br><br>
+        Quando qualquer um gera texto, imagem e vídeo com IA — o que ainda é raro e valioso?<br><br>
+        A resposta vai contra o que a maioria dos criadores está apostando.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"O único teto do negócio de uma pessoa que domina IA é a clareza da sua visão."</div>
+  </div>
+</div>
+
+<!-- EP 05 -->
+<div id="ep5" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 05</div>
+    <div class="ep-title">Conteúdo na Era da IA:<br>Quem Vai Sobreviver</div>
+    <div class="ep-hook">Qualquer pessoa pode gerar 100 posts, 10 artigos e 5 vídeos por dia com IA. E é exatamente por isso que fazer isso não vale mais nada. Quando a execução vira commodity, o que fica valioso é o que nunca foi sobre execução.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">conteúdo</span>
+      <span class="ep-tag g">criadores</span>
+      <span class="ep-tag p">autenticidade</span>
+      <span class="ep-tag c">mercado</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>Quando a execução de conteúdo vira commodity via IA, o diferencial volta a ser o que sempre foi o verdadeiro diferencial — mas que muita gente ignorava porque conseguia competir no volume: perspectiva genuína, experiência vivida, ponto de vista insubstituível e a confiança que vem de uma relação real com a audiência.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Referências e dados do episódio</div>
+    <div class="case-item"><div class="case-key">Google SGE</div>Search Generative Experience do Google passou a resumir respostas diretamente nos resultados. Tráfego orgânico de conteúdo genérico caiu 40-60% em 2024. Conteúdo com perspectiva única e autoridade real manteve ou cresceu.</div>
+    <div class="case-item"><div class="case-key">Substack</div>Plataforma de newsletters cresceu 300% desde 2022. A maioria dos criadores que mais crescem escreve textos longos, pessoais, sem IA — justamente porque a audiência busca o que não pode ser gerado: a mente de uma pessoa específica.</div>
+    <div class="case-item"><div class="case-key">MrBeast / Hormozi</div>Dois dos maiores criadores em diferentes categorias. Hormozi não usa IA para gerar conteúdo — usa para analisar qual conteúdo performou. MrBeast usa IA para otimizar produção, não para criar ideias. A mente estratégica é deles.</div>
+    <div class="case-item"><div class="case-key">LinkedIn 2024</div>Posts gerados por IA identificáveis (frases como "No cenário atual…") têm engajamento 60% menor que posts com voz autêntica. O algoritmo detecta — e os humanos também.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"IA vai matar o mercado de conteúdo? (a resposta vai te surpreender)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"QUEM SOBREVIVE"</strong> · você com expressão de quem tem a resposta</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Existe um paradoxo acontecendo agora no mercado de conteúdo.<br><br>
+        Nunca foi tão fácil produzir conteúdo. E nunca foi tão difícil fazer conteúdo que as pessoas realmente querem consumir.<br><br>
+        São a mesma força. São lados opostos da mesma moeda.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento</span><span class="sb-timing">20s–5min</span></div>
+      <div class="sb-body">
+        <p>Quando a IA torna a execução de conteúdo acessível para qualquer pessoa, ela faz uma coisa que parece boa mas tem uma consequência brutal: ela comoditiza a execução.<br><br>
+        E quando execução é commodity, o que fica raro?<br><br>
+        Perspectiva. Experiência vivida. Ponto de vista que só você tem — porque viveu o que viveu, errou o que errou, construiu o que construiu.<br><br>
+        O Google lançou o SGE — o resumidor de buscas com IA — e o tráfego orgânico de conteúdo genérico caiu entre 40% e 60% em 2024. Porque o Google passa a resumir esse conteúdo em vez de mandar o usuário para o site.<br><br>
+        Mas os criadores com perspectiva única? Com autoridade real? Com audiência que os busca pelo nome, não pela keyword?<br><br>
+        <span class="emphasis">Eles mantiveram e em muitos casos cresceram. Porque o que eles têm não cabe num resumo de IA.</span></p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>A distinção que vai separar quem cresce de quem desaparece no mercado de conteúdo daqui em diante:<br><br>
+        <span class="emphasis">Você está criando conteúdo que informa — ou conteúdo que só você poderia criar?</span><br><br>
+        Informação, a IA produz de graça e infinitamente. Perspectiva insubstituível ainda é rara. E vai ficar mais rara.</p>
+        <span class="quote-line">"Na era onde tudo pode ser gerado, o que não pode ser gerado é a sua mente."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Aplicação Prática</span><span class="sb-timing">5–9min</span></div>
+      <div class="sb-body">
+        <p>Alex Hormozi não usa IA para gerar seus posts. Usa para analisar quais posts performaram — e entender os padrões que funcionam. A execução é dele. A análise é da máquina.<br><br>
+        O Substack cresceu 300% desde 2022. Os criadores que mais crescem na plataforma escrevem textos longos, pessoais, sem padrão de IA — porque a audiência busca o que não pode ser gerado: acesso à mente de uma pessoa específica.<br><br>
+        O modelo de conteúdo que vai dominar os próximos anos não é volume. É <span class="emphasis">profundidade de perspectiva com consistência de voz</span>.<br><br>
+        E a IA pode — e deve — ser usada para ampliar a distribuição dessa perspectiva, para otimizar o formato, para analisar o que ressoa. Mas nunca para substituir o pensamento que está na base.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span><span class="sb-timing">9–11min</span></div>
+      <div class="sb-body">
+        <p>A ironia da era da IA para criadores de conteúdo:<br><br>
+        Ela tornou a qualidade do seu pensamento mais importante do que nunca. Não menos.<br><br>
+        No próximo episódio eu vou mostrar como negócios que integraram IA na estrutura — não só nos processos — estão operando em outro nível inteiramente.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"Na era onde tudo pode ser gerado, o que não pode ser gerado é a sua mente."</div>
+  </div>
+</div>
+
+<!-- EP 06 -->
+<div id="ep6" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 06</div>
+    <div class="ep-title">A Nova Anatomia de um<br>Negócio Inteligente</div>
+    <div class="ep-hook">Existe uma diferença entre uma empresa que usa algumas ferramentas de IA e uma empresa desenhada com IA na sua estrutura. A primeira ficou um pouco mais eficiente. A segunda se tornou um tipo diferente de negócio.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">estrutura</span>
+      <span class="ep-tag g">sistemas</span>
+      <span class="ep-tag c">negócio</span>
+      <span class="ep-tag p">estratégia</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>Integração superficial de IA é adicionar ferramentas ao processo existente. Integração estrutural é redesenhar o negócio a partir do que a IA torna possível. O segundo nível não é incrementalmente melhor — é categoricamente diferente em termos de escala, custo e capacidade de resposta ao mercado.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Referências e dados do episódio</div>
+    <div class="case-item"><div class="case-key">Duolingo</div>Em 2023 demitiu 10% do time de contratados de conteúdo após integrar IA na geração e tradução de lições. Mas o time de engenharia e design cresceu. IA não cortou pessoas — redistribuiu onde o humano agrega mais.</div>
+    <div class="case-item"><div class="case-key">Shopify</div>CEO Tobi Lütke em memo interno de 2025: antes de contratar qualquer pessoa nova, os times precisam justificar por que IA não consegue fazer o trabalho. IA virou o primeiro recurso — não o último.</div>
+    <div class="case-item"><div class="case-key">Cursor / GitHub Copilot</div>Empresas que adotaram IA em development reportam 30-40% de ganho em velocidade de entrega de software. Mas o maior ganho não é velocidade — é que developers passam mais tempo em arquitetura e menos em código repetitivo.</div>
+    <div class="case-item"><div class="case-key">Agências BR</div>Agências de marketing que redesenharam o modelo — de vender hora de trabalho para vender resultado entregue por sistema IA + estrategista humano — conseguiram dobrar margem mantendo ou reduzindo time.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"O CEO da Shopify mandou um memo que muda tudo (e o que aprender com isso)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"NOVA ESTRUTURA"</strong> · você com postura de arquiteto estratégico</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Em 2025, Tobi Lütke — CEO da Shopify — mandou um memo interno para todos os times.<br><br>
+        A mensagem era simples: antes de pedir qualquer nova contratação, o time precisa provar que IA não consegue fazer aquele trabalho.<br><br>
+        Isso não é corte de custo. É uma declaração filosófica sobre como um negócio inteligente opera.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Os Dois Níveis de Integração</span><span class="sb-timing">20s–5min</span></div>
+      <div class="sb-body">
+        <p>Existe uma diferença fundamental entre integração superficial e integração estrutural de IA.<br><br>
+        Integração superficial: você adiciona ferramentas de IA ao processo que já existe. Usa ChatGPT pra ajudar a escrever email. Usa Midjourney pra criar imagem de post. Usa IA pra resumir reunião. Você ficou um pouco mais eficiente — o negócio continua o mesmo.<br><br>
+        Integração estrutural: você redesenha o negócio a partir do que a IA torna possível. Quais processos existem só porque eram necessários antes da IA? Quais funções eram executadas por humanos porque a automatização era cara ou inviável? O que você consegue oferecer agora que antes era inviável pelo custo de execução?<br><br>
+        <span class="emphasis">O segundo nível não é incrementalmente melhor. É categoricamente diferente.</span><br><br>
+        A Duolingo não usou IA para tornar seu processo de criação de conteúdo mais rápido. Ela redesenhou quem cria o quê. IA gera e traduz conteúdo em escala. Humanos focam em design pedagógico e estratégia. Resultado: crescimento sem crescimento proporcional de custo.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>A pergunta que redesenha um negócio:<br><br>
+        <span class="emphasis">"Se eu começasse esse negócio hoje, do zero, com tudo que a IA pode fazer — como eu o desenharia?"</span><br><br>
+        Essa resposta raramente é "exatamente igual ao que eu tenho, só com algumas ferramentas a mais".</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span><span class="sb-timing">9–11min</span></div>
+      <div class="sb-body">
+        <p>No próximo episódio eu vou falar de algo que elimina uma das desculpas mais antigas do empreendedorismo.<br><br>
+        "Não tenho equipe." "Não tenho budget." "Não tenho tempo."<br><br>
+        Com IA, essas três frases perderam muito do peso que tinham.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"Se eu começasse esse negócio hoje, com tudo que a IA pode fazer — como eu o desenharia?"</div>
+  </div>
+</div>
+
+<!-- EP 07 -->
+<div id="ep7" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 07</div>
+    <div class="ep-title">IA e o Fim da Desculpa<br>da Falta de Recurso</div>
+    <div class="ep-hook">Por anos, a diferença entre o que o grande e o pequeno conseguiam fazer era proporcional ao recurso disponível. Design de qualidade precisava de designer. Análise de dados precisava de analista. Conteúdo em escala precisava de equipe. Isso mudou.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">recursos</span>
+      <span class="ep-tag g">democratização</span>
+      <span class="ep-tag c">mercado</span>
+      <span class="ep-tag p">mentalidade</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>A IA democratizou a capacidade de execução de nível profissional em áreas que antes exigiam especialistas caros ou equipes inteiras. Isso não elimina a necessidade de estratégia — mas elimina a desculpa de que a falta de recurso impede a execução. O novo obstáculo é clareza de direção, não capacidade operacional.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Referências e dados do episódio</div>
+    <div class="case-item"><div class="case-key">Design (Canva + IA)</div>Canva com IA gerou 15 bilhões de designs em 2023. Micro-empreendedores que antes não tinham budget para designer conseguem produzir material de comunicação profissional sem equipe.</div>
+    <div class="case-item"><div class="case-key">Análise de dados</div>ChatGPT Advanced Data Analysis permite que qualquer pessoa faça análises que antes exigiriam analista de dados com Python. Empreendedor pode entender padrões de comportamento do próprio cliente sem contratar especialista.</div>
+    <div class="case-item"><div class="case-key">Atendimento ao cliente</div>Ferramentas como Intercom com IA permitem atendimento 24/7 personalizado por negócios de uma pessoa. Custo equivalente a $50/mês substituindo o que antes era um atendente em tempo integral.</div>
+    <div class="case-item"><div class="case-key">Produção de vídeo</div>CapCut, Descript, HeyGen — edição automatizada, dublagem com IA, avatares digitais. Um criador solo consegue produzir em escala que antes precisaria de equipe de produção.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"Você não tem desculpa pra não crescer em 2025 (e não é o que você acha)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"SEM DESCULPA"</strong> · você com expressão direta, sem filtro</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Durante muito tempo, ter menos recurso era uma desvantagem real.<br><br>
+        Grandes empresas tinham designers, analistas, desenvolvedores, equipes de conteúdo. Pequenos não tinham.<br><br>
+        Essa diferença não desapareceu completamente. Mas encolheu de forma dramática.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento</span><span class="sb-timing">20s–5min</span></div>
+      <div class="sb-body">
+        <p>O Canva com IA gerou 15 bilhões de designs em 2023. Empreendedores que antes não tinham budget para designer estão produzindo material de comunicação de nível profissional — sozinhos, sem custo de especialista.<br><br>
+        O ChatGPT com análise de dados permite que qualquer pessoa faça em minutos o que antes exigia um analista com Python e horas de trabalho. Você pode pegar os dados do seu negócio e entender padrões de comportamento de cliente sem contratar ninguém.<br><br>
+        Atendimento ao cliente? Ferramentas como Intercom com IA oferecem atendimento 24/7, personalizado, por cerca de $50 por mês. O que antes era um funcionário em tempo integral.<br><br>
+        <span class="emphasis">O custo de execução profissional caiu de forma que não tem precedente histórico.</span><br><br>
+        Isso não significa que tudo ficou fácil. Significa que a limitação mudou de endereço.<br><br>
+        Antes o obstáculo era: "não tenho recurso para executar com qualidade".<br><br>
+        Agora o obstáculo é: "não tenho clareza sobre o que deveria estar executando".</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type prov-t">Provocação</span></div>
+      <div class="sb-body">
+        <p>E aqui está a verdade desconfortável que essa série toda está construindo:<br><br>
+        <span class="emphasis">Com IA, o principal obstáculo para crescer um negócio não é mais operacional. É estratégico.</span><br><br>
+        É saber o que construir. Pra quem. Com qual posicionamento. Com qual modelo.<br><br>
+        E isso é exatamente o tipo de clareza que nenhuma ferramenta instala automaticamente.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span><span class="sb-timing">9–11min</span></div>
+      <div class="sb-body">
+        <p>No próximo episódio eu vou falar de algo que quase ninguém está discutindo sobre IA.<br><br>
+        O risco que não é a IA tomar seu emprego — é o risco de usar IA sem estratégia e construir algo rápido e completamente frágil.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"Com IA, o principal obstáculo para crescer não é mais operacional. É estratégico."</div>
+  </div>
+</div>
+
+<!-- EP 08 -->
+<div id="ep8" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 08</div>
+    <div class="ep-title">O Risco que Ninguém Fala:<br>IA sem Estratégia</div>
+    <div class="ep-hook">Todo mundo está falando dos benefícios da IA para negócios. Poucos estão falando do risco silencioso — negócios construídos rápido demais, sem profundidade, que parecem sólidos e desmoronam quando o mercado testa.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">risco</span>
+      <span class="ep-tag g">estratégia</span>
+      <span class="ep-tag p">mentalidade</span>
+      <span class="ep-tag c">mercado</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>A velocidade que a IA oferece pode ser uma armadilha. Construir rápido sem pensar profundo gera negócios que parecem escalados mas são frágeis — sem diferenciação real, sem relação genuína com clientes, sem posicionamento que sobrevive à pressão competitiva. IA amplifica tudo, inclusive os erros de estratégia.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Referências e dados do episódio</div>
+    <div class="case-item"><div class="case-key">Conteúdo IA flood</div>Em 2024, Google Spam Report identificou aumento de 1000% em sites de conteúdo gerado por IA sem valor real. A maioria perdeu todo o tráfego orgânico após atualização do algoritmo. Construídos rápido, destruídos mais rápido.</div>
+    <div class="case-item"><div class="case-key">Infoprodutos BR</div>Explosão de lançamentos com copy gerada por IA em 2023-2024. Alta taxa de chargeback e reembolso porque a promessa era fabricada — não construída em cima de resultado real. Velocidade de lançamento sem profundidade de entrega.</div>
+    <div class="case-item"><div class="case-key">Startups IA 2023</div>Mais de 4.000 startups "baseadas em IA" receberam seed funding em 2023. Analistas da CB Insights apontam que 70%+ não têm diferenciação real além de chamar ChatGPT via API — frágeis ao primeiro concorrente ou ao próximo modelo da OpenAI.</div>
+    <div class="case-item"><div class="case-key">Princípio da Fragilidade</div>Nassim Taleb: sistemas que crescem sem resistência se tornam frágeis. Negócios construídos com IA sem atrito estratégico são o equivalente empresarial — rápidos, sem músculo real.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"O erro de IA que vai destruir negócios em 2025 (e como não cometer)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"CUIDADO"</strong> · sua expressão de alerta genuíno</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Eu vi empreendedor lançar infoproduto em 3 dias com IA.<br><br>
+        Copy escrita por IA. Página criada por IA. Email de venda gerado por IA. Anúncio gerado por IA.<br><br>
+        O lançamento funcionou. E em seis meses o negócio não existia mais.</p>
+        <div class="dir">Tom de quem viveu ou observou de perto. Não alarmista — preciso e honesto.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento</span><span class="sb-timing">20s–5min</span></div>
+      <div class="sb-body">
+        <p>Existe um princípio do pensador Nassim Taleb que se aplica perfeitamente aqui: sistemas que crescem sem resistência ficam frágeis.<br><br>
+        Um músculo que nunca é testado não desenvolve força. Um negócio que nunca enfrenta atrito estratégico não desenvolve diferenciação real.<br><br>
+        A IA permite construir muito rápido. E rápido demais, sem profundidade, gera o que eu chamo de <span class="emphasis">negócio de aparência</span> — parece escalado, parece sólido, mas não tem substância que sobrevive ao primeiro teste real de mercado.<br><br>
+        O Google, em 2024, atualizou o algoritmo especificamente para eliminar conteúdo gerado por IA sem valor real. Sites que tinham crescido acumulando conteúdo IA em volume perderam 80%, 90% do tráfego em semanas.<br><br>
+        Mais de 4.000 startups "de IA" receberam funding em 2023. A maioria não tem diferenciação real além de fazer chamadas para a API da OpenAI. Quando o modelo da OpenAI melhora — a startup some.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>O teste que separa negócio real de negócio de aparência:<br><br>
+        <span class="emphasis">Se você remover a IA do seu negócio amanhã, o que sobra que ninguém consegue copiar?</span><br><br>
+        Se a resposta for "nada" — você construiu velocidade sem profundidade. E velocidade sem profundidade tem data de validade.</p>
+        <span class="quote-line">"IA amplifica tudo que você tem — inclusive o que você ainda não construiu."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span><span class="sb-timing">9–11min</span></div>
+      <div class="sb-body">
+        <p>O antídoto para isso não é usar menos IA. É ter mais clareza estratégica antes de usar IA.<br><br>
+        No próximo episódio eu vou mostrar o modelo que combina o melhor dos dois mundos: decisão humana com velocidade de máquina.<br><br>
+        É o modelo mais competitivo que existe. E ainda é raro o suficiente para ser uma vantagem.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"IA amplifica tudo que você tem — inclusive o que você ainda não construiu."</div>
+  </div>
+</div>
+
+<!-- EP 09 -->
+<div id="ep9" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 09</div>
+    <div class="ep-title">Decisão Humana +<br>Velocidade de Máquina</div>
+    <div class="ep-hook">Existe um modelo de operação que é imbatível — e que ainda é raro o suficiente para ser uma vantagem competitiva real. É o modelo que combina o que o humano faz de único com o que a máquina faz de extraordinário.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">modelo operacional</span>
+      <span class="ep-tag g">sinergia</span>
+      <span class="ep-tag c">execução</span>
+      <span class="ep-tag p">estratégia</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>O modelo de negócio mais competitivo do momento não é o mais automatizado — é o que usa automação de IA para executar com velocidade e escala, enquanto mantém o humano focado nas decisões que exigem julgamento, intuição e visão estratégica. A sinergia entre os dois cria algo que nem humano sozinho nem IA sozinha conseguem replicar.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Referências e dados do episódio</div>
+    <div class="case-item"><div class="case-key">AlphaGo / Centaur Chess</div>Nos anos 2000, times de humano + computador (Centauros) derrotavam tanto o computador puro quanto o humano puro em xadrez. A combinação era superior aos extremos. Mesmo princípio vale para negócios.</div>
+    <div class="case-item"><div class="case-key">Morgan Stanley</div>Lançou IA de pesquisa que processa milhares de relatórios para os advisors. O advisor não foi substituído — ganhou capacidade de análise 10x maior. O relacionamento com o cliente (insubstituível) ficou mais informado.</div>
+    <div class="case-item"><div class="case-key">Midjourney + Designers</div>Os designers que mais cresceram em receita após o surgimento do Midjourney não são os que ignoraram a ferramenta — são os que a usam para prototipar em velocidade e mantêm seu julgamento estético para refinar e direcionar. Velocidade de máquina com curadoria humana.</div>
+    <div class="case-item"><div class="case-key">Akasha Hub</div>O modelo que você aplica: visão estratégica de posicionamento, conteúdo e mentoria é humano. A execução — estrutura de plataforma, automações, análise — é onde IA atua como extensão de capacidade.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"O modelo de negócio mais poderoso de 2025 (e por que ainda é raro)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"HUMANO + IA"</strong> · você com postura de arquiteto, expressão de quem tem a resposta</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Nos anos 2000, um experimento no xadrez mostrou algo que mudou o jogo.<br><br>
+        Computadores já ganhavam de humanos. Humanos já não ganhavam de computadores.<br><br>
+        Mas times de humano mais computador ganhavam de qualquer computador sozinho.<br><br>
+        A combinação era melhor que os extremos. Isso não mudou. Ficou mais verdadeiro.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">O Modelo Centauro</span><span class="sb-timing">20s–5min</span></div>
+      <div class="sb-body">
+        <p>Esse modelo ficou conhecido como "Centauro" — metade humano, metade máquina. E no contexto de negócios, é a estrutura mais competitiva do momento.<br><br>
+        O humano faz: visão, julgamento sobre o que vale construir, relação com clientes, tomada de decisão em contexto de ambiguidade, curadoria de qualidade.<br><br>
+        A IA faz: execução em escala, análise de padrões em dados, síntese de informação, automação de processos repetitivos, velocidade de prototipagem.<br><br>
+        Quando você mantém o humano no lugar certo — e a IA no lugar certo — você cria algo que nenhum dos dois consegue replicar sozinho.<br><br>
+        A Morgan Stanley deu aos seus advisors financeiros uma IA que processa milhares de relatórios e pesquisas de mercado. O advisor não foi substituído. Ficou mais inteligente — porque ganhou capacidade de análise que antes seria impossível para uma pessoa. O relacionamento de confiança com o cliente, que é o real ativo, ficou mais informado e mais eficiente.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>A pergunta que define onde você posiciona o humano e onde posiciona a máquina:<br><br>
+        <span class="emphasis">Qual é a decisão que, se errada, destrói valor de forma irreversível?</span><br><br>
+        Essa decisão fica com o humano. Sempre.<br><br>
+        O resto pode — e deve — ser amplificado pela máquina.</p>
+        <span class="quote-line">"O modelo mais poderoso não é o mais automatizado. É o que automatiza o que precisa de velocidade e humaniza o que precisa de julgamento."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span><span class="sb-timing">9–11min</span></div>
+      <div class="sb-body">
+        <p>No episódio final eu vou fechar esse ciclo.<br><br>
+        Tudo que falamos ao longo dessa série — a mudança de era, o perfil insubstituível, a alavanca, o negócio solo, o conteúdo, a estrutura, o risco, o modelo —<br><br>
+        Aponta para um único perfil de empreendedor que vai construir os maiores negócios da próxima década.<br><br>
+        E a pergunta é se você vai ser esse empreendedor.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"O modelo mais poderoso não é o mais automatizado. É o que automatiza o que precisa de velocidade e humaniza o que precisa de julgamento."</div>
+  </div>
+</div>
+
+<!-- EP 10 -->
+<div id="ep10" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 10 · FINAL DA SÉRIE</div>
+    <div class="ep-title">O Empreendedor do<br>Futuro Já Existe</div>
+    <div class="ep-hook">O manifesto final. Essa série não foi sobre IA — foi sobre quem você escolhe ser dentro dessa mudança. O empreendedor que vai construir os maiores negócios da próxima década já está operando. A questão é se você vai estar entre eles.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">manifesto</span>
+      <span class="ep-tag g">síntese</span>
+      <span class="ep-tag p">identidade</span>
+      <span class="ep-tag c">akasha hub</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>O episódio final conecta todos os princípios da série em um perfil concreto e uma ativação direta. O empreendedor do futuro não é o mais técnico em IA — é o que combina visão estratégica, clareza de posicionamento e domínio operacional de IA para construir negócios que antes eram impossíveis. Esse episódio é a ponte para a oferta do Akasha Hub.</p>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"O perfil do empreendedor que vai dominar a próxima década (série final)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Visual</div><div class="thumb-val">Você de frente, olhar direto, postura mais cinematográfica. <strong>"EP FINAL"</strong> em dourado. Melhor produção da série.</div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"VOCÊ ESTÁ PRONTO?"</strong> · provocação direta</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–30s</span></div>
+      <div class="sb-body">
+        <p>10 episódios. 10 perspectivas.<br><br>
+        E tudo que foi dito aqui aponta para a mesma conclusão:<br><br>
+        A IA não é a história. Você é a história.<br><br>
+        A IA é o campo. O que você constrói nele — isso é o que vai importar.</p>
+        <div class="dir">Pausa longa após "você é a história". Deixa o reframe estabelecer completamente.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Síntese da série</span><span class="sb-timing">30s–5min</span></div>
+      <div class="sb-body">
+        <p>Você aprendeu que a IA não é uma ferramenta — é uma mudança de era. E eras não são avaliadas por quem tem a melhor ferramenta, mas por quem tem a melhor visão sobre o que construir com ela.<br><br>
+        Que o empreendedor insubstituível não é o mais técnico — é o que faz as perguntas certas, tolera ambiguidade e tem contexto que não está em nenhum dataset.<br><br>
+        Que existe uma diferença crítica entre usar IA como atalho e usá-la como alavanca — e que só uma delas muda de nível.<br><br>
+        Que o negócio de uma pessoa com IA não tem o mesmo teto de antes — e que esse modelo está se tornando um dos mais competitivos do mercado digital.<br><br>
+        Que na era onde tudo pode ser gerado, o que não pode ser gerado é a sua mente — e que isso torna perspectiva genuína mais valiosa, não menos.<br><br>
+        Que o risco mais silencioso não é ser substituído pela IA — é construir rápido demais sem profundidade estratégica.<br><br>
+        E que o modelo mais poderoso combina decisão humana com velocidade de máquina — e que isso ainda é raro o suficiente para ser vantagem.<br><br>
+        <span class="emphasis">Esse é o Código da IA para empreendedores.</span></p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">O Manifesto</span><span class="sb-timing">5–8min</span></div>
+      <div class="sb-body">
+        <p>O Akasha Hub existe porque acredito que a maior alavanca de qualquer negócio nunca foi a tecnologia — foi a clareza de quem a opera.<br><br>
+        Que estratégia de posicionamento, construção de marca e entendimento profundo do cliente não são "soft skills" — são o núcleo duro de qualquer negócio que dura.<br><br>
+        Que a IA amplifica estratégia clara e amplifica também a falta de estratégia — e que a diferença entre os dois nunca foi tão importante.<br><br>
+        <span class="emphasis">O empreendedor do futuro não é o que tem mais ferramentas. É o que tem mais clareza sobre para onde está indo — e usa as melhores ferramentas disponíveis para chegar lá mais rápido e mais longe.</span><br><br>
+        Essa série foi sobre tecnologia. E nunca foi sobre tecnologia.<br><br>
+        Foi sobre quem você escolhe ser dentro da maior mudança de era da sua geração.</p>
+        <div class="dir">Câmera levemente mais próxima. Tom mais íntimo e direto. Este é o momento mais importante do episódio.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento — Convite</span><span class="sb-timing">8–11min</span></div>
+      <div class="sb-body">
+        <p>Se você chegou até aqui, você não está procurando um tutorial de ChatGPT.<br><br>
+        Você está procurando construir algo real — com visão, com estrutura, com a tecnologia certa no lugar certo.<br><br>
+        E é exatamente isso que o Akasha Hub oferece.<br><br>
+        O link está na descrição. A próxima série começa em breve.<br><br>
+        Bem-vindos ao Akasha.</p>
+        <div class="dir">Lento. Com peso. Mesma assinatura das outras séries. Câmera fixa. Fade to black com logo Akasha Hub. 3 segundos de silêncio.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva — manifesto do canal</div>
+    <div class="save-text">"O empreendedor do futuro não é o que tem mais ferramentas. É o que tem mais clareza sobre para onde está indo."</div>
+  </div>
+
+  <div class="visual-dir">
+    <div class="vd-label">Direção visual — episódio final</div>
+    <div class="vd-item"><div class="vd-key">Produção</div>Melhor setup da série. Luz mais trabalhada. Pode ter ponto de luz ciano suave ao fundo — referência sutil a tecnologia sem clichê.</div>
+    <div class="vd-item"><div class="vd-key">Roupa</div>Levemente diferente dos outros episódios. Um detalhe que marca o encerramento — ainda sóbrio, mas com intenção.</div>
+    <div class="vd-item"><div class="vd-key">Logo</div>Logo Akasha Hub em fade ao final. Silêncio de 3 segundos antes do corte. Consistência com as outras séries.</div>
+    <div class="vd-item"><div class="vd-key">Duração</div>10 a 12 minutos. O público que chegou até o EP10 está completamente retido.</div>
+    <div class="vd-item"><div class="vd-key">CTA</div>Único episódio com CTA explícito — entregue como manifesto, não como pitch.</div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+function showEp(id, btn) {
+  document.querySelectorAll('.episode').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
