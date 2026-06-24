@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Hub — Série: Código da Marca</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-dim: #7A6230;
+  --gold-glow: rgba(201,168,76,0.12);
+  --purple: #6B4FA0;
+  --purple-light: #9B79CC;
+  --cyan: #4FC9C9;
+  --cyan-dim: rgba(79,201,201,0.15);
+  --bg: #080809;
+  --bg2: #0F0F12;
+  --bg3: #141418;
+  --bg4: #1A1A1F;
+  --border: rgba(201,168,76,0.12);
+  --border2: rgba(201,168,76,0.06);
+  --text: #EAE6DE;
+  --text-muted: #8A867E;
+  --text-dim: #4E4A46;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.site-header {
+  padding: 48px 24px 36px;
+  max-width: 720px;
+  margin: 0 auto;
+  border-bottom: 0.5px solid var(--border2);
+}
+.series-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 14px;
+}
+.site-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px,7vw,52px);
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+  line-height: 1.12;
+  margin-bottom: 12px;
+}
+.site-header .sub {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+}
+.series-meta {
+  display: flex;
+  gap: 20px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+.meta-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  border: 0.5px solid var(--gold-dim);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* NAV */
+.ep-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,8,9,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 0.5px solid var(--border2);
+  padding: 0 24px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  height: 48px;
+  align-items: center;
+}
+.ep-nav::-webkit-scrollbar { display: none; }
+.ep-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.ep-btn:hover, .ep-btn.active {
+  color: var(--gold);
+  background: var(--gold-glow);
+}
+
+/* MAIN */
+.main { max-width: 720px; margin: 0 auto; padding: 0 24px 100px; }
+
+.episode { display: none; padding-top: 40px; }
+.episode.active { display: block; }
+
+/* EP HEADER */
+.ep-header { margin-bottom: 36px; }
+.ep-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.ep-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(24px,5vw,38px);
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.ep-hook {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+.ep-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.ep-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  border: 0.5px solid var(--border);
+  color: var(--text-dim);
+}
+.ep-tag.g { border-color: var(--gold-dim); color: var(--gold); }
+.ep-tag.p { border-color: rgba(107,79,160,0.4); color: var(--purple-light); }
+.ep-tag.c { border-color: rgba(79,201,201,0.3); color: var(--cyan); }
+
+/* CONCEPT BOX */
+.concept {
+  background: var(--gold-glow);
+  border: 0.5px solid rgba(201,168,76,0.2);
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin-bottom: 28px;
+}
+.concept-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.concept p {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.72;
+}
+
+/* CASO REAL BOX */
+.case-box {
+  background: rgba(79,201,201,0.04);
+  border: 0.5px solid rgba(79,201,201,0.2);
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin-bottom: 28px;
+}
+.case-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 12px;
+}
+.case-item {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid rgba(79,201,201,0.08);
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  align-items: flex-start;
+}
+.case-item:last-child { border: none; padding-bottom: 0; }
+.case-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--cyan);
+  min-width: 72px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* SCRIPT */
+.script-area { margin-bottom: 28px; }
+.script-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--border2);
+}
+
+/* SCRIPT BLOCKS */
+.sb { margin-bottom: 12px; border-radius: 6px; overflow: hidden; }
+.sb-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--bg3);
+}
+.sb-type {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.sb-type.open-t  { background: rgba(201,168,76,0.15); color: var(--gold); }
+.sb-type.hook-t  { background: rgba(107,79,160,0.2); color: var(--purple-light); }
+.sb-type.dev-t   { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+.sb-type.key-t   { background: rgba(201,168,76,0.08); color: var(--gold-dim); }
+.sb-type.close-t { background: rgba(201,168,76,0.2); color: var(--gold-light); }
+.sb-type.case-t  { background: rgba(79,201,201,0.12); color: var(--cyan); }
+.sb-timing {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+.sb-body {
+  background: var(--bg2);
+  padding: 14px 16px;
+  border: 0.5px solid var(--border2);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+.sb-body p { font-size: 14px; color: var(--text); line-height: 1.72; }
+.sb-body .dir {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--border2);
+}
+.sb-body .quote-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px;
+  font-style: italic;
+  color: var(--gold-light);
+  display: block;
+  margin-top: 8px;
+}
+.sb-body .emphasis { color: var(--gold); font-weight: 500; }
+.sb-body .cyan { color: var(--cyan); }
+
+/* SAVE PHRASE */
+.save-phrase {
+  border: 0.5px solid rgba(201,168,76,0.35);
+  background: rgba(201,168,76,0.05);
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin: 24px 0;
+  position: relative;
+}
+.save-phrase::before {
+  content: '★';
+  position: absolute;
+  top: 16px; right: 18px;
+  color: var(--gold-dim);
+  font-size: 12px;
+}
+.save-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 10px;
+}
+.save-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-style: italic;
+  color: var(--gold-light);
+  line-height: 1.4;
+}
+
+/* VISUAL DIR */
+.visual-dir {
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+}
+.vd-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--purple-light);
+  margin-bottom: 12px;
+}
+.vd-item {
+  display: flex;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 0.5px solid var(--border2);
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.vd-item:last-child { border: none; padding-bottom: 0; }
+.vd-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  min-width: 70px;
+  margin-top: 1px;
+}
+
+/* THUMB */
+.thumb-box {
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-bottom: 28px;
+  border: 0.5px solid var(--border);
+}
+.thumb-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 14px;
+}
+.thumb-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.thumb-item:last-child { margin-bottom: 0; }
+.thumb-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  min-width: 60px;
+  padding-top: 1px;
+}
+.thumb-val { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+.thumb-val strong { color: var(--gold); font-weight: 500; }
+
+hr { border: none; border-top: 0.5px solid var(--border2); margin: 28px 0; }
+
+/* OVERVIEW GRID */
+.ep-grid { display: grid; gap: 12px; margin-top: 28px; }
+.ep-card {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.ep-card:hover { border-color: rgba(201,168,76,0.3); background: var(--bg3); }
+.ep-card-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 22px;
+  color: var(--gold-dim);
+  font-weight: 300;
+  line-height: 1;
+  min-width: 32px;
+}
+.ep-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  color: var(--gold-light);
+  margin-bottom: 4px;
+}
+.ep-card-hook { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
+
+@media(max-width:600px) {
+  .main, .site-header { padding-left: 16px; padding-right: 16px; }
+  .ep-nav { padding: 0 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="series-tag">Akasha Hub · Série Talking Head · 2026</div>
+  <h1>Código da<br>Marca</h1>
+  <p class="sub">10 episódios. Como as maiores marcas do mundo constroem poder, percepção e cultura.<br>Casos reais. Copa do Mundo. Patrocínios bilionários. Gerações. Comportamento humano.</p>
+  <div class="series-meta">
+    <span class="meta-pill">10 episódios</span>
+    <span class="meta-pill">branding</span>
+    <span class="meta-pill">casos reais</span>
+    <span class="meta-pill">akasha.hub</span>
+  </div>
+</div>
+
+<nav class="ep-nav">
+  <button class="ep-btn active" onclick="showEp('overview',this)">Visão Geral</button>
+  <button class="ep-btn" onclick="showEp('ep1',this)">EP 01</button>
+  <button class="ep-btn" onclick="showEp('ep2',this)">EP 02</button>
+  <button class="ep-btn" onclick="showEp('ep3',this)">EP 03</button>
+  <button class="ep-btn" onclick="showEp('ep4',this)">EP 04</button>
+  <button class="ep-btn" onclick="showEp('ep5',this)">EP 05</button>
+  <button class="ep-btn" onclick="showEp('ep6',this)">EP 06</button>
+  <button class="ep-btn" onclick="showEp('ep7',this)">EP 07</button>
+  <button class="ep-btn" onclick="showEp('ep8',this)">EP 08</button>
+  <button class="ep-btn" onclick="showEp('ep9',this)">EP 09</button>
+  <button class="ep-btn" onclick="showEp('ep10',this)">EP 10</button>
+</nav>
+
+<div class="main">
+
+<!-- OVERVIEW -->
+<div id="overview" class="episode active">
+  <div class="ep-header">
+    <div class="ep-num">VISÃO GERAL DA SÉRIE</div>
+    <div class="ep-title">10 Episódios.<br>Um Código.</div>
+    <div class="ep-hook">Por que a Nike patrocina jogadores que perdem? Por que a Coca-Cola não vende refrigerante? Por que a Apple nunca faz propaganda de produto? Porque elas entenderam algo que a maioria das marcas — e pessoas — ainda não entendeu.</div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">A lógica da série</div>
+    <p>Não é uma série sobre logo e identidade visual. É uma série sobre <strong style="color:var(--text)">arquitetura de percepção</strong>. Como as maiores marcas do mundo usam Copa do Mundo, crises, gerações, neurociência e comportamento humano para construir algo que vai muito além do produto — constroem <em>pertencimento</em>. E como você pode aplicar esse mesmo código na sua marca pessoal e no seu negócio.</p>
+  </div>
+
+  <div class="ep-grid">
+    <div class="ep-card" onclick="showEp('ep1',document.querySelectorAll('.ep-btn')[1])">
+      <div class="ep-card-num">01</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">Marca Não É Logo. É Religião.</div>
+        <div class="ep-card-hook">Por que Apple, Nike e Corinthians têm algo em comum com as maiores religiões do mundo</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep2',document.querySelectorAll('.ep-btn')[2])">
+      <div class="ep-card-num">02</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">O Negócio da Copa não É Futebol</div>
+        <div class="ep-card-hook">Como Adidas, Budweiser e Coca-Cola faturam bilhões vendendo emoção, não produto</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep3',document.querySelectorAll('.ep-btn')[3])">
+      <div class="ep-card-num">03</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">O Atleta Virou a Marca</div>
+        <div class="ep-card-hook">Como Mbappé, Neymar e LeBron James viraram empresas — e o que isso revela sobre poder de marca pessoal</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep4',document.querySelectorAll('.ep-btn')[4])">
+      <div class="ep-card-num">04</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">Geração Z Não Compra Produto. Compra Posicionamento.</div>
+        <div class="ep-card-hook">Por que a geração mais cética da história também é a mais fiel — e como as marcas que entenderam isso dominaram o mercado</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep5',document.querySelectorAll('.ep-btn')[5])">
+      <div class="ep-card-num">05</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">O Preço É Uma Mensagem</div>
+        <div class="ep-card-hook">Por que a Rolex custa o que custa — e por que baixar preço é o maior erro que uma marca pode cometer</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep6',document.querySelectorAll('.ep-btn')[6])">
+      <div class="ep-card-num">06</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">Crise É Branding</div>
+        <div class="ep-card-hook">Como Nike, Adidas e Patagonia usaram polêmicas, cancelamentos e crises para ficar maiores — e o que marcas frágeis fazem diferente</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep7',document.querySelectorAll('.ep-btn')[7])">
+      <div class="ep-card-num">07</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">O Neuromarketing que Ninguém Te Contou</div>
+        <div class="ep-card-hook">Como Spotify, McDonald's e Airbnb hackeiam seu cérebro — e por que você compra coisas que não planejou</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep8',document.querySelectorAll('.ep-btn')[8])">
+      <div class="ep-card-num">08</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">Patrocínio Não É Propaganda</div>
+        <div class="ep-card-hook">A diferença entre pagar para aparecer e construir associação — e como as marcas que entendem isso dominam o imaginário coletivo</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep9',document.querySelectorAll('.ep-btn')[9])">
+      <div class="ep-card-num">09</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">Economia da Atenção e a Guerra das Marcas</div>
+        <div class="ep-card-hook">Por que TikTok destruiu estratégias de marketing de 30 anos — e como as marcas que sobreviveram pensam diferente</div>
+      </div>
+    </div>
+    <div class="ep-card" onclick="showEp('ep10',document.querySelectorAll('.ep-btn')[10])">
+      <div class="ep-card-num">10</div>
+      <div class="ep-card-info">
+        <div class="ep-card-title">Você É Uma Marca. Quer Queira ou Não.</div>
+        <div class="ep-card-hook">O episódio final. O manifesto. Como tudo que você aprendeu sobre as grandes marcas se aplica diretamente a você.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EP 01 -->
+<div id="ep1" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 01 · ABERTURA DA SÉRIE</div>
+    <div class="ep-title">Marca Não É Logo.<br>É Religião.</div>
+    <div class="ep-hook">Apple tem 1,5 bilhão de dispositivos ativos. Corinthians tem 30 milhões de torcedores que nunca jogaram um minuto. O que essas duas entidades têm em comum com as maiores religiões do mundo diz tudo sobre o que uma marca realmente é.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">abertura</span>
+      <span class="ep-tag g">branding</span>
+      <span class="ep-tag">comportamento</span>
+      <span class="ep-tag p">psicologia</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>Uma marca não é um produto, um logo ou um slogan. É um sistema de crenças compartilhadas que gera sentimento de pertencimento, identidade e até sacrifício pessoal. Quem entende isso constrói lealdade que nenhuma estratégia de marketing consegue comprar.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Casos reais do episódio</div>
+    <div class="case-item"><div class="case-key">Apple</div>Clientes fazem fila de madrugada para comprar um produto que já testaram e aprovaram antes de existir. A compra é ritual de afirmação de identidade.</div>
+    <div class="case-item"><div class="case-key">Corinthians</div>Maior torcida do Brasil — pessoas que passam perrengue, pagam caro, se identificam como "Fiel" — não porque o time ganha sempre, mas porque <em>pertencer</em> é o produto.</div>
+    <div class="case-item"><div class="case-key">Nike</div>"Just Do It" não é slogan. É crença. É um chamado para a identidade de quem você quer ser. Por isso funciona desde 1988.</div>
+    <div class="case-item"><div class="case-key">Harley-Davidson</div>Pesquisa de 2023: 60% dos donos tatuam o logo da marca no corpo. Qual produto você tatua na pele? Só o que virou identidade.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"Por que as pessoas fazem fila para comprar iPhone (não é o que você pensa)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Visual</div><div class="thumb-val">Você com expressão de revelação. Fundo escuro. Logo Apple em ghost/desfocado atrás. Texto em dourado.</div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"NÃO É O PRODUTO"</strong> em branco · subtexto em dourado</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Por que alguém acampa na calçada pra comprar um celular que já sabe como funciona?<br><br>
+        Por que um torcedor do Corinthians chora quando o time perde — mas não devolve a camisa?<br><br>
+        Porque eles não estão comprando produto. Eles estão afirmando <span class="emphasis">quem são</span>.</p>
+        <div class="dir">Tom firme. Cada pergunta com uma pausa antes da próxima. Olho direto na câmera.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Gancho</span><span class="sb-timing">20–45s</span></div>
+      <div class="sb-body">
+        <p>Marketing te ensinou que marca é logo, paleta de cor e slogan bonito.<br><br>
+        Isso está errado.<br><br>
+        Marca é o conjunto de crenças que as pessoas têm sobre quem elas são quando estão <em>associadas</em> a você. E quando você entende isso, muda completamente como você constrói a sua.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type case-t">Caso Real</span><span class="sb-timing">45s–3min</span></div>
+      <div class="sb-body">
+        <p>Em 2022, a Apple tinha 57% de margem de lucro num mercado onde a Samsung tem 8%. Mesmo produto — smartphone. Mesma categoria.<br><br>
+        A diferença não é tecnologia. Samsung tem patentes que a Apple usa. A diferença é <span class="emphasis">o significado que as pessoas atribuem ao objeto</span>.<br><br>
+        Comprar um iPhone em 2026 ainda comunica algo. Ainda é um marcador de identidade social. E o cérebro humano, que é fundamentalmente tribal, responde a isso.<br><br>
+        Harley-Davidson fez uma pesquisa interna em 2023: mais de 60% dos proprietários têm a tatuagem da marca no corpo. Alguém tatua uma Samsung na perna? Não. Porque Samsung é produto. Harley é identidade.<br><br>
+        E o Corinthians? O clube tem dívida de R$2 bilhões, já foi rebaixado, já perdeu Copa de campeonato. E tem a maior torcida organizada da América do Sul. Porque o produto é o <span class="emphasis">pertencimento</span>. Não o resultado.</p>
+        <div class="dir">Aqui você pode usar gestos. Abrir as mãos ao falar de "pertencimento". Fecha o punho ao falar de "identidade".</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>E sabe qual é a estrutura comum entre Apple, Corinthians, Harley-Davidson e as maiores religiões do mundo?<br><br>
+        Todas têm: <span class="emphasis">um inimigo, um herói, um ritual e um símbolo</span>.<br><br>
+        Apple tem a Microsoft como inimigo. O criativo como herói. A fila de lançamento como ritual. A maçã como símbolo.<br><br>
+        Isso não é coincidência. É arquitetura.</p>
+        <span class="quote-line">"Marca forte não é sobre o que você vende. É sobre quem as pessoas se tornam quando te escolhem."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento</span><span class="sb-timing">3–6min</span></div>
+      <div class="sb-body">
+        <p>Simon Sinek passou anos estudando isso e chegou na teoria do Golden Circle. Por quê você existe? Como você faz? O quê você vende?<br><br>
+        A maioria das marcas comunica de fora para dentro: produto, funcionalidade, preço. As marcas que viram religião comunicam de dentro para fora: crença, missão, propósito.<br><br>
+        E o cérebro humano responde de formas completamente diferentes a cada um desses sinais. Quando você ativa o "porquê" de alguém, você não faz uma venda — você cria um aliado.<br><br>
+        Essa série vai mostrar como as maiores marcas do mundo aplicam isso em patrocínios de Copa do Mundo, em crises de imagem, em precificação, em gerações diferentes. E como você pode usar exatamente o mesmo código — independente do tamanho da sua marca.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span><span class="sb-timing">último 30s</span></div>
+      <div class="sb-body">
+        <p>No próximo episódio eu vou te mostrar o maior negócio de branding do mundo — que se disfarça de esporte.<br><br>
+        A Copa do Mundo. E por que Coca-Cola, Adidas e Budweiser pagam bilhões para estar lá.<br><br>
+        Spoiler: não é para vender produto.</p>
+        <div class="dir">Sem forçar CTA. A curiosidade É o call to action.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"Marca forte não é sobre o que você vende. É sobre quem as pessoas se tornam quando te escolhem."</div>
+  </div>
+
+  <div class="visual-dir">
+    <div class="vd-label">Direção visual</div>
+    <div class="vd-item"><div class="vd-key">Cenário</div>Ambiente escuro, minimalista. Se possível, um elemento simbólico sutil ao fundo — um objeto que remeta a marca (ex: câmera, livro, objeto de design).</div>
+    <div class="vd-item"><div class="vd-key">Luz</div>Frontal suave + rim light dourado. Mesma linguagem da série Mente Milionária, mas pode ter leve toque ciano para diferenciar.</div>
+    <div class="vd-item"><div class="vd-key">Roupa</div>Preto ou cinza escuro. Nada que concorra com o conteúdo.</div>
+    <div class="vd-item"><div class="vd-key">Texto tela</div>Palavras-chave em overlay: RELIGIÃO / IDENTIDADE / PERTENCIMENTO. Dourado, fonte clean.</div>
+    <div class="vd-item"><div class="vd-key">Corte</div>Cortes secos. Sem transição. Muda de ideia, corta.</div>
+  </div>
+</div>
+
+<!-- EP 02 -->
+<div id="ep2" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 02</div>
+    <div class="ep-title">O Negócio da Copa<br>não É Futebol</div>
+    <div class="ep-hook">A Copa do Mundo de 2026 vai movimentar mais de $11 bilhões em patrocínios. Nenhuma marca patrocinadora está lá para vender produto. Elas estão lá para comprar emoção — e instalar essa emoção dentro de você para sempre.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">copa do mundo</span>
+      <span class="ep-tag g">patrocínio</span>
+      <span class="ep-tag c">economia</span>
+      <span class="ep-tag p">neuromarketing</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>Grandes eventos esportivos não são esporte — são máquinas de transferência emocional. Quando você está com o coração disparando assistindo seu time marcar, tudo que está no seu campo visual naquele momento fica associado a essa emoção para sempre. As marcas sabem disso. É o negócio mais sofisticado de branding do planeta.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Casos reais do episódio</div>
+    <div class="case-item"><div class="case-key">Coca-Cola</div>Patrocinadora oficial da Copa desde 1950. Não vende Coca-Cola durante o jogo — vende a sensação de que Coca-Cola faz parte dos momentos mais felizes da sua vida.</div>
+    <div class="case-item"><div class="case-key">Adidas</div>Equipa 12 seleções na Copa 2026 incluindo Alemanha, Argentina e Espanha. Cada gol, cada imagem viral é propaganda de produto que nunca aparece como propaganda.</div>
+    <div class="case-item"><div class="case-key">Budweiser</div>Patrocinou a Copa 2022 no Qatar onde venda de álcool era proibida. Pagou $75M para não vender nada. O retorno em brand awareness foi calculado em $400M+.</div>
+    <div class="case-item"><div class="case-key">Qatar 2022</div>Maior audiência da história da Copa: 1,5 bilhão de pessoas assistiram à final Argentina x França. As marcas não compram minutos de TV — compram o maior ritual coletivo humano.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"A Budweiser pagou $75 milhões pra não vender nada na Copa (e foi o melhor investimento)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"$75 MILHÕES"</strong> em destaque · sua expressão de choque estratégico</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>A Budweiser pagou $75 milhões para ser patrocinadora da Copa do Qatar em 2022.<br><br>
+        O Qatar proibiu venda de álcool no estádio dois dias antes do torneio.<br><br>
+        A Budweiser não pediu reembolso. Porque ela nunca estava lá para vender cerveja.</p>
+        <div class="dir">Pausa dramática depois de cada frase. Deixa o paradoxo pousar.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type case-t">Caso Real — Neurociência</span><span class="sb-timing">20s–3min</span></div>
+      <div class="sb-body">
+        <p>Existe um conceito em neurociência chamado <span class="emphasis">transferência de excitação</span>. Quando você está em estado de alta emoção — gol, virada, pênalti decisivo — seu cérebro forma memórias com intensidade multiplicada.<br><br>
+        E tudo que está associado a esse momento fica colado àquela emoção para sempre.<br><br>
+        É por isso que quando você ouve aquele jingle da Coca-Cola da Copa de 2014, você sente alguma coisa no peito. Não é saudade do refrigerante. É saudade da emoção. E a Coca-Cola está dentro dessa emoção.<br><br>
+        As marcas não compram espaço publicitário nos grandes eventos. <span class="emphasis">Elas compram acesso à sua memória emocional.</span><br><br>
+        E isso vale muito mais do que qualquer anúncio.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento</span><span class="sb-timing">3–5min</span></div>
+      <div class="sb-body">
+        <p>A Copa 2026 acontece nos EUA, Canadá e México. É a maior Copa da história — 48 seleções, 104 jogos. A FIFA projeta receita de $11 bilhões só em direitos e patrocínios.<br><br>
+        Por que empresas como Visa, Hyundai, Qatar Airways e Adidas pagam centenas de milhões por isso?<br><br>
+        Porque a Copa cria o que marketeiros chamam de <span class="emphasis">janela de receptividade emocional</span>. Durante 30 dias, bilhões de pessoas estão em estado de alta atenção, alta emoção e alta conexão social.<br><br>
+        Qualquer marca que aparece nesse estado entra no cérebro com muito menos resistência do que qualquer outro canal.<br><br>
+        Adidas não precisa convencer que a chuteira é boa. Mbappé marca de chuteira Adidas na final — convencimento feito.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>E sabe qual é a lição disso pra qualquer marca — grande ou pequena?<br><br>
+        <span class="emphasis">Você não precisa de um evento bilionário. Você precisa entender em qual contexto emocional o seu público está mais receptivo.</span><br><br>
+        E estar lá. Com consistência. Antes de precisar vender alguma coisa.</p>
+        <span class="quote-line">"As marcas mais inteligentes não interrompem emoções. Elas habitam as emoções."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span></div>
+      <div class="sb-body">
+        <p>No próximo episódio eu vou falar de algo que mudou completamente a dinâmica do branding de patrocínio.<br><br>
+        O atleta deixou de ser o veículo da marca. O atleta virou a marca.<br><br>
+        E Mbappé, Neymar e LeBron James são o melhor estudo de caso do século.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"As marcas mais inteligentes não interrompem emoções. Elas habitam as emoções."</div>
+  </div>
+
+  <div class="visual-dir">
+    <div class="vd-label">Direção visual</div>
+    <div class="vd-item"><div class="vd-key">B-roll</div>Se possível, clipes curtos de torcida — sem mostrar logos reais. Use o contexto de multidão/emoção coletiva.</div>
+    <div class="vd-item"><div class="vd-key">Texto tela</div>Número "$75 MILHÕES" em grande ao falar do caso Budweiser. Impacto visual do dado.</div>
+    <div class="vd-item"><div class="vd-key">Ritmo</div>Mais acelerado que EP01. O tema pede energia. Mas com pausas estratégicas nos momentos de revelação.</div>
+  </div>
+</div>
+
+<!-- EP 03 -->
+<div id="ep3" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 03</div>
+    <div class="ep-title">O Atleta Virou a Marca</div>
+    <div class="ep-hook">Mbappé faturou mais em patrocínios em 2024 do que em salário. LeBron James é bilionário antes de se aposentar. Neymar construiu um império enquanto jogava. O atleta não é mais o produto — ele é a plataforma.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">marca pessoal</span>
+      <span class="ep-tag g">atletas</span>
+      <span class="ep-tag c">mercado</span>
+      <span class="ep-tag p">identidade</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>A transição do atleta-produto para o atleta-marca é a maior revolução do marketing esportivo da história. E o princípio que torna isso possível — construir audiência fiel em torno de uma personalidade autêntica — é exatamente o mesmo princípio que você usa para construir sua marca pessoal.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Casos reais do episódio</div>
+    <div class="case-item"><div class="case-key">LeBron James</div>Primeiro bilionário ativo da NBA. Criou a SpringHill Company, tem participação na Fenway Sports Group (dono do Liverpool FC) e assinou deals com Nike, Amazon e Walmart. Não é atleta com patrocínios — é empresário que ainda joga.</div>
+    <div class="case-item"><div class="case-key">Mbappé</div>Em 2024: $80M em patrocínios (Nike, Dior, Hublot, EA Sports). A Nike pagou $150M para renovar o contrato mesmo antes da Copa 2026. Por quê? Porque Mbappé tem 100M de seguidores e cada post vale mais que qualquer outdoor.</div>
+    <div class="case-item"><div class="case-key">Neymar</div>Criou a NR Sports, fundou o Poker Stars deal, tem participação em e-sports. Mesmo lesionado e sem clube por meses em 2024, continuou gerando receita. A marca independeu do atleta.</div>
+    <div class="case-item"><div class="case-key">Cristiano Ronaldo</div>Instagram com 636M seguidores (2024). Um post patrocinado: $3,2M. Lançou a CR7 brand (roupas, perfumes, hotéis, suplementos). O atleta é o canal. O negócio é o conteúdo.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"Mbappé ganha mais fora do futebol do que dentro (e o que isso tem a ver com você)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"MARCA PESSOAL"</strong> · você com expressão de revelação estratégica</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Cristiano Ronaldo tem 636 milhões de seguidores no Instagram.<br><br>
+        Um post patrocinado dele: $3,2 milhões de dólares.<br><br>
+        Ele não é mais o melhor jogador do mundo. Mas ele é, com folga, a maior mídia esportiva do planeta.</p>
+        <div class="dir">Pausa entre cada dado. Deixa os números falarem.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type case-t">Caso Real — LeBron</span><span class="sb-timing">20s–3min</span></div>
+      <div class="sb-body">
+        <p>LeBron James se tornou bilionário <em>enquanto ainda jogava</em>. Não por salário — jogadores da NBA são bem pagos mas não bilionários. Mas por entender, em 2003 com 18 anos de idade, que <span class="emphasis">o jogo de basquete era o produto de entrada, não o produto final</span>.<br><br>
+        Ele criou a SpringHill Company — produtora que fez "Space Jam: A New Legacy" e séries documentais. Tem participação no Liverpool FC, nos Boston Red Sox, numa empresa de mídia e num fundo de venture capital.<br><br>
+        A carreira esportiva foi o veículo de audiência. O negócio real estava sendo construído em paralelo.<br><br>
+        E sabe qual é o paralelo direto com qualquer criador de conteúdo, consultor ou empreendedor digital?<br><br>
+        <span class="emphasis">O conteúdo que você produz é o veículo. O negócio que você constrói por trás é o patrimônio.</span></p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>Existe um conceito que separa quem constrói marca de quem só tem visibilidade:<br><br>
+        <span class="emphasis">Audiência captiva vs audiência fiel.</span><br><br>
+        Audiência captiva te assiste. Audiência fiel te defende, te compra, te recomenda — mesmo quando você some por 6 meses.<br><br>
+        Cristiano Ronaldo tem audiência fiel. É o que torna o $3,2M por post possível.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Aplicação</span><span class="sb-timing">3–5min</span></div>
+      <div class="sb-body">
+        <p>Você não precisa de 636 milhões de seguidores para aplicar esse código.<br><br>
+        Precisa entender que <span class="emphasis">você já é uma marca</span>. Cada interação, cada conteúdo, cada posicionamento ou ausência de posicionamento está construindo ou destruindo algo.<br><br>
+        A diferença entre um profissional commodity e um profissional de referência não é talento. É a clareza sobre o que a sua presença representa — e a consistência em comunicar isso.<br><br>
+        Mbappé com 25 anos já tem mais poder de negociação que clubes centenários. Não por causa do futebol. Por causa da marca que ele construiu em torno do futebol.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span></div>
+      <div class="sb-body">
+        <p>No próximo episódio eu vou falar de quem compra tudo isso.<br><br>
+        A geração mais cética da história. Que detecta falsidade em 0,3 segundos.<br><br>
+        E que ao mesmo tempo é a mais fiel quando a marca é real.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"O conteúdo que você produz é o veículo. O negócio que você constrói por trás é o patrimônio."</div>
+  </div>
+
+  <div class="visual-dir">
+    <div class="vd-label">Direção visual</div>
+    <div class="vd-item"><div class="vd-key">Energia</div>Mais dinâmico. Os casos são grandes e os números são impactantes. Deixa a empolgação natural aparecer.</div>
+    <div class="vd-item"><div class="vd-key">Texto tela</div>Dados numéricos grandes na tela: "636M", "$3.2M", "bilionário ativo". Impacto visual dos números.</div>
+    <div class="vd-item"><div class="vd-key">Conexão</div>No momento em que vira a câmera para o espectador ("você já é uma marca"), câmera levemente mais próxima. Intimidade intencional.</div>
+  </div>
+</div>
+
+<!-- EP 04 -->
+<div id="ep4" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 04</div>
+    <div class="ep-title">Geração Z Não Compra<br>Produto. Compra Posicionamento.</div>
+    <div class="ep-hook">São 2 bilhões de pessoas. Têm o maior poder de compra em ascensão da história. E eles detectam falsidade de marca como um anticorpo detecta vírus. As marcas que não entenderam isso estão morrendo. As que entenderam estão dominando.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">geração z</span>
+      <span class="ep-tag g">comportamento</span>
+      <span class="ep-tag c">sociologia</span>
+      <span class="ep-tag p">psicologia</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>A Geração Z cresceu com acesso ilimitado à informação e com total capacidade de verificar qualquer afirmação de qualquer marca em segundos. Isso criou um filtro de autenticidade sem precedentes. Para essa geração, o que você faz pesa infinitamente mais do que o que você diz que faz.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Casos reais do episódio</div>
+    <div class="case-item"><div class="case-key">Patagônia</div>Em 2022, o fundador Yvon Chouinard doou a empresa inteira para uma fundação de proteção ambiental. Receita do ano seguinte cresceu 20%. A Geração Z não comprou mais jaquetas — comprou o gesto.</div>
+    <div class="case-item"><div class="case-key">Balenciaga</div>Campanha polêmica em 2022 causou boycott massivo Gen Z. Perdeu $3B em brand value em semanas. A geração mais conectada é também a mais rápida para cancelar o que não alinha com seus valores.</div>
+    <div class="case-item"><div class="case-key">Duolingo</div>TikTok da Duolingo com a coruja maluquinha: 9,5M seguidores, crescimento de 58% de usuários ativos. Marca que virou meme — não vendendo produto, mas vivendo a cultura da geração.</div>
+    <div class="case-item"><div class="case-key">Stanley Cup</div>Copo de $40 que virou símbolo de identidade Gen Z em 2023. Não tem nada de especial tecnicamente. Mas a comunidade em torno dele é o produto. Faturou $750M naquele ano.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"Por que a Geração Z cancelou uma marca que vale $3 bilhões (e a lição pra qualquer negócio)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"AUTENTICIDADE"</strong> · você com expressão de análise</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>A Balenciaga perdeu $3 bilhões em valor de marca em três semanas.<br><br>
+        Não por produto ruim. Por uma campanha que a Geração Z interpretou como desrespeito.<br><br>
+        E esse cancelamento não foi liderado por jornalistas ou governos. Foi liderado por adolescentes com celular.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento — Psicologia Geracional</span><span class="sb-timing">20s–3min</span></div>
+      <div class="sb-body">
+        <p>Para entender a Geração Z, precisa entender o contexto em que ela cresceu.<br><br>
+        Millennials cresceram com a promessa do sonho americano e encontraram a crise de 2008. Isso criou ceticismo institucional.<br><br>
+        A Geração Z cresceu <em>com</em> o ceticismo já instalado. Eles não acreditam em publicidade — eles sabem que é publicidade. Não acreditam em comunicado de PR — sabem que tem texto jurídico por trás.<br><br>
+        O que eles acreditam? Em <span class="emphasis">ações verificáveis</span>.<br><br>
+        A Patagônia doou a empresa. Verificável. Ato real. Resultado: crescimento de 20% em receita no ano seguinte.<br><br>
+        Não foi slogan. Foi gesto. E a Gen Z responde a gestos.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type case-t">Caso — Duolingo</span><span class="sb-timing">3–5min</span></div>
+      <div class="sb-body">
+        <p>O TikTok da Duolingo tem 9,5 milhões de seguidores. E a coruja não vende o app diretamente em nenhum vídeo.<br><br>
+        Ela vive a cultura da plataforma. Faz trend. Se autoreferencializa. Cria meme. É engraçada, irônica, às vezes perturbadora.<br><br>
+        O resultado? 58% de crescimento em usuários ativos após a estratégia de TikTok. Não por propaganda — por <span class="emphasis">participação cultural</span>.<br><br>
+        A Gen Z não quer que as marcas falem com elas. Elas querem que as marcas <em>existam na mesma realidade</em> que elas.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>E aqui está o insight que muda tudo pra qualquer marca, de qualquer tamanho:<br><br>
+        <span class="emphasis">A geração mais cética é também a mais fiel quando a marca é genuína.</span><br><br>
+        Stanley Cup é um copo de $40 que faturou $750M porque criou comunidade real. Não anúncio. Comunidade.</p>
+        <span class="quote-line">"A Geração Z não quer ser convencida. Quer ser reconhecida."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span></div>
+      <div class="sb-body">
+        <p>No próximo episódio eu vou te mostrar uma das decisões de marca mais contraintuitivas — e mais poderosas — que existem.<br><br>
+        Por que aumentar o preço pode ser o melhor movimento de branding da sua vida.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"A Geração Z não quer ser convencida. Quer ser reconhecida."</div>
+  </div>
+</div>
+
+<!-- EP 05 -->
+<div id="ep5" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 05</div>
+    <div class="ep-title">O Preço É<br>Uma Mensagem</div>
+    <div class="ep-hook">Você não paga R$50.000 num relógio Rolex porque ele marca o tempo melhor. Você paga porque ele comunica algo sobre quem você é. E toda marca que entende isso para de competir por preço — e começa a competir por significado.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">precificação</span>
+      <span class="ep-tag g">luxo</span>
+      <span class="ep-tag c">economia</span>
+      <span class="ep-tag p">psicologia</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>Preço é um dos elementos mais poderosos de comunicação de marca — e o mais subestimado. Um preço baixo comunica acessibilidade mas também mediocridade. Um preço alto comunica exclusividade e qualidade, mesmo antes do cliente experimentar o produto. A decisão de precificar é uma decisão de posicionamento.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Casos reais do episódio</div>
+    <div class="case-item"><div class="case-key">Rolex</div>Vende 1 milhão de relógios por ano propositalmente — poderia vender 3M. A escassez construída é parte do produto. Lista de espera não é problema logístico: é estratégia de desejo.</div>
+    <div class="case-item"><div class="case-key">Hermès Birkin</div>A bolsa que você não pode simplesmente comprar. Tem lista de espera de anos. Investimento que supera o S&P 500 em retorno histórico. O preço não é sobre o couro — é sobre o clube exclusivo que a bolsa representa.</div>
+    <div class="case-item"><div class="case-key">Supreme</div>Lança drops limitados. Streetwear que se vende por $100 e é revendido por $1.000. Escassez artificial + comunidade = precificação sem teto.</div>
+    <div class="case-item"><div class="case-key">Starbucks</div>Café que deveria ser commodity vendido como ritual de luxo acessível. $7 num copo com seu nome escrito. O preço paga o produto + a experiência de identidade.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"Por que a Rolex vende menos do que poderia (e ganha muito mais com isso)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"ESCASSEZ"</strong> · sua expressão de quem conhece o segredo</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>A Rolex poderia triplicar a produção e faturar três vezes mais.<br><br>
+        Ela escolhe não fazer isso.<br><br>
+        Porque a escassez não é um problema de manufatura. É o produto.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Desenvolvimento</span><span class="sb-timing">20s–4min</span></div>
+      <div class="sb-body">
+        <p>Existe um princípio em psicologia do consumo chamado <span class="emphasis">efeito Veblen</span>. Ao contrário de produtos normais, onde a demanda cai quando o preço sobe — produtos de status têm demanda que <em>aumenta</em> com o preço.<br><br>
+        Porque o preço alto é parte do produto.<br><br>
+        Se a Rolex custasse R$500, ninguém usaria ela para comunicar status. O preço alto é que garante que ela vai continuar comunicando o que as pessoas pagam para comunicar.<br><br>
+        Hermès faz algo ainda mais radical: você não pode simplesmente comprar uma Birkin. Você precisa ter histórico de compras com a marca, ser convidado por um funcionário, esperar meses. O processo de compra é deliberadamente difícil.<br><br>
+        Por quê? Porque <span class="emphasis">a dificuldade de obter é o que faz o objeto valer</span>. E o dono sabe disso. Toda vez que usa, está comunicando que passou pelo filtro.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>Agora a pergunta que incomoda:<br><br>
+        <span class="emphasis">Você está cobrando um preço que diz "preciso do seu dinheiro" ou um preço que diz "esse resultado que eu entrego é raro"?</span><br><br>
+        Porque o cliente percebe essa diferença. Mesmo sem conseguir articular.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Aplicação Prática</span><span class="sb-timing">4–6min</span></div>
+      <div class="sb-body">
+        <p>Baixar preço para atrair mais clientes é, na maioria dos casos, um erro de posicionamento disfarçado de estratégia comercial.<br><br>
+        Quando você reduz o preço, você reduz o significado percebido. O cliente começa a se perguntar: "por que tá tão barato? Tem algum problema?"<br><br>
+        Starbucks cobra R$30 num café que poderia custar R$5. Mas a experiência — o copo com seu nome, o ambiente, a identidade de "pessoa que toma Starbucks" — faz aquele R$30 parecer justo.<br><br>
+        <span class="emphasis">Preço não é sobre custo. É sobre o valor percebido — e o valor percebido é arquitetado pela marca.</span></p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span></div>
+      <div class="sb-body">
+        <p>O que você cobra diz mais sobre como você se vê do que sobre o mercado.<br><br>
+        E o mercado sempre te trata no nível em que você se apresenta.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"Preço não é sobre custo. É sobre o valor percebido — e o valor percebido é arquitetado pela marca."</div>
+  </div>
+</div>
+
+<!-- EP 06 -->
+<div id="ep6" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 06</div>
+    <div class="ep-title">Crise É Branding</div>
+    <div class="ep-hook">Nike perdeu $2 bilhões em um dia quando apoiou Colin Kaepernick. Em dois anos, o valor de marca subiu $26 bilhões. Crise não destrói marca. Crise revela o que a marca realmente é — e as marcas que sabem quem são saem maiores.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">crise</span>
+      <span class="ep-tag g">posicionamento</span>
+      <span class="ep-tag p">psicologia</span>
+      <span class="ep-tag c">sociologia</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>Uma crise não é um evento externo que acontece com a marca — é um teste que revela se a marca tem ou não um posicionamento real. Marcas com posicionamento claro e autêntico saem de crises fortalecidas porque a crise comprova que elas realmente acreditam no que dizem. Marcas sem posicionamento são destruídas pelas mesmas crises.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Casos reais do episódio</div>
+    <div class="case-item"><div class="case-key">Nike + Kaepernick</div>2018: Nike nomeia Colin Kaepernick, jogador que ajoelhou no hino americano protestando racismo, como rosto de campanha. Boycott imediato. Ações caíram 3% ($2B). Dois anos depois: brand value subiu $26B. A crise mostrou que a Nike de fato acreditava em "Just Do It" — não era slogan.</div>
+    <div class="case-item"><div class="case-key">Adidas + Kanye</div>2022: Adidas termina contrato com Ye (Kanye West) após declarações antissemitas. Perda imediata de $250M em receita do Yeezy deal. Mas manteve brand equity com o público jovem que a marca precisa. Não cancelar teria custado mais.</div>
+    <div class="case-item"><div class="case-key">Patagônia</div>Quando Trump reduziu áreas de proteção ambiental em 2017, Patagônia processou o governo federal. Uma marca de roupas processar o presidente. Vendas cresceram 40% naquele trimestre. A crise foi o melhor lançamento de produto da história deles.</div>
+    <div class="case-item"><div class="case-key">Bud Light 2023</div>Parceria com influencer trans gerou boycott conservador. A Bud Light respondeu... sem posicionamento. Tentou agradar os dois lados. Perdeu ambos. Queda de 25% em market share. A crise revelou que não havia marca — havia só produto.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"Nike perdeu $2 bilhões em 1 dia e ficou $26 bilhões mais rica depois. Entenda."</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"$26 BILHÕES"</strong> em grande · sua expressão de análise estratégica</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Em setembro de 2018, a Nike anunciou Colin Kaepernick como rosto de uma campanha.<br><br>
+        Em 48 horas, os hashtags #BoycottNike tinham 30 milhões de interações. Pessoas queimando tênis na rua ao vivo.<br><br>
+        As ações caíram. Os analistas disseram que foi um erro monumental.<br><br>
+        Dois anos depois, o valor de marca da Nike subiu $26 bilhões.</p>
+        <div class="dir">Cada frase é uma batida. Pausa real entre elas. Deixa o paradoxo construir tensão.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Análise</span><span class="sb-timing">20s–4min</span></div>
+      <div class="sb-body">
+        <p>Por que isso aconteceu? Porque a Nike tem um posicionamento real.<br><br>
+        "Just Do It" não é só um slogan motivacional. É uma declaração de que a Nike defende quem age segundo suas convicções — mesmo com risco, mesmo com pressão externa.<br><br>
+        Quando eles apoiaram Kaepernick — um atleta que literalmente perdeu a carreira por agir segundo sua convicção — eles <em>provaram</em> que o slogan era real. Não era marketing. Era quem eles são.<br><br>
+        <span class="emphasis">E aí acontece algo poderoso: os clientes que compartilham esse valor ficaram mais leais. Os que não compartilham nunca foram o público-alvo de qualquer forma.</span><br><br>
+        Compare isso com a Bud Light em 2023. Fez uma parceria com influencer trans. Boycott conservador. A marca respondeu se esquivando, sem se posicionar, tentando agradar os dois lados.<br><br>
+        Resultado: perdeu 25% de market share. Porque quando a crise chegou, ficou claro que não havia marca — havia só produto tentando não perder cliente nenhum.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>A lição que ninguém quer ouvir:<br><br>
+        <span class="emphasis">Marca forte tem inimigos. Marca sem inimigos não tem posicionamento.</span><br><br>
+        Quando você tenta agradar todo mundo, você não tem fã nenhum.</p>
+        <span class="quote-line">"A crise não cria o problema de marca. Ela revela se havia marca de verdade."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span></div>
+      <div class="sb-body">
+        <p>Qual é o posicionamento da sua marca que, se testado numa crise, você defenderia sem hesitar?<br><br>
+        Se você demorar para responder, essa é a sua próxima tarefa.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"A crise não cria o problema de marca. Ela revela se havia marca de verdade."</div>
+  </div>
+</div>
+
+<!-- EP 07 -->
+<div id="ep7" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 07</div>
+    <div class="ep-title">O Neuromarketing que<br>Ninguém Te Contou</div>
+    <div class="ep-hook">Você escolhe a marca antes de escolher o produto. Seu cérebro decide em 200 milissegundos — antes de você ter consciência da decisão. As maiores marcas do mundo arquitetam cada detalhe para influenciar exatamente esse momento pré-consciente.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">neuromarketing</span>
+      <span class="ep-tag g">comportamento</span>
+      <span class="ep-tag p">neurociência</span>
+      <span class="ep-tag">psicologia</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>95% das decisões de compra são tomadas pelo sistema inconsciente do cérebro — o que Kahneman chama de Sistema 1. As marcas que entendem isso não convencem o racional, eles seduzem o emocional. Cor, som, cheiro, linguagem, ritmo — tudo comunica antes que a mente consciente processe.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Casos reais do episódio</div>
+    <div class="case-item"><div class="case-key">Spotify</div>O algoritmo não te dá o que você quer. Te dá o que te mantém na plataforma. A diferença é sutil e poderosa. A descoberta de música nova + familiaridade = loop dopaminérgico que mantém 600M de usuários ativos.</div>
+    <div class="case-item"><div class="case-key">McDonald's</div>Vermelho e amarelo: vermelho aumenta apetite, amarelo cria senso de urgência e felicidade. Arcos dourados visíveis a 400 metros de distância. Cheiro de batata frita liberado para a rua intencionalmente. Arquitetura neural do desejo.</div>
+    <div class="case-item"><div class="case-key">Airbnb</div>A palavra "lar" em vez de "quarto" ou "acomodação". Fotos com pessoas (não só espaços). Avaliações que criam prova social. Toda arquitetura de linguagem é desenhada para ativar o sistema de pertencimento — não o sistema de transação.</div>
+    <div class="case-item"><div class="case-key">Amazon</div>Botão "comprar com 1 clique" removeu a fricção consciente. A decisão acontece antes do cérebro racional questionar se precisa do produto. Billing automático para assinaturas é o mesmo princípio: reduz o momento de decisão consciente.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"Seu cérebro decide antes de você (e as marcas sabem exatamente como usar isso)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"200ms"</strong> em destaque · você com expressão de revelação</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Você leva 200 milissegundos para formar uma primeira impressão de uma marca.<br><br>
+        Isso é antes de qualquer pensamento consciente. Antes de você ler o nome, analisar o produto, comparar o preço.<br><br>
+        E esse primeiro julgamento influencia todas as decisões que vêm depois.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type case-t">Caso — McDonald's</span><span class="sb-timing">20s–3min</span></div>
+      <div class="sb-body">
+        <p>Por que o McDonald's é vermelho e amarelo?<br><br>
+        Não é coincidência. Não é preferência do fundador. É neurociência aplicada.<br><br>
+        Vermelho aumenta frequência cardíaca e estimula apetite. Amarelo ativa sensação de felicidade e urgência — "preciso agir agora".<br><br>
+        O cheiro de batata frita liberado para a calçada não é descuido de ventilação. É intenção. Porque o sistema olfativo tem acesso direto ao sistema límbico — o centro emocional do cérebro — sem passar pela racionalidade.<br><br>
+        <span class="emphasis">Você decide que quer McDonald's antes de ter consciência de que está com fome.</span><br><br>
+        Isso não é manipulação no sentido pejorativo. É design de experiência baseado em como o cérebro humano realmente funciona.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>E o insight que muda como você vê sua própria marca:<br><br>
+        <span class="emphasis">Cada detalhe da sua comunicação — tom de voz, escolha de palavra, cor, velocidade de resposta — está sendo processado pelo sistema pré-consciente do seu público.</span><br><br>
+        Você pode deixar isso acontecer sem controle. Ou pode arquitetar conscientemente.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Aplicação</span><span class="sb-timing">3–6min</span></div>
+      <div class="sb-body">
+        <p>Airbnb fez uma escolha de linguagem que parece pequena mas é enorme: eles não usam "quarto disponível" ou "propriedade para aluguel".<br><br>
+        Eles usam "lar".<br><br>
+        Uma palavra. Mas essa palavra ativa um sistema neural completamente diferente. Lar = segurança, pertencimento, conforto. Quarto = transação, temporariedade, risco.<br><br>
+        Spotify entendeu que o produto não é música — é descoberta. O algoritmo é calibrado para te dar 80% do que você já conhece (conforto) e 20% do que você ainda não conhece (dopamina de descoberta). Esse balanço cria loop de uso diário.<br><br>
+        <span class="emphasis">As melhores marcas não convencem. Elas criam condições para que o cérebro do cliente chegue sozinho à conclusão que elas querem.</span></p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span></div>
+      <div class="sb-body">
+        <p>O neuromarketing não é sobre manipular pessoas. É sobre entender como elas realmente funcionam — e criar uma experiência de marca que respeita esse funcionamento.<br><br>
+        Porque a alternativa é ignorar como o cérebro funciona e perguntar por que as pessoas "não entendem o valor" do que você oferece.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"As melhores marcas não convencem. Criam condições para o cérebro do cliente chegar sozinho à conclusão que elas querem."</div>
+  </div>
+</div>
+
+<!-- EP 08 -->
+<div id="ep8" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 08</div>
+    <div class="ep-title">Patrocínio Não<br>É Propaganda</div>
+    <div class="ep-hook">A diferença entre pagar para aparecer e construir associação é a diferença entre ser lembrado e ser sentido. As marcas que dominam o imaginário coletivo há décadas não compram audiência — elas constroem pertencimento através de algo que as pessoas já amam.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">patrocínio</span>
+      <span class="ep-tag g">associação</span>
+      <span class="ep-tag c">mercado</span>
+      <span class="ep-tag p">comportamento</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>Patrocínio estratégico não é comprar espaço publicitário em algo popular. É escolher associar a marca com valores, emoções e identidades que o público já tem. Quando bem executado, o público não vê o patrocínio — ele sente a marca como parte daquilo que ama.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Casos reais do episódio</div>
+    <div class="case-item"><div class="case-key">Red Bull</div>Não é uma bebida energética que patrocina esportes radicais. É uma marca de estilo de vida aventureiro que tem uma bebida energética. Felix Baumgartner saltou da estratosfera ao vivo em 2012 — transmitido para 52M pessoas. Nenhum produto foi vendido no vídeo.</div>
+    <div class="case-item"><div class="case-key">Mastercard</div>"Priceless" desde 1997. A campanha não vende cartão — vende a ideia de que há coisas que dinheiro não compra, e a Mastercard te ajuda a pagar as que pode. Associação emocional que dura 27 anos.</div>
+    <div class="case-item"><div class="case-key">Rolex + Tênis</div>Rolex patrocina Wimbledon desde 1978. Não há propaganda de Rolex no torneio. O logo aparece discretamente no placar. Mas a associação com elegância, tradição e excelência britânica é irremovível. É o patrocínio mais eficiente do mundo esportivo.</div>
+    <div class="case-item"><div class="case-key">Vivo + Seleção BR</div>Patrocínio da Seleção Brasileira transformou Vivo de operadora de telefonia em marca com componente emocional nacional. Cada convocação, cada jogo importante — Vivo está no coração do momento.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"Por que a Red Bull não vende energético (e isso a tornou uma das marcas mais valiosas do mundo)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"NÃO É BEBIDA"</strong> · você apontando para câmera</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Em 2012, Felix Baumgartner saltou da estratosfera. 39 quilômetros de altitude. Velocidade máxima de 1.357 km/h.<br><br>
+        52 milhões de pessoas assistiram ao vivo. Foi o maior live streaming da história até então.<br><br>
+        Em nenhum momento do salto apareceu propaganda de energético. Nem slogan. Só o logo da Red Bull na roupa espacial.</p>
+        <div class="dir">Deixa a cena construir no imaginário. Pausa depois de cada dado.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type case-t">Análise Red Bull</span><span class="sb-timing">20s–3min</span></div>
+      <div class="sb-body">
+        <p>A Red Bull não é uma empresa de bebidas que faz marketing de esporte radical. Ela é uma <em>empresa de mídia de esporte radical</em> que vende bebida como produto secundário.<br><br>
+        Ela tem uma TV própria. Uma gravadora de música. Dois times de Fórmula 1. Vários times de futebol. Organiza seus próprios eventos de skate, surfe, parkour.<br><br>
+        Cada uma dessas iniciativas não é patrocínio. É propriedade de conteúdo.<br><br>
+        <span class="emphasis">A Red Bull não compra associação. Ela cria os momentos com os quais quer ser associada.</span><br><br>
+        Resultado: $14 bilhões em receita em 2023. Com uma única fórmula de bebida que não mudou desde 1987.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>E aqui está o princípio que qualquer marca — de qualquer tamanho — pode aplicar:<br><br>
+        <span class="emphasis">Não compre espaço em algo que as pessoas amam. Crie algo que as pessoas amam e ponha sua marca dentro.</span><br><br>
+        A diferença entre os dois é a diferença entre ser visto e ser sentido.</p>
+        <span class="quote-line">"O patrocínio certo não é sobre visibilidade. É sobre transferência de amor."</span>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span></div>
+      <div class="sb-body">
+        <p>O que a sua marca pode criar — não patrocinar, criar — que as pessoas já amariam independente de você?<br><br>
+        Responda isso e você encontrou sua estratégia de conteúdo mais poderosa.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"O patrocínio certo não é sobre visibilidade. É sobre transferência de amor."</div>
+  </div>
+</div>
+
+<!-- EP 09 -->
+<div id="ep9" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 09</div>
+    <div class="ep-title">Economia da Atenção<br>e a Guerra das Marcas</div>
+    <div class="ep-hook">Em 2004, o consumidor médio era exposto a 3.000 mensagens de marca por dia. Em 2024, são 10.000. E a capacidade de atenção caiu de 12 segundos para 8. O campo de batalha mudou. E as marcas que não perceberam estão perdendo para quem entendeu as novas regras.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">atenção</span>
+      <span class="ep-tag g">tiktok</span>
+      <span class="ep-tag c">economia</span>
+      <span class="ep-tag p">comportamento</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>A atenção humana é o recurso mais escasso e mais valioso da economia contemporânea. TikTok não destruiu estratégias de marketing — revelou que a maioria delas nunca mereceu atenção. As marcas que sobrevivem na economia da atenção são as que entenderam que precisam entregar valor antes de pedir consideração.</p>
+  </div>
+
+  <div class="case-box">
+    <div class="case-label">Casos reais do episódio</div>
+    <div class="case-item"><div class="case-key">TikTok</div>De zero a 1 bilhão de usuários em 5 anos. Mais rápido que qualquer plataforma da história. O algoritmo não prioriza seguidores — prioriza engajamento. Uma conta com 0 seguidores pode viralizar. Democratizou a atenção e destruiu a lógica de "construir audiência primeiro".</div>
+    <div class="case-item"><div class="case-key">Nike vs Adidas no TikTok</div>Nike dominou por décadas com campanhas de $500M. No TikTok, marcas menores com conteúdo autêntico superam Nike em engajamento. A Nike aprendeu a criar conteúdo nativo, não adaptar TV para mobile.</div>
+    <div class="case-item"><div class="case-key">MrBeast</div>Canal de YouTube com 300M+ seguidores. Lançou a Feastables (chocolate) direto para o público que já o amava. Faturou $100M no primeiro ano sem nenhum investimento em advertising tradicional. A audiência era o ativo — o produto foi o monetizador.</div>
+    <div class="case-item"><div class="case-key">Nubank</div>Cresceu de 0 para 100M clientes quase sem propaganda tradicional. Construiu marca através de experiência de cliente radicalmente superior e conteúdo educacional. Na economia da atenção, produto que vira conversa é o melhor marketing.</div>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"TikTok destruiu 30 anos de estratégia de marketing (e o que sobreviveu)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"8 SEGUNDOS"</strong> · relógio ou countdown visual · você ao lado</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–20s</span></div>
+      <div class="sb-body">
+        <p>Em 2004: 3.000 mensagens de marca por dia.<br><br>
+        Em 2024: 10.000 mensagens de marca por dia.<br><br>
+        E a atenção humana disponível? Caiu de 12 segundos para 8.<br><br>
+        A guerra por atenção ficou três vezes mais intensa. E o campo de batalha principal cabe no seu bolso.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Análise</span><span class="sb-timing">20s–3min</span></div>
+      <div class="sb-body">
+        <p>O TikTok não é uma plataforma de dança. É a maior disrupção de distribuição de atenção da história do marketing.<br><br>
+        Porque ele eliminou o principal ativo das grandes marcas: o orçamento de mídia.<br><br>
+        Antes do TikTok, você comprava atenção. Quanto mais dinheiro para anunciar, mais pessoas viam sua marca. Era uma corrida de capital — e as grandes marcas sempre ganhariam.<br><br>
+        O TikTok criou uma plataforma onde <span class="emphasis">a qualidade do conteúdo determina o alcance, não o orçamento</span>. Uma conta com zero seguidores pode ter 10 milhões de visualizações. E uma marca com $100M de budget pode ter zero engajamento.<br><br>
+        Isso destruiu a lógica. E marcas que não souberam criar conteúdo que as pessoas querem ver estão sumindo da consciência de consumidores jovens.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type case-t">Caso MrBeast</span><span class="sb-timing">3–5min</span></div>
+      <div class="sb-body">
+        <p>MrBeast tem 300 milhões de seguidores no YouTube. Quando lançou a Feastables — uma marca de chocolate — não gastou nada em advertising tradicional.<br><br>
+        Anunciou para o público que já o adorava. Faturou $100M no primeiro ano.<br><br>
+        A lição para qualquer marca — e para qualquer criador de conteúdo:<br><br>
+        <span class="emphasis">Na economia da atenção, a audiência que você constrói é o ativo. O produto é o instrumento de monetização dessa audiência.</span><br><br>
+        O Nubank cresceu para 100 milhões de clientes quase sem propaganda. Porque criou um produto que as pessoas queriam comentar. Na economia da atenção, experiência de produto que gera conversa é mais poderosa que qualquer campanha.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">Micro Hook</span></div>
+      <div class="sb-body">
+        <p>A pergunta que vai definir o futuro da sua marca:<br><br>
+        <span class="emphasis">Você está tentando comprar atenção — ou está criando algo que as pessoas escolhem prestar atenção?</span><br><br>
+        São estratégias fundamentalmente diferentes. E numa era de 10.000 mensagens por dia, só uma delas escala.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento</span></div>
+      <div class="sb-body">
+        <p>No episódio final, eu vou fechar esse ciclo.<br><br>
+        Porque tudo que falamos sobre Nike, Apple, Red Bull, Copa do Mundo, Geração Z, preço e atenção —<br><br>
+        Aponta para uma única verdade sobre você e a marca que você está construindo agora.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva do episódio</div>
+    <div class="save-text">"Na economia da atenção, a audiência que você constrói é o ativo. O produto é o instrumento de monetização."</div>
+  </div>
+</div>
+
+<!-- EP 10 -->
+<div id="ep10" class="episode">
+  <div class="ep-header">
+    <div class="ep-num">EPISÓDIO 10 · FINAL DA SÉRIE</div>
+    <div class="ep-title">Você É Uma Marca.<br>Quer Queira ou Não.</div>
+    <div class="ep-hook">O manifesto final. Cada episódio desta série foi sobre as maiores marcas do mundo. Mas sempre foi sobre você. Porque os princípios que constroem Apple, Nike e Red Bull são os mesmos que constroem a sua presença — e o seu negócio.</div>
+    <div class="ep-tags">
+      <span class="ep-tag g">manifesto</span>
+      <span class="ep-tag g">síntese</span>
+      <span class="ep-tag p">akasha hub</span>
+      <span class="ep-tag c">marca pessoal</span>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Conceito central</div>
+    <p>O episódio final conecta todos os códigos de marca estudados ao longo da série com a realidade prática do espectador. Cada pessoa que chegou até aqui tem uma marca — pessoal ou profissional — que pode ser arquitetada com os mesmos princípios das maiores do mundo. Esse episódio é a ativação.</p>
+  </div>
+
+  <div class="thumb-box">
+    <div class="thumb-label">Thumbnail + Título YouTube</div>
+    <div class="thumb-item"><div class="thumb-key">Título</div><div class="thumb-val"><strong>"O que Apple, Nike e Red Bull têm que você também pode ter (série final)"</strong></div></div>
+    <div class="thumb-item"><div class="thumb-key">Visual</div><div class="thumb-val">Você de frente, olhar direto, postura de quem está entregando algo importante. <strong>"EP FINAL"</strong> em dourado. Mais cinematográfico que os outros episódios.</div></div>
+    <div class="thumb-item"><div class="thumb-key">Texto thumb</div><div class="thumb-val"><strong>"VOCÊ É UMA MARCA"</strong> · contundente, sem subterfúgio</div></div>
+  </div>
+
+  <div class="script-area">
+    <div class="script-label">Script por pilares</div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type open-t">Abertura</span><span class="sb-timing">0–30s</span></div>
+      <div class="sb-body">
+        <p>10 episódios. 10 códigos.<br><br>
+        Falamos de Copa do Mundo, de Mbappé, de Geração Z, de Rolex, de Nike e de satélites no espaço.<br><br>
+        Mas essa série nunca foi sobre essas marcas.<br><br>
+        Foi sobre você.</p>
+        <div class="dir">Pausa longa após "foi sobre você". Deixa o reframe pousar completamente.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type dev-t">Síntese da série</span><span class="sb-timing">30s–5min</span></div>
+      <div class="sb-body">
+        <p>Você aprendeu que marca não é logo — é o sistema de crenças que as pessoas têm sobre quem elas são quando te escolhem.<br><br>
+        Que as maiores marcas não vendem produto — vendem acesso a estados emocionais que as pessoas querem sentir.<br><br>
+        Que o atleta que constrói marca própria não é mais dependente de clube ou contrato — é uma plataforma de valor independente.<br><br>
+        Que a Geração Z não compra propaganda — compra gesto verificável e posicionamento real.<br><br>
+        Que preço é mensagem — e cobrar pouco comunica o oposto do que você pensa que comunica.<br><br>
+        Que crise não destrói marca — revela se havia marca de verdade.<br><br>
+        Que o cérebro decide em 200 milissegundos — e você pode arquitetar exatamente o que ele vai sentir nesses 200 milissegundos.<br><br>
+        Que patrocínio não é aparecer ao lado do que as pessoas amam — é criar o que as pessoas vão amar.<br><br>
+        E que na economia da atenção, audiência fiel é o ativo mais valioso que existe.<br><br>
+        <span class="emphasis">Esse é o Código da Marca.</span> E ele funciona para a Nike. Funciona para o Mbappé. E funciona para você.</p>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type hook-t">O Manifesto</span><span class="sb-timing">5–8min</span></div>
+      <div class="sb-body">
+        <p>O Akasha Hub existe porque eu acredito que estratégia de marca não é privilégio das grandes corporações.<br><br>
+        É um conjunto de princípios que qualquer pessoa — qualquer negócio, qualquer criador, qualquer profissional — pode estudar, entender e aplicar.<br><br>
+        Que autoconhecimento e estratégia de mercado não são mundos separados. São o mesmo mundo visto de ângulos diferentes.<br><br>
+        <span class="emphasis">Porque a marca mais poderosa que você pode construir não é uma empresa. É você.</span><br><br>
+        Com um posicionamento claro. Com uma audiência que te conhece. Com um preço que comunica seu valor real. Com a capacidade de sobreviver — e crescer — em qualquer crise.<br><br>
+        Com o código certo, qualquer marca pode construir algo que dura décadas.</p>
+        <div class="dir">Câmera um pouco mais próxima. Tom mais íntimo. Este é o momento mais importante do episódio.</div>
+      </div>
+    </div>
+
+    <div class="sb">
+      <div class="sb-head"><span class="sb-type close-t">Encerramento — Convite</span><span class="sb-timing">último 60s</span></div>
+      <div class="sb-body">
+        <p>Se você chegou até aqui, você não está procurando dicas de marketing.<br><br>
+        Você está procurando arquitetura. Uma forma de construir algo real, com intenção, com visão de longo prazo.<br><br>
+        E é exatamente isso que o Akasha Hub oferece.<br><br>
+        O link está na descrição. A próxima série começa em breve.<br><br>
+        Bem-vindos ao Akasha.</p>
+        <div class="dir">Exatamente como o EP10 da Mente Milionária. Lento. Com peso. Câmera fixa. Fade to black com logo Akasha Hub. 3 segundos de silêncio antes do corte.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-phrase">
+    <div class="save-label">Frase salva — manifesto do canal</div>
+    <div class="save-text">"A marca mais poderosa que você pode construir não é uma empresa. É você."</div>
+  </div>
+
+  <div class="visual-dir">
+    <div class="vd-label">Direção visual — episódio final</div>
+    <div class="vd-item"><div class="vd-key">Produção</div>Melhor setup da série. Luz mais trabalhada. Pode ter dois pontos de luz — um dourado, um branco frio — criando profundidade máxima.</div>
+    <div class="vd-item"><div class="vd-key">Roupa</div>Algo levemente diferente dos outros episódios — ainda sóbrio, mas com um detalhe que marque o encerramento. Um blazer, um acessório sutil.</div>
+    <div class="vd-item"><div class="vd-key">Logo</div>Logo Akasha Hub em fade ao final. Silêncio completo de 3 segundos antes do corte. Exatamente como EP10 da Mente Milionária.</div>
+    <div class="vd-item"><div class="vd-key">Duração</div>10 a 15 minutos. O público que chegou até aqui está completamente retido e quer a síntese completa.</div>
+    <div class="vd-item"><div class="vd-key">CTA</div>Primeiro e único episódio com CTA explícito — mas como convite filosófico, não pitch de venda.</div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+function showEp(id, btn) {
+  document.querySelectorAll('.episode').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+  </html>
