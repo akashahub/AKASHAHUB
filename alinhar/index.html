@@ -22,29 +22,22 @@
   --gold-glow-strong: rgba(201,168,76,0.18);
   --gold-line: rgba(155,123,58,0.18);
   --gold-line-soft: rgba(155,123,58,0.1);
-
   --bg: #0A0905;
   --bg2: #0F0D08;
   --bg3: #141009;
   --bg4: #1A1510;
-  --bg5: #F8F7F4;   /* light sections */
+  --bg5: #F8F7F4;
   --bg6: #F0EDE6;
-
   --text: #EDE8DF;
   --text-muted: #A09580;
   --text-dim: #5C5448;
   --white: #ffffff;
-
   --teal: #2D8A84;
   --teal-glow: rgba(45,138,132,0.12);
-
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ============================================
-   RESET & BASE
-   ============================================ */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; font-size: 16px; }
 body {
@@ -58,15 +51,26 @@ body {
 ::-webkit-scrollbar { width: 2px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--gold-line); }
-
 img { display: block; }
+
+/* ============================================
+   PSYCHEDELIC BACKGROUND CANVAS
+   ============================================ */
+#psychCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.38;
+  mix-blend-mode: screen;
+}
 
 /* ============================================
    GRAIN OVERLAY
    ============================================ */
 .grain {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  opacity: 0.028;
+  opacity: 0.032;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -75,9 +79,9 @@ img { display: block; }
    ============================================ */
 .cursor-glow {
   position: fixed; z-index: 0; pointer-events: none;
-  width: 480px; height: 480px;
+  width: 520px; height: 520px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(155,123,58,0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(155,123,58,0.07) 0%, transparent 70%);
   transform: translate(-50%, -50%);
   transition: opacity 0.6s;
 }
@@ -101,25 +105,15 @@ nav.scrolled {
   display: flex; align-items: center; gap: 14px;
   text-decoration: none;
 }
-.nav-logo img { width: 34px; height: 34px; object-fit: contain; opacity: 0.85; }
-.nav-logo-mark {
-  width: 34px; height: 34px;
-  display: flex; align-items: center; justify-content: center;
-}
+.nav-logo-mark { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; }
 .nav-logo-mark svg { width: 34px; height: 34px; }
 .nav-logo span {
   font-family: 'DM Mono', monospace;
   font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
   color: var(--gold-dim);
 }
-.nav-center {
-  position: absolute; left: 50%; transform: translateX(-50%);
-}
-.nav-eye {
-  width: 28px; height: 28px;
-  opacity: 0.55;
-  transition: opacity 0.3s;
-}
+.nav-center { position: absolute; left: 50%; transform: translateX(-50%); }
+.nav-eye { width: 28px; height: 28px; opacity: 0.55; transition: opacity 0.3s; }
 nav.scrolled .nav-eye { opacity: 0.75; }
 .nav-eye svg { width: 28px; height: 28px; }
 .nav-cta {
@@ -131,8 +125,7 @@ nav.scrolled .nav-eye { opacity: 0.75; }
   padding: 10px 24px;
   border-radius: 1px;
   transition: all 0.35s;
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
 }
 .nav-cta::before {
   content: '';
@@ -161,7 +154,6 @@ nav.scrolled .nav-eye { opacity: 0.75; }
   filter: brightness(0.55) saturate(0.7);
   transition: opacity 2s ease;
 }
-.hero-video-wrap video.fading { opacity: 0; }
 #heroVid2 { position: absolute; inset: 0; opacity: 0; }
 .hero-overlay {
   position: absolute; inset: 0; z-index: 1;
@@ -171,16 +163,16 @@ nav.scrolled .nav-eye { opacity: 0.75; }
 }
 .hero-glow {
   position: absolute; z-index: 1;
-  width: 600px; height: 600px;
+  width: 700px; height: 700px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(155,123,58,0.09) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(155,123,58,0.11) 0%, transparent 65%);
   top: 50%; left: 50%; transform: translate(-50%, -50%);
   animation: breathe 6s ease-in-out infinite;
   pointer-events: none;
 }
 @keyframes breathe {
   0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.7; }
-  50% { transform: translate(-50%,-50%) scale(1.12); opacity: 1; }
+  50% { transform: translate(-50%,-50%) scale(1.14); opacity: 1; }
 }
 .hero-content {
   position: relative; z-index: 2;
@@ -232,6 +224,11 @@ nav.scrolled .nav-eye { opacity: 0.75; }
 .hero-cta-row {
   display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
 }
+
+/* ============================================
+   ACTION BUTTONS — 3 SPECIAL BUTTONS
+   ============================================ */
+/* PRIMARY GOLD */
 .btn-primary {
   display: inline-flex; align-items: center; gap: 10px;
   background: linear-gradient(135deg, #B8962E 0%, #E8C97A 50%, #B8962E 100%);
@@ -252,6 +249,8 @@ nav.scrolled .nav-eye { opacity: 0.75; }
   transform: translateY(-2px);
   box-shadow: 0 16px 52px rgba(184,150,46,0.3), 0 0 0 1px rgba(232,201,122,0.2);
 }
+
+/* GHOST */
 .btn-ghost {
   display: inline-flex; align-items: center; gap: 8px;
   background: transparent;
@@ -265,16 +264,108 @@ nav.scrolled .nav-eye { opacity: 0.75; }
   transition: all 0.3s;
 }
 .btn-ghost:hover { border-color: rgba(155,123,58,0.5); color: var(--gold-light); }
-.hero-price {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic; font-size: 17px;
-  color: rgba(155,123,58,0.6);
+
+/* AGENDAMENTO RÁPIDO — ripple wave */
+.btn-agendar {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(155,123,58,0.12);
+  color: var(--gold-light);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  padding: 18px 42px;
+  border-radius: 1px;
+  text-decoration: none;
+  border: 0.5px solid var(--gold-dim);
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: all 0.35s;
 }
+.btn-agendar::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  background: rgba(201,168,76,0.22);
+  border-radius: 50%;
+  transform: translate(-50%,-50%);
+  transition: width 0.7s ease, height 0.7s ease, opacity 0.7s ease;
+  opacity: 0;
+}
+.btn-agendar:hover::after {
+  width: 400px; height: 400px; opacity: 1;
+}
+.btn-agendar:hover {
+  border-color: var(--gold-light);
+  box-shadow: 0 0 32px rgba(201,168,76,0.14);
+}
+
+/* CURSO DE ALINHAMENTO — gold shimmer */
+.btn-curso {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: linear-gradient(90deg, #0f0d08 0%, rgba(155,123,58,0.18) 50%, #0f0d08 100%);
+  background-size: 300% 100%;
+  color: var(--gold-pale);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  padding: 18px 42px;
+  border-radius: 1px;
+  text-decoration: none;
+  border: 0.5px solid rgba(201,168,76,0.4);
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  animation: shimmerCurso 3.5s ease-in-out infinite;
+  transition: all 0.35s;
+}
+@keyframes shimmerCurso {
+  0% { background-position: 100% 0; }
+  50% { background-position: 0% 0; }
+  100% { background-position: 100% 0; }
+}
+.btn-curso:hover {
+  border-color: var(--gold-light);
+  color: var(--gold-light);
+  box-shadow: 0 0 40px rgba(201,168,76,0.2);
+}
+
+/* LIVROS — glitch */
+.btn-livros {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: transparent;
+  color: var(--teal);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  padding: 18px 42px;
+  border-radius: 1px;
+  text-decoration: none;
+  border: 0.5px solid rgba(45,138,132,0.35);
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: all 0.35s;
+}
+.btn-livros:hover { border-color: var(--teal); box-shadow: 0 0 32px rgba(45,138,132,0.18); }
+.btn-livros.glitch { animation: glitchBtn 0.3s steps(2) both; }
+@keyframes glitchBtn {
+  0%  { transform: translate(0);   clip-path: inset(0 0 95% 0); }
+  20% { transform: translate(-3px, 1px); clip-path: inset(10% 0 60% 0); color: #ff4df0; }
+  40% { transform: translate(3px, -1px); clip-path: inset(50% 0 30% 0); color: #4dfff5; }
+  60% { transform: translate(-2px, 2px); clip-path: inset(70% 0 10% 0); color: var(--teal); }
+  80% { transform: translate(2px, -2px); clip-path: inset(20% 0 70% 0); }
+  100%{ transform: translate(0);   clip-path: inset(0 0 0 0); color: var(--teal); }
+}
+
+/* ============================================
+   HERO BUTTONS SECTION
+   ============================================ */
+.hero-btn-cluster {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.hero-btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 .hero-note {
   font-family: 'DM Mono', monospace;
   font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--text-dim);
 }
+
 .hero-scroll {
   position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
   z-index: 2;
@@ -298,6 +389,81 @@ nav.scrolled .nav-eye { opacity: 0.75; }
 @keyframes riseIn {
   from { opacity: 0; transform: translateY(28px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   WHATSAPP FLOAT — pulsating
+   ============================================ */
+.wa-float {
+  position: fixed; bottom: 32px; right: 32px; z-index: 300;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, #B8962E, #E8C97A);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 32px rgba(184,150,46,0.28);
+  text-decoration: none; transition: transform 0.3s;
+}
+.wa-float:hover { transform: scale(1.12); }
+.wa-float svg { width: 24px; height: 24px; fill: var(--bg); position: relative; z-index: 1; }
+/* Pulsating rings */
+.wa-float::before, .wa-float::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(201,168,76,0.55);
+  animation: waPulse 2.2s ease-out infinite;
+}
+.wa-float::after { animation-delay: 1.1s; }
+@keyframes waPulse {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  80%  { transform: scale(2.0); opacity: 0; }
+  100% { transform: scale(2.0); opacity: 0; }
+}
+
+/* ============================================
+   HERO FEATURE IMAGE — ZOOM + GLOW + VIGNETTE
+   ============================================ */
+#featImage {
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  max-width: 1140px; margin: 0 auto;
+}
+.feat-img-inner {
+  position: relative; overflow: hidden;
+  max-height: 680px;
+}
+.feat-img-inner img {
+  width: 100%; object-fit: cover;
+  display: block;
+  filter: brightness(0.82) saturate(0.85);
+  transform-origin: center center;
+  animation: zoomBreath 12s ease-in-out infinite alternate;
+  transition: filter 1s;
+}
+.feat-img-inner:hover img {
+  filter: brightness(0.95) saturate(1.05);
+}
+@keyframes zoomBreath {
+  from { transform: scale(1); }
+  to   { transform: scale(1.06); }
+}
+/* Gold glow overlay */
+.feat-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 50% 60% at 50% 40%, rgba(201,168,76,0.12) 0%, transparent 70%);
+  animation: featGlowPulse 5s ease-in-out infinite;
+}
+@keyframes featGlowPulse {
+  0%,100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+/* Vignette */
+.feat-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, rgba(10,9,5,0.7) 100%),
+    linear-gradient(to bottom, rgba(10,9,5,0.45) 0%, transparent 20%, transparent 75%, rgba(10,9,5,0.9) 100%);
 }
 
 /* ============================================
@@ -368,9 +534,7 @@ section { position: relative; z-index: 1; }
   display: grid; grid-template-columns: 1fr 1fr; gap: 3px;
   position: sticky; top: 100px;
 }
-.sobre-img-item {
-  overflow: hidden; position: relative;
-}
+.sobre-img-item { overflow: hidden; position: relative; }
 .sobre-img-item:first-child { grid-column: span 2; aspect-ratio: 16/9; }
 .sobre-img-item:not(:first-child) { aspect-ratio: 1; }
 .sobre-img-item img {
@@ -379,11 +543,7 @@ section { position: relative; z-index: 1; }
   filter: brightness(0.82) saturate(0.75);
   transition: filter 0.8s ease, transform 8s ease;
 }
-.sobre-img-item:hover img {
-  filter: brightness(0.95) saturate(0.9);
-  transform: scale(1.04);
-}
-.sobre-text { }
+.sobre-img-item:hover img { filter: brightness(0.95) saturate(0.9); transform: scale(1.04); }
 .sobre-quote {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
@@ -434,19 +594,14 @@ section { position: relative; z-index: 1; }
   transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
 }
 .serv-card.visible { opacity: 1; transform: translateY(0); }
-.serv-video-bg {
-  position: absolute; inset: 0; z-index: 0;
-}
+.serv-video-bg { position: absolute; inset: 0; z-index: 0; }
 .serv-video-bg video {
   width: 100%; height: 100%;
   object-fit: cover;
   filter: brightness(0.5) saturate(0.65);
   transition: filter 1.2s ease, transform 8s ease;
 }
-.serv-card:hover .serv-video-bg video {
-  filter: brightness(0.65) saturate(0.85);
-  transform: scale(1.04);
-}
+.serv-card:hover .serv-video-bg video { filter: brightness(0.65) saturate(0.85); transform: scale(1.04); }
 .serv-card-overlay {
   position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(to top, rgba(10,9,5,0.92) 0%, rgba(10,9,5,0.2) 55%, transparent 100%);
@@ -473,10 +628,7 @@ section { position: relative; z-index: 1; }
   line-height: 1.1;
 }
 .serv-card.intense .serv-title { color: var(--gold-light); }
-.serv-desc {
-  font-size: 14px; color: var(--text-muted);
-  line-height: 1.78; margin-bottom: 24px;
-}
+.serv-desc { font-size: 14px; color: var(--text-muted); line-height: 1.78; margin-bottom: 24px; }
 .serv-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; }
 .serv-tag {
   font-family: 'DM Mono', monospace;
@@ -515,7 +667,6 @@ section { position: relative; z-index: 1; }
 }
 .modal-overlay.open { display: flex; animation: fadeModal 0.5s ease both; }
 @keyframes fadeModal { from { opacity: 0; } to { opacity: 1; } }
-
 .modal-box {
   position: relative; width: 100%; max-width: 680px;
   background: var(--bg2);
@@ -580,23 +731,13 @@ section { position: relative; z-index: 1; }
   color: var(--gold-dim); margin-bottom: 16px; display: block;
 }
 .modal-list { list-style: none; display: grid; gap: 10px; margin-bottom: 36px; }
-.modal-list li {
-  display: flex; gap: 14px;
-  font-size: 13.5px; color: var(--text-muted);
-}
+.modal-list li { display: flex; gap: 14px; font-size: 13.5px; color: var(--text-muted); }
 .modal-list li::before { content: '—'; color: var(--gold-dim); flex-shrink: 0; }
-.modal-price {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(48px, 7vw, 70px);
-  font-weight: 300; color: var(--gold-light); line-height: 1; margin-bottom: 6px;
-}
 .modal-price-label {
   font-family: 'DM Mono', monospace;
   font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--text-dim); margin-bottom: 32px; display: block;
 }
-
-/* Intense modal extras */
 .modal-box.intense .modal-title { color: var(--gold-light); }
 .intense-ambience {
   position: absolute; inset: 0; pointer-events: none; z-index: 0;
@@ -634,10 +775,7 @@ section { position: relative; z-index: 1; }
   background: var(--bg3); border: 0.5px solid var(--gold-dim);
   transition: background 0.3s, box-shadow 0.3s;
 }
-.step.visible:hover::before {
-  background: var(--gold-dim);
-  box-shadow: 0 0 12px rgba(155,123,58,0.4);
-}
+.step.visible:hover::before { background: var(--gold-dim); box-shadow: 0 0 12px rgba(155,123,58,0.4); }
 .step-num {
   font-family: 'DM Mono', monospace;
   font-size: 10px; color: var(--gold-dim); letter-spacing: 0.1em; padding-top: 2px;
@@ -649,10 +787,9 @@ section { position: relative; z-index: 1; }
 .step-content p { font-size: 14px; color: var(--text-muted); line-height: 1.75; }
 
 /* ============================================
-   CENTROS — NEURAL INTERFACE
+   CENTROS
    ============================================ */
 #centros { background: var(--bg2); }
-.centros-wrap { margin-top: 48px; }
 .centros-grid {
   display: grid; grid-template-columns: repeat(2,1fr); gap: 2px;
   background: var(--gold-line-soft);
@@ -682,7 +819,7 @@ section { position: relative; z-index: 1; }
 .centro-text { font-size: 14px; color: var(--text-muted); line-height: 1.55; }
 
 /* ============================================
-   ANTENA — PERSPECTIVE SECTION
+   ANTENA
    ============================================ */
 #antena { background: var(--bg); overflow: hidden; position: relative; }
 #antena::before {
@@ -745,7 +882,7 @@ section { position: relative; z-index: 1; }
 }
 
 /* ============================================
-   DIFERENCIAIS — GLASS CARDS
+   DIFERENCIAIS
    ============================================ */
 #diferenciais { background: var(--bg2); }
 .diff-list {
@@ -762,44 +899,8 @@ section { position: relative; z-index: 1; }
 }
 .diff-item.visible { opacity: 1; }
 .diff-item:hover { background: var(--bg4); }
-.diff-check {
-  font-family: 'DM Mono', monospace; font-size: 10px;
-  color: var(--gold-dim); flex-shrink: 0;
-}
+.diff-check { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold-dim); flex-shrink: 0; }
 .diff-text { font-size: 14px; color: var(--text-muted); line-height: 1.55; }
-
-/* ============================================
-   GALERIA FOTOS
-   ============================================ */
-#galeria-fotos { background: var(--bg); }
-.foto-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); gap: 3px;
-  margin-top: 48px;
-  background: var(--gold-line-soft);
-  border: 0.5px solid var(--gold-line-soft);
-}
-.foto-item {
-  position: relative; overflow: hidden; cursor: pointer;
-}
-.foto-item:nth-child(1), .foto-item:nth-child(6) { grid-column: span 2; }
-.foto-item img {
-  width: 100%; height: 100%; min-height: 200px;
-  object-fit: cover;
-  filter: brightness(0.72) saturate(0.65);
-  transition: filter 1s ease, transform 8s ease;
-  display: block;
-}
-.foto-item:hover img {
-  filter: brightness(0.9) saturate(0.85);
-  transform: scale(1.05);
-}
-.foto-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(10,9,5,0.5) 0%, transparent 50%);
-  opacity: 0; transition: opacity 0.5s;
-}
-.foto-item:hover .foto-overlay { opacity: 1; }
 
 /* ============================================
    GALERIA VÍDEOS
@@ -820,14 +921,10 @@ section { position: relative; z-index: 1; }
   filter: brightness(0.65) saturate(0.65);
   transition: filter 1s ease, transform 8s ease;
 }
-.video-thumb:hover video {
-  filter: brightness(0.88) saturate(0.88);
-  transform: scale(1.04);
-}
+.video-thumb:hover video { filter: brightness(0.88) saturate(0.88); transform: scale(1.04); }
 .vthumb-cin {
   position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(to bottom,
-    rgba(10,9,5,0.3) 0%, transparent 25%, transparent 65%, rgba(10,9,5,0.65) 100%);
+  background: linear-gradient(to bottom, rgba(10,9,5,0.3) 0%, transparent 25%, transparent 65%, rgba(10,9,5,0.65) 100%);
 }
 .vthumb-overlay {
   position: absolute; inset: 0;
@@ -856,7 +953,6 @@ section { position: relative; z-index: 1; }
   color: rgba(237,232,223,0.45);
 }
 
-/* Inline video modal */
 .vid-modal {
   position: fixed; inset: 0; z-index: 1100;
   background: rgba(10,9,5,0.92);
@@ -935,16 +1031,6 @@ section { position: relative; z-index: 1; }
   font-family: 'DM Mono', monospace; font-size: 8.5px;
   letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 20px;
 }
-.inv-price {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(60px, 10vw, 88px); font-weight: 300;
-  color: var(--gold-light); line-height: 1; margin-bottom: 8px;
-  text-shadow: 0 0 60px rgba(201,168,76,0.15);
-}
-.inv-price-label {
-  font-family: 'Cormorant Garamond', serif; font-style: italic;
-  font-size: 15px; color: var(--text-dim); margin-bottom: 40px;
-}
 .inv-details { font-size: 13.5px; color: var(--text-muted); line-height: 1.85; margin-bottom: 32px; }
 .inv-details strong { color: var(--text); font-weight: 400; }
 .pix-box {
@@ -1006,6 +1092,25 @@ section { position: relative; z-index: 1; }
 .faq-item.open { border-color: rgba(155,123,58,0.25); }
 
 /* ============================================
+   ACTION BUTTONS CLUSTER (bottom of page)
+   ============================================ */
+.action-cluster {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 60px 40px;
+  position: relative; z-index: 2;
+  background: var(--bg3);
+  border-top: 0.5px solid var(--gold-line-soft);
+}
+.action-cluster-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--gold-dim); margin-bottom: 8px;
+}
+.action-btn-row {
+  display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+}
+
+/* ============================================
    FOOTER
    ============================================ */
 footer {
@@ -1020,25 +1125,6 @@ footer {
   color: var(--text-dim); line-height: 2.4;
 }
 .footer-line { width: 44px; height: 0.5px; background: var(--gold-line-soft); margin: 28px auto; }
-
-/* ============================================
-   FLOAT CTA
-   ============================================ */
-.wa-float {
-  position: fixed; bottom: 32px; right: 32px; z-index: 300;
-  width: 50px; height: 50px; border-radius: 50%;
-  background: linear-gradient(135deg, #B8962E, #E8C97A);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 8px 32px rgba(184,150,46,0.28);
-  text-decoration: none; transition: all 0.3s;
-  animation: floatPulse 3s ease-in-out infinite;
-}
-.wa-float:hover { transform: scale(1.1); box-shadow: 0 12px 48px rgba(184,150,46,0.42); }
-.wa-float svg { width: 22px; height: 22px; fill: var(--bg); }
-@keyframes floatPulse {
-  0%,100% { box-shadow: 0 8px 32px rgba(184,150,46,0.28); }
-  50% { box-shadow: 0 8px 52px rgba(184,150,46,0.48); }
-}
 
 /* ============================================
    REVEAL UTILITY
@@ -1059,19 +1145,17 @@ footer {
   .serv-card { min-height: 400px; }
   .centros-grid, .diff-list { grid-template-columns: 1fr; }
   .exp-grid { grid-template-columns: repeat(2,1fr); }
-  .foto-grid { grid-template-columns: repeat(2,1fr); }
-  .foto-item:nth-child(1), .foto-item:nth-child(6) { grid-column: span 1; }
   .video-grid { grid-template-columns: 1fr; }
   .dep-card { flex: 0 0 88%; }
   .inv-card { padding: 40px 24px; }
   .section-inner { padding: 80px 24px; }
   .wa-float { bottom: 20px; right: 20px; }
+  .action-btn-row { flex-direction: column; align-items: center; }
 }
 @media (max-width: 540px) {
   .exp-grid { grid-template-columns: 1fr; }
   .sobre-pillars { grid-template-columns: 1fr; }
   .modal-body { padding: 32px 24px 44px; }
-  .modal-images { grid-template-columns: repeat(3,1fr); }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -1083,6 +1167,9 @@ footer {
 </head>
 <body>
 
+<!-- PSYCHEDELIC CANVAS BACKGROUND -->
+<canvas id="psychCanvas"></canvas>
+
 <!-- Grain -->
 <div class="grain"></div>
 <!-- Cursor glow -->
@@ -1092,7 +1179,6 @@ footer {
 <nav id="mainNav">
   <a class="nav-logo" href="#">
     <div class="nav-logo-mark">
-      <!-- Fallback if logo.png doesn't exist: SVG mark -->
       <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="18" cy="18" r="17.5" stroke="rgba(155,123,58,0.35)" stroke-width="0.5"/>
         <circle cx="18" cy="18" r="11" stroke="rgba(155,123,58,0.2)" stroke-width="0.5"/>
@@ -1133,11 +1219,22 @@ footer {
     <div class="hero-line"></div>
     <p class="hero-sub">Uma experiência exclusiva de alinhamento vital, magnetismo humano e reorganização interna que auxilia você a acessar mais presença, clareza, energia, autoestima, confiança e conexão consigo mesmo.</p>
     <div class="hero-actions">
-      <div class="hero-cta-row">
-        <a href="#investimento" class="btn-primary">Agendar Minha Sessão</a>
-        <a href="#servicos" class="btn-ghost">Conhecer Experiências</a>
+      <div class="hero-btn-cluster">
+        <div class="hero-btn-row">
+          <a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C+gostaria+de+fazer+um+agendamento+r%C3%A1pido." class="btn-agendar" target="_blank" rel="noopener">
+            ⚡ Agendamento Rápido
+          </a>
+          <a href="https://akashahub.com.br/alignmentcourse/" class="btn-curso" target="_blank" rel="noopener">
+            ✦ Curso de Alinhamento
+          </a>
+        </div>
+        <div class="hero-btn-row">
+          <a href="#servicos" class="btn-ghost">Conhecer Experiências</a>
+          <a href="https://akashahub.com.br/livros" class="btn-livros" id="btnLivros" target="_blank" rel="noopener">
+            📚 Livros da Experiência
+          </a>
+        </div>
       </div>
-      <span class="hero-price">R$ 499 por sessão</span>
       <span class="hero-note">Atendimento individual e reservado</span>
     </div>
   </div>
@@ -1149,10 +1246,20 @@ footer {
 
 <div class="divider-center"><div class="divider-diamond"></div></div>
 
+<!-- ============ FEATURE IMAGE ============ -->
+<div id="featImage">
+  <div class="feat-img-inner">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707209/VID-20251215-WA0049_xd7kpd.jpg" alt="Alinhamento Vital" loading="lazy">
+    <div class="feat-glow"></div>
+    <div class="feat-vignette"></div>
+  </div>
+</div>
+
+<div class="divider-center"><div class="divider-diamond"></div></div>
+
 <!-- ============ SOBRE ============ -->
 <section id="sobre">
   <div class="sobre-grid">
-    <!-- Images col -->
     <div class="sobre-images reveal">
       <div class="sobre-img-item">
         <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1782468297/8c5587b1-a067-4842-bbe4-c9b85f59f6e8_xkmefk.png" alt="" loading="lazy">
@@ -1164,7 +1271,6 @@ footer {
         <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1782468297/05f34e9e-fc5c-44ef-8c19-72b48a0bc143_hkodnc.png" alt="" loading="lazy">
       </div>
     </div>
-    <!-- Text col -->
     <div class="sobre-text">
       <span class="section-tag reveal">A Experiência</span>
       <h2 class="section-title reveal">O que é<br><em>esta experiência?</em></h2>
@@ -1194,8 +1300,6 @@ footer {
     <span class="section-tag reveal">Experiências</span>
     <h2 class="section-title reveal">As duas<br><em>experiências</em></h2>
     <div class="serv-grid">
-
-      <!-- Card 01: Alinhamento -->
       <div class="serv-card" onclick="openAlinhModal()">
         <div class="serv-video-bg">
           <video autoplay muted loop playsinline
@@ -1216,8 +1320,6 @@ footer {
           <button class="serv-btn">Saber Mais →</button>
         </div>
       </div>
-
-      <!-- Card 02: Intense -->
       <div class="serv-card intense" onclick="openIntenseModal()">
         <div class="serv-video-bg">
           <video autoplay muted loop playsinline
@@ -1237,7 +1339,6 @@ footer {
           <button class="serv-btn">Experiência Exclusiva →</button>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -1270,8 +1371,6 @@ footer {
         <li>Estados de paz e silêncio interno</li>
       </ul>
       <div class="modal-divider"></div>
-      <div class="modal-price">R$ 499</div>
-      <span class="modal-price-label">sessão individual</span>
       <a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C+gostaria+de+agendar+uma+sess%C3%A3o+de+Alinhamento." class="btn-whatsapp" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         <span>Agendar esta sessão</span>
@@ -1315,8 +1414,6 @@ footer {
         <li>Sessão exclusiva individual</li>
       </ul>
       <div class="modal-divider"></div>
-      <div class="modal-price">R$ 599</div>
-      <span class="modal-price-label">sessão exclusiva individual</span>
       <a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C+gostaria+de+saber+mais+sobre+o+Alinhamento+Intense." class="btn-whatsapp" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         <span>Agendar esta experiência</span>
@@ -1469,7 +1566,6 @@ footer {
   </div>
 </section>
 
-<!-- Video modal inline -->
 <div class="vid-modal" id="vidModal">
   <div class="vid-modal-box">
     <button class="vid-modal-close" onclick="closeVid()">✕ Fechar</button>
@@ -1525,18 +1621,16 @@ footer {
 <!-- ============ INVESTIMENTO ============ -->
 <section id="investimento">
   <div class="section-inner narrow">
-    <span class="section-tag reveal" style="text-align:center;display:block;">Investimento</span>
-    <h2 class="section-title reveal" style="text-align:center;">Sessão<br><em>Individual</em></h2>
+    <span class="section-tag reveal" style="text-align:center;display:block;">Agendamento</span>
+    <h2 class="section-title reveal" style="text-align:center;">Reservar<br><em>Minha Sessão</em></h2>
     <div class="inv-card reveal">
-      <div class="inv-label">Valor por sessão</div>
-      <div class="inv-price">R$ 499</div>
-      <div class="inv-price-label">sessão individual</div>
-      <div class="inv-details">Para confirmar o agendamento:<br><strong>Pagamento antecipado de 30%</strong></div>
+      <div class="inv-label">Atendimento individual e reservado</div>
+      <div class="inv-details" style="margin-bottom:32px;">Para confirmar o agendamento:<br><strong>Pagamento antecipado de 30%</strong></div>
       <div class="pix-box">
         <span class="pix-label">Chave PIX</span>
         <span class="pix-key">fluxodinheirosabedoria@gmail.com</span>
       </div>
-      <a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C+gostaria+de+agendar+uma+sess%C3%A3o+de+Alinhamento+Vital." class="btn-whatsapp" target="_blank" rel="noopener">
+      <a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C+gostaria+de+agendar+uma+sess%C3%A3o+de+Alinhamento+Vital." class="btn-whatsapp" style="margin-bottom:16px;" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         <span>Agendar pelo WhatsApp</span>
       </a>
@@ -1564,6 +1658,22 @@ footer {
 
 <div class="divider-center"><div class="divider-diamond"></div></div>
 
+<!-- ============ ACTION CLUSTER ============ -->
+<div class="action-cluster">
+  <span class="action-cluster-title">Explore o Universo Akasha</span>
+  <div class="action-btn-row">
+    <a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C+gostaria+de+fazer+um+agendamento+r%C3%A1pido." class="btn-agendar" target="_blank" rel="noopener">
+      ⚡ Agendamento Rápido
+    </a>
+    <a href="https://akashahub.com.br/alignmentcourse/" class="btn-curso" target="_blank" rel="noopener">
+      ✦ Curso de Alinhamento
+    </a>
+    <a href="https://akashahub.com.br/livros" class="btn-livros" id="btnLivros2" target="_blank" rel="noopener">
+      📚 Livros da Experiência
+    </a>
+  </div>
+</div>
+
 <!-- ============ FOOTER ============ -->
 <footer>
   <div class="footer-eye">
@@ -1581,12 +1691,113 @@ footer {
   </div>
 </footer>
 
-<!-- Float WA -->
+<!-- Float WA — pulsating -->
 <a class="wa-float" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C+gostaria+de+agendar+uma+sess%C3%A3o+de+Alinhamento+Vital." target="_blank" rel="noopener" aria-label="WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
 <script>
+/* ============================================
+   PSYCHEDELIC CANVAS — HYPNOTIC BACKGROUND
+   ============================================ */
+(function() {
+  const canvas = document.getElementById('psychCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Lissajous-style flowing orbs + sine field
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Dark base radial
+    const bg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.8);
+    bg.addColorStop(0, 'rgba(20,10,0,0)');
+    bg.addColorStop(1, 'rgba(0,0,0,0.5)');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    const speed = 0.0006;
+
+    // --- 3 large drifting gradient orbs ---
+    const orbs = [
+      { cx: W*0.5 + Math.sin(t*0.7)*W*0.3,  cy: H*0.5 + Math.cos(t*0.5)*H*0.3,  r: Math.min(W,H)*0.52, c0: `rgba(155,90,20,0.22)`,  c1: `rgba(80,20,60,0.0)` },
+      { cx: W*0.3 + Math.cos(t*0.4)*W*0.25, cy: H*0.3 + Math.sin(t*0.6)*H*0.28, r: Math.min(W,H)*0.38, c0: `rgba(60,20,100,0.18)`,  c1: `rgba(0,0,0,0)` },
+      { cx: W*0.7 + Math.sin(t*0.55)*W*0.2, cy: H*0.7 + Math.cos(t*0.45)*H*0.25,r: Math.min(W,H)*0.44, c0: `rgba(100,50,10,0.2)`,  c1: `rgba(0,0,0,0)` },
+    ];
+    orbs.forEach(o => {
+      const g = ctx.createRadialGradient(o.cx, o.cy, 0, o.cx, o.cy, o.r);
+      g.addColorStop(0, o.c0); g.addColorStop(1, o.c1);
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    });
+
+    // --- Sine wave mesh (horizontal lines flowing) ---
+    const lineCount = 28;
+    const amp = H * 0.06;
+    ctx.lineWidth = 0.6;
+    for (let i = 0; i < lineCount; i++) {
+      const yBase = (i / lineCount) * H;
+      const phase = t * 0.8 + i * 0.38;
+      const hue = (i / lineCount) * 60 + 20 + Math.sin(t*0.3 + i*0.2)*20;
+      ctx.strokeStyle = `hsla(${hue}, 70%, 55%, ${0.055 + Math.sin(phase)*0.03})`;
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 4) {
+        const y = yBase + Math.sin(x * 0.012 + phase) * amp
+                        + Math.sin(x * 0.006 + phase * 0.6) * amp * 0.5;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // --- Rotating mandala rings ---
+    const cx2 = W/2, cy2 = H/2;
+    const rings = 7;
+    for (let r = 0; r < rings; r++) {
+      const radius = (r+1) * Math.min(W,H) * 0.065;
+      const spokes = 6 + r * 2;
+      const rot = t * (r % 2 === 0 ? 0.2 : -0.15) + r;
+      const hue2 = 30 + r*8 + Math.sin(t*0.4)*20;
+      ctx.strokeStyle = `hsla(${hue2}, 60%, 55%, ${0.04 + Math.sin(t*0.5+r)*0.02})`;
+      ctx.lineWidth = 0.5;
+      for (let s = 0; s < spokes; s++) {
+        const a = (s / spokes) * Math.PI * 2 + rot;
+        const x0 = cx2 + Math.cos(a) * radius * 0.2;
+        const y0 = cy2 + Math.sin(a) * radius * 0.2;
+        const x1 = cx2 + Math.cos(a) * radius;
+        const y1 = cy2 + Math.sin(a) * radius;
+        ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, radius, 0, Math.PI*2);
+      ctx.strokeStyle = `hsla(${hue2+10}, 55%, 50%, 0.03)`;
+      ctx.stroke();
+    }
+
+    // --- Small floating particles ---
+    const particles = 18;
+    for (let p = 0; p < particles; p++) {
+      const px = (Math.sin(t*0.3 + p*2.1) * 0.5 + 0.5) * W;
+      const py = (Math.cos(t*0.25 + p*1.7) * 0.5 + 0.5) * H;
+      const pr = 1.5 + Math.sin(t*0.6+p)*1;
+      const ph = 25 + p*8 + Math.sin(t+p)*15;
+      ctx.beginPath();
+      ctx.arc(px, py, pr, 0, Math.PI*2);
+      ctx.fillStyle = `hsla(${ph}, 70%, 65%, ${0.25 + Math.sin(t*0.8+p)*0.15})`;
+      ctx.fill();
+    }
+
+    t += speed * 16;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
 /* ============================================
    NAV SCROLL
    ============================================ */
@@ -1629,39 +1840,39 @@ let heroActive = 1;
 
 function crossfadeHero() {
   if (heroActive === 1) {
-    vid2.style.opacity = '0';
-    vid2.style.transition = 'opacity 0s';
-    vid2.play();
+    vid2.style.opacity = '0'; vid2.style.transition = 'opacity 0s'; vid2.play();
     setTimeout(() => {
-      vid2.style.transition = 'opacity 2s ease';
-      vid2.style.opacity = '1';
-      vid1.style.transition = 'opacity 2s ease';
-      vid1.style.opacity = '0';
+      vid2.style.transition = 'opacity 2s ease'; vid2.style.opacity = '1';
+      vid1.style.transition = 'opacity 2s ease'; vid1.style.opacity = '0';
       heroActive = 2;
     }, 100);
   } else {
-    vid1.style.opacity = '0';
-    vid1.style.transition = 'opacity 0s';
-    vid1.play();
+    vid1.style.opacity = '0'; vid1.style.transition = 'opacity 0s'; vid1.play();
     setTimeout(() => {
-      vid1.style.transition = 'opacity 2s ease';
-      vid1.style.opacity = '1';
-      vid2.style.transition = 'opacity 2s ease';
-      vid2.style.opacity = '0';
+      vid1.style.transition = 'opacity 2s ease'; vid1.style.opacity = '1';
+      vid2.style.transition = 'opacity 2s ease'; vid2.style.opacity = '0';
       heroActive = 1;
     }, 100);
   }
 }
+setTimeout(() => { vid1.removeAttribute('loop'); vid1.addEventListener('ended', crossfadeHero); }, 500);
 
-vid1.addEventListener('ended', crossfadeHero);
-// If autoplay, listen for timeupdate to crossfade near end
-function setupCrossfade(videoEl) {
-  videoEl.removeAttribute('loop');
-  videoEl.addEventListener('ended', crossfadeHero);
+/* ============================================
+   GLITCH EFFECT — LIVROS BUTTON
+   ============================================ */
+function triggerGlitch(id) {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  btn.classList.remove('glitch');
+  void btn.offsetWidth; // reflow
+  btn.classList.add('glitch');
+  setTimeout(() => btn.classList.remove('glitch'), 400);
 }
-setTimeout(() => {
-  setupCrossfade(vid1);
-}, 500);
+// Periodic glitch on livros buttons
+setInterval(() => { triggerGlitch('btnLivros'); triggerGlitch('btnLivros2'); }, 3800);
+document.querySelectorAll('[id^="btnLivros"]').forEach(b => {
+  b.addEventListener('mouseenter', () => { b.classList.remove('glitch'); void b.offsetWidth; b.classList.add('glitch'); });
+});
 
 /* ============================================
    MODAL ALINHAMENTO
@@ -1694,7 +1905,7 @@ document.getElementById('intenseModal').addEventListener('click', function(e) {
 });
 
 /* ============================================
-   VIDEO MODAL (gallery)
+   VIDEO MODAL
    ============================================ */
 function openVid(src) {
   document.getElementById('vidModalInner').innerHTML =
@@ -1740,7 +1951,6 @@ function goTo(n) {
   track.style.transform = 'translateX(-' + (cur * w) + 'px)';
   depNav.querySelectorAll('.dep-dot').forEach((d, i) => d.classList.toggle('active', i === cur));
 }
-
 setInterval(() => goTo((cur + 1) % total), 4500);
 window.addEventListener('resize', () => goTo(cur));
 
