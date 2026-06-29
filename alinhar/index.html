@@ -984,12 +984,31 @@ section { position: relative; z-index: 1; }
   flex: 0 0 calc(50% - 1.5px);
   background: var(--bg2); border: 0.5px solid var(--gold-line-soft); overflow: hidden;
 }
+.dep-card-img-wrap {
+  position: relative; overflow: hidden; cursor: zoom-in;
+}
 .dep-card-img {
   width: 100%; aspect-ratio: 4/3; object-fit: cover;
   filter: brightness(0.72) saturate(0.65); display: block;
-  transition: filter 0.6s;
+  transition: filter 0.6s, transform 0.6s;
 }
-.dep-card:hover .dep-card-img { filter: brightness(0.82) saturate(0.75); }
+.dep-card-img-wrap:hover .dep-card-img {
+  filter: brightness(0.88) saturate(0.82);
+  transform: scale(1.03);
+}
+.dep-card-zoom-hint {
+  position: absolute; bottom: 10px; right: 12px;
+  background: rgba(10,9,5,0.72);
+  border: 0.5px solid rgba(201,168,76,0.3);
+  color: var(--gold-dim);
+  font-family: 'DM Mono', monospace;
+  font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 5px 9px;
+  opacity: 0; transition: opacity 0.3s;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+}
+.dep-card-img-wrap:hover .dep-card-zoom-hint { opacity: 1; }
 .dep-card-text { padding: 28px 30px; }
 .dep-quote-mark {
   font-family: 'Cormorant Garamond', serif; font-size: 48px;
@@ -1157,7 +1176,106 @@ footer {
   .sobre-pillars { grid-template-columns: 1fr; }
   .modal-body { padding: 32px 24px 44px; }
 }
-@media (prefers-reduced-motion: reduce) {
+
+/* ============================================
+   LIGHTBOX DEPOIMENTOS
+   ============================================ */
+.dep-lightbox {
+  position: fixed; inset: 0; z-index: 1200;
+  background: rgba(10,9,5,0.96);
+  display: none; align-items: center; justify-content: center;
+  backdrop-filter: blur(24px) saturate(1.2);
+  padding: 20px;
+}
+.dep-lightbox.open { display: flex; animation: fadeModal 0.35s ease both; }
+.dep-lb-inner {
+  position: relative;
+  max-width: min(90vw, 640px);
+  width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.dep-lb-img {
+  width: 100%; max-height: 82vh;
+  object-fit: contain;
+  border: 0.5px solid var(--gold-line);
+  box-shadow: 0 0 0 0.5px rgba(201,168,76,0.06), 0 32px 80px rgba(10,9,5,0.7);
+  display: block;
+  animation: lbImgIn 0.4s var(--ease-out) both;
+}
+@keyframes lbImgIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.dep-lb-close {
+  position: fixed; top: 22px; right: 28px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.15em;
+  color: var(--text-dim); cursor: pointer;
+  background: none; border: none; transition: color 0.2s;
+  z-index: 2;
+}
+.dep-lb-close:hover { color: var(--gold-light); }
+.dep-lb-arrow {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  font-size: 22px; color: var(--gold-dim);
+  background: rgba(10,9,5,0.6); border: 0.5px solid var(--gold-line-soft);
+  width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.25s; z-index: 2;
+}
+.dep-lb-arrow:hover { color: var(--gold-light); border-color: var(--gold-dim); background: rgba(155,123,58,0.1); }
+.dep-lb-prev { left: 16px; }
+.dep-lb-next { right: 16px; }
+.dep-lb-counter {
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+/* ============================================
+   POST-DEPOIMENTOS IMAGE — ZOOM + LIGHT
+   ============================================ */
+#postDepImage {
+  position: relative; overflow: hidden;
+  background: #000;
+  max-width: 1140px; margin: 0 auto;
+}
+.post-dep-inner {
+  position: relative; overflow: hidden;
+  max-height: 720px;
+}
+.post-dep-inner img {
+  width: 100%; object-fit: cover; display: block;
+  filter: brightness(0.8) saturate(0.85);
+  transform-origin: center center;
+  animation: postDepPulse 7s ease-in-out infinite;
+  transition: filter 1s;
+}
+.post-dep-inner:hover img {
+  filter: brightness(1) saturate(1.1);
+}
+@keyframes postDepPulse {
+  0%   { transform: scale(1);    filter: brightness(0.78) saturate(0.82); }
+  30%  { transform: scale(1.05); filter: brightness(0.88) saturate(0.95); }
+  50%  { transform: scale(1.08); filter: brightness(0.95) saturate(1.05); }
+  70%  { transform: scale(1.05); filter: brightness(0.88) saturate(0.95); }
+  100% { transform: scale(1);    filter: brightness(0.78) saturate(0.82); }
+}
+.post-dep-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 60% 55% at 50% 42%, rgba(201,168,76,0.22) 0%, transparent 70%);
+  animation: postDepGlowPulse 7s ease-in-out infinite;
+}
+@keyframes postDepGlowPulse {
+  0%,100% { opacity: 0.5; transform: scale(0.95); }
+  50%     { opacity: 1;   transform: scale(1.05); }
+}
+.post-dep-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 80% at 50% 50%, transparent 28%, rgba(10,9,5,0.65) 100%),
+    linear-gradient(to bottom, rgba(10,9,5,0.5) 0%, transparent 18%, transparent 72%, rgba(10,9,5,0.92) 100%);
+}
+
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
@@ -1179,25 +1297,10 @@ footer {
 <nav id="mainNav">
   <a class="nav-logo" href="#">
     <div class="nav-logo-mark">
-      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="18" cy="18" r="17.5" stroke="rgba(155,123,58,0.35)" stroke-width="0.5"/>
-        <circle cx="18" cy="18" r="11" stroke="rgba(155,123,58,0.2)" stroke-width="0.5"/>
-        <path d="M18 7 L18 29 M7 18 L29 18" stroke="rgba(155,123,58,0.25)" stroke-width="0.5"/>
-        <circle cx="18" cy="18" r="3" fill="rgba(155,123,58,0.5)"/>
-      </svg>
+      <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1782705303/hero-mandala_kvao9w.webp" alt="Akasha Hub" style="width:34px;height:34px;object-fit:contain;filter:brightness(0.88) sepia(0.25) saturate(1.3);transition:filter 0.4s;" onmouseover="this.style.filter='brightness(1.05) sepia(0.05) saturate(1.5)'" onmouseout="this.style.filter='brightness(0.88) sepia(0.25) saturate(1.3)'">
     </div>
     <span>Akasha Hub</span>
   </a>
-  <div class="nav-center">
-    <div class="nav-eye">
-      <svg viewBox="0 0 28 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 9 C5 2, 23 2, 27 9 C23 16, 5 16, 1 9Z" stroke="rgba(155,123,58,0.5)" stroke-width="0.5"/>
-        <circle cx="14" cy="9" r="4" stroke="rgba(155,123,58,0.4)" stroke-width="0.5"/>
-        <circle cx="14" cy="9" r="1.5" fill="rgba(155,123,58,0.55)"/>
-        <circle cx="14" cy="9" r="6.5" stroke="rgba(155,123,58,0.15)" stroke-width="0.5"/>
-      </svg>
-    </div>
-  </div>
   <a href="#investimento" class="nav-cta">Agendar Sessão</a>
 </nav>
 
@@ -1583,31 +1686,52 @@ footer {
     <div class="dep-carousel reveal">
       <div class="dep-track" id="depTrack">
         <div class="dep-card">
-          <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782431265/Screenshot_20260623_122600_Instagram_zkarto.png" alt="" loading="lazy">
+          <div class="dep-card-img-wrap" onclick="openDepLightbox(0)">
+            <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782431265/Screenshot_20260623_122600_Instagram_zkarto.png" alt="" loading="lazy">
+            <span class="dep-card-zoom-hint">ver completo</span>
+          </div>
           <div class="dep-card-text"><span class="dep-quote-mark">"</span><p class="dep-text">Você é muito maravilhoso.</p><span class="dep-author">Depoimento</span></div>
         </div>
         <div class="dep-card">
-          <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782432501/Screenshot_20260623_122438_Instagram_quvveq.png" alt="" loading="lazy">
+          <div class="dep-card-img-wrap" onclick="openDepLightbox(1)">
+            <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782432501/Screenshot_20260623_122438_Instagram_quvveq.png" alt="" loading="lazy">
+            <span class="dep-card-zoom-hint">ver completo</span>
+          </div>
           <div class="dep-card-text"><span class="dep-quote-mark">"</span><p class="dep-text">Recomendo. Se pudesse faria toda semana.</p><span class="dep-author">Depoimento</span></div>
         </div>
         <div class="dep-card">
-          <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782432502/Screenshot_20260623_122352_Instagram_nkojvj.png" alt="" loading="lazy">
+          <div class="dep-card-img-wrap" onclick="openDepLightbox(2)">
+            <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782432502/Screenshot_20260623_122352_Instagram_nkojvj.png" alt="" loading="lazy">
+            <span class="dep-card-zoom-hint">ver completo</span>
+          </div>
           <div class="dep-card-text"><span class="dep-quote-mark">"</span><p class="dep-text">Gratidão intensa.</p><span class="dep-author">Depoimento</span></div>
         </div>
         <div class="dep-card">
-          <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782432502/Screenshot_20260623_122305_Instagram_1_qky04s.png" alt="" loading="lazy">
+          <div class="dep-card-img-wrap" onclick="openDepLightbox(3)">
+            <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782432502/Screenshot_20260623_122305_Instagram_1_qky04s.png" alt="" loading="lazy">
+            <span class="dep-card-zoom-hint">ver completo</span>
+          </div>
           <div class="dep-card-text"><span class="dep-quote-mark">"</span><p class="dep-text">Você é luz na vida.</p><span class="dep-author">Depoimento</span></div>
         </div>
         <div class="dep-card">
-          <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782432502/Screenshot_20260623_122254_Instagram_j3ywid.png" alt="" loading="lazy">
+          <div class="dep-card-img-wrap" onclick="openDepLightbox(4)">
+            <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782432502/Screenshot_20260623_122254_Instagram_j3ywid.png" alt="" loading="lazy">
+            <span class="dep-card-zoom-hint">ver completo</span>
+          </div>
           <div class="dep-card-text"><span class="dep-quote-mark">"</span><p class="dep-text">Agradeço profundamente pela experiência magnífica.</p><span class="dep-author">Depoimento</span></div>
         </div>
         <div class="dep-card">
-          <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782432503/Screenshot_20260623_122225_Instagram_yzhubm.png" alt="" loading="lazy">
+          <div class="dep-card-img-wrap" onclick="openDepLightbox(5)">
+            <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782432503/Screenshot_20260623_122225_Instagram_yzhubm.png" alt="" loading="lazy">
+            <span class="dep-card-zoom-hint">ver completo</span>
+          </div>
           <div class="dep-card-text"><span class="dep-quote-mark">"</span><p class="dep-text">Transformador.</p><span class="dep-author">Depoimento</span></div>
         </div>
         <div class="dep-card">
-          <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782431265/Screenshot_20260623_122917_Instagram_tyx9la.png" alt="" loading="lazy">
+          <div class="dep-card-img-wrap" onclick="openDepLightbox(6)">
+            <img class="dep-card-img" src="https://res.cloudinary.com/dcbarseus/image/upload/v1782431265/Screenshot_20260623_122917_Instagram_tyx9la.png" alt="" loading="lazy">
+            <span class="dep-card-zoom-hint">ver completo</span>
+          </div>
           <div class="dep-card-text"><span class="dep-quote-mark">"</span><p class="dep-text">Experiência única.</p><span class="dep-author">Depoimento</span></div>
         </div>
       </div>
@@ -1615,6 +1739,28 @@ footer {
     </div>
   </div>
 </section>
+
+<!-- LIGHTBOX DEPOIMENTOS -->
+<div class="dep-lightbox" id="depLightbox">
+  <button class="dep-lb-close" onclick="closeDepLightbox()">✕</button>
+  <button class="dep-lb-arrow dep-lb-prev" onclick="depLbNav(-1)">&#8592;</button>
+  <button class="dep-lb-arrow dep-lb-next" onclick="depLbNav(1)">&#8594;</button>
+  <div class="dep-lb-inner">
+    <img class="dep-lb-img" id="depLbImg" src="" alt="">
+    <div class="dep-lb-counter" id="depLbCounter"></div>
+  </div>
+</div>
+
+<div class="divider-center"><div class="divider-diamond"></div></div>
+
+<!-- ============ POST-DEPOIMENTOS IMAGE ============ -->
+<div id="postDepImage">
+  <div class="post-dep-inner">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707219/grok_video_2025-12-23-18-06-00_xje5dc.jpg" alt="Alinhamento Vital" loading="lazy">
+    <div class="post-dep-glow"></div>
+    <div class="post-dep-vignette"></div>
+  </div>
+</div>
 
 <div class="divider-center"><div class="divider-diamond"></div></div>
 
@@ -1926,7 +2072,7 @@ document.getElementById('vidModal').addEventListener('click', function(e) {
    ESCAPE KEY
    ============================================ */
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') { closeAlinhModal(); closeIntenseModal(); closeVid(); }
+  if (e.key === 'Escape') { closeAlinhModal(); closeIntenseModal(); closeVid(); closeDepLightbox(); }
 });
 
 /* ============================================
@@ -1954,9 +2100,57 @@ function goTo(n) {
 setInterval(() => goTo((cur + 1) % total), 4500);
 window.addEventListener('resize', () => goTo(cur));
 
+
 /* ============================================
-   FAQ
+   LIGHTBOX DEPOIMENTOS
    ============================================ */
+const depImages = [
+  'https://res.cloudinary.com/dcbarseus/image/upload/v1782431265/Screenshot_20260623_122600_Instagram_zkarto.png',
+  'https://res.cloudinary.com/dcbarseus/image/upload/v1782432501/Screenshot_20260623_122438_Instagram_quvveq.png',
+  'https://res.cloudinary.com/dcbarseus/image/upload/v1782432502/Screenshot_20260623_122352_Instagram_nkojvj.png',
+  'https://res.cloudinary.com/dcbarseus/image/upload/v1782432502/Screenshot_20260623_122305_Instagram_1_qky04s.png',
+  'https://res.cloudinary.com/dcbarseus/image/upload/v1782432502/Screenshot_20260623_122254_Instagram_j3ywid.png',
+  'https://res.cloudinary.com/dcbarseus/image/upload/v1782432503/Screenshot_20260623_122225_Instagram_yzhubm.png',
+  'https://res.cloudinary.com/dcbarseus/image/upload/v1782431265/Screenshot_20260623_122917_Instagram_tyx9la.png'
+];
+let depLbCurrent = 0;
+
+function openDepLightbox(idx) {
+  depLbCurrent = idx;
+  renderDepLb();
+  document.getElementById('depLightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDepLightbox() {
+  document.getElementById('depLightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function depLbNav(dir) {
+  depLbCurrent = (depLbCurrent + dir + depImages.length) % depImages.length;
+  renderDepLb();
+}
+function renderDepLb() {
+  const img = document.getElementById('depLbImg');
+  img.style.animation = 'none';
+  void img.offsetWidth;
+  img.style.animation = '';
+  img.src = depImages[depLbCurrent];
+  document.getElementById('depLbCounter').textContent = (depLbCurrent + 1) + ' / ' + depImages.length;
+}
+document.getElementById('depLightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeDepLightbox();
+});
+// Swipe support for mobile
+(function() {
+  const lb = document.getElementById('depLightbox');
+  let startX = 0;
+  lb.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 50) depLbNav(dx < 0 ? 1 : -1);
+  });
+})();
+
 function toggleFaq(el) {
   const item = el.parentElement;
   const isOpen = item.classList.contains('open');
