@@ -1,966 +1,633 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akasha Legacy 𓂀 Soberania Digital</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #c8a04a;
-            --primary-foreground: #06050f;
-            --background: #06050f;
-            --foreground: #f7f3ec;
-            --card: #09080e;
-            --card-foreground: #f7f3ec;
-            --accent: #6b4fa0;
-            --muted: rgba(247, 243, 236, 0.4);
-            --border: rgba(200, 160, 74, 0.22);
-        }
-
-        body {
-            background: var(--background);
-            color: var(--foreground);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Efeito Hipnótico de Fundo */
-        .hypnotic-bg {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .hypnotic-bg::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(200, 160, 74, 0.08) 0%, var(--background) 50%, rgba(107, 79, 160, 0.06) 100%);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        .hypnotic-bg::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(200, 160, 74, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(107, 79, 160, 0.12) 0%, transparent 50%);
-            animation: float 8s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(20px); }
-        }
-
-        @keyframes fade-in {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Navigation */
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 40;
-            backdrop-filter: blur(10px);
-            background: rgba(6, 5, 15, 0.5);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-        }
-
-        .nav-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: var(--primary);
-            font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
-        }
-
-        .lang-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--foreground);
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-family: 'Courier New', monospace;
-            transition: all 0.3s ease;
-        }
-
-        .lang-btn:hover {
-            border-color: var(--primary);
-            background: rgba(200, 160, 74, 0.1);
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            animation: fade-in 0.8s ease-out;
-        }
-
-        .hero-content {
-            max-width: 56rem;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .hero-tag {
-            font-size: 0.875rem;
-            font-family: 'Courier New', monospace;
-            color: var(--primary);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            font-weight: bold;
-            line-height: 1.2;
-        }
-
-        .hero-title .highlight {
-            color: var(--primary);
-        }
-
-        .hero-subtitle {
-            font-size: 1.125rem;
-            color: var(--muted);
-            max-width: 42rem;
-            margin: 0 auto;
-        }
-
-        .hero-ctas {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .hero-ctas a {
-            padding: 0.75rem 2rem;
-            font-family: 'Courier New', monospace;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border-radius: 4px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            display: inline-block;
-            max-width: 300px;
-            margin: 0 auto;
-        }
-
-        .cta-primary {
-            background: var(--primary);
-            color: var(--primary-foreground);
-        }
-
-        .cta-primary:hover {
-            background: rgba(200, 160, 74, 0.9);
-            transform: scale(1.05);
-        }
-
-        .cta-secondary {
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .cta-secondary:hover {
-            background: rgba(200, 160, 74, 0.1);
-        }
-
-        /* Plans Section */
-        .plans-section {
-            padding: 5rem 2rem;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .section-tag {
-            font-size: 0.875rem;
-            font-family: 'Courier New', monospace;
-            color: var(--primary);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .section-title {
-            font-size: clamp(2rem, 6vw, 3rem);
-            font-weight: bold;
-        }
-
-        .section-title .highlight {
-            color: var(--primary);
-        }
-
-        .section-subtitle {
-            color: var(--muted);
-            max-width: 42rem;
-            margin: 0 auto;
-        }
-
-        .plans-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .plan-card {
-            position: relative;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            background: linear-gradient(135deg, var(--card) 0%, rgba(9, 8, 14, 0.8) 100%);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            transition: all 0.5s ease;
-        }
-
-        .plan-card.highlighted {
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 40px rgba(200, 160, 74, 0.3);
-            transform: scale(1.05);
-        }
-
-        .plan-card:hover {
-            border-color: rgba(200, 160, 74, 0.5);
-            box-shadow: 0 0 20px rgba(200, 160, 74, 0.1);
-        }
-
-        .plan-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.75rem;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .plan-badge.highlighted {
-            color: var(--primary);
-        }
-
-        .plan-badge.muted {
-            color: var(--muted);
-        }
-
-        .recommended-badge {
-            margin-left: auto;
-            background: rgba(200, 160, 74, 0.2);
-            color: var(--primary);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.625rem;
-        }
-
-        .plan-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-        }
-
-        .plan-period {
-            font-size: 0.875rem;
-            font-family: 'Courier New', monospace;
-            color: var(--primary);
-        }
-
-        .plan-description {
-            font-size: 0.875rem;
-            color: var(--muted);
-            line-height: 1.6;
-        }
-
-        .plan-divider {
-            border-top: 1px solid rgba(200, 160, 74, 0.2);
-            padding-top: 1rem;
-        }
-
-        .payment-label {
-            font-size: 0.75rem;
-            font-family: 'Courier New', monospace;
-            color: var(--muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .payment-text {
-            font-size: 0.875rem;
-            color: var(--foreground);
-        }
-
-        .plan-ctas {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: auto;
-        }
-
-        .plan-ctas a, .plan-ctas button {
-            flex: 1;
-            padding: 0.5rem;
-            font-family: 'Courier New', monospace;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .plan-ctas .btn-primary {
-            background: var(--primary);
-            color: var(--primary-foreground);
-        }
-
-        .plan-ctas .btn-primary:hover {
-            background: rgba(200, 160, 74, 0.9);
-            transform: scale(1.05);
-        }
-
-        .plan-ctas .btn-secondary {
-            background: rgba(107, 79, 160, 0.2);
-            color: var(--primary);
-            border: 1px solid rgba(200, 160, 74, 0.5);
-        }
-
-        .plan-ctas .btn-secondary:hover {
-            background: rgba(200, 160, 74, 0.1);
-        }
-
-        /* Mentor Section */
-        .mentor-section {
-            padding: 5rem 2rem;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        .mentor-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        @media (max-width: 768px) {
-            .mentor-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .mentor-image {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .mentor-image img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 40px rgba(200, 160, 74, 0.2);
-        }
-
-        .mentor-content h3 {
-            font-size: 0.875rem;
-            font-family: 'Courier New', monospace;
-            color: var(--primary);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        .mentor-content h2 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .mentor-content p {
-            color: var(--muted);
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 50;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 0 60px rgba(200, 160, 74, 0.2);
-        }
-
-        .modal-header {
-            padding: 2rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .modal-header-content h2 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-header-content .level {
-            font-size: 0.75rem;
-            font-family: 'Courier New', monospace;
-            color: var(--primary);
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-header-content .period {
-            font-size: 0.875rem;
-            font-family: 'Courier New', monospace;
-            color: var(--primary);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--foreground);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            width: 2rem;
-            height: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-body {
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .modal-section h3 {
-            font-size: 0.875rem;
-            font-family: 'Courier New', monospace;
-            color: var(--primary);
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        .modal-section ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .modal-section li {
-            display: flex;
-            gap: 0.75rem;
-            font-size: 0.875rem;
-            color: var(--muted);
-        }
-
-        .modal-section li::before {
-            content: '◆';
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-
-        .modal-payment {
-            background: rgba(107, 79, 160, 0.1);
-            border: 1px solid rgba(107, 79, 160, 0.3);
-            border-radius: 4px;
-            padding: 1rem;
-        }
-
-        .modal-payment .payment-options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .modal-payment .payment-option {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--muted);
-        }
-
-        .modal-payment .payment-option::before {
-            content: '●';
-            color: var(--primary);
-        }
-
-        .modal-cta {
-            display: block;
-            width: 100%;
-            padding: 0.75rem;
-            background: var(--primary);
-            color: var(--primary-foreground);
-            font-family: 'Courier New', monospace;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .modal-cta:hover {
-            background: rgba(200, 160, 74, 0.9);
-        }
-
-        /* Footer */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 3rem 2rem;
-            backdrop-filter: blur(10px);
-            background: rgba(6, 5, 15, 0.5);
-            text-align: center;
-        }
-
-        footer p {
-            font-size: 0.875rem;
-            color: var(--muted);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .plans-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .plan-card.highlighted {
-                transform: scale(1);
-            }
-
-            .hero-ctas {
-                flex-direction: column;
-            }
-
-            .hero-ctas a {
-                width: 100%;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Legacy 𓂀 Arquitetura de Essência e Autoridade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#06050f;
+    --bg-card:#0b0a15;
+    --bg-card-2:#0e0c1a;
+    --fg:#f7f3ec;
+    --muted:rgba(247,243,236,.46);
+    --muted-2:rgba(247,243,236,.68);
+    --gold:#c8a04a;
+    --gold-bright:#e8c987;
+    --violet:#6b4fa0;
+    --border:rgba(200,160,74,.18);
+    --border-bright:rgba(200,160,74,.4);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'Inter',-apple-system,sans-serif;
+    line-height:1.65;
+    overflow-x:hidden;
+  }
+  ::selection{background:rgba(200,160,74,.3);color:var(--fg);}
+
+  .serif{font-family:'Fraunces',serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--gold);
+  }
+  .gold{color:var(--gold);}
+  .italic{font-style:italic;font-weight:400;}
+
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{animation:rise .8s ease-out both;}
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+  /* background texture, hero only */
+  .field{
+    position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none;
+    background:
+      radial-gradient(circle at 18% 30%, rgba(200,160,74,.10) 0%, transparent 45%),
+      radial-gradient(circle at 82% 70%, rgba(107,79,160,.14) 0%, transparent 50%);
+  }
+  .field::after{
+    content:'';
+    position:absolute; inset:-20%;
+    background-image: linear-gradient(rgba(200,160,74,.05) 1px, transparent 1px),
+                       linear-gradient(90deg, rgba(200,160,74,.05) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 70%);
+  }
+
+  nav{
+    position:sticky; top:0; z-index:40;
+    backdrop-filter:blur(12px);
+    background:rgba(6,5,15,.65);
+    border-bottom:1px solid var(--border);
+    padding:1rem 1.5rem;
+  }
+  .nav-row{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
+  .logo{font-family:'IBM Plex Mono',monospace;font-size:1rem;letter-spacing:.14em;color:var(--gold);}
+  .logo span{color:var(--fg);opacity:.5;}
+  .lang-btn{
+    display:flex;align-items:center;gap:.4rem;padding:.4rem .7rem;
+    border:1px solid var(--border); background:transparent; color:var(--fg);
+    border-radius:4px; cursor:pointer; font-size:.78rem; font-family:'IBM Plex Mono',monospace;
+    transition:.25s;
+  }
+  .lang-btn:hover{border-color:var(--gold);background:rgba(200,160,74,.08);}
+
+  section{padding:5.5rem 1.5rem;max-width:1180px;margin:0 auto;position:relative;}
+  .hr{border:none;border-top:1px solid var(--border);max-width:1180px;margin:0 auto;}
+
+  /* HERO */
+  .hero{min-height:96vh;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:4rem;}
+  .hero-inner{max-width:820px;display:flex;flex-direction:column;gap:1.6rem;position:relative;z-index:1;}
+  .hero-tag{display:flex;justify-content:center;gap:.5rem;align-items:center;}
+  .hero-title{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(2.3rem,6vw,4rem);
+    line-height:1.1;
+    min-height:1.1em;
+  }
+  .hero-title .accent{color:var(--gold);font-style:italic;font-weight:400;}
+  .hero-sub{color:var(--muted-2);font-size:1.1rem;max-width:600px;margin:0 auto;}
+  .hero-ctas{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:.5rem;}
+  .btn{
+    padding:.9rem 1.9rem; font-family:'IBM Plex Mono',monospace; font-size:.82rem;
+    font-weight:500; border-radius:3px; text-decoration:none; cursor:pointer;
+    display:inline-block; letter-spacing:.03em; transition:.25s; border:1px solid transparent;
+  }
+  .btn-primary{background:var(--gold);color:var(--bg);}
+  .btn-primary:hover{background:var(--gold-bright);transform:translateY(-2px);}
+  .btn-ghost{border-color:var(--border-bright);color:var(--gold);background:transparent;}
+  .btn-ghost:hover{background:rgba(200,160,74,.08);}
+  .hero-proof{margin-top:1.2rem;color:var(--muted);font-size:.78rem;font-family:'IBM Plex Mono',monospace;}
+
+  /* PROBLEM */
+  .problem-head{text-align:center;max-width:680px;margin:0 auto 3rem;}
+  .problem-head h2{font-family:'Fraunces',serif;font-size:clamp(1.7rem,4vw,2.5rem);font-weight:500;margin-top:.6rem;}
+  .problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .problem-item{background:var(--bg-card);padding:1.8rem 1.5rem;}
+  .problem-item .mark{color:var(--gold);font-family:'Fraunces',serif;font-style:italic;font-size:1.3rem;}
+  .problem-item p{color:var(--muted-2);font-size:.92rem;margin-top:.5rem;}
+  .problem-close{text-align:center;margin-top:2.5rem;font-family:'Fraunces',serif;font-style:italic;font-size:1.3rem;color:var(--fg);max-width:560px;margin-left:auto;margin-right:auto;}
+
+  /* MECHANISM */
+  .mech{text-align:center;}
+  .mech h2{font-family:'Fraunces',serif;font-size:clamp(1.7rem,4vw,2.4rem);font-weight:500;margin:.6rem 0 .8rem;}
+  .mech .not{color:var(--muted);font-size:1rem;text-decoration:line-through;text-decoration-color:rgba(200,160,74,.5);}
+  .chip-row{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin-top:1.8rem;}
+  .chip{
+    border:1px solid var(--border-bright); color:var(--gold-bright);
+    padding:.55rem 1.2rem; border-radius:100px; font-family:'IBM Plex Mono',monospace;
+    font-size:.85rem; background:rgba(200,160,74,.05);
+  }
+
+  /* REPOSICIONAMENTO */
+  .repo-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:center;margin-top:2.5rem;}
+  @media (max-width:720px){.repo-grid{grid-template-columns:1fr;}}
+  .repo-col{border:1px solid var(--border);border-radius:6px;padding:2rem;background:var(--bg-card);}
+  .repo-col.before{opacity:.55;}
+  .repo-col.after{border-color:var(--border-bright);box-shadow:0 0 40px rgba(200,160,74,.08);}
+  .repo-label{font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:1.2rem;}
+  .repo-col.after .repo-label{color:var(--gold);}
+  .repo-col ul{list-style:none;display:flex;flex-direction:column;gap:.8rem;}
+  .repo-col.before li{font-size:1.05rem;text-decoration:line-through;text-decoration-color:rgba(247,243,236,.3);color:var(--muted-2);}
+  .repo-col.after li{font-family:'Fraunces',serif;font-style:italic;font-size:1.25rem;color:var(--fg);}
+  .repo-arrow{font-size:1.6rem;color:var(--gold);text-align:center;}
+
+  /* PILARES */
+  .pilares-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2rem;margin-top:2.5rem;}
+  .pilar{border-top:1px solid var(--border-bright);padding-top:1.2rem;}
+  .pilar .num{font-family:'IBM Plex Mono',monospace;color:var(--gold);font-size:.85rem;}
+  .pilar h3{font-family:'Fraunces',serif;font-weight:500;font-size:1.3rem;margin:.5rem 0 .6rem;}
+  .pilar p{color:var(--muted-2);font-size:.92rem;}
+
+  /* MENTOR */
+  .mentor-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:3rem;align-items:center;}
+  @media (max-width:768px){.mentor-grid{grid-template-columns:1fr;}}
+  .mentor-grid img{width:100%;border-radius:6px;border:1px solid var(--border-bright);filter:grayscale(.15);box-shadow:0 0 50px rgba(200,160,74,.15);}
+  .mentor-grid h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(1.7rem,4vw,2.3rem);margin-bottom:.3rem;}
+  .mentor-grid .role{color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:.8rem;letter-spacing:.06em;margin-bottom:1.1rem;}
+  .mentor-grid p{color:var(--muted-2);margin-bottom:1rem;}
+
+  /* PLANS */
+  .plans-head{text-align:center;max-width:640px;margin:0 auto 1rem;}
+  .plans-head h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(1.9rem,4.5vw,2.7rem);margin-top:.6rem;}
+  .plans-urgency{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--gold);letter-spacing:.05em;margin-bottom:3rem;}
+  .plans-urgency::before{content:'● ';}
+  .plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.6rem;}
+  .plan-card{
+    border:1px solid var(--border); border-radius:8px; background:var(--bg-card);
+    padding:2.2rem 1.8rem; display:flex; flex-direction:column; gap:1.2rem; transition:.3s;
+  }
+  .plan-card:hover{border-color:var(--border-bright);}
+  .plan-card.hi{border:1px solid var(--gold); background:linear-gradient(160deg,var(--bg-card) 0%,var(--bg-card-2) 100%); box-shadow:0 0 50px rgba(200,160,74,.16); position:relative;}
+  .plan-top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .plan-level{font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+  .plan-card.hi .plan-level{color:var(--gold);}
+  .badge{background:rgba(200,160,74,.15);color:var(--gold-bright);font-family:'IBM Plex Mono',monospace;font-size:.62rem;padding:.25rem .55rem;border-radius:3px;letter-spacing:.05em;}
+  .plan-name{font-family:'Fraunces',serif;font-weight:500;font-size:1.4rem;line-height:1.25;}
+  .plan-period{font-family:'IBM Plex Mono',monospace;color:var(--gold);font-size:.85rem;}
+  .plan-desc{color:var(--muted-2);font-size:.92rem;}
+  .plan-div{border-top:1px solid rgba(200,160,74,.16);padding-top:1rem;}
+  .plan-pay-label{font-family:'IBM Plex Mono',monospace;font-size:.66rem;color:var(--muted);letter-spacing:.08em;margin-bottom:.35rem;}
+  .plan-pay-text{font-size:.85rem;color:var(--muted-2);}
+  .plan-ctas{display:flex;gap:.6rem;margin-top:auto;}
+  .plan-ctas a,.plan-ctas button{
+    flex:1;padding:.7rem;font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;
+    border-radius:4px;border:1px solid var(--border-bright);cursor:pointer;text-decoration:none;
+    text-align:center;transition:.25s;background:transparent;color:var(--gold);
+  }
+  .plan-ctas .solid{background:var(--gold);color:var(--bg);border-color:var(--gold);}
+  .plan-ctas .solid:hover{background:var(--gold-bright);}
+  .plan-ctas a:not(.solid):hover,.plan-ctas button:hover{background:rgba(200,160,74,.08);}
+
+  /* MODAL */
+  .modal{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.82);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem;}
+  .modal.active{display:flex;}
+  .modal-content{background:var(--bg-card);border:1px solid var(--border-bright);border-radius:8px;max-width:560px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 0 70px rgba(200,160,74,.2);}
+  .modal-head{padding:1.8rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
+  .modal-head h2{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:500;margin:.4rem 0;}
+  .modal-head .lvl{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;}
+  .modal-head .per{font-family:'IBM Plex Mono',monospace;font-size:.85rem;color:var(--gold);}
+  .modal-close{background:none;border:none;color:var(--fg);font-size:1.4rem;cursor:pointer;line-height:1;}
+  .modal-body{padding:1.8rem;display:flex;flex-direction:column;gap:1.4rem;}
+  .modal-body>p{color:var(--muted-2);}
+  .modal-pay{background:rgba(107,79,160,.1);border:1px solid rgba(107,79,160,.3);border-radius:5px;padding:.9rem;font-size:.85rem;color:var(--muted-2);}
+  .modal-sec h3{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.8rem;}
+  .modal-sec ul{list-style:none;display:flex;flex-direction:column;gap:.6rem;}
+  .modal-sec li{display:flex;gap:.6rem;font-size:.88rem;color:var(--muted-2);}
+  .modal-sec li::before{content:'◆';color:var(--gold);flex-shrink:0;font-size:.7rem;margin-top:.25rem;}
+  .modal-cta{display:block;width:100%;padding:.85rem;background:var(--gold);color:var(--bg);font-family:'IBM Plex Mono',monospace;font-size:.85rem;font-weight:600;border:none;border-radius:4px;cursor:pointer;text-decoration:none;text-align:center;}
+  .modal-cta:hover{background:var(--gold-bright);}
+
+  /* FINAL CTA */
+  .final{text-align:center;background:radial-gradient(ellipse at 50% 0%, rgba(200,160,74,.08) 0%, transparent 60%);}
+  .final .eyebrow{display:block;margin-bottom:.8rem;}
+  .final h2{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:clamp(1.8rem,5vw,2.8rem);max-width:720px;margin:0 auto 1.8rem;}
+  .final h2 b{font-style:normal;font-weight:500;color:var(--gold);}
+
+  footer{border-top:1px solid var(--border);padding:2.5rem 1.5rem;text-align:center;}
+  footer p{font-size:.78rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+</style>
 </head>
 <body>
-    <div class="hypnotic-bg"></div>
 
-    <!-- Navigation -->
-    <nav>
-        <div class="nav-container">
-            <div class="logo-text">AKASHA LEGACY</div>
-            <button class="lang-btn" onclick="toggleLanguage()">
-                <span>🌐</span>
-                <span id="lang-display">PT</span>
-            </button>
-        </div>
-    </nav>
+<nav>
+  <div class="nav-row">
+    <div class="logo">AKASHA <span>·</span> LEGACY</div>
+    <button class="lang-btn" onclick="toggleLanguage()"><span>🌐</span><span id="lang-display">PT</span></button>
+  </div>
+</nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <p class="hero-tag" id="hero-tag">Transformação Digital</p>
-            <h1 class="hero-title">
-                Desperte sua <span class="highlight">Soberania Digital</span>
-            </h1>
-            <p class="hero-subtitle" id="hero-subtitle">
-                Transforme sua história e essência em um ativo digital que gera autoridade, receita e legado.
-            </p>
-            <div class="hero-ctas">
-                <a href="#plans" class="cta-primary" id="cta-explore">Explorar Planos</a>
-                <a href="https://wa.me/5571983448621" target="_blank" class="cta-secondary" id="cta-talk">Conversar</a>
-            </div>
-        </div>
-    </section>
+<!-- HERO -->
+<section class="hero">
+  <div class="field"></div>
+  <div class="hero-inner">
+    <div class="hero-tag eyebrow">𓂀 <span id="hero-tag">Portal de Decodificação · Reposicionamento 2026</span></div>
+    <h1 class="hero-title serif" id="hero-title-target">
+      <span id="decode-text">Arquitetura de <span class="accent">Essência</span> e Autoridade</span>
+    </h1>
+    <p class="hero-sub" id="hero-sub">Você sabe muito. Ainda assim, invisível. Transformamos o que você já sabe em um ativo digital que gera autoridade, receita e legado.</p>
+    <div class="hero-ctas">
+      <a href="#plans" class="btn btn-primary" id="cta-explore">Explorar Programas</a>
+      <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20entender%20o%20Akasha%20Legacy" target="_blank" class="btn btn-ghost" id="cta-talk">Falar com o mentor</a>
+    </div>
+    <p class="hero-proof" id="hero-proof">SELEÇÃO PESSOAL · VAGAS LIMITADAS POR CICLO</p>
+  </div>
+</section>
 
-    <!-- Mentor Section -->
-    <section class="mentor-section">
-        <div class="section-header">
-            <p class="section-tag" id="mentor-tag">O Mentor</p>
-            <h2 class="section-title">Filipe <span class="highlight">Klehn</span></h2>
-        </div>
-        <div class="mentor-container">
-            <div class="mentor-image">
-                <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772516452/preview_image_29_ferzvu.jpg" alt="Filipe Klehn">
-            </div>
-            <div class="mentor-content">
-                <h3 id="mentor-role">Fundador · Programador · Arquiteto de Marca</h3>
-                <p id="mentor-desc">O método que transforma essência em autoridade digital e autoridade em receita. Com mais de 10 anos de experiência em construção de impérios digitais, Filipe dedica-se a transformar visões em realidades lucrativas.</p>
-                <p id="mentor-desc2">Cada programa é uma parceria real, onde sua história e essência são o ponto de partida para construir um legado digital duradouro.</p>
-            </div>
-        </div>
-    </section>
+<hr class="hr">
 
-    <!-- Plans Section -->
-    <section class="plans-section" id="plans">
-        <div class="section-header">
-            <p class="section-tag" id="plans-tag">Programas</p>
-            <h2 class="section-title">
-                Escolha sua <span class="highlight">Ascensão</span>
-            </h2>
-            <p class="section-subtitle" id="plans-subtitle">
-                O método é o mesmo em todos os níveis. O que muda é a intensidade do acompanhamento, o volume de ativos entregues e a profundidade da construção.
-            </p>
-        </div>
+<!-- PROBLEMA -->
+<section>
+  <div class="problem-head">
+    <p class="eyebrow" id="problem-tag">O Problema Que Resolvemos</p>
+    <h2 id="problem-title">Você não precisa de mais um curso.</h2>
+  </div>
+  <div class="problem-grid">
+    <div class="problem-item"><div class="mark serif">01</div><p id="p1">Sabe muito — mas isso nunca virou reconhecimento nem receita.</p></div>
+    <div class="problem-item"><div class="mark serif">02</div><p id="p2">Está invisível, mesmo depois de anos de estudo e experiência real.</p></div>
+    <div class="problem-item"><div class="mark serif">03</div><p id="p3">Já tentou monetizar o que sabe e não conseguiu sair do zero a zero.</p></div>
+    <div class="problem-item"><div class="mark serif">04</div><p id="p4">Vive perdido entre espiritualidade, terapia e mercado, sem ponte entre os dois.</p></div>
+  </div>
+  <p class="problem-close serif" id="problem-close">"Preciso estruturar minha autoridade."</p>
+</section>
 
-        <div class="plans-grid">
-            <!-- Plan 1 -->
-            <div class="plan-card">
-                <div class="plan-badge muted">
-                    <span id="plan1-level">Nível 1</span>
-                </div>
-                <h3 class="plan-title" id="plan1-name">Arquitetura de Essência e Império Digital</h3>
-                <p class="plan-period" id="plan1-period">3 meses</p>
-                <p class="plan-description" id="plan1-desc">Para quem está no caos ou começando do zero. A fundação do seu império digital.</p>
-                <div class="plan-divider">
-                    <p class="payment-label">FORMAS DE PAGAMENTO</p>
-                    <p class="payment-text" id="plan1-payment">Pagamento à vista (PIX) ou parcelado no Cartão de Crédito</p>
-                </div>
-                <div class="plan-ctas">
-                    <button class="btn-secondary" onclick="openModal('plan1')" id="plan1-details">Ver Detalhes</button>
-                    <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20em%20um%20plano" target="_blank" class="btn-secondary">SOLICITAR</a>
-                </div>
-            </div>
+<hr class="hr">
 
-            <!-- Plan 2 (Highlighted) -->
-            <div class="plan-card highlighted">
-                <div class="plan-badge highlighted">
-                    <span id="plan2-level">Nível 2</span>
-                    <span class="recommended-badge" id="recommended-badge">RECOMENDADO</span>
-                </div>
-                <h3 class="plan-title" id="plan2-name">Akasha Legacy</h3>
-                <p class="plan-period" id="plan2-period">6 meses</p>
-                <p class="plan-description" id="plan2-desc">A ascensão do Hierofante. Execução total e presença constante do mentor.</p>
-                <div class="plan-divider">
-                    <p class="payment-label">FORMAS DE PAGAMENTO</p>
-                    <p class="payment-text" id="plan2-payment">Pagamento à vista (PIX) ou parcelado no Cartão de Crédito</p>
-                </div>
-                <div class="plan-ctas">
-                    <button class="btn-primary" onclick="openModal('plan2')" id="plan2-details">Ver Detalhes</button>
-                    <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20em%20um%20plano" target="_blank" class="btn-primary">SOLICITAR</a>
-                </div>
-            </div>
+<!-- MECANISMO -->
+<section class="mech">
+  <p class="eyebrow" id="mech-tag">Mecanismo Único</p>
+  <h2 id="mech-title">Não vendemos <span class="not">mentoria</span>.</h2>
+  <div class="chip-row" id="chip-row">
+    <span class="chip">Clareza</span><span class="chip">Posicionamento</span><span class="chip">Autoridade</span>
+    <span class="chip">Receita</span><span class="chip">Liberdade</span><span class="chip">Legado</span>
+  </div>
+</section>
 
-            <!-- Plan 3 -->
-            <div class="plan-card">
-                <div class="plan-badge muted">
-                    <span id="plan3-level">Nível Máximo</span>
-                </div>
-                <h3 class="plan-title" id="plan3-name">Legado Soberano</h3>
-                <p class="plan-period" id="plan3-period">9 meses</p>
-                <p class="plan-description" id="plan3-desc">A divindade do mercado. Parceria real com investimento do mentor.</p>
-                <div class="plan-divider">
-                    <p class="payment-label">FORMAS DE PAGAMENTO</p>
-                    <p class="payment-text" id="plan3-payment">Pagamento à vista (PIX) ou parcelado no Cartão de Crédito</p>
-                </div>
-                <div class="plan-ctas">
-                    <button class="btn-secondary" onclick="openModal('plan3')" id="plan3-details">Ver Detalhes</button>
-                    <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20em%20um%20plano" target="_blank" class="btn-secondary">SOLICITAR</a>
-                </div>
-            </div>
-        </div>
-    </section>
+<hr class="hr">
 
-    <!-- Modals -->
-    <div id="modal-plan1" class="modal" onclick="closeModalOnBg(event, 'plan1')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <div class="modal-header-content">
-                    <div class="level" id="modal1-level">Nível 1</div>
-                    <h2 id="modal1-name">Arquitetura de Essência e Império Digital</h2>
-                    <div class="period" id="modal1-period">3 meses</div>
-                </div>
-                <button class="modal-close" onclick="closeModal('plan1')">✕</button>
-            </div>
-            <div class="modal-body">
-                <p id="modal1-desc">Para quem está no caos ou começando do zero. A fundação do seu império digital.</p>
-                <div class="modal-payment">
-                    <h3>FORMAS DE PAGAMENTO</h3>
-                    <div class="payment-options">
-                        <div class="payment-option">PIX - À vista ou Parcelado</div>
-                        <div class="payment-option">Cartão de Crédito - Parcelado</div>
-                    </div>
-                </div>
-                <div class="modal-section">
-                    <h3>O QUE ESTÁ INCLUÍDO</h3>
-                    <ul id="modal1-details">
-                        <li>Arquitetura de Essência (4 camadas)</li>
-                        <li>Dossiê de Marca Profissional</li>
-                        <li>Identidade Digital Completa</li>
-                        <li>Site Profissional ou Landing Page</li>
-                        <li>Estratégia de Conteúdo (90 dias)</li>
-                        <li>Funil de Conversão Estruturado</li>
-                        <li>1 Call Semanal de Estratégia</li>
-                        <li>Suporte WhatsApp durante o período</li>
-                    </ul>
-                </div>
-                <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20em%20um%20plano" target="_blank" class="modal-cta" id="modal1-cta">Solicitar Acesso</a>
-            </div>
-        </div>
+<!-- REPOSICIONAMENTO -->
+<section>
+  <div class="problem-head">
+    <p class="eyebrow" id="repo-tag">O Reposicionamento</p>
+    <h2 id="repo-title" style="font-family:'Fraunces',serif;font-size:clamp(1.7rem,4vw,2.4rem);font-weight:500;">Você deixa de ser. Você passa a ser.</h2>
+  </div>
+  <div class="repo-grid">
+    <div class="repo-col before">
+      <div class="repo-label" id="repo-before-label">Você era chamado de</div>
+      <ul id="repo-before-list"><li>Terapeuta</li><li>Programador</li><li>Mentor</li></ul>
+    </div>
+    <div class="repo-arrow">→</div>
+    <div class="repo-col after">
+      <div class="repo-label" id="repo-after-label">Agora você é</div>
+      <ul id="repo-after-list"><li>Arquiteto de Autoridade</li><li>Arquiteto de Impérios Digitais</li></ul>
+    </div>
+  </div>
+</section>
+
+<hr class="hr">
+
+<!-- PILARES -->
+<section>
+  <div class="problem-head">
+    <p class="eyebrow" id="pilares-tag">O Método</p>
+    <h2 id="pilares-title" style="font-family:'Fraunces',serif;font-size:clamp(1.7rem,4vw,2.4rem);font-weight:500;">Três camadas. Um só resultado.</h2>
+  </div>
+  <div class="pilares-grid">
+    <div class="pilar"><div class="num mono">Pilar 01</div><h3 id="pil1-t">Autoridade</h3><p id="pil1-d">Conhecimento em percepção. As pessoas passam a te ver antes de você precisar convencer alguém de nada.</p></div>
+    <div class="pilar"><div class="num mono">Pilar 02</div><h3 id="pil2-t">Ativo Digital</h3><p id="pil2-d">Experiência em patrimônio. Estrutura que continua rendendo, sem depender do seu tempo trocado por dinheiro.</p></div>
+    <div class="pilar"><div class="num mono">Pilar 03</div><h3 id="pil3-t">Legado</h3><p id="pil3-d">A própria história em ecossistema. Algo que sobrevive além da sua presença ativa todos os dias.</p></div>
+  </div>
+</section>
+
+<hr class="hr">
+
+<!-- MENTOR -->
+<section>
+  <div class="mentor-grid">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1772516452/preview_image_29_ferzvu.jpg" alt="Filipe Klehn">
+    <div>
+      <p class="eyebrow" id="mentor-tag">O Mentor</p>
+      <h2 class="serif">Filipe <span class="italic gold">Klehn</span></h2>
+      <p class="role" id="mentor-role">FUNDADOR · PROGRAMADOR · ARQUITETO DE MARCA</p>
+      <p id="mentor-desc">O método que transforma essência em autoridade digital e autoridade em receita. Mais de 10 anos construindo impérios digitais, transformando visões em realidades lucrativas.</p>
+      <p id="mentor-desc2">Cada programa é uma parceria real, onde sua história e essência são o ponto de partida para um legado digital duradouro.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="hr">
+
+<!-- PLANOS -->
+<section id="plans">
+  <div class="plans-head">
+    <p class="eyebrow" id="plans-tag">Programas</p>
+    <h2 id="plans-title">Escolha sua <span class="italic gold">ascensão</span></h2>
+  </div>
+  <p class="plans-urgency" id="plans-urgency">SELEÇÃO PESSOAL · O MÉTODO É O MESMO EM TODOS OS NÍVEIS — MUDA A INTENSIDADE E A PROFUNDIDADE DA CONSTRUÇÃO</p>
+
+  <div class="plans-grid">
+    <div class="plan-card">
+      <div class="plan-top"><span class="plan-level" id="plan1-level">Nível 1</span></div>
+      <h3 class="plan-name serif" id="plan1-name">Arquitetura de Essência e Império Digital</h3>
+      <p class="plan-period" id="plan1-period">3 meses</p>
+      <p class="plan-desc" id="plan1-desc">Para quem está no caos ou começando do zero. A fundação do seu império digital.</p>
+      <div class="plan-div">
+        <p class="plan-pay-label">FORMAS DE PAGAMENTO</p>
+        <p class="plan-pay-text" id="plan1-payment">PIX à vista ou parcelado no cartão</p>
+      </div>
+      <div class="plan-ctas">
+        <button onclick="openModal('plan1')" id="plan1-details">Ver Detalhes</button>
+        <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Nível%201" target="_blank">Solicitar</a>
+      </div>
     </div>
 
-    <div id="modal-plan2" class="modal" onclick="closeModalOnBg(event, 'plan2')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <div class="modal-header-content">
-                    <div class="level" id="modal2-level">Nível 2</div>
-                    <h2 id="modal2-name">Akasha Legacy</h2>
-                    <div class="period" id="modal2-period">6 meses</div>
-                </div>
-                <button class="modal-close" onclick="closeModal('plan2')">✕</button>
-            </div>
-            <div class="modal-body">
-                <p id="modal2-desc">A ascensão do Hierofante. Execução total e presença constante do mentor.</p>
-                <div class="modal-payment">
-                    <h3>FORMAS DE PAGAMENTO</h3>
-                    <div class="payment-options">
-                        <div class="payment-option">PIX - À vista ou Parcelado</div>
-                        <div class="payment-option">Cartão de Crédito - Parcelado</div>
-                    </div>
-                </div>
-                <div class="modal-section">
-                    <h3>O QUE ESTÁ INCLUÍDO</h3>
-                    <ul id="modal2-details">
-                        <li>Tudo do Plano Nível 1</li>
-                        <li>Site Completo + 5 Páginas de Vendas</li>
-                        <li>Estratégia de Lançamento Completa</li>
-                        <li>Blog com SEO e YouTube Estruturado</li>
-                        <li>2 Calls Semanais + Mensagens Diárias</li>
-                        <li>Execução Compartilhada em Tempo Real</li>
-                        <li>App de Execução com Checklist</li>
-                        <li>Até 3 Produtos Digitais</li>
-                    </ul>
-                </div>
-                <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20em%20um%20plano" target="_blank" class="modal-cta" id="modal2-cta">Solicitar Acesso</a>
-            </div>
-        </div>
+    <div class="plan-card hi">
+      <div class="plan-top"><span class="plan-level" id="plan2-level">Nível 2</span><span class="badge" id="recommended-badge">RECOMENDADO</span></div>
+      <h3 class="plan-name serif" id="plan2-name">Akasha Legacy</h3>
+      <p class="plan-period" id="plan2-period">6 meses</p>
+      <p class="plan-desc" id="plan2-desc">A ascensão total. Execução constante e presença direta do mentor.</p>
+      <div class="plan-div">
+        <p class="plan-pay-label">FORMAS DE PAGAMENTO</p>
+        <p class="plan-pay-text" id="plan2-payment">PIX à vista ou parcelado no cartão</p>
+      </div>
+      <div class="plan-ctas">
+        <button class="solid" onclick="openModal('plan2')" id="plan2-details">Ver Detalhes</button>
+        <a class="solid" href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Akasha%20Legacy" target="_blank">Solicitar</a>
+      </div>
     </div>
 
-    <div id="modal-plan3" class="modal" onclick="closeModalOnBg(event, 'plan3')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <div class="modal-header-content">
-                    <div class="level" id="modal3-level">Nível Máximo</div>
-                    <h2 id="modal3-name">Legado Soberano</h2>
-                    <div class="period" id="modal3-period">9 meses</div>
-                </div>
-                <button class="modal-close" onclick="closeModal('plan3')">✕</button>
-            </div>
-            <div class="modal-body">
-                <p id="modal3-desc">A divindade do mercado. Parceria real com investimento do mentor.</p>
-                <div class="modal-payment">
-                    <h3>FORMAS DE PAGAMENTO</h3>
-                    <div class="payment-options">
-                        <div class="payment-option">PIX - À vista ou Parcelado</div>
-                        <div class="payment-option">Cartão de Crédito - Parcelado</div>
-                    </div>
-                </div>
-                <div class="modal-section">
-                    <h3>O QUE ESTÁ INCLUÍDO</h3>
-                    <ul id="modal3-details">
-                        <li>Tudo do Plano Nível 2</li>
-                        <li>R$ 3.000 em Tráfego Pago Investidos pelo Mentor</li>
-                        <li>Criação de Startup / Micro-SaaS</li>
-                        <li>Autobiografia ou Livro de Autoridade</li>
-                        <li>Acesso Diário Disponível ao Mentor</li>
-                        <li>Seleção Pessoal (Vagas Limitadas)</li>
-                        <li>Ecossistema Digital Completo</li>
-                        <li>Monetização em Múltiplas Plataformas</li>
-                    </ul>
-                </div>
-                <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20em%20um%20plano" target="_blank" class="modal-cta" id="modal3-cta">Solicitar Acesso</a>
-            </div>
-        </div>
+    <div class="plan-card">
+      <div class="plan-top"><span class="plan-level" id="plan3-level">Nível Máximo</span></div>
+      <h3 class="plan-name serif" id="plan3-name">Legado Soberano</h3>
+      <p class="plan-period" id="plan3-period">9 meses</p>
+      <p class="plan-desc" id="plan3-desc">Parceria real, com investimento do próprio mentor no seu crescimento.</p>
+      <div class="plan-div">
+        <p class="plan-pay-label">FORMAS DE PAGAMENTO</p>
+        <p class="plan-pay-text" id="plan3-payment">PIX à vista ou parcelado no cartão</p>
+      </div>
+      <div class="plan-ctas">
+        <button onclick="openModal('plan3')" id="plan3-details">Ver Detalhes</button>
+        <a href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Legado%20Soberano" target="_blank">Solicitar</a>
+      </div>
     </div>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer>
-        <p>© 2026 Akasha Legacy. Todos os direitos reservados.</p>
-    </footer>
+<!-- MODALS -->
+<div id="modal-plan1" class="modal" onclick="closeModalOnBg(event,'plan1')">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div><div class="lvl" id="modal1-level">Nível 1</div><h2 id="modal1-name">Arquitetura de Essência e Império Digital</h2><div class="per" id="modal1-period">3 meses</div></div>
+      <button class="modal-close" onclick="closeModal('plan1')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="modal1-desc">Para quem está no caos ou começando do zero. A fundação do seu império digital.</p>
+      <div class="modal-pay"><b>Pagamento:</b> PIX (à vista ou parcelado) ou cartão de crédito parcelado.</div>
+      <div class="modal-sec">
+        <h3>O QUE ESTÁ INCLUÍDO</h3>
+        <ul>
+          <li>Arquitetura de Essência (4 camadas)</li>
+          <li>Dossiê de Marca Profissional</li>
+          <li>Identidade Digital Completa</li>
+          <li>Site Profissional ou Landing Page</li>
+          <li>Estratégia de Conteúdo (90 dias)</li>
+          <li>Funil de Conversão Estruturado</li>
+          <li>1 Call Semanal de Estratégia</li>
+          <li>Suporte via WhatsApp durante o período</li>
+        </ul>
+      </div>
+      <a class="modal-cta" href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Nível%201" target="_blank">Solicitar Acesso</a>
+    </div>
+  </div>
+</div>
 
-    <script>
-        let currentLanguage = 'pt';
+<div id="modal-plan2" class="modal" onclick="closeModalOnBg(event,'plan2')">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div><div class="lvl" id="modal2-level">Nível 2</div><h2 id="modal2-name">Akasha Legacy</h2><div class="per" id="modal2-period">6 meses</div></div>
+      <button class="modal-close" onclick="closeModal('plan2')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="modal2-desc">A ascensão total. Execução constante e presença direta do mentor.</p>
+      <div class="modal-pay"><b>Pagamento:</b> PIX (à vista ou parcelado) ou cartão de crédito parcelado.</div>
+      <div class="modal-sec">
+        <h3>O QUE ESTÁ INCLUÍDO</h3>
+        <ul>
+          <li>Tudo do Nível 1</li>
+          <li>Site Completo + 5 Páginas de Vendas</li>
+          <li>Estratégia de Lançamento Completa</li>
+          <li>Blog com SEO e YouTube Estruturado</li>
+          <li>2 Calls Semanais + Mensagens Diárias</li>
+          <li>Execução Compartilhada em Tempo Real</li>
+          <li>App de Execução com Checklist</li>
+          <li>Até 3 Produtos Digitais</li>
+        </ul>
+      </div>
+      <a class="modal-cta" href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Akasha%20Legacy" target="_blank">Solicitar Acesso</a>
+    </div>
+  </div>
+</div>
 
-        const translations = {
-            pt: {
-                'hero-tag': 'Transformação Digital',
-                'hero-subtitle': 'Transforme sua história e essência em um ativo digital que gera autoridade, receita e legado.',
-                'cta-explore': 'Explorar Planos',
-                'cta-talk': 'Conversar',
-                'mentor-tag': 'O Mentor',
-                'mentor-role': 'Fundador · Programador · Arquiteto de Marca',
-                'mentor-desc': 'O método que transforma essência em autoridade digital e autoridade em receita. Com mais de 10 anos de experiência em construção de impérios digitais, Filipe dedica-se a transformar visões em realidades lucrativas.',
-                'mentor-desc2': 'Cada programa é uma parceria real, onde sua história e essência são o ponto de partida para construir um legado digital duradouro.',
-                'plans-tag': 'Programas',
-                'plans-subtitle': 'O método é o mesmo em todos os níveis. O que muda é a intensidade do acompanhamento, o volume de ativos entregues e a profundidade da construção.',
-                'plan1-level': 'Nível 1',
-                'plan1-name': 'Arquitetura de Essência e Império Digital',
-                'plan1-period': '3 meses',
-                'plan1-desc': 'Para quem está no caos ou começando do zero. A fundação do seu império digital.',
-                'plan1-payment': 'Pagamento à vista (PIX) ou parcelado no Cartão de Crédito',
-                'plan1-details': 'Ver Detalhes',
-                'plan2-level': 'Nível 2',
-                'plan2-name': 'Akasha Legacy',
-                'plan2-period': '6 meses',
-                'plan2-desc': 'A ascensão do Hierofante. Execução total e presença constante do mentor.',
-                'plan2-payment': 'Pagamento à vista (PIX) ou parcelado no Cartão de Crédito',
-                'plan2-details': 'Ver Detalhes',
-                'plan3-level': 'Nível Máximo',
-                'plan3-name': 'Legado Soberano',
-                'plan3-period': '9 meses',
-                'plan3-desc': 'A divindade do mercado. Parceria real com investimento do mentor.',
-                'plan3-payment': 'Pagamento à vista (PIX) ou parcelado no Cartão de Crédito',
-                'plan3-details': 'Ver Detalhes',
-                'recommended-badge': 'RECOMENDADO',
-            },
-            en: {
-                'hero-tag': 'Digital Transformation',
-                'hero-subtitle': 'Transform your history and essence into a digital asset that generates authority, revenue, and legacy.',
-                'cta-explore': 'Explore Plans',
-                'cta-talk': 'Talk',
-                'mentor-tag': 'The Mentor',
-                'mentor-role': 'Founder · Programmer · Brand Architect',
-                'mentor-desc': 'The method that transforms essence into digital authority and authority into revenue. With over 10 years of experience building digital empires, Filipe is dedicated to transforming visions into profitable realities.',
-                'mentor-desc2': 'Each program is a real partnership, where your story and essence are the starting point for building a lasting digital legacy.',
-                'plans-tag': 'Programs',
-                'plans-subtitle': 'The method is the same at all levels. What changes is the intensity of support, the volume of deliverables, and the depth of construction.',
-                'plan1-level': 'Level 1',
-                'plan1-name': 'Architecture of Essence and Digital Empire',
-                'plan1-period': '3 months',
-                'plan1-desc': 'For those in chaos or starting from scratch. The foundation of your digital empire.',
-                'plan1-payment': 'Payment upfront (PIX) or installments on Credit Card',
-                'plan1-details': 'View Details',
-                'plan2-level': 'Level 2',
-                'plan2-name': 'Akasha Legacy',
-                'plan2-period': '6 months',
-                'plan2-desc': 'The ascension of the Hierophant. Total execution and constant mentor presence.',
-                'plan2-payment': 'Payment upfront (PIX) or installments on Credit Card',
-                'plan2-details': 'View Details',
-                'plan3-level': 'Maximum Level',
-                'plan3-name': 'Sovereign Legacy',
-                'plan3-period': '9 months',
-                'plan3-desc': 'The divinity of the market. Real partnership with mentor investment.',
-                'plan3-payment': 'Payment upfront (PIX) or installments on Credit Card',
-                'plan3-details': 'View Details',
-                'recommended-badge': 'RECOMMENDED',
-            }
-        };
+<div id="modal-plan3" class="modal" onclick="closeModalOnBg(event,'plan3')">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div><div class="lvl" id="modal3-level">Nível Máximo</div><h2 id="modal3-name">Legado Soberano</h2><div class="per" id="modal3-period">9 meses</div></div>
+      <button class="modal-close" onclick="closeModal('plan3')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="modal3-desc">Parceria real, com investimento do próprio mentor no seu crescimento.</p>
+      <div class="modal-pay"><b>Pagamento:</b> PIX (à vista ou parcelado) ou cartão de crédito parcelado.</div>
+      <div class="modal-sec">
+        <h3>O QUE ESTÁ INCLUÍDO</h3>
+        <ul>
+          <li>Tudo do Nível 2</li>
+          <li>R$ 3.000 em Tráfego Pago investidos pelo mentor</li>
+          <li>Criação de Startup / Micro-SaaS</li>
+          <li>Autobiografia ou Livro de Autoridade</li>
+          <li>Acesso Diário Disponível ao Mentor</li>
+          <li>Seleção Pessoal (Vagas Limitadas)</li>
+          <li>Ecossistema Digital Completo</li>
+          <li>Monetização em Múltiplas Plataformas</li>
+        </ul>
+      </div>
+      <a class="modal-cta" href="https://wa.me/5571983448621?text=Olá%2C%20tenho%20interesse%20no%20Legado%20Soberano" target="_blank">Solicitar Acesso</a>
+    </div>
+  </div>
+</div>
 
-        function toggleLanguage() {
-            currentLanguage = currentLanguage === 'pt' ? 'en' : 'pt';
-            document.getElementById('lang-display').textContent = currentLanguage.toUpperCase();
-            updateTranslations();
-        }
+<hr class="hr">
 
-        function updateTranslations() {
-            const trans = translations[currentLanguage];
-            for (const [key, value] of Object.entries(trans)) {
-                const element = document.getElementById(key);
-                if (element) {
-                    element.textContent = value;
-                }
-            }
-        }
+<!-- CTA FINAL -->
+<section class="final">
+  <span class="eyebrow" id="final-tag">𓂀 A Promessa</span>
+  <h2 id="final-title">Do autoconhecimento ao <b>império digital</b>. Sua história vira ativo. Sua essência vira patrimônio.</h2>
+  <div class="hero-ctas">
+    <a href="https://wa.me/5571983448621?text=Olá%2C%20quero%20construir%20meu%20legado%20digital" target="_blank" class="btn btn-primary" id="final-cta">Solicitar Acesso ao Akasha Legacy</a>
+  </div>
+</section>
 
-        function openModal(plan) {
-            document.getElementById(`modal-${plan}`).classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+<footer><p id="footer-text">© 2026 Akasha Legacy 𓂀 Todos os direitos reservados.</p></footer>
 
-        function closeModal(plan) {
-            document.getElementById(`modal-${plan}`).classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
+<script>
+let currentLanguage='pt';
+const translations={
+  pt:{
+    'hero-tag':'Portal de Decodificação · Reposicionamento 2026',
+    'hero-sub':'Você sabe muito. Ainda assim, invisível. Transformamos o que você já sabe em um ativo digital que gera autoridade, receita e legado.',
+    'cta-explore':'Explorar Programas','cta-talk':'Falar com o mentor',
+    'hero-proof':'SELEÇÃO PESSOAL · VAGAS LIMITADAS POR CICLO',
+    'problem-tag':'O Problema Que Resolvemos','problem-title':'Você não precisa de mais um curso.',
+    'p1':'Sabe muito — mas isso nunca virou reconhecimento nem receita.',
+    'p2':'Está invisível, mesmo depois de anos de estudo e experiência real.',
+    'p3':'Já tentou monetizar o que sabe e não conseguiu sair do zero a zero.',
+    'p4':'Vive perdido entre espiritualidade, terapia e mercado, sem ponte entre os dois.',
+    'problem-close':'"Preciso estruturar minha autoridade."',
+    'mech-tag':'Mecanismo Único',
+    'repo-tag':'O Reposicionamento','repo-title':'Você deixa de ser. Você passa a ser.',
+    'repo-before-label':'Você era chamado de','repo-after-label':'Agora você é',
+    'pilares-tag':'O Método','pilares-title':'Três camadas. Um só resultado.',
+    'pil1-t':'Autoridade','pil1-d':'Conhecimento em percepção. As pessoas passam a te ver antes de você precisar convencer alguém de nada.',
+    'pil2-t':'Ativo Digital','pil2-d':'Experiência em patrimônio. Estrutura que continua rendendo, sem depender do seu tempo trocado por dinheiro.',
+    'pil3-t':'Legado','pil3-d':'A própria história em ecossistema. Algo que sobrevive além da sua presença ativa todos os dias.',
+    'mentor-tag':'O Mentor','mentor-role':'FUNDADOR · PROGRAMADOR · ARQUITETO DE MARCA',
+    'mentor-desc':'O método que transforma essência em autoridade digital e autoridade em receita. Mais de 10 anos construindo impérios digitais, transformando visões em realidades lucrativas.',
+    'mentor-desc2':'Cada programa é uma parceria real, onde sua história e essência são o ponto de partida para um legado digital duradouro.',
+    'plans-tag':'Programas',
+    'plans-urgency':'SELEÇÃO PESSOAL · O MÉTODO É O MESMO EM TODOS OS NÍVEIS — MUDA A INTENSIDADE E A PROFUNDIDADE DA CONSTRUÇÃO',
+    'plan1-level':'Nível 1','plan1-name':'Arquitetura de Essência e Império Digital','plan1-period':'3 meses',
+    'plan1-desc':'Para quem está no caos ou começando do zero. A fundação do seu império digital.',
+    'plan1-payment':'PIX à vista ou parcelado no cartão','plan1-details':'Ver Detalhes',
+    'plan2-level':'Nível 2','plan2-name':'Akasha Legacy','plan2-period':'6 meses',
+    'plan2-desc':'A ascensão total. Execução constante e presença direta do mentor.',
+    'plan2-payment':'PIX à vista ou parcelado no cartão','plan2-details':'Ver Detalhes',
+    'plan3-level':'Nível Máximo','plan3-name':'Legado Soberano','plan3-period':'9 meses',
+    'plan3-desc':'Parceria real, com investimento do próprio mentor no seu crescimento.',
+    'plan3-payment':'PIX à vista ou parcelado no cartão','plan3-details':'Ver Detalhes',
+    'recommended-badge':'RECOMENDADO',
+    'final-tag':'𓂀 A Promessa','final-cta':'Solicitar Acesso ao Akasha Legacy',
+    'footer-text':'© 2026 Akasha Legacy 𓂀 Todos os direitos reservados.'
+  },
+  en:{
+    'hero-tag':'Decoding Portal · 2026 Repositioning',
+    'hero-sub':'You know a lot. Still invisible. We turn what you already know into a digital asset that generates authority, revenue and legacy.',
+    'cta-explore':'Explore Programs','cta-talk':'Talk to the mentor',
+    'hero-proof':'PERSONAL SELECTION · LIMITED SEATS PER CYCLE',
+    'problem-tag':'The Problem We Solve','problem-title':"You don't need another course.",
+    'p1':'You know a lot — but it never became recognition or revenue.',
+    'p2':"You're invisible, even after years of real study and experience.",
+    'p3':"You tried to monetize what you know and stayed stuck at zero.",
+    'p4':"You live lost between spirituality, therapy and the market, with no bridge between them.",
+    'problem-close':'"I need to structure my authority."',
+    'mech-tag':'Unique Mechanism',
+    'repo-tag':'The Repositioning','repo-title':'You stop being. You start being.',
+    'repo-before-label':'You used to be called','repo-after-label':'Now you are',
+    'pilares-tag':'The Method','pilares-title':'Three layers. One outcome.',
+    'pil1-t':'Authority','pil1-d':'Knowledge into perception. People see you before you need to convince anyone of anything.',
+    'pil2-t':'Digital Asset','pil2-d':'Experience into patrimony. Structure that keeps generating, without trading time for money.',
+    'pil3-t':'Legacy','pil3-d':'Your own story as an ecosystem. Something that outlives your daily active presence.',
+    'mentor-tag':'The Mentor','mentor-role':'FOUNDER · PROGRAMMER · BRAND ARCHITECT',
+    'mentor-desc':'The method that turns essence into digital authority, and authority into revenue. Over 10 years building digital empires, turning visions into profitable realities.',
+    'mentor-desc2':'Each program is a real partnership, where your story and essence are the starting point for a lasting digital legacy.',
+    'plans-tag':'Programs',
+    'plans-urgency':'PERSONAL SELECTION · THE METHOD IS THE SAME AT EVERY LEVEL — WHAT CHANGES IS INTENSITY AND DEPTH',
+    'plan1-level':'Level 1','plan1-name':'Architecture of Essence and Digital Empire','plan1-period':'3 months',
+    'plan1-desc':'For those in chaos or starting from scratch. The foundation of your digital empire.',
+    'plan1-payment':'PIX upfront or installments on card','plan1-details':'View Details',
+    'plan2-level':'Level 2','plan2-name':'Akasha Legacy','plan2-period':'6 months',
+    'plan2-desc':'The full ascension. Constant execution and direct mentor presence.',
+    'plan2-payment':'PIX upfront or installments on card','plan2-details':'View Details',
+    'plan3-level':'Max Level','plan3-name':'Sovereign Legacy','plan3-period':'9 months',
+    'plan3-desc':"Real partnership, with the mentor's own investment in your growth.",
+    'plan3-payment':'PIX upfront or installments on card','plan3-details':'View Details',
+    'recommended-badge':'RECOMMENDED',
+    'final-tag':'𓂀 The Promise','final-cta':'Request Access to Akasha Legacy',
+    'footer-text':'© 2026 Akasha Legacy 𓂀 All rights reserved.'
+  }
+};
 
-        function closeModalOnBg(event, plan) {
-            if (event.target.id === `modal-${plan}`) {
-                closeModal(plan);
-            }
-        }
+function toggleLanguage(){
+  currentLanguage = currentLanguage==='pt' ? 'en' : 'pt';
+  document.getElementById('lang-display').textContent = currentLanguage.toUpperCase();
+  updateTranslations();
+}
+function updateTranslations(){
+  const t = translations[currentLanguage];
+  for(const [key,val] of Object.entries(t)){
+    const el = document.getElementById(key);
+    if(el) el.textContent = val;
+  }
+  // hero title and final title kept with inline accent spans, handled separately
+  document.getElementById('decode-text').innerHTML = currentLanguage==='pt'
+    ? 'Arquitetura de <span class="accent">Essência</span> e Autoridade'
+    : 'Architecture of <span class="accent">Essence</span> and Authority';
+  document.getElementById('mech-title').innerHTML = currentLanguage==='pt'
+    ? 'Não vendemos <span class="not">mentoria</span>.'
+    : "We don't sell <span class=\"not\">mentorship</span>.";
+  document.getElementById('final-title').innerHTML = currentLanguage==='pt'
+    ? 'Do autoconhecimento ao <b>império digital</b>. Sua história vira ativo. Sua essência vira patrimônio.'
+    : 'From self-knowledge to <b>digital empire</b>. Your story becomes an asset. Your essence becomes patrimony.';
+  const repoBefore = document.getElementById('repo-before-list');
+  const repoAfter = document.getElementById('repo-after-list');
+  if(currentLanguage==='pt'){
+    repoBefore.innerHTML='<li>Terapeuta</li><li>Programador</li><li>Mentor</li>';
+    repoAfter.innerHTML='<li>Arquiteto de Autoridade</li><li>Arquiteto de Impérios Digitais</li>';
+  }else{
+    repoBefore.innerHTML='<li>Therapist</li><li>Programmer</li><li>Mentor</li>';
+    repoAfter.innerHTML='<li>Authority Architect</li><li>Digital Empire Architect</li>';
+  }
+}
 
-        // Initialize
-        updateTranslations();
-    </script>
+function openModal(plan){document.getElementById('modal-'+plan).classList.add('active');document.body.style.overflow='hidden';}
+function closeModal(plan){document.getElementById('modal-'+plan).classList.remove('active');document.body.style.overflow='auto';}
+function closeModalOnBg(e,plan){if(e.target.id==='modal-'+plan) closeModal(plan);}
+
+// Decode-in effect for hero headline — the brand's core idea made visible on load
+function decodeHero(){
+  const target = document.getElementById('decode-text');
+  const finalHTML = target.innerHTML;
+  const plain = target.textContent;
+  const glyphs = '𓂀◈✦⟁αβγΔ01#$%&';
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(prefersReduced) return;
+
+  let frame = 0;
+  const totalFrames = 24;
+  const chars = plain.split('');
+  const interval = setInterval(()=>{
+    frame++;
+    const progress = frame/totalFrames;
+    let out = '';
+    chars.forEach((ch,i)=>{
+      if(ch===' '){out+=' ';return;}
+      const revealPoint = (i/chars.length);
+      if(progress > revealPoint + 0.15){
+        out += ch;
+      } else {
+        out += glyphs[Math.floor(Math.random()*glyphs.length)];
+      }
+    });
+    target.textContent = out;
+    if(frame>=totalFrames){
+      clearInterval(interval);
+      target.innerHTML = finalHTML;
+    }
+  },45);
+}
+
+updateTranslations();
+decodeHero();
+</script>
 </body>
 </html>
