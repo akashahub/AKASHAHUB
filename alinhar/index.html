@@ -137,32 +137,41 @@ nav.scrolled .nav-eye { opacity: 0.75; }
       rgba(139,26,58,0.12) 480px
     );
 }
-.hero-overlay {
+.hero-video-bg {
   position: absolute; inset: 0; z-index: 1;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: saturate(0.65) contrast(1.2) hue-rotate(260deg);
+  opacity: 0.6;
+}
+.hero-overlay {
+  position: absolute; inset: 0; z-index: 2;
   background:
     linear-gradient(to bottom, rgba(11,7,22,0.52) 0%, transparent 30%, transparent 65%, rgba(11,7,22,0.92) 100%),
     linear-gradient(to right, rgba(11,7,22,0.3) 0%, transparent 50%, rgba(11,7,22,0.2) 100%);
 }
 .hero-content {
-  position: relative; z-index: 2;
-  text-align: center; max-width: 860px;
+  position: relative; z-index: 3;
+  text-align: center; max-width: 960px;
   padding: 0 32px;
 }
 .hero-tag {
   font-family: 'DM Mono', monospace;
-  font-size: 9px; letter-spacing: 0.38em; text-transform: uppercase;
-  color: rgba(155,123,58,0.7);
+  font-size: 11px; letter-spacing: 0.38em; text-transform: uppercase;
+  color: rgba(201,168,76,0.85);
   margin-bottom: 44px;
   display: block;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
 }
 .hero-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(40px, 6vw, 82px);
+  font-size: clamp(48px, 7.5vw, 100px);
   font-weight: 300;
   line-height: 1.06;
   color: var(--text);
   letter-spacing: 0.01em;
   margin-bottom: 32px;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.55);
 }
 .hero-title em {
   color: var(--gold-light);
@@ -174,12 +183,13 @@ nav.scrolled .nav-eye { opacity: 0.75; }
   margin: 0 auto 36px;
 }
 .hero-sub {
-  font-size: clamp(14px, 1.6vw, 16.5px);
+  font-size: clamp(16px, 1.9vw, 19px);
   color: var(--text-muted);
   line-height: 1.9;
-  max-width: 540px;
+  max-width: 580px;
   margin: 0 auto 52px;
   font-weight: 300;
+  text-shadow: 0 2px 14px rgba(0,0,0,0.5);
 }
 .hero-actions {
   display: flex; flex-direction: column; align-items: center; gap: 20px;
@@ -433,7 +443,7 @@ nav.scrolled .nav-eye { opacity: 0.75; }
 
 .hero-scroll {
   position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
-  z-index: 2;
+  z-index: 3;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
 }
 .hero-scroll span {
@@ -936,38 +946,6 @@ section { position: relative; z-index: 1; }
 .centro-text { font-size: 14px; color: var(--text-muted); line-height: 1.55; }
 
 /* ============================================
-   ANTENA
-   ============================================ */
-#antena { background: var(--bg); overflow: hidden; position: relative; }
-.antena-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 80px; align-items: center;
-  max-width: 980px; margin: 0 auto; padding: 112px 40px;
-}
-.antena-signals { display: flex; flex-direction: column; gap: 3px; }
-.signal-item {
-  display: flex; align-items: center; gap: 16px;
-  padding: 16px 22px;
-  background: var(--bg2); border: 0.5px solid var(--gold-line-soft);
-  transition: border-color 0.3s;
-}
-.signal-item:hover { border-color: rgba(155,123,58,0.28); }
-.signal-item.human { border-color: rgba(155,123,58,0.22); background: rgba(155,123,58,0.04); }
-.signal-icon {
-  font-family: 'DM Mono', monospace; font-size: 9px;
-  color: var(--teal); letter-spacing: 0.1em; min-width: 56px;
-}
-.signal-item.human .signal-icon { color: var(--gold-light); }
-.signal-label { font-size: 13px; color: var(--text-muted); }
-.signal-item.human .signal-label { color: var(--text); }
-.antena-highlight {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: clamp(20px, 2.6vw, 32px);
-  color: var(--text); line-height: 1.35; margin: 36px 0;
-}
-
-/* ============================================
    DURANTE A SESSÃO
    ============================================ */
 #experiencia { background: var(--bg3); }
@@ -1193,12 +1171,14 @@ footer {
 /* ============================================
    RESPONSIVE
    ============================================ */
+@media (max-width: 1180px) and (min-width: 901px) {
+  .serv-grid { grid-template-columns: 1fr 1fr; }
+}
 @media (max-width: 900px) {
   nav { padding: 18px 24px; }
   nav.scrolled { padding: 12px 24px; }
   .sobre-grid { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
   .sobre-images { position: static; }
-  .antena-grid { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
   .serv-grid { grid-template-columns: 1fr; }
   .serv-card { min-height: 400px; }
   .centros-grid, .diff-list { grid-template-columns: 1fr; }
@@ -1220,7 +1200,7 @@ footer {
    BLUR EM TODAS AS IMAGENS E VÍDEOS (EXCETO A LOGO)
    ============================================ */
 img:not(.nav-logo-mark img),
-video {
+video:not(.hero-video-bg) {
   filter: blur(3px) brightness(0.82) saturate(0.85) !important;
 }
 
@@ -1245,6 +1225,8 @@ video {
 <!-- ============ HERO ============ -->
 <section id="hero">
   <div class="hero-wave-bg"></div>
+  <video class="hero-video-bg" autoplay muted loop playsinline
+    src="https://res.cloudinary.com/dlueoyrhe/video/upload/v1766082891/generated_video_-_2025-12-18T153324.917_bmqoo2.mp4"></video>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <span class="hero-tag">Experiência Individual · Reservada</span>
@@ -1258,9 +1240,6 @@ video {
         <div class="hero-btn-row">
           <a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C+gostaria+de+agendar+uma+sess%C3%A3o+personalizada." class="btn-agendar" target="_blank" rel="noopener">
             ⚡ Agendar Sessão Personalizada
-          </a>
-          <a href="https://akashahub.com.br/alignmentcourse/" class="btn-curso" target="_blank" rel="noopener">
-            ✦ Curso de Alinhamento
           </a>
         </div>
         <div class="hero-btn-row">
@@ -1294,6 +1273,11 @@ video {
     <div class="sobre-images">
       <div class="sobre-img-item">
         <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1782468297/8c5587b1-a067-4842-bbe4-c9b85f59f6e8_xkmefk.png" alt="" loading="lazy">
+      </div>
+      <div style="grid-column:span 2;display:flex;justify-content:center;padding:6px 0;">
+        <a href="https://akashahub.com.br/alignmentcourse/" class="btn-curso" target="_blank" rel="noopener">
+          ✦ Curso de Alinhamento
+        </a>
       </div>
       <div class="sobre-img-item">
         <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1782468297/84fd5bd1-6521-4fee-ba60-714ce4952060_pfxycu.png" alt="" loading="lazy">
