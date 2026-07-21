@@ -1030,6 +1030,26 @@ section { position: relative; z-index: 1; }
   border-color: var(--gold-light);
 }
 .play-btn svg { width: 18px; height: 18px; fill: var(--gold-light); margin-left: 3px; }
+.video-cta { background: var(--bg3); }
+.video-cta-inner {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  text-align: center; padding: 0 20px;
+}
+.video-cta-plus {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 0.5px solid rgba(201,168,76,0.5);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300;
+  color: var(--gold-light);
+  transition: all 0.35s; backdrop-filter: blur(8px);
+  background: rgba(11,7,22,0.3);
+}
+.video-cta:hover .video-cta-plus { background: rgba(201,168,76,0.14); border-color: var(--gold-light); }
+.video-cta-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-muted); line-height: 1.7;
+}
 .vthumb-label {
   position: absolute; bottom: 14px; left: 16px; right: 16px;
   font-family: 'DM Mono', monospace;
@@ -1591,6 +1611,15 @@ video:not(.hero-video-bg) {
         <div class="vthumb-cin"></div><div class="vthumb-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
         <span class="vthumb-label">Experiência · Intensa</span>
       </div>
+      <div class="video-thumb video-cta" onclick="openModeloModal()">
+        <div class="vthumb-cin"></div>
+        <div class="vthumb-overlay" style="background:rgba(11,7,22,0.5);">
+          <div class="video-cta-inner">
+            <span class="video-cta-plus">+</span>
+            <span class="video-cta-text">Quero ser<br>Modelo / Voluntária(o)</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1680,6 +1709,41 @@ video:not(.hero-video-bg) {
       <div class="privacy-note">
         <span class="privacy-note-icon">🔒</span>
         <span class="privacy-note-text"><strong>Privacidade garantida:</strong> seus dados são usados apenas para viabilizar o atendimento a domicílio e tratados com total discrição. O valor do deslocamento é negociado de forma reservada, diretamente com o mentor.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: QUERO SER MODELO / VOLUNTÁRIA(O) -->
+<div class="modal-overlay" id="modeloModal">
+  <div class="modal-box" style="max-width:560px;">
+    <button class="modal-close" onclick="closeModeloModal()">✕ Fechar</button>
+    <div class="modal-body" style="padding-top:56px;">
+      <span class="modal-tag">Participe</span>
+      <div class="modal-title" style="font-size:clamp(24px,3.4vw,36px);">Quero ser Modelo<br>Voluntária(o)</div>
+      <p class="modal-desc">Preencha os dados abaixo para se candidatar a participar como modelo ou voluntária(o) em uma sessão. Entraremos em contato pelo WhatsApp.</p>
+      <form class="lead-form" id="modeloForm" onsubmit="return sendModeloForm(event)">
+        <div class="lead-field">
+          <label for="modeloNome">Nome</label>
+          <input type="text" id="modeloNome" required placeholder="Seu nome completo">
+        </div>
+        <div class="lead-field">
+          <label for="modeloTelefone">Telefone / WhatsApp</label>
+          <input type="tel" id="modeloTelefone" required placeholder="(00) 00000-0000">
+        </div>
+        <div class="lead-field">
+          <label for="modeloIdade">Idade</label>
+          <input type="text" id="modeloIdade" placeholder="Sua idade">
+        </div>
+        <div class="lead-field">
+          <label for="modeloObs">Sobre você</label>
+          <textarea id="modeloObs" placeholder="Conte um pouco sobre você e por que gostaria de participar..."></textarea>
+        </div>
+        <button type="submit" class="lead-submit">Enviar pelo WhatsApp</button>
+      </form>
+      <div class="privacy-note">
+        <span class="privacy-note-icon">🔒</span>
+        <span class="privacy-note-text"><strong>Privacidade garantida:</strong> seus dados são usados apenas para avaliar sua candidatura e tratados com total discrição.</span>
       </div>
     </div>
   </div>
@@ -1883,6 +1947,40 @@ function sendLeadForm(e) {
 }
 
 /* ============================================
+   MODAL QUERO SER MODELO / VOLUNTÁRIA(O)
+   ============================================ */
+function openModeloModal() {
+  document.getElementById('modeloModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModeloModal() {
+  document.getElementById('modeloModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('modeloModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModeloModal();
+});
+function sendModeloForm(e) {
+  e.preventDefault();
+  const nome = document.getElementById('modeloNome').value.trim();
+  const telefone = document.getElementById('modeloTelefone').value.trim();
+  const idade = document.getElementById('modeloIdade').value.trim();
+  const obs = document.getElementById('modeloObs').value.trim();
+
+  let msg = 'Olá, tenho interesse em ser modelo/voluntária(o) para uma sessão.\n\n';
+  msg += 'Nome: ' + nome + '\n';
+  msg += 'Telefone: ' + telefone + '\n';
+  if (idade) msg += 'Idade: ' + idade + '\n';
+  if (obs) msg += 'Sobre mim: ' + obs + '\n';
+
+  const url2 = 'https://wa.me/5571983448621?text=' + encodeURIComponent(msg);
+  window.open(url2, '_blank', 'noopener');
+  closeModeloModal();
+  document.getElementById('modeloForm').reset();
+  return false;
+}
+
+/* ============================================
    VIDEO MODAL
    ============================================ */
 function openVid(src) {
@@ -1904,7 +2002,7 @@ document.getElementById('vidModal').addEventListener('click', function(e) {
    ESCAPE KEY
    ============================================ */
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') { closeAlinhModal(); closeIntenseModal(); closePrimalModal(); closeVid(); closeMapModal(); closeLeadModal(); toggleSpotifyPanel(false); }
+  if (e.key === 'Escape') { closeAlinhModal(); closeIntenseModal(); closePrimalModal(); closeModeloModal(); closeVid(); closeMapModal(); closeLeadModal(); toggleSpotifyPanel(false); }
 });
 
 function toggleFaq(el) {
