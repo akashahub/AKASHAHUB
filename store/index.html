@@ -360,6 +360,28 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Encomenda Section */
+        .encomenda-section { padding: 20px 20px 60px; background: linear-gradient(180deg, transparent, rgba(139,92,246,0.05), transparent); }
+        .encomenda-badge {
+            display: inline-block; background: rgba(212,175,55,0.12); color: var(--gold-primary);
+            border: 1px solid rgba(212,175,55,0.3); padding: 4px 12px; border-radius: 20px;
+            font-size: 0.7rem; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase;
+        }
+        .encomenda-card { background: var(--dark-card); border-radius: 15px; overflow: hidden; border: 1px solid rgba(212,175,55,0.15); transition: 0.4s; }
+        .encomenda-card:hover { transform: translateY(-5px); border-color: var(--gold-primary); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .encomenda-img { width: 100%; height: 320px; object-fit: cover; background: #f5f5f5; display: block; }
+        .encomenda-info { padding: 20px; }
+        .encomenda-name { font-family: 'Cinzel', serif; font-size: 1rem; margin-bottom: 6px; line-height: 1.3; }
+        .encomenda-note { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-bottom: 15px; }
+        .btn-wa {
+            width: 100%; padding: 12px; background: #25d366; border: none; color: #fff;
+            font-weight: 700; border-radius: 8px; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 1px; font-size: 0.85rem; min-height: 44px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            text-decoration: none; transition: 0.3s;
+        }
+        .btn-wa:hover { background: #1fb855; transform: translateY(-2px); }
+
         @media (max-width: 768px) {
             .products-grid { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
@@ -384,9 +406,9 @@
     <!-- Hero -->
     <section class="hero">
         <div class="hero-content">
-            <h1>VISTA SUA<br>FREQUÊNCIA</h1>
+            <h1>DESPERTE O QUE<br>JÁ ESTAVA EM VOCÊ</h1>
             <p>Moda com propósito. Frases que ressoam. Energia que transforma.</p>
-            <button class="btn-add" onclick="document.getElementById('colecao').scrollIntoView({behavior: 'smooth'})" style="width: auto; padding: 15px 40px;">
+            <button class="btn-add" onclick="document.getElementById('encomendas').scrollIntoView({behavior: 'smooth'})" style="width: auto; padding: 15px 40px;">
                 VER COLEÇÃO
             </button>
         </div>
@@ -402,14 +424,13 @@
         </div>
     </div>
 
-    <!-- Products Section -->
-    <section class="products-section" id="colecao">
+    <!-- Encomenda Section -->
+    <section class="encomenda-section" id="encomendas">
         <div class="section-header">
-            <span class="section-tag">PRODUTOS</span>
-            <h2 class="section-title">Coleção Completa</h2>
-            <p class="section-subtitle">Escolha a frequência que ressoa com você</p>
+            <span class="encomenda-badge">Sob Encomenda</span>
+            <p class="section-subtitle">Peças exclusivas, produzidas sob encomenda. Valor e prazo combinados diretamente no WhatsApp.</p>
         </div>
-        <div class="products-grid" id="mainGrid"></div>
+        <div class="products-grid" id="encomendaGrid"></div>
     </section>
 
     <!-- WhatsApp Float -->
@@ -700,22 +721,21 @@
     </div>
 
     <script>
-        // CATÁLOGO
-        const catalog = [
-            { id: 1, type: 'shirt', name: "Tee Meu Campo Magnético", price: 129.90, weight: 0.3, links: { 'Masculino': 'https://mpago.la/1DUaEXt', 'Feminino': 'https://mpago.la/2fBH19J' }, defaultMedia: [{ type: 'image', url: 'https://res.cloudinary.com/dlueoyrhe/image/upload/v1765744489/OFICIAL_sxamyo.jpg' }] },
-            { id: 2, type: 'shirt', name: "Tee Autoestima Blindada", price: 129.90, weight: 0.3, links: { 'Masculino': 'https://mpago.la/1KZM8jM', 'Feminino': 'https://mpago.la/2JRhzZz' }, defaultMedia: [{ type: 'image', url: 'https://res.cloudinary.com/dlueoyrhe/image/upload/v1765804156/WhatsApp_Image_2025-12-15_at_10.08.41_lwbt1m.jpg' }] },
-            { id: 3, type: 'shirt', name: "Tee Eu Decreto", price: 129.90, weight: 0.3, links: { 'Masculino': 'https://mpago.la/1V2HLv6', 'Feminino': 'https://mpago.la/2VVMLjf' }, defaultMedia: [{ type: 'image', url: 'https://res.cloudinary.com/dlueoyrhe/image/upload/v1765691304/OFICIAL_EU_DECRETO_FEMININA_PRETO_en5kpb.jpg' }] },
-            { id: 4, type: 'shirt', name: "Tee Manifestando em Silêncio", price: 129.90, weight: 0.3, links: { 'Masculino': 'https://mpago.la/2AYhuCN', 'Feminino': 'https://mpago.la/16F2YnK' }, defaultMedia: [{ type: 'image', url: 'https://res.cloudinary.com/dlueoyrhe/image/upload/v1765808813/WhatsApp_Image_2025-12-15_at_11.14.55_d0d1do.jpg' }] },
-            { id: 5, type: 'shirt', name: "Tee Vibro Alto, Vivo Bem", price: 179.90, weight: 0.3, links: { 'Masculino': 'https://mpago.la/2YxBzaM', 'Feminino': 'https://mpago.la/2omVF13' }, defaultMedia: [{ type: 'image', url: 'https://res.cloudinary.com/dlueoyrhe/image/upload/v1765691364/OFICIAL_VIBRO_ALTO_VIVO_BEM_FEMININA_PRETA_u7y5f6.jpg' }] },
-            { id: 6, type: 'shirt', name: "Tee Energia Cara", price: 129.90, weight: 0.3, links: { 'Masculino': 'https://mpago.la/1tHH6R8', 'Feminino': 'https://mpago.la/2QQ5vWD' }, defaultMedia: [{ type: 'video', url: 'https://res.cloudinary.com/dlueoyrhe/video/upload/v1765726735/generated_video_69_nwspva.mp4' }] },
-            { id: 7, type: 'uni', name: "Boné Signature", price: 99.90, weight: 0.2, link: 'https://mpago.la/2MH1Xdv', defaultMedia: [{ type: 'video', url: 'https://res.cloudinary.com/dlueoyrhe/video/upload/v1765164412/bone_violeta_rc440o.mp4' }] },
-            { id: 8, type: 'short', name: "Short Riqueza", price: 119.90, weight: 0.4, link: 'https://mpago.la/1uwbwj5', defaultMedia: [{ type: 'video', url: 'https://res.cloudinary.com/dlueoyrhe/video/upload/v1765164730/short_riqueza_copa_cabana_leeyuw.mp4' }] },
-            { id: 9, type: 'short', name: "Short Ritual", price: 119.90, weight: 0.4, link: 'https://mpago.la/2JkJsX7', defaultMedia: [{ type: 'video', url: 'https://res.cloudinary.com/dlueoyrhe/video/upload/v1765164415/short_meu_silencio_shop_Trim_zjkmch.mp4' }] },
-            { id: 10, type: 'uni', name: "Bucket Hermético", price: 89.90, weight: 0.25, link: 'https://mpago.la/2YL6mLw', defaultMedia: [{ type: 'video', url: 'https://res.cloudinary.com/dlueoyrhe/video/upload/v1765164412/buck_f_zscrqn.mp4' }] },
-            { id: 11, type: 'uni', name: "Tote Bag Aura Premium", price: 79.90, weight: 0.35, link: 'https://mpago.la/1ESsadB', defaultMedia: [{ type: 'video', url: 'https://res.cloudinary.com/dlueoyrhe/video/upload/v1765167962/minha_aura_yhukft.mp4' }] },
-            { id: 12, type: 'uni', name: "Shoulder Bag Akasha", price: 199.90, weight: 0.6, link: 'https://mpago.la/2EcDTac', defaultMedia: [{ type: 'video', url: 'https://res.cloudinary.com/dlueoyrhe/video/upload/v1765169416/generated_video_13_sv2zk4.mp4' }] },
-            { id: 13, type: 'kit', name: "Kit Akasha Mystery", price: 497.00, weight: 2.0, link: 'https://mpago.la/1tsY1yG', defaultMedia: [{ type: 'image', url: 'https://i.ibb.co/Fbxk6mQ3/Design-sem-nome-2.png' }] }
+        // CATÁLOGO (produtos removidos a pedido: camisetas até Shoulder Bag Akasha)
+        const catalog = [];
+
+        // SOB ENCOMENDA — sem preço fixo, sem checkout: contato direto via WhatsApp
+        const encomendaCatalog = [
+            { name: "Banheira de Imersão em Gelo Go Arctic", img: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714204/01_banheira_go_arctic_h1ggwx.png", msg: "Olá, tenho interesse em encomendar a Banheira de Imersão em Gelo Go Arctic." },
+            { name: "Cafeteira Portátil Hyllis", img: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714205/02_cafeteira_hyllis_sbrza0.png", msg: "Olá, tenho interesse em encomendar a Cafeteira Portátil Hyllis." },
+            { name: "Escultura Decorativa Anubis", img: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714205/03_escultura_anubis_yfpiv1.png", msg: "Olá, tenho interesse em encomendar a Escultura Decorativa de Anubis." },
+            { name: "Kit 7 Cristais Brutos dos Chakras", img: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714204/06_cristais_chakras_dhcop4.png", msg: "Olá, tenho interesse em encomendar o Kit 7 Cristais Brutos dos Chakras." },
+            { name: "Coleção Óleos Essenciais Vitalize Aromas", img: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714202/07_oleos_essenciais_lqh84a.png", msg: "Olá, tenho interesse em encomendar a Coleção de Óleos Essenciais Vitalize Aromas." },
+            { name: "Kit Ritual de Limpeza (Palo Santo + Banho de Ervas)", img: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714203/08_ritual_limpeza_il1ns6.png", msg: "Olá, tenho interesse em encomendar o Kit Ritual de Limpeza Energética." },
+            { name: "Incensário de Vidro Nirvana", img: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714202/09_incensario_nirvana_piyjha.png", msg: "Olá, tenho interesse em encomendar o Incensário de Vidro Nirvana." },
+            { name: "Japamala Sagrado", img: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714202/10_japamala_cnq9gi.png", msg: "Olá, tenho interesse em encomendar o Japamala Sagrado." }
         ];
+        const ENCOMENDA_WHATSAPP = "5571983448621";
 
         let currentUser = null;
         let tempItem = {};
@@ -727,33 +747,24 @@
                 currentUser = JSON.parse(saved);
                 updateHeaderAuth();
             }
-            renderCatalog();
+            renderEncomendaCatalog();
         }
 
-        function renderCatalog() {
-            const grid = document.getElementById('mainGrid');
-            grid.innerHTML = catalog.filter(p => p.id !== 13).map(p => `
-                <div class="product-card">
-                    <button class="btn-fav" onclick="toggleFav(${p.id}, this)" data-id="${p.id}">
-                        <i class="fas fa-heart"></i>
-                    </button>
-                    <div class="product-carousel">
-                        <div class="carousel-track">
-                            ${p.defaultMedia.map(m => `
-                                <div class="carousel-slide">
-                                    ${m.type === 'video' ? `<video src="${m.url}" muted loop autoplay playsinline></video>` : `<img src="${m.url}" alt="${p.name}">`}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <div class="product-name">${p.name}</div>
-                        <div class="product-price">R$ ${p.price.toFixed(2).replace('.',',')}</div>
-                        <button class="btn-add" onclick="clickBuy(${p.id})">COMPRAR AGORA</button>
+        function renderEncomendaCatalog() {
+            const grid = document.getElementById('encomendaGrid');
+            if (!grid) return;
+            grid.innerHTML = encomendaCatalog.map(p => `
+                <div class="encomenda-card">
+                    <img class="encomenda-img" src="${p.img}" alt="${p.name}" loading="lazy">
+                    <div class="encomenda-info">
+                        <div class="encomenda-name">${p.name}</div>
+                        <div class="encomenda-note">Sob encomenda · valor e prazo combinados no WhatsApp</div>
+                        <a class="btn-wa" href="https://wa.me/${ENCOMENDA_WHATSAPP}?text=${encodeURIComponent(p.msg)}" target="_blank" rel="noopener">
+                            <i class="fab fa-whatsapp"></i> ENCOMENDAR
+                        </a>
                     </div>
                 </div>
             `).join('');
-            updateFavIcons();
         }
 
         // AUTH
@@ -810,7 +821,6 @@
             currentUser = null;
             closeModal('dashboardModal');
             updateHeaderAuth();
-            renderCatalog();
         }
 
         function updateHeaderAuth() {
