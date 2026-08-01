@@ -69,9 +69,28 @@
             position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; justify-content: center; align-items: center; flex-direction: column;
             transition: opacity 1s ease, visibility 1s ease;
         }
-        .loader-symbol {
-            font-size: 3rem; color: var(--gold-primary); margin-bottom: 20px;
-            animation: pulse-gold 2s infinite;
+        .loader-logo-wrap {
+            position: relative; width: 130px; height: 130px; margin-bottom: 22px;
+            border-radius: 50%; overflow: hidden;
+            animation: pulse-gold-frame 2.4s ease-in-out infinite;
+        }
+        .loader-logo-wrap img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: sepia(0.12) saturate(1.15) contrast(1.05) brightness(0.95);
+        }
+        .loader-logo-wrap::before {
+            content: ''; position: absolute; inset: 0; border-radius: 50%;
+            box-shadow: inset 0 0 25px 12px rgba(0,0,0,0.9);
+            pointer-events: none;
+        }
+        .loader-logo-wrap::after {
+            content: ''; position: absolute; inset: -1px; border-radius: 50%;
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            pointer-events: none;
+        }
+        @keyframes pulse-gold-frame {
+            0%, 100% { box-shadow: 0 0 18px rgba(212, 175, 55, 0.15); }
+            50% { box-shadow: 0 0 42px rgba(212, 175, 55, 0.45); }
         }
         .loader-text {
             font-family: 'Cinzel', serif; letter-spacing: 0.3em; font-size: 0.8rem; color: rgba(255,255,255,0.5);
@@ -446,6 +465,28 @@
         .pack-whatsapp-btn:hover { background: #1ebc57; box-shadow: 0 0 20px rgba(37, 211, 102, 0.4); transform: scale(1.02); }
         .pack-whatsapp-btn i { font-size: 1.1rem; }
 
+        /* Botões de compra nos cards de livro (Hotmart + WhatsApp) */
+        .book-actions {
+            display: flex; gap: 6px; margin-top: 10px;
+        }
+        .book-buy-btn, .book-wpp-btn {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
+            padding: 7px 4px; text-decoration: none;
+            font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.58rem;
+            letter-spacing: 0.2px; text-transform: uppercase;
+            border-radius: 20px; transition: all 0.3s ease; cursor: pointer !important;
+            white-space: nowrap;
+        }
+        .book-buy-btn {
+            background: transparent; color: var(--gold-primary); border: 1px solid rgba(212, 175, 55, 0.5);
+        }
+        .book-buy-btn:hover { background: rgba(212, 175, 55, 0.15); box-shadow: 0 0 10px rgba(212, 175, 55, 0.25); }
+        .book-wpp-btn {
+            background: #25D366; color: #fff; border: 1px solid #25D366;
+        }
+        .book-wpp-btn:hover { background: #1ebc57; box-shadow: 0 0 12px rgba(37, 211, 102, 0.4); }
+        .book-buy-btn i, .book-wpp-btn i { font-size: 0.75rem; }
+
         .v-img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
         .v-info { margin-top: 12px; text-align: center; }
         .v-title {
@@ -549,7 +590,9 @@
 
     <!-- Loader -->
     <div class="loader-overlay" id="loader">
-        <div class="loader-symbol">𓂀</div>
+        <div class="loader-logo-wrap">
+            <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1782705303/hero-mandala_kvao9w.webp" alt="Akasha Hub">
+        </div>
         <div class="loader-text">ACESSANDO ARQUIVOS AKÁSHICOS...</div>
         <div class="loader-bar">
             <div class="loader-progress"></div>
@@ -635,15 +678,15 @@
                 <!-- Curso Akasha -->
                 <div class="course-card reveal delay-100 hover-trigger">
                     <div class="course-thumbnail">
-                        <img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766003273/download_-_2025-12-17T172504.739_ocd5rn.jpg" alt="Akasha Fascinação">
+                        <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png" alt="Código de Alinhamento Akasha">
                         <span class="course-type">CURSO</span>
                     </div>
                     <div class="course-info">
-                        <h3 class="course-title">Curso: Código Akasha</h3>
+                        <h3 class="course-title">Código de Alinhamento Akasha</h3>
                         <p class="course-desc">O curso completo para despertar seu magnetismo pessoal e dominar a arte da fascinação através dos princípios akáshicos.</p>
                         <div class="course-meta">
                             <span class="course-status available"><i class="fas fa-circle" style="font-size:6px;"></i> Disponível</span>
-                            <a href="https://akashahub.com.br/alignmentcourse/" target="_blank" class="course-btn">ACESSAR</a>
+                            <a href="https://pay.hotmart.com/D100728801L" target="_blank" class="course-btn">ACESSAR</a>
                         </div>
                     </div>
                 </div>
@@ -730,6 +773,40 @@
                                     <div class="v-sub">R$ 26,73</div>
                                 </div>
                             </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://go.hotmart.com/G104196878C?dp=1" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20O%20C%C3%B3digo%20Secreto%20do%20Universo" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="https://pay.hotmart.com/X105218960C" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://hotmart.s3.amazonaws.com/product_pictures/21992551-c579-48c7-8146-5d70e1b5c758/1000229694.png" alt="Código Quântico">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Código Quântico</div>
+                                    <div class="v-sub">R$ 47,00</div>
+                                </div>
+                            </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://pay.hotmart.com/X105218960C" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20C%C3%B3digo%20Qu%C3%A2ntico" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="https://pay.hotmart.com/U105068951X" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1785615030/6b180fb0-4b30-440b-9195-d094b16dc611_nobxps.png" alt="Revelações Quânticas">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Revelações Quânticas</div>
+                                    <div class="v-sub">R$ 15,00</div>
+                                </div>
+                            </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://pay.hotmart.com/U105068951X" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20Revela%C3%A7%C3%B5es%20Qu%C3%A2nticas" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -940,6 +1017,10 @@
                                     <div class="v-sub">R$ 48,07</div>
                                 </div>
                             </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://go.hotmart.com/F104168327C?dp=1" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20C%C3%B3digo%20de%20Conduta" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
                         </div>
                         <div class="v-card book-style hover-trigger">
                             <a href="https://go.hotmart.com/G104168848Y?dp=1" target="_blank">
@@ -951,6 +1032,10 @@
                                     <div class="v-sub">R$ 26,73</div>
                                 </div>
                             </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://go.hotmart.com/G104168848Y?dp=1" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20O%20Que%20%C3%A9%20Tantra%3F" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
                         </div>
                         <div class="v-card book-style hover-trigger">
                             <a href="https://pay.hotmart.com/U104170307P" target="_blank">
@@ -962,6 +1047,10 @@
                                     <div class="v-sub">R$ 26,79</div>
                                 </div>
                             </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://pay.hotmart.com/U104170307P" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20Shiva%2C%20Shakti%20e%20Shava" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
                         </div>
                         <div class="v-card book-style hover-trigger">
                             <a href="https://go.hotmart.com/M104187005M?dp=1" target="_blank">
@@ -973,6 +1062,10 @@
                                     <div class="v-sub">R$ 47,98</div>
                                 </div>
                             </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://go.hotmart.com/M104187005M?dp=1" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20Honrar%20a%20Deusa" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
                         </div>
                         <div class="v-card book-style hover-trigger">
                             <a href="https://go.hotmart.com/P103542930V?dp=1" target="_blank">
@@ -984,6 +1077,10 @@
                                     <div class="v-sub">R$ 45,00</div>
                                 </div>
                             </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://go.hotmart.com/P103542930V?dp=1" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20Tantra%20Descomplicado" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1087,6 +1184,10 @@
                                     <div class="v-sub">R$ 43,00</div>
                                 </div>
                             </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://go.hotmart.com/C103563355K?dp=1" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20Autoestima%20Blindada" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
                         </div>
                         <div class="v-card book-style hover-trigger">
                             <a href="https://go.hotmart.com/K103564499T?dp=1" target="_blank">
@@ -1098,6 +1199,10 @@
                                     <div class="v-sub">R$ 43,00</div>
                                 </div>
                             </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://go.hotmart.com/K103564499T?dp=1" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20Como%20Blindar%20Sua%20Mente%3F" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
                         </div>
                         <div class="v-card book-style hover-trigger">
                             <a href="https://go.hotmart.com/U103564795C?dp=1" target="_blank">
@@ -1109,6 +1214,10 @@
                                     <div class="v-sub">R$ 39,90</div>
                                 </div>
                             </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://go.hotmart.com/U103564795C?dp=1" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20Triplex%20na%20Mente" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1196,6 +1305,25 @@
                                     <div class="v-sub">R$ 70,00</div>
                                 </div>
                             </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://pay.hotmart.com/S103543026B" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20Colet%C3%A2nea%20Alinhamento%20Financeiro" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
+                        </div>
+                        <div class="v-card book-style hover-trigger">
+                            <a href="https://pay.hotmart.com/D106719959G?bid=1784607107273" target="_blank">
+                                <div class="v-img-wrapper">
+                                    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1785388669/image_-_2026-07-30T020906.810_wtua29.jpg" alt="Códigos de Origem">
+                                </div>
+                                <div class="v-info">
+                                    <div class="v-title">Códigos de Origem</div>
+                                    <div class="v-sub">R$ 97,00</div>
+                                </div>
+                            </a>
+                            <div class="book-actions">
+                                <a class="book-buy-btn hover-trigger" href="https://pay.hotmart.com/D106719959G?bid=1784607107273" target="_blank"><i class="fas fa-shopping-cart"></i> Hotmart</a>
+                                <a class="book-wpp-btn hover-trigger" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20livro%20C%C3%B3digos%20de%20Origem" target="_blank"><i class="fab fa-whatsapp"></i> Zap</a>
+                            </div>
                         </div>
                     </div>
                 </div>
