@@ -2,6 +2,7 @@
 <html class="dark scroll-smooth" lang="pt-BR"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script>document.documentElement.classList.add('js-enabled');</script>
 <title>Tecnologia da Alma | Mentoria Exclusiva</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&amp;family=Josefin+Sans:wght@300;400;500;600&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
@@ -89,6 +90,22 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(212, 175, 55, 0.15);
             transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(280px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(212, 175, 55, 0.12), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .glass-card:hover::before {
+            opacity: 1;
         }
 
         .glass-card:hover {
@@ -135,6 +152,35 @@
         @media (max-width: 380px) {
             .label-caps { letter-spacing: 0.18em; }
         }
+
+        /* Shimmer dourado nos destaques em itálico */
+        .text-alchemical-gold.italic {
+            background: linear-gradient(100deg, #a9822f 0%, #f2ca50 25%, #fff6da 40%, #d4af37 55%, #a9822f 75%, #f2ca50 100%);
+            background-size: 250% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            animation: shimmer-sweep 7s linear infinite;
+        }
+
+        @keyframes shimmer-sweep {
+            0% { background-position: 0% 50%; }
+            100% { background-position: -250% 50%; }
+        }
+
+        /* Conteúdo só começa invisível quando o JS roda (progressive enhancement).
+           Sem JS, as seções ficam visíveis normalmente. */
+        .js-enabled section > div {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.2s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .js-enabled section > div.is-revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="font-body-md selection:bg-alchemical-gold/30 selection:text-alchemical-gold">
@@ -143,29 +189,29 @@
 <div class="flex justify-between items-center h-[72px] sm:h-20 px-gutter max-w-container-max mx-auto">
 <div class="font-headline-lg text-lg sm:text-2xl text-alchemical-gold uppercase tracking-widest serif-headline">Akasha Hub</div>
 <div class="flex gap-4 sm:gap-10 items-center">
-<a class="hidden lg:inline label-caps text-[11px] text-on-surface hover:text-alchemical-gold transition-colors" href="#">Atravessar Portal</a>
-<a class="bg-primary-container text-on-primary-container px-4 py-2.5 sm:px-8 sm:py-3 label-caps text-[10px] sm:text-[11px] hover:bg-primary transition-all duration-300 active:scale-95 whitespace-nowrap" href="https://wa.me/5571983448621?text=Quero%20saber%20mais%20sobre%20a%20Tecnologia%20da%20Alma">
-<span class="sm:hidden">WhatsApp</span>
-<span class="hidden sm:inline">WhatsApp CTA</span>
-</a>
+<a class="hidden lg:inline label-caps text-[11px] text-on-surface hover:text-alchemical-gold transition-colors cursor-pointer" onclick="openLeadModal()">Atravessar Portal</a>
+<button type="button" onclick="openLeadModal()" class="bg-primary-container text-on-primary-container px-4 py-2.5 sm:px-8 sm:py-3 label-caps text-[10px] sm:text-[11px] hover:bg-primary transition-all duration-300 active:scale-95 whitespace-nowrap">
+<span class="sm:hidden">Diagnóstico</span>
+<span class="hidden sm:inline">SOLICITAR DIAGNÓSTICO</span>
+</button>
 </div>
 </div>
 </nav>
 <main class="relative">
 <!-- Hero Section -->
 <section class="min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center items-center text-center pt-[72px] sm:pt-20 px-gutter relative overflow-hidden">
-<div class="relative z-10 max-w-5xl">
-<span class="label-caps text-alchemical-gold mb-6 sm:mb-8 block text-[11px] sm:text-[12px]">Sincronização Alquímica</span>
+<div class="relative z-10 max-w-4xl">
+<span class="label-caps text-alchemical-gold mb-6 sm:mb-8 block text-[11px] sm:text-[12px]">Tecnologia da Alma</span>
 <h1 class="serif-headline text-display-lg mb-8 sm:mb-10">
-                    Você não precisa de mais motivação, precisa de <span class="text-alchemical-gold italic font-normal">coerência</span> entre energia, presença e ação.
+                    Sua energia é o ativo <span class="text-alchemical-gold italic font-normal">mais subestimado</span> do seu negócio.
                 </h1>
-<p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-10 sm:mb-14 technical-sans leading-relaxed">
-                    A mentoria que transforma seu potencial latente em soberania executiva através da Tecnologia da Alma.
+<p class="font-body-lg text-on-surface-variant max-w-xl mx-auto mb-10 sm:mb-14 technical-sans leading-relaxed">
+                    Protocolo de neurociência, tantra e alta performance para converter energia vital em autoridade, presença e faturamento.
                 </p>
-<a class="cta-button inline-flex items-center justify-center text-center gap-4 sm:gap-6 bg-alchemical-gold text-on-primary label-caps px-8 py-5 sm:px-12 sm:py-6 text-[11px] sm:text-[13px] hover:bg-primary transition-all duration-500 animate-pulse-gold group" href="https://wa.me/5571983448621?text=Quero%20saber%20mais%20sobre%20a%20Tecnologia%20da%20Alma">
+<button type="button" onclick="openLeadModal()" class="cta-button inline-flex items-center justify-center text-center gap-4 sm:gap-6 bg-alchemical-gold text-on-primary label-caps px-8 py-5 sm:px-12 sm:py-6 text-[11px] sm:text-[13px] hover:bg-primary transition-all duration-500 animate-pulse-gold group">
                     FALAR COM A EQUIPE
                     <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-</a>
+</button>
 </div>
 </section>
 <!-- The Pain Section -->
@@ -200,7 +246,7 @@
 <div class="relative group order-1 lg:order-2">
 <div class="absolute inset-0 bg-alchemical-gold/5 blur-[100px] rounded-full scale-90"></div>
 <div class="relative aspect-[4/5] lg:aspect-square border border-alchemical-gold/10 overflow-hidden">
-<img class="w-full h-full object-cover grayscale opacity-70 hover:opacity-100 hover:grayscale-0 transition-all duration-1000 ease-out" data-alt="High contrast professional photo" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785406700/image_-_2026-07-30T071752.488_jd1zcm.jpg"/>
+<img class="w-full h-full object-cover grayscale opacity-70 hover:opacity-100 hover:grayscale-0 transition-all duration-1000 ease-out" data-alt="High contrast professional photo" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785632407/1785632104646_sv3deu.png"/>
 </div>
 </div>
 </div>
@@ -238,44 +284,44 @@
 <span class="material-symbols-outlined text-alchemical-gold mb-5 sm:mb-6 text-4xl">architecture</span>
 <h3 class="label-caps text-[13px] text-alchemical-gold mb-4 sm:mb-5">Fundamentos</h3>
 <p class="technical-sans text-[15px] text-on-surface-variant leading-relaxed mb-8 sm:mb-10">Limpeza de ruídos e calibração da bússola interna.</p>
-<a class="mt-auto label-caps text-[10px] text-alchemical-gold border-b border-alchemical-gold/30 pb-1 hover:border-alchemical-gold transition-colors" href="https://wa.me/5571983448621?text=Quero%20aplicar%20Fundamentos">APLICAR PROTOCOLO</a>
+<button type="button" onclick="openLeadModal()" class="mt-auto label-caps text-[10px] text-alchemical-gold border-b border-alchemical-gold/30 pb-1 hover:border-alchemical-gold transition-colors bg-transparent">APLICAR PROTOCOLO</button>
 </div>
 <!-- Pillar 2 -->
 <div class="glass-card p-8 sm:p-10 flex flex-col items-center text-center">
 <span class="material-symbols-outlined text-alchemical-gold mb-5 sm:mb-6 text-4xl">shield_person</span>
 <h3 class="label-caps text-[13px] text-alchemical-gold mb-4 sm:mb-5">Autoestima Estrutural</h3>
 <p class="technical-sans text-[15px] text-on-surface-variant leading-relaxed mb-8 sm:mb-10">Identidade inabalável que não depende de validação externa.</p>
-<a class="mt-auto label-caps text-[10px] text-alchemical-gold border-b border-alchemical-gold/30 pb-1 hover:border-alchemical-gold transition-colors" href="https://wa.me/5571983448621?text=Quero%20aplicar%20Autoestima%20Estrutural">APLICAR PROTOCOLO</a>
+<button type="button" onclick="openLeadModal()" class="mt-auto label-caps text-[10px] text-alchemical-gold border-b border-alchemical-gold/30 pb-1 hover:border-alchemical-gold transition-colors bg-transparent">APLICAR PROTOCOLO</button>
 </div>
 <!-- Pillar 3 -->
 <div class="glass-card p-8 sm:p-10 flex flex-col items-center text-center">
-<span class="material-symbols-outlined text-alchemical-gold mb-5 sm:mb-6 text-4xl">bolt</span>
+<span class="material-symbols-outlined text-alchemical-gold mb-5 sm:mb-6 text-4xl">insights</span>
 <h3 class="label-caps text-[13px] text-alchemical-gold mb-4 sm:mb-5">Energia Direcionada</h3>
 <p class="technical-sans text-[15px] text-on-surface-variant leading-relaxed mb-8 sm:mb-10">Foco laser e gestão de vitalidade para alta performance.</p>
-<a class="mt-auto label-caps text-[10px] text-alchemical-gold border-b border-alchemical-gold/30 pb-1 hover:border-alchemical-gold transition-colors" href="https://wa.me/5571983448621?text=Quero%20aplicar%20Energia%20Direcionada">APLICAR PROTOCOLO</a>
+<button type="button" onclick="openLeadModal()" class="mt-auto label-caps text-[10px] text-alchemical-gold border-b border-alchemical-gold/30 pb-1 hover:border-alchemical-gold transition-colors bg-transparent">APLICAR PROTOCOLO</button>
 </div>
 <!-- Pillar 4 -->
 <div class="glass-card p-8 sm:p-10 flex flex-col items-center text-center">
 <span class="material-symbols-outlined text-alchemical-gold mb-5 sm:mb-6 text-4xl">center_focus_strong</span>
 <h3 class="label-caps text-[13px] text-alchemical-gold mb-4 sm:mb-5">Magnetismo &amp; Presença</h3>
 <p class="technical-sans text-[15px] text-on-surface-variant leading-relaxed mb-8 sm:mb-10">Ocupação absoluta do espaço e atração de oportunidades.</p>
-<a class="mt-auto label-caps text-[10px] text-alchemical-gold border-b border-alchemical-gold/30 pb-1 hover:border-alchemical-gold transition-colors" href="https://wa.me/5571983448621?text=Quero%20aplicar%20Magnetismo%20e%20Presenca">APLICAR PROTOCOLO</a>
+<button type="button" onclick="openLeadModal()" class="mt-auto label-caps text-[10px] text-alchemical-gold border-b border-alchemical-gold/30 pb-1 hover:border-alchemical-gold transition-colors bg-transparent">APLICAR PROTOCOLO</button>
 </div>
 <!-- Pillar 5 -->
 <div class="glass-card p-8 sm:p-10 flex flex-col items-center text-center">
 <span class="material-symbols-outlined text-alchemical-gold mb-5 sm:mb-6 text-4xl">all_inclusive</span>
 <h3 class="label-caps text-[13px] text-alchemical-gold mb-4 sm:mb-5">Integração</h3>
 <p class="technical-sans text-[15px] text-on-surface-variant leading-relaxed mb-8 sm:mb-10">A união dos processos para um estilo de vida soberano.</p>
-<a class="mt-auto label-caps text-[10px] text-alchemical-gold border-b border-alchemical-gold/30 pb-1 hover:border-alchemical-gold transition-colors" href="https://wa.me/5571983448621?text=Quero%20aplicar%20Integracao">APLICAR PROTOCOLO</a>
+<button type="button" onclick="openLeadModal()" class="mt-auto label-caps text-[10px] text-alchemical-gold border-b border-alchemical-gold/30 pb-1 hover:border-alchemical-gold transition-colors bg-transparent">APLICAR PROTOCOLO</button>
 </div>
 </div>
 </section>
 <!-- The Mentor Section -->
-<section class="py-section-padding-lg bg-surface-dim relative border-t border-outline-variant/10">
+<section id="mentor" class="py-section-padding-lg bg-surface-dim relative border-t border-outline-variant/10">
 <div class="max-w-container-max mx-auto px-gutter grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-16 items-center">
 <div class="md:col-span-5 relative max-w-xs sm:max-w-none mx-auto md:mx-0">
 <div class="relative overflow-hidden border border-alchemical-gold/20 shadow-2xl bg-void-black">
-<img class="w-full aspect-square object-cover object-top" data-alt="Portrait of Akasha (Yan)" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785405629/image_29_svobuw.jpg"/>
+<img class="w-full aspect-square object-cover object-top" data-alt="Portrait of Akasha (Yan)" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785595541/image_-_2026-08-01T024422.354_sibfaq.jpg"/>
 </div>
 </div>
 <div class="md:col-span-7">
@@ -306,45 +352,13 @@
 </div>
 <div class="glass-card p-8">
 <div class="text-alchemical-gold mb-6 label-caps text-[10px]">PROTOCOLO 03</div>
-<h4 class="label-caps text-[14px] mb-4 text-on-surface">Massagem Tântrica</h4>
-<p class="technical-sans text-sm text-on-surface-variant leading-relaxed">Desbloqueio de fluxos energéticos. <span class="text-[10px] block mt-2 opacity-50 italic">Focado em vitalidade.</span></p>
+<h4 class="label-caps text-[14px] mb-4 text-on-surface">Desbloqueio &amp; Calibração Bioenergética</h4>
+<p class="technical-sans text-sm text-on-surface-variant leading-relaxed">Liberação de bloqueios que drenam energia, foco e presença executiva. <span class="text-[10px] block mt-2 opacity-50 italic">Metodologia baseada em práticas somáticas e tântricas.</span></p>
 </div>
 <div class="glass-card p-8">
 <div class="text-alchemical-gold mb-6 label-caps text-[10px]">PROTOCOLO 04</div>
 <h4 class="label-caps text-[14px] mb-4 text-on-surface">Alignment Course</h4>
 <p class="technical-sans text-sm text-on-surface-variant leading-relaxed">Acesso vitalício à plataforma de fundamentos para revisão contínua.</p>
-</div>
-</div>
-</div>
-</section>
-<!-- Testimonials -->
-<section class="py-section-padding-lg bg-surface-container overflow-hidden">
-<div class="max-w-container-max mx-auto px-gutter">
-<div class="flex flex-col md:flex-row justify-between items-baseline mb-12 sm:mb-20 gap-4">
-<h2 class="serif-headline text-headline-lg">Impacto <span class="text-alchemical-gold italic font-normal">Mensurável</span></h2>
-<p class="label-caps text-[10px] sm:text-[11px] text-on-surface-variant">Evolução relatada por quem atravessou o portal</p>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">
-<div class="glass-card p-8 sm:p-10 lg:p-12 relative group">
-<p class="font-quote-text italic mb-8 sm:mb-12 relative z-10 leading-relaxed text-on-surface">"A Tecnologia da Alma mudou meu jogo. O faturamento da minha empresa dobrou, não porque trabalhei mais, mas porque minha energia parou de vazar."</p>
-<div class="border-t border-alchemical-gold/10 pt-6">
-<p class="label-caps text-[13px] text-alchemical-gold mb-1">Ricardo M.</p>
-<p class="label-caps text-[9px] opacity-50">CEO Tech Venture</p>
-</div>
-</div>
-<div class="glass-card p-8 sm:p-10 lg:p-12 relative group">
-<p class="font-quote-text italic mb-8 sm:mb-12 relative z-10 leading-relaxed text-on-surface">"Pela primeira vez sinto que ocupo o meu corpo. Minha presença em reuniões agora é magnética. As pessoas simplesmente param para ouvir."</p>
-<div class="border-t border-alchemical-gold/10 pt-6">
-<p class="label-caps text-[13px] text-alchemical-gold mb-1">Mariana S.</p>
-<p class="label-caps text-[9px] opacity-50">Consultora de Branding</p>
-</div>
-</div>
-<div class="glass-card p-8 sm:p-10 lg:p-12 relative group">
-<p class="font-quote-text italic mb-8 sm:mb-12 relative z-10 leading-relaxed text-on-surface">"Yan não te dá 'dicas'. Ele instala um novo sistema operacional. A clareza mental que tenho hoje é algo que eu nunca tinha experimentado."</p>
-<div class="border-t border-alchemical-gold/10 pt-6">
-<p class="label-caps text-[13px] text-alchemical-gold mb-1">Lucas T.</p>
-<p class="label-caps text-[9px] opacity-50">Investidor</p>
-</div>
 </div>
 </div>
 </div>
@@ -396,15 +410,10 @@
 <div class="mb-8 sm:mb-10 inline-block border border-alchemical-gold/30 px-5 py-2 sm:px-6 label-caps text-[9px] sm:text-[10px] text-alchemical-gold">VAGAS LIMITADAS POR CICLO</div>
 <h2 class="serif-headline text-display-lg mb-8 sm:mb-10">A Engrenagem Final para sua <span class="text-alchemical-gold italic font-normal">Soberania</span></h2>
 <p class="technical-sans text-base sm:text-lg md:text-xl text-on-surface-variant mb-10 sm:mb-16 max-w-2xl mx-auto leading-relaxed">Não deixe seu hardware biológico limitar sua visão espiritual e material. Atravesse o portal da Tecnologia da Alma agora.</p>
-<a class="cta-button inline-flex items-center justify-center text-center gap-4 sm:gap-6 bg-alchemical-gold text-on-primary label-caps px-8 py-5 sm:px-14 sm:py-7 text-[11px] sm:text-sm hover:bg-primary transition-all duration-500 glow-gold animate-pulse-gold group" href="https://wa.me/5571983448621?text=Quero%20saber%20mais%20sobre%20a%20Tecnologia%20da%20Alma">
+<button type="button" onclick="openLeadModal()" class="cta-button inline-flex items-center justify-center text-center gap-4 sm:gap-6 bg-alchemical-gold text-on-primary label-caps px-8 py-5 sm:px-14 sm:py-7 text-[11px] sm:text-sm hover:bg-primary transition-all duration-500 glow-gold animate-pulse-gold group">
                     <span>FALAR COM A EQUIPE<span class="hidden sm:inline"> VIA WHATSAPP</span></span>
-                    <span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform shrink-0">bolt</span>
-</a>
-<div class="mt-16 sm:mt-24 flex justify-center gap-10 sm:gap-16 opacity-30 grayscale hover:opacity-60 transition-opacity duration-700">
-<img class="h-8 sm:h-10 w-auto" data-alt="Icon 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFqU1facKLXEtChEq2ihO8-8GsI4MGh17sXPqWSXGCcDG5tWXqxH2UvTOnKpHHvpf7iaExH68NR3SsSvSM10qdEzb6o5lBtpdja6o2nRUVMuVzU5_EF6uu7RHqvsliMBakIDMMOuLs5RKmiwhUbb7oMkVAQU_a7vM8XHoqJfPxedoTHKK4WEuw9lZKweB1UQRdW11QO2UEbujF7eF7UUJZuI-Idc7JszzTBLPeyUgcWhb7D21cdqhs"/>
-<img class="h-8 sm:h-10 w-auto" data-alt="Icon 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBny6mVl0oySeButKLOjesY8nlW6XgAaSplnOgMYApzpM_KbE7YHECWA3Y-tOTnexXLjvlk56VFrsMKdEI22QRo8OzcCOFUupLUOnN4z-rlXPbnLDqv4fOtzFQOZ_brjcBb4JLH7jnDtxw4TRtyscUpGSk3ipTSUuxtV4qi8AeTYWYKxI-BQw51nR9FCCOcoYMlk_EyoafvP9ugynmfG4vurj1L7zHVCQAJ4WN4iIcR9UztUSfYkYNB"/>
-<img class="h-8 sm:h-10 w-auto" data-alt="Icon 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9_WvzHIgbzQsZU61AHxnH3DyWezpV5gfXPckd92xelSEsR5PkVNzivaI8S_ZeMdZC5oR3wqIn10QYgc7p2OXfQsSj5C89ii1ix3c5_M9fqpTTBfPcZ3fYFnNAW7X4X0qVDaU0WEx-9J4V80blHOuCJvoqPJvyjNyYq7zEpoHHoE-YRM8WxtFdWTuOdTt4wPIShsa9UEJ0MKoMiaYQvd8xnDEIUsspHe1u7GN5XlogUpixsV_3_G8P"/>
-</div>
+                    <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform shrink-0">arrow_forward</span>
+</button>
 </div>
 </section>
 </main>
@@ -413,19 +422,176 @@
 <div class="flex flex-col md:flex-row justify-between items-center px-gutter max-w-container-max mx-auto gap-8 sm:gap-12">
 <div class="serif-headline text-xl sm:text-2xl text-alchemical-gold">Akasha Hub</div>
 <div class="flex flex-wrap justify-center gap-6 sm:gap-10">
-<a class="label-caps text-[10px] text-on-surface-variant hover:text-alchemical-gold transition-colors" href="#">Termos de Uso</a>
-<a class="label-caps text-[10px] text-on-surface-variant hover:text-alchemical-gold transition-colors" href="#">Privacidade</a>
-<a class="label-caps text-[10px] text-on-surface-variant hover:text-alchemical-gold transition-colors" href="#">Suporte</a>
-<a class="label-caps text-[10px] text-on-surface-variant hover:text-alchemical-gold transition-colors" href="#">Mentor</a>
+<a class="label-caps text-[10px] text-on-surface-variant hover:text-alchemical-gold transition-colors cursor-pointer" onclick="openLegalModal('termos')">Termos de Uso</a>
+<a class="label-caps text-[10px] text-on-surface-variant hover:text-alchemical-gold transition-colors cursor-pointer" onclick="openLegalModal('privacidade')">Privacidade</a>
+<a class="label-caps text-[10px] text-on-surface-variant hover:text-alchemical-gold transition-colors" href="https://wa.me/5571983448621?text=Preciso%20de%20suporte%20com%20a%20Tecnologia%20da%20Alma" target="_blank">Suporte</a>
+<a class="label-caps text-[10px] text-on-surface-variant hover:text-alchemical-gold transition-colors" href="#mentor">Mentor</a>
 </div>
-<p class="technical-sans text-[12px] text-on-surface-variant opacity-40">© 2024 Tecnologia da Alma - Akasha Hub.</p>
+<p class="technical-sans text-[12px] text-on-surface-variant opacity-40">© <span id="currentYear"></span> Tecnologia da Alma - Akasha Hub.</p>
 </div>
 </footer>
 <!-- Sticky WhatsApp CTA -->
-<a class="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-[100] flex items-center gap-3 sm:gap-4 bg-surface-variant/80 backdrop-blur-xl border border-alchemical-gold/30 px-5 py-3 sm:px-8 sm:py-4 rounded-full hover:bg-alchemical-gold hover:text-void-black transition-all duration-500 group glow-gold" href="https://wa.me/5571983448621?text=Quero%20saber%20mais%20sobre%20a%20Tecnologia%20da%20Alma">
+<button type="button" onclick="openLeadModal()" class="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-[100] flex items-center gap-3 sm:gap-4 bg-surface-variant/80 backdrop-blur-xl border border-alchemical-gold/30 px-5 py-3 sm:px-8 sm:py-4 rounded-full hover:bg-alchemical-gold hover:text-void-black transition-all duration-500 group glow-gold">
 <span class="material-symbols-outlined text-alchemical-gold group-hover:text-void-black transition-colors">chat</span>
 <span class="hidden sm:inline label-caps text-[10px] tracking-widest font-bold">SUPORTE IMEDIATO</span>
+</button>
+
+<!-- Lead Qualification Modal -->
+<div id="leadModalOverlay" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-6 bg-void-black/90 backdrop-blur-xl opacity-0 transition-opacity duration-400" onclick="if(event.target===this) closeLeadModal()">
+<div class="glass-card bg-surface-dim w-full max-w-md relative border border-alchemical-gold/20 max-h-[92vh] overflow-y-auto">
+<button type="button" onclick="closeLeadModal()" aria-label="Fechar" class="absolute top-5 right-5 text-on-surface-variant hover:text-alchemical-gold transition-colors z-10">
+<span class="material-symbols-outlined">close</span>
+</button>
+
+<!-- Step 1: Form -->
+<div id="leadStepForm" class="p-8 sm:p-10">
+<span class="label-caps text-alchemical-gold mb-3 block text-[10px]">DIAGNÓSTICO RÁPIDO</span>
+<h3 class="serif-headline text-headline-lg mb-3">Antes da call</h3>
+<p class="technical-sans text-on-surface-variant text-[14px] leading-relaxed mb-8">Três perguntas para preparar sua conversa e confirmar se este é o momento certo de avançar.</p>
+
+<form id="leadForm" class="space-y-5" onsubmit="submitLeadForm(event)">
+<div>
+<label class="label-caps text-[10px] text-on-surface-variant block mb-2">Nome</label>
+<input required type="text" id="leadNome" class="w-full bg-void-black/60 border border-outline-variant/30 focus:border-alchemical-gold outline-none px-4 py-3 text-on-surface text-[15px] technical-sans transition-colors" placeholder="Seu nome"/>
+</div>
+<div>
+<label class="label-caps text-[10px] text-on-surface-variant block mb-2">WhatsApp</label>
+<input required type="tel" id="leadWhats" class="w-full bg-void-black/60 border border-outline-variant/30 focus:border-alchemical-gold outline-none px-4 py-3 text-on-surface text-[15px] technical-sans transition-colors" placeholder="(DDD) 9 9999-9999"/>
+</div>
+<div>
+<label class="label-caps text-[10px] text-on-surface-variant block mb-2">Faturamento mensal atual</label>
+<select required id="leadFaturamento" class="w-full bg-void-black/60 border border-outline-variant/30 focus:border-alchemical-gold outline-none px-4 py-3 text-on-surface text-[15px] technical-sans transition-colors">
+<option value="" disabled selected>Selecione uma faixa</option>
+<option value="Até R$10 mil">Até R$10 mil</option>
+<option value="R$10 mil a R$30 mil">R$10 mil a R$30 mil</option>
+<option value="R$30 mil a R$100 mil">R$30 mil a R$100 mil</option>
+<option value="Acima de R$100 mil">Acima de R$100 mil</option>
+</select>
+</div>
+<div>
+<label class="label-caps text-[10px] text-on-surface-variant block mb-2">Maior desafio agora</label>
+<select required id="leadDesafio" class="w-full bg-void-black/60 border border-outline-variant/30 focus:border-alchemical-gold outline-none px-4 py-3 text-on-surface text-[15px] technical-sans transition-colors">
+<option value="" disabled selected>Selecione uma opção</option>
+<option value="Energia e presença">Energia e presença</option>
+<option value="Autoestima e identidade">Autoestima e identidade</option>
+<option value="Foco e execução">Foco e execução</option>
+<option value="Escalar sem me perder">Escalar sem me perder</option>
+</select>
+</div>
+<button type="submit" class="cta-button w-full inline-flex items-center justify-center gap-3 bg-alchemical-gold text-on-primary label-caps px-8 py-4 text-[11px] hover:bg-primary transition-all duration-500 mt-2">
+QUERO SABER SE ESTOU APTO
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+<p class="text-[11px] text-on-surface-variant opacity-50 text-center technical-sans pt-1">Análise gratuita. Sem compromisso.</p>
+</form>
+</div>
+
+<!-- Step 2: Confirmation -->
+<div id="leadStepDone" class="hidden p-8 sm:p-10 text-center">
+<span class="material-symbols-outlined text-alchemical-gold text-5xl mb-6 inline-block">verified</span>
+<h3 class="serif-headline text-headline-lg mb-3">Diagnóstico recebido</h3>
+<p class="technical-sans text-on-surface-variant text-[14px] leading-relaxed mb-3">Falta um último passo: clique no botão abaixo para enviar seu diagnóstico pelo WhatsApp e falar com nossa equipe.</p>
+<p class="label-caps text-alchemical-gold text-[10px] mb-8">Sem esse envio, sua análise não chega até nós.</p>
+<a id="leadWhatsLink" class="cta-button w-full inline-flex items-center justify-center gap-3 bg-alchemical-gold text-on-primary label-caps px-8 py-5 text-[12px] hover:bg-primary transition-all duration-500 glow-gold animate-pulse-gold" href="#" target="_blank" onclick="closeLeadModal()">
+ENVIAR DIAGNÓSTICO NO WHATSAPP
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
 </a>
+<p class="text-[11px] text-on-surface-variant opacity-50 text-center technical-sans pt-4">Vamos confirmar se você está apto a avançar para a call de fechamento.</p>
+</div>
+
+</div>
+</div>
+
+<!-- Legal Modal (Termos / Privacidade) -->
+<div id="legalModalOverlay" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-6 bg-void-black/90 backdrop-blur-xl opacity-0 transition-opacity duration-400" onclick="if(event.target===this) closeLegalModal()">
+<div class="glass-card bg-surface-dim w-full max-w-2xl relative border border-alchemical-gold/20 flex flex-col" style="max-height: 88vh;">
+<div class="p-8 sm:p-10 pb-4 shrink-0 border-b border-outline-variant/10">
+<h3 id="legalModalTitle" class="serif-headline text-headline-lg text-alchemical-gold"></h3>
+<p id="legalModalUpdated" class="label-caps text-[10px] text-on-surface-variant mt-2"></p>
+</div>
+<div id="legalModalBody" class="technical-sans text-on-surface-variant text-[14px] leading-relaxed p-8 sm:p-10 overflow-y-auto space-y-5"></div>
+<div class="p-6 sm:p-8 border-t border-outline-variant/10 shrink-0">
+<p id="legalScrollHint" class="text-[11px] text-on-surface-variant opacity-60 text-center mb-3 technical-sans">Role até o final para habilitar o botão.</p>
+<button id="legalOkButton" type="button" onclick="closeLegalModal()" disabled class="w-full inline-flex items-center justify-center gap-3 bg-alchemical-gold/30 text-on-surface-variant label-caps px-8 py-4 text-[11px] transition-all duration-500 cursor-not-allowed">
+OK, ENTENDI
+</button>
+</div>
+</div>
+</div>
+
+<script>
+        const legalContent = {
+            termos: {
+                title: 'Termos de Uso',
+                html: `
+                    <p><strong class="text-alchemical-gold">1. Objeto.</strong> Estes Termos de Uso regulam o acesso e a utilização deste site e dos conteúdos relacionados à mentoria Tecnologia da Alma, oferecida pela Akasha Hub. Ao navegar neste site ou entrar em contato através dele, você concorda com as condições aqui descritas.</p>
+                    <p><strong class="text-alchemical-gold">2. Natureza do Serviço.</strong> A Tecnologia da Alma é um serviço de mentoria e desenvolvimento pessoal/profissional. Não se trata de aconselhamento médico, psicológico ou financeiro, e os resultados relatados por participantes não constituem garantia de resultado individual, já que dependem de fatores pessoais, dedicação e contexto de cada um.</p>
+                    <p><strong class="text-alchemical-gold">3. Processo de Seleção.</strong> O acesso à mentoria é precedido por um diagnóstico e/ou entrevista de qualificação. A Akasha Hub reserva-se o direito de aceitar ou recusar a participação de qualquer interessado, a seu critério, sem necessidade de justificativa detalhada.</p>
+                    <p><strong class="text-alchemical-gold">4. Propriedade Intelectual.</strong> Todo o conteúdo do site — textos, identidade visual, materiais de apoio e metodologia — é de propriedade da Akasha Hub e não pode ser reproduzido, distribuído ou comercializado sem autorização prévia por escrito.</p>
+                    <p><strong class="text-alchemical-gold">5. Investimento e Pagamento.</strong> Valores, condições e formas de pagamento são informados individualmente após a etapa de qualificação, podendo variar conforme o nível de suporte contratado.</p>
+                    <p><strong class="text-alchemical-gold">6. Limitação de Responsabilidade.</strong> A Akasha Hub não se responsabiliza por decisões tomadas pelo participante com base nos conteúdos da mentoria, nem por resultados financeiros, emocionais ou profissionais que dependam de fatores fora do controle da empresa.</p>
+                    <p><strong class="text-alchemical-gold">7. Alterações.</strong> Estes termos podem ser atualizados periodicamente. A versão vigente é sempre a publicada nesta página.</p>
+                    <p><strong class="text-alchemical-gold">8. Contato.</strong> Dúvidas sobre estes termos podem ser enviadas via <a class="text-alchemical-gold underline" href="https://wa.me/5571983448621" target="_blank">WhatsApp</a>.</p>
+                `
+            },
+            privacidade: {
+                title: 'Política de Privacidade',
+                html: `
+                    <p><strong class="text-alchemical-gold">1. Quais dados coletamos.</strong> Ao preencher o formulário de diagnóstico ou entrar em contato pelo WhatsApp, coletamos: nome, número de WhatsApp, faixa de faturamento e informações sobre seus desafios atuais, fornecidas voluntariamente por você.</p>
+                    <p><strong class="text-alchemical-gold">2. Para que usamos esses dados.</strong> Para entender seu momento atual e verificar aderência à mentoria; entrar em contato para dar continuidade ao diagnóstico e, se aplicável, agendar a call de fechamento; e enviar informações relacionadas à Tecnologia da Alma e à Akasha Hub.</p>
+                    <p><strong class="text-alchemical-gold">3. Compartilhamento de dados.</strong> Não vendemos nem compartilhamos seus dados com terceiros para fins de marketing alheios à Akasha Hub. Os dados podem ser processados por ferramentas de comunicação (como WhatsApp) necessárias à prestação do atendimento.</p>
+                    <p><strong class="text-alchemical-gold">4. Armazenamento e segurança.</strong> Adotamos medidas razoáveis para proteger os dados coletados contra acesso não autorizado, mantendo-os apenas pelo tempo necessário ao atendimento e relacionamento comercial.</p>
+                    <p><strong class="text-alchemical-gold">5. Seus direitos (LGPD).</strong> Nos termos da Lei Geral de Proteção de Dados (Lei nº 13.709/2018), você pode solicitar a qualquer momento a confirmação, correção, anonimização ou exclusão dos seus dados pessoais, entrando em contato pelos canais abaixo.</p>
+                    <p><strong class="text-alchemical-gold">6. Contato.</strong> Para exercer seus direitos ou tirar dúvidas sobre esta política, fale conosco via <a class="text-alchemical-gold underline" href="https://wa.me/5571983448621" target="_blank">WhatsApp</a>.</p>
+                `
+            }
+        };
+
+        function openLegalModal(type){
+            const data = legalContent[type];
+            const overlay = document.getElementById('legalModalOverlay');
+            const body = document.getElementById('legalModalBody');
+            const okButton = document.getElementById('legalOkButton');
+            const scrollHint = document.getElementById('legalScrollHint');
+
+            document.getElementById('legalModalTitle').textContent = data.title;
+            document.getElementById('legalModalUpdated').textContent = 'Última atualização: ' + new Date().toLocaleDateString('pt-BR');
+            body.innerHTML = data.html;
+            body.scrollTop = 0;
+
+            okButton.disabled = true;
+            okButton.classList.add('bg-alchemical-gold/30', 'text-on-surface-variant', 'cursor-not-allowed');
+            okButton.classList.remove('bg-alchemical-gold', 'text-on-primary', 'hover:bg-primary', 'cursor-pointer');
+            scrollHint.style.opacity = '0.6';
+
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            requestAnimationFrame(() => overlay.classList.remove('opacity-0'));
+            document.body.style.overflow = 'hidden';
+
+            body.onscroll = function(){
+                const reachedEnd = body.scrollTop + body.clientHeight >= body.scrollHeight - 16;
+                if(reachedEnd){
+                    okButton.disabled = false;
+                    okButton.classList.remove('bg-alchemical-gold/30', 'text-on-surface-variant', 'cursor-not-allowed');
+                    okButton.classList.add('bg-alchemical-gold', 'text-on-primary', 'hover:bg-primary', 'cursor-pointer');
+                    scrollHint.style.opacity = '0';
+                }
+            };
+        }
+
+        function closeLegalModal(){
+            const overlay = document.getElementById('legalModalOverlay');
+            if(document.getElementById('legalOkButton').disabled) return;
+            overlay.classList.add('opacity-0');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }, 400);
+        }
+    </script>
+
 <script>
         // Micro-interactions for glass cards
         document.querySelectorAll('.glass-card').forEach(card => {
@@ -438,22 +604,60 @@
             });
         });
 
-        // Simplified Reveal on Scroll
+        // Simplified Reveal on Scroll (progressive enhancement — base state vem do CSS .js-enabled)
         const observerOptions = { threshold: 0.05 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.classList.add('is-revealed');
                 }
             });
         }, observerOptions);
 
         document.querySelectorAll('section > div').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 1.2s cubic-bezier(0.2, 1, 0.3, 1)';
             observer.observe(el);
+        });
+
+        // Atualiza o ano do rodapé automaticamente
+        const yearEl = document.getElementById('currentYear');
+        if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+        // Lead qualification modal
+        function openLeadModal(){
+            const overlay = document.getElementById('leadModalOverlay');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            requestAnimationFrame(() => overlay.classList.remove('opacity-0'));
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLeadModal(){
+            const overlay = document.getElementById('leadModalOverlay');
+            overlay.classList.add('opacity-0');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }, 400);
+        }
+
+        function submitLeadForm(e){
+            e.preventDefault();
+            const nome = document.getElementById('leadNome').value.trim();
+            const whats = document.getElementById('leadWhats').value.trim();
+            const faturamento = document.getElementById('leadFaturamento').value;
+            const desafio = document.getElementById('leadDesafio').value;
+
+            const mensagem = `Olá, meu nome é ${nome}. Faturamento mensal: ${faturamento}. Maior desafio: ${desafio}. WhatsApp para contato: ${whats}. Quero saber se estou apto para a Tecnologia da Alma.`;
+            const link = `https://wa.me/5571983448621?text=${encodeURIComponent(mensagem)}`;
+
+            document.getElementById('leadWhatsLink').href = link;
+            document.getElementById('leadStepForm').classList.add('hidden');
+            document.getElementById('leadStepDone').classList.remove('hidden');
+        }
+
+        document.addEventListener('keydown', function(e){
+            if(e.key === 'Escape') closeLeadModal();
         });
     </script>
 </body></html>
