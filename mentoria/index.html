@@ -191,128 +191,111 @@
       color: var(--text);
     }
 
-    /* ========== MENTORIAS GRID ========== */
+    /* ========== MENTORIAS GRID (imagens horizontais lado a lado) ========== */
     .mentorias-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: 20px;
     }
 
     @media (max-width: 960px) {
       .mentorias-grid {
         grid-template-columns: 1fr;
-        max-width: 480px;
+        max-width: 520px;
         margin: 0 auto;
+        gap: 40px;
       }
     }
 
-    .mentoria-card {
-      position: relative;
-      background: var(--bg-card);
-      background-size: cover;
-      background-position: center;
-      border: 1px solid var(--border);
-      padding: 48px 36px 44px;
+    .mentoria-item {
       display: flex;
       flex-direction: column;
-      transition: border-color 0.4s ease, transform 0.4s ease;
-      overflow: hidden;
-      isolation: isolate;
+      cursor: pointer;
     }
 
-    .mentoria-card::after {
+    .mentoria-image-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+
+    .mentoria-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mentoria-item:hover .mentoria-image-wrap img {
+      transform: scale(1.05);
+    }
+
+    .mentoria-image-wrap::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(7,7,7,0.72) 0%, rgba(7,7,7,0.88) 55%, rgba(7,7,7,0.94) 100%);
-      z-index: 0;
+      background: linear-gradient(180deg, transparent 60%, rgba(7,7,7,0.75) 100%);
       pointer-events: none;
     }
 
-    .mentoria-card > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    .mentoria-card.bg-alinhamento {
-      background-image: url('bg-alinhamento.jpg');
-    }
-
-    .mentoria-card.bg-tecnologia {
-      background-image: url('bg-tecnologia.jpg');
-    }
-
-    .mentoria-card.bg-arquitetura {
-      background-image: url('bg-arquitetura.jpg');
-    }
-
-    .mentoria-card::before {
-      content: '';
+    .mentoria-priority-label {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      opacity: 0;
-      transition: opacity 0.4s ease;
+      top: 16px;
+      right: 16px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: #070707;
+      background: var(--gold);
+      padding: 5px 10px;
       z-index: 2;
     }
 
-    .mentoria-card:hover {
-      border-color: rgba(201, 168, 76, 0.4);
-      transform: translateY(-4px);
-    }
-
-    .mentoria-card:hover::before {
-      opacity: 1;
-    }
-
-    .card-number {
+    .mentoria-number {
+      position: absolute;
+      bottom: 14px;
+      left: 18px;
       font-family: 'Cormorant Garamond', serif;
       font-size: 13px;
       font-weight: 500;
       letter-spacing: 0.2em;
-      color: var(--gold);
-      margin-bottom: 28px;
-      opacity: 0.8;
+      color: var(--gold-soft);
+      z-index: 2;
     }
 
-    .card-title {
+    .mentoria-details {
+      padding: 22px 2px 0;
+    }
+
+    .mentoria-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 500;
       line-height: 1.2;
       color: var(--text);
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       letter-spacing: -0.01em;
+      transition: color 0.3s ease;
     }
 
-    .card-tagline {
-      font-size: 13px;
-      font-weight: 400;
+    .mentoria-item:hover .mentoria-title {
       color: var(--gold-soft);
-      letter-spacing: 0.04em;
-      margin-bottom: 24px;
-      font-style: italic;
+    }
+
+    .mentoria-tagline {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 16px;
+      font-style: italic;
+      font-size: 15px;
+      color: var(--gold-soft);
+      letter-spacing: 0.02em;
+      margin-bottom: 16px;
     }
 
-    .card-body {
-      font-size: 14.5px;
-      font-weight: 300;
-      color: var(--text-muted);
-      line-height: 1.75;
-      flex-grow: 1;
-      margin-bottom: 36px;
-    }
-
-    .card-body p + p {
-      margin-top: 14px;
-    }
-
-    .card-link {
+    .mentoria-more {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -321,35 +304,151 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--gold);
-      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
       transition: gap 0.3s ease;
     }
 
-    .card-link:hover {
+    .mentoria-item:hover .mentoria-more {
       gap: 14px;
     }
 
-    .card-link svg {
+    .mentoria-more svg {
       width: 14px;
       height: 14px;
       stroke: currentColor;
     }
 
-    /* Priority card highlight */
-    .mentoria-card.priority {
-      border-color: rgba(201, 168, 76, 0.35);
+    /* ========== MODAL ========== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 0.4s ease;
     }
 
-    .card-priority-label {
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: linear-gradient(145deg, #121212, #070707);
+      border: 1px solid var(--border);
+      max-width: 720px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-close {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 9px;
+      top: 18px;
+      right: 18px;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      background: rgba(7,7,7,0.6);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 3;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .modal-close:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .modal-close svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+    }
+
+    .modal-image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+    }
+
+    .modal-body-inner {
+      padding: 40px;
+    }
+
+    .modal-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      margin-bottom: 16px;
+      opacity: 0.85;
+    }
+
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+
+    .modal-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 17px;
+      color: var(--gold-soft);
+      margin-bottom: 26px;
+    }
+
+    .modal-text {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 36px;
+    }
+
+    .modal-text p + p {
+      margin-top: 14px;
+    }
+
+    .modal-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      background: var(--gold);
+      border: 1px solid var(--gold);
+      color: #070707;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.35s ease;
+    }
+
+    .modal-cta:hover {
+      background: transparent;
       color: var(--gold);
-      opacity: 0.75;
-      z-index: 2;
     }
 
     /* ========== FOOTER MINI ========== */
@@ -379,11 +478,11 @@
       .hero {
         padding: 100px 20px 80px;
       }
-      .mentoria-card {
-        padding: 40px 28px 36px;
+      .mentoria-title {
+        font-size: 21px;
       }
-      .card-title {
-        font-size: 24px;
+      .modal-body-inner {
+        padding: 28px 24px;
       }
     }
   </style>
@@ -418,81 +517,147 @@
       <div class="mentorias-grid">
 
         <!-- 01 Alinhamento Financeiro -->
-        <article class="mentoria-card priority bg-alinhamento">
-          <span class="card-priority-label">PRIORIDADE</span>
-          <span class="card-number">01</span>
-          <h3 class="card-title">Alinhamento Financeiro</h3>
-          <p class="card-tagline">Energia alinhada. Dinheiro em consequência.</p>
-          <div class="card-body">
-            <p>
-              O problema nunca foi falta de planilha ou de esforço. 
-              É desalinhamento entre energia, decisão e execução.
-            </p>
-            <p>
-              Este sistema trata os chakras como motores neuroendócrinos 
-              de prosperidade, e os coloca a serviço do seu resultado financeiro 
-              com método, constância e aplicação real.
-            </p>
+        <div class="mentoria-item" onclick="openMentoriaModal(0)">
+          <div class="mentoria-image-wrap">
+            <span class="mentoria-priority-label">PRIORIDADE</span>
+            <span class="mentoria-number">01</span>
+            <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1785632407/1785631784395_gchlfz.png" alt="Alinhamento Financeiro" />
           </div>
-          <a href="https://akashahub.com.br/alinhamentofinanceiro" class="card-link">
-            Acessar sistema
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
-        </article>
+          <div class="mentoria-details">
+            <h3 class="mentoria-title">Alinhamento Financeiro</h3>
+            <p class="mentoria-tagline">Energia alinhada. Dinheiro em consequência.</p>
+            <button type="button" class="mentoria-more">
+              Ver detalhes
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
 
         <!-- 02 Tecnologia da Alma -->
-        <article class="mentoria-card bg-tecnologia">
-          <span class="card-number">02</span>
-          <h3 class="card-title">Tecnologia da Alma</h3>
-          <p class="card-tagline">Coerência entre energia, presença e ação.</p>
-          <div class="card-body">
-            <p>
-              Você usa física quântica todos os dias no celular, no avião, na internet. 
-              Quase ninguém usa esses princípios na forma de viver e de direcionar a própria força.
-            </p>
-            <p>
-              Tecnologia da Alma é a maestria de canalizar a energia mais poderosa 
-              que você carrega, inclusive a sexual, como combustível consciente 
-              de criação, presença, persuasão e prosperidade.
-            </p>
+        <div class="mentoria-item" onclick="openMentoriaModal(1)">
+          <div class="mentoria-image-wrap">
+            <span class="mentoria-number">02</span>
+            <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1785632407/1785632104646_sv3deu.png" alt="Tecnologia da Alma" />
           </div>
-          <a href="https://akashahub.com.br/ta" class="card-link">
-            Acessar sistema
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
-        </article>
+          <div class="mentoria-details">
+            <h3 class="mentoria-title">Tecnologia da Alma</h3>
+            <p class="mentoria-tagline">Coerência entre energia, presença e ação.</p>
+            <button type="button" class="mentoria-more">
+              Ver detalhes
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
 
         <!-- 03 Arquitetura de Essência -->
-        <article class="mentoria-card bg-arquitetura">
-          <span class="card-number">03</span>
-          <h3 class="card-title">Arquitetura de Essência</h3>
-          <p class="card-tagline">Essência → Identidade → Império.</p>
-          <div class="card-body">
-            <p>
-              A maior crise atual não é de dinheiro. É de identidade. 
-              Pessoas construindo impérios em cima de máscaras frágeis.
-            </p>
-            <p>
-              Três camadas do ser: Marketing Pessoal, Constelação Familiar 
-              e Registros Akáshicos. A base sólida para um império digital 
-              que sustenta porque nasce da essência real, não da performance.
-            </p>
+        <div class="mentoria-item" onclick="openMentoriaModal(2)">
+          <div class="mentoria-image-wrap">
+            <span class="mentoria-number">03</span>
+            <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1785632407/b10307b4-ef56-4307-9ad0-92702aa4c910_i6adcz.png" alt="Arquitetura de Essência" />
           </div>
-          <a href="https://akashahub.com.br/legado" class="card-link">
-            Acessar sistema
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
-        </article>
+          <div class="mentoria-details">
+            <h3 class="mentoria-title">Arquitetura de Essência</h3>
+            <p class="mentoria-tagline">Essência → Identidade → Império.</p>
+            <button type="button" class="mentoria-more">
+              Ver detalhes
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
 
       </div>
     </div>
   </section>
+
+  <!-- ==================== MODAL MENTORIAS ==================== -->
+  <div class="modal-overlay" id="mentoriaModalOverlay" onclick="if(event.target===this) closeMentoriaModal()">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeMentoriaModal()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-width="1.5"/></svg>
+      </button>
+      <img class="modal-image" id="modalImage" src="" alt="" />
+      <div class="modal-body-inner">
+        <p class="modal-number" id="modalNumber"></p>
+        <h3 class="modal-title" id="modalTitle"></h3>
+        <p class="modal-tagline" id="modalTagline"></p>
+        <div class="modal-text" id="modalText"></div>
+        <a class="modal-cta" id="modalCta" href="#" target="_blank">
+          Acessar sistema
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
 
   <!-- ==================== FOOTER ==================== -->
   <footer class="page-footer">
     <a href="https://akashahub.com.br">akashahub.com.br</a>
     <p>Sistemas reais para dinheiro, energia e identidade.</p>
   </footer>
+
+  <script>
+    const mentorias = [
+      {
+        number: '01',
+        title: 'Alinhamento Financeiro',
+        tagline: 'Energia alinhada. Dinheiro em consequência.',
+        image: 'https://res.cloudinary.com/dcbarseus/image/upload/v1785632407/1785631784395_gchlfz.png',
+        link: 'https://akashahub.com.br/alinhamentofinanceiro',
+        paragraphs: [
+          'O problema nunca foi falta de planilha ou de esforço. É desalinhamento entre energia, decisão e execução.',
+          'Este sistema trata os chakras como motores neuroendócrinos de prosperidade, e os coloca a serviço do seu resultado financeiro com método, constância e aplicação real.'
+        ]
+      },
+      {
+        number: '02',
+        title: 'Tecnologia da Alma',
+        tagline: 'Coerência entre energia, presença e ação.',
+        image: 'https://res.cloudinary.com/dcbarseus/image/upload/v1785632407/1785632104646_sv3deu.png',
+        link: 'https://akashahub.com.br/ta',
+        paragraphs: [
+          'Você usa física quântica todos os dias no celular, no avião, na internet. Quase ninguém usa esses princípios na forma de viver e de direcionar a própria força.',
+          'Tecnologia da Alma é a maestria de canalizar a energia mais poderosa que você carrega, inclusive a sexual, como combustível consciente de criação, presença, persuasão e prosperidade.'
+        ]
+      },
+      {
+        number: '03',
+        title: 'Arquitetura de Essência',
+        tagline: 'Essência → Identidade → Império.',
+        image: 'https://res.cloudinary.com/dcbarseus/image/upload/v1785632407/b10307b4-ef56-4307-9ad0-92702aa4c910_i6adcz.png',
+        link: 'https://akashahub.com.br/legado',
+        paragraphs: [
+          'A maior crise atual não é de dinheiro. É de identidade. Pessoas construindo impérios em cima de máscaras frágeis.',
+          'Três camadas do ser: Marketing Pessoal, Constelação Familiar e Registros Akáshicos. A base sólida para um império digital que sustenta porque nasce da essência real, não da performance.'
+        ]
+      }
+    ];
+
+    function openMentoriaModal(index){
+      const data = mentorias[index];
+      const overlay = document.getElementById('mentoriaModalOverlay');
+
+      document.getElementById('modalImage').src = data.image;
+      document.getElementById('modalImage').alt = data.title;
+      document.getElementById('modalNumber').textContent = data.number;
+      document.getElementById('modalTitle').textContent = data.title;
+      document.getElementById('modalTagline').textContent = data.tagline;
+      document.getElementById('modalText').innerHTML = data.paragraphs.map(p => `<p>${p}</p>`).join('');
+      document.getElementById('modalCta').href = data.link;
+
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMentoriaModal(){
+      const overlay = document.getElementById('mentoriaModalOverlay');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeMentoriaModal();
+    });
+  </script>
 
 </body>
 </html>
