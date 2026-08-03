@@ -1,1 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Hub | Lives</title>
+<link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06050a;--gold:#c9a227;--gold-light:#f0d078;
+  --gold-border:rgba(201,162,39,.3);
+  --white:#f5f0e8;--muted:rgba(245,240,232,.35);--card:rgba(255,255,255,.025);
+  --red:#e05555;--green:#5ec98a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--white);font-family:'Josefin Sans',sans-serif;
+  font-weight:300;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);
+  width:700px;height:700px;
+  background:radial-gradient(ellipse,rgba(201,162,39,.06) 0%,transparent 65%);
+  pointer-events:none;animation:breathe 9s ease-in-out infinite;z-index:0;}
+@keyframes breathe{0%,100%{opacity:.4;}50%{opacity:.9;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
+  justify-content:space-between;padding:16px 28px;background:rgba(6,5,10,.88);
+  backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.04);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{width:34px;height:34px;border-radius:50%;filter:drop-shadow(0 0 6px rgba(201,162,39,.35));}
+.nav-logo span{font-family:'Cormorant Garamond',serif;font-size:1.05rem;letter-spacing:4px;color:var(--white);}
+.nav-logo span b{color:var(--gold-light);font-weight:400;}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.sala-badge{font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);
+  opacity:.85;border:1px solid var(--gold-border);padding:5px 12px;border-radius:20px;white-space:nowrap;}
+.nav-back{font-size:.55rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted);
+  text-decoration:none;border:1px solid rgba(255,255,255,.07);padding:7px 14px;border-radius:20px;
+  transition:all .25s;}
+.nav-back:hover{border-color:var(--gold-border);color:var(--gold-light);}
+
+/* ── LAYOUT ── */
+main{max-width:900px;margin:0 auto;padding:88px 16px 110px;position:relative;z-index:1;}
+
+/* ── PRE-JOIN ── */
+#preJoin{max-width:420px;margin:60px auto 0;text-align:center;opacity:0;animation:fadeUp .6s ease forwards;}
+#preJoin p.eyebrow{font-size:.55rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:.6;margin-bottom:10px;}
+#preJoin h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.7rem;letter-spacing:1.5px;margin-bottom:14px;}
+#preJoin p.desc{font-size:.75rem;color:var(--muted);line-height:1.8;margin-bottom:26px;letter-spacing:.3px;}
+.btn-entrar{padding:14px 34px;background:linear-gradient(135deg,rgba(201,162,39,.2),rgba(201,162,39,.1));
+  border:1px solid rgba(201,162,39,.4);border-radius:2px;cursor:pointer;
+  font-family:'Josefin Sans',sans-serif;font-size:.6rem;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold-light);transition:all .3s;}
+.btn-entrar:hover{background:rgba(201,162,39,.28);border-color:rgba(201,162,39,.7);}
+.btn-entrar:disabled{opacity:.4;cursor:not-allowed;}
+#preJoinStatus{margin-top:16px;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.3);min-height:16px;}
+#preJoinStatus.err{color:var(--red);}
+
+/* ── GRID DE VÍDEO ── */
+#callArea{display:none;}
+#callArea.active{display:block;}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;opacity:0;animation:fadeUp .5s ease forwards;}
+.tile{position:relative;aspect-ratio:4/3;background:#0a0812;border-radius:4px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);}
+.tile video{width:100%;height:100%;object-fit:cover;display:block;background:#0a0812;}
+.tile.self video{transform:scaleX(-1);}
+.tile-label{position:absolute;bottom:8px;left:10px;font-size:.5rem;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(255,255,255,.75);background:rgba(0,0,0,.4);
+  padding:4px 9px;border-radius:2px;}
+.tile-status{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 6px var(--green);}
+.tile.connecting .tile-status{background:#e8a84a;box-shadow:0 0 6px #e8a84a;}
+.tile-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:2rem;color:rgba(201,162,39,.4);}
+
+/* ── CONTROLES ── */
+.controls{position:fixed;bottom:0;left:0;right:0;z-index:150;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  padding:18px 20px calc(18px + env(safe-area-inset-bottom));
+  background:linear-gradient(0deg,rgba(6,5,10,.96),rgba(6,5,10,.7));
+  backdrop-filter:blur(14px);border-top:1px solid rgba(255,255,255,.04);}
+.ctrl-btn{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--white);font-size:1rem;transition:all .25s;}
+.ctrl-btn:hover{border-color:var(--gold-border);}
+.ctrl-btn.off{background:rgba(224,85,85,.15);border-color:rgba(224,85,85,.35);color:var(--red);}
+.ctrl-btn.leave{background:rgba(224,85,85,.15);border-color:rgba(224,85,85,.4);color:var(--red);width:auto;
+  padding:0 22px;border-radius:24px;font-family:'Josefin Sans',sans-serif;font-size:.55rem;
+  letter-spacing:3px;text-transform:uppercase;}
+.ctrl-btn.leave:hover{background:rgba(224,85,85,.28);}
+
+/* ── LOADING ── */
+#ls{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
+  justify-content:center;z-index:999;transition:opacity .5s;}
+#ls.hide{opacity:0;pointer-events:none;}
+#ls span{font-size:.55rem;letter-spacing:6px;text-transform:uppercase;color:var(--gold);
+  opacity:.5;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.3;}50%{opacity:.8;}}
+
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);
+  z-index:800;background:#0d0b1a;border:1px solid rgba(201,162,39,.25);border-radius:2px;
+  padding:10px 20px;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;
+  color:var(--gold-light);opacity:0;transition:all .35s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.err{border-color:rgba(224,85,85,.35);color:var(--red);}
+</style>
+</head>
+<body>
+
+<div id="ls"><span>Carregando…</span></div>
+<div class="toast" id="toast"></div>
+
+<nav>
+  <a href="/dashboard/" class="nav-logo">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Logo">
+    <span>AK<b>A</b>SHA <b>HUB</b></span>
+  </a>
+  <div class="nav-right">
+    <div class="sala-badge" id="salaBadge" style="display:none;">…</div>
+    <a href="/dashboard/" class="nav-back">← Painel</a>
+  </div>
+</nav>
+
+<main>
+  <!-- PRÉ-ENTRADA -->
+  <div id="preJoin">
+    <p class="eyebrow">Portal · Encontros ao Vivo</p>
+    <h2>Entrar em uma Live</h2>
+    <p class="desc">Você será colocado automaticamente numa sala com outras pessoas do Akasha Hub. Se a sala estiver cheia, uma nova se abre pra você.</p>
+    <button class="btn-entrar" id="btnEntrar" onclick="iniciarChamada()">Entrar Agora</button>
+    <div id="preJoinStatus"></div>
+  </div>
+
+  <!-- ÁREA DA CHAMADA -->
+  <div id="callArea">
+    <div class="video-grid" id="videoGrid"></div>
+  </div>
+</main>
+
+<!-- CONTROLES (aparecem só durante a chamada) -->
+<div class="controls" id="controls" style="display:none;">
+  <button class="ctrl-btn" id="btnMic" onclick="toggleMic()" title="Microfone">🎙</button>
+  <button class="ctrl-btn" id="btnCam" onclick="toggleCam()" title="Câmera">📷</button>
+  <button class="ctrl-btn leave" onclick="sairDaSala()">Sair</button>
+</div>
+
+<script type="module">
+import { initializeApp }     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged }
+                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
+         collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, Timestamp }
+                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app  = initializeApp({
+  apiKey:            "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+  authDomain:        "hub-akasha.firebaseapp.com",
+  projectId:         "hub-akasha",
+  storageBucket:     "hub-akasha.firebasestorage.app",
+  messagingSenderId: "370851875474",
+  appId:             "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const MAX_SALA        = 6;
+const HEARTBEAT_MS     = 15000;
+const STALE_MS         = 35000; // presença considerada inativa depois disso
+const ICE_SERVERS = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+];
+
+let currentUser = null;
+let myNome      = 'Convidado';
+let myPeerId    = null;
+let salaId      = null;
+let localStream = null;
+let heartbeatInterval = null;
+let unsubParticipantes = null;
+let unsubSinais = null;
+let micOn = true, camOn = true;
+
+const peers = new Map(); // peerId -> { pc, nome }
+
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (err ? ' err' : '');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── AUTH ── */
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href = '/login/'; return; }
+  currentUser = user;
+  myPeerId    = user.uid;
+
+  const snap = await getDoc(doc(db, "users", user.uid));
+  const ud   = snap.exists() ? snap.data() : {};
+  myNome = ud.nome || user.displayName || 'Convidado';
+
+  document.getElementById('ls').classList.add('hide');
+});
+
+/* ── ENTRAR NA CHAMADA ── */
+window.iniciarChamada = async function() {
+  const btn    = document.getElementById('btnEntrar');
+  const status = document.getElementById('preJoinStatus');
+  btn.disabled = true;
+  status.className = '';
+  status.textContent = 'Pedindo acesso à câmera e microfone…';
+
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  } catch (e) {
+    console.error(e);
+    status.className = 'err';
+    status.textContent = 'Não foi possível acessar câmera/microfone. Verifique as permissões do navegador.';
+    btn.disabled = false;
+    return;
+  }
+
+  status.textContent = 'Procurando uma sala disponível…';
+  salaId = await encontrarSalaDisponivel();
+
+  document.getElementById('preJoin').style.display = 'none';
+  document.getElementById('callArea').classList.add('active');
+  document.getElementById('controls').style.display = 'flex';
+  const badge = document.getElementById('salaBadge');
+  badge.style.display = 'inline-block';
+  badge.textContent = 'Sala ' + salaId.replace('sala','');
+
+  renderTile(myPeerId, 'Você', true);
+  attachStream(myPeerId, localStream);
+
+  await entrarNaSala(salaId);
+};
+
+/* ── ENCONTRAR SALA COM VAGA ── */
+async function encontrarSalaDisponivel() {
+  for (let n = 1; n <= 30; n++) {
+    const id = 'sala' + n;
+    try {
+      const snap = await getDocs(collection(db, 'salas_live', id, 'participantes'));
+      const ativos = snap.docs.filter(d => isAtivo(d.data()));
+      if (ativos.length < MAX_SALA) return id;
+    } catch (e) { return id; }
+  }
+  return 'sala31';
+}
+
+function isAtivo(data) {
+  if (!data.heartbeat) return true; // acabou de entrar, ainda sem heartbeat gravado
+  const t = data.heartbeat.toDate ? data.heartbeat.toDate().getTime() : 0;
+  return (Date.now() - t) < STALE_MS;
+}
+
+/* ── PRESENÇA + SINALIZAÇÃO ── */
+async function entrarNaSala(id) {
+  const participanteRef = doc(db, 'salas_live', id, 'participantes', myPeerId);
+  await setDoc(participanteRef, { nome: myNome, entrouEm: serverTimestamp(), heartbeat: serverTimestamp() });
+
+  heartbeatInterval = setInterval(() => {
+    updateDoc(participanteRef, { heartbeat: serverTimestamp() }).catch(()=>{});
+  }, HEARTBEAT_MS);
+
+  const participantesRef = collection(db, 'salas_live', id, 'participantes');
+  unsubParticipantes = onSnapshot(participantesRef, snap => {
+    snap.docChanges().forEach(change => {
+      const peerId = change.doc.id;
+      if (peerId === myPeerId) return;
+      if (change.type === 'added') {
+        handlePeerJoined(peerId, change.doc.data());
+      } else if (change.type === 'removed') {
+        handlePeerLeft(peerId);
+      }
+    });
+  });
+
+  const sinaisRef = collection(db, 'salas_live', id, 'sinais');
+  const q = query(sinaisRef, where('para', '==', myPeerId));
+  unsubSinais = onSnapshot(q, snap => {
+    snap.docChanges().forEach(change => {
+      if (change.type === 'added') {
+        processarSinal(id, change.doc.id, change.doc.data());
+      }
+    });
+  });
+}
+
+/* ── PEER JOINED / LEFT ── */
+function handlePeerJoined(peerId, data) {
+  if (peers.has(peerId)) return;
+  renderTile(peerId, data.nome || 'Convidado', false);
+  const souIniciador = myPeerId < peerId;
+  criarConexao(peerId, data.nome || 'Convidado', souIniciador);
+}
+
+function handlePeerLeft(peerId) {
+  const p = peers.get(peerId);
+  if (p) { p.pc.close(); peers.delete(peerId); }
+  const tile = document.getElementById('tile-' + peerId);
+  if (tile) tile.remove();
+}
+
+/* ── WEBRTC ── */
+function criarConexao(peerId, nome, souIniciador) {
+  const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+  peers.set(peerId, { pc, nome });
+
+  if (localStream) {
+    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+  }
+
+  pc.onicecandidate = e => {
+    if (e.candidate) enviarSinal(peerId, 'candidate', e.candidate.toJSON());
+  };
+
+  pc.ontrack = e => {
+    attachStream(peerId, e.streams[0]);
+    const tile = document.getElementById('tile-' + peerId);
+    if (tile) tile.classList.remove('connecting');
+  };
+
+  pc.onconnectionstatechange = () => {
+    if (['failed','disconnected','closed'].includes(pc.connectionState)) {
+      const tile = document.getElementById('tile-' + peerId);
+      if (tile) tile.classList.add('connecting');
+    }
+  };
+
+  if (souIniciador) {
+    pc.createOffer().then(offer => {
+      pc.setLocalDescription(offer);
+      enviarSinal(peerId, 'offer', { sdp: offer.sdp, type: offer.type });
+    }).catch(console.error);
+  }
+  return pc;
+}
+
+async function processarSinal(salaIdAtual, sinalDocId, data) {
+  const peerId = data.de;
+  let entry = peers.get(peerId);
+  if (!entry) {
+    const pc = criarConexao(peerId, data.deNome || 'Convidado', false);
+    entry = peers.get(peerId);
+  }
+  const pc = entry.pc;
+  try {
+    if (data.tipo === 'offer') {
+      await pc.setRemoteDescription(data.payload);
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      enviarSinal(peerId, 'answer', { sdp: answer.sdp, type: answer.type });
+    } else if (data.tipo === 'answer') {
+      await pc.setRemoteDescription(data.payload);
+    } else if (data.tipo === 'candidate') {
+      await pc.addIceCandidate(data.payload);
+    }
+  } catch (e) { console.error('Erro processando sinal:', e); }
+
+  deleteDoc(doc(db, 'salas_live', salaIdAtual, 'sinais', sinalDocId)).catch(()=>{});
+}
+
+function enviarSinal(paraPeerId, tipo, payload) {
+  if (!salaId) return;
+  addDoc(collection(db, 'salas_live', salaId, 'sinais'), {
+    de: myPeerId, deNome: myNome, para: paraPeerId, tipo, payload, criadoEm: serverTimestamp()
+  }).catch(console.error);
+}
+
+/* ── UI DE VÍDEO ── */
+function renderTile(peerId, nome, isSelf) {
+  const grid = document.getElementById('videoGrid');
+  const tile = document.createElement('div');
+  tile.className = 'tile' + (isSelf ? ' self' : ' connecting');
+  tile.id = 'tile-' + peerId;
+  tile.innerHTML = `
+    <div class="tile-placeholder">${esc((nome||'?').charAt(0).toUpperCase())}</div>
+    <video id="video-${peerId}" autoplay playsinline ${isSelf ? 'muted' : ''}></video>
+    <span class="tile-status"></span>
+    <span class="tile-label">${esc(nome)}</span>
+  `;
+  grid.appendChild(tile);
+}
+
+function attachStream(peerId, stream) {
+  const video = document.getElementById('video-' + peerId);
+  if (!video) return;
+  video.srcObject = stream;
+  video.onloadedmetadata = () => {
+    const ph = document.querySelector('#tile-' + peerId + ' .tile-placeholder');
+    if (ph) ph.style.display = 'none';
+  };
+}
+
+/* ── CONTROLES ── */
+window.toggleMic = function() {
+  if (!localStream) return;
+  micOn = !micOn;
+  localStream.getAudioTracks().forEach(t => t.enabled = micOn);
+  document.getElementById('btnMic').classList.toggle('off', !micOn);
+  document.getElementById('btnMic').textContent = micOn ? '🎙' : '🔇';
+};
+
+window.toggleCam = function() {
+  if (!localStream) return;
+  camOn = !camOn;
+  localStream.getVideoTracks().forEach(t => t.enabled = camOn);
+  document.getElementById('btnCam').classList.toggle('off', !camOn);
+  document.getElementById('btnCam').textContent = camOn ? '📷' : '🚫';
+};
+
+window.sairDaSala = async function() {
+  await limparTudo();
+  window.location.href = '/dashboard/';
+};
+
+async function limparTudo() {
+  if (heartbeatInterval) clearInterval(heartbeatInterval);
+  if (unsubParticipantes) unsubParticipantes();
+  if (unsubSinais) unsubSinais();
+  peers.forEach(p => p.pc.close());
+  peers.clear();
+  if (localStream) localStream.getTracks().forEach(t => t.stop());
+  if (salaId && myPeerId) {
+    try { await deleteDoc(doc(db, 'salas_live', salaId, 'participantes', myPeerId)); } catch(e){}
+  }
+}
+
+window.addEventListener('beforeunload', () => {
+  if (salaId && myPeerId) {
+    try { deleteDoc(doc(db, 'salas_live', salaId, 'participantes', myPeerId)); } catch(e){}
+  }
+});
+</script>
+</body>
+</html>
