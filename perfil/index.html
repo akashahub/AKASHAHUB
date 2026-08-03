@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Hub | Meu Perfil</title>
+<link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06050a;--gold:#c9a227;--gold-light:#f0d078;
+  --gold-border:rgba(201,162,39,.3);--gold-dim:rgba(201,162,39,.08);
+  --white:#f5f0e8;--muted:rgba(245,240,232,.35);--card:rgba(255,255,255,.025);
+  --red:#e05555;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:'Josefin Sans',sans-serif;
+  font-weight:300;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);
+  width:700px;height:700px;
+  background:radial-gradient(ellipse,rgba(201,162,39,.06) 0%,transparent 65%);
+  pointer-events:none;animation:breathe 9s ease-in-out infinite;z-index:0;}
+@keyframes breathe{0%,100%{opacity:.4;}50%{opacity:.9;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── NAV (idêntico ao dashboard) ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
+  justify-content:space-between;padding:16px 28px;background:rgba(6,5,10,.88);
+  backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.04);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{width:34px;height:34px;border-radius:50%;filter:drop-shadow(0 0 6px rgba(201,162,39,.35));}
+.nav-logo span{font-family:'Cormorant Garamond',serif;font-size:1.05rem;letter-spacing:4px;color:var(--white);}
+.nav-logo span b{color:var(--gold-light);font-weight:400;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-back{font-size:.55rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted);
+  text-decoration:none;border:1px solid rgba(255,255,255,.07);padding:7px 14px;border-radius:20px;
+  transition:all .25s;}
+.nav-back:hover{border-color:var(--gold-border);color:var(--gold-light);}
+
+/* ── LAYOUT ── */
+main{max-width:560px;margin:0 auto;padding:96px 20px 100px;position:relative;z-index:1;}
+.sec{display:flex;align-items:center;gap:14px;margin:30px 0 12px;opacity:0;animation:fadeUp .6s ease forwards;}
+.sec span{font-size:.55rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:.5;white-space:nowrap;}
+.sec::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--gold-border),transparent);}
+
+/* ── HERO / AVATAR ── */
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:10px 0 6px;opacity:0;animation:fadeUp .6s ease forwards;}
+.avatar-wrap{position:relative;width:112px;height:112px;margin-bottom:18px;cursor:pointer;}
+.avatar-ring{position:absolute;inset:-5px;border-radius:50%;
+  background:conic-gradient(from 0deg,var(--gold),transparent 30%,transparent 70%,var(--gold));
+  opacity:.55;animation:spin 6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.avatar-circle{position:relative;width:112px;height:112px;border-radius:50%;overflow:hidden;
+  background:rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--gold-light);}
+.avatar-circle img{width:100%;height:100%;object-fit:cover;display:none;}
+.avatar-overlay{position:absolute;inset:0;border-radius:50%;background:rgba(6,5,10,.55);
+  display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .25s;
+  font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);flex-direction:column;gap:4px;}
+.avatar-wrap:hover .avatar-overlay{opacity:1;}
+.avatar-camera{font-size:1.1rem;}
+.avatar-input{display:none;}
+.hero-name{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1.5rem;letter-spacing:1.5px;margin-bottom:6px;}
+.hero-email{font-size:.62rem;letter-spacing:2px;color:var(--muted);margin-bottom:12px;}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;font-size:.55rem;letter-spacing:4px;
+  text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-border);
+  padding:6px 16px;border-radius:20px;}
+
+/* ── UPLOAD STATUS ── */
+.upload-status{font-size:.55rem;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(201,162,39,.6);margin-top:2px;min-height:14px;text-align:center;}
+.upload-status.err{color:var(--red);}
+
+/* ── CARD / FORM ── */
+.panel{width:100%;background:var(--card);border:1px solid rgba(255,255,255,.05);
+  border-radius:2px;padding:22px;margin-bottom:14px;opacity:0;animation:fadeUp .6s ease forwards;}
+.form-row{margin-bottom:16px;}
+.form-row:last-child{margin-bottom:0;}
+.form-label{display:block;font-size:.52rem;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold);opacity:.7;margin-bottom:7px;}
+.form-input,.form-textarea{width:100%;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);border-radius:2px;
+  padding:11px 14px;color:var(--white);
+  font-family:'Josefin Sans',sans-serif;font-size:.85rem;font-weight:300;letter-spacing:.5px;
+  outline:none;transition:border-color .25s;}
+.form-input:focus,.form-textarea:focus{border-color:rgba(201,162,39,.4);background:rgba(201,162,39,.03);}
+.form-input:disabled{opacity:.4;cursor:not-allowed;}
+.form-textarea{resize:vertical;min-height:90px;line-height:1.8;}
+.form-hint{font-size:.6rem;letter-spacing:.4px;color:rgba(245,240,232,.28);margin-top:6px;line-height:1.6;}
+
+/* ── INFO GRID (dados não editáveis) ── */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.info-item{padding:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:2px;}
+.info-item span{display:block;}
+.info-label{font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.info-value{font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:.5px;color:var(--white);}
+
+/* ── ACTIONS ── */
+.btn-salvar{width:100%;padding:14px;
+  background:linear-gradient(135deg,rgba(201,162,39,.2),rgba(201,162,39,.1));
+  border:1px solid rgba(201,162,39,.4);border-radius:2px;cursor:pointer;
+  font-family:'Josefin Sans',sans-serif;font-size:.58rem;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold-light);transition:all .3s;}
+.btn-salvar:hover{background:rgba(201,162,39,.28);border-color:rgba(201,162,39,.7);}
+.btn-salvar:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+  z-index:800;background:#0d0b1a;border:1px solid rgba(201,162,39,.25);border-radius:2px;
+  padding:10px 20px;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;
+  color:var(--gold-light);opacity:0;transition:all .35s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.err{border-color:rgba(224,85,85,.35);color:var(--red);}
+
+/* ── FOOTER ── */
+footer{margin-top:36px;text-align:center;padding:18px 0;border-top:1px solid rgba(255,255,255,.04);}
+.btn-logout{background:none;border:1px solid rgba(255,255,255,.07);border-radius:2px;
+  padding:9px 22px;color:rgba(255,255,255,.2);cursor:pointer;
+  font-family:'Josefin Sans',sans-serif;font-size:.55rem;letter-spacing:4px;
+  text-transform:uppercase;transition:all .3s;}
+.btn-logout:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.45);}
+
+/* ── LOADING ── */
+#ls{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
+  justify-content:center;z-index:999;transition:opacity .5s;}
+#ls.hide{opacity:0;pointer-events:none;}
+#ls span{font-size:.55rem;letter-spacing:6px;text-transform:uppercase;color:var(--gold);
+  opacity:.5;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.3;}50%{opacity:.8;}}
+.spin-load{display:inline-block;width:12px;height:12px;border:2px solid rgba(201,162,39,.2);
+  border-top-color:var(--gold);border-radius:50%;animation:rotate .7s linear infinite;}
+@keyframes rotate{to{transform:rotate(360deg);}}
+
+.d1{animation-delay:.1s;}.d2{animation-delay:.2s;}.d3{animation-delay:.3s;}.d4{animation-delay:.4s;}
+</style>
+</head>
+<body>
+
+<div id="ls"><span>Carregando…</span></div>
+<div class="toast" id="toast"></div>
+
+<nav>
+  <a href="/dashboard/" class="nav-logo">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Logo">
+    <span>AK<b>A</b>SHA <b>HUB</b></span>
+  </a>
+  <a href="/dashboard/" class="nav-back">← Painel</a>
+</nav>
+
+<main id="mainContent" style="pointer-events:none;opacity:0;transition:opacity .4s;">
+
+  <div class="hero d1">
+    <div class="avatar-wrap" onclick="document.getElementById('avatarInput').click()">
+      <div class="avatar-ring"></div>
+      <div class="avatar-circle" id="avatarCircle">
+        <span id="avatarInitial">?</span>
+        <img id="avatarImg" alt="Foto de perfil">
+        <div class="avatar-overlay">
+          <span class="avatar-camera">◈</span>
+          <span>Trocar foto</span>
+        </div>
+      </div>
+    </div>
+    <input type="file" accept="image/*" id="avatarInput" class="avatar-input" onchange="onAvatarFile(this.files[0])">
+    <div class="upload-status" id="uploadStatus"></div>
+    <h2 class="hero-name" id="heroName">…</h2>
+    <p class="hero-email" id="heroEmail">…</p>
+    <div class="hero-badge" id="heroBadge">…</div>
+  </div>
+
+  <div class="sec d2"><span>Meus Dados</span></div>
+  <div class="panel d2">
+    <div class="form-row">
+      <label class="form-label">Nome</label>
+      <input class="form-input" id="fNome" placeholder="Seu nome completo" />
+    </div>
+    <div class="form-row">
+      <label class="form-label">Telefone / WhatsApp</label>
+      <input class="form-input" id="fTelefone" placeholder="(00) 00000-0000" />
+    </div>
+    <div class="form-row">
+      <label class="form-label">Sobre você</label>
+      <textarea class="form-textarea" id="fBio" placeholder="Um pouco sobre sua jornada…"></textarea>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Ou cole a URL de uma foto</label>
+      <input class="form-input" id="fFotoUrl" placeholder="https://..." oninput="onFotoUrlInput(this.value)" />
+      <p class="form-hint">Alternativa ao upload acima — útil se a foto já estiver hospedada em algum lugar (Cloudinary, Imgur, etc).</p>
+    </div>
+  </div>
+
+  <div class="sec d3"><span>Sua Jornada</span></div>
+  <div class="panel d3">
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-label">Nível Atual</span>
+        <span class="info-value" id="infoNivel">…</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Membro Desde</span>
+        <span class="info-value" id="infoDesde">…</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-salvar d4" id="btnSalvar" onclick="salvarPerfil()">Salvar Alterações</button>
+
+  <footer>
+    <button class="btn-logout" id="btnLogout">Sair da conta</button>
+  </footer>
+</main>
+
+<script type="module">
+import { initializeApp }     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, updateProfile }
+                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc }
+                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app  = initializeApp({
+  apiKey:            "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+  authDomain:        "hub-akasha.firebaseapp.com",
+  projectId:         "hub-akasha",
+  storageBucket:     "hub-akasha.firebasestorage.app",
+  messagingSenderId: "370851875474",
+  appId:             "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+/* Cloudinary — mesmo cloud name já usado no restante do site.
+   Para o upload direto funcionar, crie em Cloudinary → Settings → Upload
+   um "Upload preset" UNSIGNED chamado exatamente: akasha_perfil
+   (Sem isso, o botão de colar URL abaixo continua funcionando normalmente.) */
+const CLOUD_NAME     = "dcbarseus";
+const UPLOAD_PRESET  = "akasha_perfil";
+
+const NIVEIS = ['Visitante','Iniciado','Despertar','Domínio','Magnetismo Supremo'];
+let currentUser = null;
+let fotoUrlAtual = "";
+
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (err ? ' err' : '');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+
+function setAvatarPreview(url) {
+  const img = document.getElementById('avatarImg');
+  const initial = document.getElementById('avatarInitial');
+  if (url) {
+    img.src = url;
+    img.style.display = 'block';
+    initial.style.display = 'none';
+  } else {
+    img.style.display = 'none';
+    initial.style.display = 'block';
+  }
+}
+
+function formatarData(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+}
+
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href = '/login/'; return; }
+  currentUser = user;
+
+  const ref  = doc(db, "users", user.uid);
+  const snap = await getDoc(ref);
+  const ud   = snap.exists() ? snap.data() : {};
+
+  const nome  = ud.nome || user.displayName || 'Membro';
+  const nivel = ud.nivel ?? 0;
+  fotoUrlAtual = ud.fotoUrl || '';
+
+  document.getElementById('avatarInitial').textContent = nome.charAt(0).toUpperCase();
+  document.getElementById('heroName').textContent  = nome;
+  document.getElementById('heroEmail').textContent = user.email || '';
+  document.getElementById('heroBadge').textContent = NIVEIS[nivel] || 'Visitante';
+  document.getElementById('infoNivel').textContent = NIVEIS[nivel] || 'Visitante';
+  document.getElementById('infoDesde').textContent = formatarData(user.metadata?.creationTime);
+
+  document.getElementById('fNome').value     = nome;
+  document.getElementById('fTelefone').value = ud.telefone || '';
+  document.getElementById('fBio').value      = ud.bio || '';
+  document.getElementById('fFotoUrl').value  = fotoUrlAtual;
+  setAvatarPreview(fotoUrlAtual);
+
+  const main = document.getElementById('mainContent');
+  main.style.pointerEvents = 'all';
+  main.style.opacity = '1';
+  document.getElementById('ls').classList.add('hide');
+});
+
+/* ── UPLOAD DIRETO (Cloudinary unsigned) ── */
+window.onAvatarFile = async function(file) {
+  if (!file) return;
+  const status = document.getElementById('uploadStatus');
+  status.className = 'upload-status';
+  status.textContent = 'Enviando…';
+
+  // preview local imediato enquanto sobe
+  const localUrl = URL.createObjectURL(file);
+  setAvatarPreview(localUrl);
+
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    if (!res.ok) throw new Error('upload preset ausente ou inválido');
+    const data = await res.json();
+
+    fotoUrlAtual = data.secure_url;
+    document.getElementById('fFotoUrl').value = fotoUrlAtual;
+    setAvatarPreview(fotoUrlAtual);
+    status.textContent = 'Foto enviada ✦';
+    setTimeout(() => status.textContent = '', 2500);
+  } catch (e) {
+    console.error(e);
+    status.className = 'upload-status err';
+    status.textContent = 'Upload indisponível — use o campo de URL abaixo';
+    setAvatarPreview(fotoUrlAtual); // volta pra última foto salva
+  }
+};
+
+/* ── OU COLAR URL MANUALMENTE ── */
+window.onFotoUrlInput = function(val) {
+  fotoUrlAtual = val.trim();
+  setAvatarPreview(fotoUrlAtual);
+};
+
+/* ── SALVAR ── */
+window.salvarPerfil = async function() {
+  if (!currentUser) return;
+  const nome     = document.getElementById('fNome').value.trim();
+  const telefone = document.getElementById('fTelefone').value.trim();
+  const bio      = document.getElementById('fBio').value.trim();
+
+  if (!nome) { showToast('Nome obrigatório', true); return; }
+
+  const btn = document.getElementById('btnSalvar');
+  btn.disabled = true; btn.textContent = '…';
+
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid), {
+      nome, telefone, bio, fotoUrl: fotoUrlAtual
+    }, { merge: true });
+
+    if (currentUser.displayName !== nome) {
+      await updateProfile(currentUser, { displayName: nome });
+    }
+
+    document.getElementById('heroName').textContent = nome;
+    document.getElementById('avatarInitial').textContent = nome.charAt(0).toUpperCase();
+    showToast('Perfil atualizado ✦');
+  } catch (e) {
+    console.error(e);
+    showToast('Erro ao salvar', true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Salvar Alterações';
+  }
+};
+
+/* ── LOGOUT (mesma lógica do dashboard) ── */
+document.getElementById('btnLogout').addEventListener('click', async () => {
+  await signOut(auth);
+  window.location.href = '/';
+});
+</script>
+</body>
+</html>
