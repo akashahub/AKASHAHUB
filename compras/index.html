@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akasha Hub | Minhas Compras</title>
+<link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06050a;--gold:#c9a227;--gold-light:#f0d078;
+  --gold-border:rgba(201,162,39,.3);--gold-dim:rgba(201,162,39,.08);
+  --white:#f5f0e8;--muted:rgba(245,240,232,.35);--card:rgba(255,255,255,.025);
+  --red:#e05555;--blue:#56a8e1;--green:#5ec98a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:'Josefin Sans',sans-serif;
+  font-weight:300;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);
+  width:700px;height:700px;
+  background:radial-gradient(ellipse,rgba(201,162,39,.06) 0%,transparent 65%);
+  pointer-events:none;animation:breathe 9s ease-in-out infinite;z-index:0;}
+@keyframes breathe{0%,100%{opacity:.4;}50%{opacity:.9;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
+  justify-content:space-between;padding:16px 28px;background:rgba(6,5,10,.88);
+  backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.04);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{width:34px;height:34px;border-radius:50%;filter:drop-shadow(0 0 6px rgba(201,162,39,.35));}
+.nav-logo span{font-family:'Cormorant Garamond',serif;font-size:1.05rem;letter-spacing:4px;color:var(--white);}
+.nav-logo span b{color:var(--gold-light);font-weight:400;}
+.nav-back{font-size:.55rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted);
+  text-decoration:none;border:1px solid rgba(255,255,255,.07);padding:7px 14px;border-radius:20px;
+  transition:all .25s;}
+.nav-back:hover{border-color:var(--gold-border);color:var(--gold-light);}
+
+/* ── LAYOUT ── */
+main{max-width:600px;margin:0 auto;padding:96px 20px 100px;position:relative;z-index:1;}
+.greeting{margin-bottom:8px;opacity:0;animation:fadeUp .6s ease forwards;}
+.greeting-sub{font-size:.55rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:.6;margin-bottom:8px;}
+.greeting h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.7rem;letter-spacing:2px;}
+
+.sec{display:flex;align-items:center;gap:14px;margin:30px 0 12px;opacity:0;animation:fadeUp .6s ease forwards;}
+.sec span{font-size:.55rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:.5;white-space:nowrap;}
+.sec::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--gold-border),transparent);}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:6px;margin-bottom:6px;opacity:0;animation:fadeUp .6s ease forwards;}
+.tab{flex:1;text-align:center;padding:11px;font-size:.55rem;letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted);background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:2px;
+  cursor:pointer;transition:all .25s;}
+.tab.active{color:var(--gold-light);border-color:var(--gold-border);background:rgba(201,162,39,.06);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ── PEDIDOS ── */
+.pedido-empty{text-align:center;padding:40px 20px;font-size:.6rem;letter-spacing:4px;
+  text-transform:uppercase;color:rgba(245,240,232,.18);}
+.pedido-card{width:100%;padding:18px 20px;margin-bottom:10px;border-radius:2px;
+  background:var(--card);border:1px solid rgba(255,255,255,.05);opacity:0;
+  animation:fadeUp .5s ease forwards;transition:border-color .3s;}
+.pedido-card:hover{border-color:rgba(201,162,39,.18);}
+.pedido-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
+.pedido-nome{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1.05rem;letter-spacing:1px;color:var(--white);}
+.pedido-data{font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:rgba(245,240,232,.25);margin-top:4px;}
+.pedido-valor{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--gold-light);white-space:nowrap;}
+
+.status-badge{display:inline-flex;align-items:center;gap:6px;font-size:.5rem;letter-spacing:3px;
+  text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-top:4px;}
+.status-badge::before{content:'●';font-size:.55rem;}
+.st-pendente{color:#e8a84a;background:rgba(232,168,74,.08);border:1px solid rgba(232,168,74,.2);}
+.st-processando{color:var(--blue);background:rgba(86,168,225,.08);border:1px solid rgba(86,168,225,.2);}
+.st-enviado{color:var(--gold);background:rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.2);}
+.st-entregue{color:var(--green);background:rgba(94,201,138,.08);border:1px solid rgba(94,201,138,.2);}
+.st-cancelado{color:var(--red);background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.2);}
+
+.pedido-track{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);
+  font-size:.62rem;letter-spacing:.4px;color:rgba(245,240,232,.4);line-height:1.7;}
+.pedido-track b{color:rgba(245,240,232,.6);font-weight:400;}
+
+/* ── ENDEREÇO ── */
+.panel{width:100%;background:var(--card);border:1px solid rgba(255,255,255,.05);
+  border-radius:2px;padding:22px;margin-bottom:14px;opacity:0;animation:fadeUp .6s ease forwards;}
+.form-row{margin-bottom:16px;}
+.form-row:last-child{margin-bottom:0;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.form-row-3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-bottom:16px;}
+.form-label{display:block;font-size:.52rem;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold);opacity:.7;margin-bottom:7px;}
+.form-input{width:100%;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);border-radius:2px;
+  padding:11px 14px;color:var(--white);
+  font-family:'Josefin Sans',sans-serif;font-size:.85rem;font-weight:300;letter-spacing:.5px;
+  outline:none;transition:border-color .25s;}
+.form-input:focus{border-color:rgba(201,162,39,.4);background:rgba(201,162,39,.03);}
+.form-hint{font-size:.6rem;letter-spacing:.4px;color:rgba(245,240,232,.28);margin-top:10px;line-height:1.6;}
+
+.btn-salvar{width:100%;padding:14px;
+  background:linear-gradient(135deg,rgba(201,162,39,.2),rgba(201,162,39,.1));
+  border:1px solid rgba(201,162,39,.4);border-radius:2px;cursor:pointer;
+  font-family:'Josefin Sans',sans-serif;font-size:.58rem;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold-light);transition:all .3s;margin-top:6px;}
+.btn-salvar:hover{background:rgba(201,162,39,.28);border-color:rgba(201,162,39,.7);}
+.btn-salvar:disabled{opacity:.4;cursor:not-allowed;}
+
+.addr-saved{display:flex;align-items:center;gap:8px;font-size:.55rem;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(94,201,138,.7);margin-bottom:16px;}
+.addr-saved::before{content:'✓';}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+  z-index:800;background:#0d0b1a;border:1px solid rgba(201,162,39,.25);border-radius:2px;
+  padding:10px 20px;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;
+  color:var(--gold-light);opacity:0;transition:all .35s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.err{border-color:rgba(224,85,85,.35);color:var(--red);}
+
+/* ── LOADING ── */
+#ls{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
+  justify-content:center;z-index:999;transition:opacity .5s;}
+#ls.hide{opacity:0;pointer-events:none;}
+#ls span{font-size:.55rem;letter-spacing:6px;text-transform:uppercase;color:var(--gold);
+  opacity:.5;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.3;}50%{opacity:.8;}}
+
+.d1{animation-delay:.1s;}.d2{animation-delay:.2s;}.d3{animation-delay:.3s;}
+</style>
+</head>
+<body>
+
+<div id="ls"><span>Carregando…</span></div>
+<div class="toast" id="toast"></div>
+
+<nav>
+  <a href="/dashboard/" class="nav-logo">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Logo">
+    <span>AK<b>A</b>SHA <b>HUB</b></span>
+  </a>
+  <a href="/dashboard/" class="nav-back">← Painel</a>
+</nav>
+
+<main id="mainContent" style="pointer-events:none;opacity:0;transition:opacity .4s;">
+
+  <div class="greeting d1">
+    <p class="greeting-sub">Portal · Compras</p>
+    <h2>Minhas Compras</h2>
+  </div>
+
+  <div class="tabs d1">
+    <div class="tab active" data-tab="pedidos" onclick="trocarTab('pedidos')">Meus Pedidos</div>
+    <div class="tab" data-tab="endereco" onclick="trocarTab('endereco')">Endereço de Entrega</div>
+  </div>
+
+  <!-- PEDIDOS -->
+  <div class="tab-panel active" id="panel-pedidos">
+    <div id="pedidosContainer" class="d2"><div class="pedido-empty"><span class="spin-load"></span></div></div>
+  </div>
+
+  <!-- ENDEREÇO -->
+  <div class="tab-panel" id="panel-endereco">
+    <div class="panel d2">
+      <div class="addr-saved" id="addrSavedTag" style="display:none;">Endereço salvo</div>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">CEP</label>
+          <input class="form-input" id="fCep" placeholder="00000-000" />
+        </div>
+        <div>
+          <label class="form-label">Número</label>
+          <input class="form-input" id="fNumero" placeholder="Nº" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Rua / Avenida</label>
+        <input class="form-input" id="fRua" placeholder="Nome da rua" />
+      </div>
+      <div class="form-row-2">
+        <div>
+          <label class="form-label">Complemento</label>
+          <input class="form-input" id="fComplemento" placeholder="Apto, bloco… (opcional)" />
+        </div>
+        <div>
+          <label class="form-label">Bairro</label>
+          <input class="form-input" id="fBairro" placeholder="Bairro" />
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div>
+          <label class="form-label">Cidade</label>
+          <input class="form-input" id="fCidade" placeholder="Cidade" />
+        </div>
+        <div>
+          <label class="form-label">Estado</label>
+          <input class="form-input" id="fEstado" placeholder="UF" maxlength="2" style="text-transform:uppercase;" />
+        </div>
+        <div>
+          <label class="form-label">País</label>
+          <input class="form-input" id="fPais" placeholder="Brasil" value="Brasil" />
+        </div>
+      </div>
+      <button class="btn-salvar" id="btnSalvarEndereco" onclick="salvarEndereco()">Salvar Endereço</button>
+      <p class="form-hint">Esse é o endereço usado para o envio dos seus pedidos físicos. Mantenha atualizado antes de finalizar uma compra na loja.</p>
+    </div>
+  </div>
+
+</main>
+
+<script type="module">
+import { initializeApp }     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged }
+                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, collection,
+         query, where, orderBy, getDocs }
+                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app  = initializeApp({
+  apiKey:            "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+  authDomain:        "hub-akasha.firebaseapp.com",
+  projectId:         "hub-akasha",
+  storageBucket:     "hub-akasha.firebasestorage.app",
+  messagingSenderId: "370851875474",
+  appId:             "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+let currentUser = null;
+
+const STATUS_MAP = {
+  pendente:    { label:'Pagamento Pendente', cls:'st-pendente' },
+  processando: { label:'Em Processamento',   cls:'st-processando' },
+  enviado:     { label:'A Caminho',          cls:'st-enviado' },
+  entregue:    { label:'Entregue',           cls:'st-entregue' },
+  cancelado:   { label:'Cancelado',          cls:'st-cancelado' },
+};
+
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (err ? ' err' : '');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatarData(ts) {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+function formatarValor(v) {
+  if (v == null) return '';
+  return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits:2 });
+}
+
+window.trocarTab = function(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.getElementById('panel-pedidos').classList.toggle('active', tab === 'pedidos');
+  document.getElementById('panel-endereco').classList.toggle('active', tab === 'endereco');
+};
+
+/* ── AUTH ── */
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href = '/login/'; return; }
+  currentUser = user;
+
+  const ref  = doc(db, "users", user.uid);
+  const snap = await getDoc(ref);
+  const ud   = snap.exists() ? snap.data() : {};
+
+  preencherEndereco(ud.endereco || {});
+  await carregarPedidos();
+
+  const main = document.getElementById('mainContent');
+  main.style.pointerEvents = 'all';
+  main.style.opacity = '1';
+  document.getElementById('ls').classList.add('hide');
+});
+
+/* ── PEDIDOS ── */
+async function carregarPedidos() {
+  const container = document.getElementById('pedidosContainer');
+  try {
+    const q = query(
+      collection(db, 'pedidos'),
+      where('uid', '==', currentUser.uid),
+      orderBy('criadoEm', 'desc')
+    );
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      container.innerHTML = '<div class="pedido-empty">Nenhuma compra ainda<br><span style="opacity:.5">Seus pedidos vão aparecer aqui</span></div>';
+      return;
+    }
+    container.innerHTML = '';
+    snap.docs.forEach((d, i) => container.appendChild(criarPedidoCard({ id: d.id, ...d.data() }, i)));
+  } catch (e) {
+    console.error(e);
+    container.innerHTML = '<div class="pedido-empty">Nenhuma compra ainda<br><span style="opacity:.5">Seus pedidos vão aparecer aqui</span></div>';
+  }
+}
+
+function criarPedidoCard(p, i) {
+  const st = STATUS_MAP[p.status] || STATUS_MAP.pendente;
+  const div = document.createElement('div');
+  div.className = 'pedido-card';
+  div.style.animationDelay = (i * 0.07) + 's';
+  div.innerHTML = `
+    <div class="pedido-top">
+      <div>
+        <div class="pedido-nome">${esc(p.produto || 'Pedido Akasha Hub')}</div>
+        <div class="pedido-data">${formatarData(p.criadoEm)} · #${esc(p.id.slice(0,8))}</div>
+      </div>
+      <div class="pedido-valor">${formatarValor(p.valor)}</div>
+    </div>
+    <span class="status-badge ${st.cls}">${st.label}</span>
+    ${p.codigoRastreio ? `
+    <div class="pedido-track">
+      <b>Rastreio:</b> ${esc(p.codigoRastreio)}
+      ${p.transportadora ? ' · ' + esc(p.transportadora) : ''}
+    </div>` : ''}
+  `;
+  return div;
+}
+
+/* ── ENDEREÇO ── */
+function preencherEndereco(end) {
+  document.getElementById('fCep').value        = end.cep || '';
+  document.getElementById('fRua').value        = end.rua || '';
+  document.getElementById('fNumero').value     = end.numero || '';
+  document.getElementById('fComplemento').value= end.complemento || '';
+  document.getElementById('fBairro').value     = end.bairro || '';
+  document.getElementById('fCidade').value     = end.cidade || '';
+  document.getElementById('fEstado').value     = end.estado || '';
+  document.getElementById('fPais').value       = end.pais || 'Brasil';
+  if (end.rua) document.getElementById('addrSavedTag').style.display = 'flex';
+}
+
+window.salvarEndereco = async function() {
+  if (!currentUser) return;
+  const endereco = {
+    cep:         document.getElementById('fCep').value.trim(),
+    rua:         document.getElementById('fRua').value.trim(),
+    numero:      document.getElementById('fNumero').value.trim(),
+    complemento: document.getElementById('fComplemento').value.trim(),
+    bairro:      document.getElementById('fBairro').value.trim(),
+    cidade:      document.getElementById('fCidade').value.trim(),
+    estado:      document.getElementById('fEstado').value.trim().toUpperCase(),
+    pais:        document.getElementById('fPais').value.trim() || 'Brasil',
+  };
+
+  if (!endereco.rua || !endereco.numero || !endereco.cidade) {
+    showToast('Preencha rua, número e cidade', true);
+    return;
+  }
+
+  const btn = document.getElementById('btnSalvarEndereco');
+  btn.disabled = true; btn.textContent = '…';
+
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid), { endereco }, { merge: true });
+    document.getElementById('addrSavedTag').style.display = 'flex';
+    showToast('Endereço salvo ✦');
+  } catch (e) {
+    console.error(e);
+    showToast('Erro ao salvar', true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Salvar Endereço';
+  }
+};
+</script>
+</body>
+</html>
