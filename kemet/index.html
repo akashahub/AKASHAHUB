@@ -188,6 +188,51 @@
   .section-head h2{font-size:clamp(30px,4vw,46px); line-height:1.08;}
   .section-head p{margin-top:18px; color:var(--ivory-dim); font-size:16px; max-width:58ch;}
 
+  /* ---------- VIDEO ORIGEM ---------- */
+  .origin-video{
+    background:var(--basalt);
+    border-bottom:1px solid var(--line);
+  }
+  .video-frame{
+    position:relative;
+    max-width:820px;
+    margin:0 auto;
+    border:1px solid var(--gold);
+    border-radius:var(--radius);
+    overflow:hidden;
+    background:#000;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .video-frame video{
+    width:100%; display:block; max-height:80vh;
+  }
+  .video-caption{
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    gap:14px; max-width:820px; margin:20px auto 0;
+  }
+  .video-caption p{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ivory-dim);
+    letter-spacing:0.04em; max-width:52ch;
+  }
+  .audio-toggle{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.06em;
+    text-transform:uppercase; color:var(--gold); border:1px solid var(--gold);
+    padding:10px 16px; border-radius:var(--radius); cursor:pointer; background:transparent;
+    display:inline-flex; align-items:center; gap:8px; transition:background .2s ease, color .2s ease;
+    white-space:nowrap;
+  }
+  .audio-toggle:hover{background:var(--gold); color:var(--obsidian);}
+  .audio-panel{
+    max-width:820px; margin:18px auto 0; padding:20px; border:1px solid var(--line);
+    border-radius:var(--radius); background:var(--obsidian); display:none;
+  }
+  .audio-panel.show{display:block;}
+  .audio-panel .label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--gold); display:block; margin-bottom:12px;
+  }
+  .audio-panel audio{width:100%;}
+
   /* ---------- ERASURE ---------- */
   .erasure{
     background: 
@@ -409,7 +454,7 @@
     <p class="lede">Meses estudando, cruzando fontes e decodificando o que a Zenaide Silva trouxe à tona em poucos minutos. Reuni tudo em um único lugar - pra você não precisar reconstruir sozinho.</p>
     <div class="cta-row">
       <a href="#comprar" class="btn btn-primary">📖 Comprar agora</a>
-      <a href="#mapa" class="btn btn-ghost">Como funciona</a>
+      <a href="#video-origem" class="btn btn-ghost">Assistir o vídeo</a>
     </div>
     <div class="trust-row">
       <span>Entrega imediata</span>
@@ -432,6 +477,33 @@
     <span class="proof-item">"Essa entrevista completa é um patrimônio da humanidade" - wellceni</span>
   </div>
 </div>
+
+<section class="origin-video" id="video-origem">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">O vídeo original</p>
+      <h2>O momento que deu origem a tudo isso.</h2>
+      <p>Assista o trecho que viralizou e entenda por que ele virou ponto de partida pra um livro inteiro.</p>
+    </div>
+    <div class="video-frame reveal">
+      <video controls preload="metadata" playsinline poster="">
+        <source src="https://res.cloudinary.com/dekoucycr/video/upload/v1786988112/A_%C3%81frica_%C3%A9_o_ber%C3%A7o_da_humanidade_onde_nossos_ancestrais_surgiram_h%C3%A1_centenas_de_milhares_de_ano_f9qrbj.mp4" type="video/mp4">
+        Seu navegador não suporta a exibição de vídeo.
+      </video>
+    </div>
+    <div class="video-caption reveal">
+      <p>Prefere só ouvir? O áudio completo também está disponível, sem precisar baixar nada.</p>
+      <button class="audio-toggle" id="audioToggle" aria-expanded="false" aria-controls="audioPanel">🔊 Ouvir o áudio</button>
+    </div>
+    <div class="audio-panel" id="audioPanel">
+      <span class="label">Áudio · A África é o berço da humanidade</span>
+      <audio controls preload="none">
+        <source src="https://res.cloudinary.com/dekoucycr/video/upload/v1786987987/A_%C3%81frica_%C3%A9_o_ber%C3%A7o_da_humanidade_onde_nossos_ancestrais_surgiram_h%C3%A1_centenas_de_milhares_de_ano_tcs9ki.mp3" type="audio/mpeg">
+        Seu navegador não suporta a reprodução de áudio.
+      </audio>
+    </div>
+  </div>
+</section>
 
 <section class="erasure">
   <div class="wrap">
@@ -698,6 +770,21 @@
       entries.forEach(e=>{ bar.classList.toggle('show', !e.isIntersecting); });
     }, {threshold:0});
     heroObs.observe(hero);
+  }
+
+  // audio toggle
+  const audioToggle = document.getElementById('audioToggle');
+  const audioPanel = document.getElementById('audioPanel');
+  if(audioToggle && audioPanel){
+    audioToggle.addEventListener('click', () => {
+      const showing = audioPanel.classList.toggle('show');
+      audioToggle.setAttribute('aria-expanded', showing ? 'true' : 'false');
+      audioToggle.textContent = showing ? '✕ Fechar áudio' : '🔊 Ouvir o áudio';
+      if(!showing){
+        const audioEl = audioPanel.querySelector('audio');
+        if(audioEl) audioEl.pause();
+      }
+    });
   }
 </script>
 
