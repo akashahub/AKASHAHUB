@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oráculo das Finanças — Akasha Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#04030a;
+    --void-2:#0a0814;
+    --gold:#c9a961;
+    --gold-dim:#8a7343;
+    --violet:#4a2d6b;
+    --violet-soft:#2c1c3e;
+    --ledger:#0e3b2e;
+    --ledger-bright:#3f8f6f;
+    --parchment:#ede6da;
+    --parchment-dim:#a89e8c;
+    --danger:#8a3a3a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(74,45,107,0.35), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(14,59,46,0.25), transparent 60%),
+      var(--void);
+    color:var(--parchment);
+    font-family:'Cormorant Garamond', serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:48px 20px 100px;}
+
+  /* ===== HERO / SELO ===== */
+  .hero{text-align:center;margin-bottom:56px;position:relative;}
+  .eyebrow{
+    font-family:'Space Mono',monospace;
+    font-size:12px;letter-spacing:0.35em;text-transform:uppercase;
+    color:var(--gold-dim);margin-bottom:18px;
+  }
+  h1{
+    font-family:'Cinzel',serif;font-weight:700;
+    font-size:clamp(30px,6vw,52px);
+    margin:0 0 14px;letter-spacing:0.02em;
+    background:linear-gradient(180deg,#f2e6c9 0%,var(--gold) 55%,var(--gold-dim) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{
+    font-size:19px;color:var(--parchment-dim);max-width:560px;margin:0 auto;
+    font-style:italic;line-height:1.5;
+  }
+
+  .selo{
+    width:120px;height:120px;margin:32px auto 0;position:relative;
+  }
+  .selo svg{width:100%;height:100%;display:block;}
+  .selo circle{fill:none;stroke:var(--gold-dim);stroke-width:1;}
+  .selo .fill{
+    stroke:var(--gold);stroke-width:1.6;
+    stroke-dasharray:339.3;
+    stroke-dashoffset:339.3;
+    transition:stroke-dashoffset 0.6s ease;
+    transform:rotate(-90deg);transform-origin:60px 60px;
+  }
+  .selo-label{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:'Space Mono',monospace;font-size:13px;color:var(--gold);
+  }
+
+  /* ===== RITUAIS (module tabs) ===== */
+  .rituais{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+    background:rgba(201,169,97,0.18);
+    border:1px solid rgba(201,169,97,0.25);
+    margin-bottom:36px;
+  }
+  .ritual-btn{
+    background:var(--void-2);border:none;color:var(--parchment-dim);
+    padding:16px 8px;cursor:pointer;font-family:'Space Mono',monospace;
+    font-size:11px;letter-spacing:0.03em;text-align:center;line-height:1.4;
+    transition:background 0.25s, color 0.25s;
+  }
+  .ritual-btn .num{display:block;color:var(--gold-dim);font-size:10px;margin-bottom:6px;letter-spacing:0.2em;}
+  .ritual-btn:hover{background:rgba(201,169,97,0.06);color:var(--parchment);}
+  .ritual-btn.active{background:var(--violet-soft);color:var(--gold);}
+  .ritual-btn.active .num{color:var(--gold);}
+  @media(max-width:680px){
+    .rituais{grid-template-columns:repeat(3,1fr);}
+  }
+
+  .ritual-desc{
+    text-align:center;color:var(--parchment-dim);font-style:italic;
+    margin:0 0 40px;font-size:16px;min-height:24px;
+  }
+
+  /* ===== FORM ===== */
+  .ledger{
+    background:linear-gradient(180deg, rgba(14,59,46,0.10), rgba(4,3,10,0));
+    border:1px solid rgba(201,169,97,0.2);
+    padding:36px 32px;
+    position:relative;
+  }
+  .ledger::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+  .field{margin-bottom:24px;}
+  .field label{
+    display:block;font-family:'Space Mono',monospace;font-size:11px;
+    letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;
+  }
+  .field .hint{color:var(--parchment-dim);font-size:14px;font-style:italic;margin-bottom:8px;display:block;}
+  .field textarea, .field input{
+    width:100%;background:rgba(0,0,0,0.35);border:1px solid rgba(201,169,97,0.3);
+    color:var(--parchment);font-family:'Cormorant Garamond',serif;font-size:17px;
+    padding:12px 14px;resize:vertical;min-height:52px;
+  }
+  .field textarea:focus, .field input:focus{
+    outline:none;border-color:var(--gold);background:rgba(0,0,0,0.5);
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media(max-width:600px){.grid2{grid-template-columns:1fr;}}
+
+  .consult-btn{
+    width:100%;margin-top:12px;
+    background:linear-gradient(180deg,var(--gold) 0%,var(--gold-dim) 100%);
+    color:var(--void);border:none;padding:17px;
+    font-family:'Cinzel',serif;font-weight:600;font-size:15px;letter-spacing:0.08em;
+    text-transform:uppercase;cursor:pointer;transition:transform 0.15s, box-shadow 0.15s;
+  }
+  .consult-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 24px rgba(201,169,97,0.25);}
+  .consult-btn:disabled{opacity:0.5;cursor:wait;}
+
+  /* ===== RESULT ===== */
+  .result{
+    margin-top:40px;background:var(--void-2);
+    border:1px solid rgba(63,143,111,0.35);
+    padding:0;display:none;
+  }
+  .result.show{display:block;}
+  .result-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;border-bottom:1px solid rgba(63,143,111,0.25);
+  }
+  .result-head .tag{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.15em;
+    text-transform:uppercase;color:var(--ledger-bright);
+  }
+  .result-head button{
+    background:none;border:1px solid rgba(201,169,97,0.3);color:var(--parchment-dim);
+    font-family:'Space Mono',monospace;font-size:11px;padding:6px 12px;cursor:pointer;
+  }
+  .result-head button:hover{color:var(--gold);border-color:var(--gold);}
+  .result-body{padding:28px 32px 36px;font-size:18px;line-height:1.75;}
+  .result-body h3{
+    font-family:'Cinzel',serif;color:var(--gold);font-size:17px;letter-spacing:0.03em;
+    margin:28px 0 10px;font-weight:600;
+  }
+  .result-body h3:first-child{margin-top:0;}
+  .result-body p{margin:0 0 14px;color:var(--parchment);}
+  .result-body strong{color:var(--gold);font-weight:600;}
+  .result-body ul{margin:0 0 14px;padding-left:22px;}
+  .result-body li{margin-bottom:8px;}
+
+  .loading{
+    display:none;align-items:center;gap:14px;padding:28px 32px;color:var(--parchment-dim);
+    font-style:italic;
+  }
+  .loading.show{display:flex;}
+  .spinner{
+    width:18px;height:18px;border:2px solid rgba(201,169,97,0.25);
+    border-top-color:var(--gold);border-radius:50%;
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .error{
+    display:none;margin-top:40px;padding:20px 24px;border:1px solid rgba(138,58,58,0.5);
+    background:rgba(138,58,58,0.08);color:#e0a8a8;font-size:16px;
+  }
+  .error.show{display:block;}
+
+  footer{text-align:center;margin-top:60px;color:var(--parchment-dim);font-size:13px;
+    font-family:'Space Mono',monospace;letter-spacing:0.05em;}
+  footer .mark{color:var(--gold-dim);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Akasha Hub · Ferramentas do Guardião</div>
+    <h1>Oráculo das Finanças</h1>
+    <p class="sub">Não é sorte. É clareza. Preencha seu mapa financeiro uma vez e consulte os cinco rituais quantas vezes precisar.</p>
+    <div class="selo">
+      <svg viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="54"></circle>
+        <circle class="fill" id="seloFill" cx="60" cy="60" r="54"></circle>
+      </svg>
+      <div class="selo-label" id="seloLabel">0/5</div>
+    </div>
+  </div>
+
+  <div class="rituais" id="rituais"></div>
+  <p class="ritual-desc" id="ritualDesc"></p>
+
+  <div class="ledger">
+    <div class="field">
+      <label>Renda mensal</label>
+      <span class="hint">Salário, freelas, tudo que entra por mês (em R$)</span>
+      <input type="text" id="renda" placeholder="Ex: R$ 6.500 fixos + variável de R$ 1.200">
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Gastos fixos e variáveis</label>
+        <span class="hint">Aluguel, contas, mercado, assinaturas...</span>
+        <textarea id="gastos" placeholder="Ex: aluguel 1800, mercado 900, streaming 120, academia 150..."></textarea>
+      </div>
+      <div class="field">
+        <label>Dívidas atuais</label>
+        <span class="hint">Cartão, empréstimo, financiamento — valor e juros se souber</span>
+        <textarea id="dividas" placeholder="Ex: cartão R$ 3.200 a 14%/mês, financiamento carro R$ 800/mês"></textarea>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Reservas e investimentos</label>
+        <span class="hint">O que já está guardado ou investido</span>
+        <textarea id="economias" placeholder="Ex: R$ 4.000 na poupança, R$ 2.000 em CDB"></textarea>
+      </div>
+      <div class="field">
+        <label>Objetivos</label>
+        <span class="hint">O que você quer construir</span>
+        <textarea id="objetivos" placeholder="Ex: quitar o cartão em 6 meses, reserva de emergência de 6 meses, viajar ano que vem"></textarea>
+      </div>
+    </div>
+
+    <button class="consult-btn" id="consultBtn">Consultar o Oráculo</button>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <span id="loadingText">Analisando seu mapa financeiro...</span>
+    </div>
+
+    <div class="error" id="error"></div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="result-head">
+      <span class="tag" id="resultTag">Auditoria do Dinheiro</span>
+      <button id="copyBtn">Copiar</button>
+    </div>
+    <div class="result-body" id="resultBody"></div>
+  </div>
+
+  <footer>
+    <span class="mark">✦</span>&nbsp; akashahub.com.br &nbsp;<span class="mark">✦</span>
+  </footer>
+
+</div>
+
+<script>
+const RITUAIS = [
+  {
+    id:'auditoria',
+    num:'I',
+    nome:'Auditoria',
+    tag:'Auditoria do Dinheiro',
+    desc:'Um raio-x completo: onde seu dinheiro vaza, onde ele trabalha, o que corrigir primeiro.',
+    system: `Você é um CFO pessoal experiente e direto, escrevendo em português do Brasil para o usuário do Akasha Hub. Faça uma auditoria financeira completa e honesta com base nos dados fornecidos. Encontre toda fuga de dinheiro, toda oportunidade desperdiçada e todo erro financeiro. Depois, monte o plano mais simples e realista para melhorar a situação o mais rápido possível.
+
+Formate a resposta em HTML simples usando apenas as tags <h3>, <p>, <ul>, <li> e <strong> (sem markdown, sem \`\`\`, sem head/body). Estruture com estas seções: <h3>O Raio-X</h3>, <h3>As Fugas</h3>, <h3>O Plano</h3>. Seja específico e prático, sem clichês genéricos de coach. Números concretos sempre que possível.`
+  },
+  {
+    id:'plano',
+    num:'II',
+    nome:'Plano de Riqueza',
+    tag:'Plano de Riqueza',
+    desc:'A rota completa: aumentar renda, cortar o desnecessário, investir com inteligência.',
+    system: `Você é um CFO pessoal experiente e direto, escrevendo em português do Brasil. Crie um plano completo para construir riqueza a partir da situação financeira informada, priorizando: aumentar renda, reduzir gastos desnecessários, criar reservas, administrar dívidas, investir de forma inteligente e gerar segurança financeira de longo prazo.
+
+Formate em HTML simples (<h3>, <p>, <ul>, <li>, <strong>, sem markdown, sem \`\`\`). Estruture com: <h3>Onde Você Está</h3>, <h3>As Prioridades</h3>, <h3>Os Próximos 90 Dias</h3>, <h3>Visão de Longo Prazo</h3>. Seja realista com os números informados, não invente valores que o usuário não deu.`
+  },
+  {
+    id:'fluxo',
+    num:'III',
+    nome:'Fluxo de Caixa',
+    tag:'Otimização do Fluxo de Caixa',
+    desc:'Cada real com um propósito: o que cortar, o que manter, o que automatizar.',
+    system: `Você é um CFO pessoal experiente e direto, escrevendo em português do Brasil. Com base nas receitas e gastos mensais informados, redesenhe o fluxo de caixa para que cada real tenha um propósito claro. Mostre exatamente o que cortar, o que manter, o que automatizar e para onde o dinheiro deve ir todo mês.
+
+Formate em HTML simples (<h3>, <p>, <ul>, <li>, <strong>, sem markdown, sem \`\`\`). Estruture com: <h3>Diagnóstico do Fluxo</h3>, <h3>Cortar</h3>, <h3>Manter</h3>, <h3>Automatizar</h3>, <h3>Novo Destino do Dinheiro</h3>.`
+  },
+  {
+    id:'fugas',
+    num:'IV',
+    nome:'Fugas de Dinheiro',
+    tag:'Fugas de Dinheiro',
+    desc:'Assinaturas esquecidas, compras por impulso, aumento silencioso do padrão de vida.',
+    system: `Você é um CFO pessoal experiente e direto, escrevendo em português do Brasil. Analise os gastos informados e encontre cada gasto desnecessário, assinatura esquecida, compra por impulso, aumento do padrão de vida e fuga oculta de dinheiro. Classifique tudo pelo custo anual estimado e diga quais mudanças economizariam mais dinheiro com o menor impacto no estilo de vida do usuário.
+
+Formate em HTML simples (<h3>, <p>, <ul>, <li>, <strong>, sem markdown, sem \`\`\`). Estruture com: <h3>As Fugas Encontradas</h3> (liste cada uma com custo anual estimado em <strong>), <h3>Custo Total Estimado</h3>, <h3>O Que Cortar Primeiro</h3>.`
+  },
+  {
+    id:'dividas',
+    num:'V',
+    nome:'Destruidor de Dívidas',
+    tag:'Destruidor de Dívidas',
+    desc:'A estratégia mais inteligente para se livrar de cada dívida, na ordem certa.',
+    system: `Você é um CFO pessoal experiente e direto, escrevendo em português do Brasil. Com base nas dívidas, renda e fluxo de caixa informados, crie a estratégia de pagamento mais inteligente. Explique a lógica por trás da estratégia (avalanche vs. bola de neve, o que faz mais sentido aqui) e mostre como o usuário pode se livrar das dívidas da forma mais eficiente possível.
+
+Formate em HTML simples (<h3>, <p>, <ul>, <li>, <strong>, sem markdown, sem \`\`\`). Estruture com: <h3>O Panorama</h3>, <h3>A Ordem de Ataque</h3>, <h3>Por Que Essa Ordem</h3>, <h3>Cronograma Estimado</h3>.`
+  }
+];
+
+let activeRitual = RITUAIS[0].id;
+
+const rituaisEl = document.getElementById('rituais');
+const ritualDescEl = document.getElementById('ritualDesc');
+
+function renderRituais(){
+  rituaisEl.innerHTML = '';
+  RITUAIS.forEach(r=>{
+    const btn = document.createElement('button');
+    btn.className = 'ritual-btn' + (r.id===activeRitual ? ' active':'');
+    btn.innerHTML = `<span class="num">${r.num}</span>${r.nome}`;
+    btn.onclick = ()=>{ activeRitual = r.id; renderRituais(); };
+    rituaisEl.appendChild(btn);
+  });
+  ritualDescEl.textContent = RITUAIS.find(r=>r.id===activeRitual).desc;
+}
+renderRituais();
+
+// ===== Selo progress =====
+const fields = ['renda','gastos','dividas','economias','objetivos'];
+const seloFill = document.getElementById('seloFill');
+const seloLabel = document.getElementById('seloLabel');
+const CIRC = 339.3;
+
+function updateSelo(){
+  const filled = fields.filter(id=>document.getElementById(id).value.trim().length>0).length;
+  seloFill.style.strokeDashoffset = CIRC - (CIRC * filled/fields.length);
+  seloLabel.textContent = `${filled}/${fields.length}`;
+}
+fields.forEach(id=>document.getElementById(id).addEventListener('input', updateSelo));
+updateSelo();
+
+// ===== Consult =====
+const consultBtn = document.getElementById('consultBtn');
+const loading = document.getElementById('loading');
+const loadingText = document.getElementById('loadingText');
+const resultEl = document.getElementById('result');
+const resultBody = document.getElementById('resultBody');
+const resultTag = document.getElementById('resultTag');
+const errorEl = document.getElementById('error');
+const copyBtn = document.getElementById('copyBtn');
+
+function buildUserMessage(){
+  const get = id => document.getElementById(id).value.trim();
+  const parts = [];
+  if(get('renda')) parts.push(`RENDA MENSAL: ${get('renda')}`);
+  if(get('gastos')) parts.push(`GASTOS: ${get('gastos')}`);
+  if(get('dividas')) parts.push(`DÍVIDAS: ${get('dividas')}`);
+  if(get('economias')) parts.push(`RESERVAS/INVESTIMENTOS: ${get('economias')}`);
+  if(get('objetivos')) parts.push(`OBJETIVOS: ${get('objetivos')}`);
+  return parts.join('\n');
+}
+
+consultBtn.addEventListener('click', async ()=>{
+  const userMsg = buildUserMessage();
+  errorEl.classList.remove('show');
+  if(!userMsg){
+    errorEl.textContent = 'Preencha ao menos um campo do seu mapa financeiro antes de consultar o oráculo.';
+    errorEl.classList.add('show');
+    return;
+  }
+
+  const ritual = RITUAIS.find(r=>r.id===activeRitual);
+  consultBtn.disabled = true;
+  loading.classList.add('show');
+  resultEl.classList.remove('show');
+  loadingText.textContent = `Consultando: ${ritual.tag}...`;
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1500,
+        system: ritual.system,
+        messages: [{ role: "user", content: userMsg }]
+      })
+    });
+
+    if(!response.ok){
+      throw new Error('Falha na consulta (' + response.status + ')');
+    }
+
+    const data = await response.json();
+    const textBlock = (data.content || []).find(b=>b.type==='text');
+    let html = textBlock ? textBlock.text : '';
+    html = html.replace(/```html|```/g,'').trim();
+
+    resultTag.textContent = ritual.tag;
+    resultBody.innerHTML = html;
+    resultEl.classList.add('show');
+    resultEl.scrollIntoView({behavior:'smooth', block:'start'});
+  }catch(err){
+    errorEl.textContent = 'O oráculo não respondeu. Verifique a conexão e tente novamente. (' + err.message + ')';
+    errorEl.classList.add('show');
+  }finally{
+    consultBtn.disabled = false;
+    loading.classList.remove('show');
+  }
+});
+
+copyBtn.addEventListener('click', ()=>{
+  const text = resultBody.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    copyBtn.textContent = 'Copiado ✓';
+    setTimeout(()=>copyBtn.textContent='Copiar', 1800);
+  });
+});
+</script>
+</body>
+</html>
