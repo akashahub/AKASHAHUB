@@ -1,0 +1,82 @@
+export const TRANSLATIONS = {
+  "pt-BR": {
+    dash: "Dashboard",
+    modules: "Módulos",
+    call: "Call",
+    tools: "Ferramentas",
+    profile: "Perfil",
+    mentor: "Mentor",
+    welcome: "Bem-vindo à sua jornada de Alinhamento.",
+    locked: "Esta camada ainda não foi liberada para sua jornada.",
+    progress: "Meu progresso",
+    next: "Próxima etapa",
+    accessDenied: "Seu acesso à Mentoria de Alinhamento Financeiro ainda não foi liberado.",
+    loginTitle: "AF Plataforma",
+    loginSub: "Área operacional da mentoria. Conta ≠ acesso. Liberação manual após Sessão de Alinhamento.",
+    enter: "Entrar",
+    google: "Continuar com Google",
+    email: "E-mail",
+    password: "Senha"
+  },
+  en: {
+    dash: "Dashboard",
+    modules: "Modules",
+    call: "Call",
+    tools: "Tools",
+    profile: "Profile",
+    mentor: "Mentor",
+    welcome: "Welcome to your Alignment journey.",
+    locked: "This layer is not unlocked yet.",
+    progress: "My progress",
+    next: "Next step",
+    accessDenied: "Your access to the Financial Alignment Mentorship has not been released yet.",
+    loginTitle: "AF Platform",
+    loginSub: "Operational area. Account ≠ access. Manual release after Alignment Session.",
+    enter: "Sign in",
+    google: "Continue with Google",
+    email: "Email",
+    password: "Password"
+  },
+  es: {
+    dash: "Panel",
+    modules: "Módulos",
+    call: "Llamada",
+    tools: "Herramientas",
+    profile: "Perfil",
+    mentor: "Mentor",
+    welcome: "Bienvenido a tu viaje de Alineación.",
+    locked: "Esta capa aún no está liberada.",
+    progress: "Mi progreso",
+    next: "Próximo paso",
+    accessDenied: "Tu acceso a la Mentoría aún no ha sido liberado.",
+    loginTitle: "AF Plataforma",
+    loginSub: "Área operativa. Cuenta ≠ acceso. Liberación manual tras la Sesión.",
+    enter: "Entrar",
+    google: "Continuar con Google",
+    email: "Correo",
+    password: "Contraseña"
+  },
+  it: {
+    dash: "Dashboard",
+    modules: "Moduli",
+    call: "Call",
+    tools: "Strumenti",
+    profile: "Profilo",
+    mentor: "Mentor",
+    welcome: "Benvenuto nel tuo percorso di Allineamento.",
+    locked: "Questo livello non è ancora sbloccato.",
+    progress: "Il mio progresso",
+    next: "Prossimo passo",
+    accessDenied: "Il tuo accesso alla Mentorship non è ancora stato rilasciato.",
+    loginTitle: "AF Piattaforma",
+    loginSub: "Area operativa. Account ≠ accesso. Rilascio manuale dopo la Sessione.",
+    enter: "Accedi",
+    google: "Continua con Google",
+    email: "Email",
+    password: "Password"
+  }
+};
+
+export function t(lang, key) {
+  return (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) || TRANSLATIONS["pt-BR"][key] || key;
+}
