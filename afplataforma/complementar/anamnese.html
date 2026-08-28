@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anamnese · Arquitetura de Essência</title>
+<link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F3EB;--gold:#8B6914;--ink:#1a1714;--muted:rgba(26,23,20,.58)}
+*{box-sizing:border-box}body{margin:0;font-family:'Josefin Sans',sans-serif;background:var(--bg);color:var(--ink);padding:28px 18px 80px}
+h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:2rem}
+.sub{color:var(--muted);max-width:640px;line-height:1.6;margin-bottom:28px}
+label{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin:14px 0 6px}
+input,textarea{width:100%;max-width:720px;padding:12px;border:1px solid rgba(139,105,20,.3);background:#fff;font:inherit}
+textarea{min-height:90px}
+button{margin-top:18px;padding:12px 18px;border:1px solid var(--gold);background:rgba(201,162,39,.15);letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+.hint{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<h1>Anamnese · Arquitetura de Essência</h1>
+<p class="sub">Sessão de Alinhamento (antes da mentoria de 90 dias). Salva neste navegador. Não substitui a call ao vivo.</p>
+<form id="f">
+<label>Nome</label><input id="nome">
+<label>O que você constrói hoje?</label><textarea id="constroi"></textarea>
+<label>Onde o dinheiro trava? (descreva o padrão, não o sentimento)</label><textarea id="trava"></textarea>
+<label>Reserva atual (meses de despesa)</label><input id="reserva">
+<label>Quem veio antes na sua família e a relação com dinheiro</label><textarea id="familia"></textarea>
+<label>O que precisa estar verdadeiro em 90 dias?</label><textarea id="90"></textarea>
+<label>Para quem isso precisa servir (legado)</label><textarea id="legado"></textarea>
+<button type="submit">Salvar anamnese</button>
+<p class="hint" id="ok"></p>
+</form>
+<script>
+const KEY='af_anamnese_v1';
+const ids=['nome','constroi','trava','reserva','familia','90','legado'];
+try{const s=JSON.parse(localStorage.getItem(KEY)||'{}');ids.forEach(i=>{if(s[i])document.getElementById(i).value=s[i]})}catch(e){}
+document.getElementById('f').onsubmit=e=>{
+  e.preventDefault();
+  const data={};ids.forEach(i=>data[i]=document.getElementById(i).value);
+  localStorage.setItem(KEY,JSON.stringify(data));
+  document.getElementById('ok').textContent='Salvo neste aparelho · '+new Date().toLocaleString('pt-BR');
+};
+</script>
+</body>
+</html>
