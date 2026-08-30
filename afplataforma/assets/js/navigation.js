@@ -5,8 +5,6 @@ import { session, isMentorSession } from "./auth.js";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { Store } from "./storage.js";
-import { stopTeleprompter } from "./teleprompter.js";
-import { onCallNavigate } from "./call.js";
 
 let currentView = "dashboard";
 let renderers = {};
@@ -64,8 +62,6 @@ export function buildNav() {
 export function navigate(view) {
   currentView = view;
   closeSide();
-  onCallNavigate(view === "call");
-
   document.querySelectorAll(".nav-item").forEach((n) => {
     n.classList.toggle(
       "active",
