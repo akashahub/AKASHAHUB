@@ -234,10 +234,14 @@ export function bindCallControls(navigate) {
 }
 
 function bindDockButtons(navigate) {
-  document.getElementById("callDockExpand")?.onclick = () => {
-    if (navigate) navigate("call");
-  };
-  document.getElementById("callDockLeave")?.onclick = () => leaveCall();
+  const expand = document.getElementById("callDockExpand");
+  if (expand) {
+    expand.onclick = () => {
+      if (navigate) navigate("call");
+    };
+  }
+  const leave = document.getElementById("callDockLeave");
+  if (leave) leave.onclick = () => leaveCall();
 }
 
 export async function joinCall() {
@@ -327,7 +331,6 @@ async function ensurePeer(remoteUid, label) {
       try { pc.restartIce(); } catch (e) {}
     }
     if (pc.connectionState === "disconnected" || pc.connectionState === "closed") {
-      // keep tile; ice restart may recover
     }
   };
 
