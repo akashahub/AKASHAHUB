@@ -5,6 +5,7 @@ import { session, isMentorSession } from "./auth.js";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { Store } from "./storage.js";
+import { handleCoverClick } from "./covers.js";
 
 let currentView = "dashboard";
 let renderers = {};
@@ -102,6 +103,13 @@ export function navigate(view) {
   }
 
   root.onclick = (e) => {
+    if (handleCoverClick(e)) return;
+    const act = e.target.closest("[data-act]");
+    if (act && typeof window[act.dataset.act] === "function") {
+      e.preventDefault();
+      window[act.dataset.act](act);
+      return;
+    }
     const row = e.target.closest("[data-nav]");
     if (row && row.dataset.nav) {
       e.preventDefault();

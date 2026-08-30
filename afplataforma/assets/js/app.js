@@ -22,6 +22,7 @@ import {
   nextModule,
   registerRenderers,
   onAfterNavigate,
+  getCurrentView,
   esc
 } from "./navigation.js";
 import { MODULES } from "../../data/modules.js";
@@ -31,6 +32,8 @@ import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI,
 import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
 import { renderComplementarHome, renderComplementarApp } from "./complementar.js";
+import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js";
+import { bindCoverEditor } from "./covers.js";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -213,13 +216,13 @@ function renderMentor() {
     <div class="stat-card" style="max-width:480px">
       <div class="lbl">Operação</div>
       <div class="hint" style="margin-top:10px;line-height:1.8">
-        1. Aluno entra com e-mail ou Google<br>
-        2. Você cria <strong>afAccess/{uid do aluno}</strong><br>
-        3. approved: true · active: true · module01: true…<br>
-        4. Roteiros privados: <strong>afMentorScripts/module01</strong><br>
-        &nbsp;&nbsp;&nbsp;{ title, content, duration }
+        1. Mentorando tenta entrar com e-mail ou Google<br>
+        2. A solicitação aparece abaixo automaticamente<br>
+        3. Você libera, pausa, gerencia módulos ou bloqueia<br>
+        4. Roteiros privados: <strong>afMentorScripts/module01</strong>
       </div>
     </div>
+    ${renderAccessAdminPanel()}
   </div>`;
 }
 
@@ -274,6 +277,7 @@ onAfterNavigate((view) => {
   onCallNavigate(view === "call");
   if (view === "call") bindCallControls(navigate);
   if (view === "profile") bindProfileEdit();
+  if (view === "mentor") bindAccessAdmin();
 });
 
 function bindProfileEdit() {
@@ -389,6 +393,10 @@ function init() {
 
   bindTeleprompterUI();
   bindToolPanelUI();
+  bindCoverEditor();
+  document.addEventListener("af-covers-changed", () => {
+    navigate(getCurrentView());
+  });
 
   setAuthCallbacks({
     onReady: () => showApp(),
