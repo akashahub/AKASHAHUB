@@ -27,7 +27,7 @@ import {
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
-import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI } from "./call.js";
+import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI, onCallNavigate } from "./call.js";
 import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
 import { renderComplementarHome, renderComplementarApp } from "./complementar.js";
@@ -271,6 +271,7 @@ registerRenderers({
 });
 
 onAfterNavigate((view) => {
+  onCallNavigate(view === "call");
   if (view === "call") bindCallControls(navigate);
   if (view === "profile") bindProfileEdit();
 });
