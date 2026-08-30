@@ -30,5 +30,5 @@ export const DEV_MODE = false;
 
 
 /** URL do backend que assina o token LiveKit. Vazio = lobby + presença funcionam; vídeo de grupo espera o token. */
-export const LIVEKIT_TOKEN_URL = "";
-export const LIVEKIT_WS_URL = "";
+export const LIVEKIT_TOKEN_URL = "akasha.yanfili-simon.workers.dev";
+export const LIVEKIT_WS_URL = "wss://akashahub-vlya29kl.livekit.cloud";
