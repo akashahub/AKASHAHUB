@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="pt-BR"><head>
+<html class="dark" lang="pt-BR">
+<head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Akasha Hub · Legados com Códigos</title>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Akasha Hub · Ākāśa — o campo dos registros</title>
+<meta name="description" content="Ākāśa, do sânscrito: éter, espaço, registro, origem. A Akasha Hub é o portal de um ecossistema — consciência, identidade, negócio e legado."/>
+<link rel="canonical" href="https://akashahub.com.br/"/>
+<meta property="og:title" content="Akasha Hub · o campo dos registros"/>
+<meta property="og:description" content="Você não está perdido. Foi programado para não saber que é livre."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://akashahub.com.br/"/>
+<meta property="og:image" content="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png"/>
+<link rel="icon" href="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&amp;family=Cinzel+Decorative:wght@700;900&amp;family=Jost:wght@300;400;500;600&amp;family=Cormorant+Garamond:ital,wght@0,500;1,500&amp;family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700;900&family=Jost:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600;1,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
   tailwind.config = {
     darkMode: "class",
@@ -109,576 +117,829 @@
 </script>
 <style>
   :root {
+    --gold: #8a6a22;
+    --gold-bright: #b8923a;
+    --gold-33: rgba(138, 106, 34, 0.22);
+    --void: #f3eee4;
+    --surface: #f3eee4;
+    --ink: #1c1620;
+    --muted: #5c5348;
+    --line: rgba(28, 22, 32, 0.14);
+    --panel: rgba(255, 252, 246, 0.72);
+    --on-surface: #1c1620;
+    --on-primary: #402d00;
+    --serif: "Playfair Display", "Cinzel", Georgia, serif;
+    --sans: "Jost", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --max: 1180px;
+    --nav-h: 72px;
+  }
+  html.dark {
     --gold: #c9a24b;
     --gold-bright: #e9cd82;
     --gold-33: rgba(201, 162, 75, 0.2);
-    --surface: #151219;
+    --void: #07050b;
+    --surface: #07050b;
+    --ink: #ede6d6;
+    --muted: #a89bb5;
+    --line: rgba(201, 162, 75, 0.16);
+    --panel: rgba(12, 9, 16, 0.72);
     --on-surface: #e7e0ea;
+    --on-primary: #402d00;
   }
-
+  * { box-sizing: border-box; }
+  html, body { background: var(--void); color: var(--ink); }
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; }
   body {
-    background: var(--surface);
-    color: var(--on-surface);
-    font-family: 'Jost', sans-serif;
-    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    font-family: var(--sans);
+    font-weight: 300;
+    overflow-x: hidden;
   }
-
+  button:not(:disabled), [role="button"]:not(:disabled), a { cursor: pointer; }
   canvas#shader-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-    pointer-events: none;
+    position: fixed; inset: 0; width: 100vw; height: 100vh;
+    z-index: -1; pointer-events: none;
   }
+  .grain {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .045;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  .progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0;
+    background: var(--gold); z-index: 80; transform-origin: left;
+  }
+  .wrap { width: min(var(--max), calc(100% - 40px)); margin-inline: auto; }
+  @media (min-width: 768px) { .wrap { width: min(var(--max), calc(100% - 56px)); } }
 
   .premium-blur {
     backdrop-filter: blur(24px) saturate(180%);
-    background: rgba(21, 18, 25, 0.72);
+    background: var(--panel);
   }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .gold-glow:hover {
-    box-shadow: 0 0 20px rgba(235, 193, 102, 0.3);
-    border-color: var(--gold-bright);
-  }
-
-  .plan-card {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid var(--gold-33);
-  }
-
-  .plan-card:hover {
-    transform: translateY(-8px);
-    border-color: var(--gold);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-  }
-
-  .btn-premium {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-
+  .reveal { opacity: 0; transform: translateY(22px); transition: all .8s cubic-bezier(.22,1,.36,1); }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+  .gold-glow:hover { box-shadow: 0 0 20px rgba(235,193,102,.3); border-color: var(--gold-bright); }
+  .plan-card { transition: all .4s cubic-bezier(.4,0,.2,1); border: 1px solid var(--gold-33); }
+  .plan-card:hover { transform: translateY(-8px); border-color: var(--gold); box-shadow: 0 20px 40px rgba(0,0,0,.4); }
+  .btn-premium { position: relative; overflow: hidden; transition: all .3s ease; }
   .btn-premium::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    transition: 0.5s;
+    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); transition: .5s;
   }
+  .btn-premium:hover::after { left: 100%; }
 
-  .btn-premium:hover::after {
-    left: 100%;
-  }
-
-  /* Audio Visualizer Pulse */
-  @keyframes pulse-ring {
-    0% { transform: scale(0.33); }
-    80%, 100% { opacity: 0; }
-  }
-
+  @keyframes pulse-ring { 0% { transform: scale(.33); } 80%, 100% { opacity: 0; } }
+  .audio-playing .dot { position: relative; }
   .audio-playing .dot::after {
-    content: '';
-    position: absolute;
-    width: 100%; height: 100%;
-    border-radius: 50%;
-    background: var(--gold);
-    animation: pulse-ring 1.25s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-    top:0; left:0;
+    content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%;
+    background: var(--gold); animation: pulse-ring 1.25s cubic-bezier(.215,.61,.355,1) infinite; top: 0; left: 0;
   }
+  .modal-overlay { background: rgba(0,0,0,.85); backdrop-filter: blur(10px); transition: opacity .4s ease; }
+  .modal-content { background: linear-gradient(145deg, #1d1a21, #151219); border: 1px solid var(--gold-33); color: #ede6d6; }
+  html:not(.dark) .modal-content { background: linear-gradient(145deg, #fffdf8, #f3eee4); color: #1c1620; }
+  html:not(.dark) .text-on-surface { color: #1c1620 !important; }
+  html:not(.dark) .text-on-surface-variant { color: #5c5348 !important; }
+  html:not(.dark) .border-outline { border-color: rgba(28,22,32,.2) !important; }
+  html:not(.dark) .border-outline-variant\/20 { border-color: rgba(28,22,32,.14) !important; }
 
-  .modal-overlay {
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(10px);
-    transition: opacity 0.4s ease;
-  }
 
-  .modal-content {
-    background: linear-gradient(145deg, #1d1a21, #151219);
-    border: 1px solid var(--gold-33);
-  }
-
-  /* Legacy badge — image CTA with float + pulsing glow */
   .legacy-badge-link {
-    position: relative;
-    animation: legacy-float 4.5s ease-in-out infinite;
-    filter: drop-shadow(0 0 0 rgba(233, 205, 130, 0));
-    transition: filter 0.4s ease, transform 0.4s ease;
+    position: relative; animation: legacy-float 4.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 0 rgba(233,205,130,0)); transition: filter .4s ease, transform .4s ease;
   }
-
-  .legacy-badge-img {
-    max-width: 220px;
-    width: 100%;
-    height: auto;
-    position: relative;
-    z-index: 2;
-  }
-
+  .legacy-badge-img { max-width: 220px; width: 100%; height: auto; position: relative; z-index: 2; }
   .legacy-badge-link::before {
-    content: '';
-    position: absolute;
-    inset: -14px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(233, 205, 130, 0.35) 0%, rgba(233, 205, 130, 0) 70%);
-    animation: legacy-pulse 2.6s ease-in-out infinite;
-    z-index: 1;
+    content: ''; position: absolute; inset: -14px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(233,205,130,.35) 0%, rgba(233,205,130,0) 70%);
+    animation: legacy-pulse 2.6s ease-in-out infinite; z-index: 1;
   }
+  .legacy-badge-link:hover { transform: scale(1.06); filter: drop-shadow(0 0 24px rgba(233,205,130,.55)); }
+  @keyframes legacy-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  @keyframes legacy-pulse { 0% { opacity:.35; transform:scale(.92);} 50% { opacity:.75; transform:scale(1.12);} 100% { opacity:.35; transform:scale(.92);} }
 
-  .legacy-badge-link:hover {
-    transform: scale(1.06);
-    filter: drop-shadow(0 0 24px rgba(233, 205, 130, 0.55));
-  }
-
-  @keyframes legacy-float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-  }
-
-  @keyframes legacy-pulse {
-    0% { opacity: 0.35; transform: scale(0.92); }
-    50% { opacity: 0.75; transform: scale(1.12); }
-    100% { opacity: 0.35; transform: scale(0.92); }
-  }
-
-  /* ===== Efeitos "milionários" de tipografia ===== */
-
-  /* Shimmer dourado — luz que desliza pelo texto, tipo metal polido */
   .text-shimmer {
-    background: linear-gradient(
-      100deg,
-      #a9822f 0%,
-      #f6dc9b 20%,
-      #fff6da 35%,
-      #e9cd82 45%,
-      #a9822f 60%,
-      #f6dc9b 80%,
-      #a9822f 100%
-    );
-    background-size: 250% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    animation: shimmer-sweep 6s linear infinite;
-    text-shadow: none;
+    background: linear-gradient(100deg, #a9822f 0%, #f6dc9b 20%, #fff6da 35%, #e9cd82 45%, #a9822f 60%, #f6dc9b 80%, #a9822f 100%);
+    background-size: 250% auto; -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent; animation: shimmer-sweep 6s linear infinite;
   }
-
-  @keyframes shimmer-sweep {
-    0% { background-position: 0% 50%; }
-    100% { background-position: -250% 50%; }
-  }
-
-  /* Glow suave para reforçar peso e presença do texto dourado */
-  .text-glow {
-    text-shadow: 0 0 18px rgba(233, 205, 130, 0.45), 0 0 40px rgba(201, 162, 75, 0.18);
-  }
-
-  /* Serifa de luxo com tracking generoso, para títulos-chave */
-  .font-luxury {
-    font-family: 'Playfair Display', 'Cinzel', serif;
-    letter-spacing: 0.015em;
-  }
-
-  /* Realce nos rótulos em caixa alta (eyebrows / labels) */
+  @keyframes shimmer-sweep { 0% { background-position: 0% 50%; } 100% { background-position: -250% 50%; } }
+  .text-glow { text-shadow: 0 0 18px rgba(233,205,130,.45), 0 0 40px rgba(201,162,75,.18); }
+  .font-luxury { font-family: var(--serif); letter-spacing: .015em; }
   .label-luxury {
     background: linear-gradient(90deg, var(--gold) 0%, var(--gold-bright) 50%, var(--gold) 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    animation: shimmer-sweep 8s linear infinite;
+    background-size: 200% auto; -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent; animation: shimmer-sweep 8s linear infinite;
+  }
+  .plan-tier-number { font-family: var(--serif); font-style: italic; }
+  .plan-name { font-family: var(--serif); letter-spacing: .01em; transition: text-shadow .4s ease, color .4s ease; }
+  .plan-card:hover .plan-name { color: var(--gold-bright); text-shadow: 0 0 20px rgba(233,205,130,.5); }
+  .hero-banner img { width: 100%; height: auto; display: block; }
+
+  /* —— site chrome —— */
+  .ah-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    height: var(--nav-h); border-bottom: 1px solid var(--line);
+  }
+  .ah-nav-inner {
+    height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; min-width: 0; }
+  .brand-mark { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 1px solid var(--gold-33); flex-shrink: 0; }
+  .brand-mark img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-type { display: flex; flex-direction: column; line-height: 1; }
+  .brand-type strong { font-family: var(--serif); font-weight: 700; letter-spacing: .28em; font-size: 13px; color: var(--gold); }
+  .brand-type span { font-family: var(--mono); font-size: 8px; letter-spacing: .42em; color: var(--muted); margin-top: 4px; }
+  .nav-links { display: none; align-items: center; gap: 28px; }
+  .nav-links a {
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 500;
+    color: var(--muted); text-decoration: none; padding: 8px 0; border-bottom: 1px solid transparent;
+  }
+  .nav-links a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+  .nav-actions { display: flex; align-items: center; gap: 10px; }
+  .login-chip {
+    display: inline-flex; align-items: center; height: 36px; padding: 0 14px;
+    border: 1px solid var(--line); border-radius: 999px; color: var(--muted);
+    font-size: 10px; letter-spacing: .22em; text-transform: uppercase; text-decoration: none; font-weight: 500;
+  }
+  .login-chip:hover { color: var(--gold); border-color: var(--gold); }
+  .cta-nav {
+    display: none; align-items: center; height: 36px; padding: 0 16px;
+    background: var(--gold); color: var(--on-primary); font-size: 10px; letter-spacing: .2em;
+    text-transform: uppercase; text-decoration: none; font-weight: 600;
+  }
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line);
+    background: transparent; color: var(--muted); display: grid; place-items: center; padding: 0;
+  }
+  .icon-btn:hover { color: var(--gold); border-color: var(--gold); }
+  .burger { display: grid; }
+  @media (min-width: 900px) {
+    .nav-links { display: flex; }
+    .cta-nav { display: inline-flex; }
+    .burger { display: none; }
   }
 
-  /* Números de nível (Nível 01, Nível 02...) com relevo dourado sutil */
-  .plan-tier-number {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
+  .drawer {
+    position: fixed; inset: 0; z-index: 60; background: rgba(7,5,11,.92); backdrop-filter: blur(18px);
+    display: none; flex-direction: column; padding: 88px 28px 40px;
+  }
+  .drawer.is-open { display: flex; }
+  html:not(.dark) .drawer { background: rgba(243,238,228,.96); }
+  .drawer a {
+    font-family: var(--serif); font-size: clamp(28px, 8vw, 40px); color: var(--ink);
+    text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  .drawer a:hover { color: var(--gold); }
+  .drawer .sub { font-family: var(--mono); font-size: 11px; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; display: block; margin-top: 2px; }
+
+  .hero {
+    position: relative; min-height: 100svh; display: flex; flex-direction: column;
+    justify-content: center; padding: calc(var(--nav-h) + 28px) 0 72px; overflow: hidden;
+  }
+  .hero-media { position: absolute; inset: 0; z-index: 0; }
+  .hero-media video { width: 100%; height: 100%; object-fit: cover; opacity: .38; }
+  html:not(.dark) .hero-media video { opacity: .22; }
+  .hero-media::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--void) 40%, transparent) 0%, color-mix(in srgb, var(--void) 55%, transparent) 45%, var(--void) 100%);
+  }
+  .hero-content { position: relative; z-index: 2; text-align: center; }
+  .watermark {
+    position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
+    font-family: var(--serif); font-weight: 900; font-size: clamp(72px, 22vw, 280px);
+    letter-spacing: -.04em; color: var(--ink); opacity: .045; pointer-events: none; white-space: nowrap; z-index: 1;
+  }
+  .freq-btn {
+    display: inline-flex; align-items: center; gap: 12px; margin: 0 auto 28px;
+    padding: 10px 18px; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--panel); color: var(--gold); font-family: var(--mono);
+    font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+  }
+  .freq-btn:hover { border-color: var(--gold); }
+  .dot { position: relative; display: inline-flex; width: 8px; height: 8px; }
+  .dot > span { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); opacity: .8; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .32em; text-transform: uppercase;
+    color: var(--gold); margin: 0 0 18px;
+  }
+  .hero h1 {
+    font-family: var(--serif); font-weight: 900; font-size: clamp(30px, 7.2vw, 64px);
+    line-height: 1.08; letter-spacing: -.01em; margin: 0 auto 22px; max-width: 18ch;
+    text-wrap: balance; color: var(--ink);
+  }
+  .lede {
+    font-size: clamp(16px, 2.2vw, 18px); line-height: 1.75; color: var(--muted);
+    max-width: 42rem; margin: 0 auto 32px; text-wrap: pretty;
+  }
+  .hero-ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 28px; }
+  .btn-gold {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 28px;
+    background: var(--gold); color: var(--on-primary); text-decoration: none;
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 600;
+  }
+  .btn-ghost {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 28px;
+    border: 1px solid var(--ink); color: var(--ink); background: transparent; text-decoration: none;
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 500;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+  .sound-fab {
+    position: absolute; top: calc(var(--nav-h) + 16px); right: 16px; z-index: 20;
+    width: 44px; height: 44px; border-radius: 50%; color: var(--muted);
+  }
+  .explore-hint {
+    position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: .4; z-index: 2;
+  }
+  .explore-hint span { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; }
+  .explore-hint i { width: 1px; height: 36px; background: linear-gradient(var(--gold), transparent); display: block; }
+
+  .section { position: relative; z-index: 2; padding: 88px 0; }
+  @media (min-width: 768px) { .section { padding: 120px 0; } }
+  .kicker {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .28em; text-transform: uppercase;
+    color: var(--gold); display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+  }
+  .kicker::after { content: ''; flex: 1; height: 1px; background: var(--line); max-width: 120px; }
+  .section h2 {
+    font-family: var(--serif); font-weight: 700; font-size: clamp(30px, 5vw, 48px);
+    line-height: 1.15; margin: 0 0 18px; text-wrap: balance; max-width: 18ch;
+  }
+  .section p.lead { font-size: 17px; line-height: 1.8; color: var(--muted); max-width: 40rem; margin: 0 0 40px; text-wrap: pretty; }
+
+  .etymon {
+    display: grid; gap: 28px;
+  }
+  @media (min-width: 800px) { .etymon { grid-template-columns: 1fr 1.1fr; align-items: end; gap: 64px; } }
+  .glyph {
+    font-family: var(--serif); font-style: italic; font-weight: 700;
+    font-size: clamp(56px, 12vw, 120px); line-height: .9; color: var(--gold); letter-spacing: -.03em;
+  }
+  .glyph small { display: block; font-family: var(--mono); font-style: normal; font-size: 11px; letter-spacing: .28em; color: var(--muted); margin-top: 16px; text-transform: uppercase; }
+  .meaning { border-top: 1px solid var(--line); padding-top: 24px; }
+  .meaning p { font-size: 17px; line-height: 1.8; color: var(--muted); margin: 0 0 16px; }
+  .meaning p strong { color: var(--ink); font-weight: 500; }
+
+  .pillars { display: grid; gap: 20px; }
+  @media (min-width: 800px) { .pillars { grid-template-columns: repeat(3, 1fr); gap: 28px; } }
+  .pillar {
+    padding: 28px 0; border-top: 1px solid var(--line);
+  }
+  .pillar .idx { font-family: var(--mono); font-size: 11px; letter-spacing: .28em; color: var(--gold); margin-bottom: 14px; }
+  .pillar h3 { font-family: var(--serif); font-size: 26px; margin: 0 0 12px; }
+  .pillar p { margin: 0; color: var(--muted); line-height: 1.7; font-size: 15px; }
+
+  .index-list { border-top: 1px solid var(--line); }
+  .index-row {
+    display: grid; grid-template-columns: 88px 1fr auto; gap: 12px; align-items: center;
+    padding: 18px 0; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit;
+    min-height: 64px;
+  }
+  .index-row .path { font-family: var(--mono); font-size: 11px; color: var(--gold); letter-spacing: .04em; }
+  .index-row .name { font-family: var(--serif); font-size: clamp(18px, 3vw, 22px); }
+  .index-row .hint { font-size: 12px; color: var(--muted); text-align: right; max-width: 28ch; }
+  .index-row:hover { color: var(--gold); }
+  @media (max-width: 640px) {
+    .index-row { grid-template-columns: 1fr auto; }
+    .index-row .path { grid-column: 1 / -1; }
+    .index-row .hint { display: none; }
   }
 
-  /* Nomes dos níveis (Anúbis, Hórus, Ísis, Rá) — serifa grande com glow no hover */
-  .plan-name {
-    font-family: 'Playfair Display', 'Cinzel', serif;
-    letter-spacing: 0.01em;
-    transition: text-shadow 0.4s ease, color 0.4s ease;
+  .legado-block {
+    display: grid; gap: 32px; align-items: center;
   }
-
-  .plan-card:hover .plan-name {
-    color: var(--gold-bright);
-    text-shadow: 0 0 20px rgba(233, 205, 130, 0.5);
+  @media (min-width: 860px) { .legado-block { grid-template-columns: .9fr 1.1fr; gap: 56px; } }
+  .legado-visual img { width: 100%; height: auto; display: block; }
+  .levels { display: grid; gap: 16px; }
+  @media (min-width: 720px) { .levels { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .levels { grid-template-columns: repeat(4, 1fr); } }
+  .plan-card { background: color-mix(in srgb, var(--ink) 4%, transparent); padding: 28px 24px; display: flex; flex-direction: column; min-height: 100%; }
+  .plan-card .seal { width: 72px; height: 72px; border-radius: 50%; overflow: hidden; border: 1px solid var(--gold-33); margin: 0 auto 20px; }
+  .plan-card .seal img { width: 100%; height: 100%; object-fit: cover; }
+  .plan-card ul { list-style: none; padding: 0; margin: 0 0 28px; flex: 1; }
+  .plan-card li { font-size: 14px; color: var(--muted); padding: 6px 0; display: flex; gap: 10px; }
+  .plan-card li span { color: var(--gold); }
+  .plan-cta {
+    display: block; text-align: center; padding: 12px; border: 1px solid var(--gold);
+    color: var(--gold); text-decoration: none; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 600;
   }
+  .plan-cta.fill { background: var(--gold); color: var(--on-primary); }
 
-  .hero-banner img{
-    width:100%;
-    height:auto;
-    display:block;
+  .book-row {
+    display: grid; gap: 32px; align-items: center;
+    border: 1px solid var(--line); padding: 28px;
+  }
+  @media (min-width: 760px) { .book-row { grid-template-columns: 180px 1fr; gap: 40px; padding: 40px; } }
+  .book-row img { width: 160px; max-width: 100%; box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+
+  .enter-grid { display: grid; gap: 12px; }
+  @media (min-width: 700px) { .enter-grid { grid-template-columns: repeat(3, 1fr); } }
+  .enter-card {
+    border: 1px solid var(--line); padding: 28px 24px; text-decoration: none; color: inherit; display: block; min-height: 140px;
+  }
+  .enter-card:hover { border-color: var(--gold); }
+  .enter-card .tag { font-family: var(--mono); font-size: 10px; letter-spacing: .24em; color: var(--gold); text-transform: uppercase; }
+  .enter-card h3 { font-family: var(--serif); font-size: 24px; margin: 10px 0 8px; }
+  .enter-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+  footer.ah-foot { position: relative; z-index: 2; padding: 72px 0 36px; border-top: 1px solid var(--line); }
+  .foot-grid { display: grid; gap: 32px; margin-bottom: 48px; }
+  @media (min-width: 800px) { .foot-grid { grid-template-columns: 1.4fr 1fr 1fr; } }
+  .foot-grid h4 { font-family: var(--mono); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); margin: 0 0 16px; }
+  .foot-grid ul { list-style: none; padding: 0; margin: 0; }
+  .foot-grid a { color: var(--muted); text-decoration: none; font-size: 14px; display: inline-block; padding: 6px 0; }
+  .foot-grid a:hover { color: var(--gold); }
+  .legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+
+  .blink { animation: blink 1.1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
   }
 </style>
 </head>
 <body class="overflow-x-hidden">
 <canvas id="shader-canvas"></canvas>
-<!-- ================= TOP NAV BAR ================= -->
-<header class="fixed top-0 w-full z-50 border-b border-outline-variant/30 premium-blur">
-<div class="max-w-container-max mx-auto px-section-h h-20 flex justify-between items-center">
-<div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full overflow-hidden border border-primary/40 shadow-[0_0_15px_rgba(235,193,102,0.2)]">
-<img alt="Akasha Hub" class="w-full h-full object-cover" src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png"/>
-</div>
-<div class="font-headline-md text-headline-md text-primary tracking-[0.25em] flex flex-col leading-none">
-<span class="text-shimmer font-luxury">AKASHA</span>
-<span class="text-[10px] tracking-[0.4em] text-on-surface-variant font-nav-link mt-1 ml-0.5">HUB</span>
-</div>
-<a class="ml-4 px-4 py-1.5 border border-outline-variant/50 rounded-full text-[10px] font-nav-link text-on-surface-variant hover:text-primary hover:border-primary transition-all" href="https://akashahub.com.br/login">LOGIN</a>
-</div>
-<nav class="hidden md:flex items-center gap-8">
-<a class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors tracking-widest uppercase py-2 border-b border-transparent hover:border-primary" href="https://akashahub.com.br/login">Atravessar</a>
-<a class="font-nav-link text-nav-link text-on-surface-variant hover:text-primary transition-colors tracking-widest uppercase py-2" href="https://akashahub.com.br/portal">Portal</a>
-</nav>
-<div class="flex items-center gap-6">
-<a class="btn-premium hidden lg:block bg-primary text-on-primary px-6 py-2.5 rounded-sm font-nav-link text-nav-link hover:bg-gold-bright transition-all shadow-[0_4px_20px_rgba(201,162,75,0.2)]" href="https://akashahub.com.br/leituracall">CONVERSAR</a>
-<div class="flex items-center gap-4 border-l border-outline-variant/30 pl-6">
-<button class="text-on-surface-variant hover:text-primary transition-colors" id="themeToggle" onclick="toggleTheme()">
-<svg class="w-5 h-5 dark:block hidden" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
-<svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
-</button>
-</div>
-</div>
-</div>
-</header>
-<!-- ================= HERO ================= -->
-<section class="relative min-h-screen flex flex-col items-center justify-center pt-24 overflow-hidden">
-<div class="absolute inset-0 z-[-1] opacity-60">
-<video autoplay="" class="w-full h-full object-cover" id="heroVideo" loop="" muted="" playsinline="" src="https://res.cloudinary.com/dcbarseus/video/upload/v1785163141/SnapInsta.to_AQPq6HfkibVdXLzQAZ9YFPUNNpiTPONbEPErrZvTgNdaHeOBljXGmmzos4_PdC4aALtGggZI5NWuglZPWgTqCajhvtX20DOasv9TBi0_uuuapk.mp4"></video>
-<div class="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background"></div>
-</div>
-<button aria-label="Ativar som do vídeo" class="absolute top-24 right-6 z-20 w-10 h-10 rounded-full premium-blur border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary transition-all" id="videoSoundToggle" onclick="toggleVideoSound()">
-<svg class="w-4 h-4" fill="none" id="soundIconOn" stroke="currentColor" style="display:none" viewbox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
-<svg class="w-4 h-4" fill="none" id="soundIconOff" stroke="currentColor" viewbox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><path d="M23 9l-6 6M17 9l6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
-</button>
-<div class="max-w-container-max mx-auto px-section-h text-center z-10">
-<button class="inline-flex items-center gap-3 px-5 py-2 mb-12 border border-outline-variant/30 rounded-full premium-blur text-[10px] font-nav-link tracking-[0.2em] text-primary hover:border-primary transition-all group" id="audioToggle" onclick="toggleAudio()">
-<span class="relative flex h-2 w-2 dot">
-<span class="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-</span>
-<span class="uppercase" id="audioLabel">Frequência · 999Hz Limpeza</span>
-</button>
-<audio hidden="" id="freqAudio" loop="" preload="none"></audio>
-<div class="eyebrow mb-6 font-label-caps text-label-caps label-luxury reveal">TECNOLOGIA DA ALMA · ARQUITETURA DE ESSÊNCIA</div>
-<h1 class="font-headline-xl text-headline-xl-mobile md:text-headline-xl text-on-surface mb-8 max-w-4xl mx-auto leading-tight reveal">
-      Você não está perdido.<br/>
-<span class="text-shimmer text-glow italic font-luxury">Foi programado para não saber que é livre.</span>
-</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl mx-auto mb-12 leading-relaxed reveal">
-      A Akasha Hub é a incubadora pessoal de negócios e consciência para quem está pronto para parar de consumir transformação e começar a construir legado. Unimos constelação, branding e tecnologia para expandir quem você é.
-    </p>
-<a class="legacy-badge-link hero-banner inline-block reveal max-w-2xl mx-auto" href="https://akashahub.com.br/legado" target="_blank">
-<img alt="Legado" class="mx-auto rounded-sm" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785625979/b10307b4-ef56-4307-9ad0-92702aa4c910_xaackw.png"/>
-</a>
-<div class="flex flex-wrap justify-center gap-6 mt-10 reveal">
-<a class="btn-premium bg-primary text-on-primary px-10 py-4 rounded-sm font-nav-link text-nav-link shadow-lg gold-glow" href="https://akashahub.com.br/leituracall">APLICAR PARA UMA CONVERSA</a>
-<button class="px-10 py-4 border border-outline text-on-surface font-nav-link text-nav-link hover:border-primary hover:text-primary transition-all" onclick="openModal()">CONHECER O CRIADOR</button>
-</div>
-</div>
-<div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 animate-bounce opacity-30">
-<span class="text-[9px] font-label-caps tracking-[0.4em] uppercase">Explorar</span>
-<div class="w-px h-12 bg-gradient-to-b from-primary to-transparent"></div>
-</div>
-</section>
-<!-- ================= PILLARS ================= -->
-<section class="py-section-v">
-<div class="max-w-container-max mx-auto px-section-h">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-16">
-<div class="reveal">
-<div class="text-primary font-headline-md mb-4 tracking-widest border-b border-outline-variant/30 pb-4 inline-block w-full">I. ORIGEM</div>
-<h3 class="font-headline-md text-on-surface mb-4">Identidade &amp; Storytelling</h3>
-<p class="font-body-md text-on-surface-variant leading-relaxed">
-          Construa a partir da sua verdadeira cosmologia. Branding pessoal profundo para manifestar sua essência no digital.
-        </p>
-</div>
-<div class="reveal delay-100">
-<div class="text-primary font-headline-md mb-4 tracking-widest border-b border-outline-variant/30 pb-4 inline-block w-full">II. CORPO</div>
-<h3 class="font-headline-md text-on-surface mb-4">Frequência Aplicada</h3>
-<p class="font-body-md text-on-surface-variant leading-relaxed">
-          Sua mente e corpo como um sistema de alta performance. Tecnologia da alma para alinhar seu campo vibracional.
-        </p>
-</div>
-<div class="reveal delay-200">
-<div class="text-primary font-headline-md mb-4 tracking-widest border-b border-outline-variant/30 pb-4 inline-block w-full">III. NEGÓCIO</div>
-<h3 class="font-headline-md text-on-surface mb-4">Ecossistemas Digitais</h3>
-<p class="font-body-md text-on-surface-variant leading-relaxed">
-          Incubadora de negócios e legados. Transformamos sua expansão em um império digital que trabalha por você.
-        </p>
-</div>
-</div>
-</div>
-</section>
-<!-- ================= MEMBERSHIP ================= -->
-<section class="py-section-v bg-surface-container-lowest/50 border-y border-outline-variant/20">
-<div class="max-w-container-max mx-auto px-section-h">
-<div class="text-center mb-24 reveal">
-<div class="eyebrow label-luxury mb-4 font-label-caps text-label-caps">ÁREA DE MEMBROS</div>
-<h2 class="font-headline-lg text-headline-lg font-luxury text-shimmer text-glow mb-6">Níveis de Iniciação</h2>
-<div class="w-16 h-px bg-primary mx-auto mb-8"></div>
-<p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto">
-        Quatro portais, uma jornada de soberania. Cada nível abre um novo grau de acesso à Tecnologia da Alma.
-      </p>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-<!-- Nível 01 -->
-<div class="plan-card bg-surface-container-low p-10 rounded-sm flex flex-col h-full reveal">
-<div class="w-24 h-24 rounded-full border border-primary/20 p-1 mb-8 mx-auto overflow-hidden">
-<img alt="Anúbis" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIiut3WOn9Qv2aI57mN873F5PBbGefaBPzhF_awtzK74iPNH32TIWGWtsX_3-U1PF7oXmQsXsxxVi91LCIaZYv0ve9sC18to0s92pdtWZ3T34c1LjLpML1Ho3cFYSmcrEd7WtD1ifVXjY6v5kAU0D7m33KOV9Rpp8f78VPGkj0_qLrZZ6V-ovNiF4ACCinXkyTw-TT7knGFGgYVHab4V2K0v7A70TpBUDLNhdgW0pKK7j18HPRy-M_tqAytEt_T3qxMvDWgYm0XVH2"/>
-</div>
-<div class="text-[10px] font-label-caps text-primary tracking-widest mb-2 uppercase plan-tier-number">Nível 01</div>
-<h3 class="font-headline-md text-on-surface mb-2 plan-name text-xl">Anúbis</h3>
-<p class="italic font-serif text-on-surface-variant/80 mb-8 text-sm">O Iniciado</p>
-<ul class="space-y-4 mb-12 text-sm font-body-md text-on-surface-variant flex-grow">
-<li class="flex gap-3"><span class="text-primary">—</span> Reprogramação de Crenças</li>
-<li class="flex gap-3"><span class="text-primary">—</span> Pack de Frequências</li>
-</ul>
-<a class="block w-full py-3 border border-primary/40 text-primary text-center font-nav-link text-nav-link hover:bg-primary hover:text-on-primary transition-all" href="https://pay.hotmart.com/N104491126Y" target="_blank">ASSINAR</a>
-</div>
-<!-- Nível 02 -->
-<div class="plan-card bg-surface-container-low p-10 rounded-sm flex flex-col h-full reveal delay-75">
-<div class="w-24 h-24 rounded-full border border-primary/20 p-1 mb-8 mx-auto overflow-hidden">
-<img alt="Hórus" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnfMuK5SqDq0iHLfxAgih1aTrCNR0DAfdfYYMoEZl-MXyi9qKcrvzOkjNwQneYYOThRBfGqy7Mnnh1wZj3LGNCNa14QyYdHxib32H4RM7YZUZFPHhtw9N0MIxlOJUVfCTQ2tmjNTKjAvhDRTiVYEjWF5toXVMadTIFvbVediWCiTUKDEzvetrJTkK5PiMDu52EwzYkV8E14NSL1uvmOtcD0xqKGYnB9bWx_RTrKwa_EBb8l3fFEermL8Rc-XQ0adUm2TQLqezzG2sR"/>
-</div>
-<div class="text-[10px] font-label-caps text-primary tracking-widest mb-2 uppercase plan-tier-number">Nível 02</div>
-<h3 class="font-headline-md text-on-surface mb-2 plan-name text-xl">Hórus</h3>
-<p class="italic font-serif text-on-surface-variant/80 mb-8 text-sm">O Despertar</p>
-<ul class="space-y-4 mb-12 text-sm font-body-md text-on-surface-variant flex-grow">
-<li class="flex gap-3"><span class="text-primary">—</span> Tudo do Nível Anúbis</li>
-<li class="flex gap-3"><span class="text-primary">—</span> Kit de Arquétipos</li>
-<li class="flex gap-3"><span class="text-primary">—</span> Dicionário de Marca</li>
-</ul>
-<a class="block w-full py-3 border border-primary/40 text-primary text-center font-nav-link text-nav-link hover:bg-primary hover:text-on-primary transition-all" href="https://pay.hotmart.com/O104491171B" target="_blank">ASSINAR</a>
-</div>
-<!-- Nível 03 -->
-<div class="plan-card bg-surface-container-low p-10 rounded-sm flex flex-col h-full reveal delay-150">
-<div class="w-24 h-24 rounded-full border border-primary/20 p-1 mb-8 mx-auto overflow-hidden">
-<img alt="Ísis" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhDgL2qqw1Qh_kmGNLDeMQFJfJSgihkVK4bjVD34nT10TqCw0cgTKWMk31K68hlTwIY7ROW7OxwGNtDdZ6L1SOZBtHvJEdgttjKIp0AF5ABL5-NDs_W4mBFjygjW8SulGEggHht9D_Q9JacS9M-mZFW9WhFYZlvFOu1AIDKyrqKlwh1fBRhGnsuwk5vxaqJBmamCGH8wnqqVQeSVOZGkpma17yWmZQZM1G5f6jsYqpS05KJnDlM6TVwZBta7RU0vezWmyyY9QTy1_6"/>
-</div>
-<div class="text-[10px] font-label-caps text-primary tracking-widest mb-2 uppercase plan-tier-number">Nível 03</div>
-<h3 class="font-headline-md text-on-surface mb-2 plan-name text-xl">Ísis</h3>
-<p class="italic font-serif text-on-surface-variant/80 mb-8 text-sm">O Domínio</p>
-<ul class="space-y-4 mb-12 text-sm font-body-md text-on-surface-variant flex-grow">
-<li class="flex gap-3"><span class="text-primary">—</span> Tudo dos Níveis 01 e 02</li>
-<li class="flex gap-3"><span class="text-primary">—</span> Códices de Persuasão</li>
-<li class="flex gap-3"><span class="text-primary">—</span> Comunidade Devota</li>
-</ul>
-<a class="block w-full py-3 border border-primary/40 text-primary text-center font-nav-link text-nav-link hover:bg-primary hover:text-on-primary transition-all" href="https://pay.hotmart.com/F104491235U" target="_blank">ASSINAR</a>
-</div>
-<!-- Nível 04 -->
-<div class="plan-card bg-surface-container-low p-10 rounded-sm flex flex-col h-full reveal delay-200">
-<div class="w-24 h-24 rounded-full border border-primary/20 p-1 mb-8 mx-auto overflow-hidden">
-<img alt="Rá" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdkjox6VhkS53n3K9H_MSkB0fXfuwjNMdaIY-6VnsoUmaWpHx23pcrW9gGmQCeIHiHaKiVkBA61-iNK8g-hMWIRD2rXgwdiLxJlUWGnp6syz7NDyWppgSph_vM_WnFl6LgLGACe87NmZS4Kr7SULfxgwM1-MvA793H-ZaWTwXr2YSH_D7tu7AtupDM5j3c7TttvqIERpVvpONlopCEbbfzR5zMLgCaN8rXBFg1_8w4FeBH641L7CaBgecIT_IsCSbHMFkhC8nMDxM6"/>
-</div>
-<div class="text-[10px] font-label-caps text-primary tracking-widest mb-2 uppercase plan-tier-number">Nível 04</div>
-<h3 class="font-headline-md text-on-surface mb-2 plan-name text-xl">Rá</h3>
-<p class="italic font-serif text-on-surface-variant/80 mb-8 text-sm">Magnetismo Supremo</p>
-<ul class="space-y-4 mb-12 text-sm font-body-md text-on-surface-variant flex-grow">
-<li class="flex gap-3"><span class="text-primary">—</span> Conteúdo Ilimitado</li>
-<li class="flex gap-3"><span class="text-primary">—</span> Automação Avançada com IA</li>
-<li class="flex gap-3"><span class="text-primary">—</span> Suporte Direto da Ordem</li>
-</ul>
-<a class="block w-full py-3 bg-primary text-on-primary text-center font-nav-link text-nav-link hover:bg-gold-bright transition-all" href="https://pay.hotmart.com/L104491291E" target="_blank">ASSINAR</a>
-</div>
-</div>
-<div class="mt-20 text-center text-[11px] font-body-md text-on-surface-variant tracking-widest uppercase reveal">
-      Garantia de 7 dias · Acesso Vitalício · Atualizações Constantes
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" id="scrollProgress"></div>
+
+<header class="ah-nav premium-blur">
+  <div class="wrap ah-nav-inner">
+    <div style="display:flex;align-items:center;gap:12px;min-width:0">
+      <a class="brand" href="https://akashahub.com.br/">
+        <div class="brand-mark">
+          <img alt="Akasha Hub" src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png"/>
+        </div>
+        <div class="brand-type">
+          <strong class="text-shimmer font-luxury">AKASHA</strong>
+          <span>HUB</span>
+        </div>
+      </a>
+      <a class="login-chip" href="https://akashahub.com.br/login">LOGIN</a>
     </div>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="https://akashahub.com.br/portal">Portal</a>
+      <a href="https://akashahub.com.br/legado">Legado</a>
+      <a href="https://akashahub.com.br/livros">Livros</a>
+      <a href="#niveis">Níveis</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="cta-nav btn-premium" href="https://akashahub.com.br/leituracall">CONVERSAR</a>
+      <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" aria-label="Alternar tema">
+        <svg class="w-5 h-5 dark:block hidden" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
+        <svg class="w-5 h-5 block dark:hidden" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
+      </button>
+      <button class="icon-btn burger" id="navToggle" onclick="toggleNav()" aria-label="Abrir menu">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" stroke-width="1.5"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="mobileNav">
+  <a href="https://akashahub.com.br/login" onclick="toggleNav()">Login<span class="sub">entrar no sistema</span></a>
+  <a href="https://akashahub.com.br/portal" onclick="toggleNav()">Portal<span class="sub">frequência</span></a>
+  <a href="https://akashahub.com.br/legado" onclick="toggleNav()">Legado<span class="sub">ecossistema digital</span></a>
+  <a href="https://akashahub.com.br/livros" onclick="toggleNav()">Livros<span class="sub">bibliotheca</span></a>
+  <a href="https://akashahub.com.br/leituracall" onclick="toggleNav()">Conversar<span class="sub">leitura call</span></a>
+  <a href="#niveis" onclick="toggleNav()">Níveis<span class="sub">anúbis · hórus · ísis · rá</span></a>
+  <a href="https://akashahub.com.br/mentoria" onclick="toggleNav()">Mentoria<span class="sub">arquitetura de essência</span></a>
 </div>
+
+<section class="hero">
+  <div class="hero-media">
+    <video autoplay="" class="w-full h-full object-cover" id="heroVideo" loop="" muted="" playsinline="" src="https://res.cloudinary.com/dcbarseus/video/upload/v1785163141/SnapInsta.to_AQPq6HfkibVdXLzQAZ9YFPUNNpiTPONbEPErrZvTgNdaHeOBljXGmmzos4_PdC4aALtGggZI5NWuglZPWgTqCajhvtX20DOasv9TBi0_uuuapk.mp4"></video>
+  </div>
+  <div class="watermark" aria-hidden="true">ĀKĀŚA</div>
+  <button aria-label="Ativar som do vídeo" class="sound-fab premium-blur icon-btn" id="videoSoundToggle" onclick="toggleVideoSound()">
+    <svg class="w-4 h-4" fill="none" id="soundIconOn" stroke="currentColor" style="display:none" width="16" height="16" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
+    <svg class="w-4 h-4" fill="none" id="soundIconOff" stroke="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><path d="M23 9l-6 6M17 9l6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
+  </button>
+  <div class="wrap hero-content">
+    <button class="freq-btn" id="audioToggle" onclick="toggleAudio()" type="button">
+      <span class="dot"><span class="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span></span>
+      <span id="audioLabel">Frequência · 999Hz Limpeza</span>
+    </button>
+    <audio hidden="" id="freqAudio" loop="" preload="none"></audio>
+    <p class="eyebrow label-luxury">ākāśa · sânscrito · éter · registro · origem</p>
+    <h1 class="reveal">Você não está perdido.<br/><span class="text-shimmer text-glow italic font-luxury">Foi programado para não saber que é livre.</span></h1>
+    <p class="lede reveal">A Akasha Hub é o portal de um ecossistema. Não é um curso. Não é um feed. É o lugar onde origem, consciência, identidade e negócio se encontram — para quem está pronto para construir o que fica.</p>
+    <div class="hero-ctas reveal">
+      <a class="btn-gold btn-premium gold-glow" href="https://akashahub.com.br/leituracall">APLICAR PARA UMA CONVERSA</a>
+      <button class="btn-ghost" onclick="openModal()" type="button">CONHECER O CRIADOR</button>
+    </div>
+    <a class="legacy-badge-link hero-banner inline-block reveal max-w-xl mx-auto" href="https://akashahub.com.br/legado" target="_blank">
+      <img alt="Legado" class="mx-auto rounded-sm" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785625979/b10307b4-ef56-4307-9ad0-92702aa4c910_xaackw.png"/>
+    </a>
+    <p class="reveal" style="margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase">> abrir registro<span class="blink">_</span></p>
+  </div>
+  <div class="explore-hint">
+    <span>Explorar</span>
+    <i></i>
+  </div>
 </section>
-<!-- ================= FOOTER ================= -->
-<footer class="pt-24 pb-12 border-t border-outline-variant/10 bg-surface-container-lowest">
-<div class="max-w-container-max mx-auto px-section-h">
-<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-<div class="md:col-span-1">
-<div class="flex items-center gap-3 mb-6">
-<div class="w-8 h-8 rounded-full border border-primary/40 overflow-hidden">
-<img alt="Logo" class="w-full h-full object-cover" src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png"/>
-</div>
-<span class="font-headline-md font-luxury text-shimmer tracking-widest text-lg">AKASHA HUB</span>
-</div>
-<p class="text-on-surface-variant text-sm font-body-md leading-relaxed">
-          Pelo progresso do universo. Tecnologia da alma e arquitetura de essência.
-        </p>
-</div>
-<div>
-<h4 class="font-label-caps text-primary text-[10px] tracking-[0.3em] uppercase mb-6">Explorar</h4>
-<ul class="space-y-4 text-sm font-body-md text-on-surface-variant">
-<li><a class="hover:text-primary transition-colors" href="https://akashahub.com.br/portal">Portal de Frequência</a></li>
-<li><a class="hover:text-primary transition-colors" href="https://akashahub.com.br/login">Entrar no Portal</a></li>
-<li><a class="hover:text-primary transition-colors" href="https://akashahub.com.br/livros">Livros do Akasha Hub</a></li>
-</ul>
-</div>
-<div>
-<h4 class="font-label-caps text-primary text-[10px] tracking-[0.3em] uppercase mb-6">Conexão</h4>
-<ul class="space-y-4 text-sm font-body-md text-on-surface-variant">
-<li><a class="hover:text-primary transition-colors" href="https://akashahub.com.br/leituracall">Leitura Call</a></li>
-<li><a class="hover:text-primary transition-colors" href="https://wa.me/5571983448621" target="_blank">WhatsApp Suporte</a></li>
-<li><a class="hover:text-primary transition-colors" href="https://instagram.com/akasha.hub" target="_blank">@akasha.hub</a></li>
-</ul>
-</div>
-</div>
-<div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-outline-variant/10 text-[10px] font-label-caps text-on-surface-variant tracking-widest gap-4">
-<span>© 2026 AKASHA HUB · YAN FILIPE SIMON · TODOS OS DIREITOS RESERVADOS</span>
-<div class="flex gap-8">
-<a class="hover:text-primary" href="#">TERMOS DE USO</a>
-<a class="hover:text-primary" href="#">PRIVACIDADE</a>
-</div>
-</div>
-</div>
+
+<section class="section" id="akasha">
+  <div class="wrap">
+    <div class="kicker">01 / o nome</div>
+    <div class="etymon">
+      <div class="reveal">
+        <div class="glyph">ākāśa<small>sânscrito · आकाश</small></div>
+      </div>
+      <div class="meaning reveal">
+        <h2>O espaço que segura tudo — inclusive você.</h2>
+        <p>Akasha é uma palavra antiga da Índia. Significa <strong>éter</strong>: o quinto elemento. Não é o céu que se vê. É o espaço que deixa o som existir. O campo onde o mundo deixa memória.</p>
+        <p>Nas tradições que usam essa palavra, nada se perde. Cada gesto, cada decisão, cada origem fica registrado. Por isso o nome. A Akasha Hub não nasceu para parecer mística. Nasceu para tratar o que já está escrito em você — e o que ainda precisa ser construído no mundo.</p>
+        <p>Tecnologia da alma. Arquitetura de essência. Ecossistemas digitais. Três frentes. Um único campo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pilares" style="padding-top:0">
+  <div class="wrap">
+    <div class="kicker">02 / três portas</div>
+    <h2 class="reveal">Origem. Corpo. Negócio.</h2>
+    <p class="lead reveal">Toda expansão verdadeira começa no que você é, passa pelo que você sustenta, e vira o que você constrói.</p>
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="idx">I. ORIGEM</div>
+        <h3>Identidade & Storytelling</h3>
+        <p>Construa a partir da sua verdadeira cosmologia. Branding pessoal profundo para manifestar sua essência no digital.</p>
+      </div>
+      <div class="pillar reveal">
+        <div class="idx">II. CORPO</div>
+        <h3>Frequência Aplicada</h3>
+        <p>Sua mente e corpo como um sistema de alta performance. Tecnologia da alma para alinhar seu campo vibracional.</p>
+      </div>
+      <div class="pillar reveal">
+        <div class="idx">III. NEGÓCIO</div>
+        <h3>Ecossistemas Digitais</h3>
+        <p>Incubadora de negócios e legados. Transformamos sua expansão em um império digital que trabalha por você.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="mapa">
+  <div class="wrap">
+    <div class="kicker">03 / índice do hub</div>
+    <h2 class="reveal">O que existe aqui dentro.</h2>
+    <p class="lead reveal">Não é um menu. É um mapa. Entre pela porta que fizer sentido agora — o resto do universo continua aqui.</p>
+    <div class="index-list">
+      <a class="index-row reveal" href="https://akashahub.com.br/portal">
+        <span class="path">/portal</span>
+        <span class="name">Portal de Frequência</span>
+        <span class="hint">o campo, ao vivo</span>
+      </a>
+      <a class="index-row reveal" href="https://akashahub.com.br/legado">
+        <span class="path">/legado</span>
+        <span class="name">Legado</span>
+        <span class="hint">ecossistema digital por prioridades</span>
+      </a>
+      <a class="index-row reveal" href="https://akashahub.com.br/livros">
+        <span class="path">/livros</span>
+        <span class="name">Livros</span>
+        <span class="hint">bibliotheca · grimórios</span>
+      </a>
+      <a class="index-row reveal" href="https://akashahub.com.br/leituracall">
+        <span class="path">/leituracall</span>
+        <span class="name">Leitura Call</span>
+        <span class="hint">uma conversa, não um funil</span>
+      </a>
+      <a class="index-row reveal" href="https://akashahub.com.br/mentoria">
+        <span class="path">/mentoria</span>
+        <span class="name">Mentoria</span>
+        <span class="hint">arquitetura de essência</span>
+      </a>
+      <a class="index-row reveal" href="https://akashahub.com.br/alinhamentofinanceiro">
+        <span class="path">/alinhamentofinanceiro</span>
+        <span class="name">Alinhamento Financeiro</span>
+        <span class="hint">sistema, não dica</span>
+      </a>
+      <a class="index-row reveal" href="https://akashahub.com.br/codigosdeorigem">
+        <span class="path">/codigosdeorigem</span>
+        <span class="name">Códigos de Origem</span>
+        <span class="hint">o livro do mentor</span>
+      </a>
+      <a class="index-row reveal" href="https://akashahub.com.br/login">
+        <span class="path">/login</span>
+        <span class="name">Entrar</span>
+        <span class="hint">acesso ao sistema</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="legado">
+  <div class="wrap">
+    <div class="legado-block">
+      <div class="legado-visual reveal">
+        <a href="https://akashahub.com.br/legado">
+          <img alt="Legado — construção de um ecossistema digital" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785625979/b10307b4-ef56-4307-9ad0-92702aa4c910_xaackw.png"/>
+        </a>
+      </div>
+      <div class="reveal">
+        <div class="kicker">04 / prioridade</div>
+        <h2>Um ciclo. Uma prioridade. Uma evolução.</h2>
+        <p class="lead">Legado não é “criação de sites”. É a construção de um ecossistema digital por prioridades — diagnóstico, fundação, conversão, posicionamento, conteúdo, clientes, automação, expansão. Sem pressa falsa. Sem preço na vitrine. Com clareza.</p>
+        <a class="btn-gold btn-premium" href="https://akashahub.com.br/legado">ENTRAR NO LEGADO</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="niveis">
+  <div class="wrap">
+    <div class="kicker label-luxury">05 / área de membros</div>
+    <h2 class="reveal font-luxury text-shimmer text-glow">Níveis de Iniciação</h2>
+    <p class="lead reveal">Quatro portais, uma jornada de soberania. Cada nível abre um novo grau de acesso à Tecnologia da Alma.</p>
+    <div class="levels">
+      <div class="plan-card reveal">
+        <div class="seal">
+          <img alt="Anúbis" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIiut3WOn9Qv2aI57mN873F5PBbGefaBPzhF_awtzK74iPNH32TIWGWtsX_3-U1PF7oXmQsXsxxVi91LCIaZYv0ve9sC18to0s92pdtWZ3T34c1LjLpML1Ho3cFYSmcrEd7WtD1ifVXjY6v5kAU0D7m33KOV9Rpp8f78VPGkj0_qLrZZ6V-ovNiF4ACCinXkyTw-TT7knGFGgYVHab4V2K0v7A70TpBUDLNhdgW0pKK7j18HPRy-M_tqAytEt_T3qxMvDWgYm0XVH2"/>
+        </div>
+        <div class="text-[10px] font-label-caps text-primary tracking-widest mb-2 uppercase plan-tier-number">Nível 01</div>
+        <h3 class="plan-name" style="font-size:28px;margin:0 0 4px">Anúbis</h3>
+        <p class="italic" style="font-family:var(--serif);color:var(--muted);margin:0 0 20px;font-size:14px">O Iniciado</p>
+        <ul>
+          <li><span>—</span> Reprogramação de Crenças</li>
+          <li><span>—</span> Pack de Frequências</li>
+        </ul>
+        <a class="plan-cta" href="https://pay.hotmart.com/N104491126Y" target="_blank" rel="noopener">ASSINAR</a>
+      </div>
+      <div class="plan-card reveal">
+        <div class="seal">
+          <img alt="Hórus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnfMuK5SqDq0iHLfxAgih1aTrCNR0DAfdfYYMoEZl-MXyi9qKcrvzOkjNwQneYYOThRBfGqy7Mnnh1wZj3LGNCNa14QyYdHxib32H4RM7YZUZFPHhtw9N0MIxlOJUVfCTQ2tmjNTKjAvhDRTiVYEjWF5toXVMadTIFvbVediWCiTUKDEzvetrJTkK5PiMDu52EwzYkV8E14NSL1uvmOtcD0xqKGYnB9bWx_RTrKwa_EBb8l3fFEermL8Rc-XQ0adUm2TQLqezzG2sR"/>
+        </div>
+        <div class="text-[10px] font-label-caps text-primary tracking-widest mb-2 uppercase plan-tier-number">Nível 02</div>
+        <h3 class="plan-name" style="font-size:28px;margin:0 0 4px">Hórus</h3>
+        <p class="italic" style="font-family:var(--serif);color:var(--muted);margin:0 0 20px;font-size:14px">O Despertar</p>
+        <ul>
+          <li><span>—</span> Tudo do Nível Anúbis</li>
+          <li><span>—</span> Kit de Arquétipos</li>
+          <li><span>—</span> Dicionário de Marca</li>
+        </ul>
+        <a class="plan-cta" href="https://pay.hotmart.com/O104491171B" target="_blank" rel="noopener">ASSINAR</a>
+      </div>
+      <div class="plan-card reveal">
+        <div class="seal">
+          <img alt="Ísis" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhDgL2qqw1Qh_kmGNLDeMQFJfJSgihkVK4bjVD34nT10TqCw0cgTKWMk31K68hlTwIY7ROW7OxwGNtDdZ6L1SOZBtHvJEdgttjKIp0AF5ABL5-NDs_W4mBFjygjW8SulGEggHht9D_Q9JacS9M-mZFW9WhFYZlvFOu1AIDKyrqKlwh1fBRhGnsuwk5vxaqJBmamCGH8wnqqVQeSVOZGkpma17yWmZQZM1G5f6jsYqpS05KJnDlM6TVwZBta7RU0vezWmyyY9QTy1_6"/>
+        </div>
+        <div class="text-[10px] font-label-caps text-primary tracking-widest mb-2 uppercase plan-tier-number">Nível 03</div>
+        <h3 class="plan-name" style="font-size:28px;margin:0 0 4px">Ísis</h3>
+        <p class="italic" style="font-family:var(--serif);color:var(--muted);margin:0 0 20px;font-size:14px">O Domínio</p>
+        <ul>
+          <li><span>—</span> Tudo dos Níveis 01 e 02</li>
+          <li><span>—</span> Códices de Persuasão</li>
+          <li><span>—</span> Comunidade Devota</li>
+        </ul>
+        <a class="plan-cta" href="https://pay.hotmart.com/F104491235U" target="_blank" rel="noopener">ASSINAR</a>
+      </div>
+      <div class="plan-card reveal">
+        <div class="seal">
+          <img alt="Rá" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdkjox6VhkS53n3K9H_MSkB0fXfuwjNMdaIY-6VnsoUmaWpHx23pcrW9gGmQCeIHiHaKiVkBA61-iNK8g-hMWIRD2rXgwdiLxJlUWGnp6syz7NDyWppgSph_vM_WnFl6LgLGACe87NmZS4Kr7SULfxgwM1-MvA793H-ZaWTwXr2YSH_D7tu7AtupDM5j3c7TttvqIERpVvpONlopCEbbfzR5zMLgCaN8rXBFg1_8w4FeBH641L7CaBgecIT_IsCSbHMFkhC8nMDxM6"/>
+        </div>
+        <div class="text-[10px] font-label-caps text-primary tracking-widest mb-2 uppercase plan-tier-number">Nível 04</div>
+        <h3 class="plan-name" style="font-size:28px;margin:0 0 4px">Rá</h3>
+        <p class="italic" style="font-family:var(--serif);color:var(--muted);margin:0 0 20px;font-size:14px">Magnetismo Supremo</p>
+        <ul>
+          <li><span>—</span> Conteúdo Ilimitado</li>
+          <li><span>—</span> Automação Avançada com IA</li>
+          <li><span>—</span> Suporte Direto da Ordem</li>
+        </ul>
+        <a class="plan-cta fill" href="https://pay.hotmart.com/L104491291E" target="_blank" rel="noopener">ASSINAR</a>
+      </div>
+    </div>
+    <p class="reveal" style="margin-top:36px;text-align:center;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)">Garantia de 7 dias · Acesso Vitalício · Atualizações Constantes</p>
+  </div>
+</section>
+
+<section class="section" id="registros">
+  <div class="wrap">
+    <div class="kicker">06 / registros</div>
+    <h2 class="reveal">O livro. A bibliotheca. O criador.</h2>
+    <p class="lead reveal">Quem construiu este universo tem nome, obra e um caminho de 28 anos condensado em sistema.</p>
+    <div class="book-row reveal">
+      <a href="https://pay.hotmart.com/D106719959G" target="_blank" rel="noopener">
+        <img alt="Códigos de Origem" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785388669/image_-_2026-07-30T020906.810_wtua29.jpg"/>
+      </a>
+      <div>
+        <p class="eyebrow" style="margin-bottom:10px">livro do mentor</p>
+        <h3 style="font-family:var(--serif);font-size:32px;margin:0 0 12px">Códigos de Origem</h3>
+        <p style="color:var(--muted);line-height:1.75;margin:0 0 24px;max-width:36rem">A jornada de 28 anos condensada em um sistema de transformação para o mundo. Blindar atenção. Construir cosmologia pessoal. Gerar legado.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <a class="btn-gold btn-premium" href="https://pay.hotmart.com/D106719959G" target="_blank" rel="noopener">LIVRO DO MENTOR</a>
+          <a class="btn-ghost" href="https://akashahub.com.br/livros">VER TODOS OS LIVROS</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="entrar">
+  <div class="wrap">
+    <div class="kicker">07 / atravessar</div>
+    <h2 class="reveal">Três formas de entrar.</h2>
+    <p class="lead reveal">Quem já tem acesso, entra. Quem quer conversar, aplica. Quem quer presença, chama.</p>
+    <div class="enter-grid">
+      <a class="enter-card reveal" href="https://akashahub.com.br/login">
+        <span class="tag">01</span>
+        <h3>Login</h3>
+        <p>Acesso ao sistema. A home só aponta — a autenticação vive no portal de entrada.</p>
+      </a>
+      <a class="enter-card reveal" href="https://akashahub.com.br/portal">
+        <span class="tag">02</span>
+        <h3>Portal</h3>
+        <p>O campo de frequência. Para quem já atravessou e continua dentro.</p>
+      </a>
+      <a class="enter-card reveal" href="https://akashahub.com.br/leituracall">
+        <span class="tag">03</span>
+        <h3>Conversar</h3>
+        <p>Leitura Call. Uma conversa para entender se este universo é o seu próximo ciclo.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="ah-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div class="brand-mark">
+            <img alt="Logo" src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png"/>
+          </div>
+          <span class="font-luxury text-shimmer" style="letter-spacing:.22em;font-size:14px">AKASHA HUB</span>
+        </div>
+        <p style="color:var(--muted);font-size:14px;line-height:1.7;max-width:32ch;margin:0">Pelo progresso do universo. Tecnologia da alma e arquitetura de essência.</p>
+      </div>
+      <div>
+        <h4>Explorar</h4>
+        <ul>
+          <li><a href="https://akashahub.com.br/portal">Portal de Frequência</a></li>
+          <li><a href="https://akashahub.com.br/login">Entrar no Portal</a></li>
+          <li><a href="https://akashahub.com.br/livros">Livros do Akasha Hub</a></li>
+          <li><a href="https://akashahub.com.br/legado">Legado</a></li>
+          <li><a href="https://akashahub.com.br/mentoria">Mentoria</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Conexão</h4>
+        <ul>
+          <li><a href="https://akashahub.com.br/leituracall">Leitura Call</a></li>
+          <li><a href="https://wa.me/5571983448621" target="_blank" rel="noopener">WhatsApp Suporte</a></li>
+          <li><a href="https://instagram.com/akasha.hub" target="_blank" rel="noopener">@akasha.hub</a></li>
+          <li><a href="https://akashahub.com.br/codigosdeorigem">Códigos de Origem</a></li>
+          <li><a href="https://akashahub.com.br/alinhamentofinanceiro">Alinhamento Financeiro</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 AKASHA HUB · YAN FILIPE SIMON · TODOS OS DIREITOS RESERVADOS</span>
+      <div style="display:flex;gap:24px">
+        <a href="#" style="color:inherit;text-decoration:none">TERMOS DE USO</a>
+        <a href="#" style="color:inherit;text-decoration:none">PRIVACIDADE</a>
+      </div>
+    </div>
+  </div>
 </footer>
-<!-- ================= MODAL: CONHECER O CRIADOR ================= -->
+
 <div class="modal-overlay fixed inset-0 z-[100] hidden items-center justify-center p-6 opacity-0" id="modalOverlay" onclick="if(event.target===this) closeModal()">
-<div class="modal-content max-w-5xl w-full max-h-[90vh] overflow-y-auto rounded-sm relative">
-<button class="absolute top-6 right-6 text-on-surface-variant hover:text-primary transition-all p-2 z-10" onclick="closeModal()">
-<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-width="1.5"></path></svg>
-</button>
-<div class="grid grid-cols-1 lg:grid-cols-2">
-<!-- Mentor Bio -->
-<div class="p-10 lg:p-16 border-b lg:border-b-0 lg:border-r border-outline-variant/20">
-<div class="w-32 h-32 rounded-full overflow-hidden border-2 border-primary/30 mb-8 mx-auto lg:mx-0">
-<img alt="Yan Filipe Simon" class="w-full h-full object-cover" src="https://res.cloudinary.com/dcbarseus/image/upload/v1784250691/d2a5e805-6f3e-4938-9ed8-7cc91862a4bf_cuejin.png"/>
-</div>
-<h2 class="font-headline-md text-on-surface text-3xl mb-2">Yan Filipe Simon</h2>
-<div class="font-label-caps text-primary text-[10px] tracking-widest mb-8 uppercase">Fundador · Akasha Hub</div>
-<p class="font-body-md text-on-surface-variant leading-relaxed mb-6">
+  <div class="modal-content max-w-5xl w-full max-h-[90vh] overflow-y-auto rounded-sm relative">
+    <button class="absolute top-6 right-6 text-on-surface-variant hover:text-primary transition-all p-2 z-10" onclick="closeModal()" aria-label="Fechar">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-width="1.5"></path></svg>
+    </button>
+    <div class="grid grid-cols-1 lg:grid-cols-2">
+      <div class="p-10 lg:p-16 border-b lg:border-b-0 lg:border-r border-outline-variant/20">
+        <div class="w-32 h-32 rounded-full overflow-hidden border-2 border-primary/30 mb-8 mx-auto lg:mx-0">
+          <img alt="Yan Filipe Simon" class="w-full h-full object-cover" src="https://res.cloudinary.com/dcbarseus/image/upload/v1784250691/d2a5e805-6f3e-4938-9ed8-7cc91862a4bf_cuejin.png"/>
+        </div>
+        <h2 class="font-headline-md text-on-surface text-3xl mb-2">Yan Filipe Simon</h2>
+        <div class="font-label-caps text-primary text-[10px] tracking-widest mb-8 uppercase">Fundador · Akasha Hub</div>
+        <p class="font-body-md text-on-surface-variant leading-relaxed mb-6">
           Formado em mais de 30 modalidades terapêuticas, com mais de 2.000 atendimentos realizados. Um ano inteiro dedicado ao silêncio e ao estudo direto da própria energia deu origem à Tecnologia da Alma.
         </p>
-<div class="font-luxury italic text-shimmer text-glow text-xl">"Pelo progresso do universo."</div>
+        <div class="font-luxury italic text-shimmer text-glow text-xl">"Pelo progresso do universo."</div>
+      </div>
+      <div class="p-10 lg:p-16 flex flex-col items-center justify-center text-center">
+        <div class="relative group mb-10">
+          <div class="absolute inset-0 bg-primary/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <a class="block" href="https://pay.hotmart.com/D106719959G" target="_blank" rel="noopener">
+            <img alt="Códigos de Origem" class="w-48 shadow-2xl relative z-10 transition-transform hover:scale-105" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785388669/image_-_2026-07-30T020906.810_wtua29.jpg"/>
+          </a>
+        </div>
+        <h3 class="font-headline-md text-on-surface mb-4">Códigos de Origem</h3>
+        <p class="font-body-md text-on-surface-variant mb-8 max-w-xs">A jornada de 28 anos condensada em um sistema de transformação para o mundo.</p>
+        <a class="bg-primary text-on-primary px-8 py-3 rounded-sm font-nav-link text-[12px] hover:bg-gold-bright transition-all" href="https://pay.hotmart.com/D106719959G" target="_blank" rel="noopener">LIVRO DO MENTOR</a>
+      </div>
+    </div>
+    <div class="p-8 border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="flex items-center gap-6">
+        <div class="w-12 h-12 rounded-full overflow-hidden border border-primary/20">
+          <img alt="Yan Profile" class="w-full h-full object-cover" src="https://res.cloudinary.com/dcbarseus/image/upload/v1784250996/IMG_20251020_014152_574_nobtvn.webp"/>
+        </div>
+        <div class="text-left">
+          <h4 class="font-headline-md text-sm text-on-surface">Livros do Akasha Hub</h4>
+          <p class="text-[11px] text-on-surface-variant uppercase tracking-widest">Acervo de Legado</p>
+        </div>
+      </div>
+      <div class="flex gap-4">
+        <a class="px-6 py-2 border border-outline text-[11px] font-nav-link text-on-surface-variant hover:text-primary hover:border-primary transition-all" href="https://akashahub.com.br/livros" target="_blank">VER TODOS</a>
+        <a class="px-6 py-2 bg-primary text-on-primary text-[11px] font-nav-link transition-all" href="https://akashahub.com.br/leituracall" target="_blank">LEITURA CALL</a>
+      </div>
+    </div>
+  </div>
 </div>
-<!-- Book Section -->
-<div class="p-10 lg:p-16 flex flex-col items-center justify-center text-center">
-<div class="relative group mb-10">
-<div class="absolute inset-0 bg-primary/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<a class="block" href="https://pay.hotmart.com/D106719959G" target="_blank">
-<img alt="Códigos de Origem" class="w-48 shadow-2xl relative z-10 transition-transform hover:scale-105" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785388669/image_-_2026-07-30T020906.810_wtua29.jpg"/>
-</a>
-</div>
-<h3 class="font-headline-md text-on-surface mb-4">Códigos de Origem</h3>
-<p class="font-body-md text-on-surface-variant mb-8 max-w-xs">A jornada de 28 anos condensada em um sistema de transformação para o mundo.</p>
-<a class="bg-primary text-on-primary px-8 py-3 rounded-sm font-nav-link text-[12px] hover:bg-gold-bright transition-all" href="https://pay.hotmart.com/D106719959G" target="_blank">LIVRO DO MENTOR</a>
-</div>
-</div>
-<!-- Extra Links -->
-<div class="p-8 border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-center gap-6">
-<div class="flex items-center gap-6">
-<div class="w-12 h-12 rounded-full overflow-hidden border border-primary/20">
-<img alt="Yan Profile" class="w-full h-full object-cover" src="https://res.cloudinary.com/dcbarseus/image/upload/v1784250996/IMG_20251020_014152_574_nobtvn.webp"/>
-</div>
-<div class="text-left">
-<h4 class="font-headline-md text-sm text-on-surface">Livros do Akasha Hub</h4>
-<p class="text-[11px] text-on-surface-variant uppercase tracking-widest">Acervo de Legado</p>
-</div>
-</div>
-<div class="flex gap-4">
-<a class="px-6 py-2 border border-outline text-[11px] font-nav-link text-on-surface-variant hover:text-primary hover:border-primary transition-all" href="https://akashahub.com.br/livros" target="_blank">VER TODOS</a>
-<a class="px-6 py-2 bg-primary text-on-primary text-[11px] font-nav-link transition-all" href="https://akashahub.com.br/leituracall" target="_blank">LEITURA CALL</a>
-</div>
-</div>
-</div>
-</div>
+
 <script>
-  // SHADER IMPLEMENTATION
   const canvas = document.getElementById('shader-canvas');
-  const gl = canvas.getContext('webgl');
+  const gl = canvas && canvas.getContext('webgl');
 
-  const vsSource = `
-    attribute vec4 a_position;
-    varying vec2 v_texCoord;
-    void main() {
-      gl_Position = a_position;
-      v_texCoord = a_position.xy * 0.5 + 0.5;
+  if (gl) {
+    const vsSource = `
+      attribute vec4 a_position;
+      varying vec2 v_texCoord;
+      void main() {
+        gl_Position = a_position;
+        v_texCoord = a_position.xy * 0.5 + 0.5;
+      }
+    `;
+
+    const fsSource = `
+      precision highp float;
+      varying vec2 v_texCoord;
+      uniform float u_time;
+      uniform vec2 u_resolution;
+      uniform vec2 u_mouse;
+
+      void main() {
+          vec2 uv = v_texCoord;
+          vec2 mouse = u_mouse / u_resolution;
+
+          float stars = fract(sin(dot(uv * 10.0, vec2(12.9898, 78.233))) * 43758.5453);
+          stars = pow(stars, 20.0) * 0.5;
+
+          float flow = sin(uv.x * 2.0 + u_time * 0.1) * cos(uv.y * 2.0 - u_time * 0.15);
+          vec3 color1 = vec3(0.03, 0.02, 0.05);
+          vec3 color2 = vec3(0.04, 0.08, 0.15);
+          vec3 color3 = vec3(0.1, 0.08, 0.05);
+
+          vec3 baseColor = mix(color1, color2, flow * 0.5 + 0.5);
+          baseColor += color3 * (sin(u_time * 0.5 + length(uv - 0.5) * 5.0) * 0.1 + 0.1);
+
+          float dist = distance(uv, mouse);
+          baseColor += vec3(0.1, 0.08, 0.04) * (1.0 - smoothstep(0.0, 0.4, dist)) * 0.3;
+
+          gl_FragColor = vec4(baseColor + stars, 1.0);
+      }
+    `;
+
+    function createShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      return shader;
     }
-  `;
 
-  const fsSource = `
-    precision highp float;
-    varying vec2 v_texCoord;
-    uniform float u_time;
-    uniform vec2 u_resolution;
-    uniform vec2 u_mouse;
+    const program = gl.createProgram();
+    gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
+    gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
+    gl.linkProgram(program);
 
-    void main() {
-        vec2 uv = v_texCoord;
-        vec2 mouse = u_mouse / u_resolution;
-        
-        float stars = fract(sin(dot(uv * 10.0, vec2(12.9898, 78.233))) * 43758.5453);
-        stars = pow(stars, 20.0) * 0.5;
-        
-        float flow = sin(uv.x * 2.0 + u_time * 0.1) * cos(uv.y * 2.0 - u_time * 0.15);
-        vec3 color1 = vec3(0.03, 0.02, 0.05);
-        vec3 color2 = vec3(0.04, 0.08, 0.15);
-        vec3 color3 = vec3(0.1, 0.08, 0.05);
-        
-        vec3 baseColor = mix(color1, color2, flow * 0.5 + 0.5);
-        baseColor += color3 * (sin(u_time * 0.5 + length(uv - 0.5) * 5.0) * 0.1 + 0.1);
-        
-        float dist = distance(uv, mouse);
-        baseColor += vec3(0.1, 0.08, 0.04) * (1.0 - smoothstep(0.0, 0.4, dist)) * 0.3;
-        
-        gl_FragColor = vec4(baseColor + stars, 1.0);
+    const positionLoc = gl.getAttribLocation(program, 'a_position');
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+
+    const timeLoc = gl.getUniformLocation(program, 'u_time');
+    const resLoc = gl.getUniformLocation(program, 'u_resolution');
+    const mouseLoc = gl.getUniformLocation(program, 'u_mouse');
+
+    let mouseX = 0, mouseY = 0;
+    window.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = canvas.height - e.clientY;
+    });
+
+    function render(time) {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.useProgram(program);
+      gl.enableVertexAttribArray(positionLoc);
+      gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+      gl.uniform1f(timeLoc, time * 0.001);
+      gl.uniform2f(resLoc, canvas.width, canvas.height);
+      gl.uniform2f(mouseLoc, mouseX, mouseY);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      requestAnimationFrame(render);
     }
-  `;
-
-  function createShader(gl, type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    return shader;
-  }
-
-  const program = gl.createProgram();
-  gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
-  gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
-  gl.linkProgram(program);
-
-  const positionLoc = gl.getAttribLocation(program, 'a_position');
-  const buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
-
-  const timeLoc = gl.getUniformLocation(program, 'u_time');
-  const resLoc = gl.getUniformLocation(program, 'u_resolution');
-  const mouseLoc = gl.getUniformLocation(program, 'u_mouse');
-
-  let mouseX = 0, mouseY = 0;
-  window.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = canvas.height - e.clientY;
-  });
-
-  function render(time) {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.useProgram(program);
-    gl.enableVertexAttribArray(positionLoc);
-    gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
-    gl.uniform1f(timeLoc, time * 0.001);
-    gl.uniform2f(resLoc, canvas.width, canvas.height);
-    gl.uniform2f(mouseLoc, mouseX, mouseY);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
     requestAnimationFrame(render);
   }
-  requestAnimationFrame(render);
 
-  // CORE FUNCTIONS
   document.addEventListener('DOMContentLoaded', function(){
     const revealEls = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
@@ -714,7 +975,14 @@
     document.documentElement.classList.toggle('dark');
   }
 
-  // AUDIO LOGIC 999Hz
+  function toggleNav(){
+    const d = document.getElementById('mobileNav');
+    const open = d.classList.toggle('is-open');
+    if (!document.getElementById('modalOverlay').classList.contains('flex')) {
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+  }
+
   var freqCtx = null;
   var freqMasterGain = null;
   var freqPlaying = false;
@@ -766,7 +1034,7 @@
     if(!freqCtx) buildFrequencyGraph();
     const label = document.getElementById('audioLabel');
     const toggle = document.getElementById('audioToggle');
-    
+
     if(freqPlaying){
       freqCtx.suspend();
       freqPlaying = false;
@@ -783,9 +1051,24 @@
   function initFrequencyAudio(){
     const interact = () => {
       document.removeEventListener('click', interact);
-      // Auto resume suppressed by some browsers, manually triggered first time
     };
     document.addEventListener('click', interact);
   }
+
+  window.addEventListener('scroll', function(){
+    const p = document.getElementById('scrollProgress');
+    if(!p) return;
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    p.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }, {passive:true});
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      closeModal();
+      const d = document.getElementById('mobileNav');
+      if(d.classList.contains('is-open')) toggleNav();
+    }
+  });
 </script>
-</body></html>
+</body>
+</html>
