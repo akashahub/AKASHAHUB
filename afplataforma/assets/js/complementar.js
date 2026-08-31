@@ -21,8 +21,20 @@ import {
   canEditCovers,
   pickNewProductImage,
   removeProduct,
-  COVER_SLOTS
+  COVER_SLOTS,
+  videoSrc,
+  setVideoSrc
 } from "./covers.js";
+
+const CHAKRAS = [
+  { n: "01", nome: "Muladhara · Base", cor: "#8B1E1E", modulo: "Módulo 01 · Fundação" },
+  { n: "02", nome: "Svadhishthana · Sacral", cor: "#C45A12", modulo: "Módulo 02 · Criativo" },
+  { n: "03", nome: "Manipura · Plexo solar", cor: "#C9A227", modulo: "Módulo 03 · Execução" },
+  { n: "04", nome: "Anahata · Cardíaco", cor: "#2D6A4F", modulo: "Módulo 04 · Relacional" },
+  { n: "05", nome: "Vishuddha · Laríngeo", cor: "#2B5F8A", modulo: "Módulo 05 · Comunicação" },
+  { n: "06", nome: "Ajna · Frontal", cor: "#3D3A8A", modulo: "Módulo 06 · Visão" },
+  { n: "07", nome: "Sahasrara · Coronário", cor: "#6B3FA0", modulo: "Módulo 07 · Governança" }
+];
 
 const COMP_APPS = [
   { id: "alimentacao", name: "Alimentação saudável", desc: "Base corporal alinhada aos 7 vetores." },
@@ -118,7 +130,8 @@ export function renderComplementarHome() {
   </div>`;
 }
 
-export function renderComplementarApp(id) {
+export function renderComplementarApp(id, extra) {
+  if (id === "treino" && extra) return viewTreinoDetail(extra);
   const map = {
     alimentacao: viewAlimentacao,
     constelacao: viewConstelacao,
@@ -246,29 +259,21 @@ window.afPedirLivro = (el) => {
 };
 
 function viewTreino() {
-  const CH = [
-    { n: "01", nome: "Muladhara · Base", cor: "#8B1E1E" },
-    { n: "02", nome: "Svadhishthana · Sacral", cor: "#C45A12" },
-    { n: "03", nome: "Manipura · Plexo solar", cor: "#C9A227" },
-    { n: "04", nome: "Anahata · Cardíaco", cor: "#2D6A4F" },
-    { n: "05", nome: "Vishuddha · Laríngeo", cor: "#2B5F8A" },
-    { n: "06", nome: "Ajna · Frontal", cor: "#3D3A8A" },
-    { n: "07", nome: "Sahasrara · Coronário", cor: "#6B3FA0" }
-  ];
   const card = (kind, i) => {
-    const c = CH[i];
+    const c = CHAKRAS[i];
     const id = kind === "maq" ? `maq-0${i + 1}` : `halter-0${i + 1}`;
     return `<article class="treino-card">
       ${editImg(id, c.nome, "treino-photo")}
       <div class="treino-meta">
         <span class="treino-chip" style="--chip:${c.cor}">${c.n}</span>
         <h4>${esc(c.nome)}</h4>
-        <p>7 exercícios · ${kind === "maq" ? "máquinas" : "halteres e peso do corpo"}</p>
+        <p>${esc(c.modulo)} · 7 exercícios · ${kind === "maq" ? "máquinas" : "halteres"}</p>
+        <button class="tool-btn" type="button" data-nav="comp:treino:${id}">Abrir quadro · 7 vídeos</button>
       </div>
     </article>`;
   };
   return `<div class="view active">${back()}
-    ${pageHead("treino", "Corpo a serviço da execução", "Treino e exercícios", "Duas coleções iguais: 7 treinos de máquina (um por vetor) e 7 treinos de halteres (um por vetor).")}
+    ${pageHead("treino", "Corpo a serviço da execução", "Treino e exercícios", "7 treinos de máquina + 7 de halteres. Cada treino abre um quadro de 7 vídeos de 6s (um por exercício). O vídeo completo entra depois.")}
     <div class="treino-proto">
       <div>
         <strong>Pirâmide</strong>
@@ -287,20 +292,95 @@ function viewTreino() {
       ${editImg("treino-maq", "Máquinas", "treino-band")}
       <div>
         <h3 class="section-h">Treino nas máquinas</h3>
-        <p class="hero-sub" style="margin:0">Smart Fit / Bluefit · 1 imagem = 1 vetor = 7 exercícios</p>
+        <p class="hero-sub" style="margin:0">Um treino por módulo · 7 quadros de 6s + treino completo</p>
       </div>
     </div>
-    <div class="treino-grid">${CH.map((_, i) => card("maq", i)).join("")}</div>
+    <div class="treino-grid">${CHAKRAS.map((_, i) => card("maq", i)).join("")}</div>
     <div class="treino-block-head">
       ${editImg("treino-halter", "Halteres", "treino-band")}
       <div>
         <h3 class="section-h">Treino com halteres</h3>
-        <p class="hero-sub" style="margin:0">Livres e peso do corpo · mesmo template das máquinas</p>
+        <p class="hero-sub" style="margin:0">Mesma estrutura das máquinas · 7 × 7 vídeos</p>
       </div>
     </div>
-    <div class="treino-grid">${CH.map((_, i) => card("halter", i)).join("")}</div>
+    <div class="treino-grid">${CHAKRAS.map((_, i) => card("halter", i)).join("")}</div>
   </div>`;
 }
+
+function videoFrame(vid, label, poster, tall) {
+  const src = videoSrc(vid);
+  const mentor = canEditCovers();
+  const pen = mentor
+    ? `<button type="button" class="cover-pen${tall ? " cover-pen-sm" : ""}" data-act="afSetTreinoVideo" data-vid="${esc(vid)}">Colocar</button>`
+    : "";
+  const cls = tall ? "ex-frame" : "ex-frame ex-frame-full";
+  return `<div class="${cls}" data-vid="${esc(vid)}">
+      <video controls playsinline preload="metadata" poster="${esc(poster)}" src="${esc(src)}" onloadeddata="this.closest('.ex-frame').classList.add('is-ready')" onerror="this.closest('.ex-frame').classList.add('is-empty')"></video>
+      <div class="ex-empty"><span>${esc(label)}</span><small>${tall ? "6 segundos" : "treino completo · entra depois"}</small></div>
+      ${pen}
+    </div>`;
+}
+
+function viewTreinoDetail(slot) {
+  const m = String(slot || "").match(/^(maq|halter)-0([1-7])$/);
+  if (!m) return viewTreino();
+  const kind = m[1];
+  const idx = Number(m[2]) - 1;
+  const c = CHAKRAS[idx];
+  const kindLabel = kind === "maq" ? "Máquinas" : "Halteres";
+  const poster = coverUrl(slot);
+  const frames = [1, 2, 3, 4, 5, 6, 7]
+    .map(
+      (ex) => `<figure class="ex-slot">
+      ${videoFrame(slot + "-ex-0" + ex, "0" + ex, poster, true)}
+      <figcaption>Exercício 0${ex}</figcaption>
+    </figure>`
+    )
+    .join("");
+  const hint = canEditCovers()
+    ? `<p class="notes-hint">Mentor: toque em Colocar e cole a URL do MP4 (Cloudinary). Sem URL, o player usa o arquivo padrão <code>assets/video/treino/${esc(slot)}-ex-01.mp4</code> … <code>ex-07.mp4</code> e <code>${esc(slot)}-full.mp4</code>.</p>`
+    : "";
+  return `<div class="view active">
+    <div class="back-link" data-nav="comp:treino">← Treinos</div>
+    ${pageHead("treino", kindLabel + " · " + c.modulo, c.nome, "Quadro de 7 vídeos de 6 segundos — um por exercício. O vídeo completo do treino fica acima, para entrar depois.")}
+    <div class="treino-proto">
+      <div>
+        <strong>Pirâmide</strong>
+        <p>1ª 12 reps · 2ª 10 reps (+ carga) · 3ª 8 reps (+ carga)</p>
+      </div>
+      <div>
+        <strong>Respiração</strong>
+        <p>inspira → força expirando → inspira no fim → retorna expirando.</p>
+      </div>
+      <div>
+        <strong>7 + 1</strong>
+        <p>7 cortes curtos agora. 1 treino completo depois.</p>
+      </div>
+    </div>
+    <h3 class="section-h">Treino completo</h3>
+    ${videoFrame(slot + "-full", "Completo", poster, false)}
+    <h3 class="section-h">Quadro · 7 exercícios · 6s</h3>
+    <div class="ex-grid">${frames}</div>
+    ${hint}
+  </div>`;
+}
+
+window.afSetTreinoVideo = (el) => {
+  if (!canEditCovers()) return;
+  const id = el && el.dataset ? el.dataset.vid : "";
+  if (!id) return;
+  const cur = videoSrc(id);
+  const seeded = cur.indexOf("http") === 0 ? cur : "";
+  const url = window.prompt(
+    "Cole a URL do vídeo (Cloudinary MP4).\nDeixe vazio para usar o arquivo padrão no GitHub:\nassets/video/treino/" +
+      id +
+      ".mp4",
+    seeded
+  );
+  if (url === null) return;
+  setVideoSrc(id, url.trim());
+  document.dispatchEvent(new CustomEvent("af-covers-changed"));
+};
 
 function viewYoga() {
   const slots = [

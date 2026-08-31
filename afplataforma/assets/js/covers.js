@@ -108,6 +108,22 @@ export function resetCover(id) {
   Store.set(KEY, all);
 }
 
+const VIDEO_KEY = "treino_videos";
+
+/** URL do vídeo do treino: override do mentor ou arquivo padrão no GitHub. */
+export function videoSrc(id) {
+  const over = (Store.get(VIDEO_KEY, {}) || {})[id];
+  if (over) return over;
+  return "assets/video/treino/" + id + ".mp4";
+}
+
+export function setVideoSrc(id, url) {
+  const all = Store.get(VIDEO_KEY, {}) || {};
+  if (url) all[id] = url;
+  else delete all[id];
+  Store.set(VIDEO_KEY, all);
+}
+
 export function canEditCovers() {
   return isMentorSession();
 }

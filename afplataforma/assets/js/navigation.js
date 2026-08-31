@@ -94,8 +94,10 @@ export function navigate(view) {
     const id = view.split(":")[1];
     root.innerHTML = renderers.moduleDetail ? renderers.moduleDetail(id) : "";
   } else if (view.startsWith("comp:")) {
-    const id = view.split(":")[1];
-    root.innerHTML = renderers.compApp ? renderers.compApp(id) : "";
+    const parts = view.split(":");
+    const id = parts[1];
+    const extra = parts.slice(2).join(":");
+    root.innerHTML = renderers.compApp ? renderers.compApp(id, extra) : "";
   } else if (renderers[view]) {
     root.innerHTML = renderers[view]();
   } else {
