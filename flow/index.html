@@ -42,12 +42,13 @@ p{text-wrap:pretty}
 .nav nav{display:none;align-items:center;gap:28px;font-size:11px;text-transform:uppercase;letter-spacing:.2em;color:var(--ivory-dim)}
 @media(min-width:768px){.nav nav{display:flex}}
 #nav-m{display:none}
-.btn{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 22px;border-radius:6px;font-size:14px;font-weight:500;border:0;cursor:pointer;text-align:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 22px;border-radius:6px;font-size:14px;font-weight:500;border:0;cursor:pointer;text-align:center;transition:transform .15s ease,opacity .2s ease,background .2s ease}
+.btn:active{transform:scale(.96)}
 .btn-ivory{background:var(--ivory);color:var(--ink)}
 .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ivory)}
 .btn-sm{height:36px;padding:0 16px;font-size:11px;text-transform:uppercase;letter-spacing:.16em}
 .hero{position:relative;height:100dvh;min-height:640px;overflow:hidden}
-.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:72% center}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:72% center;transform:scale(1.04);animation:ken 36s ease-in-out alternate infinite;will-change:transform}
 @media(min-width:768px){.hero img{object-position:center}}
 .hero .veil{position:absolute;inset:0;background:linear-gradient(to top,#0b0a09 0%,rgba(11,10,9,.55) 42%,rgba(11,10,9,.18) 100%)}
 .hero .copy{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:88px var(--pad) calc(28px + var(--dock))}
@@ -70,7 +71,8 @@ p{text-wrap:pretty}
 @media(min-width:900px){.pillars{grid-template-columns:repeat(3,1fr);padding:32px var(--pad)}}
 .card{background:var(--ink2);border-radius:14px;overflow:hidden;min-width:0}
 .card .ph{aspect-ratio:4/5;overflow:hidden}
-.card .ph img{width:100%;height:100%;object-fit:cover}
+.card .ph img{width:100%;height:100%;object-fit:cover;transition:transform 1.6s cubic-bezier(.22,1,.36,1)}
+@media(hover:hover){.card:hover .ph img{transform:scale(1.06)}}
 .card .body{padding:22px;display:grid;gap:10px}
 .gallery{padding:72px var(--pad)}
 .gallery-head{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-bottom:28px}
@@ -84,7 +86,8 @@ p{text-wrap:pretty}
 .ggrid figure{overflow:hidden;border-radius:10px;background:var(--ink2);margin:0;aspect-ratio:4/3;min-width:0}
 .ggrid figure.tall{aspect-ratio:3/4}
 .ggrid figure.wide{grid-column:span 2;aspect-ratio:16/10}
-.ggrid img{width:100%;height:100%;object-fit:cover}
+.ggrid img{width:100%;height:100%;object-fit:cover;transition:transform 1.6s cubic-bezier(.22,1,.36,1)}
+@media(hover:hover){.ggrid figure:hover img{transform:scale(1.06)}}
 .split{display:grid;gap:28px;padding:64px var(--pad);align-items:center}
 @media(min-width:900px){.split{grid-template-columns:1fr 1fr;gap:56px;padding:96px var(--pad)}}
 .split img{width:100%;border-radius:14px;object-fit:cover;aspect-ratio:4/5;max-height:72vh}
@@ -98,11 +101,13 @@ p{text-wrap:pretty}
 @media(min-width:768px){.works{padding:40px var(--pad) 48px}}
 .wgrid{display:grid;gap:8px;margin-top:18px}
 @media(min-width:640px){.wgrid{grid-template-columns:repeat(3,1fr)}}
-.work{display:flex;flex-direction:column;border:1px solid var(--line);background:var(--ink3);border-radius:14px;padding:20px;min-width:0;transition:border-color .2s ease}
-.work:hover{border-color:rgba(243,238,230,.35)}
+.work{display:flex;flex-direction:column;border:1px solid var(--line);background:var(--ink3);border-radius:14px;padding:20px;min-width:0;transition:border-color .45s ease,transform .5s cubic-bezier(.22,1,.36,1)}
+.work:hover{border-color:rgba(243,238,230,.35);transform:translateY(-3px)}
 .work h3{margin:12px 0 0;font-size:1.45rem;line-height:1.15}
-.work .go{margin-top:18px;font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--ivory-dim)}
+.work .go{margin-top:18px;font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--ivory-dim);width:fit-content}
+.work .go:after{content:"";display:block;height:1px;width:0;margin-top:6px;background:currentColor;transition:width .45s cubic-bezier(.22,1,.36,1)}
 .work:hover .go{color:var(--ivory)}
+.work:hover .go:after{width:100%}
 .mods{padding:72px var(--pad)}
 .mgrid{display:grid;gap:12px;margin-top:32px}
 @media(min-width:768px){.mgrid{grid-template-columns:1fr 1fr}}
@@ -155,9 +160,30 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
 .links{display:flex;flex-wrap:wrap;gap:12px 18px;margin-top:28px;font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--ivory-dim)}
 .links a:hover{color:var(--ivory);text-decoration:underline;text-underline-offset:4px}
 .note{font-size:12px;color:var(--stone);margin-top:16px}
+.grain{pointer-events:none;position:fixed;inset:0;z-index:50;opacity:.045;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+.hero .copy > *{opacity:0;transform:translate3d(0,22px,0);animation:rise 1.2s cubic-bezier(.22,1,.36,1) forwards}
+.hero .copy > *:nth-child(1){animation-delay:.18s}
+.hero .copy > *:nth-child(2){animation-delay:.42s}
+.hero .copy > *:nth-child(3){animation-delay:.64s}
+.hero .copy > *:nth-child(4){animation-delay:.84s}
+.hero .copy > *:nth-child(5){animation-delay:1.04s}
+.reveal{opacity:0;transform:translate3d(0,32px,0);transition:opacity 1.05s cubic-bezier(.22,1,.36,1),transform 1.05s cubic-bezier(.22,1,.36,1)}
+.reveal.is-in{opacity:1;transform:none}
+.pillars .card.reveal:nth-child(2){transition-delay:.12s}
+.pillars .card.reveal:nth-child(3){transition-delay:.24s}
+.nav{animation:fade .9s ease both}
+@keyframes ken{from{transform:scale(1.04)}to{transform:scale(1.13) translate3d(-1.8%,1.2%,0)}}
+@keyframes rise{to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){
+  .hero img,.hero .copy > *,.nav{animation:none!important;opacity:1;transform:none}
+  .reveal{opacity:1;transform:none;filter:none}
+  .grain{display:none}
+}
 </style>
 </head>
 <body id="topo">
+<div class="grain" aria-hidden="true"></div>
 <header class="nav">
   <a class="brand" href="#topo">FLOW</a>
   <nav>
@@ -166,7 +192,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
     <a href="#yan">Yan</a>
     <a class="btn btn-ivory btn-sm" href="#agendar">Reservar</a>
   </nav>
-  <a class="btn btn-ivory btn-sm" href="#agendar" style="display:inline-flex" id="nav-m">Reservar</a>
+  <a class="btn btn-ivory btn-sm" href="#agendar" id="nav-m">Reservar</a>
 </header>
 
 <section class="hero">
@@ -184,7 +210,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </div>
 </section>
 
-<section class="manifest">
+<section class="manifest reveal">
   <p class="k">Isto não é um spa</p>
   <div class="t">
     <h2>O corpo lembra. A presença organiza. O restante não se explica — se vive.</h2>
@@ -193,7 +219,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
 </section>
 
 <section id="pilares" class="pillars">
-  <article class="card">
+  <article class="card reveal">
     <div class="ph"><img src="/flow/img/ruby.jpg" alt="Massagem Tântrica"/></div>
     <div class="body">
       <p class="kicker">O corpo</p>
@@ -201,7 +227,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
       <p class="dim" style="margin:0;font-size:.9rem;line-height:1.6">Toque presente, óleo, respiração e escuta. Não é spa. Não é performance. É o corpo sendo tratado como o lugar onde a vida realmente acontece.</p>
     </div>
   </article>
-  <article class="card">
+  <article class="card reveal">
     <div class="ph"><img src="/flow/img/crown.jpg" alt="Meditação"/></div>
     <div class="body">
       <p class="kicker">O silêncio</p>
@@ -209,7 +235,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
       <p class="dim" style="margin:0;font-size:.9rem;line-height:1.6">O que a sessão abre, o silêncio organiza. Uma âncora curta — no início, no meio ou no fechamento — para que o sistema nervoso integre em vez de apenas sentir.</p>
     </div>
   </article>
-  <article class="card">
+  <article class="card reveal">
     <div class="ph"><img src="/flow/img/hover.jpg" alt="Terapia de Alinhamento"/></div>
     <div class="body">
       <p class="kicker">O código</p>
@@ -219,7 +245,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </article>
 </section>
 
-<section class="gallery">
+<section class="gallery reveal">
   <div class="gallery-head">
     <h2 style="font-size:clamp(2rem,4vw,3rem);margin:0">A atmosfera</h2>
     <p class="muted" style="max-width:20rem;font-size:.9rem">Enquadramentos de campanha. Editorial. A sessão real não é conteúdo.</p>
@@ -240,7 +266,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </div>
 </section>
 
-<section class="split">
+<section class="split reveal">
   <img src="/flow/img/crown.jpg" alt="Terapia de Alinhamento"/>
   <div>
     <p class="kicker">O terceiro pilar</p>
@@ -250,7 +276,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </div>
 </section>
 
-<section id="yan" class="yan">
+<section id="yan" class="yan reveal">
   <img src="/flow/img/yan.jpg" alt="Yan, terapeuta Akasha"/>
   <div class="txt">
     <p class="kicker">O terapeuta</p>
@@ -266,25 +292,25 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
         <p class="kicker">Curso</p>
         <h3>Curso de Alinhamento</h3>
         <p class="dim" style="margin:8px 0 0;font-size:.9rem;line-height:1.55">O código em aula. Magnetismo, presença e eixo — com Yan.</p>
-        <span class="go">Acessar →</span>
+        <span class="go">Abrir</span>
       </a>
       <a class="work" href="https://pay.hotmart.com/W102015202C" target="_blank" rel="noopener noreferrer">
         <p class="kicker">Desafio</p>
         <h3>Desafio de Magnetismo</h3>
         <p class="dim" style="margin:8px 0 0;font-size:.9rem;line-height:1.55">Alinhamento em 7 dias. Prática diária de magnetismo pessoal.</p>
-        <span class="go">Acessar →</span>
+        <span class="go">Abrir</span>
       </a>
       <a class="work" href="https://pay.hotmart.com/D106719959G" target="_blank" rel="noopener noreferrer">
         <p class="kicker">Livro</p>
         <h3>Códigos de Origem</h3>
         <p class="dim" style="margin:8px 0 0;font-size:.9rem;line-height:1.55">Mente, corpo e ambiente. O tripé operacional para o autodomínio.</p>
-        <span class="go">Acessar →</span>
+        <span class="go">Abrir</span>
       </a>
     </div>
   </div>
 </section>
 
-<section class="mods">
+<section class="mods reveal">
   <h2 style="font-size:clamp(2rem,4vw,3rem);margin:0">Onde acontece</h2>
   <p class="dim" style="margin-top:16px;max-width:36rem;font-size:.95rem">A domicílio, no hotel ou no Airbnb. O espaço é preparado. A sessão não se adapta a qualquer lugar — adapta o lugar à sessão.</p>
   <div class="mgrid">
@@ -295,7 +321,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </div>
 </section>
 
-<section id="investimento" class="price">
+<section id="investimento" class="price reveal">
   <p class="kicker">Investimento</p>
   <h2 style="font-size:clamp(2rem,4vw,3rem);margin:12px 0 0">Três portas. Uma casa.</h2>
   <p class="dim" style="margin-top:16px;max-width:40rem;font-size:.95rem">Entrada premium, experiência principal, jornada superior. O preço cobre preparação, deslocamento quando couber, tempo real e exclusividade — não uma tabela de massagem.</p>
@@ -368,7 +394,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </div>
 </section>
 
-<section class="qual">
+<section class="qual reveal">
   <div>
     <h2 style="font-size:2rem;margin:0">Isso é para você se</h2>
     <ul style="list-style:none;padding:0;margin:24px 0 0;display:grid;gap:16px">
@@ -390,7 +416,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </div>
 </section>
 
-<section class="ritual">
+<section class="ritual reveal">
   <h2 style="font-size:2.4rem;margin:0">O ritual de entrada</h2>
   <ol class="rgrid" style="list-style:none;padding:0">
     <li><p class="display dim" style="font-size:1.8rem;margin:0">01</p><h3 style="margin:12px 0 0;font-size:1.2rem">O pedido</h3><p class="muted" style="font-size:.9rem;line-height:1.6">Você escolhe a experiência e envia o briefing pelo WhatsApp.</p></li>
@@ -401,7 +427,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </ol>
 </section>
 
-<section id="agendar" class="book">
+<section id="agendar" class="book reveal">
   <div>
     <p class="kicker">Agendamento</p>
     <h2 style="font-size:clamp(2rem,4vw,3rem);margin:12px 0 0">Uma mensagem. Uma data.</h2>
@@ -447,7 +473,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </div>
 </section>
 
-<section class="rules">
+<section class="rules reveal">
   <h2 style="font-size:2rem;margin:0">Regras da casa</h2>
   <div class="r3">
     <article><h3 style="font-size:.9rem;margin:0">Sinal</h3><p class="muted" style="font-size:.9rem;line-height:1.6">50% para confirmar (40% na Jornada). O sinal não é reembolsável. Pode ser creditado uma vez, com 48h de antecedência.</p></article>
@@ -568,6 +594,18 @@ if (dock && hero && 'IntersectionObserver' in window) {
   new IntersectionObserver(([e]) => {
     dock.classList.toggle('is-hero', e.isIntersecting && e.intersectionRatio > 0.35);
   }, { threshold: [0, 0.35, 0.7] }).observe(hero);
+}
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('is-in');
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach((n) => io.observe(n));
+} else {
+  document.querySelectorAll('.reveal').forEach((n) => n.classList.add('is-in'));
 }
 </script>
 </body>
