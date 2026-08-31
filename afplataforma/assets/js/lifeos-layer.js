@@ -389,42 +389,64 @@ export function viewCoach() {
 
 /* ── Sono ── */
 export function viewSono() {
+  const btns = FREQS.map(
+    (f, i) =>
+      `<button class="freq-btn" type="button" data-act="afPlayFreq" data-hz="${f.hz}" data-name="${esc(f.name)}">${String(i + 1).padStart(2, "0")}<small>${f.hz} Hz</small></button>`
+  ).join("");
   return `<div class="view active">${back()}
     <p class="hero-line">Modo sono</p>
     <h2 class="hero-title">Dinheiro entrando</h2>
-    <p class="hero-sub">Em vez de ovelhas: depósitos em R$ / € / US$ + 7 frequências dos vetores.</p>
-    <button class="btn btn-inline" type="button" data-act="afOpenSleep">Abrir modo sono</button>
+    <p class="hero-sub">Em vez de ovelhas: depósitos em R$ / € / US$ + 7 frequências dos vetores. No celular, toque a frequência para o som começar.</p>
+    <div class="freq-row">${btns}</div>
+    <p class="notes-hint" id="sonoFreqLab">Toque uma frequência · 396 · 417 · 528 · 639 · 741 · 852 · 963 Hz</p>
+    <button class="btn btn-inline" type="button" data-act="afOpenSleep" style="margin-top:16px">Abrir modo sono</button>
   </div>`;
 }
 
 window.afOpenSleep = () => {
   document.getElementById("sleepOverlay")?.classList.add("open");
   sleepBal = 0;
+  const list = document.getElementById("sleepTx");
+  if (list) list.innerHTML = "";
   renderSleepTx("Início da sessão", 0);
   startSleepLoop();
+  const first = document.querySelector("#sleepOverlay .freq-btn[data-hz='396']");
+  if (first) window.afPlayFreq(first);
+  else playFreq(396);
 };
 window.afCloseSleep = () => {
   document.getElementById("sleepOverlay")?.classList.remove("open");
   stopFreq();
   clearInterval(sleepTimer);
+  const lab2 = document.getElementById("sonoFreqLab");
+  if (lab2) lab2.textContent = "Frequência pausada";
 };
 window.afPlayFreq = (el) => {
   const hz = +el.dataset.hz;
+  if (!hz) return;
+  const name = el.dataset.name || hz + " Hz";
   playFreq(hz);
-  document.querySelectorAll(".freq-btn").forEach((b) => b.classList.toggle("on", b === el));
+  document.querySelectorAll(".freq-btn").forEach((b) => b.classList.toggle("on", +b.dataset.hz === hz));
+  const lab = document.getElementById("sleepFreqLab");
+  if (lab) lab.textContent = name + " · " + hz + " Hz";
+  const lab2 = document.getElementById("sonoFreqLab");
+  if (lab2) lab2.textContent = "Tocando · " + name + " · " + hz + " Hz";
 };
 
 function playFreq(hz) {
   stopFreq();
-  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-  oscNode = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  oscNode.frequency.value = hz;
-  oscNode.type = "sine";
-  g.gain.value = 0.04;
-  oscNode.connect(g);
-  g.connect(audioCtx.destination);
-  oscNode.start();
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    oscNode = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    oscNode.frequency.value = hz;
+    oscNode.type = "sine";
+    g.gain.value = 0.04;
+    oscNode.connect(g);
+    g.connect(audioCtx.destination);
+    oscNode.start();
+  } catch (e) {}
 }
 function stopFreq() {
   try {
@@ -452,6 +474,7 @@ function renderSleepTx(text, v) {
   row.className = "sleep-tx";
   row.textContent = (v ? "+" : "") + " " + text;
   list.prepend(row);
+  while (list.children.length > 8) list.removeChild(list.lastChild);
 }
 function spawnCoin() {
   const o = document.getElementById("sleepOverlay");
