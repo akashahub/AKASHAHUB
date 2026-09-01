@@ -212,6 +212,11 @@ function renderModuleDetail(id) {
   </div>`;
 }
 
+function livroHref() {
+  const q = session.mode === "local" && isMentorSession() ? "?demo=mentor" : "";
+  return "interno/livro.html" + q;
+}
+
 function renderMentor() {
   if (!isMentorSession()) {
     return `<div class="view active"><p class="empty">Acesso restrito ao mentor.</p></div>`;
@@ -237,6 +242,12 @@ function renderMentor() {
         4. Roteiros privados: <strong>afMentorScripts/module01</strong>
       </div>
     </div>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Uso interno</p>
+      <h3>Livro Operacional</h3>
+      <p>Volume 0 · auditoria e mapa do sistema. Só esta conta abre. Mentorados não veem este botão.</p>
+      <a class="tool-btn" href="${livroHref()}">Abrir livro</a>
+    </article>
     ${renderAccessAdminPanel()}
   </div>`;
 }
