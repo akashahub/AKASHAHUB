@@ -28,6 +28,20 @@ export const MENTOR_UID = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
  */
 export const DEV_MODE = false;
 
+/** Preview ou ?demo=mentor|mentee. Produção sem query continua fechada. */
+export function isDemoEnabled() {
+  if (DEV_MODE) return true;
+  try {
+    const q = new URLSearchParams(location.search);
+    if (q.get("demo")) return true;
+    if (/localhost|127\.0\.0\.1/.test(location.hostname)) return true;
+  } catch {
+    /* ignore */
+  }
+  return false;
+}
+
+
 
 /** URL do backend que assina o token LiveKit. Vazio = lobby + presença funcionam; vídeo de grupo espera o token. */
 export const LIVEKIT_TOKEN_URL = "https://akasha.yanfili-simon.workers.dev";

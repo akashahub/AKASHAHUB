@@ -30,6 +30,7 @@ export const COVER_SLOTS = [
   { id: "call", label: "Call · head", fallback: "assets/img/capas/call.jpg" },
   { id: "profile", label: "Perfil · head", fallback: "assets/img/capas/profile.jpg" },
   { id: "complementar", label: "Complementar · head", fallback: "assets/img/capas/complementar.jpg" },
+  { id: "quitei", label: "Quitei · head", fallback: "assets/img/capas/cashflow.jpg" },
   { id: "alimentacao", label: "Alimentação · head", fallback: "assets/img/capas/alimentacao.jpg" },
   { id: "ali-01", label: "Alimentação 01 · Estabilidade", fallback: "assets/img/capas/ali-01.jpg" },
   { id: "ali-02", label: "Alimentação 02 · Variedade", fallback: "assets/img/capas/ali-02.jpg" },

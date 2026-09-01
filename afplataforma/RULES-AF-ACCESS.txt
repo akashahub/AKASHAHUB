@@ -1,0 +1,55 @@
+COLE NO FIREBASE → Firestore → Rules
+=====================================
+NÃO apague as regras que já existem.
+Só ADICIONE / SUBSTITUA o bloco de afAccess
+e garanta a função isAfMentor + leitura de users pelo mentor.
+
+1) Função (se ainda não existir no topo do arquivo):
+
+    function isAfMentor() {
+      return request.auth != null
+        && request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+    }
+
+2) users — o mentor precisa LER a lista (não precisa escrever).
+   Se já tiver allow read para esse UID, não mude o write.
+
+    match /users/{uid} {
+      allow read: if request.auth != null
+        && (request.auth.uid == uid || isAfMentor());
+      allow write: if request.auth != null
+        && request.auth.uid == uid;
+    }
+
+3) afAccess — autorização da AF (único lugar de liberação).
+   Substitua o match /afAccess se já existir, senão cole este:
+
+    match /afAccess/{uid} {
+      allow read: if request.auth != null
+        && (request.auth.uid == uid || isAfMentor());
+
+      allow create, update: if isAfMentor();
+
+      allow delete: if false;
+    }
+
+4) afMedia — URLs de vídeo (Yoga / Treino). Leitura para qualquer usuário logado da AF.
+   Escrita só do mentor. Sem isso, o vídeo fica só neste aparelho (localStorage).
+
+    match /afMedia/{id} {
+      allow read: if request.auth != null;
+      allow create, update: if isAfMentor();
+      allow delete: if isAfMentor();
+    }
+
+5) afTools — já deve existir. Quitei grava em afTools/{uid}/tools/quitei
+   O mentorando lê/escreve só o próprio uid. O mentor pode ler.
+
+ÍNDICE: nenhum. getDocs em users e afAccess não precisa de índice composto.
+
+MATERIAIS DO MENTORANDO vs ROTEIRO
+==================================
+PDFs em assets/materials/ são material educacional do mentorando.
+Roteiros de call continuam SOMENTE em afMentorScripts/{moduleId}
+e só abrem no teleprompter do mentor. Não copiar roteiro para a pasta materials.
+

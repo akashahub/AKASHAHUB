@@ -9,7 +9,7 @@ import {
   GoogleAuthProvider,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { auth, MENTOR_UID, DEV_MODE } from "../../firebase/firebase-config.js";
+import { auth, MENTOR_UID, DEV_MODE, isDemoEnabled } from "../../firebase/firebase-config.js";
 import { getAfAccess, registerAfLoginAttempt } from "../../firebase/firestore.js";
 import { defaultModulesMap } from "../../data/modules.js";
 import { Store } from "./storage.js";
@@ -174,7 +174,7 @@ export async function logout() {
 
 export function enterDemo(role) {
   const q = new URLSearchParams(location.search).get("demo");
-  if (!DEV_MODE && !q) return;
+  if (!isDemoEnabled()) return;
   if (role === "mentor") {
     applySession({
       mode: "local",

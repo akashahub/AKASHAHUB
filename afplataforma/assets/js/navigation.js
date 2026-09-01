@@ -1,11 +1,13 @@
 /**
  * Navegação e shell UI
+ * Sem import de call.js / teleprompter.js (isso quebrava o login).
  */
 import { session, isMentorSession } from "./auth.js";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { Store } from "./storage.js";
 import { handleCoverClick } from "./covers.js";
+import { handleMaterialClick } from "./materials.js";
 
 let currentView = "dashboard";
 let renderers = {};
@@ -30,8 +32,9 @@ export function buildNav() {
     { id: "modules", label: t(lang, "modules"), ico: "▣" },
     { id: "tools", label: t(lang, "tools"), ico: "⚙" },
     { id: "call", label: t(lang, "call"), ico: "◎" },
-    { id: "profile", label: t(lang, "profile"), ico: "○" },
-    { id: "complementar", label: "Complementar", ico: "✦" }
+    { id: "complementar", label: "Complementar", ico: "✦" },
+    { id: "quitei", label: "Quitei", ico: "⬡" },
+    { id: "profile", label: t(lang, "profile"), ico: "○" }
   ];
   if (isMentorSession()) {
     items.splice(1, 0, { id: "mentor", label: t(lang, "mentor"), ico: "★" });
@@ -42,13 +45,7 @@ export function buildNav() {
   nav.innerHTML = items
     .map(
       (i) =>
-        `<a class="nav-item${
-          currentView === i.id ||
-          (currentView.startsWith("module:") && i.id === "modules") ||
-          (currentView.startsWith("comp:") && i.id === "complementar")
-            ? " active"
-            : ""
-        }" href="#" data-view="${i.id}"><span class="ico">${i.ico}</span>${esc(i.label)}</a>`
+        `<a class="nav-item${isActive(i.id) ? " active" : ""}" href="#" data-view="${i.id}"><span class="ico">${i.ico}</span>${esc(i.label)}</a>`
     )
     .join("");
 
@@ -60,15 +57,29 @@ export function buildNav() {
   });
 }
 
-export function navigate(view) {
-  currentView = view;
-  closeSide();
+function isActive(id) {
+  if (currentView === id) return true;
+  if (currentView.startsWith("module:") && id === "modules") return true;
+  if (currentView.startsWith("comp:") && id === "complementar") return true;
+  return false;
+}
+
+function setActiveNav(view) {
   document.querySelectorAll(".nav-item").forEach((n) => {
+    const id = n.dataset.view;
     n.classList.toggle(
       "active",
-      n.dataset.view === view || (view.startsWith("module:") && n.dataset.view === "modules")
+      id === view ||
+        (view.startsWith("module:") && id === "modules") ||
+        (view.startsWith("comp:") && id === "complementar")
     );
   });
+}
+
+export async function navigate(view) {
+  currentView = view;
+  closeSide();
+  setActiveNav(view);
 
   const lang = session.lang || "pt-BR";
   const titles = {
@@ -78,7 +89,8 @@ export function navigate(view) {
     call: t(lang, "call"),
     profile: t(lang, "profile"),
     mentor: t(lang, "mentor"),
-    complementar: "Complementar"
+    complementar: "Complementar",
+    quitei: "Quitei"
   };
   const top = document.getElementById("topTitle");
   if (top) {
@@ -90,26 +102,42 @@ export function navigate(view) {
   const root = document.getElementById("content");
   if (!root) return;
 
+  let html = "";
   if (view.startsWith("module:")) {
     const id = view.split(":")[1];
-    root.innerHTML = renderers.moduleDetail ? renderers.moduleDetail(id) : "";
+    html = renderers.moduleDetail ? renderers.moduleDetail(id) : "";
   } else if (view.startsWith("comp:")) {
     const parts = view.split(":");
     const id = parts[1];
     const extra = parts.slice(2).join(":");
-    root.innerHTML = renderers.compApp ? renderers.compApp(id, extra) : "";
+    html = renderers.compApp ? renderers.compApp(id, extra) : "";
   } else if (renderers[view]) {
-    root.innerHTML = renderers[view]();
+    html = renderers[view]();
   } else {
-    root.innerHTML = `<div class="view active"><p class="empty">View não encontrada</p></div>`;
+    html = `<div class="view active"><p class="empty">View não encontrada</p></div>`;
   }
+
+  if (html && typeof html.then === "function") {
+    root.innerHTML = `<div class="view active"><p class="empty">Carregando…</p></div>`;
+    html = await html;
+    if (currentView !== view) return;
+  }
+
+  root.innerHTML = html;
 
   root.onclick = (e) => {
     if (handleCoverClick(e)) return;
+    if (handleMaterialClick(e)) return;
     const act = e.target.closest("[data-act]");
     if (act && typeof window[act.dataset.act] === "function") {
       e.preventDefault();
       window[act.dataset.act](act);
+      return;
+    }
+    const addp = e.target.closest("#btnAddProd");
+    if (addp && renderers.pickProduct) {
+      e.preventDefault();
+      renderers.pickProduct();
       return;
     }
     const row = e.target.closest("[data-nav]");
@@ -127,15 +155,7 @@ export function navigate(view) {
     if (tool && renderers.openTool) renderers.openTool(tool.dataset.tool);
   };
 
-  document.querySelectorAll(".nav-item").forEach((n) => {
-    n.classList.toggle(
-      "active",
-      n.dataset.view === view ||
-        (view.startsWith("module:") && n.dataset.view === "modules") ||
-        (view.startsWith("comp:") && n.dataset.view === "complementar")
-    );
-  });
-
+  setActiveNav(view);
   if (afterNavigateHook) afterNavigateHook(view);
 }
 
@@ -168,5 +188,6 @@ export function esc(s) {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }

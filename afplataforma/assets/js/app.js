@@ -1,7 +1,7 @@
 /**
  * AF Plataforma — orquestrador
  */
-import { DEV_MODE } from "../../firebase/firebase-config.js";
+import { isDemoEnabled } from "../../firebase/firebase-config.js";
 import {
   session,
   setAuthCallbacks,
@@ -33,7 +33,11 @@ import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
 import { renderComplementarHome, renderComplementarApp } from "./complementar.js";
 import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js";
-import { bindCoverEditor } from "./covers.js";
+import { bindCoverEditor, pickNewProductImage } from "./covers.js";
+import { renderQuitei, bindQuitei } from "./quitei.js";
+import { bindMaterialViewer } from "./materials.js";
+import { bindMediaUI, hydrateMedia } from "./media.js";
+import { bindLifeOsLayer } from "./lifeos-layer.js";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -89,6 +93,7 @@ function showApp() {
   document.getElementById("accessDenied")?.classList.remove("show");
   document.getElementById("appShell")?.classList.add("show");
   applyProfileUI();
+  hydrateMedia();
   const badge = document.getElementById("modeBadge");
   if (badge) {
     badge.textContent = session.mode === "firebase" ? "Firebase" : "MVP local";
@@ -165,7 +170,7 @@ function renderModules() {
   return `<div class="view active">
     <p class="hero-line">Conteúdo</p>
     <h2 class="hero-title">7 módulos · 21 materiais</h2>
-    <p class="hero-sub">Conteúdo em HTML. PDFs externos no WhatsApp.</p>
+    <p class="hero-sub">Material completo em PDF, lido na própria plataforma.</p>
     <div class="module-list">${MODULES.map((m) => {
       const open = !!session.modules[m.id];
       return `<div class="mod-row ${open ? "" : "locked"}" data-nav="${open ? "module:" + m.id : ""}" ${open ? "" : "data-locked=\"1\""}>
@@ -187,7 +192,17 @@ function renderModuleDetail(id) {
     <p class="hero-sub">${esc(m.subtitle)}</p>
     <h3 class="section-h">Materiais</h3>
     <div class="mat-grid">${m.materials
-      .map((mat) => `<div class="mat-card"><h4>${esc(mat.title)}</h4><p>${esc(mat.body)}</p></div>`)
+      .map(
+        (mat) => `<div class="mat-card">
+      <h4>${esc(mat.title)}</h4>
+      <p>${esc(mat.body)}</p>
+      ${
+        mat.pdf
+          ? `<button class="tool-btn mat-open-btn" type="button" data-open-pdf="${esc(mat.pdf)}" data-pdf-title="${esc(mat.title)}">Abrir material</button>`
+          : ""
+      }
+    </div>`
+      )
       .join("")}</div>
     <h3 class="section-h">Ferramentas</h3>
     ${m.tools.map((tid) => `<button class="tool-btn" type="button" data-tool="${tid}">Abrir ferramenta · ${esc(tid)}</button> `).join("")}
@@ -269,8 +284,10 @@ registerRenderers({
   profile: renderProfile,
   complementar: renderComplementarHome,
   compApp: renderComplementarApp,
+  quitei: renderQuitei,
   showLocked,
-  openTool
+  openTool,
+  pickProduct: pickNewProductImage
 });
 
 onAfterNavigate((view) => {
@@ -321,6 +338,7 @@ function bindProfileEdit() {
     localStorage.setItem("afplataforma_v1_profile_" + (session.uid || "anon"), JSON.stringify(next));
     if (next.name) session.name = next.name;
     applyProfileUI();
+  hydrateMedia();
     toast("Perfil salvo neste aparelho");
   });
 }
@@ -366,7 +384,7 @@ async function onLoginGoogle() {
 
 function init() {
   const demoWrap = document.getElementById("demoButtons");
-  if (demoWrap) demoWrap.style.display = DEV_MODE ? "block" : "none";
+  if (demoWrap) demoWrap.style.display = isDemoEnabled() ? "block" : "none";
 
   document.getElementById("btnLogin")?.addEventListener("click", onLoginEmail);
   document.getElementById("btnGoogle")?.addEventListener("click", onLoginGoogle);
@@ -393,7 +411,11 @@ function init() {
 
   bindTeleprompterUI();
   bindToolPanelUI();
+  bindMaterialViewer();
+  bindMediaUI();
   bindCoverEditor();
+  bindLifeOsLayer();
+  bindQuitei();
   document.addEventListener("af-covers-changed", () => {
     navigate(getCurrentView());
   });

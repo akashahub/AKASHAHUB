@@ -1,6 +1,6 @@
 /**
- * Área Complementar + LifeOS organizado + Lojinha
- * Preserva apps existentes e adiciona camadas 1–3.
+ * Área Complementar + Lojinha
+ * LifeOS fora do menu. Treino 7+7 e capas preservados.
  */
 import { esc } from "./navigation.js";
 import {
@@ -25,6 +25,8 @@ import {
   videoSrc,
   setVideoSrc
 } from "./covers.js";
+import { materialButton } from "./materials.js";
+import { renderVideoFrame } from "./media.js";
 
 const CHAKRAS = [
   { n: "01", nome: "Muladhara · Base", cor: "#8B1E1E", modulo: "Módulo 01 · Fundação" },
@@ -54,7 +56,6 @@ const COMP_APPS = [
   { id: "coach", name: "AF Coach", desc: "IA Life Coach — desligada até você ativar." },
   { id: "anamnese", name: "Anamnese · Essência", desc: "Arquitetura de essência (HTML complementar)." },
   { id: "encontros", name: "Encontros da mentoria", desc: "26 encontros · página complementar." },
-  { id: "lifeos", name: "Life OS", desc: "Painel único — sem duplicar ferramentas dos módulos." },
   { id: "loja", name: "Lojinha Akasha", desc: "Pedido: produto → cor → dados → WhatsApp." }
 ];
 
@@ -90,13 +91,13 @@ const DICT = [
 ];
 
 const LIVROS = [
-  { id: "raiz", name: "A Raiz da Riqueza", vetor: "01 Base" },
-  { id: "criativo", name: "A Criatividade Lucrativa", vetor: "02 Criativo" },
-  { id: "poder", name: "O Poder da Prosperidade", vetor: "03 Execução" },
-  { id: "amor", name: "Amor pelo Sucesso Financeiro", vetor: "04 Relacional" },
-  { id: "voz", name: "A Voz da Abundância", vetor: "05 Comunicação" },
-  { id: "visao", name: "A Visão da Fortuna", vetor: "06 Visão" },
-  { id: "conexao", name: "A Conexão Divina com a Opulência", vetor: "07 Governança" }
+  { id: "raiz", name: "A Raiz da Riqueza", vetor: "01 Base", pdf: "assets/materials/livros/01-raiz.pdf" },
+  { id: "criativo", name: "A Criatividade Lucrativa", vetor: "02 Criativo", pdf: "assets/materials/livros/02-criatividade.pdf" },
+  { id: "poder", name: "O Poder da Prosperidade", vetor: "03 Execução", pdf: "assets/materials/livros/03-poder.pdf" },
+  { id: "amor", name: "Amor pelo Sucesso Financeiro", vetor: "04 Relacional", pdf: "assets/materials/livros/04-amor.pdf" },
+  { id: "voz", name: "A Voz da Abundância", vetor: "05 Comunicação", pdf: "assets/materials/livros/05-voz.pdf" },
+  { id: "visao", name: "A Visão da Fortuna", vetor: "06 Visão", pdf: "assets/materials/livros/06-visao.pdf" },
+  { id: "conexao", name: "A Conexão Divina com a Opulência", vetor: "07 Governança", pdf: "assets/materials/livros/07-conexao.pdf" }
 ];
 
 const LOJA = [
@@ -117,7 +118,7 @@ export function renderComplementarHome() {
   const apps = COMP_APPS.slice();
   if (canEditCovers()) apps.push({ id: "imagens", name: "Imagens da plataforma", desc: "Só mentor: trocar capas e fotos." });
   return `<div class="view active">
-    ${pageHead("complementar", "Complementar", "Camada paralela", "Alimentação, constelação, livros, corpo, yoga, Life OS e loja — no mesmo ecossistema AF.")}
+    ${pageHead("complementar", "Complementar", "Camada paralela", "Alimentação, constelação, livros, corpo, yoga e loja — no mesmo ecossistema AF.")}
     <div class="mat-grid">
       ${apps.map(
         (a) => `<div class="mat-card">
@@ -127,6 +128,12 @@ export function renderComplementarHome() {
       </div>`
       ).join("")}
     </div>
+    <article class="q-feature" data-nav="quitei">
+      <p class="hero-line">Ferramenta</p>
+      <h3>Quitei</h3>
+      <p>Estratégia de quitação nativa — avalanche ou bola de neve — com plano, pagamentos e previsão. Abaixo da camada complementar, com o mesmo peso da operação.</p>
+      <button class="tool-btn" type="button" data-nav="quitei">Abrir Quitei</button>
+    </article>
   </div>`;
 }
 
@@ -151,7 +158,6 @@ export function renderComplementarApp(id, extra) {
     coach: viewCoach,
     anamnese: viewAnamnese,
     encontros: viewEncontros,
-    lifeos: viewLifeOS,
     loja: viewLoja
   };
   return (map[id] || renderComplementarHome)();
@@ -210,6 +216,11 @@ function viewConstelacao() {
   ];
   return `<div class="view active">${back()}
     ${pageHead("constelacao", "Chave mestra", "Constelação familiar", "Camada paralela aos 7 módulos. O mentor não se torna terapeuta clínico — engenheiro de performance sistêmica.")}
+    <div class="mat-card" style="margin-bottom:16px">
+      <h4>Material do módulo</h4>
+      <p>Ciclo de 6 etapas, ordens do dinheiro e frases de força — documento completo, sem cortes.</p>
+      ${materialButton("Constelação familiar · Chave mestra", "assets/materials/constelacao-chave-mestra.pdf")}
+    </div>
     <div class="stat-card" style="margin-bottom:16px">
       <div class="lbl">Metáfora operacional</div>
       <div class="hint" style="margin-top:8px;line-height:1.7">Mãe = dinheiro (receber, fluxo). Pai = riqueza (construir, patrimônio). Rejeitar a figura é rejeitar o fluxo correspondente.</div>
@@ -219,7 +230,7 @@ function viewConstelacao() {
     <h3 class="section-h">Ciclo de 6 etapas</h3>
     <div class="module-list">${etapas
       .map(
-        (e) => `<div class="mod-row">
+        (e) => `<div class="mod-row full">
       <div class="mod-num">${e.n}</div>
       <div class="mod-body"><h3>${esc(e.t)}</h3><p>${esc(e.d)}</p></div>
     </div>`
@@ -236,15 +247,21 @@ function viewConstelacao() {
 function viewDicionario() {
   return `<div class="view active">${back()}
     ${pageHead("dicionario", "Referência", "Dicionário", DICT.length + " termos · finanças · marketing · operação · sistêmico")}
+    <div class="mat-card" style="margin-bottom:16px">
+      <h4>Mini dicionário (PDF)</h4>
+      <p>Versão completa para leitura e consulta durante os módulos.</p>
+      ${materialButton("Mini dicionário de startups", "assets/materials/dicionario-startups.pdf")}
+    </div>
     <div class="mat-grid">${DICT.map((x) => `<div class="mat-card"><h4>${esc(x.t)}</h4><p>${esc(x.d)}</p></div>`).join("")}</div>
   </div>`;
 }
 
 function viewLivros() {
   return `<div class="view active">${back()}
-    ${pageHead("livros", "Bônus de membro", "Livros dos 7 vetores", "Quem está na plataforma já tem acesso. PDF completo: peça no WhatsApp.")}
+    ${pageHead("livros", "Bônus de membro", "Livros dos 7 vetores", "Leitura integral na plataforma. PDF também pode ser pedido no WhatsApp.")}
     <div class="mat-grid">${LIVROS.map(
       (l) => `<div class="mat-card"><h4>${esc(l.name)}</h4><p>${esc(l.vetor)}</p>
+      ${materialButton(l.name, l.pdf)}
       <button class="tool-btn" type="button" data-act="afPedirLivro" data-livro="${esc(l.name)}">Pedir no WhatsApp</button></div>`
     ).join("")}</div>
   </div>`;
@@ -396,13 +413,14 @@ function viewYoga() {
     { n: "10", t: "Saudação à lua", id: "yoga-10" }
   ];
   return `<div class="view active">${back()}
-    ${pageHead("yoga", "Estrutura pronta", "Yoga operacional", "Imagens, vídeos e faixas de frequência entram nestes slots. A mídia é plug-in.")}
-    <div class="cover-list">${slots
+    ${pageHead("yoga", "Corpo e presença", "Yoga operacional", "Cada série tem imagem + vídeo guiado. O mentor cola o link (YouTube ou Cloudinary) no próprio cartão.")}
+    <div class="yoga-grid">${slots
       .map(
-        (s) => `<article class="cover-row">
+        (s) => `<article class="yoga-card">
       ${editImg(s.id, s.t, "cover-thumb")}
       <div class="mod-num">${s.n}</div>
-      <div class="mod-body"><h3>${esc(s.t)}</h3><p>Slot de imagem + vídeo guiado.</p></div>
+      <h3>${esc(s.t)}</h3>
+      ${renderVideoFrame(s.id, { caption: s.t })}
     </article>`
       )
       .join("")}</div>
