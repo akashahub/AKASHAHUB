@@ -74,11 +74,13 @@ function renderPeople(list) {
   const count = document.getElementById("callOnlineCount");
   const inCallN = document.getElementById("callInCallCount");
   if (!box) return;
-  const online = list.filter((p) => p.online);
-  const incall = list.filter((p) => p.status === "incall");
+  const room = roomOfSession();
+  const here = list.filter((p) => !p.roomId || p.roomId === room);
+  const online = here.filter((p) => p.online);
+  const incall = here.filter((p) => p.status === "incall");
   if (count) count.textContent = String(online.length);
   if (inCallN) inCallN.textContent = String(incall.length);
-  box.innerHTML = list
+  box.innerHTML = here
     .map((p) => {
       const dot = p.status === "incall" ? "incall" : p.online ? "on" : "off";
       const role = p.role === "mentor" ? " · MENTOR" : "";
