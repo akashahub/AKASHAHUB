@@ -98,6 +98,33 @@ function renderPeople(list) {
     .join("") || `<p class="empty">Ninguem visivel ainda.</p>`;
 }
 
+function pipVideoEl() {
+  const remotes = [...document.querySelectorAll("#callStage .v-tile:not(.self) video")];
+  const live = remotes.find((v) => v.srcObject);
+  if (live) return live;
+  return document.getElementById("localVideo");
+}
+
+export async function enterSystemPip() {
+  if (!inCall) return;
+  const v = pipVideoEl();
+  if (!v || !v.srcObject) return;
+  try {
+    if (document.pictureInPictureElement) return;
+    if (document.pictureInPictureEnabled && typeof v.requestPictureInPicture === "function") {
+      await v.requestPictureInPicture();
+    }
+  } catch (e) {
+    console.warn("pip", e);
+  }
+}
+
+export async function leaveSystemPip() {
+  try {
+    if (document.pictureInPictureElement) await document.exitPictureInPicture();
+  } catch (e) {}
+}
+
 export function isCallActive() {
   return inCall;
 }
@@ -170,7 +197,7 @@ export function onCallNavigate(onCallPage) {
   if (!el) return;
   if (!inCall) {
     el.classList.add("hidden");
-    el.classList.remove("pip", "expanded");
+    el.classList.remove("pip", "expanded", "pip-min");
     return;
   }
   el.classList.remove("hidden");
@@ -182,9 +209,10 @@ export function onCallNavigate(onCallPage) {
   } else {
     el.classList.remove("expanded");
     el.classList.add("pip");
-    document.body.appendChild(el);
+    if (el.parentElement !== document.body) document.body.appendChild(el);
   }
   attachLocal();
+  document.getElementById("callDockTitle") && (document.getElementById("callDockTitle").textContent = "Call · ao vivo");
 }
 
 export function renderCallView() {
@@ -293,6 +321,8 @@ function bindDockButtons(navigate) {
       }
     };
   }
+  const pipBtn = document.getElementById("callDockPip");
+  if (pipBtn) pipBtn.onclick = () => enterSystemPip();
 }
 
 async function switchRoom(id) {
@@ -491,6 +521,7 @@ function closePeer(uid) {
 
 export async function leaveCall() {
   inCall = false;
+  await leaveSystemPip();
   const room = roomOfSession();
   if (unsubPeers) { unsubPeers(); unsubPeers = null; }
   if (unsubSignals) { unsubSignals(); unsubSignals = null; }
@@ -643,4 +674,7 @@ export function bindPersistentCallUI(navigate) {
     el.style.bottom = "auto";
   });
   bar?.addEventListener("pointerup", () => { dragging = false; });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && inCall) enterSystemPip();
+  });
 }

@@ -102,15 +102,16 @@ export async function navigate(view) {
   const root = document.getElementById("content");
   if (!root) return;
 
+  const dock = document.getElementById("callDock");
+  if (dock && dock.parentElement !== document.body) document.body.appendChild(dock);
+
   let html = "";
   if (view.startsWith("module:")) {
     const id = view.split(":")[1];
     html = renderers.moduleDetail ? renderers.moduleDetail(id) : "";
   } else if (view.startsWith("comp:")) {
-    const parts = view.split(":");
-    const id = parts[1];
-    const extra = parts.slice(2).join(":");
-    html = renderers.compApp ? renderers.compApp(id, extra) : "";
+    const id = view.split(":")[1];
+    html = renderers.compApp ? renderers.compApp(id) : "";
   } else if (renderers[view]) {
     html = renderers[view]();
   } else {
@@ -128,12 +129,6 @@ export async function navigate(view) {
   root.onclick = (e) => {
     if (handleCoverClick(e)) return;
     if (handleMaterialClick(e)) return;
-    const act = e.target.closest("[data-act]");
-    if (act && typeof window[act.dataset.act] === "function") {
-      e.preventDefault();
-      window[act.dataset.act](act);
-      return;
-    }
     const addp = e.target.closest("#btnAddProd");
     if (addp && renderers.pickProduct) {
       e.preventDefault();
