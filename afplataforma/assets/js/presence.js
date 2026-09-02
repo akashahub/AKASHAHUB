@@ -29,6 +29,13 @@ export function roomOfSession() {
   return session.roomId || "mentoria-principal";
 }
 
+export function setSessionRoom(id) {
+  const next = String(id || "mentoria-principal").trim() || "mentoria-principal";
+  session.roomId = next;
+  try { localStorage.setItem("af_room", next); } catch (e) {}
+  return next;
+}
+
 export function isFresh(p) {
   const t = p?.lastSeenMs || 0;
   return Date.now() - t < ONLINE_MS && p?.online === true;
@@ -69,6 +76,10 @@ export function onPresence(fn) {
 
 export async function startPresence() {
   if (!session.uid) return;
+  try {
+    const saved = localStorage.getItem("af_room");
+    if (saved) session.roomId = saved;
+  } catch (e) {}
   await beatOnce(inCallFlag);
   clearInterval(beat);
   beat = setInterval(() => beatOnce(inCallFlag), 25000);

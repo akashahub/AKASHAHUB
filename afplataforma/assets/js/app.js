@@ -33,10 +33,10 @@ import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
 import { renderComplementarHome, renderComplementarApp } from "./complementar.js";
 import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js";
-import { bindCoverEditor, pickNewProductImage } from "./covers.js";
 import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
+import { bindCoverEditor, pickNewProductImage } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js";
 
 function toast(msg, err = false) {
@@ -278,6 +278,7 @@ function renderProfile() {
       <div class="hint" style="margin-top:8px;line-height:1.7">
         approved: ${session.approved ? "sim" : "não"}<br>
         active: ${session.active ? "sim" : "não"}<br>
+        plano: ${esc(session.plan || "essential")}<br>
         módulos: ${unlockedCount()}/7<br>
         uid: ${esc(session.uid)}
       </div>
@@ -349,7 +350,6 @@ function bindProfileEdit() {
     localStorage.setItem("afplataforma_v1_profile_" + (session.uid || "anon"), JSON.stringify(next));
     if (next.name) session.name = next.name;
     applyProfileUI();
-  hydrateMedia();
     toast("Perfil salvo neste aparelho");
   });
 }
@@ -427,8 +427,10 @@ function init() {
   bindCoverEditor();
   bindLifeOsLayer();
   bindQuitei();
+
   document.addEventListener("af-covers-changed", () => {
-    navigate(getCurrentView());
+    const v = getCurrentView();
+    if (v) navigate(v);
   });
 
   setAuthCallbacks({

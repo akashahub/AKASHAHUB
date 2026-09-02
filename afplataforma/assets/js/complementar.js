@@ -1,6 +1,6 @@
 /**
  * Área Complementar + Lojinha
- * LifeOS fora do menu. Treino 7+7 e capas preservados.
+ * LifeOS removido da interface. Funções de hábitos/rotina/etc. permanecem.
  */
 import { esc } from "./navigation.js";
 import {
@@ -21,28 +21,19 @@ import {
   canEditCovers,
   pickNewProductImage,
   removeProduct,
-  COVER_SLOTS,
-  videoSrc,
-  setVideoSrc
+  COVER_SLOTS
 } from "./covers.js";
 import { materialButton } from "./materials.js";
-import { renderVideoFrame } from "./media.js";
-
-const CHAKRAS = [
-  { n: "01", nome: "Muladhara · Base", cor: "#8B1E1E", modulo: "Módulo 01 · Fundação" },
-  { n: "02", nome: "Svadhishthana · Sacral", cor: "#C45A12", modulo: "Módulo 02 · Criativo" },
-  { n: "03", nome: "Manipura · Plexo solar", cor: "#C9A227", modulo: "Módulo 03 · Execução" },
-  { n: "04", nome: "Anahata · Cardíaco", cor: "#2D6A4F", modulo: "Módulo 04 · Relacional" },
-  { n: "05", nome: "Vishuddha · Laríngeo", cor: "#2B5F8A", modulo: "Módulo 05 · Comunicação" },
-  { n: "06", nome: "Ajna · Frontal", cor: "#3D3A8A", modulo: "Módulo 06 · Visão" },
-  { n: "07", nome: "Sahasrara · Coronário", cor: "#6B3FA0", modulo: "Módulo 07 · Governança" }
-];
+import { renderVideoFrame, getVideoUrl, setVideoUrl, parseVideo } from "./media.js";
+import { canFeature, featureLockPlan, planLabel } from "./plans.js";
+import { isMentorSession } from "./auth.js";
 
 const COMP_APPS = [
   { id: "alimentacao", name: "Alimentação saudável", desc: "Base corporal alinhada aos 7 vetores." },
   { id: "constelacao", name: "Constelação familiar", desc: "6 etapas: investigação → segredo. Material paralelo." },
   { id: "dicionario", name: "Dicionário", desc: "Termos de finanças, marketing, startups e operação." },
   { id: "livros", name: "Livros dos 7 vetores", desc: "Bônus de membro — pedir cada um no WhatsApp." },
+  { id: "audiolivros", name: "Áudiolivros autorizados", desc: "Slots para obras próprias, licenciadas ou domínio público." },
   { id: "treino", name: "Treino e exercícios", desc: "Máquinas + halteres · pirâmide · respiração." },
   { id: "yoga", name: "Yoga operacional", desc: "Slots prontos: 7 vetores, integrado, sol, lua, áudio." },
   { id: "meditacao", name: "Meditação guiada", desc: "Camada de áudio — arquivos entram depois." },
@@ -120,13 +111,7 @@ export function renderComplementarHome() {
   return `<div class="view active">
     ${pageHead("complementar", "Complementar", "Camada paralela", "Alimentação, constelação, livros, corpo, yoga e loja — no mesmo ecossistema AF.")}
     <div class="mat-grid">
-      ${apps.map(
-        (a) => `<div class="mat-card">
-        <h4>${esc(a.name)}</h4>
-        <p>${esc(a.desc)}</p>
-        <button class="tool-btn" type="button" data-nav="comp:${a.id}">Abrir</button>
-      </div>`
-      ).join("")}
+      ${apps.map((a) => cardForApp(a)).join("")}
     </div>
     <article class="q-feature" data-nav="quitei">
       <p class="hero-line">Ferramenta</p>
@@ -137,13 +122,44 @@ export function renderComplementarHome() {
   </div>`;
 }
 
-export function renderComplementarApp(id, extra) {
-  if (id === "treino" && extra) return viewTreinoDetail(extra);
+function cardForApp(a) {
+  const open = canFeature(a.id);
+  if (open) {
+    return `<div class="mat-card">
+        <h4>${esc(a.name)}</h4>
+        <p>${esc(a.desc)}</p>
+        <button class="tool-btn" type="button" data-nav="comp:${a.id}">Abrir</button>
+      </div>`;
+  }
+  const need = planLabel(featureLockPlan(a.id));
+  return `<div class="mat-card is-locked">
+        <h4>${esc(a.name)}</h4>
+        <p>${esc(a.desc)}</p>
+        <p class="lock-note">🔒 ${esc(need)} — existe no método; o seu plano não abre esta porta.</p>
+        <button class="tool-btn" type="button" data-act="afUpgrade" data-upgrade="${a.id}">Conhecer o ${esc(need)}</button>
+      </div>`;
+}
+
+function viewLockedFeature(id) {
+  const need = planLabel(featureLockPlan(id));
+  return `<div class="view active">${back()}
+    ${pageHead(id, "Recurso", "🔒 " + need, "O método dos 7 módulos continua inteiro. Esta porta é extra.")}
+    <div class="mat-card">
+      <h4>Não é o método pela metade</h4>
+      <p>Os 7 módulos e o Quitei já são seus. Este recurso entra no ${esc(need)}. O mentor pode liberar só ele, sem mudar o plano.</p>
+      <button class="tool-btn" type="button" data-act="afUpgrade" data-upgrade="${esc(id)}">Falar no WhatsApp</button>
+    </div>
+  </div>`;
+}
+
+export function renderComplementarApp(id) {
+  if (id !== "imagens" && !canFeature(id)) return viewLockedFeature(id);
   const map = {
     alimentacao: viewAlimentacao,
     constelacao: viewConstelacao,
     dicionario: viewDicionario,
     livros: viewLivros,
+    audiolivros: viewAudiolivros,
     treino: viewTreino,
     yoga: viewYoga,
     imagens: viewImagens,
@@ -267,6 +283,67 @@ function viewLivros() {
   </div>`;
 }
 
+function viewAudiolivros() {
+  const slots = [
+    { id: "audio-vetor-01", name: "Vetor 01 · Base", hint: "Obra autorizada ligada à fundação." },
+    { id: "audio-vetor-02", name: "Vetor 02 · Criativo", hint: "Obra autorizada ligada à ideação." },
+    { id: "audio-vetor-03", name: "Vetor 03 · Execução", hint: "Obra autorizada ligada ao ritmo." },
+    { id: "audio-vetor-04", name: "Vetor 04 · Relacional", hint: "Obra autorizada ligada à rede." },
+    { id: "audio-vetor-05", name: "Vetor 05 · Voz", hint: "Obra autorizada ligada à expressão." },
+    { id: "audio-vetor-06", name: "Vetor 06 · Visão", hint: "Obra autorizada ligada ao horizonte." },
+    { id: "audio-vetor-07", name: "Vetor 07 · Legado", hint: "Obra autorizada ligada à governança." },
+    { id: "audio-extra-1", name: "Extra autorizado 1", hint: "Domínio público, próprio ou licenciado." },
+    { id: "audio-extra-2", name: "Extra autorizado 2", hint: "Domínio público, próprio ou licenciado." }
+  ];
+  const mentor = isMentorSession();
+  const cards = slots.map((s) => {
+    const url = getVideoUrl(s.id);
+    const parsed = parseVideo(url);
+    let player = `<p class="notes-hint">Slot vazio. O mentor cola um link autorizado.</p>`;
+    if (parsed.kind === "youtube") {
+      player = `<div class="media-frame"><iframe src="${esc(parsed.embed)}" allow="autoplay; encrypted-media" allowfullscreen title="${esc(s.name)}"></iframe></div>`;
+    } else if (url) {
+      player = `<audio controls preload="none" src="${esc(url)}" style="width:100%"></audio>`;
+    }
+    const edit = mentor
+      ? `<div class="field"><label>URL autorizada (mp3, Cloudinary ou YouTube)</label>
+           <input data-audio-slot="${esc(s.id)}" value="${esc(url)}" placeholder="https://…"></div>
+         <button class="tool-btn" type="button" data-act="afSaveAudioSlot" data-slot="${esc(s.id)}">Salvar slot</button>`
+      : "";
+    return `<div class="mat-card"><h4>${esc(s.name)}</h4><p>${esc(s.hint)}</p>${player}${edit}</div>`;
+  }).join("");
+  return `<div class="view active">${back()}
+    ${pageHead("audiolivros", "Complementar", "Áudiolivros autorizados", "Só o que você tem direito de hospedar. Obra de terceiros sem licença não entra aqui.")}
+    <div class="mat-card" style="margin-bottom:16px">
+      <h4>Regra</h4>
+      <p>Não use esta aba para Deepak Chopra ou qualquer título protegido sem autorização. O roteiro pode <em>citar</em> o livro. A plataforma só toca arquivo próprio, licenciado ou de domínio público.</p>
+    </div>
+    <div class="mat-grid">${cards}</div>
+  </div>`;
+}
+
+window.afSaveAudio = async (slot, url) => {
+  await setVideoUrl(slot, url);
+};
+
+window.afSaveAudioSlot = async (el) => {
+  const slot = el.dataset.slot;
+  const inp = document.querySelector(`[data-audio-slot="${slot}"]`);
+  await setVideoUrl(slot, inp?.value || "");
+  const toast = document.getElementById("toast");
+  if (toast) {
+    toast.textContent = "Slot salvo.";
+    toast.className = "toast show";
+  }
+};
+
+window.afUpgrade = (el) => {
+  const id = el.dataset.upgrade || "premium";
+  const need = planLabel(featureLockPlan(id));
+  const txt = encodeURIComponent(`Olá, estou na AF Plataforma e quero conhecer o plano ${need} (recurso: ${id}).`);
+  window.open(`https://wa.me/${WA}?text=${txt}`, "_blank");
+};
+
 window.afPedirLivro = (el) => {
   const livro = el.dataset.livro || "livro da coletânea";
   const txt = encodeURIComponent(
@@ -276,21 +353,30 @@ window.afPedirLivro = (el) => {
 };
 
 function viewTreino() {
+  const CH = [
+    { n: "01", nome: "Muladhara · Base", cor: "#8B1E1E" },
+    { n: "02", nome: "Svadhishthana · Sacral", cor: "#C45A12" },
+    { n: "03", nome: "Manipura · Plexo solar", cor: "#C9A227" },
+    { n: "04", nome: "Anahata · Cardíaco", cor: "#2D6A4F" },
+    { n: "05", nome: "Vishuddha · Laríngeo", cor: "#2B5F8A" },
+    { n: "06", nome: "Ajna · Frontal", cor: "#3D3A8A" },
+    { n: "07", nome: "Sahasrara · Coronário", cor: "#6B3FA0" }
+  ];
   const card = (kind, i) => {
-    const c = CHAKRAS[i];
+    const c = CH[i];
     const id = kind === "maq" ? `maq-0${i + 1}` : `halter-0${i + 1}`;
     return `<article class="treino-card">
       ${editImg(id, c.nome, "treino-photo")}
       <div class="treino-meta">
         <span class="treino-chip" style="--chip:${c.cor}">${c.n}</span>
         <h4>${esc(c.nome)}</h4>
-        <p>${esc(c.modulo)} · 7 exercícios · ${kind === "maq" ? "máquinas" : "halteres"}</p>
-        <button class="tool-btn" type="button" data-nav="comp:treino:${id}">Abrir quadro · 7 vídeos</button>
+        <p>7 exercícios · ${kind === "maq" ? "máquinas" : "halteres e peso do corpo"}</p>
       </div>
+      ${renderVideoFrame(id, { caption: "Série guiada" })}
     </article>`;
   };
   return `<div class="view active">${back()}
-    ${pageHead("treino", "Corpo a serviço da execução", "Treino e exercícios", "7 treinos de máquina + 7 de halteres. Cada treino abre um quadro de 7 vídeos de 6s (um por exercício). O vídeo completo entra depois.")}
+    ${pageHead("treino", "Corpo a serviço da execução", "Treino e exercícios", "Duas coleções iguais: 7 treinos de máquina (um por vetor) e 7 treinos de halteres (um por vetor).")}
     <div class="treino-proto">
       <div>
         <strong>Pirâmide</strong>
@@ -309,95 +395,20 @@ function viewTreino() {
       ${editImg("treino-maq", "Máquinas", "treino-band")}
       <div>
         <h3 class="section-h">Treino nas máquinas</h3>
-        <p class="hero-sub" style="margin:0">Um treino por módulo · 7 quadros de 6s + treino completo</p>
+        <p class="hero-sub" style="margin:0">Smart Fit / Bluefit · 1 imagem = 1 vetor = 7 exercícios</p>
       </div>
     </div>
-    <div class="treino-grid">${CHAKRAS.map((_, i) => card("maq", i)).join("")}</div>
+    <div class="treino-grid">${CH.map((_, i) => card("maq", i)).join("")}</div>
     <div class="treino-block-head">
       ${editImg("treino-halter", "Halteres", "treino-band")}
       <div>
         <h3 class="section-h">Treino com halteres</h3>
-        <p class="hero-sub" style="margin:0">Mesma estrutura das máquinas · 7 × 7 vídeos</p>
+        <p class="hero-sub" style="margin:0">Livres e peso do corpo · mesmo template das máquinas</p>
       </div>
     </div>
-    <div class="treino-grid">${CHAKRAS.map((_, i) => card("halter", i)).join("")}</div>
+    <div class="treino-grid">${CH.map((_, i) => card("halter", i)).join("")}</div>
   </div>`;
 }
-
-function videoFrame(vid, label, poster, tall) {
-  const src = videoSrc(vid);
-  const mentor = canEditCovers();
-  const pen = mentor
-    ? `<button type="button" class="cover-pen${tall ? " cover-pen-sm" : ""}" data-act="afSetTreinoVideo" data-vid="${esc(vid)}">Colocar</button>`
-    : "";
-  const cls = tall ? "ex-frame" : "ex-frame ex-frame-full";
-  return `<div class="${cls}" data-vid="${esc(vid)}">
-      <video controls playsinline preload="metadata" poster="${esc(poster)}" src="${esc(src)}" onloadeddata="this.closest('.ex-frame').classList.add('is-ready')" onerror="this.closest('.ex-frame').classList.add('is-empty')"></video>
-      <div class="ex-empty"><span>${esc(label)}</span><small>${tall ? "6 segundos" : "treino completo · entra depois"}</small></div>
-      ${pen}
-    </div>`;
-}
-
-function viewTreinoDetail(slot) {
-  const m = String(slot || "").match(/^(maq|halter)-0([1-7])$/);
-  if (!m) return viewTreino();
-  const kind = m[1];
-  const idx = Number(m[2]) - 1;
-  const c = CHAKRAS[idx];
-  const kindLabel = kind === "maq" ? "Máquinas" : "Halteres";
-  const poster = coverUrl(slot);
-  const frames = [1, 2, 3, 4, 5, 6, 7]
-    .map(
-      (ex) => `<figure class="ex-slot">
-      ${videoFrame(slot + "-ex-0" + ex, "0" + ex, poster, true)}
-      <figcaption>Exercício 0${ex}</figcaption>
-    </figure>`
-    )
-    .join("");
-  const hint = canEditCovers()
-    ? `<p class="notes-hint">Mentor: toque em Colocar e cole a URL do MP4 (Cloudinary). Sem URL, o player usa o arquivo padrão <code>assets/video/treino/${esc(slot)}-ex-01.mp4</code> … <code>ex-07.mp4</code> e <code>${esc(slot)}-full.mp4</code>.</p>`
-    : "";
-  return `<div class="view active">
-    <div class="back-link" data-nav="comp:treino">← Treinos</div>
-    ${pageHead("treino", kindLabel + " · " + c.modulo, c.nome, "Quadro de 7 vídeos de 6 segundos — um por exercício. O vídeo completo do treino fica acima, para entrar depois.")}
-    <div class="treino-proto">
-      <div>
-        <strong>Pirâmide</strong>
-        <p>1ª 12 reps · 2ª 10 reps (+ carga) · 3ª 8 reps (+ carga)</p>
-      </div>
-      <div>
-        <strong>Respiração</strong>
-        <p>inspira → força expirando → inspira no fim → retorna expirando.</p>
-      </div>
-      <div>
-        <strong>7 + 1</strong>
-        <p>7 cortes curtos agora. 1 treino completo depois.</p>
-      </div>
-    </div>
-    <h3 class="section-h">Treino completo</h3>
-    ${videoFrame(slot + "-full", "Completo", poster, false)}
-    <h3 class="section-h">Quadro · 7 exercícios · 6s</h3>
-    <div class="ex-grid">${frames}</div>
-    ${hint}
-  </div>`;
-}
-
-window.afSetTreinoVideo = (el) => {
-  if (!canEditCovers()) return;
-  const id = el && el.dataset ? el.dataset.vid : "";
-  if (!id) return;
-  const cur = videoSrc(id);
-  const seeded = cur.indexOf("http") === 0 ? cur : "";
-  const url = window.prompt(
-    "Cole a URL do vídeo (Cloudinary MP4).\nDeixe vazio para usar o arquivo padrão no GitHub:\nassets/video/treino/" +
-      id +
-      ".mp4",
-    seeded
-  );
-  if (url === null) return;
-  setVideoSrc(id, url.trim());
-  document.dispatchEvent(new CustomEvent("af-covers-changed"));
-};
 
 function viewYoga() {
   const slots = [
@@ -473,47 +484,6 @@ function viewEtiqueta() {
         <p class="etiq-dont"><span>Evitar</span>${esc(c.dont)}</p>
         <p class="etiq-tip">${esc(c.tip)}</p>
       </div>`
-      )
-      .join("")}</div>
-  </div>`;
-}
-
-function viewLifeOS() {
-  const tools = [
-    { id: "cashflow", name: "Cash-flow", mod: "01 · já existe" },
-    { id: "ideation", name: "Ideação", mod: "02 · já existe" },
-    { id: "execution", name: "Execução", mod: "03 · já existe" },
-    { id: "network", name: "Rede / contatos", mod: "04 · já existe" },
-    { id: "pitch", name: "Pitch", mod: "05 · já existe" },
-    { id: "fono", name: "Fono", mod: "05 · já existe" },
-    { id: "vision", name: "Visão", mod: "06 · já existe" },
-    { id: "legacy", name: "Legado", mod: "07 · já existe" }
-  ];
-  const extra = [
-    { nav: "comp:habitos", name: "Hábitos" },
-    { nav: "comp:rotina", name: "Rotina" },
-    { nav: "comp:metas", name: "Metas" },
-    { nav: "comp:mindzone", name: "MindZone" },
-    { nav: "comp:produtividade", name: "Produtividade" },
-    { nav: "comp:sono", name: "Modo sono" },
-    { nav: "comp:coach", name: "AF Coach (off)" }
-  ];
-  return `<div class="view active">${back()}
-    <p class="hero-line">Life OS</p>
-    <h2 class="hero-title">Sistema operacional</h2>
-    <p class="hero-sub">Ferramentas dos módulos (não duplicadas) + camada complementar.</p>
-    <h3 class="section-h">Já existiam nos módulos</h3>
-    <div class="mat-grid">${tools
-      .map(
-        (x) => `<div class="mat-card"><h4>${esc(x.name)}</h4><p>${esc(x.mod)}</p>
-      <button class="tool-btn" type="button" data-tool="${x.id}">Abrir em segundo plano</button></div>`
-      )
-      .join("")}</div>
-    <h3 class="section-h">Camada complementar (nova)</h3>
-    <div class="mat-grid">${extra
-      .map(
-        (x) => `<div class="mat-card"><h4>${esc(x.name)}</h4>
-      <button class="tool-btn" type="button" data-nav="${x.nav}">Abrir</button></div>`
       )
       .join("")}</div>
   </div>`;

@@ -31,7 +31,7 @@ export function openTeleprompter(moduleId = "module01") {
 
 export function closeTeleprompter() {
   stopTeleprompter(true);
-  document.getElementById("tpPanel")?.classList.remove("open");
+  document.getElementById("tpPanel")?.classList.remove("open", "min");
   document.body.classList.remove("tp-open");
 }
 
@@ -131,10 +131,34 @@ function tpLoop() {
 
 export function bindTeleprompterUI() {
   document.getElementById("tpClose")?.addEventListener("click", closeTeleprompter);
+  document.getElementById("tpMin")?.addEventListener("click", () => {
+    document.getElementById("tpPanel")?.classList.toggle("min");
+  });
   document.getElementById("tpModule")?.addEventListener("change", loadTp);
   document.getElementById("tpPlay")?.addEventListener("click", toggleTp);
   document.getElementById("tpResetBtn")?.addEventListener("click", tpReset);
   document.getElementById("tpUp")?.addEventListener("click", () => tpNudge(-48));
   document.getElementById("tpDown")?.addEventListener("click", () => tpNudge(48));
   document.getElementById("tpSpeed")?.addEventListener("input", tpSpeedLbl);
+  const panel = document.getElementById("tpPanel");
+  const head = panel?.querySelector(".tp-head");
+  if (panel && head) {
+    let drag = false, ox = 0, oy = 0;
+    head.addEventListener("pointerdown", (e) => {
+      if (e.target.closest("button")) return;
+      if (window.matchMedia("(max-width:820px)").matches) return;
+      drag = true;
+      ox = e.clientX - panel.getBoundingClientRect().left;
+      oy = e.clientY - panel.getBoundingClientRect().top;
+      head.setPointerCapture(e.pointerId);
+    });
+    head.addEventListener("pointermove", (e) => {
+      if (!drag) return;
+      panel.style.left = Math.max(8, e.clientX - ox) + "px";
+      panel.style.top = Math.max(8, e.clientY - oy) + "px";
+      panel.style.right = "auto";
+      panel.style.bottom = "auto";
+    });
+    head.addEventListener("pointerup", () => { drag = false; });
+  }
 }

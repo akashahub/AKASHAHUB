@@ -159,6 +159,7 @@ export async function grantFullAfAccess(uid) {
       approved: true,
       active: true,
       modules: fullAfModules(),
+      plan: existing.exists() && existing.data()?.plan ? existing.data().plan : "essential",
       updatedAt: serverTimestamp(),
       updatedBy: actorUid()
     };
@@ -236,6 +237,88 @@ export async function updateAfModules(uid, modules) {
       updatedBy: actorUid()
     });
     return { uid, modules: next };
+  } catch (e) {
+    mapAfError(e);
+  }
+}
+
+export async function updateAfPlan(uid, plan) {
+  if (!uid) throw new Error("Usuário não encontrado.");
+  const next = ["essential", "premium", "vip"].includes(plan) ? plan : "essential";
+  try {
+    const ref = doc(db, "afAccess", uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) throw Object.assign(new Error("Usuário não encontrado."), { code: "not-found" });
+    await updateDoc(ref, {
+      plan: next,
+      updatedAt: serverTimestamp(),
+      updatedBy: actorUid()
+    });
+    return { uid, plan: next };
+  } catch (e) {
+    mapAfError(e);
+  }
+}
+
+export async function updateAfFeatures(uid, features) {
+  if (!uid) throw new Error("Usuário não encontrado.");
+  const clean = {};
+  Object.keys(features || {}).forEach((k) => {
+    if (features[k] === true) clean[k] = true;
+    else if (features[k] === false) clean[k] = false;
+  });
+  try {
+    const ref = doc(db, "afAccess", uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) throw Object.assign(new Error("Usuário não encontrado."), { code: "not-found" });
+    await updateDoc(ref, {
+      features: clean,
+      updatedAt: serverTimestamp(),
+      updatedBy: actorUid()
+    });
+    return { uid, features: clean };
+  } catch (e) {
+    mapAfError(e);
+  }
+}
+
+export async function updateAfRoomAccess(uid, extraRooms, roomsBlocked) {
+  if (!uid) throw new Error("Usuário não encontrado.");
+  const extra = (extraRooms || []).map((s) => String(s).trim()).filter(Boolean);
+  const blocked = (roomsBlocked || []).map((s) => String(s).trim()).filter(Boolean);
+  try {
+    const ref = doc(db, "afAccess", uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) throw Object.assign(new Error("Usuário não encontrado."), { code: "not-found" });
+    await updateDoc(ref, {
+      extraRooms: extra,
+      roomsBlocked: blocked,
+      updatedAt: serverTimestamp(),
+      updatedBy: actorUid()
+    });
+    return { uid, extraRooms: extra, roomsBlocked: blocked };
+  } catch (e) {
+    mapAfError(e);
+  }
+}
+
+export async function updateAfDates(uid, fields) {
+  if (!uid) throw new Error("Usuário não encontrado.");
+  const patch = {
+    updatedAt: serverTimestamp(),
+    updatedBy: actorUid()
+  };
+  ["mentorshipEndsAt", "supportEndsAt", "contentEndsAt"].forEach((k) => {
+    if (fields[k] === "" || fields[k] == null) patch[k] = "";
+    else if (fields[k]) patch[k] = String(fields[k]);
+  });
+  if (typeof fields.lifetime === "boolean") patch.lifetime = fields.lifetime;
+  try {
+    const ref = doc(db, "afAccess", uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) throw Object.assign(new Error("Usuário não encontrado."), { code: "not-found" });
+    await updateDoc(ref, patch);
+    return { uid, ...fields };
   } catch (e) {
     mapAfError(e);
   }

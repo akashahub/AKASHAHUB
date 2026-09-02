@@ -10,6 +10,10 @@ import {
   pauseAfAccess,
   reactivateAfAccess,
   updateAfModules,
+  updateAfPlan,
+  updateAfFeatures,
+  updateAfRoomAccess,
+  updateAfDates,
   denyAfAccess,
   blockAfAccess,
   markAfRequestPending,
@@ -19,6 +23,15 @@ import {
 } from "../../firebase/firestore.js";
 import { MODULES } from "../../data/modules.js";
 import { esc } from "./navigation.js";
+import {
+  PLANS,
+  PLAN_ORDER,
+  FEATURES,
+  DEFAULT_ROOMS,
+  planLabel,
+  normalizePlan,
+  defaultOnForPlan
+} from "./plans.js";
 
 const STATUS_LABEL = {
   none: "SEM ACESSO",
@@ -77,7 +90,14 @@ function injectCss() {
 .af-btn-warn{border-color:rgba(224,85,85,.35)!important;color:var(--red)!important}
 .af-mod-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
 .af-mod-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px;border:1px solid var(--line);border-radius:4px;font-size:13px}
-.af-mod-row input{width:18px;height:18px}`;
+.af-mod-row input{width:18px;height:18px}
+.af-plan-map{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 22px}
+.af-plan-card{border:1px solid var(--line);padding:12px;border-radius:6px;background:#fff}
+.af-plan-card h3{font-family:var(--font-d);font-size:1.15rem;margin:4px 0}
+.af-plan-card p{font-size:12px;color:var(--muted);margin:4px 0}
+.af-pill-plan{border-color:rgba(201,162,39,.45);color:#8B6914;background:rgba(201,162,39,.1)}
+.af-mod-row select{max-width:140px;padding:6px;border:1px solid var(--line);border-radius:4px}
+@media(max-width:820px){.af-plan-map{grid-template-columns:1fr}}`;
   document.head.appendChild(s);
 }
 
@@ -109,10 +129,24 @@ function fmtWhen(ms) {
 
 export function renderAccessAdminPanel() {
   if (!isAfAdminUi()) return "";
+  const map = PLAN_ORDER.map((id) => {
+    const p = PLANS[id];
+    const extras = FEATURES.filter((f) => f.min === id && f.group !== "core").map((f) => f.name);
+    return `<article class="af-plan-card">
+      <p class="lvl">${esc(p.label)}</p>
+      <h3>${esc(String(p.weeks))} semanas</h3>
+      <p>${esc(p.blurb)}</p>
+      <p class="af-mods">7 módulos · biblioteca ${p.libraryDays} dias</p>
+      <p class="af-mods">${extras.length ? extras.join(" · ") : "Pacote-base"}</p>
+    </article>`;
+  }).join("");
   return `<section class="af-admin" id="afAdmin">
     <p class="hero-line">Operação administrativa</p>
-    <h3 class="section-h" style="margin-top:8px">Gestão de acessos AF</h3>
-    <p class="hero-sub">Quem tenta entrar aparece aqui sozinho. Você libera, nega, pausa ou bloqueia.</p>
+    <h3 class="section-h" style="margin-top:8px">Mapa dos planos</h3>
+    <p class="hero-sub">Padrão de cada chave. No card da pessoa você sobrescreve sem mudar o plano inteiro.</p>
+    <div class="af-plan-map">${map}</div>
+    <h3 class="section-h">Gestão de acessos AF</h3>
+    <p class="hero-sub">Quem tenta entrar aparece aqui sozinho. Você libera, escolhe o plano, pausa ou bloqueia.</p>
     <div class="af-search-row">
       <input id="afUserSearch" type="search" placeholder="Buscar por nome ou e-mail" autocomplete="off">
       <span class="af-badge-new" id="afNewBadge"></span>
@@ -215,6 +249,7 @@ function paintList() {
       <div>
         <div class="af-user-meta" style="margin-bottom:8px">
           <span class="af-pill af-pill-${st}">${STATUS_LABEL[st] || st}</span>
+          <span class="af-pill af-pill-plan">${esc(planLabel(u.access?.plan))}</span>
           <span class="af-mods">${st === "active" || st === "paused" ? u.modulesOn + "/7 módulos" : "—"}</span>
         </div>
         <div class="af-user-actions">${actions}</div>
@@ -271,16 +306,62 @@ function confirmAct(u, title, html, okLabel, fn, okMsg) {
 
 function openModules(u) {
   pendingMods = {};
-  const mods = { ...(u.access?.modules || {}) };
+  const acc = u.access || {};
+  const mods = { ...(acc.modules || {}) };
   for (let i = 1; i <= 7; i++) pendingMods["module0" + i] = mods["module0" + i] === true;
-  const rows = MODULES.map((m) => `<label class="af-mod-row"><span>Módulo ${esc(m.num)} · ${esc(m.title)}</span>
+  const planNow = normalizePlan(acc.plan);
+  const feat = { ...(acc.features || {}) };
+  const extraRooms = (acc.extraRooms || []).join(", ");
+  const blockedRooms = (acc.roomsBlocked || []).join(", ");
+
+  const planBtns = PLAN_ORDER.map((id) =>
+    `<label class="af-mod-row"><span>${esc(PLANS[id].label)} · ${PLANS[id].weeks} sem.</span>
+      <input type="radio" name="afPlanPick" value="${id}" ${planNow === id ? "checked" : ""}></label>`
+  ).join("");
+
+  const modRows = MODULES.map((m) => `<label class="af-mod-row"><span>Módulo ${esc(m.num)} · ${esc(m.title)}</span>
     <input type="checkbox" data-mod="${m.id}" ${pendingMods[m.id] ? "checked" : ""}></label>`).join("");
-  openModal("Gerenciar módulos",
-    `<p class="notes-hint">${esc(u.name)} · ${esc(u.email || u.uid)}</p><div class="af-mod-list">${rows}</div>`,
-    `<button class="tool-btn" type="button" id="afAllOn">Liberar todos</button>
-     <button class="tool-btn" type="button" id="afAllOff">Bloquear todos</button>
+
+  const featRows = FEATURES.map((f) => {
+    let state = "pack";
+    if (feat[f.id] === true) state = "on";
+    if (feat[f.id] === false) state = "off";
+    return `<label class="af-mod-row"><span>${esc(f.name)} <em class="af-mods">pacote ${esc(planLabel(f.min))}</em></span>
+      <select data-feat="${f.id}">
+        <option value="pack" ${state === "pack" ? "selected" : ""}>Do plano</option>
+        <option value="on" ${state === "on" ? "selected" : ""}>Liberar</option>
+        <option value="off" ${state === "off" ? "selected" : ""}>Bloquear</option>
+      </select></label>`;
+  }).join("");
+
+  const roomHint = DEFAULT_ROOMS.map((r) => r.id + " (" + r.name + ")").join(", ");
+
+  openModal("Gerenciar " + (u.name || u.uid),
+    `<p class="notes-hint">${esc(u.email || u.uid)}</p>
+     <p class="hero-line">Plano</p>
+     <div class="af-mod-list" id="afPlanList">${planBtns}</div>
+     <p class="hero-line" style="margin-top:14px">Módulos 1–7</p>
+     <div class="af-mod-list">${modRows}</div>
+     <p class="hero-line" style="margin-top:14px">Extras (override)</p>
+     <p class="notes-hint">Do plano = segue o pacote. Liberar / Bloquear = exceção só desta pessoa.</p>
+     <div class="af-mod-list">${featRows}</div>
+     <p class="hero-line" style="margin-top:14px">Salas extras</p>
+     <p class="notes-hint">Padrão: ${esc(roomHint)}</p>
+     <div class="field"><label>Salas extras (ids separados por vírgula)</label>
+       <input id="afExtraRooms" value="${esc(extraRooms)}" placeholder="turma-setembro, sala-vip-2"></div>
+     <div class="field"><label>Salas bloqueadas</label>
+       <input id="afBlockedRooms" value="${esc(blockedRooms)}" placeholder="sala-premium"></div>
+     <p class="hero-line" style="margin-top:14px">Datas</p>
+     <div class="field"><label>Mentoria até</label><input id="afDateMent" type="date" value="${esc(String(acc.mentorshipEndsAt || "").slice(0, 10))}"></div>
+     <div class="field"><label>Suporte até</label><input id="afDateSup" type="date" value="${esc(String(acc.supportEndsAt || "").slice(0, 10))}"></div>
+     <div class="field"><label>Biblioteca até</label><input id="afDateLib" type="date" value="${esc(String(acc.contentEndsAt || "").slice(0, 10))}"></div>
+     <label class="af-mod-row"><span>Biblioteca vitalícia</span>
+       <input type="checkbox" id="afLifetime" ${acc.lifetime ? "checked" : ""}></label>`,
+    `<button class="tool-btn" type="button" id="afAllOn">Liberar módulos</button>
+     <button class="tool-btn" type="button" id="afAllOff">Travar módulos</button>
      <button class="tool-btn" type="button" id="afCancel">Cancelar</button>
-     <button class="tool-btn" type="button" id="afSaveMods">Salvar alterações</button>`);
+     <button class="tool-btn" type="button" id="afSaveMods">Salvar</button>`);
+
   const body = document.getElementById("modalBody");
   body.querySelectorAll("[data-mod]").forEach((inp) => {
     inp.addEventListener("change", () => { pendingMods[inp.dataset.mod] = inp.checked; });
@@ -296,8 +377,29 @@ function openModules(u) {
   };
   document.getElementById("afSaveMods").onclick = () => {
     runAction(document.getElementById("afSaveMods"), async () => {
+      const planPick = body.querySelector("[name=afPlanPick]:checked")?.value || "essential";
+      const features = {};
+      body.querySelectorAll("[data-feat]").forEach((sel) => {
+        if (sel.value === "on") features[sel.dataset.feat] = true;
+        else if (sel.value === "off") features[sel.dataset.feat] = false;
+      });
+      const extra = (document.getElementById("afExtraRooms")?.value || "").split(",").map((s) => s.trim()).filter(Boolean);
+      const blocked = (document.getElementById("afBlockedRooms")?.value || "").split(",").map((s) => s.trim()).filter(Boolean);
+      if (session.mode === "local") {
+        toast("Demo local: mudanças não gravam no Firebase.");
+        return;
+      }
+      await updateAfPlan(u.uid, planPick);
       await updateAfModules(u.uid, pendingMods);
+      await updateAfFeatures(u.uid, features);
+      await updateAfRoomAccess(u.uid, extra, blocked);
+      await updateAfDates(u.uid, {
+        mentorshipEndsAt: document.getElementById("afDateMent")?.value || "",
+        supportEndsAt: document.getElementById("afDateSup")?.value || "",
+        contentEndsAt: document.getElementById("afDateLib")?.value || "",
+        lifetime: !!document.getElementById("afLifetime")?.checked
+      });
       closeModal();
-    }, "Módulos atualizados.");
+    }, "Acesso atualizado.");
   };
 }

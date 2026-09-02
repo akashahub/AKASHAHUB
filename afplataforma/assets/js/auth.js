@@ -23,6 +23,15 @@ export const session = {
   approved: false,
   active: false,
   modules: {},
+  plan: "essential",
+  features: {},
+  extraRooms: [],
+  roomsBlocked: [],
+  roomId: "mentoria-principal",
+  mentorshipEndsAt: "",
+  supportEndsAt: "",
+  contentEndsAt: "",
+  lifetime: false,
   lang: Store.getLang(),
   ready: false
 };
@@ -54,6 +63,12 @@ function buildSessionFromUser(user, access, mode = "firebase") {
       approved: true,
       active: true,
       modules: access?.modules || defaultModulesMap(7),
+      plan: "vip",
+      features: {},
+      extraRooms: [],
+      roomsBlocked: [],
+      roomId: session.roomId || "mentoria-principal",
+      lifetime: true,
       lang: session.lang,
       ready: true
     };
@@ -75,6 +90,15 @@ function buildSessionFromUser(user, access, mode = "firebase") {
     approved: true,
     active: true,
     modules: access.modules || defaultModulesMap(0),
+    plan: access.plan || "essential",
+    features: access.features || {},
+    extraRooms: access.extraRooms || [],
+    roomsBlocked: access.roomsBlocked || [],
+    roomId: session.roomId || "mentoria-principal",
+    mentorshipEndsAt: access.mentorshipEndsAt || "",
+    supportEndsAt: access.supportEndsAt || "",
+    contentEndsAt: access.contentEndsAt || "",
+    lifetime: access.lifetime === true,
     lang: session.lang,
     ready: true
   };
@@ -185,6 +209,12 @@ export function enterDemo(role) {
       approved: true,
       active: true,
       modules: defaultModulesMap(7),
+      plan: "vip",
+      features: {},
+      extraRooms: [],
+      roomsBlocked: [],
+      roomId: "mentoria-principal",
+      lifetime: true,
       lang: session.lang,
       ready: true
     });
@@ -198,6 +228,11 @@ export function enterDemo(role) {
       approved: true,
       active: true,
       modules: defaultModulesMap(2),
+      plan: "essential",
+      features: {},
+      extraRooms: [],
+      roomsBlocked: [],
+      roomId: "sala-essencial",
       lang: session.lang,
       ready: true
     });

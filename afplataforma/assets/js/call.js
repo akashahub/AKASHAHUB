@@ -21,8 +21,10 @@ import {
   onPresence,
   getPresenceSnapshot,
   setInCall,
-  roomOfSession
+  roomOfSession,
+  setSessionRoom
 } from "./presence.js";
+import { allowedRoomIds, roomName, DEFAULT_ROOMS, canEnterRoom, accessOfSession } from "./plans.js";
 
 const ICE = {
   iceServers: [
@@ -186,15 +188,25 @@ export function onCallNavigate(onCallPage) {
 export function renderCallView() {
   const mentor = isMentorSession();
   const room = roomOfSession();
+  const rooms = allowedRoomIds(accessOfSession(), mentor);
+  const opts = rooms.map((id) => {
+    const label = roomName(id);
+    return `<option value="${esc(id)}" ${id === room ? "selected" : ""}>${esc(label)}</option>`;
+  }).join("");
   return `<div class="view active">
     <p class="hero-line">Sala ao vivo</p>
     <h2 class="hero-title">Call da mentoria</h2>
-    <p class="hero-sub">Sem codigo. Sem Meet. A call continua em segundo plano se voce abrir ferramentas.</p>
+    <p class="hero-sub">Mesma call, várias salas. Sair da página não encerra — o vídeo flutua.</p>
     <div class="call-shell">
       <aside class="call-roster">
-        <p class="call-kicker">${esc(room)}</p>
+        <p class="call-kicker">${esc(roomName(room))}</p>
         <h3>Presenca</h3>
         <p class="notes-meta"><span id="callOnlineCount">0</span> online · <span id="callInCallCount">0</span> na call</p>
+        <label class="notes-hint" for="callRoomSelect">Sala</label>
+        <select id="callRoomSelect">${opts}</select>
+        ${mentor ? `<div class="field" style="margin-top:8px"><label>Nova sala / turma</label>
+          <input id="callNewRoom" placeholder="turma-setembro">
+          <button class="tool-btn" type="button" id="btnAddRoom">Usar esta sala</button></div>` : ""}
         <div id="callPeople" class="pres-list"></div>
       </aside>
       <section class="call-main">
@@ -209,7 +221,7 @@ export function renderCallView() {
             : `<button class="ctrl tool" type="button" id="btnNotes">Notas</button>`}
           <button class="ctrl leave" type="button" id="btnLeaveCall">Sair</button>
         </div>
-        <p class="call-hint" id="callHint">${inCall ? "Call ativa. Voce pode navegar — o video fica flutuando." : "Ao entrar, camera e microfone ligam e o outro participante aparece aqui."}</p>
+        <p class="call-hint" id="callHint">${inCall ? "Call ativa. Você pode navegar — o vídeo fica flutuando." : "Escolha a sala e entre. Camera e microfone ligam aqui."}</p>
       </section>
     </div>
   </div>`;
@@ -229,6 +241,18 @@ export function bindCallControls(navigate) {
   document.getElementById("btnRoteiro")?.addEventListener("click", () => openTeleprompter());
   document.getElementById("btnNotes")?.addEventListener("click", openMenteeNotes);
   document.getElementById("btnMentorNotes")?.addEventListener("click", openMentorPrivateNotes);
+  document.getElementById("callRoomSelect")?.addEventListener("change", async (e) => {
+    await switchRoom(e.target.value);
+  });
+  document.getElementById("btnAddRoom")?.addEventListener("click", async () => {
+    const raw = (document.getElementById("callNewRoom")?.value || "").trim().toLowerCase().replace(/\s+/g, "-");
+    if (!raw) return toast("Escreva o id da sala.", true);
+    await switchRoom(raw);
+    const sel = document.getElementById("callRoomSelect");
+    if (sel && ![...sel.options].some((o) => o.value === raw)) {
+      sel.appendChild(new Option(raw, raw, true, true));
+    }
+  });
   onCallNavigate(true);
   bindDockButtons(navigate);
 }
@@ -237,11 +261,75 @@ function bindDockButtons(navigate) {
   const expand = document.getElementById("callDockExpand");
   if (expand) {
     expand.onclick = () => {
+      const el = dock();
+      if (el?.classList.contains("pip-min")) el.classList.remove("pip-min");
       if (navigate) navigate("call");
     };
   }
   const leave = document.getElementById("callDockLeave");
   if (leave) leave.onclick = () => leaveCall();
+  const mic = document.getElementById("callDockMic");
+  if (mic) mic.onclick = () => toggleMic();
+  const min = document.getElementById("callDockMin");
+  if (min) {
+    min.onclick = () => {
+      dock()?.classList.toggle("pip-min");
+    };
+  }
+  const size = document.getElementById("callDockSize");
+  if (size) {
+    size.onclick = () => {
+      const el = dock();
+      if (!el) return;
+      if (el.classList.contains("pip-l")) {
+        el.classList.remove("pip-l");
+        el.classList.add("pip-s");
+      } else if (el.classList.contains("pip-s")) {
+        el.classList.remove("pip-s");
+      } else {
+        el.classList.add("pip-l");
+      }
+    };
+  }
+}
+
+async function switchRoom(id) {
+  const next = String(id || "").trim() || "mentoria-principal";
+  if (!isMentorSession() && !canEnterRoom(next, accessOfSession(), false)) {
+    toast("Esta sala não está no seu plano.", true);
+    const sel = document.getElementById("callRoomSelect");
+    if (sel) sel.value = roomOfSession();
+    return;
+  }
+  const prev = roomOfSession();
+  if (prev === next) return;
+  if (inCall && session.mode === "firebase") {
+    try { await leaveLiveRoom(prev, session.uid); } catch (e) {}
+    if (unsubPeers) { unsubPeers(); unsubPeers = null; }
+    if (unsubSignals) { unsubSignals(); unsubSignals = null; }
+    for (const [uid, state] of peers) {
+      try { state.pc.close(); } catch (e) {}
+    }
+    peers.clear();
+    document.querySelectorAll("#callStage .v-tile:not(#tileSelf)").forEach((el) => el.remove());
+  }
+  setSessionRoom(next);
+  const kick = document.querySelector(".call-kicker");
+  if (kick) kick.textContent = roomName(next);
+  if (inCall && session.mode === "firebase") {
+    try {
+      await joinLiveRoom(next, session.uid, {
+        name: session.name || "Participante",
+        role: session.role || "mentee"
+      });
+      unsubPeers = listenLivePeers(next, onPeers);
+      unsubSignals = listenLiveSignalsToMe(next, session.uid, onSignal);
+    } catch (e) {
+      toast("Sala trocada. Sinal: " + (e.message || e), true);
+    }
+  }
+  await setInCall(inCall);
+  toast("Sala: " + roomName(next));
 }
 
 export async function joinCall() {
@@ -331,6 +419,7 @@ async function ensurePeer(remoteUid, label) {
       try { pc.restartIce(); } catch (e) {}
     }
     if (pc.connectionState === "disconnected" || pc.connectionState === "closed") {
+      // keep tile; ice restart may recover
     }
   };
 
