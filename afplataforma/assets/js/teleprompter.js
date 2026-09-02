@@ -140,25 +140,56 @@ export function bindTeleprompterUI() {
   document.getElementById("tpUp")?.addEventListener("click", () => tpNudge(-48));
   document.getElementById("tpDown")?.addEventListener("click", () => tpNudge(48));
   document.getElementById("tpSpeed")?.addEventListener("input", tpSpeedLbl);
+  bindTpDrag();
+}
+
+function bindTpDrag() {
   const panel = document.getElementById("tpPanel");
-  const head = panel?.querySelector(".tp-head");
-  if (panel && head) {
-    let drag = false, ox = 0, oy = 0;
-    head.addEventListener("pointerdown", (e) => {
-      if (e.target.closest("button")) return;
-      if (window.matchMedia("(max-width:820px)").matches) return;
-      drag = true;
-      ox = e.clientX - panel.getBoundingClientRect().left;
-      oy = e.clientY - panel.getBoundingClientRect().top;
-      head.setPointerCapture(e.pointerId);
-    });
-    head.addEventListener("pointermove", (e) => {
-      if (!drag) return;
-      panel.style.left = Math.max(8, e.clientX - ox) + "px";
-      panel.style.top = Math.max(8, e.clientY - oy) + "px";
-      panel.style.right = "auto";
-      panel.style.bottom = "auto";
-    });
-    head.addEventListener("pointerup", () => { drag = false; });
+  const head = document.getElementById("tpHead") || panel?.querySelector(".tp-head");
+  if (!panel || !head || head.dataset.dragBound) return;
+  head.dataset.dragBound = "1";
+  let dragging = false;
+  let ox = 0;
+  let oy = 0;
+
+  function pinFromRect() {
+    const r = panel.getBoundingClientRect();
+    panel.style.right = "auto";
+    panel.style.bottom = "auto";
+    panel.style.left = r.left + "px";
+    panel.style.top = r.top + "px";
+    panel.style.width = r.width + "px";
+    if (!panel.classList.contains("min")) panel.style.height = r.height + "px";
   }
+
+  head.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("button, select, input, a")) return;
+    pinFromRect();
+    dragging = true;
+    const r = panel.getBoundingClientRect();
+    ox = e.clientX - r.left;
+    oy = e.clientY - r.top;
+    panel.classList.add("dragging");
+    try { head.setPointerCapture(e.pointerId); } catch (err) {}
+    e.preventDefault();
+  });
+
+  head.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const maxX = Math.max(8, window.innerWidth - panel.offsetWidth - 8);
+    const maxY = Math.max(8, window.innerHeight - 56);
+    const x = Math.min(maxX, Math.max(8, e.clientX - ox));
+    const y = Math.min(maxY, Math.max(8, e.clientY - oy));
+    panel.style.left = x + "px";
+    panel.style.top = y + "px";
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    panel.classList.remove("dragging");
+    try { head.releasePointerCapture(e.pointerId); } catch (err) {}
+  }
+  head.addEventListener("pointerup", endDrag);
+  head.addEventListener("pointercancel", endDrag);
 }
