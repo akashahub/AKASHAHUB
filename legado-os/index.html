@@ -1,20 +1,74 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/legado-os/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0B0B0F" />
-    <meta name="description" content="LEGADO OS — o evento começa no celular." />
-    <link rel="manifest" href="/legado-os/manifest.json" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,560&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
-    <title>LEGADO OS</title>
-    <script type="module" crossorigin src="/legado-os/assets/index-a6ckssQ_.js"></script>
-    <link rel="stylesheet" crossorigin href="/legado-os/assets/index-BS17zwUM.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#0B0B0F"/>
+<title>LEGADO OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Sora:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0b0b0f;--bg2:#14141b;--bg3:#1c1c26;--ink:#f4ede0;--dim:#b7ae9f;--mute:#7d766b;--gold:#d4af6a;--live:#ff4d4d;--line:rgba(244,237,224,.08)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Sora,system-ui,sans-serif}
+body{min-height:100dvh;background:radial-gradient(900px 500px at 80% -10%,rgba(212,175,106,.12),transparent 50%),var(--bg)}
+.wrap{max-width:480px;margin:0 auto;padding:18px 16px 96px}
+.brand{color:var(--gold);letter-spacing:.08em;text-transform:uppercase;font-family:Fraunces,serif;font-size:14px}
+h1,h2,h3{font-family:Fraunces,serif;margin:0;font-weight:560}
+h1{font-size:32px;line-height:1.05}h2{font-size:22px}h3{font-size:16px}
+.k{color:var(--gold);letter-spacing:.14em;text-transform:uppercase;font-size:11px;margin-bottom:8px}
+.q{color:var(--dim);font-size:13px}.m{color:var(--mute);font-size:12px}
+.card{background:linear-gradient(#ffffff08,#ffffff04);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.btn{width:100%;border:0;border-radius:999px;padding:13px 18px;background:var(--gold);color:#1a1408;font-weight:600;margin-top:12px}
+.btn2{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.4}
+input,textarea,select{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:12px;color:inherit;font:inherit}
+label{display:block;font-size:12px;color:var(--dim);margin:10px 0 6px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border-radius:999px;padding:5px 10px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.live{background:#3a1010;color:#fff}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--live)}
+.xp{height:6px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-top:10px}
+.xp>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#f0d59a)}
+.nav{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);width:min(448px,calc(100% - 20px));display:grid;grid-template-columns:repeat(5,1fr);background:#0e0e14e0;backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:22px;padding:8px 6px 10px;z-index:20}
+.nav button{background:0;border:0;color:var(--mute);font-size:10px}
+.nav button.on{color:var(--gold)}
+.av{width:44px;height:44px;border-radius:50%;background:#2a2418;color:var(--gold);display:grid;place-items:center;font-family:Fraunces,serif;font-size:18px}
+.person{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1d1912;border:1px solid #d4af6a59;color:#f0d59a;padding:10px 14px;border-radius:999px;font-size:13px;z-index:30}
+.gate{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;padding:36px 20px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const KEY='legado-os.preview.v001';
+const PEOPLE=[{id:'maya',name:'Maya Quirino',job:'Designer de identidade',city:'Curitiba',why:'Ela oferece o que marcas pessoais procuram.'},{id:'tomas',name:'Tom\u00e1s Vale',job:'Fundador \u00b7 Clara Finan\u00e7as',city:'BH',why:'Procura exatamente o que Maya oferece.'},{id:'helena',name:'Helena Dias',job:'Produtora cultural',city:'Salvador',why:'Projeto com corpo. Caio est\u00e1 olhando isso.'},{id:'rafael',name:'Rafael Mune',job:'Filmmaker',city:'S\u00e3o Paulo',why:'Encaixa no pedido da Maya.'},{id:'iris',name:'\u00cdris Benton',job:'Facilitadora',city:'Lisboa',why:'Interesse comum em legado.'},{id:'caio',name:'Caio Neri',job:'Operador e investidor',city:'Rio',why:'Olha hospitalidade e educa\u00e7\u00e3o.'},{id:'lina',name:'Lina Prado',job:'Hospitalidade',city:'Gramado',why:'Complementa a Casa Travessia.'},{id:'davi',name:'Davi Solano',job:'Engenheiro',city:'Floripa',why:'Quer tecnologia a servi\u00e7o do encontro.'}];
+const MISSIONS=[{id:'p',title:'Complete o essencial do perfil',xp:20,cat:'identidade'},{id:'w',title:'Conte quem voc\u00ea \u00e9',xp:25,cat:'identidade'},{id:'m',title:'Conhe\u00e7a algu\u00e9m complementar',xp:25,cat:'conex\u00e3o'},{id:'r',title:'Entre em uma sala',xp:15,cat:'presen\u00e7a'},{id:'k',title:'Abra um cap\u00edtulo do Master',xp:15,cat:'presen\u00e7a'},{id:'o',title:'Declare uma oportunidade',xp:20,cat:'oportunidade'}];
+const LIVES=[{t:'Palco Principal',k:'master',s:'live',n:86},{t:'Sala Business',k:'official',s:'live',n:19},{t:'Sala Identidade',k:'official',s:'scheduled',n:0},{t:'Bastidores do Est\u00fadio',k:'creator',s:'live',n:11}];
+const CH=[['00:00','Abertura','Por que o evento existe no celular.'],['04:32','Identidade','Do cargo \u00e0 ess\u00eancia.'],['11:18','Narrativa','A hist\u00f3ria que voc\u00ea sustenta.'],['17:51','Conex\u00e3o','Por que duas pessoas deveriam se conhecer.'],['28:10','Oportunidade','Pedido claro, sem spam.'],['39:02','Continuidade','O after come\u00e7a agora.']];
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||null}catch(e){return null}}
+function save(s){localStorage.setItem(KEY,JSON.stringify(s))}
+let S=load()||{user:null,done:[],xp:0,route:'enter',admin:false,conns:[]};
+function level(){return S.xp>=280?5:S.xp>=180?4:S.xp>=100?3:S.xp>=40?2:1}
+function title(){return ['','Chegada','Presen\u00e7a','Participa\u00e7\u00e3o','Cria\u00e7\u00e3o','Conex\u00e3o'][level()]}
+function cur(){return MISSIONS.find(m=>!S.done.includes(m.id))}
+function go(r){S.route=r;save(S);render()}
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),1600)}
+function complete(id){if(S.done.includes(id))return;const m=MISSIONS.find(x=>x.id===id);S.done.push(id);S.xp+=m.xp;save(S);toast('+'+m.xp+' XP');render()}
+function nav(){const items=[['home','\u25ce','Home'],['play','\u2726','Play'],['people','\u25c9','Pessoas'],['live','\u25cf','Live'],['me','\u25cb','Eu']];return '<nav class="nav">'+items.map(([id,i,l])=>'<button class="'+(S.route===id?'on':'')+'" onclick="go(\''+id+'\')"><div>'+i+'</div>'+l+'</button>').join('')+'</nav>'}
+function shell(html){return '<div class="wrap"><div class="row"><div class="brand">Legado OS</div><div class="m">LEGADO 001 \u00b7 Evento Zero</div></div>'+html+nav()+'</div>'}
+function viewEnter(){return '<div class="gate"><div class="k">Evento Zero</div><h1>Voc\u00ea n\u00e3o veio s\u00f3 assistir.</h1><p class="q">Crie sua identidade. Entre no LEGADO 001.</p><label>Como voc\u00ea se chama?</label><input id="n" placeholder="Seu nome"/><label>O que voc\u00ea quer fazer acontecer?</label><textarea id="i" placeholder="Uma frase."></textarea><label>C\u00f3digo de comando (opcional)</label><input id="c" placeholder="S\u00f3 se voc\u00ea opera"/><button class="btn" onclick="enter()">Entrar no Evento Zero</button><p class="m" style="text-align:center">Firebase Hub: hub-akasha. Demo neste aparelho, sem misturar com a AF.</p></div>'}
+function enter(){const n=document.getElementById('n').value.trim();const i=document.getElementById('i').value.trim();if(n.length<2||i.length<3){toast('Nome e inten\u00e7\u00e3o');return}S.user={name:n,intent:i};S.admin=document.getElementById('c').value.trim().toUpperCase()==='LEGADO-CMD';S.route='home';save(S);render()}
+function viewHome(){const m=cur();const lives=LIVES.filter(l=>l.s==='live');return shell('<div class="k">LEGADO 001 \u00b7 Evento Zero</div><h1>'+S.user.name.split(' ')[0]+', voc\u00ea est\u00e1 dentro.</h1><p class="q">O encontro come\u00e7a no bolso.</p><div class="card"><div class="row"><div><div class="m">N\u00edvel '+level()+'</div><h3>'+title()+'</h3></div><span class="pill">'+S.xp+' XP</span></div><div class="xp"><i style="width:'+Math.min(100,S.xp/2.8)+'%"></i></div></div>'+(m?'<div class="card"><div class="m">Miss\u00e3o atual</div><h2 style="margin-top:6px">'+m.title+'</h2><button class="btn" onclick="go(\'play\')">Continuar</button></div>':'')+'<div class="card"><div class="row"><h3>Agora</h3><span class="pill live"><span class="dot"></span> '+lives.length+' ao vivo</span></div>'+lives.map(l=>'<p class="q">'+l.t+' \u00b7 '+l.n+' pessoas</p>').join('')+'<button class="btn btn2" onclick="go(\'live\')">Abrir Live Hub</button></div><div class="card"><h3>Para voc\u00ea</h3>'+PEOPLE.slice(0,3).map(p=>'<div class="person" style="margin-top:12px"><div class="av">'+p.name[0]+'</div><div><strong>'+p.name+'</strong><div class="m">'+p.job+'</div></div></div><p class="q">Por que: '+p.why+'</p>').join('')+'</div>')}
+function viewPlay(){const m=cur();return shell('<div class="k">Legado Play</div><h1>O que fazer agora</h1>'+(m?'<div class="card"><span class="pill">'+m.cat+'</span><h2 style="margin-top:8px">'+m.title+'</h2><button class="btn" onclick="complete(\''+m.id+'\')">Concluir \u00b7 +'+m.xp+' XP</button></div>':'<div class="card"><h2>Ciclo inicial cumprido.</h2></div>')+'<div class="card">'+MISSIONS.map(x=>'<div class="row" style="margin-top:8px"><span>'+x.title+'</span><span class="m">'+(S.done.includes(x.id)?'feita':'+'+x.xp)+'</span></div>').join('')+'</div>')}
+function viewPeople(){return shell('<div class="k">Connect</div><h1>Pessoas com motivo</h1>'+PEOPLE.map(p=>'<div class="card"><div class="person"><div class="av">'+p.name[0]+'</div><div><strong>'+p.name+'</strong><div class="m">'+p.job+' \u00b7 '+p.city+'</div></div></div><p class="q">Por que: '+p.why+'</p><button class="btn" onclick="conn(\''+p.id+'\')">'+(S.conns.includes(p.id)?'J\u00e1 conectado':'Quero conhecer')+'</button></div>').join(''))}
+function conn(id){if(!S.conns.includes(id)){S.conns.push(id);if(!S.done.includes('m'))complete('m');save(S);toast('Conex\u00e3o registrada')}render()}
+function viewLive(){return shell('<div class="k">Live Hub</div><h1>O que est\u00e1 acontecendo</h1><p class="q">Estados reais. Stream entra depois.</p>'+LIVES.map(l=>'<div class="card"><div class="row"><span class="pill '+(l.s==='live'?'live':'')+'">'+(l.s==='live'?'<span class="dot"></span> ':'')+l.s+'</span><span class="m">'+l.k+'</span></div><h2>'+l.t+'</h2></div>').join('')+'<button class="btn btn2" onclick="go(\'master\')">Abrir Master</button>')}
+function viewMaster(){if(!S.done.includes('k'))complete('k');return shell('<div class="k">Master</div><h1>Master \u2014 LEGADO 001</h1><div class="card" style="height:140px;display:grid;place-items:center;color:var(--gold);font-family:Fraunces,serif">Palco \u00b7 cap\u00edtulos</div><div class="card">'+CH.map(c=>'<div class="row" style="margin:10px 0;border-top:1px solid var(--line);padding-top:10px"><span class="m">'+c[0]+'</span><div><strong>'+c[1]+'</strong><div class="q">'+c[2]+'</div></div></div>').join('')+'</div>')}
+function viewMe(){return shell('<div class="k">Legado ID</div><h1>'+S.user.name+'</h1><p class="q">'+S.user.intent+'</p><div class="card">N\u00edvel '+level()+' \u00b7 '+S.xp+' XP \u00b7 '+S.done.length+' miss\u00f5es</div>'+(S.admin?'<button class="btn btn2" onclick="go(\'admin\')">Command Center</button>':'')+'<button class="btn btn2" onclick="S={user:null,done:[],xp:0,route:\'enter\',admin:false,conns:[]};save(S);render()">Sair</button>')}
+function viewAdmin(){if(!S.admin)return viewMe();return shell('<div class="k">Command</div><h1>Opera\u00e7\u00e3o</h1><div class="card"><div class="row"><span>Pessoas demo</span><strong>8</strong></div><div class="row"><span>Lives</span><strong>3</strong></div><div class="row"><span>Miss\u00f5es suas</span><strong>'+S.done.length+'</strong></div></div><p class="m">Firebase: hub-akasha. V0 ainda no aparelho para n\u00e3o misturar com a AF.</p>')}
+function render(){if(!S.user){document.getElementById('app').innerHTML=viewEnter();return}const map={home:viewHome,play:viewPlay,people:viewPeople,live:viewLive,master:viewMaster,me:viewMe,admin:viewAdmin};document.getElementById('app').innerHTML=(map[S.route]||viewHome)()}
+render();
+</script>
+</body>
 </html>
