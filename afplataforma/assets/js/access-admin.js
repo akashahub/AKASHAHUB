@@ -3,7 +3,7 @@
  * Segurança real = Firestore Rules.
  */
 import { session } from "./auth.js";
-import { MENTOR_UID } from "../../firebase/firebase-config.js";
+import { MENTOR_UID, isMentorIdentity } from "../../firebase/firebase-config.js";
 import {
   listenAfAccessBoard,
   grantFullAfAccess,
@@ -102,7 +102,7 @@ function injectCss() {
 }
 
 export function isAfAdminUi() {
-  return session.uid === MENTOR_UID;
+  return isMentorIdentity(session.uid, session.email) || session.role === "mentor";
 }
 
 function openModal(title, body, foot) {

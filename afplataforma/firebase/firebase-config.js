@@ -19,8 +19,21 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-/** UID mentor/admin principal AF */
+/** UID mentor/admin principal AF (Yan) */
 export const MENTOR_UID = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+
+/** Contas com o mesmo poder de mentor: gestão de acesso, roteiro, call, livro. */
+export const MENTOR_EMAILS = [
+  "yanfili.simon@gmail.com",
+  "plmacramo@gmail.com",
+  "sendatantrica@gmail.com"
+];
+
+export function isMentorIdentity(uid, email) {
+  if (uid && uid === MENTOR_UID) return true;
+  const mail = String(email || "").trim().toLowerCase();
+  return MENTOR_EMAILS.includes(mail);
+}
 
 /**
  * DEV_MODE = true  → mostra botões Demo Mentor / Demo Mentorado
@@ -28,7 +41,7 @@ export const MENTOR_UID = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
  */
 export const DEV_MODE = false;
 
-/** Preview ou ?demo=mentor|mentee. Produção sem query continua fechada. */
+/** Preview local ou ?demo=1 — não liga demo na produção. */
 export function isDemoEnabled() {
   if (DEV_MODE) return true;
   try {
@@ -40,7 +53,6 @@ export function isDemoEnabled() {
   }
   return false;
 }
-
 
 
 /** URL do backend que assina o token LiveKit. Vazio = lobby + presença funcionam; vídeo de grupo espera o token. */

@@ -9,7 +9,7 @@ import {
   GoogleAuthProvider,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { auth, MENTOR_UID, DEV_MODE, isDemoEnabled } from "../../firebase/firebase-config.js";
+import { auth, MENTOR_UID, DEV_MODE, isDemoEnabled, isMentorIdentity } from "../../firebase/firebase-config.js";
 import { getAfAccess, registerAfLoginAttempt } from "../../firebase/firestore.js";
 import { defaultModulesMap } from "../../data/modules.js";
 import { Store } from "./storage.js";
@@ -48,11 +48,11 @@ export function setAuthCallbacks({ onReady, onDenied, onLogout }) {
 }
 
 export function isMentorSession() {
-  return session.role === "mentor" || session.uid === MENTOR_UID;
+  return session.role === "mentor" || isMentorIdentity(session.uid, session.email);
 }
 
 function buildSessionFromUser(user, access, mode = "firebase") {
-  const isMentor = user.uid === MENTOR_UID;
+  const isMentor = isMentorIdentity(user.uid, user.email);
   if (isMentor) {
     return {
       mode,
@@ -121,7 +121,7 @@ export async function resolveUserAccess(user) {
     access = await getAfAccess(user.uid);
   } catch (e) {
     console.warn("[AF] getAfAccess:", e?.code || e?.message || e);
-    if (user.uid !== MENTOR_UID) {
+    if (!isMentorIdentity(user.uid, user.email)) {
       if (onAccessDenied) onAccessDenied("error");
       return false;
     }

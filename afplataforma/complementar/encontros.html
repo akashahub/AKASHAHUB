@@ -670,7 +670,7 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 
 const ADMIN_UID    = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
-const MENTOR_EMAIL = "yanfili.simon@gmail.com";
+const MENTOR_EMAILS = ["yanfili.simon@gmail.com", "plmacramo@gmail.com", "sendatantrica@gmail.com"];
 const WPP_NUM      = "5571983448621";
 
 /* ══════════════════════════════════════
@@ -1089,7 +1089,7 @@ onAuthStateChanged(auth, async user => {
 
   const snap = await getDoc(doc(db, "users", user.uid));
   const ud   = snap.exists() ? snap.data() : {};
-  const isAdmin = user.uid === ADMIN_UID;
+  const isAdmin = user.uid === ADMIN_UID || MENTOR_EMAILS.includes(String(user.email || "").toLowerCase());
 
   if (!isAdmin && !ud.tem_mentoria) {
     window.location.href = '/sessoes/';
