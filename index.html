@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html class="dark" lang="pt-BR">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
@@ -157,7 +157,10 @@
     overflow-x: hidden;
   }
   button:not(:disabled), [role="button"]:not(:disabled), a { cursor: pointer; }
-  canvas#shader-canvas { display: none; }
+  canvas#shader-canvas {
+    position: fixed; inset: 0; width: 100vw; height: 100vh;
+    z-index: -1; pointer-events: none;
+  }
   .grain {
     position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .045;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
@@ -290,34 +293,16 @@
   .drawer .sub { font-family: var(--mono); font-size: 11px; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; display: block; margin-top: 2px; }
 
   .hero {
-    position: relative;
-    min-height: auto;
-    padding: calc(var(--nav-h) + 36px) 0 56px;
-    display: block;
-    overflow: hidden;
+    position: relative; min-height: 100svh; display: flex; flex-direction: column;
+    justify-content: center; padding: calc(var(--nav-h) + 28px) 0 72px; overflow: hidden;
   }
-  .hero-media { display: none; }
-  .hero-portrait {
-    width: min(420px, 86vw);
-    margin: 0 auto 28px;
-    border: 1px solid var(--line);
-    background: #fffdf8;
-    padding: 8px;
+  .hero-media { position: absolute; inset: 0; z-index: 0; }
+  .hero-media video { width: 100%; height: 100%; object-fit: cover; opacity: .38; }
+  html:not(.dark) .hero-media video { opacity: .22; }
+  .hero-media::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--void) 40%, transparent) 0%, color-mix(in srgb, var(--void) 55%, transparent) 45%, var(--void) 100%);
   }
-  .hero-portrait img {
-    width: 100%;
-    height: min(52vh, 520px);
-    object-fit: cover;
-    object-position: center 16%;
-    display: block;
-  }
-  .hero-film {
-    width: min(420px, 86vw);
-    margin: 22px auto 0;
-    border: 1px solid var(--line);
-    background: #111;
-  }
-  .hero-film video { width: 100%; height: auto; display: block; max-height: 220px; object-fit: cover; }
   .hero-content { position: relative; z-index: 2; text-align: center; }
   .watermark {
     position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
@@ -524,11 +509,15 @@
 </div>
 
 <section class="hero">
+  <div class="hero-media">
+    <video autoplay="" class="w-full h-full object-cover" id="heroVideo" loop="" muted="" playsinline="" src="https://res.cloudinary.com/dcbarseus/video/upload/v1785163141/SnapInsta.to_AQPq6HfkibVdXLzQAZ9YFPUNNpiTPONbEPErrZvTgNdaHeOBljXGmmzos4_PdC4aALtGggZI5NWuglZPWgTqCajhvtX20DOasv9TBi0_uuuapk.mp4"></video>
+  </div>
   <div class="watermark" aria-hidden="true">ĀKĀŚA</div>
+  <button aria-label="Ativar som do vídeo" class="sound-fab premium-blur icon-btn" id="videoSoundToggle" onclick="toggleVideoSound()">
+    <svg class="w-4 h-4" fill="none" id="soundIconOn" stroke="currentColor" style="display:none" width="16" height="16" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
+    <svg class="w-4 h-4" fill="none" id="soundIconOff" stroke="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path><path d="M23 9l-6 6M17 9l6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path></svg>
+  </button>
   <div class="wrap hero-content">
-    <figure class="hero-portrait">
-      <img src="/img/lua-home-salon.jpg" alt="Lua"/>
-    </figure>
     <button class="freq-btn" id="audioToggle" onclick="toggleAudio()" type="button">
       <span class="dot"><span class="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span></span>
       <span id="audioLabel">Frequência · 999Hz Limpeza</span>
@@ -536,15 +525,19 @@
     <audio hidden="" id="freqAudio" loop="" preload="none"></audio>
     <p class="eyebrow label-luxury">ākāśa · sânscrito · éter · registro · origem</p>
     <h1 class="reveal">Você não está perdido.<br/><span class="text-shimmer text-glow italic font-luxury">Foi programado para não saber que é livre.</span></h1>
-    <p class="lede reveal">A Akasha Hub é o portal de um ecossistema. Não é um curso. Não é um feed. É o lugar onde origem, consciência, identidade e negócio se encontram.</p>
+    <p class="lede reveal">A Akasha Hub é o portal de um ecossistema. Não é um curso. Não é um feed. É o lugar onde origem, consciência, identidade e negócio se encontram — para quem está pronto para construir o que fica.</p>
     <div class="hero-ctas reveal">
-      <a class="btn-gold btn-premium gold-glow" href="https://akashahub.com.br/alinhamentofinanceiro/">ALINHAMENTO FINANCEIRO</a>
-      <a class="btn-ghost" href="https://akashahub.com.br/leituracall">APLICAR PARA UMA CONVERSA</a>
+      <a class="btn-gold btn-premium gold-glow" href="https://akashahub.com.br/leituracall">APLICAR PARA UMA CONVERSA</a>
+      <button class="btn-ghost" onclick="openModal()" type="button">CONHECER O CRIADOR</button>
     </div>
-    <div class="hero-film reveal">
-      <video controls playsinline preload="metadata" poster="/img/lua-home-salon.jpg" src="https://res.cloudinary.com/dcbarseus/video/upload/v1785163141/SnapInsta.to_AQPq6HfkibVdXLzQAZ9YFPUNNpiTPONbEPErrZvTgNdaHeOBljXGmmzos4_PdC4aALtGggZI5NWuglZPWgTqCajhvtX20DOasv9TBi0_uuuapk.mp4"></video>
-    </div>
+    <a class="legacy-badge-link hero-banner inline-block reveal max-w-xl mx-auto" href="https://akashahub.com.br/legado" target="_blank">
+      <img alt="Legado" class="mx-auto rounded-sm" src="https://res.cloudinary.com/dcbarseus/image/upload/v1785625979/b10307b4-ef56-4307-9ad0-92702aa4c910_xaackw.png"/>
+    </a>
     <p class="reveal" style="margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase">> abrir registro<span class="blink">_</span></p>
+  </div>
+  <div class="explore-hint">
+    <span>Explorar</span>
+    <i></i>
   </div>
 </section>
 
@@ -822,7 +815,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2">
       <div class="p-10 lg:p-16 border-b lg:border-b-0 lg:border-r border-outline-variant/20">
         <div class="w-32 h-32 rounded-full overflow-hidden border-2 border-primary/30 mb-8 mx-auto lg:mx-0">
-          <img alt="Lua" class="w-full h-full object-cover" src="/img/lua-home-salon.jpg"/>
+          <img alt="Yan Filipe Simon" class="w-full h-full object-cover" src="https://res.cloudinary.com/dcbarseus/image/upload/v1784250691/d2a5e805-6f3e-4938-9ed8-7cc91862a4bf_cuejin.png"/>
         </div>
         <h2 class="font-headline-md text-on-surface text-3xl mb-2">Yan Filipe Simon</h2>
         <div class="font-label-caps text-primary text-[10px] tracking-widest mb-8 uppercase">Fundador · Akasha Hub</div>
@@ -846,7 +839,7 @@
     <div class="p-8 border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-center gap-6">
       <div class="flex items-center gap-6">
         <div class="w-12 h-12 rounded-full overflow-hidden border border-primary/20">
-          <img alt="Lua" class="w-full h-full object-cover" src="/img/lua-home-library.jpg"/>
+          <img alt="Yan Profile" class="w-full h-full object-cover" src="https://res.cloudinary.com/dcbarseus/image/upload/v1784250996/IMG_20251020_014152_574_nobtvn.webp"/>
         </div>
         <div class="text-left">
           <h4 class="font-headline-md text-sm text-on-surface">Livros do Akasha Hub</h4>
