@@ -1,0 +1,67 @@
+COLE NO FIREBASE → Firestore → Rules
+=====================================
+NÃO apague as regras da AF.
+ADICIONE este bloco no final do match /databases/{database}/documents { ... }
+
+    function isLegadoCeo() {
+      return request.auth != null && (
+        request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2"
+        || request.auth.token.email in [
+          "yanfili.simon@gmail.com",
+          "plmacramo@gmail.com",
+          "sendatantrica@gmail.com",
+          "opatricksimon@gmail.com"
+        ]
+      );
+    }
+
+    match /legado_users/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isLegadoCeo());
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow update: if request.auth != null && (
+        request.auth.uid == uid
+        || isLegadoCeo()
+      );
+      allow delete: if false;
+    }
+
+    match /legado_access/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isLegadoCeo());
+      allow create, update: if isLegadoCeo();
+      allow delete: if false;
+    }
+
+    match /legado_profiles/{uid} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && request.auth.uid == uid;
+      allow delete: if isLegadoCeo();
+    }
+
+    match /legado_points/{id} {
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid || isLegadoCeo()
+      );
+      allow create: if request.auth != null && (
+        request.resource.data.userId == request.auth.uid || isLegadoCeo()
+      );
+      allow update, delete: if isLegadoCeo();
+    }
+
+    match /legado_logs/{id} {
+      allow read: if isLegadoCeo();
+      allow create: if request.auth != null;
+      allow update, delete: if false;
+    }
+
+    match /legado_events/{id} {
+      allow read: if request.auth != null;
+      allow write: if isLegadoCeo();
+    }
+
+    match /legado_invites/{email} {
+      allow read: if request.auth != null && (
+        request.auth.token.email == email || isLegadoCeo()
+      );
+      allow create, update: if isLegadoCeo();
+      allow delete: if false;
+    }
