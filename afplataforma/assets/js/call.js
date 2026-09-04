@@ -24,7 +24,9 @@ import {
   roomOfSession,
   setSessionRoom
 } from "./presence.js";
-import { allowedRoomIds, roomName, DEFAULT_ROOMS, canEnterRoom, accessOfSession } from "./plans.js";
+import { allowedRoomIds, roomName, canEnterRoom, accessOfSession } from "./plans.js";
+import { LIVEKIT_TOKEN_URL, LIVEKIT_WS_URL } from "../../firebase/firebase-config.js";
+import { Room, RoomEvent, Track, VideoPresets } from "https://esm.sh/livekit-client@2.15.4";
 
 const ICE = {
   iceServers: [
@@ -45,6 +47,8 @@ let unsubPeers = null;
 let unsubSignals = null;
 let inCall = false;
 const peers = new Map();
+let lkRoom = null;
+let usingLivekit = false;
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -129,6 +133,138 @@ export function isCallActive() {
   return inCall;
 }
 
+function liveRoomName() {
+  return String(roomOfSession() || "mentoria-principal").replace(/[^a-zA-Z0-9_\-.]/g, "-").slice(0, 80);
+}
+
+async function mintLivekitToken() {
+  if (!LIVEKIT_TOKEN_URL) throw new Error("sem worker");
+  const res = await fetch(LIVEKIT_TOKEN_URL, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      identity: session.uid,
+      room: liveRoomName(),
+      name: session.name || "Participante",
+      mentor: isMentorSession()
+    })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.token) throw new Error(data.error || "token");
+  return { token: data.token, url: data.url || LIVEKIT_WS_URL };
+}
+
+function bindLivekitEvents(room) {
+  room.on(RoomEvent.TrackSubscribed, (track, _pub, participant) => {
+    if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
+      const el = attachRemote(participant.identity, null, participant.name || participant.identity);
+      track.attach(el);
+    }
+  });
+  room.on(RoomEvent.TrackUnsubscribed, (track, _pub, participant) => {
+    track.detach();
+    const tile = document.getElementById("tile-" + participant.identity);
+    if (tile && !participant.videoTrackPublications.size) tile.querySelector("video")?.removeAttribute("src");
+  });
+  room.on(RoomEvent.ParticipantDisconnected, (p) => {
+    document.getElementById("tile-" + p.identity)?.remove();
+    layoutGrid();
+  });
+  room.on(RoomEvent.Reconnecting, () => toast("Reconectando a call..."));
+  room.on(RoomEvent.Reconnected, () => toast("Call reconectada"));
+  room.on(RoomEvent.Disconnected, () => {
+    if (inCall && usingLivekit) toast("Sinal da call caiu. Entre de novo.", true);
+  });
+  room.on(RoomEvent.LocalTrackPublished, () => attachLocalFromLivekit());
+}
+
+function attachLocalFromLivekit() {
+  ensureLocalTile();
+  const v = document.getElementById("localVideo");
+  const cam = lkRoom?.localParticipant?.getTrackPublication(Track.Source.Camera);
+  if (v && cam?.track) {
+    cam.track.attach(v);
+    v.muted = true;
+    const ph = document.getElementById("localPh");
+    if (ph) ph.style.display = "none";
+  }
+}
+
+function attachRemote(uid, stream, label) {
+  const st = stage();
+  if (!st) return document.createElement("video");
+  const id = "tile-" + uid;
+  let tile = document.getElementById(id);
+  if (!tile) {
+    tile = document.createElement("article");
+    tile.id = id;
+    tile.className = "v-tile";
+    tile.innerHTML = `<span class="v-label">${esc(label || uid)}</span>`;
+    st.appendChild(tile);
+  }
+  let v = tile.querySelector("video");
+  if (!v) {
+    v = document.createElement("video");
+    v.autoplay = true;
+    v.playsInline = true;
+    tile.appendChild(v);
+  }
+  if (stream && v.srcObject !== stream) v.srcObject = stream;
+  v.muted = false;
+  v.play?.().catch(() => {});
+  layoutGrid();
+  return v;
+}
+
+async function connectLivekit() {
+  const minted = await mintLivekitToken();
+  if (lkRoom) {
+    try { await lkRoom.disconnect(); } catch (e) {}
+  }
+  lkRoom = new Room({
+    adaptiveStream: true,
+    dynacast: true,
+    disconnectOnPageLeave: false,
+    publishDefaults: {
+      simulcast: true,
+      videoEncoding: { maxBitrate: 900000, maxFramerate: 24 },
+      screenShareEncoding: { maxBitrate: 1200000, maxFramerate: 15 },
+      dtx: true,
+      red: true
+    },
+    videoCaptureDefaults: {
+      resolution: VideoPresets.h720.resolution,
+      facingMode: "user"
+    },
+    audioCaptureDefaults: {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true
+    }
+  });
+  bindLivekitEvents(lkRoom);
+  await lkRoom.connect(minted.url || LIVEKIT_WS_URL, minted.token, { autoSubscribe: true });
+  await lkRoom.localParticipant.setMicrophoneEnabled(micOn);
+  await lkRoom.localParticipant.setCameraEnabled(camOn);
+  usingLivekit = true;
+  attachLocalFromLivekit();
+  lkRoom.remoteParticipants.forEach((p) => {
+    p.trackPublications.forEach((pub) => {
+      if (pub.track) {
+        const el = attachRemote(p.identity, null, p.name || p.identity);
+        pub.track.attach(el);
+      }
+    });
+  });
+}
+
+async function disconnectLivekit() {
+  if (!lkRoom) return;
+  try { await lkRoom.disconnect(); } catch (e) {}
+  lkRoom = null;
+  usingLivekit = false;
+}
+
 function dock() {
   return document.getElementById("callDock");
 }
@@ -158,31 +294,6 @@ function attachLocal() {
     const ph = document.getElementById("localPh");
     if (ph) ph.style.display = "none";
   }
-}
-
-function attachRemote(uid, stream, label) {
-  const st = stage();
-  if (!st) return;
-  const id = "tile-" + uid;
-  let tile = document.getElementById(id);
-  if (!tile) {
-    tile = document.createElement("article");
-    tile.id = id;
-    tile.className = "v-tile";
-    tile.innerHTML = `<span class="v-label">${esc(label || uid)}</span>`;
-    st.appendChild(tile);
-  }
-  let v = tile.querySelector("video");
-  if (!v) {
-    v = document.createElement("video");
-    v.autoplay = true;
-    v.playsInline = true;
-    tile.appendChild(v);
-  }
-  if (v.srcObject !== stream) v.srcObject = stream;
-  v.muted = false;
-  v.play?.().catch(() => {});
-  layoutGrid();
 }
 
 function layoutGrid() {
@@ -226,7 +337,7 @@ export function renderCallView() {
   return `<div class="view active">
     <p class="hero-line">Sala ao vivo</p>
     <h2 class="hero-title">Call da mentoria</h2>
-    <p class="hero-sub">Mesma call, várias salas. Sair da página não encerra — o vídeo flutua.</p>
+    <p class="hero-sub">Servidor LiveKit. Salvador com Japão, 6 pessoas, em movimento. Sair da página não encerra — o vídeo flutua.</p>
     <div class="call-shell">
       <aside class="call-roster">
         <p class="call-kicker">${esc(roomName(room))}</p>
@@ -337,12 +448,16 @@ async function switchRoom(id) {
   if (prev === next) return;
   if (inCall && session.mode === "firebase") {
     try { await leaveLiveRoom(prev, session.uid); } catch (e) {}
-    if (unsubPeers) { unsubPeers(); unsubPeers = null; }
-    if (unsubSignals) { unsubSignals(); unsubSignals = null; }
-    for (const [uid, state] of peers) {
-      try { state.pc.close(); } catch (e) {}
+    if (usingLivekit) {
+      await disconnectLivekit();
+    } else {
+      if (unsubPeers) { unsubPeers(); unsubPeers = null; }
+      if (unsubSignals) { unsubSignals(); unsubSignals = null; }
+      for (const [uid, state] of peers) {
+        try { state.pc.close(); } catch (e) {}
+      }
+      peers.clear();
     }
-    peers.clear();
     document.querySelectorAll("#callStage .v-tile:not(#tileSelf)").forEach((el) => el.remove());
   }
   setSessionRoom(next);
@@ -354,8 +469,13 @@ async function switchRoom(id) {
         name: session.name || "Participante",
         role: session.role || "mentee"
       });
-      unsubPeers = listenLivePeers(next, onPeers);
-      unsubSignals = listenLiveSignalsToMe(next, session.uid, onSignal);
+      try {
+        await connectLivekit();
+      } catch (lk) {
+        console.warn("livekit room", lk);
+        unsubPeers = listenLivePeers(next, onPeers);
+        unsubSignals = listenLiveSignalsToMe(next, session.uid, onSignal);
+      }
     } catch (e) {
       toast("Sala trocada. Sinal: " + (e.message || e), true);
     }
@@ -365,24 +485,15 @@ async function switchRoom(id) {
 }
 
 export async function joinCall() {
-  if (inCall && localStream) {
+  if (inCall && (localStream || usingLivekit)) {
     toast("Voce ja esta na call");
-    onCallNavigate(true);
+    onCallNavigate(!!document.getElementById("callStageHost"));
     return;
-  }
-  try {
-    localStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "user", width: { ideal: 960 }, height: { ideal: 720 } },
-      audio: { echoCancellation: true, noiseSuppression: true }
-    });
-  } catch (e) {
-    return toast("Autorize camera e microfone.", true);
   }
   inCall = true;
   const el = dock();
   el?.classList.remove("hidden");
   ensureLocalTile();
-  attachLocal();
   onCallNavigate(!!document.getElementById("callStageHost"));
   await setInCall(true);
 
@@ -393,6 +504,32 @@ export async function joinCall() {
         name: session.name || "Participante",
         role: session.role || "mentee"
       });
+    } catch (e) {
+      console.warn(e);
+    }
+    try {
+      await connectLivekit();
+      toast("Call no servidor. Pode estar em movimento.");
+      return;
+    } catch (lk) {
+      console.warn("livekit", lk);
+      toast("Servidor de mídia ainda não publicado. Usando conexão direta.", true);
+    }
+  }
+
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user", width: { ideal: 960 }, height: { ideal: 720 } },
+      audio: { echoCancellation: true, noiseSuppression: true }
+    });
+  } catch (e) {
+    inCall = false;
+    await setInCall(false);
+    return toast("Autorize camera e microfone.", true);
+  }
+  attachLocal();
+  if (session.mode === "firebase") {
+    try {
       if (unsubPeers) unsubPeers();
       unsubPeers = listenLivePeers(room, onPeers);
       if (unsubSignals) unsubSignals();
@@ -525,6 +662,7 @@ export async function leaveCall() {
   const room = roomOfSession();
   if (unsubPeers) { unsubPeers(); unsubPeers = null; }
   if (unsubSignals) { unsubSignals(); unsubSignals = null; }
+  await disconnectLivekit();
   for (const [uid, state] of peers) {
     try {
       await sendLiveSignal(room, { de: session.uid, para: uid, type: "bye" });
@@ -558,28 +696,41 @@ export function stopMedia() {
 
 export function forceStopMedia() {
   inCall = false;
+  disconnectLivekit();
   if (localStream) localStream.getTracks().forEach((t) => t.stop());
   localStream = null;
   sharing = false;
 }
 
-export function toggleMic() {
-  if (!localStream) return;
+export async function toggleMic() {
   micOn = !micOn;
-  localStream.getAudioTracks().forEach((t) => (t.enabled = micOn));
+  if (usingLivekit && lkRoom) {
+    try { await lkRoom.localParticipant.setMicrophoneEnabled(micOn); } catch (e) {}
+  } else if (localStream) {
+    localStream.getAudioTracks().forEach((t) => (t.enabled = micOn));
+  }
   document.getElementById("btnMic")?.classList.toggle("off", !micOn);
   document.getElementById("callDockMic")?.classList.toggle("off", !micOn);
 }
 
-export function toggleCam() {
-  if (!localStream) return;
+export async function toggleCam() {
   camOn = !camOn;
-  localStream.getVideoTracks().forEach((t) => (t.enabled = camOn));
+  if (usingLivekit && lkRoom) {
+    try { await lkRoom.localParticipant.setCameraEnabled(camOn); } catch (e) {}
+  } else if (localStream) {
+    localStream.getVideoTracks().forEach((t) => (t.enabled = camOn));
+  }
   document.getElementById("btnCam")?.classList.toggle("off", !camOn);
 }
 
 async function toggleShare() {
   try {
+    if (usingLivekit && lkRoom) {
+      sharing = !sharing;
+      await lkRoom.localParticipant.setScreenShareEnabled(sharing);
+      toast(sharing ? "Compartilhando tela" : "Tela encerrada");
+      return;
+    }
     if (sharing) {
       sharing = false;
       toast("Tela encerrada");
@@ -604,6 +755,7 @@ async function toggleShare() {
     };
     toast("Compartilhando tela");
   } catch (e) {
+    sharing = false;
     toast("Tela nao autorizada", true);
   }
 }
