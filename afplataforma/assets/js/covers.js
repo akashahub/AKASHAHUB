@@ -5,11 +5,11 @@
 import { isMentorSession } from "./auth.js";
 import { Store } from "./storage.js";
 
-const KEY = "covers";
+const KEY = "covers_v2";
 const LOJA_KEY = "loja_extra";
 
 export const COVER_SLOTS = [
-  { id: "dash", label: "Dashboard · head", fallback: "assets/img/lua/dashboard/lua-dashboard-01.webp" },
+  { id: "dash", label: "Dashboard · head", fallback: "assets/img/lua/hero/lua-banner-dash.webp" },
   { id: "modules", label: "Módulos · head", fallback: "assets/img/capas/modules.jpg" },
   { id: "module01", label: "Camada 1 · Fundação", fallback: "assets/img/capas/module01.jpg" },
   { id: "module02", label: "Camada 2 · Criativo", fallback: "assets/img/capas/module02.jpg" },
@@ -18,19 +18,19 @@ export const COVER_SLOTS = [
   { id: "module05", label: "Camada 5 · Comunicação", fallback: "assets/img/capas/module05.jpg" },
   { id: "module06", label: "Camada 6 · Visão", fallback: "assets/img/capas/module06.jpg" },
   { id: "module07", label: "Camada 7 · Governança", fallback: "assets/img/capas/module07.jpg" },
-  { id: "tools", label: "Ferramentas · head", fallback: "assets/img/capas/tools.jpg" },
-  { id: "tool-cashflow", label: "Auditoria de Cash-Flow", fallback: "assets/img/capas/cashflow.jpg" },
-  { id: "tool-ideation", label: "Ideação / Insights", fallback: "assets/img/capas/ideation.jpg" },
-  { id: "tool-execution", label: "Execução semanal", fallback: "assets/img/capas/execution.jpg" },
-  { id: "tool-network", label: "Mapa de rede", fallback: "assets/img/capas/network.jpg" },
-  { id: "tool-pitch", label: "Pitch 60s", fallback: "assets/img/capas/pitch.jpg" },
-  { id: "tool-fono", label: "Fono · Dicção", fallback: "assets/img/capas/fono.jpg" },
-  { id: "tool-vision", label: "Visão 1 página", fallback: "assets/img/capas/vision.jpg" },
-  { id: "tool-legacy", label: "Declaração de legado", fallback: "assets/img/capas/legacy.jpg" },
+  { id: "tools", label: "Ferramentas · head", fallback: "assets/img/lua/hero/lua-banner-tools.webp" },
+  { id: "tool-cashflow", label: "Auditoria de Cash-Flow", fallback: "assets/img/lua/rosto/lua-face-01.webp" },
+  { id: "tool-ideation", label: "Ideação / Insights", fallback: "assets/img/lua/rosto/lua-face-02.webp" },
+  { id: "tool-execution", label: "Execução semanal", fallback: "assets/img/lua/rosto/lua-face-03.webp" },
+  { id: "tool-network", label: "Mapa de rede", fallback: "assets/img/lua/rosto/lua-face-04.webp" },
+  { id: "tool-pitch", label: "Pitch 60s", fallback: "assets/img/lua/rosto/lua-face-05.webp" },
+  { id: "tool-fono", label: "Fono · Dicção", fallback: "assets/img/lua/rosto/lua-face-06.webp" },
+  { id: "tool-vision", label: "Visão 1 página", fallback: "assets/img/lua/rosto/lua-face-02.webp" },
+  { id: "tool-legacy", label: "Declaração de legado", fallback: "assets/img/lua/rosto/lua-face-01.webp" },
   { id: "call", label: "Call · head", fallback: "assets/img/lua/atencao/lua-atencao-01.webp" },
   { id: "profile", label: "Perfil · head", fallback: "assets/img/lua/perfil/lua-perfil-01.webp" },
-  { id: "complementar", label: "Complementar · head", fallback: "assets/img/capas/complementar.jpg" },
-  { id: "quitei", label: "Quitei · head", fallback: "assets/img/capas/cashflow.jpg" },
+  { id: "complementar", label: "Complementar · head", fallback: "assets/img/lua/hero/lua-banner-comp.webp" },
+  { id: "quitei", label: "Quitei · head", fallback: "assets/img/lua/hero/lua-banner-quitei.webp" },
   { id: "alimentacao", label: "Alimentação · head", fallback: "assets/img/capas/alimentacao.jpg" },
   { id: "ali-01", label: "Alimentação 01 · Estabilidade", fallback: "assets/img/capas/ali-01.jpg" },
   { id: "ali-02", label: "Alimentação 02 · Variedade", fallback: "assets/img/capas/ali-02.jpg" },
