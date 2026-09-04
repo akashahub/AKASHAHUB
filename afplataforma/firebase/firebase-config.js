@@ -26,7 +26,8 @@ export const MENTOR_UID = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
 export const MENTOR_EMAILS = [
   "yanfili.simon@gmail.com",
   "plmacramo@gmail.com",
-  "sendatantrica@gmail.com"
+  "sendatantrica@gmail.com",
+  "opatricksimon@gmail.com"
 ];
 
 export function isMentorIdentity(uid, email) {
