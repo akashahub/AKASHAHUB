@@ -9,7 +9,7 @@ const KEY = "covers";
 const LOJA_KEY = "loja_extra";
 
 export const COVER_SLOTS = [
-  { id: "dash", label: "Dashboard · head", fallback: "assets/img/auth/dashboard-bg.jpg" },
+  { id: "dash", label: "Dashboard · head", fallback: "assets/img/lua/dashboard/lua-dashboard-01.webp" },
   { id: "modules", label: "Módulos · head", fallback: "assets/img/capas/modules.jpg" },
   { id: "module01", label: "Camada 1 · Fundação", fallback: "assets/img/capas/module01.jpg" },
   { id: "module02", label: "Camada 2 · Criativo", fallback: "assets/img/capas/module02.jpg" },
@@ -27,8 +27,8 @@ export const COVER_SLOTS = [
   { id: "tool-fono", label: "Fono · Dicção", fallback: "assets/img/capas/fono.jpg" },
   { id: "tool-vision", label: "Visão 1 página", fallback: "assets/img/capas/vision.jpg" },
   { id: "tool-legacy", label: "Declaração de legado", fallback: "assets/img/capas/legacy.jpg" },
-  { id: "call", label: "Call · head", fallback: "assets/img/capas/call.jpg" },
-  { id: "profile", label: "Perfil · head", fallback: "assets/img/capas/profile.jpg" },
+  { id: "call", label: "Call · head", fallback: "assets/img/lua/atencao/lua-atencao-01.webp" },
+  { id: "profile", label: "Perfil · head", fallback: "assets/img/lua/perfil/lua-perfil-01.webp" },
   { id: "complementar", label: "Complementar · head", fallback: "assets/img/capas/complementar.jpg" },
   { id: "quitei", label: "Quitei · head", fallback: "assets/img/capas/cashflow.jpg" },
   { id: "alimentacao", label: "Alimentação · head", fallback: "assets/img/capas/alimentacao.jpg" },
