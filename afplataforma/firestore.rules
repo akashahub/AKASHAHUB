@@ -1,0 +1,260 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAfMentor() {
+      return request.auth != null && (
+        request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2"
+        || request.auth.token.email in [
+          "yanfili.simon@gmail.com",
+          "plmacramo@gmail.com",
+          "sendatantrica@gmail.com",
+          "opatricksimon@gmail.com"
+        ]
+      );
+    }
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function hasAfAccess(uid) {
+      return request.auth != null
+        && request.auth.uid == uid
+        && exists(/databases/$(database)/documents/afAccess/$(uid))
+        && get(/databases/$(database)/documents/afAccess/$(uid)).data.approved == true
+        && get(/databases/$(database)/documents/afAccess/$(uid)).data.active == true;
+    }
+
+    match /users/{uid} {
+      allow read, write: if request.auth.uid == uid;
+      allow read: if isAfMentor();
+    }
+    match /posts/{postId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+    }
+    match /blog_posts/{post} {
+      allow read: if true;
+      allow write: if request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+    }
+    match /posts_alinhamento_financeiro/{postId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+      match /comentarios/{commentId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null
+          && request.resource.data.autorUid == request.auth.uid;
+        allow delete: if request.auth != null
+          && (request.auth.uid == resource.data.autorUid
+              || request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2");
+      }
+    }
+    match /posts_tecnologia_da_alma/{postId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+      match /comentarios/{commentId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null
+          && request.resource.data.autorUid == request.auth.uid;
+        allow delete: if request.auth != null
+          && (request.auth.uid == resource.data.autorUid
+              || request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2");
+      }
+    }
+    match /posts_arquitetura_de_essencia/{postId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+      match /comentarios/{commentId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null
+          && request.resource.data.autorUid == request.auth.uid;
+        allow delete: if request.auth != null
+          && (request.auth.uid == resource.data.autorUid
+              || request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2");
+      }
+    }
+    match /mentoria_respostas/{uid}/dados/{doc} {
+      allow read, write: if request.auth.uid == uid;
+      allow read: if isAfMentor();
+    }
+    match /leituras/{uid} {
+      allow read, write: if request.auth.uid == uid;
+      allow read: if isAfMentor();
+    }
+    match /mentorias/{uid}/{rest=**} {
+      allow read, write: if request.auth.uid == uid;
+      allow read: if isAfMentor();
+    }
+    match /apostilas/{uid}/respostas/{doc} {
+      allow read, write: if request.auth.uid == uid;
+      allow read: if isAfMentor();
+    }
+    match /calls/{roomId} {
+      allow read, write: if true;
+      match /callerCandidates/{c} { allow read, write: if true; }
+      match /calleeCandidates/{c} { allow read, write: if true; }
+    }
+    match /presence/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == uid;
+    }
+    match /rooms/global/messages/{msgId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.text is string
+                    && request.resource.data.text.size() <= 1000;
+      allow delete: if isAfMentor();
+    }
+    match /rooms/topics/{roomId}/messages/{msgId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.text is string
+                    && request.resource.data.text.size() <= 1000;
+      allow delete: if isAfMentor();
+    }
+    match /rooms/topics/{roomId}/users/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == uid;
+    }
+    match /matchQueue/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == uid;
+    }
+    match /privateRooms/{roomId} {
+      allow read, write: if request.auth != null
+                         && roomId.matches('.*' + request.auth.uid + '.*');
+      match /messages/{msgId} {
+        allow read: if request.auth != null
+                    && roomId.matches('.*' + request.auth.uid + '.*');
+        allow create: if request.auth != null
+                      && roomId.matches('.*' + request.auth.uid + '.*')
+                      && request.resource.data.uid == request.auth.uid
+                      && request.resource.data.text.size() <= 1000;
+      }
+    }
+    match /salas_live/{salaId}/participantes/{peerId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if request.auth.uid == peerId;
+    }
+    match /salas_live/{salaId}/sinais/{sinalId} {
+      allow read: if request.auth != null
+                  && (request.auth.uid == resource.data.para
+                      || request.auth.uid == resource.data.de);
+      allow create: if request.auth != null
+                    && request.resource.data.de == request.auth.uid;
+      allow delete: if request.auth != null
+                    && (request.auth.uid == resource.data.para
+                        || request.auth.uid == resource.data.de);
+    }
+    match /afAccess/{uid} {
+      allow read: if isSignedIn()
+        && (
+          request.auth.uid == uid
+          || isAfMentor()
+        );
+      allow create, update: if isAfMentor();
+      allow delete: if false;
+    }
+    match /afAccessRequests/{uid} {
+      allow read: if isSignedIn()
+        && (
+          request.auth.uid == uid
+          || isAfMentor()
+        );
+      allow create: if isSignedIn()
+        && request.auth.uid == uid
+        && request.resource.data.status == "pending"
+        && request.resource.data.uid == request.auth.uid;
+      allow update: if isSignedIn()
+        && request.auth.uid == uid
+        && resource.data.status != "blocked"
+        && request.resource.data.status == resource.data.status;
+      allow create, update: if isAfMentor();
+      allow delete: if false;
+    }
+    match /afTools/{uid}/{document=**} {
+      allow read, write: if hasAfAccess(uid);
+      allow read, write: if isAfMentor();
+    }
+    match /afMenteeNotes/{uid}/{document=**} {
+      allow read, write: if hasAfAccess(uid);
+      allow read: if isAfMentor();
+    }
+    match /afMentorNotes/{document=**} {
+      allow read, write: if isAfMentor();
+    }
+    match /afMentorScripts/{document=**} {
+      allow read, write: if isAfMentor();
+    }
+    match /afCalls/{callId} {
+      allow read: if isSignedIn()
+        && (
+          isAfMentor()
+          || resource.data.mentorId == request.auth.uid
+          || resource.data.menteeId == request.auth.uid
+        );
+      allow create: if isAfMentor();
+      allow update, delete: if isAfMentor();
+      match /signals/{signalId} {
+        function isCallParticipant() {
+          let call = get(
+            /databases/$(database)/documents/afCalls/$(callId)
+          );
+          return request.auth != null
+            && (
+              isAfMentor()
+              || call.data.mentorId == request.auth.uid
+              || call.data.menteeId == request.auth.uid
+            );
+        }
+        allow read, create, delete: if isCallParticipant();
+        allow update: if false;
+      }
+      match /participants/{uid} {
+        function isCallParticipant() {
+          let call = get(
+            /databases/$(database)/documents/afCalls/$(callId)
+          );
+          return request.auth != null
+            && (
+              isAfMentor()
+              || call.data.mentorId == request.auth.uid
+              || call.data.menteeId == request.auth.uid
+            );
+        }
+        allow read: if isCallParticipant();
+        allow create, update, delete: if isCallParticipant()
+          && request.auth.uid == uid;
+      }
+    }
+    match /afPresence/{uid} {
+      allow read: if isSignedIn()
+        && (
+          isAfMentor()
+          || hasAfAccess(request.auth.uid)
+        );
+      allow create, update: if isSignedIn()
+        && request.auth.uid == uid
+        && (
+          isAfMentor()
+          || hasAfAccess(request.auth.uid)
+        );
+      allow delete: if isSignedIn()
+        && (
+          request.auth.uid == uid
+          || isAfMentor()
+        );
+    }
+    match /afRooms/{roomId} {
+      allow read: if isSignedIn()
+        && (
+          isAfMentor()
+          || hasAfAccess(request.auth.uid)
+        );
+      allow create, update, delete: if isAfMentor();
+    }
+  }
+}
