@@ -144,7 +144,7 @@ export function pageHead(id, line, title, sub) {
     : "";
   return `<div class="page-head">
     <div class="page-head-img" data-cover="${escAttr(id)}">
-      <img src="${escAttr(src)}" alt="">
+      <img src="${escAttr(src)}" alt="" decoding="async" fetchpriority="high">
       ${edit}
     </div>
     <p class="hero-line">${line}</p>
@@ -160,7 +160,7 @@ export function editImg(id, alt, cls) {
     ? `<button type="button" class="cover-pen cover-pen-sm" data-cover="${escAttr(id)}">Trocar</button>`
     : "";
   return `<div class="img-slot ${cls || ""}" data-cover="${escAttr(id)}">
-    <img src="${escAttr(src)}" alt="${escAttr(alt)}">
+    <img src="${escAttr(src)}" alt="${escAttr(alt)}" loading="lazy" decoding="async">
     ${pen}
   </div>`;
 }
