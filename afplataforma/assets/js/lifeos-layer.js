@@ -404,11 +404,20 @@ export function viewSono() {
 }
 
 window.afOpenSleep = () => {
-  document.getElementById("sleepOverlay")?.classList.add("open");
+  const o = document.getElementById("sleepOverlay");
+  if (!o) return;
+  const bar = document.getElementById("sleepFreqs");
+  if (bar && !bar.childElementCount) {
+    bar.innerHTML = FREQS.map(
+      (f, i) =>
+        `<button class="freq-btn" type="button" data-act="afPlayFreq" data-hz="${f.hz}" data-name="${esc(f.name)}">${String(i + 1).padStart(2, "0")}<small>${f.hz} Hz</small></button>`
+    ).join("");
+  }
+  o.classList.add("open");
   sleepBal = 0;
   const list = document.getElementById("sleepTx");
   if (list) list.innerHTML = "";
-  renderSleepTx("Início da sessão", 0);
+  renderSleepTx("Inicio da sessao", 0);
   startSleepLoop();
   const first = document.querySelector("#sleepOverlay .freq-btn[data-hz='396']");
   if (first) window.afPlayFreq(first);
@@ -457,13 +466,16 @@ function stopFreq() {
 function startSleepLoop() {
   clearInterval(sleepTimer);
   const curs = ["R$", "€", "US$"];
-  sleepTimer = setInterval(() => {
+  const tick = () => {
     const cur = curs[Math.floor(Math.random() * 3)];
     const v = Math.round(80 + Math.random() * 920);
     sleepBal += v;
     renderSleepTx(cur + " " + v.toLocaleString("pt-BR") + " creditado", v);
-    spawnCoin();
-  }, 2800);
+    spawnCoin(cur, v);
+    spawnCoin(cur, v);
+  };
+  tick();
+  sleepTimer = setInterval(tick, 2200);
 }
 function renderSleepTx(text, v) {
   const bal = document.getElementById("sleepBal");
@@ -476,15 +488,17 @@ function renderSleepTx(text, v) {
   list.prepend(row);
   while (list.children.length > 8) list.removeChild(list.lastChild);
 }
-function spawnCoin() {
+function spawnCoin(cur, v) {
   const o = document.getElementById("sleepOverlay");
   if (!o) return;
   const c = document.createElement("div");
   c.className = "sleep-coin";
-  c.textContent = "R$";
-  c.style.left = 8 + Math.random() * 84 + "%";
+  c.textContent = (cur || "R$") + " " + Number(v || 0).toLocaleString("pt-BR");
+  c.style.left = 6 + Math.random() * 82 + "%";
+  c.style.bottom = 10 + Math.random() * 18 + "%";
+  c.style.animationDuration = 1.8 + Math.random() * 1.2 + "s";
   o.appendChild(c);
-  setTimeout(() => c.remove(), 1800);
+  setTimeout(() => c.remove(), 2800);
 }
 
 function back() {
