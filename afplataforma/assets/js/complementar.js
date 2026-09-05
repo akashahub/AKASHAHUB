@@ -274,7 +274,7 @@ function viewDicionario() {
 
 function viewLivros() {
   return `<div class="view active">${back()}
-    ${pageHead("livros", "Bônus de membro", "Livros dos 7 vetores", "Leitura integral na plataforma. PDF também pode ser pedido no WhatsApp.")}
+    ${pageHead("livros", "Bônus de membro", "Livros dos 7 vetores", "Edição oficial atual. Leitura na plataforma. Última página: marca do autor + ação de 7 dias.")}
     <div class="mat-grid">${LIVROS.map(
       (l) => `<div class="mat-card"><h4>${esc(l.name)}</h4><p>${esc(l.vetor)}</p>
       ${materialButton(l.name, l.pdf)}
