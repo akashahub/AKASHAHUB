@@ -97,6 +97,10 @@ function injectCss() {
 .af-plan-card p{font-size:12px;color:var(--muted);margin:4px 0}
 .af-pill-plan{border-color:rgba(201,162,39,.45);color:#8B6914;background:rgba(201,162,39,.1)}
 .af-mod-row select{max-width:140px;padding:6px;border:1px solid var(--line);border-radius:4px}
+.af-price-box{border:1px solid var(--line);background:#fff;padding:14px 16px;border-radius:6px;margin:0 0 22px}
+.af-price-box p{font-size:13px;line-height:1.55;margin:0 0 8px;color:#1a1714}
+.af-price-box ul{margin:0 0 10px 18px;font-size:13px;color:#1a1714}
+.af-price-box li{margin:3px 0}
 @media(max-width:820px){.af-plan-map{grid-template-columns:1fr}}`;
   document.head.appendChild(s);
 }
@@ -145,6 +149,22 @@ export function renderAccessAdminPanel() {
     <h3 class="section-h" style="margin-top:8px">Mapa dos planos</h3>
     <p class="hero-sub">Padrão de cada chave. No card da pessoa você sobrescreve sem mudar o plano inteiro.</p>
     <div class="af-plan-map">${map}</div>
+    <h3 class="section-h">Precificação (memória do mentor)</h3>
+    <p class="hero-sub">Números para não esquecer. Mentorando não vê esta área.</p>
+    <div class="af-price-box">
+      <p><strong>Porta pública.</strong> Sessão de Alinhamento / Ascensão: <b>R$ 350</b> · 1h30 · 1:1 · gravada · dossiê. Fecha no WhatsApp +55 71 98344-8621.</p>
+      <p><strong>Bibliotheca.</strong> Pasta dos livros: <b>R$ 97</b>. Não é mentoria.</p>
+      <p><strong>Desafio 7 dias Magnetismo.</strong> <b>R$ 882</b> · Hotmart W102015202.</p>
+      <p><strong>Flow.</strong> 12 mulheres por ano. Preço não vai na vitrine. Sessão antiga de 3 por R$ 700 está encerrada.</p>
+      <p><strong>Mentoria AF.</strong> 7 módulos iguais nos 3 planos. Valor apresentado na sessão, um a um. Landing não imprime ticket.</p>
+      <ul>
+        <li>Essencial · 8 semanas · turma · complementar leve</li>
+        <li>Premium · 10 a 12 semanas · grupo menor · corpo, livros, áudio, encontros</li>
+        <li>VIP · sob medida · 1:1 · tudo aberto</li>
+      </ul>
+      <p><strong>Meta 39k / mês (conta interna, não é preço oficial).</strong> Porta 350 não fecha a meta sozinha. Exemplos de combinação: 3 VIP a 13 mil, ou 2 VIP a 13 mil + 2 Premium a 6,5 mil, ou 1 VIP + mix de Premium e sessões. Cravar o ticket na sessão, não no Instagram.</p>
+      <p><a class="tool-btn" href="interno/precificacao-af.pdf" target="_blank" rel="noopener">Abrir PDF de precificação</a></p>
+    </div>
     <h3 class="section-h">Gestão de acessos AF</h3>
     <p class="hero-sub">Quem tenta entrar aparece aqui sozinho. Você libera, escolhe o plano, pausa ou bloqueia.</p>
     <div class="af-search-row">
