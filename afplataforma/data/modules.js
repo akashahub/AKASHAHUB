@@ -8,6 +8,8 @@ export const MODULES = [
     num: "01",
     title: "Fundação de Capital de Segurança",
     subtitle: "Eliminar escassez cognitiva · reserva e cash-flow",
+    archetype: "Guardião da Base",
+    chakra: "Muladhara · Raiz",
     materials: [
       { id: "m1a", title: "Protocolo de Execução", body: "Rotina de auditoria, ancoragem de estado e automatização de reserva (10–20% da receita líquida).", pdf: "assets/materials/01-protocolo-execucao.pdf" },
       { id: "m1b", title: "Checklist de Accountability", body: "Lista de verificação diária/semanal para manter a base financeira ativa.", pdf: "assets/materials/02-checklist-accountability.pdf" },
@@ -20,6 +22,8 @@ export const MODULES = [
     num: "02",
     title: "Capital Criativo e Inovação Lucrativa",
     subtitle: "Ideação forçada · validação · empacotamento",
+    archetype: "Criador",
+    chakra: "Svadhisthana · Sacral",
     materials: [
       { id: "m2a", title: "Protocolo de Validação de Ideias", body: "Teste rápido com 3 potenciais clientes antes de construir.", pdf: "assets/materials/04-protocolo-validacao.pdf" },
       { id: "m2b", title: "Cronograma de Ideação Forçada", body: "Bloco semanal de 45 minutos com restrição e método.", pdf: "assets/materials/05-cronograma-ideacao.pdf" },
@@ -32,6 +36,8 @@ export const MODULES = [
     num: "03",
     title: "Motor de Execução e Determinação",
     subtitle: "Mínimo viável diário · priorização · anti-procrastinação",
+    archetype: "Executor",
+    chakra: "Manipura · Plexo solar",
     materials: [
       { id: "m3a", title: "Protocolo de Accountability", body: "Compromisso público e revisão de entrega.", pdf: "assets/materials/07-protocolo-accountability.pdf" },
       { id: "m3b", title: "Matriz de Priorização", body: "80% no importante não urgente.", pdf: "assets/materials/08-matriz-priorizacao.pdf" },
@@ -44,6 +50,8 @@ export const MODULES = [
     num: "04",
     title: "Capital Relacional e Reciprocidade",
     subtitle: "Mapa de rede · entrega de valor · ativação",
+    archetype: "Tecelão da Rede",
+    chakra: "Anahata · Cardíaco",
     materials: [
       { id: "m4a", title: "Template de Mapa de Rede", body: "5–10 conexões de alto valor e próximos passos.", pdf: "assets/materials/10-mapa-rede.pdf" },
       { id: "m4b", title: "Guia de Reciprocidade", body: "Generosidade estratégica sem compra de afeto.", pdf: "assets/materials/11-guia-reciprocidade.pdf" },
@@ -56,6 +64,8 @@ export const MODULES = [
     num: "05",
     title: "Comunicação, Negociação e Expressão de Valor",
     subtitle: "Pitch · BATNA · clareza de mensagem",
+    archetype: "Mensageiro",
+    chakra: "Vishuddha · Laríngeo",
     materials: [
       { id: "m5a", title: "Estruturas de Pitch", body: "PSI · ADP · POC em 60–90 segundos.", pdf: "assets/materials/13-estruturas-pitch.pdf" },
       { id: "m5b", title: "Checklist de Negociação", body: "Pré e pós: objetivos, limites, próximo passo.", pdf: "assets/materials/14-checklist-negociacao.pdf" },
@@ -68,6 +78,8 @@ export const MODULES = [
     num: "06",
     title: "Visão Estratégica e Planejamento de Longo Prazo",
     subtitle: "Visão 1 página · roadmap reverso · cenários",
+    archetype: "Visionário",
+    chakra: "Ajna · Frontal",
     materials: [
       { id: "m6a", title: "Template de Planejamento de Longo Prazo", body: "Documento vivo de 10 anos traduzido em próximos 90 dias.", pdf: "assets/materials/16-planejamento-estrategico.pdf" },
       { id: "m6b", title: "Matriz de Cenários", body: "Otimista / base / pessimista com respostas preparadas.", pdf: "assets/materials/17-matriz-cenarios.pdf" },
@@ -80,6 +92,8 @@ export const MODULES = [
     num: "07",
     title: "Governança de Consciência e Opulência Sistêmica",
     subtitle: "Legado · stewardship · alinhamento valores-dinheiro",
+    archetype: "Guardião do Legado",
+    chakra: "Sahasrara · Coronário",
     materials: [
       { id: "m7a", title: "Guia de Governança de Consciência", body: "Critérios de decisão e revisão periódica do sistema.", pdf: "assets/materials/19-governanca-consciencia.pdf" },
       { id: "m7b", title: "Modelo de Declaração de Legado", body: "Quem sou · o que construí · por quê · para quem · o que resta.", pdf: "assets/materials/20-declaracao-legado.pdf" },

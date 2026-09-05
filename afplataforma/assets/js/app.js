@@ -156,7 +156,7 @@ function renderDashboard() {
         const open = !!session.modules[m.id];
         return `<div class="mod-row ${open ? "" : "locked"}" data-nav="${open ? "module:" + m.id : ""}" ${open ? "" : "data-locked=\"1\""}>
           <div class="mod-num">${m.num}</div>
-          <div class="mod-body"><h3>${esc(m.title)}</h3><p>${esc(m.subtitle)}</p></div>
+          <div class="mod-body"><h3>${esc(m.title)}</h3><p>${esc(m.archetype)} · ${esc(m.chakra)}</p><p>${esc(m.subtitle)}</p></div>
           <div class="mod-lock">${open ? "🔓" : "🔒"}</div>
         </div>`;
       }).join("")}
@@ -171,7 +171,7 @@ function renderModules() {
       const open = !!session.modules[m.id];
       return `<div class="mod-row ${open ? "" : "locked"}" data-nav="${open ? "module:" + m.id : ""}" ${open ? "" : "data-locked=\"1\""}>
         <div class="mod-num">${m.num}</div>
-        <div class="mod-body"><h3>${esc(m.title)}</h3><p>${m.materials.length} materiais · ${m.tools.length} ferramenta(s)</p></div>
+        <div class="mod-body"><h3>${esc(m.title)}</h3><p>${esc(m.archetype)} · ${esc(m.chakra)}</p><p>${m.materials.length} materiais · ${m.tools.length} ferramenta(s)</p></div>
         <div class="mod-lock">${open ? "🔓" : "🔒"}</div>
       </div>`;
     }).join("")}</div>
@@ -183,9 +183,9 @@ function renderModuleDetail(id) {
   if (!m || !session.modules[id]) return renderModules();
   return `<div class="view active">
     <div class="back-link" data-nav="modules">← Módulos</div>
-    <p class="hero-line">Camada ${m.num}</p>
+    <p class="hero-line">Camada ${m.num} · ${esc(m.archetype)}</p>
     <h2 class="hero-title">${esc(m.title)}</h2>
-    <p class="hero-sub">${esc(m.subtitle)}</p>
+    <p class="hero-sub">${esc(m.chakra)} · ${esc(m.subtitle)}</p>
     <h3 class="section-h">Materiais</h3>
     <div class="mat-grid">${m.materials
       .map(

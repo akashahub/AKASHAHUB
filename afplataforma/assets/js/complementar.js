@@ -82,13 +82,13 @@ const DICT = [
 ];
 
 const LIVROS = [
-  { id: "raiz", name: "A Raiz da Riqueza", vetor: "01 Base", pdf: "assets/materials/livros/01-raiz.pdf" },
-  { id: "criativo", name: "A Criatividade Lucrativa", vetor: "02 Criativo", pdf: "assets/materials/livros/02-criatividade.pdf" },
-  { id: "poder", name: "O Poder da Prosperidade", vetor: "03 Execução", pdf: "assets/materials/livros/03-poder.pdf" },
-  { id: "amor", name: "Amor pelo Sucesso Financeiro", vetor: "04 Relacional", pdf: "assets/materials/livros/04-amor.pdf" },
-  { id: "voz", name: "A Voz da Abundância", vetor: "05 Comunicação", pdf: "assets/materials/livros/05-voz.pdf" },
-  { id: "visao", name: "A Visão da Fortuna", vetor: "06 Visão", pdf: "assets/materials/livros/06-visao.pdf" },
-  { id: "conexao", name: "A Conexão Divina com a Opulência", vetor: "07 Governança", pdf: "assets/materials/livros/07-conexao.pdf" }
+  { id: "raiz", name: "A Raiz da Riqueza", vetor: "01 Base", archetype: "Guardião da Base · Muladhara", pdf: "assets/materials/livros/01-raiz.pdf" },
+  { id: "criativo", name: "A Criatividade Lucrativa", vetor: "02 Criativo", archetype: "Criador · Svadhisthana", pdf: "assets/materials/livros/02-criatividade.pdf" },
+  { id: "poder", name: "O Poder da Prosperidade", vetor: "03 Execução", archetype: "Executor · Manipura", pdf: "assets/materials/livros/03-poder.pdf" },
+  { id: "amor", name: "Amor pelo Sucesso Financeiro", vetor: "04 Relacional", archetype: "Tecelão da Rede · Anahata", pdf: "assets/materials/livros/04-amor.pdf" },
+  { id: "voz", name: "A Voz da Abundância", vetor: "05 Comunicação", archetype: "Mensageiro · Vishuddha", pdf: "assets/materials/livros/05-voz.pdf" },
+  { id: "visao", name: "A Visão da Fortuna", vetor: "06 Visão", archetype: "Visionário · Ajna", pdf: "assets/materials/livros/06-visao.pdf" },
+  { id: "conexao", name: "A Conexão Divina com a Opulência", vetor: "07 Governança", archetype: "Guardião do Legado · Sahasrara", pdf: "assets/materials/livros/07-conexao.pdf" }
 ];
 
 const LOJA = [
@@ -276,7 +276,7 @@ function viewLivros() {
   return `<div class="view active">${back()}
     ${pageHead("livros", "Bônus de membro", "Livros dos 7 vetores", "Edição oficial atual. Leitura na plataforma. Última página: marca do autor + ação de 7 dias.")}
     <div class="mat-grid">${LIVROS.map(
-      (l) => `<div class="mat-card"><h4>${esc(l.name)}</h4><p>${esc(l.vetor)}</p>
+      (l) => `<div class="mat-card"><h4>${esc(l.name)}</h4><p>${esc(l.vetor)}</p><p>${esc(l.archetype)}</p>
       ${materialButton(l.name, l.pdf)}
       <button class="tool-btn" type="button" data-act="afPedirLivro" data-livro="${esc(l.name)}">Pedir no WhatsApp</button></div>`
     ).join("")}</div>
