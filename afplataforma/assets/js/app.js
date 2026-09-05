@@ -36,7 +36,7 @@ import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js";
 import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
-import { bindCoverEditor, pickNewProductImage } from "./covers.js";
+import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js";
 
 function toast(msg, err = false) {
@@ -143,10 +143,7 @@ function renderDashboard() {
   const next = nextModule();
   return `
   <div class="view active">
-    <img class="hero-photo" src="assets/img/auth/dashboard-bg.jpg" alt="">
-    <p class="hero-line">Alinhamento Financeiro</p>
-    <h2 class="hero-title">${esc(t(lang, "welcome"))}</h2>
-    <p class="hero-sub">${esc(session.name)} · ${session.role === "mentee" ? "Mentorado" : "Mentor"} · acesso ${session.active ? "ativo" : "pendente"}</p>
+    ${pageHead("dash", "Alinhamento Financeiro", esc(t(lang, "welcome")), `${esc(session.name)} · ${session.role === "mentee" ? "Mentorado" : "Mentor"} · acesso ${session.active ? "ativo" : "pendente"}`)}
     <div class="grid-3">
       <div class="stat-card"><div class="lbl">${esc(t(lang, "progress"))}</div><div class="val">${u}/7</div><div class="hint">módulos liberados</div></div>
       <div class="stat-card"><div class="lbl">Materiais</div><div class="val">${u * 3}/21</div><div class="hint">estimativa por liberação</div></div>
@@ -168,9 +165,7 @@ function renderDashboard() {
 
 function renderModules() {
   return `<div class="view active">
-    <p class="hero-line">Conteúdo</p>
-    <h2 class="hero-title">7 módulos · 21 materiais</h2>
-    <p class="hero-sub">Material completo em PDF, lido na própria plataforma.</p>
+    ${pageHead("modules", "Conteúdo", "7 módulos · 21 materiais", "Material completo em PDF, lido na própria plataforma.")}
     <div class="module-list">${MODULES.map((m) => {
       const open = !!session.modules[m.id];
       return `<div class="mod-row ${open ? "" : "locked"}" data-nav="${open ? "module:" + m.id : ""}" ${open ? "" : "data-locked=\"1\""}>

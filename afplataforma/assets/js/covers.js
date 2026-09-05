@@ -10,7 +10,7 @@ const LOJA_KEY = "loja_extra";
 
 export const COVER_SLOTS = [
   { id: "dash", label: "Dashboard · head", fallback: "assets/img/lua/hero/lua-banner-dash.webp" },
-  { id: "modules", label: "Módulos · head", fallback: "assets/img/capas/modules.jpg" },
+  { id: "modules", label: "Módulos · head", fallback: "assets/img/lua/hero/lua-banner-leitura.webp" },
   { id: "module01", label: "Camada 1 · Fundação", fallback: "assets/img/capas/module01.jpg" },
   { id: "module02", label: "Camada 2 · Criativo", fallback: "assets/img/capas/module02.jpg" },
   { id: "module03", label: "Camada 3 · Execução", fallback: "assets/img/capas/module03.jpg" },
@@ -27,7 +27,7 @@ export const COVER_SLOTS = [
   { id: "tool-fono", label: "Fono · Dicção", fallback: "assets/img/lua/rosto/lua-face-06.webp" },
   { id: "tool-vision", label: "Visão 1 página", fallback: "assets/img/lua/rosto/lua-face-02.webp" },
   { id: "tool-legacy", label: "Declaração de legado", fallback: "assets/img/lua/rosto/lua-face-01.webp" },
-  { id: "call", label: "Call · head", fallback: "assets/img/lua/atencao/lua-atencao-01.webp" },
+  { id: "call", label: "Call · head", fallback: "assets/img/lua/hero/lua-banner-tools.webp" },
   { id: "profile", label: "Perfil · head", fallback: "assets/img/lua/perfil/lua-perfil-01.webp" },
   { id: "complementar", label: "Complementar · head", fallback: "assets/img/lua/hero/lua-banner-comp.webp" },
   { id: "quitei", label: "Quitei · head", fallback: "assets/img/lua/hero/lua-banner-quitei.webp" },

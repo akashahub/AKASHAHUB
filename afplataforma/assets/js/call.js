@@ -17,6 +17,7 @@ import {
 } from "../../firebase/firestore.js";
 import { openTeleprompter } from "./teleprompter.js";
 import { esc } from "./navigation.js";
+import { pageHead } from "./covers.js";
 import {
   onPresence,
   getPresenceSnapshot,
@@ -335,9 +336,7 @@ export function renderCallView() {
     return `<option value="${esc(id)}" ${id === room ? "selected" : ""}>${esc(label)}</option>`;
   }).join("");
   return `<div class="view active">
-    <p class="hero-line">Sala ao vivo</p>
-    <h2 class="hero-title">Call da mentoria</h2>
-    <p class="hero-sub">Servidor LiveKit. Salvador com Japão, 6 pessoas, em movimento. Sair da página não encerra — o vídeo flutua.</p>
+    ${pageHead("call", "Sala ao vivo", "Call da mentoria", "Servidor LiveKit. Salvador com Japão, 6 pessoas, em movimento. Sair da página não encerra. O vídeo flutua.")}
     <div class="call-shell">
       <aside class="call-roster">
         <p class="call-kicker">${esc(roomName(room))}</p>
