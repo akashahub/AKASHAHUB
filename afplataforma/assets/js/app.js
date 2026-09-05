@@ -48,12 +48,7 @@ function toast(msg, err = false) {
   window._tt = setTimeout(() => (el.className = "toast"), 2800);
 }
 
-function hideSplash() {
-  document.getElementById("bootSplash")?.classList.add("hidden");
-}
-
 function showAuth() {
-  hideSplash();
   document.getElementById("authShell")?.classList.remove("hidden");
   document.getElementById("appShell")?.classList.remove("show");
   document.getElementById("accessDenied")?.classList.remove("show");
@@ -94,7 +89,6 @@ function applyProfileUI() {
 }
 
 function showApp() {
-  hideSplash();
   document.getElementById("authShell")?.classList.add("hidden");
   document.getElementById("accessDenied")?.classList.remove("show");
   document.getElementById("appShell")?.classList.add("show");
@@ -110,15 +104,10 @@ function showApp() {
   buildNav();
   bindPersistentCallUI(navigate);
   startPresence();
-  let start = "dashboard";
-  try {
-    start = sessionStorage.getItem("af_last_view") || "dashboard";
-  } catch (_) {}
-  navigate(start);
+  navigate("dashboard");
 }
 
 function showAccessDenied() {
-  hideSplash();
   document.getElementById("authShell")?.classList.add("hidden");
   document.getElementById("appShell")?.classList.remove("show");
   document.getElementById("accessDenied")?.classList.add("show");

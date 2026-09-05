@@ -78,7 +78,6 @@ function setActiveNav(view) {
 
 export async function navigate(view) {
   currentView = view;
-  try { sessionStorage.setItem("af_last_view", view); } catch (_) {}
   closeSide();
   setActiveNav(view);
 
