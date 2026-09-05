@@ -13,6 +13,8 @@ export const PLANS = {
     label: "Essencial",
     weeks: 8,
     libraryDays: 30,
+    price: "R$ 3.900",
+    priceNote: "turma · ticket interno",
     blurb: "Método completo. Complementar leve. Call da turma / sala Essencial."
   },
   premium: {
@@ -20,6 +22,8 @@ export const PLANS = {
     label: "Premium",
     weeks: 12,
     libraryDays: 180,
+    price: "R$ 6.500",
+    priceNote: "grupo reduzido · ticket interno",
     blurb: "Método + corpo, livros, áudio autorizado, encontros. Sala Premium."
   },
   vip: {
@@ -27,6 +31,8 @@ export const PLANS = {
     label: "VIP",
     weeks: 16,
     libraryDays: 365,
+    price: "R$ 13.000",
+    priceNote: "1:1 · ticket interno",
     blurb: "Tudo aberto + acompanhamento 1:1. Sala VIP e Geral."
   }
 };

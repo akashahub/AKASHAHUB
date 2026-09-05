@@ -95,6 +95,8 @@ function injectCss() {
 .af-plan-card{border:1px solid var(--line);padding:12px;border-radius:6px;background:#fff}
 .af-plan-card h3{font-family:var(--font-d);font-size:1.15rem;margin:4px 0}
 .af-plan-card p{font-size:12px;color:var(--muted);margin:4px 0}
+.af-plan-price{font-family:var(--font-d);font-size:1.7rem;color:#8B6914;margin:2px 0 0!important;letter-spacing:.5px}
+.af-plan-price-note{font-size:10px!important;letter-spacing:.8px;text-transform:uppercase}
 .af-pill-plan{border-color:rgba(201,162,39,.45);color:#8B6914;background:rgba(201,162,39,.1)}
 .af-mod-row select{max-width:140px;padding:6px;border:1px solid var(--line);border-radius:4px}
 .af-price-box{border:1px solid var(--line);background:#fff;padding:14px 16px;border-radius:6px;margin:0 0 22px}
@@ -138,6 +140,8 @@ export function renderAccessAdminPanel() {
     const extras = FEATURES.filter((f) => f.min === id && f.group !== "core").map((f) => f.name);
     return `<article class="af-plan-card">
       <p class="lvl">${esc(p.label)}</p>
+      <p class="af-plan-price">${esc(p.price || "")}</p>
+      <p class="af-plan-price-note">${esc(p.priceNote || "ticket interno · não vai na landing")}</p>
       <h3>${esc(String(p.weeks))} semanas</h3>
       <p>${esc(p.blurb)}</p>
       <p class="af-mods">7 módulos · biblioteca ${p.libraryDays} dias</p>
@@ -156,7 +160,7 @@ export function renderAccessAdminPanel() {
       <p><strong>Bibliotheca.</strong> Pasta dos livros: <b>R$ 97</b>. Não é mentoria.</p>
       <p><strong>Desafio 7 dias Magnetismo.</strong> <b>R$ 882</b> · Hotmart W102015202.</p>
       <p><strong>Flow.</strong> 12 mulheres por ano. Preço não vai na vitrine. Sessão antiga de 3 por R$ 700 está encerrada.</p>
-      <p><strong>Mentoria AF.</strong> 7 módulos iguais nos 3 planos. Valor apresentado na sessão, um a um. Landing não imprime ticket.</p>
+      <p><strong>Mentoria AF (ticket interno, nos quadros acima).</strong> Essencial R$ 3.900 · Premium R$ 6.500 · VIP R$ 13.000. A landing não imprime esses números. Fecha na sessão.</p>
       <ul>
         <li>Essencial · 8 semanas · turma · complementar leve</li>
         <li>Premium · 10 a 12 semanas · grupo menor · corpo, livros, áudio, encontros</li>
