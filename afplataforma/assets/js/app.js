@@ -186,6 +186,7 @@ function renderModuleDetail(id) {
     <p class="hero-line">Camada ${m.num} · ${esc(m.archetype)}</p>
     <h2 class="hero-title">${esc(m.title)}</h2>
     <p class="hero-sub">${esc(m.chakra)} · ${esc(m.subtitle)}</p>
+    <article class="af-asc-card" style="margin:12px 0 18px"><p class="lvl">Como incorporar</p><p>${esc(m.cena)}</p></article>
     <h3 class="section-h">Materiais</h3>
     <div class="mat-grid">${m.materials
       .map(

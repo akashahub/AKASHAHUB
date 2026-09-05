@@ -3,6 +3,7 @@
  * LifeOS removido da interface. Funções de hábitos/rotina/etc. permanecem.
  */
 import { esc } from "./navigation.js";
+import { MODULES } from "../../data/modules.js";
 import {
   viewHabitos,
   viewMetas,
@@ -276,7 +277,8 @@ function viewLivros() {
   return `<div class="view active">${back()}
     ${pageHead("livros", "Bônus de membro", "Livros dos 7 vetores", "Edição oficial atual. Leitura na plataforma. Última página: marca do autor + ação de 7 dias.")}
     <div class="mat-grid">${LIVROS.map(
-      (l) => `<div class="mat-card"><h4>${esc(l.name)}</h4><p>${esc(l.vetor)}</p><p>${esc(l.archetype)}</p>
+      (l, i) => `<div class="mat-card"><h4>${esc(l.name)}</h4><p>${esc(l.vetor)}</p><p>${esc(l.archetype)}</p>
+      <p class="notes-hint">${esc(MODULES[i]?.cena || "")}</p>
       ${materialButton(l.name, l.pdf)}
       <button class="tool-btn" type="button" data-act="afPedirLivro" data-livro="${esc(l.name)}">Pedir no WhatsApp</button></div>`
     ).join("")}</div>

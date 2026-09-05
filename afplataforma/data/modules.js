@@ -10,6 +10,7 @@ export const MODULES = [
     subtitle: "Eliminar escassez cognitiva · reserva e cash-flow",
     archetype: "Guardião da Base",
     chakra: "Muladhara · Raiz",
+    cena: "Pés no chão. Voz baixa. Conta o dinheiro no papel antes de falar de sonho. Não sai da cadeira até o número existir.",
     materials: [
       { id: "m1a", title: "Protocolo de Execução", body: "Rotina de auditoria, ancoragem de estado e automatização de reserva (10–20% da receita líquida).", pdf: "assets/materials/01-protocolo-execucao.pdf" },
       { id: "m1b", title: "Checklist de Accountability", body: "Lista de verificação diária/semanal para manter a base financeira ativa.", pdf: "assets/materials/02-checklist-accountability.pdf" },
@@ -24,6 +25,7 @@ export const MODULES = [
     subtitle: "Ideação forçada · validação · empacotamento",
     archetype: "Criador",
     chakra: "Svadhisthana · Sacral",
+    cena: "Olho curioso. Mão suja de teste. Fala ideia só depois de ter tentado uma versão feia em 48 horas.",
     materials: [
       { id: "m2a", title: "Protocolo de Validação de Ideias", body: "Teste rápido com 3 potenciais clientes antes de construir.", pdf: "assets/materials/04-protocolo-validacao.pdf" },
       { id: "m2b", title: "Cronograma de Ideação Forçada", body: "Bloco semanal de 45 minutos com restrição e método.", pdf: "assets/materials/05-cronograma-ideacao.pdf" },
@@ -38,6 +40,7 @@ export const MODULES = [
     subtitle: "Mínimo viável diário · priorização · anti-procrastinação",
     archetype: "Executor",
     chakra: "Manipura · Plexo solar",
+    cena: "Coluna ereta. Relógio à vista. Uma entrega por dia, visível. Sem ensaio longo. Fez ou não fez.",
     materials: [
       { id: "m3a", title: "Protocolo de Accountability", body: "Compromisso público e revisão de entrega.", pdf: "assets/materials/07-protocolo-accountability.pdf" },
       { id: "m3b", title: "Matriz de Priorização", body: "80% no importante não urgente.", pdf: "assets/materials/08-matriz-priorizacao.pdf" },
@@ -52,6 +55,7 @@ export const MODULES = [
     subtitle: "Mapa de rede · entrega de valor · ativação",
     archetype: "Tecelão da Rede",
     chakra: "Anahata · Cardíaco",
+    cena: "Chega oferecendo. Nome da outra pessoa primeiro. Não pede palco. Deixa um valor concreto na mesa e sai.",
     materials: [
       { id: "m4a", title: "Template de Mapa de Rede", body: "5–10 conexões de alto valor e próximos passos.", pdf: "assets/materials/10-mapa-rede.pdf" },
       { id: "m4b", title: "Guia de Reciprocidade", body: "Generosidade estratégica sem compra de afeto.", pdf: "assets/materials/11-guia-reciprocidade.pdf" },
@@ -66,6 +70,7 @@ export const MODULES = [
     subtitle: "Pitch · BATNA · clareza de mensagem",
     archetype: "Mensageiro",
     chakra: "Vishuddha · Laríngeo",
+    cena: "Pausa antes da frase. Olho no olho. 60 segundos. Um pedido claro. Sem desculpa no fim da fala.",
     materials: [
       { id: "m5a", title: "Estruturas de Pitch", body: "PSI · ADP · POC em 60–90 segundos.", pdf: "assets/materials/13-estruturas-pitch.pdf" },
       { id: "m5b", title: "Checklist de Negociação", body: "Pré e pós: objetivos, limites, próximo passo.", pdf: "assets/materials/14-checklist-negociacao.pdf" },
@@ -80,6 +85,7 @@ export const MODULES = [
     subtitle: "Visão 1 página · roadmap reverso · cenários",
     archetype: "Visionário",
     chakra: "Ajna · Frontal",
+    cena: "Olha longe, escreve perto. Uma página. Data. Número. Se não cabe no papel, ainda não é visão.",
     materials: [
       { id: "m6a", title: "Template de Planejamento de Longo Prazo", body: "Documento vivo de 10 anos traduzido em próximos 90 dias.", pdf: "assets/materials/16-planejamento-estrategico.pdf" },
       { id: "m6b", title: "Matriz de Cenários", body: "Otimista / base / pessimista com respostas preparadas.", pdf: "assets/materials/17-matriz-cenarios.pdf" },
@@ -94,6 +100,7 @@ export const MODULES = [
     subtitle: "Legado · stewardship · alinhamento valores-dinheiro",
     archetype: "Guardião do Legado",
     chakra: "Sahasrara · Coronário",
+    cena: "Fala baixo. Decide o que permanece quando ele sair da sala. Assina critérios, não humor do dia.",
     materials: [
       { id: "m7a", title: "Guia de Governança de Consciência", body: "Critérios de decisão e revisão periódica do sistema.", pdf: "assets/materials/19-governanca-consciencia.pdf" },
       { id: "m7b", title: "Modelo de Declaração de Legado", body: "Quem sou · o que construí · por quê · para quem · o que resta.", pdf: "assets/materials/20-declaracao-legado.pdf" },
