@@ -163,7 +163,8 @@ export function renderAccessAdminPanel() {
         <li>VIP · sob medida · 1:1 · tudo aberto</li>
       </ul>
       <p><strong>Meta 39k / mês (conta interna, não é preço oficial).</strong> Porta 350 não fecha a meta sozinha. Exemplos de combinação: 3 VIP a 13 mil, ou 2 VIP a 13 mil + 2 Premium a 6,5 mil, ou 1 VIP + mix de Premium e sessões. Cravar o ticket na sessão, não no Instagram.</p>
-      <p><a class="tool-btn" href="interno/precificacao-af.pdf" target="_blank" rel="noopener">Abrir PDF de precificação</a></p>
+      <p><a class="tool-btn" href="interno/precificacao-af.pdf" target="_blank" rel="noopener">PDF interno (mentor)</a>
+      <a class="tool-btn" href="interno/precificacao-publica.pdf" target="_blank" rel="noopener">PDF para o cliente</a></p>
     </div>
     <h3 class="section-h">Gestão de acessos AF</h3>
     <p class="hero-sub">Quem tenta entrar aparece aqui sozinho. Você libera, escolhe o plano, pausa ou bloqueia.</p>
