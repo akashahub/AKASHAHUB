@@ -1,10 +1,11 @@
 /**
  * Teleprompter mentor — painel flutuante (call + roteiro juntos)
- * Conteúdo APENAS de afMentorScripts/{moduleId} via Firestore
- * Sem fallback público de roteiro real
+ * Fonte oficial: data/mentor-scripts.js (série Julho 2026).
+ * Firestore afMentorScripts só entra se o pacote local não tiver o módulo.
  */
 import { isMentorSession } from "./auth.js";
 import { MODULES } from "../../data/modules.js";
+import { MENTOR_SCRIPTS } from "../../data/mentor-scripts.js";
 import { getMentorScript } from "../../firebase/firestore.js";
 import { esc } from "./navigation.js";
 
@@ -59,7 +60,12 @@ export async function loadTp() {
   if (meta) meta.textContent = id;
 
   try {
-    const data = await getMentorScript(id);
+    const bundled = MENTOR_SCRIPTS[id];
+    let data = bundled ? { title: bundled.title, duration: bundled.duration, content: bundled.content } : null;
+    if (!data) {
+      const remote = await getMentorScript(id);
+      if (remote && (remote.content || remote.text)) data = remote;
+    }
     if (!data || (!data.content && !data.text)) {
       el.innerHTML = `<p class="tp-empty">Roteiro não encontrado ou sem permissão.<br><small>Cole o documento em Firestore: afMentorScripts/${esc(id)}</small></p>`;
       return;
