@@ -1,6 +1,7 @@
 /**
  * Capas e imagens editáveis — só o mentor troca no frontend.
- * Override fica neste aparelho (localStorage). Padrão = arquivos em assets/img/.
+ * "Trocar" grava neste aparelho (localStorage). Não publica sozinho no GitHub.
+ * Padrão de todo mundo = arquivos em assets/img/ (fallback abaixo).
  */
 import { isMentorSession } from "./auth.js";
 import { Store } from "./storage.js";
@@ -19,14 +20,14 @@ export const COVER_SLOTS = [
   { id: "module06", label: "Camada 6 · Visão", fallback: "assets/img/capas/module06.jpg" },
   { id: "module07", label: "Camada 7 · Governança", fallback: "assets/img/capas/module07.jpg" },
   { id: "tools", label: "Ferramentas · head", fallback: "assets/img/lua/hero/lua-banner-tools.webp" },
-  { id: "tool-cashflow", label: "Auditoria de Cash-Flow", fallback: "assets/img/lua/rosto/lua-face-01.webp" },
-  { id: "tool-ideation", label: "Ideação / Insights", fallback: "assets/img/lua/rosto/lua-face-02.webp" },
-  { id: "tool-execution", label: "Execução semanal", fallback: "assets/img/lua/rosto/lua-face-03.webp" },
-  { id: "tool-network", label: "Mapa de rede", fallback: "assets/img/lua/rosto/lua-face-04.webp" },
-  { id: "tool-pitch", label: "Pitch 60s", fallback: "assets/img/lua/rosto/lua-face-05.webp" },
-  { id: "tool-fono", label: "Fono · Dicção", fallback: "assets/img/lua/rosto/lua-face-06.webp" },
-  { id: "tool-vision", label: "Visão 1 página", fallback: "assets/img/lua/rosto/lua-face-02.webp" },
-  { id: "tool-legacy", label: "Declaração de legado", fallback: "assets/img/lua/rosto/lua-face-01.webp" },
+  { id: "tool-cashflow", label: "Auditoria de Cash-Flow", fallback: "assets/img/tools/cashflow.webp" },
+  { id: "tool-ideation", label: "Ideação / Insights", fallback: "assets/img/tools/ideation.webp" },
+  { id: "tool-execution", label: "Execução semanal", fallback: "assets/img/tools/execution.webp" },
+  { id: "tool-network", label: "Mapa de rede", fallback: "assets/img/tools/network.webp" },
+  { id: "tool-pitch", label: "Pitch 60s", fallback: "assets/img/tools/pitch.webp" },
+  { id: "tool-fono", label: "Fono · Dicção", fallback: "assets/img/tools/fono.webp" },
+  { id: "tool-vision", label: "Visão 1 página", fallback: "assets/img/tools/vision.webp" },
+  { id: "tool-legacy", label: "Declaração de legado", fallback: "assets/img/tools/legacy.webp" },
   { id: "call", label: "Call · head", fallback: "assets/img/lua/hero/lua-banner-tools.webp" },
   { id: "profile", label: "Perfil · head", fallback: "assets/img/lua/perfil/lua-perfil-01.webp" },
   { id: "complementar", label: "Complementar · head", fallback: "assets/img/lua/hero/lua-banner-comp.webp" },

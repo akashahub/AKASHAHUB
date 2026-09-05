@@ -393,7 +393,7 @@ export function renderToolsView() {
     <div class="mat-grid">${list
       .map(
         (x) => `
-      <div class="mat-card">
+      <div class="mat-card tool-card">
       ${editImg("tool-" + x.id, x.name, "cover-thumb")}
       <h4>${esc(x.name)}</h4><p>Módulo ${x.mod}</p>
       <button class="tool-btn" type="button" data-tool="${x.id}">Abrir</button></div>`
