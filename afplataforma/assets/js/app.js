@@ -38,6 +38,7 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js";
+import { renderAscensaoRoteiro } from "../../data/ascensao-roteiro.js";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -243,6 +244,12 @@ function renderMentor() {
       <p>Volume 0 · auditoria e mapa do sistema. Só esta conta abre. Mentorados não veem este botão.</p>
       <a class="tool-btn" href="${livroHref()}">Abrir livro</a>
     </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Call de entrada</p>
+      <h3>Roteiro da Ascensão</h3>
+      <p>Como conduzir a sessão de 1h30 sem depender de humor. O que pode. O que é proibido. Só o mentor vê.</p>
+      <button class="tool-btn" type="button" data-nav="ascensao">Abrir roteiro</button>
+    </article>
     ${renderAccessAdminPanel()}
   </div>`;
 }
@@ -288,6 +295,7 @@ registerRenderers({
   tools: renderToolsView,
   call: renderCallView,
   mentor: renderMentor,
+  ascensao: () => (isMentorSession() ? renderAscensaoRoteiro() : `<div class="view active"><p class="empty">Acesso restrito ao mentor.</p></div>`),
   profile: renderProfile,
   complementar: renderComplementarHome,
   compApp: renderComplementarApp,

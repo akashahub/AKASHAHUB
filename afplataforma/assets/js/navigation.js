@@ -89,6 +89,7 @@ export async function navigate(view) {
     call: t(lang, "call"),
     profile: t(lang, "profile"),
     mentor: t(lang, "mentor"),
+    ascensao: "Ascensão",
     complementar: "Complementar",
     quitei: "Quitei"
   };
