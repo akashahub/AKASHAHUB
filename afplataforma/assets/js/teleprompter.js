@@ -6,12 +6,24 @@
 import { isMentorSession } from "./auth.js";
 import { MODULES } from "../../data/modules.js";
 import { MENTOR_SCRIPTS } from "../../data/mentor-scripts.js";
+import { MENTOR_SCRIPTS_I18N } from "../../data/mentor-scripts-i18n.js";
 import { getMentorScript } from "../../firebase/firestore.js";
 import { esc } from "./navigation.js";
 
 let tpPlaying = false;
 let tpRaf = null;
 let tpSpeed = 1;
+let tpLang = "pt";
+const TP_CUSTOM = "af_tp_custom_v1";
+
+function customMap() {
+  try { return JSON.parse(localStorage.getItem(TP_CUSTOM) || "{}"); } catch { return {}; }
+}
+function saveCustom(id, text) {
+  const m = customMap();
+  m[id] = text;
+  localStorage.setItem(TP_CUSTOM, JSON.stringify(m));
+}
 
 export function openTeleprompter(moduleId = "module01") {
   if (!isMentorSession()) return;
@@ -54,45 +66,82 @@ export async function loadTp() {
   const id = sel?.value || "module01";
   const el = document.getElementById("tpScroll");
   const meta = document.getElementById("tpMeta");
+  const edit = document.getElementById("tpEdit");
+  const panel = document.getElementById("tpPanel");
   if (!el) return;
+
+  const editing = tpLang === "edit";
+  panel?.classList.toggle("editing", editing);
+  if (edit) {
+    edit.classList.toggle("show", editing);
+    edit.hidden = !editing;
+  }
+
+  if (editing) {
+    const base = resolveScript(id, "pt");
+    const custom = customMap()[id];
+    edit.value = custom || base.content || "";
+    if (meta) meta.textContent = `${base.title || id} · editar`;
+    el.innerHTML = "";
+    return;
+  }
 
   el.innerHTML = `<p class="tp-loading">Carregando roteiro privado…</p>`;
   if (meta) meta.textContent = id;
 
   try {
-    const bundled = MENTOR_SCRIPTS[id];
-    let data = bundled ? { title: bundled.title, duration: bundled.duration, content: bundled.content } : null;
-    if (!data) {
-      const remote = await getMentorScript(id);
-      if (remote && (remote.content || remote.text)) data = remote;
-    }
-    if (!data || (!data.content && !data.text)) {
-      el.innerHTML = `<p class="tp-empty">Roteiro não encontrado ou sem permissão.<br><small>Cole o documento em Firestore: afMentorScripts/${esc(id)}</small></p>`;
+    const data = resolveScript(id, tpLang);
+    if (!data || !data.content) {
+      el.innerHTML = `<p class="tp-empty">Roteiro não encontrado neste idioma.</p>`;
       return;
     }
-    const raw = (data.content || data.text || "").trim();
-    const title = data.title ? `<span class="lbl">${esc(data.title)}</span>\n` : "";
-    const parts = raw.split(/\n(?=[A-ZÁÉÍÓÚÃÕÇ][A-ZÁÉÍÓÚÃÕÇ \-·]+)/);
-    const body = parts
-      .map((block) => {
-        const lines = block.trim().split("\n");
-        if (lines.length === 1) return esc(lines[0]);
-        return `<span class="lbl">${esc(lines[0])}</span>${esc(lines.slice(1).join("\n"))}`;
-      })
-      .join("\n\n");
-    el.innerHTML = title + body;
-    if (meta) meta.textContent = `${data.title || id}${data.duration ? " · ~" + data.duration + " min" : ""}`;
+    paintScript(el, data);
+    if (meta) meta.textContent = `${data.title || id}${data.duration ? " · ~" + data.duration + " min" : ""} · ${tpLang.toUpperCase()}`;
     tpReset();
   } catch (e) {
     console.error(e);
-    const denied = String(e?.code || e?.message || "").includes("permission");
-    el.innerHTML = denied
-      ? `<p class="tp-empty">Acesso negado ao roteiro (somente mentor).</p>`
-      : `<p class="tp-empty">Erro ao carregar roteiro.</p>`;
+    el.innerHTML = `<p class="tp-empty">Erro ao carregar roteiro.</p>`;
   }
 }
 
+function resolveScript(id, lang) {
+  const bundled = MENTOR_SCRIPTS[id];
+  if (lang === "pt") {
+    return bundled ? { title: bundled.title, duration: bundled.duration, content: bundled.content } : null;
+  }
+  const pack = MENTOR_SCRIPTS_I18N[lang]?.[id];
+  if (pack) return { title: pack.title || bundled?.title, duration: bundled?.duration || 90, content: pack.content };
+  return bundled ? { title: bundled.title, duration: bundled.duration, content: bundled.content } : null;
+}
+
+function paintScript(el, data) {
+  const raw = (data.content || "").trim();
+  const title = data.title ? `<span class="lbl">${esc(data.title)}</span>\n` : "";
+  const parts = raw.split(/\n(?=[A-ZÁÉÍÓÚÃÕÇÀÈÌÒÙÂÊÎÔÛÄËÏÖÜ][A-ZÁÉÍÓÚÃÕÇÀÈÌÒÙÂÊÎÔÛÄËÏÖÜ \-·’']+)/);
+  const body = parts
+    .map((block) => {
+      const lines = block.trim().split("\n");
+      if (lines.length === 1) return esc(lines[0]);
+      return `<span class="lbl">${esc(lines[0])}</span>${esc(lines.slice(1).join("\n"))}`;
+    })
+    .join("\n\n");
+  el.innerHTML = title + body;
+}
+
 export function toggleTp() {
+  if (tpLang === "edit") {
+    const id = document.getElementById("tpModule")?.value || "module01";
+    const val = document.getElementById("tpEdit")?.value || "";
+    saveCustom(id, val);
+    const el = document.getElementById("tpScroll");
+    const panel = document.getElementById("tpPanel");
+    const edit = document.getElementById("tpEdit");
+    if (el && val.trim()) {
+      panel?.classList.remove("editing");
+      if (edit) { edit.classList.remove("show"); edit.hidden = true; }
+      paintScript(el, { title: "Roteiro editado", content: val });
+    }
+  }
   tpPlaying = !tpPlaying;
   const b = document.getElementById("tpPlay");
   if (b) b.textContent = tpPlaying ? "Pausa" : "Play";
@@ -141,6 +190,22 @@ export function bindTeleprompterUI() {
     document.getElementById("tpPanel")?.classList.toggle("min");
   });
   document.getElementById("tpModule")?.addEventListener("change", loadTp);
+  document.getElementById("tpLangs")?.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-lang]");
+    if (!b) return;
+    if (tpLang === "edit") {
+      const id = document.getElementById("tpModule")?.value || "module01";
+      const val = document.getElementById("tpEdit")?.value || "";
+      saveCustom(id, val);
+    }
+    tpLang = b.dataset.lang;
+    document.querySelectorAll("#tpLangs [data-lang]").forEach((x) => x.classList.toggle("on", x === b));
+    loadTp();
+  });
+  document.getElementById("tpEdit")?.addEventListener("input", () => {
+    const id = document.getElementById("tpModule")?.value || "module01";
+    saveCustom(id, document.getElementById("tpEdit").value);
+  });
   document.getElementById("tpPlay")?.addEventListener("click", toggleTp);
   document.getElementById("tpResetBtn")?.addEventListener("click", tpReset);
   document.getElementById("tpUp")?.addEventListener("click", () => tpNudge(-48));
