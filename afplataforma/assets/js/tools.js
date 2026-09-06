@@ -158,138 +158,74 @@ async function openCashflow() {
   };
 }
 
-/** Fonoaudiologia — módulo 5 · treino + jogos */
+/** Oratória — 7 músculos. Não é dom. */
 async function openFono() {
-  const saved = (await loadToolData("fono")) || { notes: "", reps: 0, bestTap: 0 };
+  const saved = (await loadToolData("fono")) || { notes: "", reps: 0, done: [] };
+  const drills = [
+    { id: "vel", name: "Velocidade", now: "Uma palavra por batida. Nem disparo, nem arrasto." },
+    { id: "pau", name: "Pausas", now: "Frase. Conte 2 no peito. Próxima frase." },
+    { id: "vol", name: "Volume", now: "A mesma frase: baixo, médio, alto limpo." },
+    { id: "cla", name: "Clareza", now: "PA TA KA. MA ME MI MO MU. Lábios e língua." },
+    { id: "pal", name: "Palavras", now: "Pitch 40s. Ouça. Risque uma muletilla." },
+    { id: "pos", name: "Postura", now: "Pés no chão. Ombro baixo. Quatro frases." },
+    { id: "esc", name: "Escuta", now: "Ouça 20s. Repita o ponto em uma frase." }
+  ];
+  const done = new Set(saved.done || []);
   openFloat(
-    "Fono · Dicção e clareza",
-    `<p class="notes-hint">Treino operacional de articulação. Não substitui fonoaudiólogo clínico.</p>
+    "Oratória · 7 músculos",
+    `<p class="notes-hint">Falar bem é musculação. Todo mundo melhora treinando. Não substitui fonoaudiólogo clínico.</p>
+     <div class="fono-grid" id="fonoGrid">${drills.map((d) =>
+       `<button type="button" class="fono-tile${done.has(d.id) ? " ok" : ""}" data-fono="${d.id}"><b>${d.name}</b><span>${d.now}</span></button>`
+     ).join("")}</div>
      <div class="fono-block">
-       <p class="fono-label">1 · Aquecimento</p>
-       <p class="fono-line">Ma me mi mo mu. Depois pa ta ka.</p>
-       <button class="tool-btn" type="button" id="btnFonoTimer">Timer 30s</button>
-       <p class="notes-meta" id="fonoTimer">—</p>
+       <p class="fono-label" id="fonoNowName">Clareza</p>
+       <p class="fono-line" id="fonoNowLine">PA TA KA. MA ME MI MO MU. Lábios e língua.</p>
+       <p class="notes-meta" id="fonoTimer">60s</p>
+       <button class="tool-btn" type="button" id="btnFonoTimer">Começar 60s</button>
      </div>
-     <div class="fono-block">
-       <p class="fono-label">2 · Frase de pitch (3×)</p>
-       <p class="fono-line">Eu resolvo [problema] para [público] com [método], gerando [resultado].</p>
-     </div>
-     <div class="fono-block">
-       <p class="fono-label">3 · Gravação 60s</p>
-       <p class="fono-line">Grave no celular. Ouça. Corte 1 vício.</p>
-     </div>
-     <div class="fono-block">
-       <p class="fono-label">Jogo A · Escada</p>
-       <p class="fono-line">Toque na ordem e fale a sílaba.</p>
-       <div class="fono-games" id="fonoLadder"></div>
-       <p class="notes-meta" id="fonoLadderMsg">Comece em PA.</p>
-     </div>
-     <div class="fono-block">
-       <p class="fono-label">Jogo B · Ritmo</p>
-       <p class="fono-line">Toque só o ouro.</p>
-       <div class="fono-tap" id="fonoTap"></div>
-       <p class="notes-meta">Pontos <strong id="fonoTapScore">0</strong> · recorde <strong id="fonoTapBest">${saved.bestTap || 0}</strong></p>
-     </div>
-     <div class="fono-block">
-       <p class="fono-label">Jogo C · Eco</p>
-       <p class="fono-line" id="fonoEco">Gere uma frase e repita em voz alta.</p>
-       <button class="tool-btn" type="button" id="btnFonoEco">Gerar frase</button>
-     </div>
-     <label class="notes-hint">Anotações</label>
+     <label class="notes-hint">Anotação da sessão</label>
      <textarea class="notes-area" id="fonoNotes">${esc(saved.notes || "")}</textarea>
      <p class="notes-meta">Sessões: <strong id="fonoReps">${saved.reps || 0}</strong></p>`,
     `<button class="btn btn-inline" type="button" id="btnFonoSave">Salvar</button>
-     <button class="btn btn-ghost" type="button" id="btnFonoDone">+1 sessão</button>`
+     <button class="btn btn-ghost" type="button" id="btnFonoDone">Marquei este músculo</button>`
   );
 
+  let current = "cla";
   const persistFono = async () => {
-    const notes = document.getElementById("fonoNotes").value;
-    const reps = parseInt(document.getElementById("fonoReps").textContent, 10) || 0;
-    const bestTap = parseInt(document.getElementById("fonoTapBest").textContent, 10) || 0;
-    await persistToolData("fono", { notes, reps, bestTap });
+    await persistToolData("fono", {
+      notes: document.getElementById("fonoNotes").value,
+      reps: parseInt(document.getElementById("fonoReps").textContent, 10) || 0,
+      done: [...done]
+    });
   };
-
+  document.getElementById("fonoGrid").onclick = (e) => {
+    const b = e.target.closest("[data-fono]");
+    if (!b) return;
+    current = b.dataset.fono;
+    const d = drills.find((x) => x.id === current);
+    document.getElementById("fonoNowName").textContent = d.name;
+    document.getElementById("fonoNowLine").textContent = d.now;
+  };
   document.getElementById("btnFonoTimer").onclick = () => {
     const el = document.getElementById("fonoTimer");
-    let n = 30;
-    el.textContent = "30s";
+    let n = 60;
+    el.textContent = "60s";
     const id = setInterval(() => {
       n--;
-      el.textContent = n > 0 ? n + "s" : "Fechou.";
+      el.textContent = n > 0 ? n + "s" : "Fechou. Ouça o que saiu.";
       if (n <= 0) clearInterval(id);
     }, 1000);
   };
-
-  const sylls = ["PA", "TA", "KA", "MA", "LA", "RA", "SA", "FA"];
-  const ladder = document.getElementById("fonoLadder");
-  let expect = 0;
-  sylls.forEach((s, i) => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "fono-chip";
-    b.textContent = s;
-    b.onclick = () => {
-      const msg = document.getElementById("fonoLadderMsg");
-      if (i === expect) {
-        expect++;
-        b.classList.add("ok");
-        msg.textContent = expect === sylls.length ? "Completou. Repita mais rápido." : "Próxima.";
-        if (expect === sylls.length) {
-          expect = 0;
-          ladder.querySelectorAll(".fono-chip").forEach((x) => x.classList.remove("ok"));
-        }
-      } else {
-        msg.textContent = "Volte ao PA.";
-        expect = 0;
-        ladder.querySelectorAll(".fono-chip").forEach((x) => x.classList.remove("ok"));
-      }
-    };
-    ladder.appendChild(b);
-  });
-
-  let tapScore = 0;
-  const paintTap = () => {
-    const box = document.getElementById("fonoTap");
-    box.innerHTML = "";
-    const gold = Math.floor(Math.random() * 6);
-    for (let i = 0; i < 6; i++) {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "fono-chip" + (i === gold ? " gold" : "");
-      b.textContent = i === gold ? "PA" : ["TA", "KA", "MA"][i % 3];
-      b.onclick = () => {
-        if (i === gold) {
-          tapScore++;
-          document.getElementById("fonoTapScore").textContent = String(tapScore);
-          const bestEl = document.getElementById("fonoTapBest");
-          if (tapScore > (parseInt(bestEl.textContent, 10) || 0)) bestEl.textContent = String(tapScore);
-          paintTap();
-        } else {
-          tapScore = Math.max(0, tapScore - 1);
-          document.getElementById("fonoTapScore").textContent = String(tapScore);
-        }
-      };
-      box.appendChild(b);
-    }
-  };
-  paintTap();
-
-  const ecos = [
-    "Clareza gera preço.",
-    "Reserva antes de narrativa.",
-    "Uma decisão por semana.",
-    "Eu resolvo um problema mensurável.",
-    "O vazamento não está só na planilha."
-  ];
-  document.getElementById("btnFonoEco").onclick = () => {
-    document.getElementById("fonoEco").textContent = ecos[Math.floor(Math.random() * ecos.length)];
-  };
-  document.getElementById("btnFonoSave").onclick = async () => { await persistFono(); toast("Fono salvo"); };
+  document.getElementById("btnFonoSave").onclick = async () => { await persistFono(); toast("Oratória salva"); };
   document.getElementById("btnFonoDone").onclick = async () => {
+    done.add(current);
     const el = document.getElementById("fonoReps");
     el.textContent = String((parseInt(el.textContent, 10) || 0) + 1);
+    document.querySelectorAll("[data-fono]").forEach((n) => {
+      if (n.dataset.fono === current) n.classList.add("ok");
+    });
     await persistFono();
-    toast("Sessão +1");
+    toast("Músculo marcado");
   };
 }
 
@@ -384,7 +320,7 @@ export function renderToolsView() {
     { id: "execution", name: "Execução semanal", mod: "03" },
     { id: "network", name: "Mapa de rede", mod: "04" },
     { id: "pitch", name: "Pitch 60s", mod: "05" },
-    { id: "fono", name: "Fono · Dicção", mod: "05" },
+    { id: "fono", name: "Oratória · 7 músculos", mod: "05" },
     { id: "vision", name: "Visão 1 página", mod: "06" },
     { id: "legacy", name: "Declaração de legado", mod: "07" }
   ];

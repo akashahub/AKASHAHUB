@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Oratória · Akasha Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Josefin+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --ink: #1a1714;
+      --muted: #6b6258;
+      --gold: #8b6914;
+      --line: rgba(139,105,20,.28);
+      --card: #fffdf8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: var(--bg); color: var(--ink); font-family: "Josefin Sans", sans-serif; }
+    button:not(:disabled) { cursor: pointer; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 80px; }
+    header { margin-bottom: 22px; }
+    .kicker { font-size: 11px; letter-spacing: 2.4px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    h1 { font-family: "Cormorant Garamond", serif; font-size: clamp(2rem, 7vw, 3.1rem); font-weight: 500; line-height: 1.05; }
+    .lead { margin-top: 10px; color: var(--muted); font-size: 15px; line-height: 1.55; max-width: 36em; }
+    .progress { display: flex; gap: 6px; margin: 18px 0 8px; }
+    .progress i { flex: 1; height: 4px; background: rgba(139,105,20,.18); border-radius: 4px; }
+    .progress i.on { background: var(--gold); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0 22px; }
+    @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
+    .tile {
+      text-align: left; background: var(--card); border: 1px solid var(--line);
+      border-radius: 12px; padding: 14px 14px 12px; min-height: 88px;
+    }
+    .tile.on { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+    .tile .n { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+    .tile h3 { font-family: "Cormorant Garamond", serif; font-size: 1.35rem; font-weight: 500; margin: 4px 0 2px; }
+    .tile p { font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .stage {
+      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+      padding: 20px 18px 18px; min-height: 280px;
+    }
+    .clock {
+      font-family: "Cormorant Garamond", serif; font-size: 4.2rem; line-height: 1;
+      text-align: center; color: var(--ink);
+    }
+    .bar { height: 6px; background: rgba(139,105,20,.15); border-radius: 6px; margin: 10px 0 18px; overflow: hidden; }
+    .bar b { display: block; height: 100%; width: 0; background: var(--gold); }
+    .now { font-family: "Cormorant Garamond", serif; font-size: clamp(1.4rem, 4.5vw, 1.9rem); line-height: 1.25; text-align: center; margin-bottom: 10px; }
+    .hint { text-align: center; color: var(--muted); font-size: 14px; line-height: 1.5; min-height: 2.8em; }
+    .pulse { display: flex; justify-content: center; gap: 10px; margin: 16px 0; min-height: 28px; }
+    .pulse span { width: 10px; height: 10px; border-radius: 50%; background: rgba(139,105,20,.25); }
+    .pulse span.hit { background: var(--gold); transform: scale(1.35); }
+    .acts { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+    .acts button {
+      flex: 1; min-height: 46px; border-radius: 24px; border: 1px solid var(--line);
+      background: #fff; font-family: inherit; font-size: 12px; letter-spacing: 1.4px;
+      text-transform: uppercase; color: var(--ink);
+    }
+    .acts button.primary { background: var(--gold); color: #fffdf8; border-color: var(--gold); }
+    .done { margin-top: 12px; text-align: center; font-size: 13px; color: var(--gold); }
+    .foot { margin-top: 18px; font-size: 12px; color: var(--muted); line-height: 1.5; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="kicker">Akasha Hub · Módulo 5</p>
+      <h1>Oratória não é dom.</h1>
+      <p class="lead">Falar bem é musculação. Algumas pessoas começam melhores. Todo mundo melhora treinando. Escolhe um músculo. Treina 60 segundos. Marca. Amanhã o próximo.</p>
+      <div class="progress" id="prog"></div>
+    </header>
+    <div class="grid" id="grid"></div>
+    <section class="stage" id="stage"></section>
+    <p class="foot">Não substitui fonoaudiólogo clínico. Serve para treinar o que a call cobra: voz que fecha.</p>
+  </div>
+  <script>
+    const DRILLS = [
+      { id: "vel", name: "Velocidade", brief: "Nem disparo, nem arrasto.",
+        now: "Leia em voz alta. Uma palavra por batida.",
+        hint: "Se perder o fôlego, está rápido demais. Se bocejar, está lento." },
+      { id: "pau", name: "Pausas", brief: "O silêncio vende.",
+        now: "Fale uma frase. Conte 2 no peito. Fale a próxima.",
+        hint: "A pausa é depois da ideia, não no meio da palavra." },
+      { id: "vol", name: "Volume", brief: "Chega no fundo da sala.",
+        now: "Mesma frase três vezes: baixo, médio, alto limpo.",
+        hint: "Alto não é grito. É coluna e ar." },
+      { id: "cla", name: "Clareza", brief: "Cada consoante conta.",
+        now: "PA TA KA. MA ME MI MO MU. Devagar, depois rápido.",
+        hint: "Lábios e língua. Não engula o final da palavra." },
+      { id: "pal", name: "Palavras", brief: "Corte o vício.",
+        now: "Grave 40 segundos do seu pitch. Ouça. Risque 1 muletilla.",
+        hint: "Tipo, né, então, tipo assim. Uma só por sessão." },
+      { id: "pos", name: "Postura", brief: "O corpo segura a voz.",
+        now: "Pés no chão. Ombro baixo. Queixo paralelo. Fale 4 frases.",
+        hint: "Se o peito fechar, a frase morre no meio." },
+      { id: "esc", name: "Escuta", brief: "Quem ouve fecha melhor.",
+        now: "Ouça 20 segundos de qualquer áudio. Repita a ideia em 1 frase.",
+        hint: "Não copie as palavras. Copie o ponto." }
+    ];
+    const KEY = "oratoria_done_v1";
+    const done = () => JSON.parse(localStorage.getItem(KEY) || "[]");
+    const mark = (id) => {
+      const s = new Set(done());
+      s.add(id);
+      localStorage.setItem(KEY, JSON.stringify([...s]));
+    };
+    let active = "cla";
+    let timer = null;
+    let left = 60;
+    const $ = (id) => document.getElementById(id);
+
+    function renderGrid() {
+      const d = done();
+      $("grid").innerHTML = DRILLS.map((x) => `
+        <button class="tile ${x.id === active ? "on" : ""}" data-id="${x.id}" type="button">
+          <div class="n">${d.includes(x.id) ? "feito" : "treino"}</div>
+          <h3>${x.name}</h3>
+          <p>${x.brief}</p>
+        </button>`).join("");
+      $("prog").innerHTML = DRILLS.map((x) => `<i class="${d.includes(x.id) ? "on" : ""}"></i>`).join("");
+    }
+
+    function renderStage() {
+      const x = DRILLS.find((d) => d.id === active);
+      $("stage").innerHTML = `
+        <p class="kicker">${x.name}</p>
+        <p class="clock" id="clk">60</p>
+        <div class="bar"><b id="bar"></b></div>
+        <p class="now">${x.now}</p>
+        <p class="hint">${x.hint}</p>
+        <div class="pulse" id="pulse">${"<span></span>".repeat(4)}</div>
+        <div class="acts">
+          <button class="primary" type="button" id="go">Começar 60s</button>
+          <button type="button" id="ok">Marquei</button>
+        </div>
+        <p class="done" id="msg"></p>`;
+      $("go").onclick = start;
+      $("ok").onclick = () => { mark(active); renderGrid(); $("msg").textContent = "Sessão marcada. Amanhã outro músculo."; };
+    }
+
+    function start() {
+      clearInterval(timer);
+      left = 60;
+      let beat = 0;
+      const tick = () => {
+        $("clk").textContent = String(left);
+        $("bar").style.width = ((60 - left) / 60 * 100) + "%";
+        const dots = [...document.querySelectorAll("#pulse span")];
+        dots.forEach((el, i) => el.classList.toggle("hit", i === beat % 4));
+        beat++;
+        if (left <= 0) {
+          clearInterval(timer);
+          $("clk").textContent = "0";
+          $("msg").textContent = "Fechou. Ouça o que saiu. Marque se cumpriu.";
+          return;
+        }
+        left--;
+      };
+      tick();
+      timer = setInterval(tick, 1000);
+    }
+
+    $("grid").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-id]");
+      if (!b) return;
+      clearInterval(timer);
+      active = b.dataset.id;
+      renderGrid();
+      renderStage();
+    });
+    renderGrid();
+    renderStage();
+  </script>
+</body>
+</html>
