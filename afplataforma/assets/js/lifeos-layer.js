@@ -421,17 +421,7 @@ export function viewSono() {
   return `<div class="view active">${back()}
     <p class="hero-line">Modo sono</p>
     <h2 class="hero-title">Dinheiro entrando</h2>
-    <p class="hero-sub">Em vez de ovelhas: visualização de saldo subindo, lenta, enquanto a frequência toca.</p>
-    <p class="notes-hint">Saldo inicial da visualização</p>
-    <div class="freq-row" id="sonoStartRow">
-      ${[1000, 5000, 10000, 50000, 100000].map((n) => `<button class="freq-btn" type="button" data-act="afSleepStart" data-n="${n}">${brl(n)}</button>`).join("")}
-    </div>
-    <label class="notes-hint" style="display:block;margin-top:10px">Outro valor <input id="sonoStartCustom" type="number" min="0" step="100" placeholder="0" style="width:140px;margin-left:8px"></label>
-    <p class="notes-hint" style="margin-top:14px">Meta visual (opcional)</p>
-    <div class="freq-row">
-      ${[10000, 50000, 100000].map((n) => `<button class="freq-btn" type="button" data-act="afSleepGoal" data-n="${n}">${brl(n)}</button>`).join("")}
-      <button class="freq-btn" type="button" data-act="afSleepGoal" data-n="0">Sem meta</button>
-    </div>
+    <p class="hero-sub">Escolhe uma frequência, se quiser, e abre o modo sono. O saldo sobe sozinho enquanto o som toca.</p>
     <div class="freq-row">${btns}</div>
     <p class="notes-hint" id="sonoFreqLab">Toque uma frequência · 396 · 417 · 528 · 639 · 741 · 852 · 963 Hz</p>
     <button class="btn btn-inline" type="button" data-act="afOpenSleep" style="margin-top:16px">Abrir modo sono</button>
@@ -460,9 +450,8 @@ window.afOpenSleep = () => {
         `<button class="freq-btn" type="button" data-act="afPlayFreq" data-hz="${f.hz}" data-name="${esc(f.name)}">${String(i + 1).padStart(2, "0")} · ${f.hz} Hz</button>`
     ).join("");
   }
-  const custom = Number(document.getElementById("sonoStartCustom")?.value || 0);
-  const start = custom > 0 ? custom : Number(load("sonoStart", 10000));
-  sleepGoal = Number(load("sonoGoal", 0));
+  const start = Number(load("sonoStart", 10000)) || 10000;
+  sleepGoal = 0;
   sleepBal = start;
   sleepShown = start;
   sleepPaused = false;
@@ -494,10 +483,12 @@ window.afOpenSleep = () => {
   wakeSleepDock();
   if (!o.dataset.wake) {
     o.dataset.wake = "1";
-    o.addEventListener("pointerdown", wakeSleepDock);
+    o.addEventListener("pointerdown", (e) => {
+      if (e.target.closest("input,button,select")) return;
+      wakeSleepDock();
+    });
   }
   startSleepLoop();
-  startSleepClock();
   const first = document.querySelector("#sleepOverlay .freq-btn[data-hz='396']");
   if (first) window.afPlayFreq(first);
   else playFreq(396);
@@ -508,7 +499,6 @@ window.afCloseSleep = () => {
   clearTimeout(sleepTimer);
   clearTimeout(sleepIdle);
   clearTimeout(sleepDim);
-  clearInterval(sleepClock);
   if (sleepAnim) cancelAnimationFrame(sleepAnim);
   const lab2 = document.getElementById("sonoFreqLab");
   if (lab2) lab2.textContent = "Frequência pausada";
@@ -621,7 +611,7 @@ function sleepTick() {
   const today = document.getElementById("sleepToday");
   const todayN = document.getElementById("sleepTodayN");
   if (today) today.textContent = "+ " + brl(sleepInTotal);
-  if (todayN) todayN.textContent = sleepInCount + (sleepInCount === 1 ? " entrada" : " entradas");
+  if (todayN) todayN.textContent = sleepInCount + (sleepInCount === 1 ? " entrada nesta sessão" : " entradas nesta sessão");
   paintFeed();
   animateBal();
   queueSleepTick();
@@ -644,9 +634,6 @@ function paintSleepBal() {
   if (!el) return;
   el.textContent = sleepHidden ? "R$ •••••" : brl(sleepShown);
 }
-function startSleepClock() {
-  clearInterval(sleepClock);
-  sleepClock = setInterval(() => { if (!sleepHidden) paintFeed(); }, 1000);
 }
 function animateBal() {
   if (sleepAnim) cancelAnimationFrame(sleepAnim);
