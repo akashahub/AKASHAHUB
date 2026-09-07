@@ -1,3 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Akasha Hub · AF Plataforma</title>
+<link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+<link rel="preload" href="assets/css/main.css" as="style">
+<link rel="preload" href="assets/img/lua/carao/lua-carao-02.webp" as="image">
+<link rel="modulepreload" href="assets/js/app.js">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<div id="authShell">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="">
+      <span>AK<b>A</b>SHA · <b>AF</b></span>
+    </div>
+    <img class="auth-hero" src="assets/img/lua/carao/lua-carao-02.webp" alt="Lua" width="800" height="450" decoding="async" fetchpriority="high">
+    <h1>AF Plataforma</h1>
+    <p class="sub">Área operacional da mentoria Alinhamento Financeiro. Conta ≠ acesso. Liberação manual após Sessão de Alinhamento.</p>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="loginEmail" placeholder="voce@email.com" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn" id="btnLogin" type="button">Entrar</button>
+    <div class="auth-divider">ou</div>
+    <button class="btn btn-google" id="btnGoogle" type="button">Continuar com Google</button>
+    <div id="demoButtons" style="display:none">
+      <button class="btn btn-ghost" id="btnDemoMentor" type="button">Demo Mentor (local)</button>
+      <button class="btn btn-ghost" id="btnDemoMentee" type="button">Demo Mentorado (local)</button>
+    </div>
+    <div class="auth-msg" id="authMsg"></div>
+    <div class="auth-hint">
+      Projeto Firebase: <code>hub-akasha</code><br>
+      Acesso via coleção <code>afAccess</code>
+    </div>
+  </div>
+</div>
+
+<div id="accessDenied">
+  <h2>Acesso não liberado</h2>
+  <p>Seu acesso à Mentoria de Alinhamento Financeiro ainda não foi liberado. Após a Sessão de Alinhamento e o pagamento, o mentor ativa sua jornada.</p>
+  <button class="btn btn-inline" id="btnDeniedBack" type="button">Voltar</button>
+</div>
+
+<div id="appShell">
+  <div class="side-backdrop" id="sideBackdrop"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="side-logo">
+      <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="">
+      <span>AK<b>A</b>SHA</span>
+    </div>
+    <nav id="navMain"></nav>
+    <div class="side-foot">
+      <div class="user-chip">
+        <div class="av" id="userAv">A</div>
+        <div class="meta">
+          <div class="name" id="userName">—</div>
+          <div class="role" id="userRole">—</div>
+        </div>
+      </div>
+      <button class="btn-logout" type="button" id="btnLogout">Sair</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="menu-toggle" type="button" id="menuToggle" aria-label="Menu">☰</button>
+        <div class="top-title" id="topTitle">Dashboard</div>
+      </div>
+      <div class="top-actions">
+        <span class="badge-mode" id="modeBadge">—</span>
+        <select class="lang-sel" id="langSel">
+          <option value="pt-BR">PT</option>
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="it">IT</option>
+        </select>
+      </div>
+    </header>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="modal" id="modalBox">
+  <div class="modal-h"><h3 id="modalTitle">—</h3><button class="modal-x" type="button" id="modalX">×</button></div>
+  <div class="modal-b" id="modalBody"></div>
+  <div class="modal-f" id="modalFoot"></div>
+</div>
+
+<div id="tpPanel" aria-label="Teleprompter">
+  <div class="tp-head" id="tpHead">
+    <span class="tp-grip" aria-hidden="true"></span>
+    <div class="tp-head-copy">
+      <h3>Roteiro</h3>
+      <div class="tp-meta" id="tpMeta">—</div>
+    </div>
+    <button class="tp-btn" type="button" id="tpMin" aria-label="Minimizar">Min</button>
+    <button class="tp-btn tp-btn-x" type="button" id="tpClose" aria-label="Fechar">Fechar</button>
+  </div>
+  <select id="tpModule"></select>
+  <div class="tp-langs" id="tpLangs" role="tablist" aria-label="Idioma do roteiro">
+    <button type="button" class="on" data-lang="pt">PT</button>
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="it">IT</button>
+    <button type="button" data-lang="es">ES</button>
+    <button type="button" data-lang="fr">FR</button>
+    <button type="button" data-lang="edit">Editar</button>
+  </div>
+  <div class="tp-stage" id="tpStage"><div class="tp-scroll" id="tpScroll"></div></div>
+  <textarea id="tpEdit" class="tp-edit" hidden placeholder="Cola ou reescreve o roteiro deste módulo. Pode ficar em português."></textarea>
+  <div class="tp-foot">
+    <div class="tp-ctrl">
+      <button type="button" id="tpPlay">Play</button>
+      <button type="button" id="tpResetBtn">Topo</button>
+      <button type="button" id="tpUp">↑</button>
+      <button type="button" id="tpDown">↓</button>
+    </div>
+    <div class="tp-speed">
+      <span>Vel.</span>
+      <input type="range" id="tpSpeed" min="0.4" max="2.2" step="0.1" value="1">
+      <span id="tpSpeedLabel">1.0×</span>
+    </div>
+  </div>
+</div>
+
+<!-- Ferramenta em segundo plano (mentor e mentorado) -->
+<div id="toolPanel" aria-label="Ferramenta">
+  <div class="tp-head">
+    <div>
+      <h3 id="toolTitle">Ferramenta</h3>
+      <div class="tp-meta">Segundo plano · Call e página seguem visíveis</div>
+    </div>
+    <button class="modal-x" type="button" id="toolClose" aria-label="Fechar">×</button>
+  </div>
+  <div class="tool-panel-body" id="toolBody"></div>
+  <div class="tp-foot" id="toolFoot"></div>
+</div>
+
 <div id="sleepOverlay" class="sleep-overlay">
   <div class="sleep-stage">
     <p class="sleep-sim">Modo de visualização financeira</p>
@@ -29,3 +183,41 @@
     <div class="sleep-freqs" id="sleepFreqs"></div>
   </div>
 </div>
+
+<div id="callDock" class="call-dock hidden" aria-label="Call ao vivo">
+  <div class="call-dock-bar" id="callDockBar">
+    <span id="callDockTitle">Call ao vivo</span>
+    <div class="call-dock-acts">
+      <button type="button" id="callDockMic">Mic</button>
+      <button type="button" id="callDockMin">Min</button>
+      <button type="button" id="callDockSize">Tam</button>
+      <button type="button" id="callDockPip">Pop-up</button>
+      <button type="button" id="callDockExpand">Sala</button>
+      <button type="button" id="callDockLeave" class="dock-leave">Sair</button>
+    </div>
+  </div>
+  <div id="callStage" class="call-stage g1"></div>
+  <div class="call-resize" id="callResize" hidden></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<input type="file" id="coverFile" accept="image/*" hidden>
+
+<div id="matViewer" class="mat-viewer" hidden>
+  <div class="mat-viewer-bar">
+    <h3 id="matViewerTitle">Material</h3>
+    <div class="mat-viewer-acts">
+      <button type="button" id="matViewerNewTab">Nova aba</button>
+      <button type="button" id="matViewerFs">Tela cheia</button>
+      <button type="button" class="modal-x" id="matViewerClose" aria-label="Fechar">×</button>
+    </div>
+  </div>
+  <div class="mat-viewer-stage" id="matViewerStage">
+    <iframe id="matViewerFrame" title="Material do módulo"></iframe>
+  </div>
+</div>
+
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
