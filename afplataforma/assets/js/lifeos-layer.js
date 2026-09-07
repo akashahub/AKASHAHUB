@@ -418,23 +418,22 @@ export function viewSono() {
     (f, i) =>
       `<button class="freq-btn" type="button" data-act="afPlayFreq" data-hz="${f.hz}" data-name="${esc(f.name)}">${String(i + 1).padStart(2, "0")}<small>${f.hz} Hz</small></button>`
   ).join("");
-  return `<div class="view active">${back()}
-    <p class="hero-line">Modo sono</p>
-    <h2 class="hero-title">Dinheiro entrando</h2>
-    <p class="hero-sub">Em vez de ovelhas: visualização de saldo subindo, lenta, enquanto a frequência toca.</p>
-    <p class="notes-hint">Saldo inicial da visualização</p>
-    <div class="freq-row" id="sonoStartRow">
-      ${[1000, 5000, 10000, 50000, 100000].map((n) => `<button class="freq-btn" type="button" data-act="afSleepStart" data-n="${n}">${brl(n)}</button>`).join("")}
+  const nome = sleepName();
+  return `<div class="view active sono-gate">${back()}
+    <div class="sono-preview">
+      <div class="sono-preview-top">
+        <p>Olá, ${esc(nome)}</p>
+        <small>Modo Sono · Alinhamento Financeiro</small>
+      </div>
+      <div class="sono-preview-card">
+        <span>Saldo em conta</span>
+        <strong>R$ 10.000,00</strong>
+        <em>Visualização simulada · nenhum valor é real</em>
+      </div>
     </div>
-    <label class="notes-hint" style="display:block;margin-top:10px">Outro valor <input id="sonoStartCustom" type="number" min="0" step="100" placeholder="0" style="width:140px;margin-left:8px"></label>
-    <p class="notes-hint" style="margin-top:14px">Meta visual (opcional)</p>
-    <div class="freq-row">
-      ${[10000, 50000, 100000].map((n) => `<button class="freq-btn" type="button" data-act="afSleepGoal" data-n="${n}">${brl(n)}</button>`).join("")}
-      <button class="freq-btn" type="button" data-act="afSleepGoal" data-n="0">Sem meta</button>
-    </div>
+    <p class="notes-hint" id="sonoFreqLab">Escolhe a frequência e abre o modo sono</p>
     <div class="freq-row">${btns}</div>
-    <p class="notes-hint" id="sonoFreqLab">Toque uma frequência · 396 · 417 · 528 · 639 · 741 · 852 · 963 Hz</p>
-    <button class="btn btn-inline" type="button" data-act="afOpenSleep" style="margin-top:16px">Abrir modo sono</button>
+    <button class="btn btn-inline sono-open" type="button" data-act="afOpenSleep">Abrir modo sono</button>
   </div>`;
 }
 
