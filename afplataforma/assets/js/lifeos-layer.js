@@ -19,9 +19,25 @@ const FREQS = [
 
 let audioCtx = null;
 let oscNode = null;
+let sleepGain = null;
+let sleepVol = 35;
 let sleepTimer = null;
 let sleepBal = 0;
+let sleepYield = 0;
 let pomodoro = { t: null, left: 25 * 60, run: false };
+
+function firstName() {
+  const raw = (session.name || session.email || "você").trim();
+  const n = raw.split(/[\s@]+/)[0] || "você";
+  return n.charAt(0).toUpperCase() + n.slice(1);
+}
+function initials() {
+  const n = firstName();
+  return n.slice(0, 2).toUpperCase();
+}
+function brl(n) {
+  return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
 
 function uidKey(k) {
   return k + "_" + (session.uid || "anon");
@@ -51,7 +67,11 @@ export function bindLifeOsLayer() {
       fn(el);
     }
   });
-  document.addEventListener("submit", onSubmit, true);
+  document.addEventListener("input", (e) => {
+    if (e.target?.id === "sleepVol" || e.target?.id === "sleepVolPage") {
+      setSleepVol(+e.target.value);
+    }
+  });
 }
 
 function onAct(e) {
@@ -396,9 +416,16 @@ export function viewSono() {
   return `<div class="view active">${back()}
     <p class="hero-line">Modo sono</p>
     <h2 class="hero-title">Dinheiro entrando</h2>
-    <p class="hero-sub">Em vez de ovelhas: depósitos em R$ / € / US$ + 7 frequências dos vetores. No celular, toque a frequência para o som começar.</p>
+    <p class="hero-sub">Painel da conta. Depósitos pingando. Volume no canto de baixo. No celular, toque a frequência para o som começar.</p>
     <div class="freq-row">${btns}</div>
     <p class="notes-hint" id="sonoFreqLab">Toque uma frequência · 396 · 417 · 528 · 639 · 741 · 852 · 963 Hz</p>
+    <div class="nu-vol" style="max-width:420px;margin-top:16px;color:inherit">
+      <span>Volume</span>
+      <button class="nu-vol-btn" type="button" data-act="afSleepVol" data-d="-1">−</button>
+      <input type="range" id="sleepVolPage" min="0" max="100" value="35" />
+      <button class="nu-vol-btn" type="button" data-act="afSleepVol" data-d="1">+</button>
+      <b id="sleepVolPageLab">35</b>
+    </div>
     <button class="btn btn-inline" type="button" data-act="afOpenSleep" style="margin-top:16px">Abrir modo sono</button>
   </div>`;
 }
@@ -413,15 +440,27 @@ window.afOpenSleep = () => {
         `<button class="freq-btn" type="button" data-act="afPlayFreq" data-hz="${f.hz}" data-name="${esc(f.name)}">${String(i + 1).padStart(2, "0")}<small>${f.hz} Hz</small></button>`
     ).join("");
   }
+  const hi = document.getElementById("sleepHi");
+  const av = document.getElementById("sleepAv");
+  if (hi) hi.textContent = "Olá, " + firstName();
+  if (av) av.textContent = initials();
+  const saved = Number(localStorage.getItem("af_sleep_vol") || sleepVol);
+  setSleepVol(Number.isFinite(saved) ? saved : 35);
   o.classList.add("open");
   sleepBal = 0;
+  sleepYield = 0;
   const list = document.getElementById("sleepTx");
   if (list) list.innerHTML = "";
-  renderSleepTx("Inicio da sessao", 0);
+  const bal = document.getElementById("sleepBal");
+  if (bal) bal.textContent = brl(0);
   startSleepLoop();
   const first = document.querySelector("#sleepOverlay .freq-btn[data-hz='396']");
   if (first) window.afPlayFreq(first);
   else playFreq(396);
+};
+window.afSleepVol = (el) => {
+  const d = Number(el?.dataset?.d || 0);
+  setSleepVol(sleepVol + d * 8);
 };
 window.afCloseSleep = () => {
   document.getElementById("sleepOverlay")?.classList.remove("open");
@@ -442,18 +481,32 @@ window.afPlayFreq = (el) => {
   if (lab2) lab2.textContent = "Tocando · " + name + " · " + hz + " Hz";
 };
 
+function setSleepVol(n) {
+  sleepVol = Math.max(0, Math.min(100, Math.round(n)));
+  localStorage.setItem("af_sleep_vol", String(sleepVol));
+  if (sleepGain && audioCtx) sleepGain.gain.setTargetAtTime((sleepVol / 100) * 0.12, audioCtx.currentTime, 0.05);
+  ["sleepVol", "sleepVolPage"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.value = String(sleepVol);
+  });
+  ["sleepVolLab", "sleepVolPageLab"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = String(sleepVol);
+  });
+}
+
 function playFreq(hz) {
   stopFreq();
   try {
     audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === "suspended") audioCtx.resume();
     oscNode = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
+    sleepGain = audioCtx.createGain();
     oscNode.frequency.value = hz;
     oscNode.type = "sine";
-    g.gain.value = 0.04;
-    oscNode.connect(g);
-    g.connect(audioCtx.destination);
+    sleepGain.gain.value = (sleepVol / 100) * 0.12;
+    oscNode.connect(sleepGain);
+    sleepGain.connect(audioCtx.destination);
     oscNode.start();
   } catch (e) {}
 }
@@ -465,28 +518,39 @@ function stopFreq() {
 }
 function startSleepLoop() {
   clearInterval(sleepTimer);
-  const curs = ["R$", "€", "US$"];
+  const kinds = [
+    { t: "Pix recebido", from: "Cliente" },
+    { t: "Pix recebido", from: "Mentoria" },
+    { t: "Transferência recebida", from: "Reserva" },
+    { t: "Depósito", from: "Automático" },
+    { t: "Pix recebido", from: "Oferta" }
+  ];
   const tick = () => {
-    const cur = curs[Math.floor(Math.random() * 3)];
-    const v = Math.round(80 + Math.random() * 920);
+    const kind = kinds[Math.floor(Math.random() * kinds.length)];
+    const v = Math.round((80 + Math.random() * 1840) * 100) / 100;
     sleepBal += v;
-    renderSleepTx(cur + " " + v.toLocaleString("pt-BR") + " creditado", v);
-    spawnCoin(cur, v);
-    spawnCoin(cur, v);
+    sleepYield += v * 0.012;
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mm = String(now.getMinutes()).padStart(2, "0");
+    renderSleepTx(kind.t, kind.from, v, hh + ":" + mm);
+    spawnCoin("R$", Math.round(v));
   };
   tick();
-  sleepTimer = setInterval(tick, 2200);
+  sleepTimer = setInterval(tick, 2400);
 }
-function renderSleepTx(text, v) {
+function renderSleepTx(title, from, v, when) {
   const bal = document.getElementById("sleepBal");
+  const y = document.getElementById("sleepYield");
   const list = document.getElementById("sleepTx");
-  if (bal) bal.textContent = "R$ " + sleepBal.toLocaleString("pt-BR");
+  if (bal) bal.textContent = brl(sleepBal);
+  if (y) y.textContent = "Rendimento de hoje " + brl(sleepYield);
   if (!list) return;
   const row = document.createElement("div");
   row.className = "sleep-tx";
-  row.textContent = (v ? "+" : "") + " " + text;
+  row.innerHTML = `<div class="nu-ico">↓</div><div class="nu-tx-copy"><b>${esc(title)}</b><small>${esc(from)} · ${esc(when)}</small></div><div class="nu-tx-val">+ ${brl(v)}</div>`;
   list.prepend(row);
-  while (list.children.length > 8) list.removeChild(list.lastChild);
+  while (list.children.length > 10) list.removeChild(list.lastChild);
 }
 function spawnCoin(cur, v) {
   const o = document.getElementById("sleepOverlay");
