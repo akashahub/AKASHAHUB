@@ -28,7 +28,12 @@ let sleepShown = 0;
 let sleepVol = 35;
 let sleepPaused = false;
 let sleepHz = 396;
-let sleepGoal = 0;
+let sleepFeed = [];
+let sleepInTotal = 0;
+let sleepInCount = 0;
+let sleepHidden = false;
+let sleepClock = null;
+let sleepDim = null;
 let pomodoro = { t: null, left: 25 * 60, run: false };
 
 function sleepName() {
@@ -452,7 +457,7 @@ window.afOpenSleep = () => {
   if (bar && !bar.childElementCount) {
     bar.innerHTML = FREQS.map(
       (f, i) =>
-        `<button class="freq-btn" type="button" data-act="afPlayFreq" data-hz="${f.hz}" data-name="${esc(f.name)}">${String(i + 1).padStart(2, "0")}<small>${f.hz} Hz</small></button>`
+        `<button class="freq-btn" type="button" data-act="afPlayFreq" data-hz="${f.hz}" data-name="${esc(f.name)}">${String(i + 1).padStart(2, "0")} · ${f.hz} Hz</button>`
     ).join("");
   }
   const custom = Number(document.getElementById("sonoStartCustom")?.value || 0);
@@ -461,19 +466,25 @@ window.afOpenSleep = () => {
   sleepBal = start;
   sleepShown = start;
   sleepPaused = false;
+  sleepHidden = false;
+  sleepFeed = [];
+  sleepInTotal = 0;
+  sleepInCount = 0;
   const hi = document.getElementById("sleepHi");
   if (hi) hi.textContent = "Olá, " + sleepName();
-  const bal = document.getElementById("sleepBal");
-  if (bal) bal.textContent = brl(start);
+  const av = document.getElementById("sleepAv");
+  if (av) av.textContent = sleepName().slice(0, 2).toUpperCase();
+  paintSleepBal();
   const inn = document.getElementById("sleepIn");
   if (inn) { inn.hidden = true; inn.classList.remove("on"); }
-  const gw = document.getElementById("sleepGoalWrap");
-  if (gw) {
-    gw.hidden = !(sleepGoal > 0);
-    const lab = document.getElementById("sleepGoalLab");
-    if (lab) lab.textContent = sleepGoal > 0 ? "Meta visual · " + brl(sleepGoal) : "Meta visual";
-    paintGoal();
-  }
+  const feed = document.getElementById("sleepFeed");
+  if (feed) feed.innerHTML = "";
+  const today = document.getElementById("sleepToday");
+  const todayN = document.getElementById("sleepTodayN");
+  if (today) today.textContent = "+ " + brl(0);
+  if (todayN) todayN.textContent = "0 entradas";
+  const eye = document.getElementById("sleepEye");
+  if (eye) eye.textContent = "◐";
   const saved = Number(localStorage.getItem("af_sleep_vol") || sleepVol);
   setSleepVol(Number.isFinite(saved) ? saved : 35);
   const pause = document.getElementById("sleepPauseBtn");
@@ -486,15 +497,18 @@ window.afOpenSleep = () => {
     o.addEventListener("pointerdown", wakeSleepDock);
   }
   startSleepLoop();
+  startSleepClock();
   const first = document.querySelector("#sleepOverlay .freq-btn[data-hz='396']");
   if (first) window.afPlayFreq(first);
   else playFreq(396);
 };
 window.afCloseSleep = () => {
-  document.getElementById("sleepOverlay")?.classList.remove("open", "idle");
+  document.getElementById("sleepOverlay")?.classList.remove("open", "idle", "dim");
   stopFreq();
   clearTimeout(sleepTimer);
   clearTimeout(sleepIdle);
+  clearTimeout(sleepDim);
+  clearInterval(sleepClock);
   if (sleepAnim) cancelAnimationFrame(sleepAnim);
   const lab2 = document.getElementById("sonoFreqLab");
   if (lab2) lab2.textContent = "Frequência pausada";
@@ -512,6 +526,13 @@ window.afSleepPause = () => {
   }
   wakeSleepDock();
 };
+window.afSleepHide = () => {
+  sleepHidden = !sleepHidden;
+  const eye = document.getElementById("sleepEye");
+  if (eye) eye.textContent = sleepHidden ? "●" : "◐";
+  paintSleepBal();
+  wakeSleepDock();
+};
 window.afSleepVol = (el) => {
   setSleepVol(sleepVol + Number(el?.dataset?.d || 0) * 8);
   wakeSleepDock();
@@ -523,10 +544,13 @@ window.afPlayFreq = (el) => {
   const name = el.dataset.name || hz + " Hz";
   if (!sleepPaused) playFreq(hz);
   document.querySelectorAll(".freq-btn").forEach((b) => b.classList.toggle("on", +b.dataset.hz === hz));
+  const label = name + " · " + hz + " Hz";
   const lab = document.getElementById("sleepFreqLab");
-  if (lab) lab.textContent = name + " · " + hz + " Hz";
+  if (lab) lab.textContent = label;
+  const mini = document.getElementById("sleepMini");
+  if (mini) mini.textContent = label;
   const lab2 = document.getElementById("sonoFreqLab");
-  if (lab2) lab2.textContent = "Tocando · " + name + " · " + hz + " Hz";
+  if (lab2) lab2.textContent = "Tocando · " + label;
 };
 
 function setSleepVol(n) {
@@ -539,6 +563,10 @@ function setSleepVol(n) {
   if (lab) lab.textContent = String(sleepVol);
 }
 function playFreq(hz) {
+  if (oscNode && audioCtx && Math.round(oscNode.frequency.value) === Math.round(hz)) {
+    try { if (sleepGain) sleepGain.gain.setTargetAtTime((sleepVol / 100) * 0.12, audioCtx.currentTime, 0.08); } catch (e) {}
+    return;
+  }
   stopFreq();
   try {
     audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
@@ -568,9 +596,13 @@ function queueSleepTick(ms) {
 }
 function sleepTick() {
   if (sleepPaused) return;
-  const amounts = [50, 100, 250, 500, 750, 1000, 2500, 5000];
+  const amounts = [50, 100, 250, 500, 750, 1000, 1500, 2500, 5000];
   const v = amounts[Math.floor(Math.random() * amounts.length)];
   sleepBal += v;
+  sleepInTotal += v;
+  sleepInCount += 1;
+  sleepFeed.unshift({ v, at: Date.now() });
+  if (sleepFeed.length > 8) sleepFeed.length = 8;
   const inn = document.getElementById("sleepIn");
   const val = document.getElementById("sleepInVal");
   if (val) val.textContent = "+ " + brl(v);
@@ -579,40 +611,66 @@ function sleepTick() {
     inn.classList.remove("on");
     requestAnimationFrame(() => inn.classList.add("on"));
   }
+  const card = document.getElementById("sleepBalCard");
+  if (card) {
+    card.classList.remove("pulse");
+    void card.offsetWidth;
+    card.classList.add("pulse");
+    setTimeout(() => card.classList.remove("pulse"), 700);
+  }
+  const today = document.getElementById("sleepToday");
+  const todayN = document.getElementById("sleepTodayN");
+  if (today) today.textContent = "+ " + brl(sleepInTotal);
+  if (todayN) todayN.textContent = sleepInCount + (sleepInCount === 1 ? " entrada" : " entradas");
+  paintFeed();
   animateBal();
-  paintGoal();
   queueSleepTick();
+}
+function ago(ts) {
+  const s = Math.max(0, Math.round((Date.now() - ts) / 1000));
+  if (s < 3) return "Agora";
+  if (s < 60) return "há " + s + "s";
+  return "há " + Math.floor(s / 60) + " min";
+}
+function paintFeed() {
+  const el = document.getElementById("sleepFeed");
+  if (!el) return;
+  el.innerHTML = sleepFeed.slice(0, 4).map((t) =>
+    `<div class="sf-tx"><span class="sf-tx-ico">↙</span><div class="sf-tx-copy"><b>Crédito recebido</b><small>Visualização financeira · ${ago(t.at)}</small></div><div class="sf-tx-val">+ ${brl(t.v)}</div></div>`
+  ).join("") || `<p class="sf-muted">As entradas aparecem aqui.</p>`;
+}
+function paintSleepBal() {
+  const el = document.getElementById("sleepBal");
+  if (!el) return;
+  el.textContent = sleepHidden ? "R$ •••••" : brl(sleepShown);
+}
+function startSleepClock() {
+  clearInterval(sleepClock);
+  sleepClock = setInterval(() => { if (!sleepHidden) paintFeed(); }, 1000);
 }
 function animateBal() {
   if (sleepAnim) cancelAnimationFrame(sleepAnim);
   const from = sleepShown;
   const to = sleepBal;
   const t0 = performance.now();
-  const dur = 1600;
+  const dur = 1200;
   const step = (now) => {
     const p = Math.min(1, (now - t0) / dur);
     const e = 1 - Math.pow(1 - p, 3);
     sleepShown = from + (to - from) * e;
-    const el = document.getElementById("sleepBal");
-    if (el) el.textContent = brl(sleepShown);
+    paintSleepBal();
     if (p < 1) sleepAnim = requestAnimationFrame(step);
     else sleepShown = to;
   };
   sleepAnim = requestAnimationFrame(step);
 }
-function paintGoal() {
-  if (!(sleepGoal > 0)) return;
-  const pct = Math.max(0, Math.min(100, (sleepBal / sleepGoal) * 100));
-  const bar = document.getElementById("sleepGoalBar");
-  const lab = document.getElementById("sleepGoalPct");
-  if (bar) bar.style.width = pct.toFixed(1) + "%";
-  if (lab) lab.textContent = pct.toFixed(1).replace(".", ",") + "%";
-}
 function wakeSleepDock() {
   const o = document.getElementById("sleepOverlay");
-  o?.classList.remove("idle");
+  o?.classList.remove("idle", "dim");
   clearTimeout(sleepIdle);
-  sleepIdle = setTimeout(() => o?.classList.add("idle"), 5000);
+  clearTimeout(sleepDim);
+  sleepIdle = setTimeout(() => o?.classList.add("idle"), 6000);
+  sleepDim = setTimeout(() => o?.classList.add("dim"), 20000);
 }
 
 function back() {
