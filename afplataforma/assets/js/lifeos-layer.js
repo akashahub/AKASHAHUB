@@ -78,6 +78,7 @@ export function bindLifeOsLayer() {
     if (e.target?.id === "sleepVol") setSleepVol(+e.target.value);
     if (e.target?.id === "rtVol") window.afRtVol(e.target);
   });
+  startRtGlobalWatch();
 }
 
 function onAct(e) {
@@ -375,29 +376,39 @@ function rtRedraw() {
   }
 }
 function rtWatch() {
+  if (!window._rt) window._rt = rtLoad();
   rtRedraw();
+  startRtGlobalWatch();
+}
+function startRtGlobalWatch() {
+  if (!window._rt) window._rt = rtLoad();
   rtTickRemind();
-  clearInterval(window._rtWatch);
+  if (window._rtWatch) return;
   window._rtWatch = setInterval(() => {
-    if (!document.getElementById("rtList")) { clearInterval(window._rtWatch); return; }
-    rtRedraw();
+    if (!window._rt) window._rt = rtLoad();
+    if (document.getElementById("rtList")) rtRedraw();
     rtTickRemind();
-  }, 10000);
+  }, 8000);
 }
 const _rtFired = new Set();
+const _rtSnooze = [];
 let rtAlarmCtx = null;
 let rtAlarmNodes = [];
+let rtAlarmLoops = 0;
+let rtAlarmLoopT = null;
+let rtAlarmCurrent = null;
 function rtVolLevel() {
   return Math.max(0.1, Math.min(1, Number(load("rtAlarmVol", 85)) / 100));
 }
 function stopRtAlarm() {
+  rtAlarmLoops = 0;
+  clearTimeout(rtAlarmLoopT);
   rtAlarmNodes.forEach((n) => { try { n.stop(); } catch (e) {} });
   rtAlarmNodes = [];
 }
-function playRtAlarm(label) {
-  stopRtAlarm();
+function playRtAlarmOnce() {
   const AC = window.AudioContext || window.webkitAudioContext;
-  if (!AC) { toast("Alarme visual: " + (label || "atividade"), true); return; }
+  if (!AC) return;
   if (!rtAlarmCtx) rtAlarmCtx = new AC();
   if (rtAlarmCtx.state === "suspended") rtAlarmCtx.resume();
   const ctx = rtAlarmCtx;
@@ -405,7 +416,6 @@ function playRtAlarm(label) {
   master.gain.value = rtVolLevel();
   master.connect(ctx.destination);
   const now = ctx.currentTime;
-  // caixa registradora + pulso de despertador (original, sem faixa protegida)
   const hits = [0, 0.18, 0.36, 0.9, 1.08, 1.26, 1.8, 1.98, 2.16, 2.7, 2.88, 3.06];
   hits.forEach((t, i) => {
     const o = ctx.createOscillator();
@@ -419,7 +429,7 @@ function playRtAlarm(label) {
     o.start(now + t); o.stop(now + t + 0.18);
     rtAlarmNodes.push(o);
   });
-  [0, 3.4, 6.8].forEach((t) => {
+  [0, 3.4].forEach((t) => {
     const ding = ctx.createOscillator();
     const g = ctx.createGain();
     ding.type = "sine";
@@ -432,25 +442,87 @@ function playRtAlarm(label) {
     ding.start(now + t); ding.stop(now + t + 0.42);
     rtAlarmNodes.push(ding);
   });
-  toast((label || "Rotina") + " · alarme");
+}
+function showRtAlarmPop(info) {
+  rtAlarmCurrent = info;
+  let pop = document.getElementById("rtAlarmPop");
+  if (!pop) {
+    pop = document.createElement("div");
+    pop.id = "rtAlarmPop";
+    pop.className = "rt-alarm-pop";
+    document.body.appendChild(pop);
+  }
+  const why = info.remind ? "Lembrete · " + info.remind + " min antes" : "Horário da rotina";
+  pop.innerHTML = `<div class="rt-alarm-card">
+    <p class="rt-alarm-k">Alarme da rotina</p>
+    <h3>${esc(info.name || "Atividade")}</h3>
+    <p>${esc(why)}</p>
+    <p>Horário ${esc(info.start || "--:--")} — ${esc(info.end || "--:--")}</p>
+    <p class="rt-alarm-loop">Toque ${Math.min(3, (info.n || 1))}/3</p>
+    <div class="rt-row">
+      <button type="button" data-act="afRtSnooze" data-m="1">Daqui 1 min</button>
+      <button type="button" data-act="afRtSnooze" data-m="2">Daqui 2 min</button>
+      <button type="button" data-act="afRtStopAlarm">Parar</button>
+    </div>
+  </div>`;
+  pop.hidden = false;
+}
+function playRtAlarm(info) {
+  const data = typeof info === "string" ? { name: info, start: "", end: "", remind: 0 } : (info || {});
+  stopRtAlarm();
+  rtAlarmLoops = 3;
+  const ring = () => {
+    if (rtAlarmLoops <= 0) return;
+    playRtAlarmOnce();
+    showRtAlarmPop({ ...data, n: 4 - rtAlarmLoops });
+    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+      try {
+        new Notification(data.name || "Rotina", {
+          body: (data.remind ? data.remind + " min antes · " : "") + (data.start || "") + " — " + (data.end || "")
+        });
+      } catch (e) {}
+    }
+    rtAlarmLoops -= 1;
+    if (rtAlarmLoops > 0) rtAlarmLoopT = setTimeout(ring, 9000);
+  };
+  ring();
 }
 function rtTickRemind() {
   const now = new Date();
   const cur = now.getHours() * 60 + now.getMinutes();
-  (window._rt || []).filter(rtTodayApplies).forEach((b) => {
+  const list = window._rt || rtLoad();
+  list.filter(rtTodayApplies).forEach((b) => {
+    if (!b.remind && b.remind !== 0) return;
     if (!b.remind) return;
     const fire = rtMin(b.start) - Number(b.remind);
     const key = b.id + "-" + now.toISOString().slice(0, 10) + "-" + fire;
     if (cur >= fire && cur <= fire + 1 && !_rtFired.has(key)) {
       _rtFired.add(key);
-      playRtAlarm(b.name + " começa em " + b.remind + " min");
-      if (typeof Notification !== "undefined" && Notification.permission === "granted") {
-        try { new Notification(b.name + " começa em " + b.remind + " minutos."); } catch (e) {}
-      }
+      playRtAlarm({ name: b.name, start: b.start, end: b.end, remind: b.remind });
     }
   });
+  for (let i = _rtSnooze.length - 1; i >= 0; i--) {
+    const s = _rtSnooze[i];
+    if (cur >= s.fire && cur <= s.fire + 1) {
+      _rtSnooze.splice(i, 1);
+      playRtAlarm(s);
+    }
+  }
 }
-window.afRtTestAlarm = () => playRtAlarm("Teste do alarme");
+window.afRtTestAlarm = () => playRtAlarm({ name: "Teste do alarme", start: "agora", end: "", remind: 0 });
+window.afRtStopAlarm = () => {
+  stopRtAlarm();
+  const pop = document.getElementById("rtAlarmPop");
+  if (pop) pop.hidden = true;
+};
+window.afRtSnooze = (el) => {
+  const m = Number(el?.dataset.m || 1);
+  const now = new Date();
+  const fire = now.getHours() * 60 + now.getMinutes() + m;
+  _rtSnooze.push({ ...(rtAlarmCurrent || { name: "Rotina" }), fire });
+  window.afRtStopAlarm();
+  toast("Alarme de novo em " + m + " min");
+};
 window.afRtVol = (el) => {
   const v = Number(el.value || 85);
   save("rtAlarmVol", v);
@@ -507,9 +579,10 @@ window.afRtPic = (el) => {
   input.click();
 };
 window.afRtNotify = () => {
-  playRtAlarm("Lembretes ligados");
-  if (typeof Notification === "undefined") { toast("Som ligado. Aviso nativo não existe neste navegador. Deixe a Rotina aberta."); return; }
-  Notification.requestPermission().then((p) => toast(p === "granted" ? "Som + aviso do navegador ativos." : "Som ativo. Aviso do sistema negado."));
+  startRtGlobalWatch();
+  playRtAlarm({ name: "Lembretes ligados", start: "", end: "", remind: 0 });
+  if (typeof Notification === "undefined") { toast("Som ligado nesta aba. Feche a AF e o alarme para."); return; }
+  Notification.requestPermission().then((p) => toast(p === "granted" ? "Som + aviso. Vale em qualquer tela da AF, com a aba aberta." : "Som ativo nesta aba."));
 };
 function onRtSubmit(e) {
   e.preventDefault();
