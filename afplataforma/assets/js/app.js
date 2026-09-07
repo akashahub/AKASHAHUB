@@ -37,8 +37,8 @@ import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
-import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt3";
-import { renderAscensaoRoteiro } from "../../data/ascensao-roteiro.js";
+import { bindLifeOsLayer } from "./lifeos-layer.js?v=asc1";
+import { renderAscensaoRoteiro } from "../../data/ascensao-roteiro.js?v=asc1";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
