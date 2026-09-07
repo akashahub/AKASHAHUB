@@ -207,56 +207,254 @@ window.afRmMeta = (el) => {
 };
 
 /* ── Rotina ── */
-export function viewRotina() {
-  const today = new Date().toISOString().slice(0, 10);
-  const all = load("routine", {});
-  const tasks = all[today] || [
-    { t: "Revisar caixa (5 min)", done: false },
-    { t: "Bloco de execução", done: false },
-    { t: "1 contato de valor", done: false }
+const RT_PRESETS = {
+  acordar: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=60",
+  foco: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=900&q=60",
+  cafe: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=60",
+  treino: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=60",
+  refeicao: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=60",
+  trabalho: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=900&q=60",
+  pausa: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=900&q=60",
+  plano: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=900&q=60",
+  exec: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=60",
+  ar: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=900&q=60",
+  noite: "https://images.unsplash.com/photo-1482192505345-5655af677d25?auto=format&fit=crop&w=900&q=60"
+};
+function rtSuggested() {
+  return [
+    { id: "r1", name: "Acordar + planejar o dia", start: "04:00", end: "04:15", days: "all", banner: RT_PRESETS.acordar, remind: 5 },
+    { id: "r2", name: "Trabalho profundo", start: "04:15", end: "06:00", days: "all", banner: RT_PRESETS.foco, remind: 5 },
+    { id: "r3", name: "Café da manhã / conteúdo", start: "06:00", end: "06:30", days: "all", banner: RT_PRESETS.cafe, remind: 5 },
+    { id: "r4", name: "Academia", start: "06:30", end: "08:00", days: "all", banner: RT_PRESETS.treino, remind: 10 },
+    { id: "r5", name: "Refeição", start: "08:00", end: "09:00", days: "all", banner: RT_PRESETS.refeicao, remind: 5 },
+    { id: "r6", name: "Trabalho", start: "09:00", end: "12:00", days: "week", banner: RT_PRESETS.trabalho, remind: 10 },
+    { id: "r7", name: "Pausa / café", start: "12:00", end: "13:00", days: "all", banner: RT_PRESETS.pausa, remind: 5 },
+    { id: "r8", name: "Planejamento", start: "13:00", end: "14:00", days: "all", banner: RT_PRESETS.plano, remind: 5 },
+    { id: "r9", name: "Produção / execução", start: "14:00", end: "19:00", days: "week", banner: RT_PRESETS.exec, remind: 10 },
+    { id: "r10", name: "Caminhada / treino", start: "19:00", end: "20:00", days: "all", banner: RT_PRESETS.ar, remind: 10 },
+    { id: "r11", name: "Encerramento do dia", start: "20:00", end: "21:00", days: "all", banner: RT_PRESETS.noite, remind: 5 }
   ];
-  window._routineDay = today;
-  window._routine = tasks;
-  return `<div class="view active">${back()}
-    <p class="hero-line">Calendário e tarefas</p>
+}
+function rtLoad() {
+  const data = load("routinePlan", null);
+  if (Array.isArray(data) && data.length) return data;
+  const seed = rtSuggested();
+  save("routinePlan", seed);
+  return seed;
+}
+function rtSave(list) {
+  window._rt = list;
+  save("routinePlan", list);
+}
+function rtMin(hhmm) {
+  const [h, m] = String(hhmm || "00:00").split(":").map(Number);
+  return (h || 0) * 60 + (m || 0);
+}
+function rtTodayApplies(block) {
+  const d = new Date().getDay();
+  if (block.days === "week") return d >= 1 && d <= 5;
+  if (block.days && block.days !== "all") {
+    return String(block.days).split(",").map(Number).includes(d);
+  }
+  return true;
+}
+function rtState(list) {
+  const now = new Date();
+  const cur = now.getHours() * 60 + now.getMinutes();
+  const today = list.filter(rtTodayApplies).sort((a, b) => rtMin(a.start) - rtMin(b.start));
+  const current = today.find((b) => cur >= rtMin(b.start) && cur < rtMin(b.end));
+  const next = today.find((b) => rtMin(b.start) > cur);
+  return { current, next };
+}
+export function viewRotina() {
+  const list = rtLoad();
+  window._rt = list;
+  setTimeout(rtWatch, 40);
+  const { current, next } = rtState(list);
+  return `<div class="view active rt-wrap">${back()}
+    <p class="hero-line">Estrutura fixa do dia</p>
     <h2 class="hero-title">Rotina</h2>
-    <p class="hero-sub">Hoje · ${today}. O dia tem um mínimo viável — o resto é bônus.</p>
-    <div class="cash-row">
-      <input id="rtNew" placeholder="Tarefa de hoje">
-      <button class="tool-btn" type="button" data-act="afAddRotina">Adicionar</button>
+    <p class="hero-sub">Horário, atividade e duração. Não é lista de tarefas: é o esqueleto do dia.</p>
+    <div class="rt-now">
+      <div><small>Agora</small><b>${current ? esc(current.name) + " · " + current.start + "–" + current.end : "Fora da rotina agora"}</b></div>
+      <div><small>Próxima</small><b>${next ? esc(next.name) + " · " + next.start : "Nada à frente hoje"}</b></div>
     </div>
-    <div id="rtList">${renderRoutine(tasks)}</div>
+    <div class="rt-acts">
+      <button class="tool-btn" type="button" data-act="afRtAdd">+ Adicionar à rotina</button>
+      <button class="tool-btn" type="button" data-act="afRtSuggest">Usar rotina sugerida</button>
+      <button class="tool-btn" type="button" data-act="afRtNotify">Ativar lembretes</button>
+    </div>
+    <div id="rtForm" hidden></div>
+    <div id="rtList">${renderRt(list)}</div>
+    <input id="rtFile" type="file" accept="image/*" hidden>
   </div>`;
 }
-function renderRoutine(tasks) {
-  const n = tasks.filter((x) => x.done).length;
-  return `<p class="notes-meta">${n}/${tasks.length} concluídas</p>` +
-    tasks
-      .map(
-        (x, i) => `<div class="hab-row">
-        <label><input type="checkbox" ${x.done ? "checked" : ""} data-act="afToggleRotina" data-i="${i}"> ${esc(x.t)}</label>
-      </div>`
-      )
-      .join("");
+function renderRt(list) {
+  const { current, next } = rtState(list);
+  return list
+    .slice()
+    .sort((a, b) => rtMin(a.start) - rtMin(b.start))
+    .map((b) => {
+      const mark = current && current.id === b.id ? "agora" : next && next.id === b.id ? "prox" : "";
+      return `<article class="rt-card ${mark}" data-id="${esc(b.id)}">
+        <div class="rt-banner">
+          <img src="${esc(b.banner || RT_PRESETS.plano)}" alt="" onerror="this.style.opacity='.2'">
+          <span class="rt-time">${esc(b.start)} — ${esc(b.end)}</span>
+        </div>
+        <div class="rt-body">
+          <h3>${esc(b.name)}</h3>
+          <p>${b.days === "week" ? "Segunda a sexta" : b.days === "all" ? "Todos os dias" : "Dias escolhidos"} · lembrete ${b.remind ? b.remind + " min antes" : "off"}</p>
+          <div class="rt-row">
+            <button type="button" data-act="afRtEdit" data-id="${esc(b.id)}">Editar</button>
+            <button type="button" data-act="afRtPic" data-id="${esc(b.id)}">Alterar imagem</button>
+            <button type="button" data-act="afRtDel" data-id="${esc(b.id)}">Excluir</button>
+          </div>
+        </div>
+      </article>`;
+    })
+    .join("");
 }
-function persistRoutine() {
-  const all = load("routine", {});
-  all[window._routineDay] = window._routine;
-  save("routine", all);
+function rtForm(block) {
+  const b = block || { id: "", name: "", start: "07:00", end: "08:00", days: "all", banner: RT_PRESETS.plano, remind: 10 };
+  const presets = Object.entries(RT_PRESETS).map(([k, url]) => `<button type="button" class="rt-pre" data-act="afRtPreset" data-url="${esc(url)}"><img src="${url}" alt="${k}"></button>`).join("");
+  return `<form class="rt-form" id="rtFormEl">
+    <input type="hidden" name="id" value="${esc(b.id)}">
+    <label>Nome<input name="name" value="${esc(b.name)}" placeholder="Academia" required></label>
+    <div class="rt-grid">
+      <label>Início<input type="time" name="start" value="${esc(b.start)}" required></label>
+      <label>Fim<input type="time" name="end" value="${esc(b.end)}" required></label>
+    </div>
+    <label>Repetição
+      <select name="days">
+        <option value="all" ${b.days === "all" ? "selected" : ""}>Todos os dias</option>
+        <option value="week" ${b.days === "week" ? "selected" : ""}>Segunda a sexta</option>
+      </select>
+    </label>
+    <label>Lembrete
+      <select name="remind">
+        ${[0, 5, 10, 15, 30].map((n) => `<option value="${n}" ${+b.remind === n ? "selected" : ""}>${n ? n + " minutos antes" : "Sem lembrete"}</option>`).join("")}
+      </select>
+    </label>
+    <p class="notes-hint">Banner sugerido</p>
+    <div class="rt-presets">${presets}</div>
+    <input type="hidden" name="banner" id="rtBannerVal" value="${esc(b.banner || "")}">
+    <div class="rt-row">
+      <button class="tool-btn" type="submit">Salvar</button>
+      <button class="tool-btn" type="button" data-act="afRtCancel">Cancelar</button>
+    </div>
+  </form>`;
 }
-window.afToggleRotina = (el) => {
-  window._routine[+el.dataset.i].done = el.checked;
-  persistRoutine();
-  document.getElementById("rtList").innerHTML = renderRoutine(window._routine);
+function rtRedraw() {
+  const list = document.getElementById("rtList");
+  if (list) list.innerHTML = renderRt(window._rt || rtLoad());
+  const now = document.querySelector(".rt-now");
+  if (now) {
+    const { current, next } = rtState(window._rt || []);
+    now.innerHTML = `<div><small>Agora</small><b>${current ? esc(current.name) + " · " + current.start + "–" + current.end : "Fora da rotina agora"}</b></div>
+      <div><small>Próxima</small><b>${next ? esc(next.name) + " · " + next.start : "Nada à frente hoje"}</b></div>`;
+  }
+}
+function rtWatch() {
+  rtRedraw();
+  rtTickRemind();
+  clearInterval(window._rtWatch);
+  window._rtWatch = setInterval(() => {
+    if (!document.getElementById("rtList")) { clearInterval(window._rtWatch); return; }
+    rtRedraw();
+    rtTickRemind();
+  }, 30000);
+}
+const _rtFired = new Set();
+function rtTickRemind() {
+  if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
+  const now = new Date();
+  const cur = now.getHours() * 60 + now.getMinutes();
+  (window._rt || []).filter(rtTodayApplies).forEach((b) => {
+    if (!b.remind) return;
+    const fire = rtMin(b.start) - Number(b.remind);
+    const key = b.id + "-" + new Date().toISOString().slice(0, 10) + "-" + fire;
+    if (cur === fire && !_rtFired.has(key)) {
+      _rtFired.add(key);
+      try { new Notification(b.name + " começa em " + b.remind + " minutos."); } catch (e) {}
+    }
+  });
+}
+window.afRtSuggest = () => {
+  if (!confirm("Substituir a rotina atual pela sugerida?")) return;
+  rtSave(rtSuggested());
+  rtRedraw();
 };
-window.afAddRotina = () => {
-  const v = document.getElementById("rtNew")?.value?.trim();
-  if (!v) return;
-  window._routine.push({ t: v, done: false });
-  persistRoutine();
-  document.getElementById("rtList").innerHTML = renderRoutine(window._routine);
-  document.getElementById("rtNew").value = "";
+window.afRtAdd = () => {
+  const box = document.getElementById("rtForm");
+  if (!box) return;
+  box.hidden = false;
+  box.innerHTML = rtForm(null);
+  box.querySelector("form")?.addEventListener("submit", onRtSubmit);
 };
+window.afRtEdit = (el) => {
+  const b = (window._rt || []).find((x) => x.id === el.dataset.id);
+  const box = document.getElementById("rtForm");
+  if (!box || !b) return;
+  box.hidden = false;
+  box.innerHTML = rtForm(b);
+  box.querySelector("form")?.addEventListener("submit", onRtSubmit);
+};
+window.afRtCancel = () => {
+  const box = document.getElementById("rtForm");
+  if (box) { box.hidden = true; box.innerHTML = ""; }
+};
+window.afRtDel = (el) => {
+  if (!confirm("Excluir esta atividade da rotina?")) return;
+  rtSave((window._rt || []).filter((x) => x.id !== el.dataset.id));
+  rtRedraw();
+};
+window.afRtPreset = (el) => {
+  const inp = document.getElementById("rtBannerVal");
+  if (inp) inp.value = el.dataset.url || "";
+};
+window.afRtPic = (el) => {
+  const input = document.getElementById("rtFile");
+  if (!input) return;
+  input.onchange = () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const list = window._rt || [];
+      const item = list.find((x) => x.id === el.dataset.id);
+      if (item) { item.banner = String(reader.result || ""); rtSave(list); rtRedraw(); }
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+};
+window.afRtNotify = () => {
+  if (typeof Notification === "undefined") { toast("Este navegador não envia alerta nativo. O aviso aparece aqui com a plataforma aberta.", true); return; }
+  Notification.requestPermission().then((p) => toast(p === "granted" ? "Lembretes ativos neste dispositivo." : "Permissão negada."));
+};
+function onRtSubmit(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const item = {
+    id: fd.get("id") || ("r" + Date.now()),
+    name: String(fd.get("name") || "").trim(),
+    start: String(fd.get("start") || "07:00"),
+    end: String(fd.get("end") || "08:00"),
+    days: String(fd.get("days") || "all"),
+    banner: String(fd.get("banner") || RT_PRESETS.plano),
+    remind: Number(fd.get("remind") || 0)
+  };
+  if (!item.name) return;
+  const list = window._rt || [];
+  const i = list.findIndex((x) => x.id === item.id);
+  if (i >= 0) list[i] = item; else list.push(item);
+  rtSave(list);
+  window.afRtCancel();
+  rtRedraw();
+}
+
+window.afToggleRotina = () => {};
+window.afAddRotina = window.afRtAdd;
 
 /* ── MindZone ── */
 export function viewMindZone() {
