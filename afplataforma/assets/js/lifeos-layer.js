@@ -76,6 +76,7 @@ export function bindLifeOsLayer() {
   document.addEventListener("submit", onSubmit, true);
   document.addEventListener("input", (e) => {
     if (e.target?.id === "sleepVol") setSleepVol(+e.target.value);
+    if (e.target?.id === "rtVol") window.afRtVol(e.target);
   });
 }
 
@@ -297,7 +298,12 @@ export function viewRotina() {
       <button class="tool-btn" type="button" data-act="afRtAdd">+ Adicionar à rotina</button>
       <button class="tool-btn" type="button" data-act="afRtSuggest">Usar rotina sugerida</button>
       <button class="tool-btn" type="button" data-act="afRtNotify">Ativar lembretes</button>
+      <button class="tool-btn" type="button" data-act="afRtTestAlarm">Testar alarme</button>
     </div>
+    <label class="rt-vol">Volume do alarme
+      <input id="rtVol" type="range" min="10" max="100" value="${Number(load("rtAlarmVol", 85))}" data-act="afRtVol">
+      <b id="rtVolLab">${Number(load("rtAlarmVol", 85))}</b>
+    </label>
     <div id="rtForm" hidden></div>
     <div id="rtList">${renderRt(list)}</div>
     <input id="rtFile" type="file" accept="image/*" hidden>
@@ -376,23 +382,81 @@ function rtWatch() {
     if (!document.getElementById("rtList")) { clearInterval(window._rtWatch); return; }
     rtRedraw();
     rtTickRemind();
-  }, 30000);
+  }, 10000);
 }
 const _rtFired = new Set();
+let rtAlarmCtx = null;
+let rtAlarmNodes = [];
+function rtVolLevel() {
+  return Math.max(0.1, Math.min(1, Number(load("rtAlarmVol", 85)) / 100));
+}
+function stopRtAlarm() {
+  rtAlarmNodes.forEach((n) => { try { n.stop(); } catch (e) {} });
+  rtAlarmNodes = [];
+}
+function playRtAlarm(label) {
+  stopRtAlarm();
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) { toast("Alarme visual: " + (label || "atividade"), true); return; }
+  if (!rtAlarmCtx) rtAlarmCtx = new AC();
+  if (rtAlarmCtx.state === "suspended") rtAlarmCtx.resume();
+  const ctx = rtAlarmCtx;
+  const master = ctx.createGain();
+  master.gain.value = rtVolLevel();
+  master.connect(ctx.destination);
+  const now = ctx.currentTime;
+  // caixa registradora + pulso de despertador (original, sem faixa protegida)
+  const hits = [0, 0.18, 0.36, 0.9, 1.08, 1.26, 1.8, 1.98, 2.16, 2.7, 2.88, 3.06];
+  hits.forEach((t, i) => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = i % 3 === 0 ? "square" : "triangle";
+    o.frequency.value = i % 2 === 0 ? 880 : 1320;
+    g.gain.setValueAtTime(0.0001, now + t);
+    g.gain.exponentialRampToValueAtTime(0.9, now + t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + t + 0.16);
+    o.connect(g); g.connect(master);
+    o.start(now + t); o.stop(now + t + 0.18);
+    rtAlarmNodes.push(o);
+  });
+  [0, 3.4, 6.8].forEach((t) => {
+    const ding = ctx.createOscillator();
+    const g = ctx.createGain();
+    ding.type = "sine";
+    ding.frequency.setValueAtTime(2093, now + t);
+    ding.frequency.exponentialRampToValueAtTime(1318, now + t + 0.35);
+    g.gain.setValueAtTime(0.0001, now + t);
+    g.gain.exponentialRampToValueAtTime(1, now + t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + t + 0.4);
+    ding.connect(g); g.connect(master);
+    ding.start(now + t); ding.stop(now + t + 0.42);
+    rtAlarmNodes.push(ding);
+  });
+  toast((label || "Rotina") + " · alarme");
+}
 function rtTickRemind() {
-  if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
   const now = new Date();
   const cur = now.getHours() * 60 + now.getMinutes();
   (window._rt || []).filter(rtTodayApplies).forEach((b) => {
     if (!b.remind) return;
     const fire = rtMin(b.start) - Number(b.remind);
-    const key = b.id + "-" + new Date().toISOString().slice(0, 10) + "-" + fire;
-    if (cur === fire && !_rtFired.has(key)) {
+    const key = b.id + "-" + now.toISOString().slice(0, 10) + "-" + fire;
+    if (cur >= fire && cur <= fire + 1 && !_rtFired.has(key)) {
       _rtFired.add(key);
-      try { new Notification(b.name + " começa em " + b.remind + " minutos."); } catch (e) {}
+      playRtAlarm(b.name + " começa em " + b.remind + " min");
+      if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+        try { new Notification(b.name + " começa em " + b.remind + " minutos."); } catch (e) {}
+      }
     }
   });
 }
+window.afRtTestAlarm = () => playRtAlarm("Teste do alarme");
+window.afRtVol = (el) => {
+  const v = Number(el.value || 85);
+  save("rtAlarmVol", v);
+  const lab = document.getElementById("rtVolLab");
+  if (lab) lab.textContent = String(v);
+};
 window.afRtSuggest = () => {
   if (!confirm("Substituir a rotina atual pela sugerida?")) return;
   rtSave(rtSuggested());
@@ -443,8 +507,9 @@ window.afRtPic = (el) => {
   input.click();
 };
 window.afRtNotify = () => {
-  if (typeof Notification === "undefined") { toast("Este navegador não envia alerta nativo. O aviso aparece aqui com a plataforma aberta.", true); return; }
-  Notification.requestPermission().then((p) => toast(p === "granted" ? "Lembretes ativos neste dispositivo." : "Permissão negada."));
+  playRtAlarm("Lembretes ligados");
+  if (typeof Notification === "undefined") { toast("Som ligado. Aviso nativo não existe neste navegador. Deixe a Rotina aberta."); return; }
+  Notification.requestPermission().then((p) => toast(p === "granted" ? "Som + aviso do navegador ativos." : "Som ativo. Aviso do sistema negado."));
 };
 function onRtSubmit(e) {
   e.preventDefault();

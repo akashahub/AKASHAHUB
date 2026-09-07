@@ -13,7 +13,7 @@ import {
   viewCoach,
   viewSono,
   WA
-} from "./lifeos-layer.js?v=rt2";
+} from "./lifeos-layer.js?v=rt3";
 import {
   pageHead,
   editImg,
