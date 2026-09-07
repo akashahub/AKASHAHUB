@@ -208,17 +208,17 @@ window.afRmMeta = (el) => {
 
 /* ── Rotina ── */
 const RT_PRESETS = {
-  acordar: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=60",
-  foco: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=900&q=60",
-  cafe: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=60",
-  treino: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=60",
-  refeicao: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=60",
-  trabalho: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=900&q=60",
-  pausa: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=900&q=60",
-  plano: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=900&q=60",
-  exec: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=60",
-  ar: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=900&q=60",
-  noite: "https://images.unsplash.com/photo-1482192505345-5655af677d25?auto=format&fit=crop&w=900&q=60"
+  acordar: "assets/img/rotina/01.jpg",
+  foco: "assets/img/rotina/02.jpg",
+  cafe: "assets/img/rotina/03.jpg",
+  treino: "assets/img/rotina/04.jpg",
+  refeicao: "assets/img/rotina/05.jpg",
+  trabalho: "assets/img/rotina/06.jpg",
+  pausa: "assets/img/rotina/07.jpg",
+  plano: "assets/img/rotina/08.jpg",
+  exec: "assets/img/rotina/09.jpg",
+  ar: "assets/img/rotina/10.jpg",
+  noite: "assets/img/rotina/01.jpg"
 };
 function rtSuggested() {
   return [
@@ -237,10 +237,24 @@ function rtSuggested() {
 }
 function rtLoad() {
   const data = load("routinePlan", null);
-  if (Array.isArray(data) && data.length) return data;
   const seed = rtSuggested();
-  save("routinePlan", seed);
-  return seed;
+  if (!Array.isArray(data) || !data.length) {
+    save("routinePlan", seed);
+    return seed;
+  }
+  let changed = false;
+  data.forEach((b) => {
+    const s = seed.find((x) => x.id === b.id);
+    if (!s) return;
+    const custom = String(b.banner || "").startsWith("data:");
+    const stale = !b.banner || /unsplash|images\.unsplash/.test(b.banner);
+    if (!custom && stale) {
+      b.banner = s.banner;
+      changed = true;
+    }
+  });
+  if (changed) save("routinePlan", data);
+  return data;
 }
 function rtSave(list) {
   window._rt = list;
