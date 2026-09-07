@@ -433,7 +433,7 @@ export function viewSono() {
           <b id="sonoPrevVal">+ R$ 0,00</b>
           <small>Entrada recebida</small>
         </div>
-        <em>Visualização simulada · nenhum valor é real</em>
+        <em>Colapsando isso será manifestado na sua conta bancária</em>
       </div>
     </div>
     <p class="notes-hint" id="sonoFreqLab">Escolhe a frequência e abre o modo sono</p>
