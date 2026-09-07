@@ -419,6 +419,7 @@ export function viewSono() {
       `<button class="freq-btn" type="button" data-act="afPlayFreq" data-hz="${f.hz}" data-name="${esc(f.name)}">${String(i + 1).padStart(2, "0")}<small>${f.hz} Hz</small></button>`
   ).join("");
   const nome = sleepName();
+  setTimeout(startSonoPreview, 40);
   return `<div class="view active sono-gate">${back()}
     <div class="sono-preview">
       <div class="sono-preview-top">
@@ -427,7 +428,11 @@ export function viewSono() {
       </div>
       <div class="sono-preview-card">
         <span>Saldo em conta</span>
-        <strong>R$ 10.000,00</strong>
+        <strong id="sonoPrevBal">R$ 10.000,00</strong>
+        <div class="sono-in" id="sonoPrevIn">
+          <b id="sonoPrevVal">+ R$ 0,00</b>
+          <small>Entrada recebida</small>
+        </div>
         <em>Visualização simulada · nenhum valor é real</em>
       </div>
     </div>
@@ -435,6 +440,46 @@ export function viewSono() {
     <div class="freq-row">${btns}</div>
     <button class="btn btn-inline sono-open" type="button" data-act="afOpenSleep">Abrir modo sono</button>
   </div>`;
+}
+
+let sonoPrevTimer = null;
+let sonoPrevAnim = null;
+let sonoPrevBal = 10000;
+let sonoPrevShown = 10000;
+function startSonoPreview() {
+  clearTimeout(sonoPrevTimer);
+  const el = document.getElementById("sonoPrevBal");
+  if (!el) return;
+  sonoPrevBal = 10000;
+  sonoPrevShown = 10000;
+  el.textContent = brl(10000);
+  const tick = () => {
+    if (!document.getElementById("sonoPrevBal")) return;
+    const bag = [300, 500, 800, 1000, 2000, 7000, 20000, 50000, 90000];
+    const v = bag[Math.floor(Math.random() * bag.length)];
+    const from = sonoPrevBal;
+    sonoPrevBal += v;
+    const line = document.getElementById("sonoPrevIn");
+    const val = document.getElementById("sonoPrevVal");
+    if (val) val.textContent = "+ " + brl(v);
+    if (line) {
+      line.classList.remove("on");
+      requestAnimationFrame(() => line.classList.add("on"));
+    }
+    if (sonoPrevAnim) cancelAnimationFrame(sonoPrevAnim);
+    const t0 = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / 900);
+      const e = 1 - Math.pow(1 - p, 3);
+      sonoPrevShown = from + (sonoPrevBal - from) * e;
+      const bal = document.getElementById("sonoPrevBal");
+      if (bal) bal.textContent = brl(sonoPrevShown);
+      if (p < 1) sonoPrevAnim = requestAnimationFrame(step);
+    };
+    sonoPrevAnim = requestAnimationFrame(step);
+    sonoPrevTimer = setTimeout(tick, 3000);
+  };
+  sonoPrevTimer = setTimeout(tick, 1200);
 }
 
 window.afSleepStart = (el) => {
@@ -450,6 +495,7 @@ window.afSleepGoal = (el) => {
 };
 
 window.afOpenSleep = () => {
+  clearTimeout(sonoPrevTimer);
   const o = document.getElementById("sleepOverlay");
   if (!o) return;
   const bar = document.getElementById("sleepFreqs");
