@@ -209,6 +209,10 @@ function renderModuleDetail(id) {
   </div>`;
 }
 
+function fechamentoHref() {
+  const q = session.mode === "local" && isMentorSession() ? "?demo=mentor" : "";
+  return "fechamento/index.html" + q;
+}
 function livroHref() {
   const q = session.mode === "local" && isMentorSession() ? "?demo=mentor" : "";
   return "interno/livro.html" + q;
@@ -250,6 +254,12 @@ function renderMentor() {
       <h3>Roteiro da Ascensão</h3>
       <p>Como conduzir a sessão de 1h30 sem depender de humor. O que pode. O que é proibido. Só o mentor vê.</p>
       <button class="tool-btn" type="button" data-nav="ascensao">Abrir roteiro</button>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Call comercial</p>
+      <h3>Fechamento de Call</h3>
+      <p>Mapa, diagnóstico, qualificação, teleprompt e ficha. Só o mentor vê. Mentorado não entra.</p>
+      <a class="tool-btn" href="${fechamentoHref()}">Abrir fechamento</a>
     </article>
     ${renderAccessAdminPanel()}
   </div>`;
