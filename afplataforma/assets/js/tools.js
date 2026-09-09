@@ -95,10 +95,63 @@ async function openTextTool(id, title, ph) {
 
 async function openCashflow() {
   const saved = (await loadToolData("cashflow")) || { items: [] };
-  window._cash = saved.items || [];
+  const today = new Date().toISOString().slice(0, 10);
+  const norm = (it) => ({
+    desc: it.desc || "",
+    val: Number(it.val || 0),
+    tipo: it.tipo === "entrada" ? "entrada" : "saida",
+    cat: it.cat || "Outro",
+    act: it.act || "manter",
+    ess: it.ess || "sim",
+    date: /^\d{4}-\d{2}-\d{2}/.test(String(it.date || "")) ? String(it.date).slice(0, 10) : today,
+    status: it.status === "previsto" ? "previsto" : "pago",
+    recur: it.recur === "fixo" ? "fixo" : "unico",
+    paidMonths: Array.isArray(it.paidMonths) ? it.paidMonths.slice() : []
+  });
+  window._cash = (saved.items || []).map(norm);
+  window._cashMonth = (saved.month && /^\d{4}-\d{2}$/.test(saved.month))
+    ? saved.month
+    : today.slice(0, 7);
+
+  const monthKey = (d) => String(d || "").slice(0, 7);
+  const lastDay = (ym) => {
+    const [y, m] = ym.split("-").map(Number);
+    return new Date(y, m, 0).getDate();
+  };
+  const instanceDate = (it, ym) => {
+    if (it.recur !== "fixo") return it.date;
+    const day = Math.min(parseInt(String(it.date).slice(8, 10), 10) || 1, lastDay(ym));
+    return ym + "-" + String(day).padStart(2, "0");
+  };
+  const inMonth = (it, ym) => {
+    if (it.recur === "fixo") return monthKey(it.date) <= ym;
+    return monthKey(it.date) === ym;
+  };
+  const instStatus = (it, ym) => {
+    if (it.recur === "fixo") return (it.paidMonths || []).includes(ym) ? "pago" : "previsto";
+    return it.status === "previsto" ? "previsto" : "pago";
+  };
+
   openFloat(
     "Controle financeiro · Cash-Flow",
-    `<div class="cash-row">
+    `<style>
+      .cfx-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+      .cfx-bar label{font-size:11px;opacity:.75}
+      .cfx-bar input[type=month]{padding:8px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);color:inherit;font-size:12px}
+      .cfx-kpis{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 12px}
+      .cfx-kpis div{border:1px solid rgba(255,255,255,.08);padding:8px 10px;font-size:11px}
+      .cfx-kpis b{display:block;font-size:13px;margin-top:2px}
+      .cfx-tag{font-size:10px;border:1px solid rgba(255,255,255,.16);padding:1px 6px;margin-left:6px;white-space:nowrap}
+      .cfx-item{flex-wrap:wrap;gap:6px}
+      .cfx-item span{flex:1;min-width:140px}
+      .cfx-item input[type=date]{padding:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);color:inherit;font-size:11px;width:132px}
+    </style>
+    <div class="cfx-bar">
+      <label for="cMonth">Mês</label>
+      <input id="cMonth" type="month" value="${esc(window._cashMonth)}">
+    </div>
+    <div class="cfx-kpis" id="cashKpis"></div>
+    <div class="cash-row">
       <input id="cDesc" placeholder="Descrição">
       <input id="cVal" type="number" step="0.01" placeholder="Valor">
     </div>
@@ -110,53 +163,132 @@ async function openCashflow() {
       <select id="cAct"><option>manter</option><option>reduzir</option><option>cancelar</option><option>aumentar</option></select>
       <select id="cEss"><option value="sim">Essencial</option><option value="nao">Não essencial</option></select>
     </div>
+    <div class="cash-row">
+      <input id="cDate" type="date" value="${today}">
+      <select id="cStatus"><option value="previsto">Previsto</option><option value="pago">Pago</option></select>
+    </div>
+    <div class="cash-row">
+      <select id="cRecur"><option value="unico">Uma vez</option><option value="fixo">Todo mês (fixo)</option></select>
+      <span></span>
+    </div>
     <button class="tool-btn" type="button" id="btnAddCash">+ Adicionar</button>
     <div class="cash-list" id="cashList"></div>
     <p class="notes-meta" id="cashTotal"></p>`,
     `<button class="btn btn-inline" type="button" id="btnSaveCash">Salvar auditoria</button>`
   );
+
   const render = () => {
     const el = document.getElementById("cashList");
+    const kpis = document.getElementById("cashKpis");
+    const totalEl = document.getElementById("cashTotal");
     if (!el) return;
+    const ym = document.getElementById("cMonth")?.value || window._cashMonth;
+    window._cashMonth = ym;
+
+    const rows = window._cash
+      .map((it, i) => ({ it, i }))
+      .filter((x) => inMonth(x.it, ym));
+
     el.innerHTML =
-      window._cash
-        .map((it, i) => {
+      rows
+        .map(({ it, i }) => {
+          const st = instStatus(it, ym);
+          const d = instanceDate(it, ym);
           const sign = it.tipo === "entrada" ? "+" : "−";
-          return `<div class="cash-item"><span>${sign} ${esc(it.desc)} · ${esc(it.cat)} · R$ ${Number(it.val).toFixed(2)}</span>
-        <button type="button" data-rm="${i}">remover</button></div>`;
+          const fixo = it.recur === "fixo" ? `<span class="cfx-tag">fixo</span>` : "";
+          const tag = `<span class="cfx-tag">${st}</span>`;
+          return `<div class="cash-item cfx-item">
+            <span>${sign} ${esc(it.desc)} · ${esc(it.cat)} · R$ ${Number(it.val).toFixed(2)}${fixo}${tag}</span>
+            <input type="date" data-date="${i}" value="${esc(it.recur === "fixo" ? it.date : d)}">
+            <button type="button" data-pay="${i}">${st === "pago" ? "marcar previsto" : "marcar pago"}</button>
+            <button type="button" data-rm="${i}">remover</button>
+          </div>`;
         })
-        .join("") || "<p class='empty'>Nenhum item</p>";
+        .join("") || "<p class='empty'>Nenhum item neste mês</p>";
+
     el.querySelectorAll("[data-rm]").forEach((b) => {
       b.onclick = () => {
         window._cash.splice(+b.dataset.rm, 1);
         render();
       };
     });
-    const inT = window._cash.filter((i) => i.tipo === "entrada").reduce((s, i) => s + Number(i.val || 0), 0);
-    const outT = window._cash.filter((i) => i.tipo !== "entrada").reduce((s, i) => s + Number(i.val || 0), 0);
-    document.getElementById("cashTotal").textContent =
-      `Entradas R$ ${inT.toFixed(2)} · Saídas R$ ${outT.toFixed(2)} · Saldo R$ ${(inT - outT).toFixed(2)}`;
+    el.querySelectorAll("[data-pay]").forEach((b) => {
+      b.onclick = () => {
+        const it = window._cash[+b.dataset.pay];
+        if (!it) return;
+        if (it.recur === "fixo") {
+          const set = new Set(it.paidMonths || []);
+          if (set.has(ym)) set.delete(ym);
+          else set.add(ym);
+          it.paidMonths = [...set];
+        } else {
+          it.status = it.status === "pago" ? "previsto" : "pago";
+        }
+        render();
+      };
+    });
+    el.querySelectorAll("[data-date]").forEach((inp) => {
+      inp.onchange = () => {
+        const it = window._cash[+inp.dataset.date];
+        if (!it || !/^\d{4}-\d{2}-\d{2}$/.test(inp.value)) return;
+        it.date = inp.value;
+        render();
+      };
+    });
+
+    let ent = 0, prev = 0, pago = 0;
+    rows.forEach(({ it }) => {
+      const v = Number(it.val || 0);
+      const st = instStatus(it, ym);
+      if (it.tipo === "entrada") {
+        ent += v;
+      } else if (st === "pago") {
+        pago += v;
+      } else {
+        prev += v;
+      }
+    });
+    if (kpis) {
+      kpis.innerHTML = `
+        <div>Entradas <b>R$ ${ent.toFixed(2)}</b></div>
+        <div>Saídas pagas <b>R$ ${pago.toFixed(2)}</b></div>
+        <div>Saídas previstas <b>R$ ${prev.toFixed(2)}</b></div>
+        <div>Saldo (pago) <b>R$ ${(ent - pago).toFixed(2)}</b></div>`;
+    }
+    if (totalEl) {
+      totalEl.textContent =
+        `Mês ${ym} · projetado R$ ${(ent - pago - prev).toFixed(2)} · ${rows.length} lançamento(s)`;
+    }
   };
+
   render();
+  document.getElementById("cMonth").onchange = render;
   document.getElementById("btnAddCash").onclick = () => {
+    const date = document.getElementById("cDate").value || today;
+    const status = document.getElementById("cStatus").value;
+    const recur = document.getElementById("cRecur").value;
     window._cash.push({
-      desc: document.getElementById("cDesc").value || "—",
+      desc: document.getElementById("cDesc").value || "item",
       val: parseFloat(document.getElementById("cVal").value) || 0,
       tipo: document.getElementById("cTipo").value,
       cat: document.getElementById("cCat").value,
       act: document.getElementById("cAct").value,
       ess: document.getElementById("cEss").value,
-      date: new Date().toISOString().slice(0, 10)
+      date,
+      status,
+      recur,
+      paidMonths: recur === "fixo" && status === "pago" ? [monthKey(date)] : []
     });
     document.getElementById("cDesc").value = "";
     document.getElementById("cVal").value = "";
     render();
   };
   document.getElementById("btnSaveCash").onclick = async () => {
-    await persistToolData("cashflow", { items: window._cash });
+    await persistToolData("cashflow", { items: window._cash, month: window._cashMonth });
     toast("Auditoria salva");
   };
 }
+
 
 /** Oratória — 7 músculos. Não é dom. */
 async function openFono() {
