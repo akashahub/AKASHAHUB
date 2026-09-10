@@ -1,6 +1,6 @@
-/* Akasha Hub — um arquivo só. Cole o ID G-XXXXXXXX na linha abaixo. */
+/* Akasha Hub — um arquivo só. ID de medição GA4. */
 (function () {
-  var ID = "";
+  var ID = "G-TG0XJE0ZWS";
   if (!ID || ID.indexOf("G-") !== 0 || ID.length < 10) return;
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
