@@ -1,5 +1,5 @@
 /**
- * Portão do Fechamento de Call — só mentor.
+ * Portão das páginas privadas do mentor (Ascensão, Fechamento, Treinamento).
  */
 import {
   setAuthCallbacks,
@@ -26,16 +26,18 @@ function allow() {
   document.body.classList.remove("fc-deny");
   const lock = document.getElementById("fcLock");
   if (lock) lock.hidden = true;
+  const q = session.mode === "local" ? "?demo=mentor" : "";
   const back = document.getElementById("fcBack");
-  if (back) {
-    back.href = session.mode === "local" ? "../index.html?demo=mentor" : "../index.html";
-  }
+  if (back) back.href = "../index.html" + q;
+  document.querySelectorAll("[data-mentor-href]").forEach((a) => {
+    a.href = a.getAttribute("data-mentor-href") + q;
+  });
 }
 
 setAuthCallbacks({
   onReady: allow,
   onDenied: () => deny("Acesso restrito ao mentor."),
-  onLogout: () => deny("Entre com a conta do mentor para abrir o fechamento.")
+  onLogout: () => deny("Entre com a conta do mentor.")
 });
 
 startAuthListener();

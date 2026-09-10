@@ -12,7 +12,8 @@ const STEPS = [
       "Quanto tempo você tem agora?"
     ],
     qs: ["Quanto tempo você tem?", "O que te fez aceitar esta conversa?", "Se esta call servir, o que você gostaria de sair sabendo?"],
-    hint: "Interno: não apresente plano. Só alinhe. Fonte adaptada: diagnóstico antes da oferta (Ads Cast #132, descrição e trecho ~2:05)."
+    hint: "Original AF: não apresente plano. Só alinhe.",
+    plus: "Contrato no começo (Sandler, mesmo espírito da abertura AF). Transcrição 02: o objetivo não é mostrar nada. Quem avalia o cliente controla o diagnóstico. Se ela já pagou a sessão de R$ 350, diga: esta call é continuidade, não recomeço."
   },
   {
     id: "diagnostico",
@@ -34,7 +35,8 @@ const STEPS = [
       "Isso é prioridade agora ou está no fundo da fila?",
       "Qual o custo de continuar assim?"
     ],
-    hint: "Interno: desça camadas. Dor na superfície, depois o que ela ainda não nomeou. Verificado: diagnóstico em camadas e presença total (Ads Cast #132 ~41:00–54:00). Não use mapa de calor dele. Use perguntas e anote."
+    hint: "Original AF: desça camadas. Ads Cast #132 ~41:00–54:00. Não use mapa de calor. Use perguntas e anote.",
+    plus: "Transcrição 02: diagnóstico de avançar ou não avançar é regra. Número antes de sentimento. Transcrição 01: funil com muita margem de erro gasta caixa para errar. Aqui você nomeia UM furo, não dez."
   },
   {
     id: "qualificacao",
@@ -54,7 +56,8 @@ const STEPS = [
       "O que você busca é mentoria com aplicativo e call, ou só um conselho solto?",
       "Tem sessão de alinhamento feita? Pagou a sessão?"
     ],
-    hint: "Interno: se sócio ou parceiro decide, não empurre proposta final. Marque call conjunta. Adaptação nossa a partir de 'preciso falar com sócio/esposa' (Ads Cast #132 ~19:00 e 22:00). Critério de dinheiro: campo editável, não chute de renda."
+    hint: "Original AF: se sócio ou parceiro decide, não empurre proposta final. Marque call conjunta.",
+    plus: "Transcrição 02: pré-qualificação existe para não queimar a call. Transcrição 05: conversão não é só quem entrou na reunião. Se ela não executa, a mentoria vira conteúdo parado. Não venda."
   },
   {
     id: "pit",
@@ -69,7 +72,8 @@ const STEPS = [
       "Antes de eu te mostrar o caminho: tem alguém com quem você precise falar? Tem algum bloqueio de dinheiro ou de agenda que já está claro?"
     ],
     qs: ["Nota 0 a 10 de vontade?", "Por que avançar comigo, se avançar?", "O que te faria recuar depois de ouvir o número?"],
-    hint: "Interno: isto é o Pit 01 adaptado. Verificado: antecipar objeção antes do preço e escala de vontade (Ads Cast #132 ~18:59–30:46 e ~52:32). NÃO usar a tese 'toda objeção é mentira' do ROI Hunters 358 como regra da AF. Aqui a gente investiga."
+    hint: "Original AF: Pit 01 adaptado. NÃO usar a tese 'toda objeção é mentira' do ROI Hunters 358 como regra da AF.",
+    plus: "Transcrição 04: ele privilegia pagamento na reunião. AF copia o timing, não o tom. Se a nota for 6 ou menos, não apresente VIP. Ofereça sessão ou encerre."
   },
   {
     id: "validacao",
@@ -85,7 +89,8 @@ const STEPS = [
       "Você quer que eu te mostre um caminho pra essa situação, ou prefere encerrar aqui?"
     ],
     qs: ["O resumo está certo?", "Quer ver um caminho agora?"],
-    hint: "Interno: sem confirmação, não apresente plano. Adaptação nossa."
+    hint: "Original AF: sem confirmação, não apresente plano.",
+    plus: "Transcrição 01: cliente como compromisso, não como compra que some. O espelho é o momento em que ela se reconhece no mapa. Se ela não se reconhece, você ainda está no diagnóstico."
   },
   {
     id: "caminho",
@@ -100,7 +105,8 @@ const STEPS = [
       "Qual desses dois faz mais sentido pra você hoje?"
     ],
     qs: ["Sessão primeiro ou mentoria agora?", "Já pagou sessão? Quer abater se contratar?"],
-    hint: "Interno: sessão R$ 350 é oferta pública. Mentoria: use os campos de preço. Abatimento só se configurado e pago de fato."
+    hint: "Original AF: sessão R$ 350 é oferta pública. Mentoria: use os campos de preço. Abatimento só se configurado e pago de fato.",
+    plus: "Transcrição 03: não escala o que está furado. Vendedor iniciante (SDR) vende a sessão. Mentoria direta é para quem já foi diagnosticado e para closer treinado. Não misture as duas ofertas no mesmo fôlego se ela ainda está nublada."
   },
   {
     id: "proposta",
@@ -112,11 +118,12 @@ const STEPS = [
     speak: [
       "Pelo que você falou, o trabalho é este: ordem no dia a dia do dinheiro, no aplicativo, com condução.",
       "Sete etapas. Call. Você treina. Eu conduzo.",
-      "Três tempos. Essencial, 8 semanas. Premium, 12. VIP, 16, mais perto.",
+      "Três tempos. Essencial, 8 semanas. Premium, 12. VIP, mais perto.",
       "O número do plano que cabe pra você é este que está na ficha. Sem desconto de teatro."
     ],
     qs: ["Qual plano ela reconheceu?", "O preço foi entendido?", "Quer Pix, outro meio, ou tempo?"],
-    hint: "Interno: conecte cada entrega a uma frase DELA. Verificado: vender resultado, não lista de recurso (ROI Hunters 358, fala de customizar). Preencha o preço antes de falar."
+    hint: "Original AF: conecte cada entrega a uma frase DELA. ROI Hunters 358: customizar. Preencha o preço antes de falar.",
+    plus: "Transcrição 01: arquitetura de receita olha a jornada inteira (como assinatura, não como tiro). AF vende acompanhamento + plataforma, não um PDF. Diga o que ela vai fazer na semana 1 com o furo que vocês nomearam."
   },
   {
     id: "decisao",
@@ -131,7 +138,8 @@ const STEPS = [
       "Recusar é opção. Eu não seguro a call no constrangimento."
     ],
     qs: ["Aceite verbal ou pagamento?", "Pix enviado? Compensou?", "Retorno quando?"],
-    hint: "Interno: verificado que ele privilegia pagamento na call (Ads Cast #132; ROI 358). Adaptação AF: facilitar Pix, preservar o não. Diferencie aceite verbal de Pix confirmado."
+    hint: "Original AF: facilitar Pix, preservar o não. Aceite verbal ≠ Pix confirmado.",
+    plus: "Transcrição 02 chama o pagamento de 'copo'. Transcrição 04: muita gente qualificada paga na hora. AF: o copo só entra depois do espelho. Fome de resultado no vendedor não autoriza pressionar a pessoa. Família não humilha."
   },
   {
     id: "fim",
@@ -145,18 +153,24 @@ const STEPS = [
       "Obrigado pelo tempo."
     ],
     qs: ["Contratação, retorno, sessão, ou encerrado sem venda?"],
-    hint: "Interno: salve a ficha. Aceite verbal ≠ pago."
+    hint: "Original AF: salve a ficha. Aceite verbal ≠ pago.",
+    plus: "Se pagou: diga o que acontece nas 24h (acesso, primeira call, o que ela faz amanhã). Se escolheu sessão: já encaminhe o mapa da Ascensão. Se não: porta aberta, sem perseguição."
   }
 ];
 
 const DNA = [
-  { tipo: "verificado", src: "Instagram @igormelloeu", txt: "Posiciona venda consultiva. Regra visível: em serviço caro, não esteja mais interessado que o cliente, sobretudo em mercado cético. Call descrita como 80/20. Reuniões viram negociação, não slide." },
-  { tipo: "verificado", src: "Ads Cast #132 · youtube.com/watch?v=gtjOozD3NQw", txt: "Diagnóstico profundo antes de empurrar produto. Diagnóstico com presença, camadas, metáfora médica. Pit invertido / Pit 01 antecipa objeção antes do preço (sócio, dinheiro). Escala 0-10. Por que avançar com você. Pix. Meta citada de ~50% após lead aprovado. Título do episódio fala em 80% sem follow-up: tratar como título, não como sua taxa." },
-  { tipo: "verificado", src: "ROI Hunters 358 · youtube.com/watch?v=UhHMv5AxBsI", txt: "Igor é convidado. Diagnóstico 40–60 min. Cita perfil Challenger (Gartner). Customiza. Pit 01 antes da solução. Pagamento na call. Evita follow-up. Falas controversas no episódio (objeção como fuga; framing do título). Transcript incompleto." },
-  { tipo: "pendente", src: "Materiais futuros", txt: "Aulas, calls gravadas e anotações que você enviar. Esta base cresce. Não atribuir frase nova a ele sem fonte." },
-  { tipo: "interpretacao", src: "Padrão observado nos dois episódios", txt: "Quem quer resolver decide na reunião. Follow-up vira exceção. Qualificação de dinheiro aparece no diagnóstico, não só no fim." },
-  { tipo: "adaptacao", src: "Operação AF / Yan", txt: "Tom calmo. Não humilhar. Não tratar toda objeção como mentira. Sessão R$ 350 pode anteceder mentoria. Preços da mentoria ficam na ficha. Liberdade de recusar. Dois caminhos." },
-  { tipo: "complementar", src: "Gartner Challenger Sale (origem, citada por ele)", txt: "Pesquisa de perfil de vendedor. Não é método AF. Não ensinar Challenger como se fosse seu." }
+  { tipo: "verificado", src: "Instagram @igormelloeu", txt: "Posiciona venda consultiva. Em serviço caro, não esteja mais interessado que o cliente. Call 80/20. Reunião vira negociação, não slide." },
+  { tipo: "verificado", src: "Ads Cast #132 · youtube.com/watch?v=gtjOozD3NQw", txt: "Diagnóstico profundo antes do produto. Pit 01 antecipa objeção antes do preço. Escala 0–10. Pix. Título de 80% sem follow-up: tratar como título, não como sua taxa." },
+  { tipo: "verificado", src: "ROI Hunters 358 · youtube.com/watch?v=UhHMv5AxBsI", txt: "Diagnóstico 40–60 min. Challenger (Gartner). Customiza. Pagamento na call. Falas controversas (objeção como fuga). AF não copia humilhação." },
+  { tipo: "interpretacao", src: "Transcrição 01 · Arquitetura de Receita", txt: "Funil tração → qualificação → lead → venda tem margem grande de erro: você paga para ter chance de errar. Arquitetura de receita olha a jornada e trata o cliente como compromisso. AF: sessão R$ 350 é diagnóstico pago; mentoria é a mesma arquitetura com acompanhamento, não um produto colado no fim." },
+  { tipo: "interpretacao", src: "Transcrição 02 · Calls / closer faixa preta", txt: "Closer diagnostica e decide avançar ou não — regra, não feeling. Objetivo não é mostrar coisa. Qualificação existe antes. Certeza se constrói. O copo é o pagamento. AF: copo da sessão = R$ 350. Copo da mentoria só depois do espelho. Controlar = mapa, não domínio." },
+  { tipo: "interpretacao", src: "Transcrição 03 · Papo de Escala", txt: "Não escala funil furado. PME e tráfego sem arquitetura queimam caixa. AF: SDR vende sessão. Mentoria é avanço, depois de treino." },
+  { tipo: "interpretacao", src: "Transcrição 04 · ROI Hunters (estudo)", txt: "Quem foi bem diagnosticado costuma decidir na reunião. Existem vários jeitos de fechar. Customiza. AF copia o timing do Pix, não o tom pitbull, nem 'toda objeção é mentira'." },
+  { tipo: "interpretacao", src: "Transcrição 05 · faixa-preta / time", txt: "Time se forma. Conversão não é só quem entrou na reunião. Recrutamento aumenta certeza. Call de treino acaba quando a pessoa está apta, não no relógio." },
+  { tipo: "complementar", src: "Gartner Challenger Sale (citada por ele)", txt: "Pesquisa de perfil. Não ensinar Challenger como se fosse método AF." },
+  { tipo: "complementar", src: "Sandler · contrato no começo", txt: "Tempo, objetivo e permissão para um não. Já estava na abertura AF. Mantém." },
+  { tipo: "adaptacao", src: "Operação AF / Yan", txt: "Tom calmo. Não humilhar. Sessão R$ 350 pode anteceder mentoria. Preços na ficha. Liberdade de recusar. Dois caminhos. Vendedor com fome de resultado é bem-vindo; desespero como pressão na call, não." },
+  { tipo: "pendente", src: "Materiais futuros", txt: "Calls gravadas da AF, PDFs com a Lua, vídeos próprios de treino. Esta base cresce. Não atribuir frase nova a Igor sem fonte." }
 ];
 
 const OBJS = [
@@ -252,6 +266,7 @@ function renderMain() {
     ${speak}
     <p class="kicker">Perguntar</p>
     ${qs}
+    <div class="plus"><span class="lbl">Complemento · estudo IM + AF</span>${s.plus || ""}</div>
     <p class="kicker">Avançar se</p>
     <p>${s.avancar}</p>
     <p class="kicker">Encerrar se</p>
@@ -436,6 +451,8 @@ function bind() {
       document.querySelectorAll("[data-tab]").forEach((b) => b.classList.toggle("on", b === tab));
       el("viewCall").classList.toggle("hidden", tab.dataset.tab !== "call");
       el("viewDna").classList.toggle("hidden", tab.dataset.tab !== "dna");
+      const tela = el("viewTela");
+      if (tela) tela.classList.toggle("hidden", tab.dataset.tab !== "tela");
     }
   });
   document.body.addEventListener("input", (e) => {

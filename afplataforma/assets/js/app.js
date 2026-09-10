@@ -38,7 +38,6 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
-import { renderAscensaoRoteiro } from "../../data/ascensao-roteiro.js?v=asc1";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -209,13 +208,21 @@ function renderModuleDetail(id) {
   </div>`;
 }
 
-function fechamentoHref() {
+function mentorHref(path) {
   const q = session.mode === "local" && isMentorSession() ? "?demo=mentor" : "";
-  return "fechamento/index.html" + q;
+  return path + q;
+}
+function fechamentoHref() {
+  return mentorHref("fechamento/index.html");
+}
+function ascensaoHref() {
+  return mentorHref("ascensao/index.html");
+}
+function treinoHref() {
+  return mentorHref("treinamento/index.html");
 }
 function livroHref() {
-  const q = session.mode === "local" && isMentorSession() ? "?demo=mentor" : "";
-  return "interno/livro.html" + q;
+  return mentorHref("interno/livro.html");
 }
 
 function renderMentor() {
@@ -252,14 +259,20 @@ function renderMentor() {
     <article class="q-feature livro-entry">
       <p class="hero-line">Call de entrada</p>
       <h3>Roteiro da Ascensão</h3>
-      <p>Como conduzir a sessão de 1h30 sem depender de humor. O que pode. O que é proibido. Só o mentor vê.</p>
-      <button class="tool-btn" type="button" data-nav="ascensao">Abrir roteiro</button>
+      <p>Mapa da sessão de 1h30 · R$ 350. Original intacto. Complemento das transcrições em roxo. Só o mentor vê.</p>
+      <a class="tool-btn" href="${ascensaoHref()}">Abrir mapa da sessão</a>
     </article>
     <article class="q-feature livro-entry">
       <p class="hero-line">Call comercial</p>
       <h3>Fechamento de Call</h3>
-      <p>Mapa, diagnóstico, qualificação, teleprompt e ficha. Só o mentor vê. Mentorado não entra.</p>
+      <p>Mapa, diagnóstico, qualificação, teleprompt, DNA e o que mostrar na tela. Só o mentor vê. Mentorado não entra.</p>
       <a class="tool-btn" href="${fechamentoHref()}">Abrir fechamento</a>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Equipe</p>
+      <h3>Treinamento do vendedor</h3>
+      <p>Call sem tempo fixo até o checklist ficar verde. SDR vende a sessão. Mentoria cara não é o dia 1. Só o mentor vê.</p>
+      <a class="tool-btn" href="${treinoHref()}">Abrir treinamento</a>
     </article>
     ${renderAccessAdminPanel()}
   </div>`;
@@ -306,7 +319,15 @@ registerRenderers({
   tools: renderToolsView,
   call: renderCallView,
   mentor: renderMentor,
-  ascensao: () => (isMentorSession() ? renderAscensaoRoteiro() : `<div class="view active"><p class="empty">Acesso restrito ao mentor.</p></div>`),
+  ascensao: () => (isMentorSession()
+    ? `<div class="view active">
+        <div class="back-link" data-nav="mentor">← Gestão</div>
+        <p class="hero-line">Call de entrada</p>
+        <h2 class="hero-title">Ascensão de Alinhamento</h2>
+        <p class="hero-sub">O mapa da sessão (1h30 · R$ 350) está no mesmo formato do fechamento. Só o mentor abre.</p>
+        <a class="tool-btn" href="${ascensaoHref()}">Abrir mapa da sessão</a>
+      </div>`
+    : `<div class="view active"><p class="empty">Acesso restrito ao mentor.</p></div>`),
   profile: renderProfile,
   complementar: renderComplementarHome,
   compApp: renderComplementarApp,

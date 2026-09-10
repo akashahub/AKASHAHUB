@@ -1,4 +1,4 @@
-/** Roteiro privado: Ascensão de Alinhamento. Só o mentor vê. */
+/** Arquivo de arquivo. O mapa vivo da Ascensão está em /afplataforma/ascensao/. */
 export const ASCENSAO = {
   title: "Ascensão de Alinhamento",
   time: "1h30 · 1:1 · R$ 350 · gravada",
