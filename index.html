@@ -4,6 +4,13 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Akasha Hub | Alinhamento Financeiro, livros e mentoria</title>
+<meta property="og:locale" content="pt_BR"/>
+<meta property="og:site_name" content="Akasha Hub"/>
+<meta name="twitter:title" content="Akasha Hub | Alinhamento Financeiro, livros e mentoria"/>
+<meta name="twitter:description" content="Mentoria de Alinhamento Financeiro, biblioteca e formação. Saia do achismo com dinheiro."/>
+<meta name="theme-color" content="#07050b"/>
+<link rel="preload" as="image" href="https://res.cloudinary.com/dcbarseus/video/upload/so_0,w_1600,q_auto,f_jpg/v1785163141/SnapInsta.to_AQPq6HfkibVdXLzQAZ9YFPUNNpiTPONbEPErrZvTgNdaHeOBljXGmmzos4_PdC4aALtGggZI5NWuglZPWgTqCajhvtX20DOasv9TBi0_uuuapk.jpg"/>
+<meta name="twitter:card" content="summary_large_image"/>
 <meta name="description" content="Akasha Hub: mentoria de Alinhamento Financeiro, biblioteca e formação. Entre, veja o que fazer e saia do achismo com dinheiro."/>
 <link rel="canonical" href="https://akashahub.com.br/"/>
 <meta property="og:title" content="Akasha Hub · o campo dos registros"/>
@@ -299,8 +306,11 @@
     justify-content: center; padding: calc(var(--nav-h) + 28px) 0 72px; overflow: hidden;
   }
   .hero-media { position: absolute; inset: 0; z-index: 0; }
-  .hero-media video { width: 100%; height: 100%; object-fit: cover; opacity: .38; }
-  html:not(.dark) .hero-media video { opacity: .22; }
+  .hero-media img { width: 100%; height: 100%; object-fit: cover; opacity: .38; }
+  html:not(.dark) .hero-media img { opacity: .22; }
+  .hero-media video { width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+  .hero-media video.is-ready { opacity: .38; }
+  html:not(.dark) .hero-media video.is-ready { opacity: .22; }
   .hero-media::after {
     content: ''; position: absolute; inset: 0;
     background: linear-gradient(180deg, color-mix(in srgb, var(--void) 40%, transparent) 0%, color-mix(in srgb, var(--void) 55%, transparent) 45%, var(--void) 100%);
@@ -464,6 +474,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Akasha Hub","url":"https://akashahub.com.br","logo":"https://akashahub.com.br/img/akasha-mark-96.png"}
 </script>
+<script src="/js/ah-ga4.js" defer></script>
 </head>
 <body class="overflow-x-hidden">
 <canvas id="shader-canvas"></canvas>
@@ -515,7 +526,8 @@
 
 <section class="hero">
   <div class="hero-media">
-    <video autoplay="" class="w-full h-full object-cover" id="heroVideo" loop="" muted="" playsinline="" src="https://res.cloudinary.com/dcbarseus/video/upload/v1785163141/SnapInsta.to_AQPq6HfkibVdXLzQAZ9YFPUNNpiTPONbEPErrZvTgNdaHeOBljXGmmzos4_PdC4aALtGggZI5NWuglZPWgTqCajhvtX20DOasv9TBi0_uuuapk.mp4"></video>
+    <img id="heroPoster" alt="" src="https://res.cloudinary.com/dcbarseus/video/upload/so_0,w_1600,q_auto,f_jpg/v1785163141/SnapInsta.to_AQPq6HfkibVdXLzQAZ9YFPUNNpiTPONbEPErrZvTgNdaHeOBljXGmmzos4_PdC4aALtGggZI5NWuglZPWgTqCajhvtX20DOasv9TBi0_uuuapk.jpg" width="1600" height="900" decoding="async" fetchpriority="high"/>
+    <video class="w-full h-full object-cover" id="heroVideo" loop muted playsinline preload="none" poster="https://res.cloudinary.com/dcbarseus/video/upload/so_0,w_1600,q_auto,f_jpg/v1785163141/SnapInsta.to_AQPq6HfkibVdXLzQAZ9YFPUNNpiTPONbEPErrZvTgNdaHeOBljXGmmzos4_PdC4aALtGggZI5NWuglZPWgTqCajhvtX20DOasv9TBi0_uuuapk.jpg"></video>
   </div>
   <div class="watermark" aria-hidden="true">ĀKĀŚA</div>
   <button aria-label="Ativar som do vídeo" class="sound-fab premium-blur icon-btn" id="videoSoundToggle" onclick="toggleVideoSound()">
@@ -1019,10 +1031,29 @@
     subOsc.start();
   }
 
+
+  (function () {
+    var v = document.getElementById("heroVideo");
+    if (!v) return;
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var mobile = window.matchMedia("(max-width: 767px)").matches;
+    var save = navigator.connection && navigator.connection.saveData;
+    if (reduce || mobile || save) return;
+    var src = "https://res.cloudinary.com/dcbarseus/video/upload/q_30,w_540,f_mp4/v1785163141/SnapInsta.to_AQPq6HfkibVdXLzQAZ9YFPUNNpiTPONbEPErrZvTgNdaHeOBljXGmmzos4_PdC4aALtGggZI5NWuglZPWgTqCajhvtX20DOasv9TBi0_uuuapk.mp4";
+    v.addEventListener("loadeddata", function () {
+      v.classList.add("is-ready");
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});
+    });
+    v.src = src;
+    v.load();
+  })();
+
   function toggleVideoSound(){
     const video = document.getElementById('heroVideo');
     const iconOn = document.getElementById('soundIconOn');
     const iconOff = document.getElementById('soundIconOff');
+    if(!video || !video.currentSrc) return;
     if(video.muted){
       video.muted = false;
       video.volume = 1;
