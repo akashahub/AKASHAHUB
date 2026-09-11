@@ -2,12 +2,12 @@ const STEPS = [
   {
     id: "quem", n: "01", t: "Quem é você aqui",
     obj: "Combinar o papel. Sem tempo fixo. A call acaba quando ele está apto.",
-    avancar: "Ele aceitou: primeiro vende sessão. Mentoria vem depois.",
+    avancar: "Ele aceitou: primeiro conversa e diagnóstico. Número só depois da certeza.",
     sair: "Quer só link de afiliado, sem mapa e sem treino. Não é família.",
     speak: [
       "Aqui não é um link para você sair vendendo sozinho. É um time.",
-      "No começo você leva gente para a sessão de alinhamento de 350 reais. Isso já é venda.",
-      "Mentoria grande é o passo dois. A gente te solta nela quando você souber o mapa."
+      "Você leva gente para uma conversa de alinhamento. O Yan realiza a sessão. Você não precisa conhecer módulo nem plataforma.",
+      "Mentoria só entra quando a pessoa já quer avançar. Número não é o primeiro assunto."
     ],
     qs: ["Por que você quer vender isto?", "Você aguenta seguir um mapa, ou quer improvisar tudo?"],
     hint: "Fome de resultado é bem-vinda. Desespero como desculpa para pressionar o cliente, não.",
@@ -19,11 +19,11 @@ const STEPS = [
     avancar: "Ele repetiu as três frases com as palavras dele.",
     sair: "Confunde AF com Flow, livro, constelação clínica ou curso de tráfego.",
     speak: [
-      "Um: sessão de alinhamento. Uma hora e meia. 350 reais. A pessoa sai com um mapa da vida dela e uma ação de 7 dias.",
-      "Dois: mentoria de Alinhamento Financeiro. Aplicativo, sete etapas, call, alguém conduzindo.",
-      "Três: o acesso à plataforma é a casa onde isso mora. Não é um PDF jogado no WhatsApp."
+      "Um: ordem no dinheiro. O que entra, o que some, o que cobra, o que recusa.",
+      "Dois: toda semana tem call. O Yan conduz. Ela vê o hoje no aplicativo.",
+      "Três: se fizer sentido, marca uma conversa. Sem textão. Sem cardápio."
     ],
-    qs: ["Me fala as três frases.", "O que a pessoa leva para casa na sessão de 350?"],
+    qs: ["Me fala as três frases.", "O que você responde se ela pedir o preço no Direct?"],
     hint: "Linguagem de 10 anos. Se a frase precisa de dicionário, está errada.",
     plus: "Transcrição 01: não é funil de um tiro. É compromisso. Sessão já entrega. Mentoria continua."
   },
@@ -34,25 +34,26 @@ const STEPS = [
     sair: "Quer vender ‘qualquer coisa que feche’.",
     speak: [
       "Você não promete renda, cura, namoro nem resultado garantido.",
-      "Você não inventa desconto.",
-      "Você não mistura Flow, Magnetismo, sessão antiga de 700, livro, como se fosse a mesma coisa.",
+      "Você não fala preço no Direct. Não fala plano. Não fala promoção como isca.",
+      "Você não mistura Flow, Magnetismo, livro, como se fosse a mesma coisa.",
       "Você não mostra a gestão do mentor para o cliente."
     ],
     qs: ["Me fala três coisas que você não pode prometer.", "O que você faz se ela pedir desconto?"],
-    hint: "Resposta certa para desconto: repetir o número. Não negociar teatro.",
+    hint: "Resposta certa para preço no Direct: a gente olha na conversa. Sem tabela.",
     plus: "Original da Ascensão. Intacta. Treinamento só ensina a obedecer."
   },
   {
     id: "caminho", n: "04", t: "O caminho da pessoa",
-    obj: "SDR → sessão 350 → possível mentoria.",
+    obj: "SDR → conversa → possível mentoria. Sem número no começo.",
     avancar: "Ele desenhou o caminho em voz alta, na ordem certa.",
-    sair: "Quer pular a sessão e fechar 13 mil no Instagram.",
+    sair: "Quer mandar tabela de preço no primeiro Direct.",
     speak: [
-      "Você conversa com a pessoa. Se fizer sentido, marca a sessão de alinhamento.",
-      "Na sessão ela paga 350, se ainda não pagou. Você segue o mapa. Ela sai com território e um passo.",
-      "Se o diagnóstico pedir continuidade, existe a mentoria. Aí entra o mapa de fechamento. No começo, você chama o mentor."
+      "Você conversa. Diagnóstico. Quem decide. Nota 0 a 10. Espelho. Quer caminho?",
+      "Se não quiser, agradece e encerra. Sem perseguir.",
+      "Se quiser e ainda faltar peça, não fala número. Marca retorno ou chama o Yan.",
+      "Se já decidiu avançar, aí existe número. Campanha é recompensa, não isca."
     ],
-    qs: ["O que você vende na primeira call com um desconhecido?", "Quando a mentoria entra?"],
+    qs: ["O que você vende na primeira mensagem?", "Quando o número entra?"],
     hint: "Comissão da sessão (30, 40 ou 50%) ainda não está cravada. Não fale percentual para o cliente. Não invente o seu na call.",
     plus: "Transcrição 03: não escala funil furado. Iniciante que fecha VIP no escuro fura a arquitetura."
   },
@@ -72,16 +73,16 @@ const STEPS = [
   },
   {
     id: "sessao", n: "06", t: "A sessão de 350",
-    obj: "Ele sabe abrir o mapa da Ascensão e seguir os 90 minutos.",
-    avancar: "Ele apontou, no mapa, extração, um furo, ação de 7 dias, porta da mentoria.",
-    sair: "Quer improvisar a sessão ‘no feeling’.",
+    obj: "Ele sabe que o Yan realiza a sessão. Ele marca e qualifica.",
+    avancar: "Ele repetiu: eu vendo a conversa. O Yan conduz a sessão.",
+    sair: "Quer improvisar a sessão no feeling.",
     speak: [
-      "Abre o mapa da sessão de alinhamento. É o teu GPS.",
-      "Noventa minutos. Um furo. Um passo de 7 dias. Mentoria só se o diagnóstico pediu.",
-      "No fim você copia o mapa e manda no WhatsApp dela."
+      "A sessão é do Yan. Você não precisa do mapa dos 90 minutos no dia 1.",
+      "Você marca. Você qualifica. Você avisa o Yan: nome, WhatsApp, pagou ou não.",
+      "Campanha: 1 pessoa a 150 reais. Esse valor é 100% seu. Só 1. Depois volta para a casa."
     ],
-    qs: ["Quantos furos você nomeia?", "O que ela leva no WhatsApp?"],
-    hint: "Resposta: um furo. Mapa + dossiê + ação de 7 dias.",
+    qs: ["Quem realiza a sessão?", "Quantas pessoas entram a 150?"],
+    hint: "Cento e cinquenta não é isca. Só quem já quer a conversa.",
     plus: "Abra o mapa da Ascensão nesta call e ande um ciclo com ele, como se ele fosse o cliente."
   },
   {
@@ -118,12 +119,12 @@ const STEPS = [
     avancar: "Ele repetiu: SDR convida. Closer treinado fecha. Mentor pode entrar na call.",
     sair: "Acha que 350 e 13 mil são a mesma conversa.",
     speak: [
-      "Se o diagnóstico pediu continuidade, você usa a frase da porta da mentoria e manda o WhatsApp.",
-      "Você não fecha 13 mil no susto no primeiro mês.",
-      "Quando estiver pronto, o mapa de fechamento é o outro GPS. Nove etapas. Pix se ela decidiu. Não se ela não decidiu."
+      "Se o diagnóstico pediu continuidade e ela já quer avançar, aí existe o número da mentoria.",
+      "Casa: a partir de 5.000. Campanha deste vendedor: 2.000 para exatamente 3 pessoas.",
+      "Só fala 2.000 se ela já decidiu. Dúvida não ganha promoção. Quarta pessoa: volta pro Yan."
     ],
-    qs: ["Quem fecha a mentoria no seu primeiro mês?", "O que é o copo da sessão? E o copo da mentoria?"],
-    hint: "Copo da sessão = 350 (se ainda não pagou). Copo da mentoria = Pix da mentoria, só depois do espelho.",
+    qs: ["Quando você fala 2.000?", "O que você faz na quarta pessoa?"],
+    hint: "Frase: como você já decidiu avançar, nesta campanha a casa abre três vagas neste valor.",
     plus: "Transcrição 02 e 04. AF adapta o timing, não o tom pitbull."
   },
   {
@@ -132,12 +133,12 @@ const STEPS = [
     avancar: "Ele entendeu: percentual em aberto. Cliente nunca ouve a comissão.",
     sair: "Quer discutir comissão na frente do cliente.",
     speak: [
-      "Você ganha sobre a sessão que você realizou. O número exato — 30, 40 ou 50 — a gente crava com o mentor, não na call com o cliente.",
-      "Cliente não precisa saber o teu percentual.",
-      "Família tira dúvida. Afiliado some depois do pix."
+      "Sessão a 150: 100% seu. Presente. Só 1 pessoa. O Yan realiza.",
+      "Mentoria a 2.000: a comissão sua o Yan fala na call de treino. Cliente nunca ouve split.",
+      "Isaac, colégio, lista de telefone: material na sequência. Hoje o jogo é Alinhamento Financeiro."
     ],
-    qs: ["O cliente pergunta quanto você ganha. O que você responde?", "Para quem você manda dúvida depois das 22h?"],
-    hint: "Resposta ao cliente: ‘eu trabalho nesta operação. O valor da sessão é 350.’ Ponto.",
+    qs: ["O cliente pergunta quanto você ganha. O que você responde?", "Isaac entra hoje?"],
+    hint: "Resposta ao cliente: eu trabalho nesta operação. O valor a gente olha quando fizer sentido. Ponto.",
     plus: "Espírito família foi o pedido original. Comissão em aberto foi o pedido original. Não feche um dos dois neste arquivo."
   },
   {
@@ -157,14 +158,45 @@ const STEPS = [
 ];
 
 const CHECK = [
-  ["frase","Repete o que a AF vende em 3 frases"],
-  ["nunca","Lista o que nunca vende"],
-  ["mapa","Abre o mapa da sessão e aponta extração, um furo, 7 dias"],
+  ["frase","Repete o que a AF vende em 3 frases, sem preço"],
+  ["nunca","Não fala número no Direct. Não usa promoção como isca"],
+  ["mapa","Sabe o caminho: conversa → certeza → número"],
   ["tela","Sabe o que o cliente pode ver"],
   ["nao","Aceita encerrar sem venda"],
-  ["vip","Não fecha mentoria cara no dia 1"],
-  ["duvida","Sabe para quem mandar dúvida"]
+  ["campanha","3 mentorias a 2000. 1 sessão a 150. Yan realiza a sessão"],
+  ["duvida","Avisa o Yan na hora: nome, WhatsApp, pagou ou não"]
 ];
+
+const COPY_VEND = `Você vende ordem no dinheiro.
+A pessoa para de ganhar e some.
+Treina o que entra, o que some, o que cobra, o que recusa.
+Toda semana tem call. O Yan conduz.
+Ela vê o que fazer hoje no aplicativo.
+Você não vende módulo. Não vende ferramenta. Não vende tour.
+
+Três linhas.
+1. Você treina o que entra, o que some, o que cobra, o que recusa.
+2. Toda semana tem call. O Yan conduz.
+3. Se fizer sentido, a gente marca uma conversa. Sem textão.
+
+Se pedirem preço no Direct:
+Preço a gente olha na conversa, quando eu entender a tua situação. Se não couber, eu te falo.
+
+Número só quando ela já quer avançar, quem decide está na mesa, e a objeção já foi olhada.
+
+Campanha. Não anuncia. Não usa como isca.
+Mentoria da casa: a partir de 5.000.
+3 pessoas a 2.000. Só se já decidiu avançar.
+Frase: Como você já decidiu avançar, nesta campanha de vendedor a casa abre três vagas neste valor.
+Quarta pessoa: volta pro Yan.
+
+Sessão: 1 pessoa a 150. 100% seu. Yan realiza. Só 1.
+Não usa o 150 pra puxar quem não quer.
+
+Depois de fechar: avisa o Yan na hora. Nome. WhatsApp. Pagou ou não.
+Você não libera plataforma.
+
+Isaac: depois. Hoje o jogo é Alinhamento Financeiro.`;
 
 const KEY = "afTreino";
 const state = { step: 0, notes: {}, check: {}, nome: "", tpSize: 28 };
@@ -201,6 +233,7 @@ function renderMain() {
       <button class="btn" data-act="prev">Voltar</button>
       <button class="btn btn-a" data-act="next">Avançar</button>
       <button class="btn" data-act="tp">Teleprompt</button>
+      <button class="btn" data-act="copyStep">Copiar esta etapa</button>
     </div>`;
   el("note").oninput = (e) => { state.notes[s.id]=e.target.value; persist(); };
 }
@@ -217,8 +250,11 @@ function renderSide() {
     <p class="kicker">Apto a vender sessão?</p>
     <p class="hint">${n}/${CHECK.length} · a call de treino acaba quando isto está verde.</p>
     ${boxes}
+    <p class="kicker">Copiar</p>
+    <button class="btn btn-a" type="button" data-act="copyVend">Copiar texto do vendedor</button>
+    <p class="hint" style="margin-top:8px">Este é o botão. Manda o texto copiado no WhatsApp dele. Não manda PDF pro cliente.</p>
     <p class="kicker">Lembrete</p>
-    <p class="hint">Comissão 30 / 40 / 50 ainda em aberto. Cliente nunca ouve percentual. Mentoria cara não é o produto do dia 1.</p>`;
+    <p class="hint">3 mentorias a 2.000. 1 sessão a 150 (100% dele). Yan realiza a sessão. Número só depois da certeza. Isaac depois.</p>`;
   el("nome").oninput = (e) => { state.nome = e.target.value; persist(); };
 }
 function go(i) {
@@ -226,6 +262,25 @@ function go(i) {
   persist();
   renderMap();
   renderMain();
+}
+function copyTxt(t, btn) {
+  const run = async () => {
+    try { await navigator.clipboard.writeText(t); }
+    catch {
+      const ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
+    }
+    if (btn) {
+      const old = btn.textContent;
+      btn.textContent = "Copiado";
+      setTimeout(() => { btn.textContent = old; }, 1600);
+    }
+  };
+  run();
+}
+function copyStep() {
+  const s = STEPS[state.step];
+  copyTxt(s.speak.join("\n\n\n"), document.querySelector("[data-act=copyStep]"));
 }
 function openTp() {
   const s = STEPS[state.step];
@@ -243,6 +298,8 @@ document.body.addEventListener("click", (e) => {
     if (a==="prev") go(state.step-1);
     if (a==="tp") openTp();
     if (a==="closeTp") el("tp").classList.remove("on");
+    if (a==="copyStep") copyStep();
+    if (a==="copyVend") copyTxt(COPY_VEND, act);
   }
   const tab = e.target.closest("[data-tab]");
   if (tab) {
