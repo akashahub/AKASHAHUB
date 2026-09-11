@@ -256,5 +256,43 @@ service cloud.firestore {
         );
       allow create, update, delete: if isAfMentor();
     }
+
+    /* ISAAC SDR OS — bloco aditivo. Não altera regras da AF. */
+    function isIsaacSuperAdmin() {
+      return request.auth != null && request.auth.token.email in [
+        "yanfili.simon@gmail.com",
+        "srklehn@gmail.com"
+      ];
+    }
+    function isIsaacOperator() {
+      return request.auth != null && (
+        isIsaacSuperAdmin()
+        || (
+          exists(/databases/$(database)/documents/isaacAccess/$(request.auth.token.email))
+          && get(/databases/$(database)/documents/isaacAccess/$(request.auth.token.email)).data.active == true
+        )
+      );
+    }
+    match /isaacAccess/{emailId} {
+      allow read: if isIsaacSuperAdmin()
+        || (isSignedIn() && request.auth.token.email == emailId);
+      allow create, delete: if isIsaacSuperAdmin();
+      allow update: if isIsaacSuperAdmin()
+        || (
+          isSignedIn()
+          && request.auth.token.email == emailId
+          && resource.data.active == true
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['uid', 'name', 'lastLoginAt'])
+        );
+    }
+    match /isaacInstitutions/{id} {
+      allow read, create, update: if isIsaacOperator();
+      allow delete: if isIsaacSuperAdmin();
+    }
+    match /isaacReferrals/{id} {
+      allow read, create, update: if isIsaacOperator();
+      allow delete: if isIsaacSuperAdmin();
+    }
   }
 }
