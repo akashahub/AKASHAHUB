@@ -221,6 +221,9 @@ function ascensaoHref() {
 function treinoHref() {
   return mentorHref("treinamento/index.html");
 }
+function mesaHref() {
+  return mentorHref("mesa/index.html");
+}
 function livroHref() {
   return mentorHref("interno/livro.html");
 }
@@ -267,6 +270,12 @@ function renderMentor() {
       <h3>Fechamento de Call</h3>
       <p>Mapa, diagnóstico, qualificação, teleprompt, DNA e o que mostrar na tela. Só o mentor vê. Mentorado não entra.</p>
       <a class="tool-btn" href="${fechamentoHref()}">Abrir fechamento</a>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Call Francesca</p>
+      <h3>Mesa</h3>
+      <p>Cockpit privado desta call: atos, caderno, PIT, faixas. Não compartilhar tela. Mentorado não vê este botão.</p>
+      <a class="tool-btn" href="${mesaHref()}">Abrir mesa</a>
     </article>
     <article class="q-feature livro-entry">
       <p class="hero-line">Equipe</p>
