@@ -572,3 +572,623 @@ function faixaFor(v) {
 function formatBRL(n) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 }
+
+/* páginas oficiais da mesa — copiado dos data/*.ts */
+
+const AF_HEADLINE =
+  "Sistema privado de 8 a 12 semanas para quem já fatura e ainda vive no improviso: caixa, decisão, execução e legado no mesmo protocolo.";
+
+const AF_ENTRY = {
+  name: "Sessão de Alinhamento · Ascensão de Alinhamento",
+  duration: "1h30 ao vivo · 1:1",
+  price: 350,
+  includes: [
+    "Diagnóstico de caixa e de decisão",
+    "Leitura de padrões",
+    "Alinhamento prático na hora",
+    "Dossiê de ação",
+    "Gravação da sessão",
+    "Avaliação se a mentoria de ~3 meses cabe",
+  ],
+  rule: "A mentoria de ~3 meses só abre depois da sessão. Não é curso solto.",
+};
+
+const AF_PROCESS = [
+  {
+    n: "01",
+    title: "Diagnóstico",
+    body: "Mapear realidade, vazamentos e o que trava a evolução.",
+  },
+  {
+    n: "02",
+    title: "Estratégia",
+    body: "Prioridades, reserva, caixa e regras de decisão.",
+  },
+  {
+    n: "03",
+    title: "Execução",
+    body: "Plano vira ação: acompanhamento, ferramentas e cadência.",
+  },
+];
+
+const AF_MODULES = [
+  {
+    n: "01",
+    axis: "Fundação",
+    title: "Raiz e Cash-Flow",
+    leak: "Viver sem saber para onde o caixa foi.",
+    body: "Auditoria de 90 dias, essencialidade, vazamento, reserva de 3 a 6 meses.",
+    forFran:
+      "Mesmo com patrimônio e 67 países, a pergunta é: o organismo gera caixa sem te sugar.",
+  },
+  {
+    n: "02",
+    axis: "Oferta",
+    title: "Criatividade Lucrativa",
+    leak: "Ideia linda que não vira oferta testável.",
+    body: "Ideação forçada, validação e velocidade de teste.",
+    forFran:
+      "Colabocracy e Beautiful Living precisam de ofertas concretas, não só de filosofia.",
+  },
+  {
+    n: "03",
+    axis: "Ritmo",
+    title: "Execução",
+    leak: "Muitas frentes, nenhuma alavanca.",
+    body: "Priorização, constância e uma alavanca clara por vez.",
+    forFran: "Campanhas de 90–120 dias já são o ritmo dela. Falta o software que segura o ritmo.",
+  },
+  {
+    n: "04",
+    axis: "Relação",
+    title: "Rede e Reciprocidade",
+    leak: "Network sem reciprocidade econômica.",
+    body: "Relações de alto valor construídas com intenção e troca real.",
+    forFran:
+      "Ela tem 10.400 conversas. A tese da call: conexão sem entrada não constrói organismo.",
+  },
+  {
+    n: "05",
+    axis: "Presença",
+    title: "Voz e Comunicação",
+    leak: "Visão rica, conteúdo irregular.",
+    body: "Autoridade, clareza de proposta e comunicação financeira madura.",
+    forFran: "Você pode gerar conteúdo, sistema e IA para o universo dela — isso tem preço.",
+  },
+  {
+    n: "06",
+    axis: "Direção",
+    title: "Visão e Fortuna",
+    leak: "Decidir sob incerteza sem critério.",
+    body: "Visão em uma página e critérios para decidir.",
+    forFran: "Convergência pode ser a visão em uma página dos dois ecossistemas.",
+  },
+  {
+    n: "07",
+    axis: "Transmissão",
+    title: "Conexão e Legado",
+    leak: "Tudo depende do fundador.",
+    body: "Governança do que você constrói e do que deseja transmitir.",
+    forFran: "Beautiful Legacy. A plataforma sobrevive ao evento. Esse é o ponto gigante.",
+  },
+];
+
+const AF_PLATFORM = {
+  nav: ["Início", "Módulos", "Ferramentas", "Call", "Notas", "Complementares"],
+  promise:
+    "Dashboard, módulos, ferramentas, call, notas e complementares numa experiência só. Planejamento vira acompanhamento visível.",
+  extras: [
+    "21+ materiais de execução",
+    "7 módulos do protocolo",
+    "Sessão 1:1 de entrada",
+    "90 dias auditados no início",
+    "Máquina comercial: SDR, negociação, objeção, fechamento, AF → Mentoria",
+    "Lives, teleprompters, rotina, timing, yoga, academia",
+  ],
+  not: [
+    "Não é promessa de enriquecimento rápido",
+    "Não vende ativo, retorno garantido ou fórmula mágica",
+    "Não substitui assessoria regulada de investimentos",
+    "Não é curso gravado solto",
+  ],
+};
+
+const AF_SHOW_ON_CALL = [
+  "Uma tela do dashboard — progresso visível.",
+  "Módulo 01 Cash-Flow: auditoria, reserva, execução semanal.",
+  "A lógica da sessão de 1h30 → dossiê → continuidade.",
+  "Que a plataforma é a prova: conhecimento não mora em PDF.",
+];
+
+
+const IGOR_PRINCIPLES = [
+  {
+    title: "Diagnóstico antes da oferta",
+    body: "O processo tradicional falha ao empurrar o produto antes da hora. A mesa se ganha no diagnóstico profundo — visual, que faz a dor arder.",
+  },
+  {
+    title: "PIT invertido",
+    body: "Quebrar objeções antes do preço. Se a pessoa não compra o que não precisa pagar (o diagnóstico), ela não vai mandar Pix no fim da call.",
+  },
+  {
+    title: "0 a 10 — só avança no 10",
+    body: "Depois do diagnóstico: ‘de 0 a 10, o quanto você quer resolver isso?’. Oito não avança. Vai até o 10. Energia baixa? Não apresenta produto.",
+  },
+  {
+    title: "Decisão é emocional",
+    body: "Quem entra na loja já sabe se vai comprar. A razão só justifica. O PIT antecipa a objeção enquanto a emoção ainda está quente.",
+  },
+  {
+    title: "Fechar na reunião",
+    body: "Cultura de elite: fechar 50–80% sem follow-up morno no WhatsApp. ‘Vou falar com meu sócio’ se desarma antes, no PIT 01.",
+  },
+  {
+    title: "Condição única com cuidado",
+    body: "Se criar uma condição especial demais, a pessoa desacredita o preço original. Preferir recorte de escopo a desconto.",
+  },
+];
+
+
+
+const SEQUENCE = [
+  "Conexão",
+  "Diagnóstico",
+  "Visão",
+  "Sinergia",
+  "Prova",
+  "Papel",
+  "Compromisso",
+  "Recurso",
+  "Escopo",
+  "Fechamento",
+];
+
+const IF_SHE_ASKS_PRICE =
+  "Depende do nível em que você quer que eu entre. Uma coisa é eu abrir o mapa, fazer o alinhamento e estruturar contigo. Outra é eu abrir profundamente o Akasha e assumir a construção da plataforma e da Convergência contigo.";
+
+
+const CONVERGENCIA_ONE_LINER =
+  "O primeiro projeto em que praticamente todo o DNA do Akasha aparece dentro de uma única arquitetura: evento + software + rede + streaming + gamificação + conteúdo + biblioteca + comunidade + economia.";
+
+const LOCKED = [
+  {
+    title: "Híbrido de verdade",
+    body: "Não é presencial + uma câmera. Presencial ↔ digital o tempo inteiro.",
+  },
+  {
+    title: "Plataforma própria",
+    body: "Casa digital do evento. Não é só página de ingresso.",
+  },
+  {
+    title: "Identidade de participante",
+    body: "Quem entra precisa existir: perfil, interesses, propósito, conteúdos, conexões.",
+  },
+  {
+    title: "Participação ativa",
+    body: "Não existe sentar no canto. Acessos e experiências se desbloqueiam pela participação — sem usar a palavra obrigar.",
+  },
+  {
+    title: "Gamificação",
+    body: "Missões, pontuação, conexões, desbloqueios, salas, conteúdo, recompensas.",
+  },
+  {
+    title: "Streaming distribuído",
+    body: "Transmissão oficial + participantes criando perspectiva. Referência Twitch, sem ser só Twitch.",
+  },
+  {
+    title: "Várias salas",
+    body: "Hipótese: 3 / 6 / até 9. Conteúdos simultâneos, não só business.",
+  },
+  {
+    title: "Audiovisual como infraestrutura",
+    body: "Direção sincronizada com software e cronograma. Não é ‘contratar um cara para filmar’.",
+  },
+  {
+    title: "Biblioteca / replay",
+    body: "O que merece permanência é gravado. Vira replay, corte, documentário, produto.",
+  },
+  {
+    title: "A plataforma não morre",
+    body: "Depois do evento: rede, streams, comunidade, membership, próximos ciclos.",
+  },
+];
+
+const OPEN_WITH_HER = [
+  "Tema e nome",
+  "Marcas e Beautiful Living",
+  "Convidados e network internacional",
+  "Curadoria das salas",
+  "Internacionalização e inglês",
+  "Parceiros, hotel, produtos",
+  "Colabocracy como camada comercial",
+];
+
+const JOURNEY = [
+  {
+    act: "Ato 1 — Convergência",
+    body: "Salas + palco + digital + audiovisual + conteúdo + networking + comida + experiências + gamificação.",
+  },
+  {
+    act: "After",
+    body: "Sai o conteúdo estruturado. Entra música, dança, lifestyle, documentário, backstage. Digital segue vivo, lógica muda.",
+  },
+  {
+    act: "Ato 2 — Celebração / saúde",
+    body: "Manhã mais aberta, eventualmente gratuita. Café, zero álcool, música, bike, corrida, praia, produtos, comunidade.",
+  },
+  {
+    act: "VIP privado",
+    body: "Cocriadores e equipe. Sem app, sem cronograma. Não precisa definir agora.",
+  },
+];
+
+const TICKETS = [
+  {
+    name: "Presencial",
+    body: "Inclui digital incondicionalmente. Quarto/hotel vira estúdio. Participante é também creator.",
+  },
+  {
+    name: "Digital Live",
+    body: "Participa enquanto acontece. Tem sala própria, pode transmitir, entra nas salas oficiais.",
+  },
+  {
+    name: "Digital Library",
+    body: "Acesso posterior ao gravado. Não prometer vitalício antes de calcular storage, direitos e custo.",
+  },
+];
+
+const ENGINEERING_ORDER = [
+  "Papel / mapa",
+  "Software",
+  "Regras",
+  "Gamificação",
+  "Simulação",
+  "Audiovisual",
+  "Cronograma físico",
+  "Local",
+  "Evento",
+];
+
+const V1_DOD = [
+  "Login e cadastro",
+  "Perfis / identidade",
+  "Ingresso e Event Hub",
+  "Agenda e programação",
+  "Salas",
+  "Live Hub / streaming",
+  "Missões e pontuação",
+  "Recompensas V1",
+  "Connect / matchmaking",
+  "Feed / rede",
+  "Espaço de creator / stream individual",
+  "Biblioteca / replay",
+  "Painel administrativo",
+  "Analytics e moderação",
+];
+
+const SHOW_BEFORE = [
+  "A tese em uma frase",
+  "Os 10 fundamentos inegociáveis, em altitude",
+  "A ordem de engenharia (videogame antes do hotel)",
+  "Que presencial inclui digital",
+  "Que a plataforma sobrevive ao evento",
+];
+
+const SHOW_AFTER = [
+  "Blueprint de salas e cronograma",
+  "Modelo de revenue share / sociedade",
+  "Gamificação detalhada (missões, termos)",
+  "Arquitetura técnica, stack, repositório",
+  "Lista de fundadores de plataformas para fusão",
+  "Mapa-mãe completo do Akasha",
+  "Contratos, splits, tokens",
+];
+
+
+const OBJECOES = [
+  {
+    id: "colabocracy",
+    title: "Colaborocracia agora, dinheiro depois",
+    hear: "A longo prazo a gente colabora. A entrada de dinheiro vem depois.",
+    break: [
+      "Concordo com o longo prazo. O que eu não faço é abrir o organismo inteiro sem skin in the game.",
+      "Colaborocracia sem entrada vira conversa. Entrada sem recorrência já é a minha concessão — porque eu acredito em você.",
+      "O dinheiro aqui não é ‘eu preciso’. É o rito que transforma conexão em construção.",
+    ],
+  },
+  {
+    id: "vendo",
+    title: "Vamos vendo / sem prazo",
+    hear: "A gente vai andando, sem tempo determinado.",
+    break: [
+      "Eu também acredito. Por isso a ativação não é mensalidade.",
+      "Mas ‘vamos vendo’ não constrói plataforma. Constrói expectativa.",
+      "A gente congela uma V1. Quando ela existir, a gente conversa o próximo andar.",
+    ],
+  },
+  {
+    id: "mentoria",
+    title: "Mentoria não é para o meu nível",
+    hear: "Eu já tenho T. Eu já viajei 70 países. Mentoria fica pequeno.",
+    break: [
+      "Concordo. Por isso você não entra como mentoranda.",
+      "A mentoria, para você, é prova de arquitetura. Eu te mostro a casa. Você decide se construímos juntos.",
+      "O C que eu carrego — código, sistema, conteúdo, execução — é o complemento do T que você já tem.",
+    ],
+  },
+  {
+    id: "pensar",
+    title: "Preciso pensar / falar com alguém",
+    hear: "Me manda um resumo. Depois eu vejo.",
+    break: [
+      "Pensar é justo. O que eu não faço é deixar a decisão para um WhatsApp frio.",
+      "O que ainda não está claro: o papel, o recorte ou o recurso?",
+      "A gente pode fechar a sessão de alinhamento hoje e deixar a obra maior para um segundo sim — com data.",
+    ],
+  },
+  {
+    id: "preco",
+    title: "Quanto custa?",
+    hear: "Me fala o valor.",
+    break: [
+      "Depende do nível em que você quer que eu entre.",
+      "Uma coisa é mapa e alinhamento. Outra é abrir o Akasha e construir a Convergência.",
+      "Me diz o nível de responsabilidade que você quer comprar. Aí o recorte fica honesto.",
+    ],
+  },
+  {
+    id: "barato",
+    title: "Abaixo de 2 mil para a obra grande",
+    hear: "Consigo X agora, bem abaixo.",
+    break: [
+      "Por esse valor eu faço a sessão e o mapa. Não abro a casa e não assumo a plataforma.",
+      "Menos de 2 mil não gera a convergência. Eu não entrego a plataforma de mão beijada.",
+      "A gente pode honrar o que cabe hoje e deixar a obra com data — sem fingir que é a mesma coisa.",
+    ],
+  },
+  {
+    id: "gratis",
+    title: "Eu já te ajudei / você já me mostrou bastante",
+    hear: "Isso pode ser de graça, já geramos valor.",
+    break: [
+      "A sessão de alinhamento eu poderia fazer até de graça, porque você já gerou valor.",
+      "Mostrar o futuro, gerar conteúdo, construir sistema — isso não. Aí precisa de ativação.",
+      "Eu não cheguei pedindo ajuda. Você chegou interessada no que eu produzi. A reciprocidade começa agora.",
+    ],
+  },
+  {
+    id: "indicacao",
+    title: "Eu te indico pessoas",
+    hear: "Meus 10 mil empreendedores compram de você.",
+    break: [
+      "Indicação é um segundo acordo, quando a economia existir.",
+      "Não substitui a entrada. Substitui, no futuro, recorrência.",
+      "Se for para isso, a gente escreve: o que é indicação, o que é comissão, o que não é sociedade.",
+    ],
+  },
+  {
+    id: "tempo",
+    title: "Ano que vem / três meses",
+    hear: "A gente faz o evento no ano que vem, sem pressa.",
+    break: [
+      "Um ano é muito tempo para construir se a gente começar. É pouco se a gente só conversar.",
+      "Em 90 dias dá para ter V1 rodando em teste. O evento físico vem quando o videogame existir.",
+      "A ordem é mapa → software → regras → gamificação → audiovisual → local.",
+    ],
+  },
+  {
+    id: "marca-roupa",
+    title: "Voltar para marca / roupa / caixa",
+    hear: "Podemos vender produtos físicos, artesanato, caixa.",
+    break: [
+      "Faz sentido e fica no ecossistema — loja seletiva, poucas peças, feito à mão.",
+      "Isso é um braço, não a obra. A obra desta call é organismo + Convergência.",
+      "Produto físico entra como parceria de marketplace depois, com percentual claro.",
+    ],
+  },
+];
+
+
+const ASCENSAO_INTRO =
+  "Se ela fecha a ativação, ela não entra só na Convergência. Ela também se beneficia do Roteiro da Ascensão — o mesmo protocolo da AF — aplicado ao campo dela. Se ela não fecha a obra grande, a Call de Entrada continua existindo.";
+
+const H72 = [
+  {
+    t: "0–2h",
+    title: "Rito de entrada",
+    items: [
+      "Confirmar Pix / transferência",
+      "Mensagem de honra: conexão virou construção",
+      "Criar pasta da obra com escopo congelado",
+      "Liberar AF Plataforma no nível combinado",
+    ],
+  },
+  {
+    t: "24h",
+    title: "Dossiê",
+    items: [
+      "Mapa do mapa dela (Freedom eE × Akasha)",
+      "O que ficou inegociável / o que é dela",
+      "Faixa, escopo, Definition of Done se V1",
+      "Primeira alavanca da semana",
+    ],
+  },
+  {
+    t: "72h",
+    title: "Kickoff",
+    items: [
+      "Call curta de alinhamento operacional",
+      "Acesso às telas certas — não a tudo",
+      "Calendário dos 30 dias",
+      "Se V1: quadro da plataforma, não do evento físico",
+    ],
+  },
+];
+
+const D30 = [
+  "Semana 1 — Fundação: caixa, papéis, recorte da obra",
+  "Semana 2 — Mapa visual da Convergência em altitude acordada",
+  "Semana 3 — Software: login, perfil, esqueleto do Event Hub (se V1)",
+  "Semana 4 — Primeira simulação jogável ou primeiro ciclo de conteúdo",
+];
+
+const D90 = [
+  "V1 jogável se a faixa for 7–17",
+  "Gamificação mínima rodando em teste",
+  "Biblioteca de conteúdo de entrada",
+  "Modelo econômico em papel (ainda sem sociedade jurídica)",
+  "Decisão go/no-go do evento físico",
+  "Ela operando o Roteiro da Ascensão nos 7 módulos no próprio campo",
+];
+
+const ASCENSAO_TRACK = [
+  {
+    n: "01",
+    title: "Raiz",
+    hers: "O que no Freedom eE ainda vaza energia e caixa.",
+  },
+  {
+    n: "02",
+    title: "Oferta",
+    hers: "Uma campanha PHYgital testável em 90 dias — não 26 setores de uma vez.",
+  },
+  {
+    n: "03",
+    title: "Ritmo",
+    hers: "Uma alavanca: plataforma, conteúdo ou bonded table. Não as três.",
+  },
+  {
+    n: "04",
+    title: "Relação",
+    hers: "Reciprocidade escrita com você. Indicação vira acordo, não promessa.",
+  },
+  {
+    n: "05",
+    title: "Presença",
+    hers: "Conteúdo gerado com sistema, não com heroísmo.",
+  },
+  {
+    n: "06",
+    title: "Direção",
+    hers: "Visão em uma página: Beautiful Living × Convergência.",
+  },
+  {
+    n: "07",
+    title: "Legado",
+    hers: "A rede que sobrevive ao evento e à fundadora.",
+  },
+];
+
+const IF_NO_CLOSE = {
+  title: "Se a obra grande não fechar",
+  body: "Não forçar. Oferecer a Call de Entrada — Sessão de Alinhamento, 1h30, R$ 350. Ela continua no campo. O mapa-mãe e a V1 permanecem fechados. Marcar data. Não virar follow-up eterno.",
+};
+
+
+const MAPA_CHAIN = [
+  "Essência",
+  "Código",
+  "Método",
+  "Marca",
+  "Produto",
+  "Sistema",
+  "Legado",
+];
+
+const MAPA_BRANCHES = [
+  {
+    id: "A",
+    title: "Fundamentos / livros",
+    items: [
+      "Códigos de Origem — corpo, mente, campo",
+      "Revelações Quânticas",
+      "Seu Código Quântico",
+      "Deus é Quântico e está no DNA",
+      "Autoestima Blindada",
+      "Biblioteca de referências",
+    ],
+  },
+  {
+    id: "B",
+    title: "Área de membros Akasha Hub",
+    items: [
+      "N1 Anubis — o iniciado",
+      "N2 Horus — despertar",
+      "N3 Isis — domínio",
+      "N4 Ra — magnetismo supremo",
+    ],
+  },
+  {
+    id: "C",
+    title: "Mentorias",
+    items: [
+      "Arquitetura & Ciência / Legado Digital",
+      "Caminho da Energia — 8 semanas, 1ª a gravar",
+      "Mentoria Discípulo — pessoal, bônus depois",
+    ],
+  },
+  {
+    id: "D",
+    title: "Alinhamento Financeiro",
+    items: [
+      "7 módulos / vetores",
+      "Sessão de Alinhamento (Ascensão)",
+      "AF Plataforma",
+      "Máquina comercial",
+    ],
+  },
+  {
+    id: "E",
+    title: "Tecnologia da Alma",
+    items: ["Comunicação, fascinação, magnetismo, não-verbal"],
+  },
+  {
+    id: "F",
+    title: "Masterclass",
+    items: ["O Poder da Fascinação — criar do zero, depois"],
+  },
+  {
+    id: "G",
+    title: "Paladins — Liderança dos Bons",
+    items: ["10 módulos + legado + bônus. Grade antes de gravar."],
+  },
+  {
+    id: "H",
+    title: "Senda Tântrica",
+    items: ["Conteúdo existe. Ordenar, gravar. Sem sexualizar a tese na call."],
+  },
+  {
+    id: "I",
+    title: "Já gravado",
+    items: ["Ritual para casais", "Desafio 7 dias — magnetismo"],
+  },
+  {
+    id: "J",
+    title: "Tech Hub",
+    items: ["Sites, apps, IA, sistemas, Atlas"],
+  },
+  {
+    id: "K",
+    title: "Distribuição",
+    items: ["Conteúdo gratuito nasce do pago. Lua é frente visual oficial."],
+  },
+];
+
+const FILA_GRAVACAO = [
+  { fase: "1", title: "Caminho da Energia", body: "8 fundamentos. Primeiro a gravar." },
+  { fase: "2", title: "Área de membros", body: "Anubis → Horus → Isis → Ra." },
+  { fase: "3", title: "Paladins", body: "Fechar grade, depois gravar." },
+  { fase: "4", title: "Senda Tântrica", body: "Ordenar e gravar o que já existe." },
+  { fase: "5", title: "Fascinação", body: "Só depois. Conteúdo ainda inexistente." },
+];
+
+
+const SMART_MONEY_LANG = {
+  internal: "smart money / founding activation",
+  external: [
+    "Contribuição de ativação",
+    "Founding activation",
+    "Strategic build-in",
+  ],
+  why: "‘Smart money’ soa investimento com equity. Revenue share, percentual e sociedade são um segundo acordo, quando a economia existir.",
+};
