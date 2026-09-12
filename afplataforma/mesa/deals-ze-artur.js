@@ -189,7 +189,7 @@ const PACK_ARTUR = {
       "R$ 5 mil é sprint de arquitetura. Não é o preço da plataforma da rede.",
     ],
   },
-  whatsapp: "Fala, Arthur. Tudo certo? Esses dias fui olhar a Fluir e vi o tamanho que o negócio tomou, franquias, expansão e tudo mais. Muito massa ver isso depois de tantos anos.\\n\\nHoje estou trabalhando pesado com sistemas, plataformas e IA e, olhando a Fluir + essa sua frente de processos e mentoria, enxergei uma parada que acho que pode fazer bastante sentido pra vocês.\\n\\nÉ difícil explicar por mensagem sem entregar tudo picado. Bora marcar uns 30 min qualquer dia que eu te mostro na tela?",
+  whatsapp: "Fala, Arthur. Tudo certo? Esses dias fui olhar a Fluir e vi o tamanho que o negócio tomou, franquias, expansão e tudo mais. Muito massa ver isso depois de tantos anos.\\n\\nHoje estou trabalhando pesado com sistemas, plataformas e IA e, olhando a Fluir + essa sua frente de processos e mentoria, enxerguei uma parada que acho que pode fazer bastante sentido pra vocês.\\n\\nÉ difícil explicar por mensagem sem entregar tudo picado. Bora marcar uns 30 min qualquer dia que eu te mostro na tela?",
   neverGlobal: [
     "Não pedir emprego.",
     "Não falar demais do passado (estacionamento, cloro).",
