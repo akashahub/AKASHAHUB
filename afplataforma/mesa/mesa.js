@@ -17,6 +17,10 @@ function emptyState() {
     closed: false,
     elapsed: 0,
     running: false,
+    fazSentido: null,
+    payMethod: "",
+    blocker: "",
+    calledNow: false,
   };
 }
 
@@ -31,9 +35,10 @@ function load(id) {
 function save() {
   const { running, ...rest } = state;
   localStorage.setItem(storageKey(dealId), JSON.stringify(rest));
+  localStorage.setItem("af-mesa-current", dealId);
 }
 
-let dealId = DEAL_DEFAULT;
+let dealId = localStorage.getItem("af-mesa-current") || DEAL_DEFAULT;
 let state = load(dealId);
 let view = (location.hash || "#mesa").slice(1) || "mesa";
 let copied = "";
@@ -53,8 +58,64 @@ function clockLabel() {
   return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
 }
 
+function pack() {
+  if (dealId === "ze" && typeof PACK_ZE !== "undefined") return PACK_ZE;
+  if (dealId === "artur" && typeof PACK_ARTUR !== "undefined") return PACK_ARTUR;
+  return {
+    id: "francesca",
+    hero: {
+      kicker: "Cockpit privado · não compartilhar tela",
+      title: null,
+      lede: null,
+    },
+    values: typeof VALUES !== "undefined" ? VALUES : [350, 2000, 3500, 7000, 12000, 17000],
+    faixas: typeof FAIXAS !== "undefined" ? FAIXAS : [],
+    caderno: typeof CADERNO !== "undefined" ? CADERNO : [],
+    acts: typeof FECHAMENTO_ACTS !== "undefined" ? FECHAMENTO_ACTS : [],
+    entrada: typeof ENTRADA_ACTS !== "undefined" ? ENTRADA_ACTS : [],
+    person: typeof FRANCESCA !== "undefined" ? FRANCESCA : { name: "Francesca", facts: [], ecosystems: [], posture: [] },
+    objecoes: typeof OBJECOES !== "undefined" ? OBJECOES : [],
+    posture: typeof POSTURE !== "undefined" ? POSTURE : [],
+    neverGlobal: [],
+    whatsapp: "",
+  };
+}
+
 function acts() {
-  return state.mode === "entrada" ? ENTRADA_ACTS : FECHAMENTO_ACTS;
+  const p = pack();
+  if (state.mode === "entrada" && p.entrada && p.entrada.length) return p.entrada;
+  return p.acts && p.acts.length ? p.acts : FECHAMENTO_ACTS;
+}
+
+function cadernoList() {
+  return pack().caderno && pack().caderno.length ? pack().caderno : CADERNO;
+}
+
+function valuesList() {
+  return pack().values && pack().values.length ? pack().values : VALUES;
+}
+
+function faixasList() {
+  return pack().faixas && pack().faixas.length ? pack().faixas : FAIXAS;
+}
+
+function faixaForDeal(n) {
+  if (n == null || n === "") return null;
+  const num = Number(n);
+  return faixasList().find((f) => num >= f.min && num <= f.max) || null;
+}
+
+function personOf() {
+  return pack().person || FRANCESCA;
+}
+
+function postureOf() {
+  const p = pack();
+  return (p.posture && p.posture.length ? p.posture : p.person && p.person.posture) || POSTURE;
+}
+
+function objecoesOf() {
+  return pack().objecoes && pack().objecoes.length ? pack().objecoes : OBJECOES;
 }
 
 function deal() {
@@ -113,6 +174,56 @@ function line(text, italic) {
   </button>`;
 }
 
+function closePanel() {
+  const engine = typeof CLOSE_ENGINE !== "undefined" ? CLOSE_ENGINE : null;
+  if (!engine) return "";
+  const who = deal().name;
+  return `
+    <section class="panel">
+      <h3>Pagamento na call · ${esc(who)}</h3>
+      <p class="muted">${esc(engine.lede)}</p>
+      <p class="lbl">Faz sentido?</p>
+      <div class="vals">
+        <button type="button" class="btn ${state.fazSentido === true ? "btn-primary" : "btn-outline"}" data-sentido="1">Sim</button>
+        <button type="button" class="btn ${state.fazSentido === false ? "btn-primary" : "btn-outline"}" data-sentido="0">Ainda não</button>
+      </div>
+      <p class="flag ${state.fazSentido === true && state.pit >= 10 ? "ok" : "danger"}" style="margin-top:10px">${
+        state.fazSentido !== true
+          ? "Sem o sim, não fala preço."
+          : state.pit < 10
+            ? "PIT abaixo de 10. Não apresenta solução."
+            : "Autorizado. Qual valor faz sentido agora?"
+      }</p>
+      <p class="lbl">Forma</p>
+      <div class="vals">
+        ${engine.methods
+          .map(
+            (m) =>
+              `<button type="button" class="btn ${state.payMethod === m ? "btn-primary" : "btn-outline"}" data-pay="${esc(m)}">${esc(m)}</button>`
+          )
+          .join("")}
+      </div>
+      <p class="lbl">Trava — quebrar agora</p>
+      <div class="vals">
+        ${engine.blockers
+          .map(
+            (b) =>
+              `<button type="button" class="btn ${state.blocker === b.id ? "btn-primary" : "btn-outline"}" data-blocker="${esc(b.id)}">${esc(b.label)}</button>`
+          )
+          .join("")}
+      </div>
+      ${
+        state.blocker
+          ? `<p class="hint">${esc((engine.blockers.find((b) => b.id === state.blocker) || {}).speak || "")}</p>
+             <button type="button" class="btn ${state.calledNow ? "btn-primary" : "btn-outline"}" data-called="1" style="margin-top:8px">${
+               state.calledNow ? "Ligou na call" : "Marcar: ligou agora"
+             }</button>`
+          : `<p class="muted" style="margin-top:8px">Se aparecer esposa, sócio, equipe ou “depois”: liga agora. Não espera Pix depois.</p>`
+      }
+    </section>
+  `;
+}
+
 function renderShell() {
   document.querySelectorAll("[data-view]").forEach((b) => {
     b.classList.toggle("on", b.getAttribute("data-view") === view);
@@ -134,29 +245,46 @@ function renderShell() {
   const person = deal();
   const brandSpan = document.querySelector(".brand span");
   if (brandSpan && person) brandSpan.textContent = person.name;
+  const sw = document.getElementById("dealSwitch");
+  if (sw && typeof DEALS !== "undefined") {
+    sw.innerHTML = DEALS.map(
+      (d) =>
+        `<button type="button" data-deal="${esc(d.id)}" class="${d.id === dealId ? "on" : ""}">${esc(d.name)}</button>`
+    ).join("");
+  }
 }
 
 function renderMesa() {
   const list = acts();
   const act = list[Math.min(state.act, list.length - 1)];
-  const faixa = faixaFor(state.named);
-  const doneCount = CADERNO.filter((c) => state.caderno[c.id]).length;
+  const faixa = faixaForDeal(state.named);
+  const book = cadernoList();
+  const doneCount = book.filter((c) => state.caderno[c.id]).length;
   const fechamento = state.mode === "fechamento";
+  const p = pack();
+  const heroTitle = (p.hero && p.hero.title) || (fechamento ? "Call de fechamento" : "Call de entrada");
+  const heroLede =
+    (p.hero && p.hero.lede) ||
+    (fechamento
+      ? "Peer para peer. Diagnóstico → PIT → obra. Ela não é mentoranda."
+      : "Sessão de Alinhamento, 1h30. Continuidade só se fizer sentido.");
+  const heroKicker = (p.hero && p.hero.kicker) || "Cockpit privado · não compartilhar tela";
+  const showEntrada = dealId === "francesca";
 
   return `
     <div class="hero">
       <div>
-        <p class="kicker">Cockpit privado · não compartilhar tela</p>
-        <h1>${fechamento ? "Call de fechamento" : "Call de entrada"}</h1>
-        <p class="lede">${
-          fechamento
-            ? "Peer para peer. Diagnóstico → PIT → obra. Ela não é mentoranda."
-            : "Sessão de Alinhamento, 1h30. Continuidade só se fizer sentido."
-        }</p>
+        <p class="kicker">${esc(heroKicker)}</p>
+        <h1>${esc(heroTitle)}</h1>
+        <p class="lede">${esc(heroLede)}</p>
       </div>
       <div class="hero-actions">
-        <button type="button" class="btn ${fechamento ? "btn-primary" : "btn-outline"}" data-mode="fechamento">Fechamento</button>
-        <button type="button" class="btn ${!fechamento ? "btn-primary" : "btn-outline"}" data-mode="entrada">Entrada · R$ 350</button>
+        ${
+          showEntrada
+            ? `<button type="button" class="btn ${fechamento ? "btn-primary" : "btn-outline"}" data-mode="fechamento">Fechamento</button>
+        <button type="button" class="btn ${!fechamento ? "btn-primary" : "btn-outline"}" data-mode="entrada">Entrada · R$ 350</button>`
+            : `<button type="button" class="btn btn-primary" data-mode="fechamento">Fechamento na call</button>`
+        }
         <button type="button" class="btn btn-ghost" id="btnReset">Resetar mesa</button>
       </div>
     </div>
@@ -206,11 +334,11 @@ function renderMesa() {
 
         <section class="panel panel-flush">
           <div class="panel-head">
-            <h3>Caderno · ${doneCount}/20</h3>
+            <h3>Caderno · ${doneCount}/${book.length}</h3>
             <span class="kicker" style="letter-spacing:.16em">riscar</span>
           </div>
           <ol class="caderno">
-            ${CADERNO.map((item) => {
+            ${book.map((item) => {
               const on = !!state.caderno[item.id];
               return `<li>
                 <button type="button" class="cad-item ${on ? "on" : ""}" data-cad="${esc(item.id)}">
@@ -243,9 +371,9 @@ function renderMesa() {
 
         <section class="panel">
           <h3>Recurso nomeado</h3>
-          <p class="muted">Ela fala o número. Você não fala o piso. Digite o que ela disser.</p>
+          <p class="muted">A pessoa fala o número. Você não fala o piso. Digite o que ela disser.</p>
           <div class="vals">
-            ${VALUES.map(
+            ${valuesList().map(
               (v) =>
                 `<button type="button" class="btn ${state.named === v ? "btn-primary" : "btn-outline"}" data-val="${v}">${formatBRL(v)}</button>`
             ).join("")}
@@ -264,6 +392,8 @@ function renderMesa() {
                 )}</p>`
           }
         </section>
+
+        ${closePanel()}
 
         <section class="panel">
           <div class="energy-row">
@@ -295,14 +425,14 @@ function renderMesa() {
         </section>
 
         <section class="panel">
-          <h3>Lembrar quem ela é</h3>
-          <ul class="posture">${POSTURE.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>
+          <h3>Lembrar quem é</h3>
+          <ul class="posture">${postureOf().map((p) => `<li>${esc(p)}</li>`).join("")}</ul>
         </section>
 
         <section class="panel">
           <h3>Faixas internas</h3>
           <ul class="faixa-list">
-            ${FAIXAS.map(
+            ${faixasList().map(
               (f) => `<li><span>${esc(f.name)}</span><b>${esc(f.range)}</b></li>`
             ).join("")}
           </ul>
@@ -313,7 +443,8 @@ function renderMesa() {
 }
 
 function renderCaderno() {
-  const done = CADERNO.filter((c) => state.caderno[c.id]).length;
+  const book = cadernoList();
+  const done = book.filter((c) => state.caderno[c.id]).length;
   const keep = typeof STORY_KEEP !== "undefined" ? STORY_KEEP : [];
   const cut = typeof STORY_CUT !== "undefined" ? STORY_CUT : [];
   return `
@@ -321,12 +452,12 @@ function renderCaderno() {
       <div>
         <p class="kicker">Folha de caderno</p>
         <h1>Vinte pontos. Riscar na call.</h1>
-        <p class="lede">Ordem fixa. ${done} de 20 riscados. História serve à tese — não ao documentário.</p>
+        <p class="lede">Ordem fixa. ${done} de ${book.length} riscados. História serve à tese — não ao documentário.</p>
       </div>
     </div>
     <div class="grid">
       <ol class="cad-full">
-        ${CADERNO.map((item) => {
+        ${book.map((item) => {
           const on = !!state.caderno[item.id];
           return `<li>
             <button type="button" class="cad-item ${on ? "on" : ""}" data-cad="${esc(item.id)}">
@@ -356,7 +487,7 @@ function renderCaderno() {
 }
 
 function renderDossie() {
-  const f = typeof FRANCESCA !== "undefined" ? FRANCESCA : { name: "Francesca", facts: [], ecosystems: [], overlap: [], posture: POSTURE };
+  const f = personOf();
   return `
     <div class="hero">
       <div>
@@ -555,7 +686,33 @@ document.addEventListener("click", (e) => {
   if (d) {
     dealId = d.getAttribute("data-deal");
     state = load(dealId);
+    localStorage.setItem("af-mesa-current", dealId);
     setView("mesa");
+    return;
+  }
+  const sentido = e.target.closest("[data-sentido]");
+  if (sentido) {
+    state.fazSentido = sentido.getAttribute("data-sentido") === "1";
+    render();
+    return;
+  }
+  const pay = e.target.closest("[data-pay]");
+  if (pay) {
+    state.payMethod = pay.getAttribute("data-pay");
+    render();
+    return;
+  }
+  const blk = e.target.closest("[data-blocker]");
+  if (blk) {
+    state.blocker = blk.getAttribute("data-blocker");
+    state.calledNow = false;
+    render();
+    return;
+  }
+  const called = e.target.closest("[data-called]");
+  if (called) {
+    state.calledNow = !state.calledNow;
+    render();
     return;
   }
   if (e.target.id === "btnClosed" || e.target.closest("#btnClosed")) {

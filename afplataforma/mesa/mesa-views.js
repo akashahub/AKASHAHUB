@@ -105,9 +105,10 @@ function renderConv() {
 }
 
 function renderObj() {
+  const list = objecoesOf();
   return `
-    ${head("PIT invertido · quebrar antes do preço", "O que ela pode dizer.", "Não argumentar. Devolver clareza. Preferir recorte de escopo a desconto.")}
-    <div class="stack">${OBJECOES.map((o, i) => `<section class="panel">
+    ${head("PIT invertido · quebrar antes do preço", "O que pode aparecer.", "Não argumentar. Devolver clareza. Preferir recorte de escopo a desconto. Preço só depois.")}
+    <div class="stack">${list.map((o, i) => `<section class="panel">
       <p class="mono accent">${String(i + 1).padStart(2, "0")}</p>
       <h2 class="display">${esc(o.title)}</h2>
       <p class="display italic muted" style="font-size:1.15rem;margin-top:8px">“${esc(o.hear)}”</p>
@@ -145,46 +146,65 @@ function renderMapa() {
 }
 
 function renderAcesso() {
-  const f = FRANCESCA;
+  const f = personOf();
+  const never = pack().neverGlobal || [];
+  const wa = pack().whatsapp || "";
   return `
-    ${head("Antes e depois do Pix", "Abrir a casa na medida do compromisso.", "Call atual: visão, algumas provas, diagnóstico. Entrada: reciprocidade. Depois: arquitetura proporcional.")}
-    <div class="grid">
+    ${head("Antes e depois · " + (deal().name || ""), "Abrir na medida do compromisso.", "Call: visão e diagnóstico. Entrada: reciprocidade. Depois: arquitetura proporcional. Cofre fechado até o fit.")}
+    ${wa ? `<section class="panel"><p class="kicker">WhatsApp · só a porta</p><div>${line(wa, false)}</div></section>` : ""}
+    ${never.length ? `<section class="panel" style="margin-top:12px"><p class="kicker" style="color:var(--danger)">Não fazer</p><ul class="posture">${never.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></section>` : ""}
+    <div class="grid" style="margin-top:16px">
       <section class="panel">
         <p class="kicker" style="color:var(--ok)">Mostrar agora</p>
         <h2 class="display">Antes</h2>
-        ${raisedList(SHOW_BEFORE)}
-        <ul class="posture" style="margin-top:12px">
-          <li>Uma ou duas telas da AF — não o login dela.</li>
-          <li>A cadeia Essência → Legado em voz alta.</li>
-          <li>Quem você é nesta mesa: arquiteto, não pedinte.</li>
-        </ul>
+        ${raisedList(typeof SHOW_BEFORE !== "undefined" ? SHOW_BEFORE : [])}
       </section>
       <section class="panel">
         <p class="kicker" style="color:var(--danger)">Travar</p>
         <h2 class="display">Depois</h2>
-        ${raisedList(SHOW_AFTER, true)}
+        ${raisedList(typeof SHOW_AFTER !== "undefined" ? SHOW_AFTER : [], true)}
       </section>
     </div>
-    <h2 class="display page-h">Dossiê Francesca</h2>
+    <h2 class="display page-h">Dossiê · ${esc(f.name || deal().name)}</h2>
     <section class="panel">
-      <p class="kicker">${esc(f.role)}</p>
-      <h3 class="display">${esc(f.name)}</h3>
-      <ul class="posture" style="margin-top:16px">${f.facts.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+      <p class="kicker">${esc(f.role || "")}</p>
+      <h3 class="display">${esc(f.name || "")}</h3>
+      <ul class="posture" style="margin-top:16px">${(f.facts || []).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
     </section>
-    <div class="grid" style="margin-top:12px">${f.ecosystems.map((e) => `<section class="panel"><h3 class="display">${esc(e.name)}</h3><p class="muted">${esc(e.body)}</p></section>`).join("")}</div>
+    <div class="grid" style="margin-top:12px">${(f.ecosystems || []).map((e) => `<section class="panel"><h3 class="display">${esc(e.name)}</h3><p class="muted">${esc(e.body)}</p></section>`).join("")}</div>
     <section class="panel" style="margin-top:16px">
       <h2 class="display">Postura na mesa</h2>
-      ${f.posture.map((p) => line(p, false)).join("")}
+      ${(f.posture || postureOf()).map((p) => line(p, false)).join("")}
+    </section>
+    ${closePanel()}
+  `;
+}
+
+function renderPagamento() {
+  const engine = typeof CLOSE_ENGINE !== "undefined" ? CLOSE_ENGINE : { steps: [], lede: "", title: "Pagamento" };
+  return `
+    ${head("Igor · fechar na reunião", engine.title, engine.lede)}
+    <div class="stack">${(engine.steps || []).map((s) => `<section class="panel">
+      <p class="mono accent">${esc(s.n)}</p>
+      <h2 class="display">${esc(s.title)}</h2>
+      <div style="margin-top:12px">${line(s.speak, true)}</div>
+    </section>`).join("")}</div>
+    ${closePanel()}
+    <section class="panel" style="margin-top:16px">
+      <h2 class="display">Recurso nomeado</h2>
+      <div class="vals">${valuesList().map((v) => `<button type="button" class="btn ${state.named === v ? "btn-primary" : "btn-outline"}" data-val="${v}">${formatBRL(v)}</button>`).join("")}</div>
+      <div class="pit" style="margin-top:16px">${Array.from({ length: 11 }, (_, n) => `<button type="button" data-pit="${n}" class="${state.pit === n ? "on" : ""}">${n}</button>`).join("")}</div>
     </section>
   `;
 }
 
 function renderFaixasFull() {
-  const current = faixaFor(state.named);
-  const lang = typeof SMART_MONEY_LANG !== "undefined" ? SMART_MONEY_LANG : null;
+  const current = faixaForDeal(state.named);
+  const list = faixasList();
+  const lang = dealId === "francesca" && typeof SMART_MONEY_LANG !== "undefined" ? SMART_MONEY_LANG : null;
   return `
     ${head("Interno · nunca ler em voz alta como tabela", "O número compra responsabilidade.", "R$ 3 mil não é R$ 17 mil de obra. Descubra o nível. Depois case com o recorte. Não anuncie o piso.")}
-    <div class="grid">${FAIXAS.map((f) => {
+    <div class="grid">${list.map((f) => {
       const active = current && current.id === f.id;
       const pick = f.max === 17000 ? 12000 : f.min || 350;
       return `<button type="button" class="deal ${active ? "on-deal" : ""}" data-val="${pick}">
@@ -218,6 +238,7 @@ const VIEWS = {
   acesso: () => renderAcesso(),
   dossie: () => renderAcesso(),
   fechamentos: () => renderFechamentos(),
+  pagamento: () => renderPagamento(),
 };
 
 function render() {
