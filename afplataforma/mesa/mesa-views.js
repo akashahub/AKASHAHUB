@@ -241,8 +241,84 @@ const VIEWS = {
   pagamento: () => renderPagamento(),
   guia: () => renderGuiaV3(),
   mostrar: () => renderMostrar(),
-  proposta: () => renderProposta17()
+  proposta: () => renderProposta17(),
+  entrega: () => renderEntrega(),
+  garantia: () => renderGarantia(),
+  pos: () => renderPosSim()
 };
+
+function brl(n) {
+  return typeof formatBRL === "function" ? formatBRL(n) : "R$ " + n;
+}
+
+function renderEntrega() {
+  const list = typeof MARCOS_17K !== "undefined" ? MARCOS_17K : [];
+  const sum = typeof marcosSoma === "function" ? marcosSoma() : 0;
+  const inc = typeof INCLUIDO !== "undefined" ? INCLUIDO : { in: [], out: [], extra: "" };
+  const tl = typeof TIMELINE_12 !== "undefined" ? TIMELINE_12 : [];
+  const tpl = typeof DEAL_TEMPLATE !== "undefined" ? DEAL_TEMPLATE : null;
+  const fran = dealId === "francesca";
+  return `
+    ${head(fran ? "Francesca · soma R$ 17.000" : "Mesmo esqueleto · outra obra", "Dinheiro → entrega → pronto.", fran ? "Cada marco tem valor, o que é, e quando está pronto." : "Não copiar os 17 mil da Francesca. Preencher a obra deste deal.")}
+    ${fran ? `<div class="stack">${list.map((m) => `<section class="panel">
+      <p class="mono accent">${esc(m.n)} · ${brl(m.v)}</p>
+      <h3 class="display">${esc(m.name)}</h3>
+      <p>${esc(m.what)}</p>
+      <p class="muted" style="margin-top:8px">Pronto: ${esc(m.done)}</p>
+    </section>`).join("")}
+    <section class="panel"><p class="flag ${sum === 17000 ? "ok" : "danger"}">Soma: ${brl(sum)} ${sum === 17000 ? "· fecha 17.000" : "· conferir"}</p></section>
+    </div>
+    <div class="grid" style="margin-top:16px">
+      <section class="panel"><p class="kicker" style="color:var(--ok)">Incluído</p><ul class="posture">${inc.in.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></section>
+      <section class="panel"><p class="kicker" style="color:var(--danger)">Não incluído</p><ul class="posture">${inc.out.map((x) => `<li>${esc(x)}</li>`).join("")}</ul><p class="muted" style="margin-top:12px">${esc(inc.extra)}</p></section>
+    </div>
+    <h2 class="display page-h">12 meses</h2>
+    <div class="grid-3">${tl.map((t) => `<section class="panel"><p class="kicker">${esc(t.when)}</p><p>${esc(t.what)}</p></section>`).join("")}</div>` : ""}
+    ${tpl ? `<section class="panel" style="margin-top:16px">
+      <h3>${esc(tpl.title)}</h3>
+      <p class="muted">${esc(tpl.use)}</p>
+      <ul class="posture">${tpl.slots.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
+    </section>` : ""}
+  `;
+}
+
+function renderGarantia() {
+  const g = typeof GARANTIA !== "undefined" ? GARANTIA : null;
+  if (!g) return head("Garantia", "Carregue lote 2", "");
+  return `
+    ${head("Comercial · advogado revisa depois", "Garantia por marco.", g.rule)}
+    <section class="panel">
+      <p class="lede">${esc(g.example)}</p>
+    </section>
+    <section class="panel" style="margin-top:16px">
+      <p class="kicker">Cláusula para colar no termo</p>
+      ${line(g.clause, true)}
+    </section>
+  `;
+}
+
+function renderPosSim() {
+  const h = typeof H72 !== "undefined" ? H72 : [];
+  const a = typeof MSG_FECHEI !== "undefined" ? MSG_FECHEI : "";
+  const b = typeof MSG_MARCOS !== "undefined" ? MSG_MARCOS : "";
+  return `
+    ${head("Ela disse show. Fechei.", "O que mandar agora.", "Não mandar piso. Não mandar Mesa. Não mandar DNA.")}
+    <section class="panel">
+      <h3>72 horas</h3>
+      <ul class="posture">${h.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+    </section>
+    <div class="grid" style="margin-top:16px">
+      <section class="panel">
+        <p class="kicker">WhatsApp 1 · fechou</p>
+        ${line(a, true)}
+      </section>
+      <section class="panel">
+        <p class="kicker">WhatsApp 2 · marcos</p>
+        ${line(b, true)}
+      </section>
+    </div>
+  `;
+}
 
 function qBlock(title, arr) {
   return `<section class="panel"><p class="kicker">${esc(title)}</p>${arr.map((q) => line(q, false)).join("")}</section>`;

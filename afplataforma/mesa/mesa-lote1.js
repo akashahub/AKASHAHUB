@@ -116,9 +116,10 @@ const IP_SPLIT = [
 ];
 
 const LOTE_LATER = [
-  "Lote 2: decompor R$ 17.000 em marcos que somam 17.000 + garantia por entrega + incluído/não incluído.",
-  "Lote 3: blueprint de conteúdo, mentoria Freedom eE, Convergência V1 técnica, speaker roadmap.",
-  "Lote 4: termo para advogado, IP detalhado, revenue share (tudo [A DEFINIR]).",
-  "Com ela: evento, idioma, tempo de palco, quem decide o dinheiro, o que aconteceu em 2012 (só se parceria financeira).",
-  "Números dela (10 mil entrevistas, investimento próprio): claim público, não auditado. Não repetir como fato seu."
+  "Lote 3: blueprint de conteúdo, mentoria Freedom eE, V1 técnica detalhada, speaker roadmap.",
+  "Lote 4: termo completo para advogado, IP detalhado, revenue share [A DEFINIR].",
+  "Preencher chave Pix no Pós-sim.",
+  "Com ela: evento, idioma, quem decide o dinheiro.",
+  "2012: só se houver fluxo conjunto. Sem acusar.",
+  "10 mil entrevistas: claim dela, não fato seu."
 ];
