@@ -13,6 +13,7 @@ function emptyState() {
     named: null,
     caderno: {},
     notes: "",
+    actNotes: {},
     energy: "media",
     closed: false,
     elapsed: 0,
@@ -320,6 +321,9 @@ function renderMesa() {
           <div>${act.script.map((l) => line(l, true)).join("")}</div>
           <p class="lbl">Perguntar · e calar</p>
           <div>${act.questions.map((q) => line(q, false)).join("")}</div>
+          <p class="lbl">Nota desta etapa</p>
+          <textarea data-act-note="${esc(act.id)}" placeholder="O que ela disse neste ato…">${esc((state.actNotes && state.actNotes[act.id]) || "")}</textarea>
+          <p style="margin-top:8px"><button type="button" class="btn btn-outline" data-copy-notes>Copiar todas as anotações</button></p>
           <div class="split">
             <div class="box">
               <p class="lbl">Não fazer</p>
@@ -371,6 +375,7 @@ function renderMesa() {
 
         <section class="panel">
           <h3>Recurso nomeado</h3>
+          <p class="flag danger">Interno · piso R$ ${MESA_PRIVATE && MESA_PRIVATE.floor ? MESA_PRIVATE.floor.toLocaleString("pt-BR") : "5.000"} · proposta R$ ${MESA_PRIVATE && MESA_PRIVATE.offer ? MESA_PRIVATE.offer.toLocaleString("pt-BR") : "17.000"}. Ela fala primeiro.</p>
           <p class="muted">A pessoa fala o número. Você não fala o piso. Digite o que ela disser.</p>
           <div class="vals">
             ${valuesList().map(
@@ -636,6 +641,10 @@ document.addEventListener("click", (e) => {
     copyLine(copy.getAttribute("data-copy"));
     return;
   }
+  if (e.target.closest("[data-copy-notes]")) {
+    copyAllNotes();
+    return;
+  }
   const mode = e.target.closest("[data-mode]");
   if (mode) {
     state.mode = mode.getAttribute("data-mode");
@@ -744,7 +753,39 @@ document.addEventListener("input", (e) => {
     state.notes = e.target.value;
     save();
   }
+  if (e.target.dataset.actNote) {
+    if (!state.actNotes) state.actNotes = {};
+    state.actNotes[e.target.dataset.actNote] = e.target.value;
+    save();
+  }
+  if (e.target.dataset.v3Note) {
+    if (!state.actNotes) state.actNotes = {};
+    state.actNotes["v3-" + e.target.dataset.v3Note] = e.target.value;
+    save();
+  }
 });
+
+function copyAllNotes() {
+  const p = pack();
+  const lines = [];
+  lines.push("MESA · " + (p.person && p.person.name ? p.person.name : dealId));
+  lines.push("PIT " + state.pit + (state.named ? " · nomeou " + formatBRL(state.named) : ""));
+  if (state.notes) lines.push("GERAL\n" + state.notes);
+  const notes = state.actNotes || {};
+  Object.keys(notes).forEach((k) => {
+    if (notes[k]) lines.push(k.toUpperCase() + "\n" + notes[k]);
+  });
+  const t = lines.join("\n\n");
+  const run = async () => {
+    try { await navigator.clipboard.writeText(t); toast("Anotações copiadas"); }
+    catch {
+      const ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
+      toast("Anotações copiadas");
+    }
+  };
+  run();
+}
 
 window.addEventListener("hashchange", () => {
   view = (location.hash || "#mesa").slice(1) || "mesa";

@@ -274,7 +274,7 @@ function renderMentor() {
     <article class="q-feature livro-entry">
       <p class="hero-line">Call Francesca</p>
       <h3>Mesa</h3>
-      <p>Cockpit privado desta call: atos, caderno, PIT, faixas. Não compartilhar tela. Mentorado não vê este botão.</p>
+      <p>Cockpit de negociação: Core + playbook. Francesca, Zé, Artur. Guia V3, o que mostrar, proposta 17k. Não compartilhar tela.</p>
       <a class="tool-btn" href="${mesaHref()}">Abrir mesa</a>
     </article>
     <article class="q-feature livro-entry">

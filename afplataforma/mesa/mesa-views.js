@@ -239,7 +239,104 @@ const VIEWS = {
   dossie: () => renderAcesso(),
   fechamentos: () => renderFechamentos(),
   pagamento: () => renderPagamento(),
+  guia: () => renderGuiaV3(),
+  mostrar: () => renderMostrar(),
+  proposta: () => renderProposta17()
 };
+
+function qBlock(title, arr) {
+  return `<section class="panel"><p class="kicker">${esc(title)}</p>${arr.map((q) => line(q, false)).join("")}</section>`;
+}
+
+function renderGuiaV3() {
+  const steps = typeof MESA_CORE_STEPS !== "undefined" ? MESA_CORE_STEPS : [];
+  const qs = typeof CALL_QS !== "undefined" ? CALL_QS : {};
+  const later = typeof LOTE_LATER !== "undefined" ? LOTE_LATER : [];
+  const priv = typeof MESA_PRIVATE !== "undefined" ? MESA_PRIVATE : { floor: 5000, offer: 17000 };
+  return `
+    ${head("Mesa Core · playbook Francesca", "Guia da call. Um olho.", "Não é teleprompt. Risca. Anota. Copia no fim.")}
+    <section class="panel">
+      <p class="kicker">Interno</p>
+      <p>Piso R$ ${priv.floor.toLocaleString("pt-BR")} · proposta R$ ${priv.offer.toLocaleString("pt-BR")}. Ela nomeia primeiro.</p>
+    </section>
+    <ol class="v3">
+      ${steps.map((s, i) => `<li>
+        <button type="button" class="cad-item ${state.caderno["v3-"+s.id] ? "on" : ""}" data-cad="${esc("v3-"+s.id)}">
+          <span class="check ${state.caderno["v3-"+s.id] ? "on" : ""}">${state.caderno["v3-"+s.id] ? svg("check") : ""}</span>
+          <span><strong>${String(i + 1).padStart(2, "0")} ${esc(s.t)}</strong></span>
+        </button>
+        <textarea data-v3-note="${esc(s.id)}" placeholder="nota…">${esc((state.actNotes && state.actNotes["v3-"+s.id]) || "")}</textarea>
+      </li>`).join("")}
+    </ol>
+    <p style="margin:12px 0"><button type="button" class="btn btn-primary" data-copy-notes>Copiar todas as anotações</button></p>
+    <h2 class="display page-h">Perguntas (essenciais)</h2>
+    <div class="grid">
+      ${qBlock("Visão", qs.visao || [])}
+      ${qBlock("Situação", qs.situacao || [])}
+      ${qBlock("Execução", qs.execucao || [])}
+      ${qBlock("Convergência", qs.convergencia || [])}
+      ${qBlock("Papel", qs.papel || [])}
+      ${qBlock("Propriedade", qs.ip || [])}
+      ${qBlock("Dinheiro", qs.dinheiro || [])}
+      ${qBlock("Fechamento", qs.fechamento || [])}
+    </div>
+    <section class="panel" style="margin-top:16px">
+      <h3>Depois desta call (não agora)</h3>
+      <ul class="posture">${later.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+    </section>
+  `;
+}
+
+function renderMostrar() {
+  const t = typeof SHOW_TABLE !== "undefined" ? SHOW_TABLE : { before: [], partial: [], after: [] };
+  const ip = typeof IP_SPLIT !== "undefined" ? IP_SPLIT : [];
+  return `
+    ${head("Prova sem entregar a casa", "O que mostrar. O que guardar.", "Antes do pagamento: capacidade. Depois: propriedade.")}
+    <div class="grid-3">
+      <section class="panel">
+        <p class="kicker" style="color:var(--ok)">Antes do fechamento</p>
+        <ul class="posture">${t.before.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+      </section>
+      <section class="panel">
+        <p class="kicker" style="color:var(--warn)">Parcial</p>
+        <ul class="posture">${t.partial.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+      </section>
+      <section class="panel">
+        <p class="kicker" style="color:var(--danger)">Só depois</p>
+        <ul class="posture">${t.after.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+      </section>
+    </div>
+    <h2 class="display page-h">Fonte de verdade</h2>
+    <div class="grid-3">${ip.map((x) => `<section class="panel"><p class="kicker">${esc(x.who)}</p><p>${esc(x.keep)}</p></section>`).join("")}</div>
+  `;
+}
+
+function renderProposta17() {
+  const o = typeof ONE_PAGE !== "undefined" ? ONE_PAGE : null;
+  if (!o) return head("Proposta", "Carregue mesa-lote1.js", "");
+  return `
+    ${head("Não compartilhar tela até ela pedir o caminho", o.title, o.sub + " · " + o.value)}
+    <section class="panel">
+      <p class="lede">${esc(o.what)}</p>
+    </section>
+    <div class="grid">
+      <section class="panel">
+        <p class="kicker" style="color:var(--ok)">Entra</p>
+        <ul class="posture">${o.includes.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+      </section>
+      <section class="panel">
+        <p class="kicker" style="color:var(--danger)">Não entra</p>
+        <ul class="posture">${o.not.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+        <p class="flag ok" style="margin-top:16px">${esc(o.done)}</p>
+      </section>
+    </div>
+    <section class="panel" style="margin-top:16px">
+      <h3>Como falar o número</h3>
+      <p>Colaborocracia é o longo prazo. Para eu entrar com estrutura, sistema, conteúdo e execução, existe uma fase inicial financiada. São ${esc(o.value)} por 12 meses de construção conjunta, com obra definida. O que passar disso é outra obra.</p>
+      <p class="muted" style="margin-top:12px">Decomposição em marcos que somam 17.000: lote 2. Não inventar agora.</p>
+    </section>
+  `;
+}
 
 function render() {
   renderShell();

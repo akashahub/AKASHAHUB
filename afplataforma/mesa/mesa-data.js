@@ -497,8 +497,8 @@ const FRANCESCA = {
   facts: [
     "Brasileiro-italiana. 35+ anos em comércio internacional de alta costura e lifestyle.",
     "Made in Italy com Prada, Gucci, Armani, Versace. Made in Germany com Jil Sander. Marca própria de sapatos no Brasil.",
-    "Sapatos de noiva acima de 2 mil. 64–67 países. 10.200–10.400 conversas com empreendedores desde 2014.",
-    "Quebra em 2012. Reconstruiu. Condição atual: sólida, visão à frente, não é mentoranda típica.",
+    "Sapatos de noiva acima de 2 mil. 64–67 países. 10 mil conversas: número dela, sem auditoria independente.",
+    "2012: falência estendida a Francesca Giobbi EPP (grupo calçadista). Perguntar só se houver fluxo financeiro conjunto. Não acusar.",
     "Salas: House of Lords, SPIEF/BRICS 2023, embaixadas, CC Forum Paris, Cidades: Paris, London, Rome, Helsinki + co-host."
   ],
   ecosystems: [
