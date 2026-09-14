@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tech Hub · Aulas para gravar</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#F6F3EC">
+<link rel="icon" href="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png">
+<style>
+:root{--bg:#F6F3EC;--ink:#14110E;--muted:#5C564C;--gold:#9A7420;--paper:#FFFDF8;--line:rgba(20,17,14,.12);--dir:#6B4A12}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:Georgia,serif}
+header{position:sticky;top:0;z-index:5;background:rgba(246,243,236,.96);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+header a{color:var(--gold);font:12px/1 system-ui;text-decoration:none;letter-spacing:.12em;text-transform:uppercase}
+#mods{display:flex;gap:6px;overflow:auto;padding:10px 14px}
+#mods button{border:1px solid var(--line);background:var(--paper);padding:8px 10px;font:11px system-ui;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+#mods button.on{background:#14110E;color:#F6F3EC}
+#list{display:flex;gap:6px;overflow:auto;padding:0 14px 12px}
+#list button{border:1px solid var(--line);background:transparent;padding:8px 10px;font:12px system-ui;white-space:nowrap}
+#list button.on{border-color:var(--gold);color:var(--gold)}
+main{width:min(720px,calc(100% - 28px));margin:0 auto 80px}
+.meta{font:13px/1.4 system-ui;color:var(--muted);margin:8px 0 14px}
+h1{font-size:clamp(22px,5vw,34px);line-height:1.15;margin:8px 0 12px}
+.dir{background:#F3EBD8;color:var(--dir);padding:14px;border-radius:10px;font:14px/1.45 system-ui;margin:0 0 18px}
+.dir b{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px}
+.tele{font-size:22px;line-height:1.7;font-weight:700}
+.tele p{margin:0 0 1.15em}
+.row{display:flex;gap:8px;margin:18px 0;flex-wrap:wrap}
+.row button,.row a{min-height:44px;padding:10px 14px;border:0;background:#14110E;color:#fff;font:12px system-ui;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center}
+.row button.g{background:linear-gradient(135deg,#9A7420,#C4A24A)}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#14110E;color:#fff;padding:8px 14px;font:12px system-ui;display:none}
+</style>
+</head>
+<body>
+<header>
+  <a href="/techub/">Tech Hub</a>
+  <span style="font:11px system-ui;color:var(--muted)">Produção · 63 aulas</span>
+</header>
+<nav id="mods"></nav>
+<nav id="list"></nav>
+<main id="main"></main>
+<div id="toast">Copiado</div>
+<script src="aulas.js?v=1"></script>
+<script>
+const mods=[...new Set(AULAS.map(a=>a.m))];
+let mi=0, li=0;
+function toast(){const t=document.getElementById("toast");t.style.display="block";setTimeout(()=>t.style.display="none",1200)}
+function render(){
+  const group=AULAS.filter(a=>a.m===mods[mi]);
+  li=Math.max(0,Math.min(li,group.length-1));
+  const a=group[li];
+  document.getElementById("mods").innerHTML=mods.map((m,i)=>`<button class="${i===mi?"on":""}" data-m="${i}">${m}</button>`).join("");
+  document.getElementById("list").innerHTML=group.map((x,i)=>`<button class="${i===li?"on":""}" data-l="${i}">${x.id}</button>`).join("");
+  const tele=a.tele.trim().split(/\n\s*\n/).map(p=>`<p>${p.replace(/\n/g,"<br>")}</p>`).join("");
+  document.getElementById("main").innerHTML=`
+    <p class="meta">${a.id} · ${a.dur} · ${a.mix}</p>
+    <h1>${a.t}</h1>
+    <div class="dir"><b>Edição · não ler</b>${a.edit.replace(/\n/g,"<br>")}</div>
+    <div class="tele">${tele}</div>
+    <div class="row">
+      <button class="g" id="copy">Copiar teleprompt</button>
+      <button id="prev">Anterior</button>
+      <button id="next">Próxima</button>
+    </div>`;
+  document.getElementById("copy").onclick=()=>{navigator.clipboard.writeText(a.tele.trim());toast()};
+  document.getElementById("prev").onclick=()=>{if(li>0){li--;render()}else if(mi>0){mi--;li=999;render()}};
+  document.getElementById("next").onclick=()=>{if(li<group.length-1){li++;render()}else if(mi<mods.length-1){mi++;li=0;render()}};
+}
+document.getElementById("mods").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(!b)return;mi=+b.dataset.m;li=0;render()});
+document.getElementById("list").addEventListener("click",e=>{const b=e.target.closest("[data-l]");if(!b)return;li=+b.dataset.l;render()});
+render();
+</script>
+</body>
+</html>
