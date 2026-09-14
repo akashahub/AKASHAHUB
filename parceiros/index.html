@@ -1,1026 +1,229 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Parceiros | Akasha Hub</title>
-<meta name="description" content="Parceiros oficiais da Akasha Hub. Rede, colaboração e portas de entrada."/>
-<link rel="canonical" href="https://akashahub.com.br/parceiros/"/>
-<meta property="og:title" content="Parceiros | Akasha Hub"/>
-<meta property="og:description" content="Rede oficial de parceiros da Akasha Hub."/>
-<meta property="og:type" content="website"/>
-<meta property="og:url" content="https://akashahub.com.br/parceiros/"/>
-<meta property="og:image" content="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png"/>
-<meta name="twitter:card" content="summary_large_image"/>
-    
-    <!-- Fontes Premium -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;500&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --c-dark: #050505;
-            --c-light: #f0f0f0;
-            --c-accent: #ff4d00;
-            --font-display: 'Syncopate', sans-serif;
-            --font-body: 'Space Grotesk', sans-serif;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--c-dark);
-            color: var(--c-light);
-            font-family: var(--font-body);
-            overflow-x: hidden;
-            overscroll-behavior: none;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        #webgl-canvas {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 1; pointer-events: none;
-        }
-
-        /* Interface Flutuante Mobile-Friendly */
-        .ui-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10; pointer-events: none; /* Importante: deixa passar o scroll/toque no fundo */
-            display: flex; flex-direction: column; justify-content: space-between;
-            padding: 1.5rem;
-            mix-blend-mode: exclusion;
-        }
-
-        /* --- AJUSTE DA LOGO --- */
-        .brand { 
-            pointer-events: auto; /* Permite o clique no link */
-            display: block;
-            width: fit-content;
-            text-decoration: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .brand:active {
-            opacity: 0.6; /* Efeito visual ao tocar */
-        }
-
-        .brand img {
-            height: 45px; /* Altura ideal para mobile header */
-            width: auto;
-            display: block;
-            object-fit: contain;
-        }
-        /* ---------------------- */
-        
-        .status { 
-            font-size: 0.6rem; 
-            text-transform: uppercase; 
-            opacity: 0.7; 
-            align-self: flex-end; 
-        }
-
-        .scroll-container {
-            position: relative; z-index: 5; width: 100%;
-        }
-
-        section {
-            min-height: 100vh; 
-            min-height: 100dvh; 
-            width: 100%;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-            padding: 1rem;
-        }
-
-        .content-wrap {
-            text-align: center;
-            pointer-events: auto;
-            width: 100%;
-            max-width: 600px;
-            background: radial-gradient(circle at center, rgba(5,5,5,0.4) 0%, transparent 80%); 
-            padding: 2rem 1rem;
-            border-radius: 20px;
-        }
-
-        h1 {
-            font-family: var(--font-display);
-            font-size: clamp(2.5rem, 10vw, 6rem);
-            text-transform: uppercase;
-            line-height: 0.9;
-            margin-bottom: 1rem;
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(255,255,255,0.8);
-        }
-        
-        h1.fill { -webkit-text-stroke: 0; color: var(--c-light); }
-
-        h2 {
-            font-family: var(--font-display);
-            font-size: clamp(2rem, 8vw, 4rem);
-            margin-bottom: 1rem;
-            line-height: 1;
-        }
-
-        p {
-            font-size: clamp(1rem, 4vw, 1.2rem);
-            line-height: 1.5;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-        }
-
-        .price-tag {
-            display: block;
-            font-family: var(--font-display);
-            font-size: clamp(0.9rem, 3vw, 1.2rem);
-            color: var(--c-accent);
-            margin-bottom: 0.5rem;
-            letter-spacing: 2px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 1.2rem 2.5rem;
-            border: 1px solid var(--c-light);
-            color: var(--c-light);
-            text-transform: uppercase;
-            text-decoration: none;
-            font-family: var(--font-display);
-            font-size: 0.8rem;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            margin-top: 1rem;
-            letter-spacing: 1px;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .content-wrap { padding: 1rem 0.5rem; }
-            h1 { -webkit-text-stroke: 0.5px rgba(255,255,255,0.8); }
-            section { padding-top: 4rem; padding-bottom: 4rem; }
-        }
-
-        /* POPUP LEAD CAPTURE */
-        #lead-popup {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
-            z-index: 999; display: none; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s;
-        }
-        #lead-popup.active { display: flex; opacity: 1; }
-        
-        .popup-card {
-            background: #111; border: 1px solid var(--c-light);
-            padding: 2rem; width: 90%; max-width: 400px;
-            position: relative; text-align: left;
-        }
-        .popup-close {
-            position: absolute; top: 1rem; right: 1rem;
-            background: none; border: none; color: #fff; font-size: 1.5rem;
-        }
-        .popup-title { font-family: var(--font-display); margin-bottom: 0.5rem; }
-        .popup-sub { font-size: 0.8rem; color: var(--c-accent); margin-bottom: 1.5rem; }
-        
-        input {
-            width: 100%; padding: 1rem; margin-bottom: 1rem;
-            background: #222; border: 1px solid #333; color: #fff;
-            font-family: var(--font-body);
-        }
-        .btn-submit {
-            width: 100%; background: var(--c-accent); border: none; padding: 1rem;
-            color: #fff; font-family: var(--font-display); text-transform: uppercase;
-        }
-
-        .loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--c-dark); z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-            font-family: var(--font-display);
-            transition: opacity 1s ease;
-            text-align: center;
-            padding: 20px;
-            font-size: 0.8rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Parceiros | Akasha Hub</title>
+<meta name="description" content="Parceria com a Akasha Hub: presença, lives, conteúdo e portas reais. Marcas, profissionais, empresas e criadores.">
+<link rel="canonical" href="https://akashahub.com.br/parceiros/">
+<meta property="og:title" content="Parceiros | Akasha Hub">
+<meta property="og:description" content="Não é anúncio solto. É presença no campo que já tem atenção.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://akashahub.com.br/parceiros/">
+<meta property="og:image" content="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F6F3EC">
+<link rel="icon" href="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F3EC;--ink:#14110E;--muted:#6B645C;--gold:#9A7420;--gold2:#C4A24A;
+  --violet:#4A2170;--paper:#FFFdf8;--line:rgba(20,17,14,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:Outfit,system-ui,sans-serif;line-height:1.55;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{width:min(1080px,calc(100% - 36px));margin:0 auto}
+.serif{font-family:"Cormorant Garamond",Georgia,serif}
+nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 18px;background:rgba(246,243,236,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav img{height:36px;width:auto}
+nav a.ghost{font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:9px;text-decoration:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;border:1px solid transparent;transition:transform .2s ease,box-shadow .2s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-gold{background:linear-gradient(135deg,#9A7420,#C4A24A);color:#fff;box-shadow:0 10px 24px rgba(154,116,32,.22)}
+.btn-ink{background:#14110E;color:#F6F3EC}
+.btn-line{border-color:rgba(20,17,14,.2);background:transparent}
+.hero{padding:64px 0 40px;display:grid;gap:36px;align-items:center}
+@media(min-width:860px){.hero{grid-template-columns:1.1fr .9fr;padding:88px 0 56px}}
+.kicker{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:14px}
+h1{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(40px,7vw,72px);line-height:.95;font-weight:500;letter-spacing:-.03em;margin-bottom:18px}
+.lead{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(20px,2.4vw,26px);line-height:1.35;color:#3f382f;max-width:34em;margin-bottom:22px}
+.muted{color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.hero-card{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 24px 50px rgba(48,35,20,.08)}
+.hero-card img{width:100%;height:320px;object-fit:cover;object-position:50% 18%;border-radius:14px;margin-bottom:16px}
+.doors{display:grid;gap:12px;padding:10px 0 48px}
+@media(min-width:720px){.doors{grid-template-columns:repeat(4,1fr)}}
+.door{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 16px;text-decoration:none;min-height:140px}
+.door b{display:block;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.35rem;font-weight:500;margin-bottom:6px}
+.door span{font-size:13px;color:var(--muted)}
+.section{padding:28px 0 56px}
+h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(32px,5vw,52px);line-height:1;font-weight:500;margin:0 0 16px}
+h3{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.6rem;font-weight:500}
+.grid3{display:grid;gap:14px}
+@media(min-width:860px){.grid3{grid-template-columns:repeat(3,1fr)}}
+.plan{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:24px 22px;display:flex;flex-direction:column;gap:10px;min-height:100%}
+.plan.feat{border-color:rgba(154,116,32,.45);box-shadow:0 18px 40px rgba(154,116,32,.12)}
+.price{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.plan ul{list-style:none;margin:8px 0 16px;flex:1}
+.plan li{padding:7px 0;border-top:1px solid var(--line);font-size:14px}
+.split{display:grid;gap:14px}
+@media(min-width:800px){.split{grid-template-columns:1fr 1fr}}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px}
+.box ul{margin:10px 0 0 18px}
+.box li{margin:6px 0}
+.steps{display:grid;gap:12px}
+@media(min-width:800px){.steps{grid-template-columns:repeat(3,1fr)}}
+.step{padding:20px;border-left:2px solid var(--gold)}
+.faq details{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:8px 0}
+.faq summary{cursor:pointer;font-weight:600}
+.faq p{margin-top:8px;color:var(--muted)}
+footer{padding:28px 0 100px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line)}
+.sticky{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(246,243,236,.96);border-top:1px solid var(--line)}
+.sticky span{font-size:13px;color:var(--muted)}
+@media(min-width:860px){.sticky{display:none}}
+</style>
 <script src="/js/ah-ga4.js" defer></script>
 </head>
 <body>
+<nav>
+  <a href="https://akashahub.com.br"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png" alt="Akasha Hub"></a>
+  <a class="ghost" href="https://akashahub.com.br">Hub</a>
+</nav>
 
-    <div class="loader">INITIALIZING AKASHA<br>MOBILE PROTOCOL...</div>
-
-    <div class="ui-layer">
-        <!-- LOGO ATUALIZADA AQUI -->
-        <a href="https://akashahub.com.br" class="brand">
-            <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_1_rnj2cs.png" alt="Akasha Logo">
-        </a>
-        <div class="status">System: Online</div>
+<header class="wrap hero" id="top">
+  <div>
+    <p class="kicker">Rede oficial</p>
+    <h1>Parceria com quem já tem atenção.</h1>
+    <p class="lead">Não é anúncio solto. É o seu nome, a sua marca ou o seu trabalho dentro do campo da Akasha Hub: lives, conteúdo e gente que já acompanha.</p>
+    <p class="muted">Marca, profissional, empresa ou criador. Você escolhe a porta. A gente vê se a frequência combina. Se combinar, entra.</p>
+    <div class="actions">
+      <a class="btn btn-gold" href="#planos">Ver presenças</a>
+      <a class="btn btn-ink" href="https://wa.me/5571983448621?text=Quero%20conversar%20sobre%20parceria%20com%20a%20Akasha%20Hub" target="_blank" rel="noopener">Conversar no WhatsApp</a>
     </div>
+  </div>
+  <div class="hero-card">
+    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Akasha Hub">
+    <p class="kicker">O que o Hub já é</p>
+    <p>Mentoria. Plataforma. Lives. Livros. Conteúdo que a pessoa usa, não só assiste.</p>
+  </div>
+</header>
 
-    <canvas id="webgl-canvas"></canvas>
+<section class="wrap">
+  <p class="kicker">Quatro portas</p>
+  <div class="doors">
+    <a class="door" href="https://wa.me/5571983448621?text=Quero%20parceria%20como%20marca%20na%20Akasha%20Hub" target="_blank" rel="noopener">
+      <b>Marca</b>
+      <span>Produto, selo, loja, menção. Pouca coisa, bem escolhida.</span>
+    </a>
+    <a class="door" href="https://wa.me/5571983448621?text=Quero%20parceria%20como%20profissional%20na%20Akasha%20Hub" target="_blank" rel="noopener">
+      <b>Profissional</b>
+      <span>Quem já atende e quer aparecer para quem já está no campo.</span>
+    </a>
+    <a class="door" href="https://wa.me/5571983448621?text=Quero%20parceria%20como%20empresa%20na%20Akasha%20Hub" target="_blank" rel="noopener">
+      <b>Empresa</b>
+      <span>Time, operação, evento, obra conjunta. Conversa, não pacote automático.</span>
+    </a>
+    <a class="door" href="https://wa.me/5571983448621?text=Quero%20parceria%20como%20criador%20na%20Akasha%20Hub" target="_blank" rel="noopener">
+      <b>Criador</b>
+      <span>Conteúdo junto. Live, recorte, distribuição. Sem diluir o que cada um já é.</span>
+    </a>
+  </div>
+</section>
 
-    <!-- LEAD POPUP -->
-    <div id="lead-popup">
-        <div class="popup-card">
-            <button class="popup-close" onclick="closePopup()">×</button>
-            <h3 class="popup-title">Acesso Restrito</h3>
-            <p class="popup-sub" id="popup-detail">Plano selecionado</p>
-            <input type="text" id="lead-name" placeholder="Seu Nome">
-            <input type="email" id="lead-email" placeholder="Seu E-mail">
-            <button class="btn-submit" onclick="submitLead()">Acessar via WhatsApp</button>
-        </div>
+<section class="wrap section" id="planos">
+  <p class="kicker">Presença</p>
+  <h2>Três níveis. Um campo.</h2>
+  <p class="muted" style="max-width:36em;margin-bottom:22px">Isso não compra o método. Compra presença ao lado de quem já constrói. Se a parceria for maior que presença, a conversa muda de tamanho.</p>
+  <div class="grid3">
+    <article class="plan">
+      <p class="price">Iniciante · R$ 197 / mês</p>
+      <h3>Quero existir</h3>
+      <p class="muted">Seu nome no grid. Começo limpo. Sem gritar.</p>
+      <ul>
+        <li>Nome na rede de parceiros</li>
+        <li>Parte do valor reinvestida no campo</li>
+        <li>Porta de entrada, não palco inteiro</li>
+      </ul>
+      <a class="btn btn-line" href="https://wa.me/5571983448621?text=Quero%20ser%20parceiro%20Akasha%20Hub%2C%20plano%20Iniciante" target="_blank" rel="noopener">Quero existir</a>
+    </article>
+    <article class="plan feat">
+      <p class="price">Destaque · R$ 997 / mês</p>
+      <h3>Quero crescer</h3>
+      <p class="muted">A energia cinética. Menção, vídeo, live.</p>
+      <ul>
+        <li>Tudo do Iniciante</li>
+        <li>Menções em lives</li>
+        <li>Vídeos curtos</li>
+        <li>Recorte de marketing no Hub</li>
+      </ul>
+      <a class="btn btn-gold" href="https://wa.me/5571983448621?text=Quero%20ser%20parceiro%20Akasha%20Hub%2C%20plano%20Destaque" target="_blank" rel="noopener">Quero crescer</a>
+    </article>
+    <article class="plan">
+      <p class="price">Oficial · R$ 2.497 / mês</p>
+      <h3>Quero presença</h3>
+      <p class="muted">Selo. Ritmo. Estratégia. Não é post único.</p>
+      <ul>
+        <li>Tudo do Destaque</li>
+        <li>Selo Parceiro Oficial</li>
+        <li>Presença em 12 lives / mês</li>
+        <li>Estratégia combinada</li>
+      </ul>
+      <a class="btn btn-ink" href="https://wa.me/5571983448621?text=Quero%20ser%20parceiro%20Akasha%20Hub%2C%20plano%20Oficial" target="_blank" rel="noopener">Quero presença</a>
+    </article>
+  </div>
+</section>
+
+<section class="wrap section">
+  <div class="split">
+    <div class="box">
+      <h3>Serve se</h3>
+      <ul>
+        <li>Você já tem algo de verdade: marca, ofício, empresa ou conteúdo</li>
+        <li>Quer frequência parecida, não grito barato</li>
+        <li>Aceita seleção. Nem todo mundo entra</li>
+        <li>Entende que parceria é troca visível, não favor</li>
+      </ul>
     </div>
-
-    <div class="scroll-container">
-        <!-- Intro -->
-        <section id="s-intro">
-            <div class="content-wrap">
-                <h1>Consciência<br>Coletiva</h1>
-                <p>Onde visões se alinham e o éter se materializa.</p>
-            </div>
-        </section>
-
-        <!-- Manifesto -->
-        <section id="s-manifesto">
-            <div class="content-wrap">
-                <p style="font-size: clamp(1.2rem, 5vw, 2rem);">Não é sobre aparecer.</p>
-                <h2 style="color: var(--c-accent);">É sobre Pertencer.</h2>
-                <p>Conectamos profissionais e marcas que compartilham a visão de elevar o nível do jogo.</p>
-            </div>
-        </section>
-
-        <!-- Tier 1 -->
-        <section id="s-tier1" data-color="#808080">
-            <div class="content-wrap">
-                <span class="price-tag">INICIANTE<br>R$ 197/mês</span>
-                <h2>Quero<br>Existir</h2>
-                <p>70% reinvestido. Seu nome no grid. O início da materialização.</p>
-                <button class="btn" onclick="openPopup('Iniciante', 'R$ 197')">Iniciar</button>
-            </div>
-        </section>
-
-        <!-- Tier 2 -->
-        <section id="s-tier2" data-color="#00d4ff">
-            <div class="content-wrap">
-                <span class="price-tag">DESTAQUE<br>R$ 997/mês</span>
-                <h2 class="fill">Quero<br>Crescer</h2>
-                <p>Marketing exclusivo. Menções em Lives. Vídeos curtos. A energia cinética assume o controle.</p>
-                <button class="btn" onclick="openPopup('Destaque', 'R$ 997')">Acelerar</button>
-            </div>
-        </section>
-
-        <!-- Tier 3 -->
-        <section id="s-tier3" data-color="#ff4d00">
-            <div class="content-wrap">
-                <span class="price-tag">OFICIAL<br>R$ 2.497/mês</span>
-                <h1 class="fill" style="color: var(--c-accent); font-size: clamp(2.5rem, 9vw, 5rem);">Dominar<br>Presença</h1>
-                <p>Selo Parceiro Oficial. Onipresença em 12 lives/mês. Estratégia personalizada.</p>
-                <button class="btn" onclick="openPopup('Oficial', 'R$ 2.497')">Reivindicar</button>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <section style="height: 30vh;">
-            <div class="content-wrap">
-                <p style="font-size: 0.8rem; opacity: 0.5;">AKASHA © 2024</p>
-            </div>
-        </section>
+    <div class="box">
+      <h3>Não serve se</h3>
+      <ul>
+        <li>Quer só um post e sumir</li>
+        <li>Quer que o Hub carregue um produto sem qualidade</li>
+        <li>Quer desconto em troca de “exposição”</li>
+        <li>Não honra o que combina</li>
+      </ul>
     </div>
-
-    <!-- Bibliotecas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-
-    <script>
-        // --- LEAD SYSTEM ---
-        let selectedPlan = {};
-        function openPopup(plan, price) {
-            selectedPlan = { plan, price };
-            document.getElementById('popup-detail').innerText = `${plan} • ${price}`;
-            document.getElementById('lead-popup').classList.add('active');
-        }
-        function closePopup() {
-            document.getElementById('lead-popup').classList.remove('active');
-        }
-        function submitLead() {
-            const name = document.getElementById('lead-name').value;
-            const email = document.getElementById('lead-email').value;
-            if(!name || !email) return alert('Preencha os dados.');
-            
-            const msg = `*NOVO LEAD AKASHA*\nPlano: ${selectedPlan.plan}\nValor: ${selectedPlan.price}\nNome: ${name}\nEmail: ${email}`;
-            window.open(`https://wa.me/5571983448621?text=${encodeURIComponent(msg)}`, '_blank');
-            closePopup();
-        }
-
-        // --- DETECÇÃO MOBILE ---
-        const isMobile = window.innerWidth < 768;
-
-        // --- 1. SETUP THREE.JS ---
-        const canvas = document.querySelector('#webgl-canvas');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x050505, 0.02);
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.z = isMobile ? 6.5 : 5; 
-
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2)); 
-        renderer.toneMapping = THREE.ReinhardToneMapping;
-
-        // --- 2. ILUMINAÇÃO ---
-        const ambientLight = new THREE.AmbientLight(0x404040, 2);
-        scene.add(ambientLight);
-
-        const pointLight1 = new THREE.PointLight(0xffffff, 2, 50);
-        pointLight1.position.set(5, 5, 5);
-        scene.add(pointLight1);
-
-        const pointLight2 = new THREE.PointLight(0x4444ff, 5, 50);
-        pointLight2.position.set(-5, -5, 2);
-        scene.add(pointLight2);
-        
-        const accentLight = new THREE.PointLight(0xff4d00, 0, 50);
-        accentLight.position.set(0, 0, 2);
-        scene.add(accentLight);
-
-        // --- 3. O ARTEFATO (Shader) ---
-        const vertexShader = `
-            uniform float uTime;
-            uniform float uDistortion;
-            varying vec2 vUv;
-            varying float vDisplacement;
-            
-            vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-            vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-            vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
-            vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-            float snoise(vec3 v) {
-                const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
-                const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
-                vec3 i  = floor(v + dot(v, C.yyy) );
-                vec3 x0 = v - i + dot(i, C.xxx) ;
-                vec3 g = step(x0.yzx, x0.xyz);
-                vec3 l = 1.0 - g;
-                vec3 i1 = min( g.xyz, l.zxy );
-                vec3 i2 = max( g.xyz, l.zxy );
-                vec3 x1 = x0 - i1 + C.xxx;
-                vec3 x2 = x0 - i2 + C.yyy;
-                vec3 x3 = x0 - D.yyy;
-                i = mod289(i);
-                vec4 p = permute( permute( permute(
-                            i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
-                        + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
-                        + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
-                float n_ = 0.142857142857;
-                vec3  ns = n_ * D.wyz - D.xzx;
-                vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-                vec4 x_ = floor(j * ns.z);
-                vec4 y_ = floor(j - 7.0 * x_ );
-                vec4 x = x_ *ns.x + ns.yyyy;
-                vec4 y = y_ *ns.x + ns.yyyy;
-                vec4 h = 1.0 - abs(x) - abs(y);
-                vec4 b0 = vec4( x.xy, y.xy );
-                vec4 b1 = vec4( x.zw, y.zw );
-                vec4 s0 = floor(b0)*2.0 + 1.0;
-                vec4 s1 = floor(b1)*2.0 + 1.0;
-                vec4 sh = -step(h, vec4(0.0));
-                vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
-                vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
-                vec3 p0 = vec3(a0.xy,h.x);
-                vec3 p1 = vec3(a0.zw,h.y);
-                vec3 p2 = vec3(a1.xy,h.z);
-                vec3 p3 = vec3(a1.zw,h.w);
-                vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-                p0 *= norm.x;
-                p1 *= norm.y;
-                p2 *= norm.z;
-                p3 *= norm.w;
-                vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-                m = m * m;
-                return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
-            }
-            void main() {
-                vUv = uv;
-                float noise = snoise(position * 1.5 + uTime * 0.5);
-                vDisplacement = noise;
-                vec3 newPos = position + normal * (noise * uDistortion);
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
-            }
-        `;
-
-        const fragmentShader = `
-            uniform float uTime;
-            uniform vec3 uColor;
-            uniform float uAlpha;
-            varying float vDisplacement;
-            void main() {
-                float intensity = 0.5 + vDisplacement * 2.0;
-                vec3 glow = uColor * intensity;
-                gl_FragColor = vec4(glow, uAlpha);
-            }
-        `;
-
-        const geometry = new THREE.IcosahedronGeometry(1.5, isMobile ? 40 : 60);
-        const material = new THREE.ShaderMaterial({
-            vertexShader,
-            fragmentShader,
-            uniforms: {
-                uTime: { value: 0 },
-                uDistortion: { value: 0.1 },
-                uColor: { value: new THREE.Color('#444444') },
-                uAlpha: { value: 1.0 }
-            },
-            wireframe: true,
-            transparent: true,
-            side: THREE.DoubleSide
-        });
-
-        const artifact = new THREE.Mesh(geometry, material);
-        scene.add(artifact);
-
-        // Partículas
-        const particlesGeom = new THREE.BufferGeometry();
-        const particlesCount = 1000;
-        const posArray = new Float32Array(particlesCount * 3);
-        for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 15;
-        particlesGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particlesMat = new THREE.PointsMaterial({ size: 0.02, color: 0xffffff, transparent: true, opacity: 0.5 });
-        const particlesMesh = new THREE.Points(particlesGeom, particlesMat);
-        scene.add(particlesMesh);
-
-        // --- 4. POST-PROCESSING ---
-        const composer = new THREE.EffectComposer(renderer);
-        const renderPass = new THREE.RenderPass(scene, camera);
-        composer.addPass(renderPass);
-        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), isMobile ? 1.0 : 1.5, 0.4, 0.85);
-        composer.addPass(bloomPass);
-
-        // --- 5. LOOP ---
-        const clock = new THREE.Clock();
-        function animate() {
-            const time = clock.getElapsedTime();
-            material.uniforms.uTime.value = time;
-            artifact.rotation.y = time * 0.1;
-            particlesMesh.rotation.y = time * 0.05;
-            composer.render();
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // --- 6. SCROLL ANIMATION ---
-        gsap.registerPlugin(ScrollTrigger);
-
-        window.addEventListener('load', () => {
-            gsap.to('.loader', { opacity: 0, duration: 1, pointerEvents: 'none' });
-            initScroll();
-        });
-
-        function initScroll() {
-            document.querySelectorAll('section').forEach(section => {
-                gsap.to(section, {
-                    scrollTrigger: { trigger: section, start: "top 70%", end: "top 30%", scrub: 1 },
-                    opacity: 1, y: 0, duration: 1
-                });
-            });
-
-            const tl = gsap.timeline({
-                scrollTrigger: { trigger: ".scroll-container", start: "top top", end: "bottom bottom", scrub: 1.5 }
-            });
-
-            // 1. Intro -> Manifesto
-            tl.to(camera.position, { z: isMobile ? 5.5 : 4, duration: 2 });
-            tl.to(material.uniforms.uDistortion, { value: 0.2 }, "<");
-
-            // 2. Manifesto -> Tier 1
-            tl.to(artifact.rotation, { x: 1, z: 0.5, duration: 2 });
-            tl.to(material.uniforms.uColor.value, { 
-                r: 0.5, g: 0.5, b: 0.5, onUpdate: () => material.uniforms.uColor.value.set('#808080')
-            }, "<");
-            tl.to(camera.position, { 
-                x: isMobile ? 0 : -2, y: isMobile ? 1 : 0, z: isMobile ? 5 : 3.5, duration: 2 
-            }, "<");
-
-            // 3. Tier 1 -> Tier 2
-            tl.to(material, { wireframe: false, duration: 1 });
-            tl.to(material.uniforms.uDistortion, { value: 0.6, duration: 2 }, "<");
-            tl.to(material.uniforms.uColor.value, { onUpdate: () => material.uniforms.uColor.value.set('#00d4ff') }, "<");
-            tl.to(pointLight2, { intensity: 8, duration: 2 }, "<");
-            tl.to(camera.position, { 
-                x: isMobile ? 0 : 2, y: isMobile ? -0.5 : 1, z: 3, duration: 2 
-            }, "<");
-
-            // 4. Tier 2 -> Tier 3
-            tl.to(material.uniforms.uDistortion, { value: 1.2, duration: 2 });
-            tl.to(material.uniforms.uColor.value, { onUpdate: () => material.uniforms.uColor.value.set('#ff4d00') }, "<");
-            tl.to(bloomPass, { strength: 3.0, radius: 1.0, duration: 2 }, "<");
-            tl.to(accentLight, { intensity: 10, duration: 2 }, "<");
-            tl.to(camera.position, { x: 0, y: 0, z: isMobile ? 3.5 : 2.2, duration: 2 }, "<");
-
-            // 5. Final
-            tl.to(camera.position, { z: 0.5, duration: 2 });
-            tl.to(material.uniforms.uAlpha, { value: 0, duration: 1 }, "<");
-        }
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            composer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
-</body>
-</html>            z-index: 1; pointer-events: none;
-        }
-
-        /* Interface Flutuante Mobile-Friendly */
-        .ui-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10; pointer-events: none;
-            display: flex; flex-direction: column; justify-content: space-between;
-            padding: 1.5rem;
-            mix-blend-mode: exclusion;
-        }
-
-        .brand { 
-            font-family: var(--font-display); 
-            font-weight: 700; 
-            letter-spacing: -1px; 
-            font-size: 1.2rem; 
-        }
-        
-        .status { 
-            font-size: 0.6rem; 
-            text-transform: uppercase; 
-            opacity: 0.7; 
-            align-self: flex-end; /* Canto inferior direito */
-        }
-
-        .scroll-container {
-            position: relative; z-index: 5; width: 100%;
-        }
-
-        section {
-            /* DVH ajuda em navegadores mobile com barra de endereço dinâmica */
-            min-height: 100vh; 
-            min-height: 100dvh; 
-            width: 100%;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-            padding: 1rem;
-        }
-
-        .content-wrap {
-            text-align: center;
-            pointer-events: auto;
-            width: 100%;
-            max-width: 600px;
-            /* Fundo sutil para legibilidade sobre o 3D no celular */
-            background: radial-gradient(circle at center, rgba(5,5,5,0.4) 0%, transparent 80%); 
-            padding: 2rem 1rem;
-            border-radius: 20px;
-        }
-
-        h1 {
-            font-family: var(--font-display);
-            font-size: clamp(2.5rem, 10vw, 6rem);
-            text-transform: uppercase;
-            line-height: 0.9;
-            margin-bottom: 1rem;
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(255,255,255,0.8);
-        }
-        
-        h1.fill { -webkit-text-stroke: 0; color: var(--c-light); }
-
-        h2 {
-            font-family: var(--font-display);
-            font-size: clamp(2rem, 8vw, 4rem);
-            margin-bottom: 1rem;
-            line-height: 1;
-        }
-
-        p {
-            font-size: clamp(1rem, 4vw, 1.2rem);
-            line-height: 1.5;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8); /* Sombra para leitura */
-        }
-
-        .price-tag {
-            display: block;
-            font-family: var(--font-display);
-            font-size: clamp(0.9rem, 3vw, 1.2rem);
-            color: var(--c-accent);
-            margin-bottom: 0.5rem;
-            letter-spacing: 2px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 1.2rem 2.5rem;
-            border: 1px solid var(--c-light);
-            color: var(--c-light);
-            text-transform: uppercase;
-            text-decoration: none;
-            font-family: var(--font-display);
-            font-size: 0.8rem;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 50px; /* Mais amigável ao toque */
-            margin-top: 1rem;
-            letter-spacing: 1px;
-            cursor: pointer;
-        }
-
-        /* Ajustes específicos para telas pequenas */
-        @media (max-width: 768px) {
-            .content-wrap { padding: 1rem 0.5rem; }
-            h1 { -webkit-text-stroke: 0.5px rgba(255,255,255,0.8); }
-            section { padding-top: 4rem; padding-bottom: 4rem; }
-        }
-
-        /* ════════ POPUP LEAD CAPTURE ════════ */
-        #lead-popup {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
-            z-index: 999; display: none; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s;
-        }
-        #lead-popup.active { display: flex; opacity: 1; }
-        
-        .popup-card {
-            background: #111; border: 1px solid var(--c-light);
-            padding: 2rem; width: 90%; max-width: 400px;
-            position: relative; text-align: left;
-        }
-        .popup-close {
-            position: absolute; top: 1rem; right: 1rem;
-            background: none; border: none; color: #fff; font-size: 1.5rem;
-        }
-        .popup-title { font-family: var(--font-display); margin-bottom: 0.5rem; }
-        .popup-sub { font-size: 0.8rem; color: var(--c-accent); margin-bottom: 1.5rem; }
-        
-        input {
-            width: 100%; padding: 1rem; margin-bottom: 1rem;
-            background: #222; border: 1px solid #333; color: #fff;
-            font-family: var(--font-body);
-        }
-        .btn-submit {
-            width: 100%; background: var(--c-accent); border: none; padding: 1rem;
-            color: #fff; font-family: var(--font-display); text-transform: uppercase;
-        }
-
-        /* Loader */
-        .loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--c-dark); z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-            font-family: var(--font-display);
-            transition: opacity 1s ease;
-            text-align: center;
-            padding: 20px;
-            font-size: 0.8rem;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="loader">INITIALIZING AKASHA<br>MOBILE PROTOCOL...</div>
-
-    <div class="ui-layer">
-        <div class="brand"> </div>
-        <div class="status">System: Online</div>
-    </div>
-
-    <canvas id="webgl-canvas"></canvas>
-
-    <!-- LEAD POPUP -->
-    <div id="lead-popup">
-        <div class="popup-card">
-            <button class="popup-close" onclick="closePopup()">×</button>
-            <h3 class="popup-title">Acesso Restrito</h3>
-            <p class="popup-sub" id="popup-detail">Plano selecionado</p>
-            <input type="text" id="lead-name" placeholder="Seu Nome">
-            <input type="email" id="lead-email" placeholder="Seu E-mail">
-            <button class="btn-submit" onclick="submitLead()">Acessar via WhatsApp</button>
-        </div>
-    </div>
-
-    <div class="scroll-container">
-        <!-- Intro -->
-        <section id="s-intro">
-            <div class="content-wrap">
-                <h1>Consciência<br>Coletiva</h1>
-                <p>Onde visões se alinham e o éter se materializa.</p>
-            </div>
-        </section>
-
-        <!-- Manifesto -->
-        <section id="s-manifesto">
-            <div class="content-wrap">
-                <p style="font-size: clamp(1.2rem, 5vw, 2rem);">Não é sobre aparecer.</p>
-                <h2 style="color: var(--c-accent);">É sobre Pertencer.</h2>
-                <p>Conectamos profissionais e marcas que compartilham a visão de elevar o nível do jogo.</p>
-            </div>
-        </section>
-
-        <!-- Tier 1 -->
-        <section id="s-tier1" data-color="#808080">
-            <div class="content-wrap">
-                <span class="price-tag">INICIANTE<br>R$ 197/mês</span>
-                <h2>Quero<br>Existir</h2>
-                <p>70% reinvestido. Seu nome no grid. O início da materialização.</p>
-                <button class="btn" onclick="openPopup('Iniciante', 'R$ 197')">Iniciar</button>
-            </div>
-        </section>
-
-        <!-- Tier 2 -->
-        <section id="s-tier2" data-color="#00d4ff">
-            <div class="content-wrap">
-                <span class="price-tag">DESTAQUE<br>R$ 997/mês</span>
-                <h2 class="fill">Quero<br>Crescer</h2>
-                <p>Marketing exclusivo. Menções em Lives. Vídeos curtos. A energia cinética assume o controle.</p>
-                <button class="btn" onclick="openPopup('Destaque', 'R$ 997')">Acelerar</button>
-            </div>
-        </section>
-
-        <!-- Tier 3 -->
-        <section id="s-tier3" data-color="#ff4d00">
-            <div class="content-wrap">
-                <span class="price-tag">OFICIAL<br>R$ 2.497/mês</span>
-                <h1 class="fill" style="color: var(--c-accent); font-size: clamp(2.5rem, 9vw, 5rem);">Dominar<br>Presença</h1>
-                <p>Selo Parceiro Oficial. Onipresença em 12 lives/mês. Estratégia personalizada.</p>
-                <button class="btn" onclick="openPopup('Oficial', 'R$ 2.497')">Reivindicar</button>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <section style="height: 30vh;">
-            <div class="content-wrap">
-                <p style="font-size: 0.8rem; opacity: 0.5;">AKASHA © 2024</p>
-            </div>
-        </section>
-    </div>
-
-    <!-- Bibliotecas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-
-    <script>
-        // --- LEAD SYSTEM ---
-        let selectedPlan = {};
-        function openPopup(plan, price) {
-            selectedPlan = { plan, price };
-            document.getElementById('popup-detail').innerText = `${plan} • ${price}`;
-            document.getElementById('lead-popup').classList.add('active');
-        }
-        function closePopup() {
-            document.getElementById('lead-popup').classList.remove('active');
-        }
-        function submitLead() {
-            const name = document.getElementById('lead-name').value;
-            const email = document.getElementById('lead-email').value;
-            if(!name || !email) return alert('Preencha os dados.');
-            
-            const msg = `*NOVO LEAD AKASHA*\nPlano: ${selectedPlan.plan}\nValor: ${selectedPlan.price}\nNome: ${name}\nEmail: ${email}`;
-            window.open(`https://wa.me/5571983448621?text=${encodeURIComponent(msg)}`, '_blank');
-            closePopup();
-        }
-
-        // --- DETECÇÃO MOBILE ---
-        const isMobile = window.innerWidth < 768;
-
-        // --- 1. SETUP THREE.JS ---
-        const canvas = document.querySelector('#webgl-canvas');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x050505, 0.02);
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.position.z = isMobile ? 6.5 : 5; 
-
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2)); 
-        renderer.toneMapping = THREE.ReinhardToneMapping;
-
-        // --- 2. ILUMINAÇÃO ---
-        const ambientLight = new THREE.AmbientLight(0x404040, 2);
-        scene.add(ambientLight);
-
-        const pointLight1 = new THREE.PointLight(0xffffff, 2, 50);
-        pointLight1.position.set(5, 5, 5);
-        scene.add(pointLight1);
-
-        const pointLight2 = new THREE.PointLight(0x4444ff, 5, 50);
-        pointLight2.position.set(-5, -5, 2);
-        scene.add(pointLight2);
-        
-        const accentLight = new THREE.PointLight(0xff4d00, 0, 50);
-        accentLight.position.set(0, 0, 2);
-        scene.add(accentLight);
-
-        // --- 3. O ARTEFATO (Shader) ---
-        const vertexShader = `
-            uniform float uTime;
-            uniform float uDistortion;
-            varying vec2 vUv;
-            varying float vDisplacement;
-            
-            vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-            vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-            vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
-            vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-            float snoise(vec3 v) {
-                const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
-                const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
-                vec3 i  = floor(v + dot(v, C.yyy) );
-                vec3 x0 = v - i + dot(i, C.xxx) ;
-                vec3 g = step(x0.yzx, x0.xyz);
-                vec3 l = 1.0 - g;
-                vec3 i1 = min( g.xyz, l.zxy );
-                vec3 i2 = max( g.xyz, l.zxy );
-                vec3 x1 = x0 - i1 + C.xxx;
-                vec3 x2 = x0 - i2 + C.yyy;
-                vec3 x3 = x0 - D.yyy;
-                i = mod289(i);
-                vec4 p = permute( permute( permute(
-                            i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
-                        + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
-                        + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
-                float n_ = 0.142857142857;
-                vec3  ns = n_ * D.wyz - D.xzx;
-                vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-                vec4 x_ = floor(j * ns.z);
-                vec4 y_ = floor(j - 7.0 * x_ );
-                vec4 x = x_ *ns.x + ns.yyyy;
-                vec4 y = y_ *ns.x + ns.yyyy;
-                vec4 h = 1.0 - abs(x) - abs(y);
-                vec4 b0 = vec4( x.xy, y.xy );
-                vec4 b1 = vec4( x.zw, y.zw );
-                vec4 s0 = floor(b0)*2.0 + 1.0;
-                vec4 s1 = floor(b1)*2.0 + 1.0;
-                vec4 sh = -step(h, vec4(0.0));
-                vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
-                vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
-                vec3 p0 = vec3(a0.xy,h.x);
-                vec3 p1 = vec3(a0.zw,h.y);
-                vec3 p2 = vec3(a1.xy,h.z);
-                vec3 p3 = vec3(a1.zw,h.w);
-                vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-                p0 *= norm.x;
-                p1 *= norm.y;
-                p2 *= norm.z;
-                p3 *= norm.w;
-                vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-                m = m * m;
-                return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
-            }
-            void main() {
-                vUv = uv;
-                float noise = snoise(position * 1.5 + uTime * 0.5);
-                vDisplacement = noise;
-                vec3 newPos = position + normal * (noise * uDistortion);
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
-            }
-        `;
-
-        const fragmentShader = `
-            uniform float uTime;
-            uniform vec3 uColor;
-            uniform float uAlpha;
-            varying float vDisplacement;
-            void main() {
-                float intensity = 0.5 + vDisplacement * 2.0;
-                vec3 glow = uColor * intensity;
-                gl_FragColor = vec4(glow, uAlpha);
-            }
-        `;
-
-        const geometry = new THREE.IcosahedronGeometry(1.5, isMobile ? 40 : 60);
-        const material = new THREE.ShaderMaterial({
-            vertexShader,
-            fragmentShader,
-            uniforms: {
-                uTime: { value: 0 },
-                uDistortion: { value: 0.1 },
-                uColor: { value: new THREE.Color('#444444') },
-                uAlpha: { value: 1.0 }
-            },
-            wireframe: true,
-            transparent: true,
-            side: THREE.DoubleSide
-        });
-
-        const artifact = new THREE.Mesh(geometry, material);
-        scene.add(artifact);
-
-        // Partículas
-        const particlesGeom = new THREE.BufferGeometry();
-        const particlesCount = 1000;
-        const posArray = new Float32Array(particlesCount * 3);
-        for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 15;
-        particlesGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particlesMat = new THREE.PointsMaterial({ size: 0.02, color: 0xffffff, transparent: true, opacity: 0.5 });
-        const particlesMesh = new THREE.Points(particlesGeom, particlesMat);
-        scene.add(particlesMesh);
-
-        // --- 4. POST-PROCESSING ---
-        const composer = new THREE.EffectComposer(renderer);
-        const renderPass = new THREE.RenderPass(scene, camera);
-        composer.addPass(renderPass);
-        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), isMobile ? 1.0 : 1.5, 0.4, 0.85);
-        composer.addPass(bloomPass);
-
-        // --- 5. LOOP ---
-        const clock = new THREE.Clock();
-        function animate() {
-            const time = clock.getElapsedTime();
-            material.uniforms.uTime.value = time;
-            artifact.rotation.y = time * 0.1;
-            particlesMesh.rotation.y = time * 0.05;
-            composer.render();
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // --- 6. SCROLL ANIMATION ---
-        gsap.registerPlugin(ScrollTrigger);
-
-        window.addEventListener('load', () => {
-            gsap.to('.loader', { opacity: 0, duration: 1, pointerEvents: 'none' });
-            initScroll();
-        });
-
-        function initScroll() {
-            document.querySelectorAll('section').forEach(section => {
-                gsap.to(section, {
-                    scrollTrigger: { trigger: section, start: "top 70%", end: "top 30%", scrub: 1 },
-                    opacity: 1, y: 0, duration: 1
-                });
-            });
-
-            const tl = gsap.timeline({
-                scrollTrigger: { trigger: ".scroll-container", start: "top top", end: "bottom bottom", scrub: 1.5 }
-            });
-
-            // 1. Intro -> Manifesto
-            tl.to(camera.position, { z: isMobile ? 5.5 : 4, duration: 2 });
-            tl.to(material.uniforms.uDistortion, { value: 0.2 }, "<");
-
-            // 2. Manifesto -> Tier 1
-            tl.to(artifact.rotation, { x: 1, z: 0.5, duration: 2 });
-            tl.to(material.uniforms.uColor.value, { 
-                r: 0.5, g: 0.5, b: 0.5, onUpdate: () => material.uniforms.uColor.value.set('#808080')
-            }, "<");
-            tl.to(camera.position, { 
-                x: isMobile ? 0 : -2, y: isMobile ? 1 : 0, z: isMobile ? 5 : 3.5, duration: 2 
-            }, "<");
-
-            // 3. Tier 1 -> Tier 2
-            tl.to(material, { wireframe: false, duration: 1 });
-            tl.to(material.uniforms.uDistortion, { value: 0.6, duration: 2 }, "<");
-            tl.to(material.uniforms.uColor.value, { onUpdate: () => material.uniforms.uColor.value.set('#00d4ff') }, "<");
-            tl.to(pointLight2, { intensity: 8, duration: 2 }, "<");
-            tl.to(camera.position, { 
-                x: isMobile ? 0 : 2, y: isMobile ? -0.5 : 1, z: 3, duration: 2 
-            }, "<");
-
-            // 4. Tier 2 -> Tier 3
-            tl.to(material.uniforms.uDistortion, { value: 1.2, duration: 2 });
-            tl.to(material.uniforms.uColor.value, { onUpdate: () => material.uniforms.uColor.value.set('#ff4d00') }, "<");
-            tl.to(bloomPass, { strength: 3.0, radius: 1.0, duration: 2 }, "<");
-            tl.to(accentLight, { intensity: 10, duration: 2 }, "<");
-            tl.to(camera.position, { x: 0, y: 0, z: isMobile ? 3.5 : 2.2, duration: 2 }, "<");
-
-            // 5. Final
-            tl.to(camera.position, { z: 0.5, duration: 2 });
-            tl.to(material.uniforms.uAlpha, { value: 0, duration: 1 }, "<");
-        }
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            composer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
+  </div>
+</section>
+
+<section class="wrap section">
+  <p class="kicker">Como entra</p>
+  <h2>Três passos. Sem teatro.</h2>
+  <div class="steps">
+    <div class="step"><p class="kicker">01</p><h3>Mensagem</h3><p class="muted">Você diz a porta e o nível. Marca, profissional, empresa ou criador.</p></div>
+    <div class="step"><p class="kicker">02</p><h3>Conversa</h3><p class="muted">A gente vê se combina. Se não combinar, não força.</p></div>
+    <div class="step"><p class="kicker">03</p><h3>Presença</h3><p class="muted">Entra no grid, nas lives, no ritmo combinado. Obra maior é outro acordo.</p></div>
+  </div>
+</section>
+
+<section class="wrap section faq">
+  <p class="kicker">Dúvidas</p>
+  <h2>Direto.</h2>
+  <details><summary>Isso é a mentoria?</summary><p>Não. Mentoria é outra porta. Aqui é parceria de presença e colaboração. Se a mentoria fizer sentido depois, isso se fala à parte.</p></details>
+  <details><summary>E se eu quiser uma obra maior?</summary><p>Empresa, evento, produto físico, sistema, conteúdo conjunto: manda “obra conjunta” no WhatsApp. Não cabe num pacote de presença.</p></details>
+  <details><summary>Vocês aceitam qualquer um?</summary><p>Não. Frequência parecida. Quem só quer aproveitar o campo sem entregar, não entra.</p></details>
+</section>
+
+<section class="wrap section" style="padding-bottom:88px">
+  <p class="kicker">Próximo passo</p>
+  <h2>Se combinou, escreve.</h2>
+  <p class="muted" style="margin-bottom:18px">Uma mensagem. A porta. O nível. Sem novela.</p>
+  <a class="btn btn-gold" href="https://wa.me/5571983448621?text=Quero%20conversar%20sobre%20parceria%20com%20a%20Akasha%20Hub" target="_blank" rel="noopener">Abrir WhatsApp</a>
+</section>
+
+<footer class="wrap">
+  <span>Akasha Hub · Parceiros</span>
+  <a href="https://akashahub.com.br">akashahub.com.br</a>
+</footer>
+
+<div class="sticky">
+  <span>Parceria Akasha</span>
+  <a class="btn btn-gold" href="https://wa.me/5571983448621?text=Quero%20conversar%20sobre%20parceria%20com%20a%20Akasha%20Hub" target="_blank" rel="noopener">WhatsApp</a>
+</div>
 </body>
 </html>
