@@ -244,7 +244,8 @@ const VIEWS = {
   proposta: () => renderProposta17(),
   entrega: () => renderEntrega(),
   garantia: () => renderGarantia(),
-  pos: () => renderPosSim()
+  pos: () => renderPosSim(),
+  diagnostico: () => (typeof renderDiagnostico === "function" ? renderDiagnostico() : head("Diagnóstico", "Carregue mesa-diagnostico.js", ""))
 };
 
 function brl(n) {
