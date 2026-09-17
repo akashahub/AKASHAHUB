@@ -714,6 +714,14 @@ export const OBJECTIONS = [
   }
 ];
 
+
+export const OBJECTION_FLOW = [
+  { id:"abertura_historico", title:"1 · Abertura e histórico", help:"Objeções que surgem logo no começo.", stepIds:["rapida_abertura","abertura","permissao","contexto","historico"], objectionIds:["ja_falaram","ja_reuniao","agendou_nao_deu","sem_interesse","sem_tempo","nao_responsavel"] },
+  { id:"explicacao_valor", title:"2 · Explicação do valor", help:"Repasse, preço, material, dados e funcionamento.", stepIds:["rapida_contexto","diagnostico","valor"], objectionIds:["repasse","taxa","caro","manda_material","dados"] },
+  { id:"descoberta", title:"3 · Situação atual da instituição", help:"Inadimplência, sistema atual, cobrança e autonomia.", stepIds:["rapida_relevancia","descoberta","impacto","momento_prioridade"], objectionIds:["sem_inadimplencia","satisfeitos","cobramos","autonomia","terceirizar"] },
+  { id:"convite_agenda", title:"4 · Convite e agendamento", help:"Decisor, momento e marcação do horário.", stepIds:["rapida_ponte","rapida_convite","rapida_agenda","objecao","interesse","ponte","agendamento","compromisso"], objectionIds:["agora_nao","outra_reuniao","nao_decido","sociedade"] }
+];
+
 export const CALL_STEPS = [
   {
     id: "abertura",
@@ -856,19 +864,22 @@ export const CALL_STEPS = [
 export const FAST_CALL_STEPS = [
   {
     id: "rapida_abertura",
-    title: "Direto ao ponto · 15 segundos",
-    why: "Respeitar quem disse que está sem tempo.",
-    ask: "Vou direto ao ponto: sou Felipe, parceiro do isaac, e meu papel é verificar se vale conectar sua instituição ao time especializado. Posso resumir em 30 segundos?",
-    watch: "Se a pessoa disser sim, informe com calma. Se disser não, peça apenas um horário melhor.",
-    quick: ["Pode resumir", "Ligar depois", "Não é o responsável"]
+    title: "Histórico primeiro · 15 segundos",
+    why: "Evitar repetir uma abordagem ou reunião que já aconteceu.",
+    ask: "Olá, sou Felipe, parceiro da isaac. Antes de te explicar em 30 segundos: vocês já falaram ou chegaram a fazer uma reunião com alguém da isaac?",
+    watch: "Se já falaram, não recomece o discurso. Pergunte o que ficou pendente e retome daquele ponto. Se pedirem para não ligar, respeite.",
+    quick: ["Nunca falaram", "Já falaram comigo", "Já fez reunião", "Não lembra", "Ligar depois", "Não é o responsável"],
+    objectionIds: ["ja_falaram", "ja_reuniao", "agendou_nao_deu", "sem_interesse", "nao_responsavel", "sem_tempo"]
   },
   {
     id: "rapida_contexto",
-    title: "O que é · 30 segundos",
-    why: "Informar antes de perguntar.",
-    ask: "O isaac é uma plataforma de soluções financeiras para instituições de ensino. O time analisa a operação e explica possibilidades ligadas a previsibilidade, cobrança, pagamentos e experiência das famílias, conforme o caso. Eu não negocio taxa ou contrato.",
-    watch: "Se pedirem comprovação ou números, abra o Proof Vault. Se perguntarem como funciona, abra a Base isaac.",
-    quick: ["Entendeu", "Pediu prova", "Perguntou como funciona", "Já conhece"]
+    title: "O que costuma chamar atenção · 35 segundos",
+    why: "Mostrar valor antes de perguntar sobre problemas.",
+    ask: "Para escolas, o ponto mais forte é previsibilidade: o isaac pode repassar 100% das mensalidades na data combinada, mesmo quando há inadimplência. Dependendo da análise, também existem possibilidades de crédito e antecipação, sempre sujeitas à aprovação. As condições são calculadas pelo time conforme o porte, o número de alunos e os dados da operação; eu não vou te inventar preço. Qual desses pontos faria mais diferença para vocês hoje?",
+    askHigher: "Para instituições de ensino superior, o isaac analisa a operação para melhorar previsibilidade de receita, inadimplência e retenção. Também existem possibilidades de crédito e antecipação quando aplicáveis, sempre sujeitas à aprovação. As condições são calculadas conforme o porte, o número de alunos e os dados da operação; eu não vou te inventar preço. Qual desses pontos faria mais diferença para vocês hoje?",
+    watch: "Faça uma pausa depois de previsibilidade. Crédito é possibilidade sujeita à análise, nunca promessa. Se perguntarem valor, diga que o time calcula com os dados reais da instituição.",
+    quick: ["Previsibilidade chamou", "Inadimplência chamou", "Crédito chamou", "Perguntou valor", "Pediu prova", "Perguntou como funciona", "Já conhece"],
+    objectionIds: ["repasse", "taxa", "caro", "manda_material", "dados"]
   },
   {
     id: "rapida_relevancia",
@@ -876,7 +887,8 @@ export const FAST_CALL_STEPS = [
     why: "Descobrir rapidamente se existe motivo para a reunião.",
     ask: "Hoje existe algum ponto em inadimplência, cobrança, previsibilidade de caixa ou tempo da equipe que vocês gostariam de melhorar?",
     watch: "Não faça interrogatório. Escolha somente o ponto que a pessoa mencionar.",
-    quick: ["Inadimplência", "Cobrança", "Previsibilidade", "Tempo", "Sem dor"]
+    quick: ["Inadimplência", "Cobrança", "Previsibilidade", "Tempo", "Sem dor"],
+    objectionIds: ["sem_inadimplencia", "satisfeitos", "cobramos", "autonomia", "terceirizar"]
   },
   {
     id: "rapida_ponte",
@@ -884,7 +896,8 @@ export const FAST_CALL_STEPS = [
     why: "Mostrar por que a reunião pode ser útil.",
     ask: "Entendi. É justamente esse cenário que vale colocar para o time isaac analisar. A reunião serve para vocês entenderem a aplicação no caso da instituição e decidirem se existe aderência.",
     watch: "Se surgir objeção, selecione-a no bloco de Objeções, use uma frase e volte imediatamente ao convite.",
-    quick: ["Viu sentido", "Teve objeção", "Quer material", "Sem interesse"]
+    quick: ["Viu sentido", "Teve objeção", "Quer material", "Sem interesse"],
+    objectionIds: ["manda_material", "dados", "agora_nao", "sem_interesse"]
   },
   {
     id: "rapida_convite",
@@ -892,7 +905,8 @@ export const FAST_CALL_STEPS = [
     why: "Pedir a reunião sem prolongar a ligação.",
     ask: "Faz sentido uma conversa objetiva com o time da isaac para avaliar isso sem compromisso de avançar?",
     watch: "Se disser sim ou talvez, pare o roteiro e vá direto para Agendar reunião.",
-    quick: ["Sim", "Talvez", "Não", "Precisa incluir outra pessoa"]
+    quick: ["Sim", "Talvez", "Não", "Precisa incluir outra pessoa"],
+    objectionIds: ["agora_nao", "outra_reuniao", "nao_decido", "sociedade"]
   },
   {
     id: "rapida_agenda",
