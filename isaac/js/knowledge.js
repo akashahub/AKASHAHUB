@@ -302,6 +302,10 @@ export const OBJECTIONS = [
       "Não é preciso esperar um problema aparecer para avaliar se existe uma forma mais eficiente de operar.",
       "Quem olha o processo antes da dor crescer preserva mais escolhas para a instituição."
     ],
+    booking: [
+      "Ótimo. Então a reunião não precisa partir de um problema: pode apenas verificar se existe algum ganho operacional real. Faz sentido reservar um horário com o time?",
+      "Se a análise não mostrar valor, vocês encerram com clareza. Tenho disponibilidade a partir da semana que vem; qual dia funciona melhor?"
+    ],
     advance: "Faz sentido olhar juntos se a previsibilidade de caixa de vocês está no nível que o mantenedor gostaria?",
     stop: "Se o responsável for claro que não há espaço e não há decisor, não force reunião.",
     source: SOURCES.treino
@@ -318,6 +322,10 @@ export const OBJECTIONS = [
       "Autonomia não é precisar fazer tudo sozinho; é continuar decidindo sem ficar refém da operação.",
       "Se uma solução retirasse peso operacional sem retirar poder de decisão, isso seria perda de autonomia ou ganho de controle?",
       "Controle real é escolher conscientemente o que permanece com a escola e o que pode ser otimizado."
+    ],
+    booking: [
+      "Então vamos usar a reunião justamente para esclarecer o que continua sob decisão da escola. Qual horário permite que você leve essa pergunta ao time?",
+      "Você não precisa decidir nada agora; apenas confirmar se o modelo preserva a autonomia. Prefere conversar no começo ou no fim da próxima semana?"
     ],
     advance: "Se a autonomia de precificação permanece com vocês, vale ouvir como o repasse entra na prática?",
     stop: "Se o medo for jurídico/contratual fundo, encaminhe ao time isaac — SDR não interpreta contrato.",
@@ -336,6 +344,10 @@ export const OBJECTIONS = [
       "Talvez a pergunta não seja “terceirizar a família”, mas separar o vínculo pedagógico do desgaste financeiro.",
       "Se a cobrança desgasta o vínculo, melhorar o processo também pode ser uma forma de preservar o relacionamento."
     ],
+    booking: [
+      "A melhor forma de não presumir é levar essa preocupação diretamente ao time. Podemos marcar um horário para eles explicarem onde termina a cobrança e começa o relacionamento da escola?",
+      "Se a conversa mostrar que o vínculo seria prejudicado, não faz sentido avançar. Qual dia você consegue avaliar isso com calma?"
+    ],
     advance: "Se a cobrança sair da mesa da direção, o que vocês fariam com esse tempo?",
     stop: "Não discuta 'terceirizar o cuidado'. Separe cobrança de vínculo.",
     source: SOURCES.treino
@@ -352,6 +364,10 @@ export const OBJECTIONS = [
       "Taxa isolada diz pouco; a decisão precisa comparar custo atual, risco, tempo e impacto operacional.",
       "Antes de perguntar apenas quanto custa mudar, vale entender quanto custa continuar exatamente como está.",
       "O menor número nem sempre representa o menor custo total — por isso a análise precisa ser feita sobre a operação real."
+    ],
+    booking: [
+      "Para não te dar um número solto ou incorreto, o melhor é o time analisar o cenário e explicar as condições aplicáveis. Qual horário funciona para essa conversa?",
+      "Essa pergunta merece uma resposta exata, não uma estimativa minha. Posso te colocar com o time a partir da semana que vem; qual é sua disponibilidade?"
     ],
     advance: "Quer que o time isaac olhe os números e volte com a conta real da operação de vocês?",
     stop: "Não chute taxa. Não cite 1,99% / 2,99% de crédito como se fosse taxa da operação escolar.",
@@ -370,6 +386,10 @@ export const OBJECTIONS = [
       "Algo só é caro ou barato quando é comparado ao problema que deveria resolver.",
       "Se não fizer sentido econômico para a instituição, a decisão correta é não avançar; a conversa serve justamente para descobrir isso."
     ],
+    booking: [
+      "Antes de decidir pelo preço, vale comparar o modelo com o custo do cenário atual. Faz sentido reservar uma conversa curta para fazer essa comparação?",
+      "Se a conta não fizer sentido, vocês não avançam. Qual dia da próxima semana seria melhor para avaliar com o time?"
+    ],
     advance: "Se a gente colocar lado a lado o que vocês gastam hoje para receber, faz sentido uma conversa com o time?",
     stop: "Não barganhe taxa. Encaminhe.",
     source: SOURCES.treino
@@ -387,6 +407,10 @@ export const OBJECTIONS = [
       "A conversa anterior realmente esclareceu o modelo ou apenas apresentou uma solução?",
       "Às vezes não é necessária uma solução nova, mas uma leitura mais precisa do momento atual."
     ],
+    booking: [
+      "Perfeito. Então não precisamos começar do zero: podemos marcar uma conversa focada apenas no que ficou sem resposta. Qual foi o ponto principal?",
+      "Se o cenário mudou ou ainda existe uma dúvida, vale uma revisão objetiva. Você prefere um horário no começo ou no fim da próxima semana?"
+    ],
     advance: "O que precisaria ser diferente desta vez para valer uma conversa curta com o time?",
     stop: "Se a pessoa pedir para não ligarem mais, respeite e marque perdido/não avançou."
   },
@@ -402,6 +426,10 @@ export const OBJECTIONS = [
       "Uma reunião anterior não encerra o assunto; ela mostra o que ainda não ficou claro ou não fez sentido.",
       "O ponto mais útil agora é entender exatamente o que impediu o avanço naquela ocasião.",
       "Se nada mudou, não precisamos repetir a conversa; se o cenário mudou, vale comparar com honestidade."
+    ],
+    booking: [
+      "Então a próxima conversa só faz sentido se resolver exatamente o que impediu o avanço anterior. Posso deixar o time preparado para isso; qual horário funciona?",
+      "Não quero repetir apresentação. Quero marcar uma conversa focada no ponto que ficou aberto. Qual é sua disponibilidade na próxima semana?"
     ],
     advance: "Se a trava mudou, o time isaac retoma a partir dali. Posso encaminhar com esse contexto?",
     stop: "Não remarque reunião só para 'apresentar de novo'."
@@ -419,6 +447,10 @@ export const OBJECTIONS = [
       "Adiar também é uma decisão; o importante é saber por que estamos adiando e quando o tema deve ser revisto.",
       "Se este não é o momento, qual mudança mostraria que o momento chegou?"
     ],
+    booking: [
+      "Entendo. Em vez de deixar indefinido, podemos escolher agora uma data futura que respeite seu momento. A partir de quando sua agenda melhora?",
+      "Qual semana faria mais sentido para revisitar isso? Eu registro o horário e o time chega sabendo por que vocês adiaram."
+    ],
     advance: "Posso te ligar em que semana, depois de qual marco?",
     stop: "Se for recusa, não insista no mesmo dia."
   },
@@ -434,6 +466,10 @@ export const OBJECTIONS = [
       "Estar satisfeito é um ótimo sinal; a pergunta é se o sistema atual também sustenta o próximo estágio da instituição.",
       "Não precisamos substituir o que funciona — precisamos apenas verificar se existe alguma lacuna relevante.",
       "Satisfação com o presente e preparação para o futuro são perguntas diferentes."
+    ],
+    booking: [
+      "Ótimo. A reunião pode servir apenas para comparar, sem compromisso de trocar o que já funciona. Faz sentido reservar esse diagnóstico?",
+      "Se não aparecer nenhuma vantagem concreta, vocês mantêm o sistema atual com ainda mais segurança. Qual horário funciona melhor?"
     ],
     advance: "Tem alguma ponta (atraso, tempo da secretaria, família reclamando) que ainda dói?",
     stop: "Não ataque o sistema atual."
@@ -451,6 +487,10 @@ export const OBJECTIONS = [
       "Fazer internamente pode funcionar; ainda assim, vale medir o custo invisível em tempo, energia e foco.",
       "Se a cobrança ocupasse menos espaço na agenda, onde esse tempo produziria mais valor para a instituição?"
     ],
+    booking: [
+      "Então a conversa pode medir se existe algum ganho em retirar parte desse peso sem perder controle. Vale colocar essa pergunta para o time?",
+      "Se o processo interno já for a melhor opção, a análise vai deixar isso claro. Qual dia você consegue conversar por alguns minutos?"
+    ],
     advance: "Se a cobrança sair do colo da direção, o que vocês fariam com as manhãs?",
     stop: "Não humilhe o processo interno."
   },
@@ -466,6 +506,10 @@ export const OBJECTIONS = [
       "Perfeito — eu não preciso que você decida sozinho; preciso entender quem deve participar para a conversa ser útil.",
       "Uma decisão bem conduzida começa colocando as pessoas certas na mesma conversa.",
       "Se você enxergar sentido, pode me ajudar a levar o contexto correto para quem decide?"
+    ],
+    booking: [
+      "Perfeito. Vamos colocar quem decide na conversa desde o início para ninguém precisar retransmitir informação. Qual horário funciona para vocês?",
+      "Quem mais precisa participar? Me diga duas possibilidades de agenda e eu deixo a reunião organizada."
     ],
     advance: "Posso te ajudar a levar um resumo objetivo para o sócio, ou marcamos os dois?",
     stop: "Não peça para a secretária 'fechar'."
@@ -483,6 +527,10 @@ export const OBJECTIONS = [
       "Para eu não mandar algo genérico, qual ponto decidiria se vale ou não conversar?",
       "Informação ajuda quando responde uma pergunta real — vamos identificar essa pergunta primeiro."
     ],
+    booking: [
+      "Eu envio o material certo, mas já podemos deixar um horário curto marcado para responder o que o documento não explica. Qual dia funciona?",
+      "Para o material não virar só mais um arquivo, marcamos um retorno com o time. Prefere começo ou fim da próxima semana?"
+    ],
     advance: "Te mando o recorte e te ligo quinta para ver se fez sentido. Qual horário?",
     stop: "Não despeje PDF e suma. Sem data = lead morto."
   },
@@ -498,6 +546,10 @@ export const OBJECTIONS = [
       "Essa é uma pergunta essencial: sem confiança sobre os dados, nenhuma solução financeira deveria avançar.",
       "Você não precisa aceitar uma resposta vaga; esse ponto deve ser esclarecido pelo time responsável com precisão.",
       "Segurança de dados não é detalhe técnico — é condição para uma decisão consciente."
+    ],
+    booking: [
+      "Essa dúvida merece resposta técnica do time oficial. Posso marcar uma conversa focada em dados e segurança para você avaliar com precisão?",
+      "Você não precisa avançar sem essa resposta. Qual horário permite colocar essa pergunta diretamente para quem domina o assunto?"
     ],
     advance: "Anoto a pergunta para o time responder com precisão na call. Seguimos?",
     stop: "Não dê garantia jurídica."
@@ -515,6 +567,10 @@ export const OBJECTIONS = [
       "Antes de explicar o mecanismo, vale entender como e quando o dinheiro entra atualmente.",
       "A utilidade do repasse só pode ser avaliada quando ligada ao problema real de previsibilidade da instituição."
     ],
+    booking: [
+      "Essa é justamente uma das perguntas que o time precisa responder olhando a operação de vocês. Qual horário funciona para essa análise?",
+      "Em vez de eu simplificar demais, posso te conectar com quem explica o repasse aplicado ao cenário da instituição. Prefere qual dia?"
+    ],
     advance: "Essa é exatamente a conversa da call com o isaac. Posso encaminhar?",
     stop: "Não descreva fluxo bancário que você não viu no contrato."
   },
@@ -530,6 +586,10 @@ export const OBJECTIONS = [
       "Justamente porque o tempo é escasso, vale medir quanto tempo o processo atual já consome sem aparecer na agenda.",
       "Não quero tomar seu tempo agora; quero apenas saber se existe motivo suficiente para reservar um horário certo.",
       "Quando nunca existe tempo para revisar um processo, é o próprio processo que continua definindo a agenda."
+    ],
+    booking: [
+      "Vou respeitar seu tempo: não precisamos continuar agora. Me diga apenas um dia e horário em que o time possa falar objetivamente com você.",
+      "Posso deixar uma conversa curta marcada para a próxima semana. Funciona melhor pela manhã ou pela tarde?"
     ],
     advance: "Tenho [opção A] ou [opção B]. Qual pesa menos na sua agenda?",
     phone: "Entendo. Prefere dois minutos agora só para ver se há aderência, ou marcamos 20 minutos com o time?",
@@ -550,6 +610,10 @@ export const OBJECTIONS = [
       "Em vez de você tentar traduzir tudo depois, podemos colocar as duas pessoas na mesma conversa.",
       "Qual dúvida seu sócio precisaria ver respondida para avaliar isso com seriedade?"
     ],
+    booking: [
+      "Então o melhor é marcar com vocês dois, evitando informação pela metade. Quais dois horários funcionam para o sócio participar?",
+      "Podemos transformar o “preciso falar com meu sócio” em uma conversa conjunta e objetiva. Qual é a disponibilidade de vocês?"
+    ],
     advance: "Marcamos os dois e deixo a pergunta principal registrada para o time?",
     phone: "Perfeito. Quem mais precisa estar e qual dúvida precisa ser respondida?",
     whatsapp: "Posso mandar um resumo curto e marcar um horário em que vocês dois participem.",
@@ -568,6 +632,10 @@ export const OBJECTIONS = [
       "Perfeito — então o melhor resultado desta conversa é chegar à pessoa certa, não tentar convencer a pessoa errada.",
       "Quem conhece a operação pode não assinar a decisão, mas pode indicar quem precisa participar.",
       "Para eu respeitar seu tempo, quem é a pessoa adequada e qual é a melhor forma de abordá-la?"
+    ],
+    booking: [
+      "Perfeito. Não quero ocupar seu tempo nem apresentar para a pessoa errada. Quem deve participar e qual é o melhor horário?",
+      "Se você me indicar o responsável, eu preparo uma abordagem curta e já proponho a reunião com o time. Quem seria?"
     ],
     advance: "Você consegue me indicar o nome e o melhor horário para falar com essa pessoa?",
     phone: "Obrigado. Quem é a pessoa certa e quando costuma estar disponível?",
@@ -588,6 +656,10 @@ export const OBJECTIONS = [
       "O problema foi apenas agenda ou o valor da conversa não ficou claro o suficiente?",
       "Desta vez só faz sentido marcar se motivo, expectativa e participantes estiverem claros."
     ],
+    booking: [
+      "Desta vez só vamos marcar se horário, motivo e participantes estiverem claros. Qual janela realmente funciona para você?",
+      "Vamos corrigir a causa da última tentativa. Prefere remarcar para o começo ou para o fim da próxima semana?"
+    ],
     advance: "Se resolvermos esse ponto e o time já chegar preparado, vale remarcar?",
     phone: "Quero evitar repetir o erro. O que precisamos mudar desta vez?",
     whatsapp: "Registro o que aconteceu e remarco só se o novo formato fizer sentido.",
@@ -607,6 +679,10 @@ export const OBJECTIONS = [
       "Um “não” claro é melhor do que um follow-up artificial; quero apenas compreender a razão real.",
       "Se o cenário mudar, qual mudança faria este tema voltar a merecer atenção?"
     ],
+    booking: [
+      "Entendo. Se existir uma única dúvida que ainda valha esclarecer, podemos fazer uma conversa focada apenas nela. Existe alguma?",
+      "Se hoje não há motivo real, não marcamos. Mas se faltar clareza, qual horário permitiria uma avaliação objetiva com o time?"
+    ],
     advance: "Se esse ponto mudou, retomamos; se não mudou, eu encerro por aqui.",
     phone: "O que não aderiu: solução, timing, investimento ou prioridade?",
     whatsapp: "Só retomo se algo tiver mudado; qual foi a trava principal?",
@@ -625,6 +701,10 @@ export const OBJECTIONS = [
       "Concordo: ninguém precisa de mais uma apresentação comercial genérica.",
       "Se for apenas um pitch, não vale seu tempo; se for uma análise da operação, a conversa pode ter outra utilidade.",
       "O que precisaria acontecer para esta conversa merecer espaço na sua agenda?"
+    ],
+    booking: [
+      "Concordo. Por isso não proponho uma apresentação genérica, mas uma conversa focada no cenário que você mencionou. Isso faria sentido?",
+      "Se houver uma pergunta concreta para responder, marcamos; se não houver, encerramos por aqui. Qual pergunta justificaria a reunião?"
     ],
     advance: "Se o time entrar já respondendo sua pergunta principal, vale 20 minutos?",
     phone: "Não quero te colocar em apresentação genérica. Qual resposta justificaria a conversa?",
@@ -772,6 +852,58 @@ export const CALL_STEPS = [
     quick: ["Indicou", "Não indicou", "Pediu para não perguntar"]
   }
 ];
+
+export const FAST_CALL_STEPS = [
+  {
+    id: "rapida_abertura",
+    title: "Direto ao ponto · 15 segundos",
+    why: "Respeitar quem disse que está sem tempo.",
+    ask: "Vou direto ao ponto: sou Felipe, parceiro do isaac, e meu papel é verificar se vale conectar sua instituição ao time especializado. Posso resumir em 30 segundos?",
+    watch: "Se a pessoa disser sim, informe com calma. Se disser não, peça apenas um horário melhor.",
+    quick: ["Pode resumir", "Ligar depois", "Não é o responsável"]
+  },
+  {
+    id: "rapida_contexto",
+    title: "O que é · 30 segundos",
+    why: "Informar antes de perguntar.",
+    ask: "O isaac é uma plataforma de soluções financeiras para instituições de ensino. O time analisa a operação e explica possibilidades ligadas a previsibilidade, cobrança, pagamentos e experiência das famílias, conforme o caso. Eu não negocio taxa ou contrato.",
+    watch: "Se pedirem comprovação ou números, abra o Proof Vault. Se perguntarem como funciona, abra a Base isaac.",
+    quick: ["Entendeu", "Pediu prova", "Perguntou como funciona", "Já conhece"]
+  },
+  {
+    id: "rapida_relevancia",
+    title: "Uma pergunta · 30 segundos",
+    why: "Descobrir rapidamente se existe motivo para a reunião.",
+    ask: "Hoje existe algum ponto em inadimplência, cobrança, previsibilidade de caixa ou tempo da equipe que vocês gostariam de melhorar?",
+    watch: "Não faça interrogatório. Escolha somente o ponto que a pessoa mencionar.",
+    quick: ["Inadimplência", "Cobrança", "Previsibilidade", "Tempo", "Sem dor"]
+  },
+  {
+    id: "rapida_ponte",
+    title: "Conectar o ponto · 20 segundos",
+    why: "Mostrar por que a reunião pode ser útil.",
+    ask: "Entendi. É justamente esse cenário que vale colocar para o time isaac analisar. A reunião serve para vocês entenderem a aplicação no caso da instituição e decidirem se existe aderência.",
+    watch: "Se surgir objeção, selecione-a no bloco de Objeções, use uma frase e volte imediatamente ao convite.",
+    quick: ["Viu sentido", "Teve objeção", "Quer material", "Sem interesse"]
+  },
+  {
+    id: "rapida_convite",
+    title: "Convite · 15 segundos",
+    why: "Pedir a reunião sem prolongar a ligação.",
+    ask: "Faz sentido uma conversa objetiva com o time da isaac para avaliar isso sem compromisso de avançar?",
+    watch: "Se disser sim ou talvez, pare o roteiro e vá direto para Agendar reunião.",
+    quick: ["Sim", "Talvez", "Não", "Precisa incluir outra pessoa"]
+  },
+  {
+    id: "rapida_agenda",
+    title: "Fechar o horário · 10 segundos",
+    why: "O objetivo real desta call é sair com dia e horário.",
+    ask: "Tenho possibilidade a partir da próxima semana. Funciona melhor no começo ou no fim da semana? E pela manhã ou pela tarde?",
+    watch: "Abra Agendar reunião. Registre somente data, horário, responsável e pergunta principal. O restante é opcional.",
+    quick: ["Data definida", "Consultar agenda", "Remarcar", "Agendado"]
+  }
+];
+
 
 export const PROOF_VAULT = [
   { id:"repasse", claim:"100% das mensalidades na data combinada", segment:"Educação básica", product:"Receita", source:SOURCES.treino, status:"aprovado", use:"Previsibilidade e repasse", restriction:"Condições comerciais e análise ficam com o time isaac." },
