@@ -659,7 +659,7 @@ function renderCockpit() {
             <option value="">— selecionar —</option>
             ${KB.OBJECTIONS.map((o) => `<option value="${o.id}" ${row.objectionId === o.id ? "selected" : ""}>${esc(o.said)}</option>`).join("")}
           </select>
-          ${obj ? `<p class="hint" style="margin-top:8px"><b>Pode querer dizer:</b> ${esc(obj.means)}<br><b>Pergunte:</b> ${esc(obj.ask)}<br><b>Valor:</b> ${esc(obj.value)}<br><b>Prova:</b> ${esc(obj.proof || "—")}<br><b>Avanço:</b> ${esc(obj.advance)}<br><b>Não insistir:</b> ${esc(obj.stop)}</p>` : ""}
+          ${obj ? `<p class="hint" style="margin-top:8px"><b>Pode querer dizer:</b> ${esc(obj.means)}<br><b>Pergunte:</b> ${esc(obj.ask)}<br><b>Valor:</b> ${esc(obj.value)}<br><b>Prova:</b> ${esc(obj.proof || "—")}${obj.reflection && obj.reflection.length ? `<br><br><b>Frases de impacto — fale com calma:</b><br>${obj.reflection.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}` : ""}<br><b>Avanço:</b> ${esc(obj.advance)}<br><b>Não insistir:</b> ${esc(obj.stop)}</p>` : ""}
         </div>
         <div class="card meeting-box" style="margin-top:10px">
           <p class="kicker">CONVERSÃO PRINCIPAL</p><h2>Agendar reunião</h2>
@@ -729,6 +729,7 @@ function renderObj() {
       <p><b>Pode querer dizer:</b> ${esc(o.means)}</p>
       <p><b>Pergunte:</b> ${esc(o.ask)}</p>
       <p><b>Valor:</b> ${esc(o.value)}</p>
+      ${o.reflection && o.reflection.length ? `<div class="hint" style="margin:10px 0"><b>Frases de impacto — escolha uma e fale com calma:</b><br>${o.reflection.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</div>` : ""}
       <p><b>Avanço:</b> ${esc(o.advance)}</p>
       ${o.phone ? `<p><b>Ligação:</b> ${esc(o.phone)}</p><p><b>WhatsApp:</b> ${esc(o.whatsapp)}</p><p><b>Email:</b> ${esc(o.email)}</p>` : ""}
       <p class="muted">Quando não insistir: ${esc(o.stop)} · ${esc(o.source || "")}</p>
