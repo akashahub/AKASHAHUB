@@ -20,18 +20,18 @@ provider.setCustomParameters({ prompt: "select_account" });
 
 const VIEWS = [
   ["dash", "Hoje"],
-  ["directory", "Diretório"],
-  ["crm", "CRM"],
-  ["pipe", "Pipeline"],
-  ["cockpit", "Call"],
+  ["directory", "Lista de instituições"],
+  ["crm", "Contatos"],
+  ["pipe", "Etapas"],
+  ["cockpit", "Ligação"],
   ["follow", "Agenda"],
-  ["react", "Reativação"],
+  ["react", "Retomar"],
   ["ind", "Indicações"],
-  ["play", "Playbook"],
+  ["play", "Guia"],
   ["obj", "Objeções"],
-  ["proof", "Proof Vault"],
-  ["base", "Base isaac"],
-  ["parc", "Parceiros"],
+  ["proof", "Provas"],
+  ["base", "Como funciona"],
+  ["parc", "Já parceiras"],
   ["equipe", "Equipe"],
   ["access", "Acessos"]
 ];
@@ -52,6 +52,10 @@ let view = "dash";
 let currentId = null;
 let callStep = 0;
 let callMode = "fast";
+let directoryTypeFilter = "all";
+let directoryStatusFilter = "all";
+let directoryCityFilter = "all";
+let directoryEditId = null;
 let filterQ = "";
 let callStartedAt = null;
 let callTimerHandle = null;
@@ -93,6 +97,60 @@ function fmt(ts) {
 }
 function activeCallSteps() {
   return callMode === "fast" && Array.isArray(KB.FAST_CALL_STEPS) ? KB.FAST_CALL_STEPS : KB.CALL_STEPS;
+}
+
+const LOG_ACTION_LABELS = {
+  create: "Instituição cadastrada",
+  directory_import: "Adicionada à lista",
+  directory_edit: "Informações editadas",
+  directory_promoted: "Colocada nos contatos em andamento",
+  directory_novo: "Marcada como ainda não tentada",
+  directory_tentei: "Tentativa de contato marcada",
+  directory_falei: "Conversa realizada marcada",
+  directory_reuniao: "Reunião marcada",
+  directory_nao_abordar: "Marcada para não abordar",
+  attempt: "Tentativa de contato registrada",
+  responsavel_alcancado: "Responsável alcançado",
+  call_step: "Etapa da ligação registrada",
+  status: "Etapa alterada",
+  objection: "Objeção registrada",
+  historico: "Histórico anterior atualizado",
+  meeting_scheduled: "Reunião agendada",
+  meeting_rescheduled: "Reunião remarcada",
+  end_call: "Ligação encerrada",
+  encaminhar: "Encaminhada ao time isaac",
+  nao_fit: "Marcada como não adequada",
+  indicacao: "Indicação registrada",
+  import_parceiro_ssa: "Parceira oficial importada"
+};
+function logActionLabel(action) {
+  return LOG_ACTION_LABELS[action] || String(action || "").replace(/_/g, " ");
+}
+const DIRECTORY_STATUS = {
+  novo: { label: "Ainda não tentei", short: "Novo" },
+  tentei: { label: "Já tentei contato", short: "Tentei" },
+  falei: { label: "Já falei com alguém", short: "Falei" },
+  reuniao: { label: "Reunião marcada", short: "Reunião" },
+  nao_abordar: { label: "Não abordar", short: "Não abordar" }
+};
+
+function directoryStatusOf(row) {
+  return DIRECTORY_STATUS[row.directoryStatus] || DIRECTORY_STATUS.novo;
+}
+function digits(value) { return String(value || "").replace(/\D/g, ""); }
+function telLink(value) {
+  const d = digits(value);
+  if (!d) return "";
+  if (d.startsWith("0800")) return "tel:" + d;
+  return "tel:+" + (d.length <= 11 ? "55" : "") + d;
+}
+function whatsappLink(value) { const d = digits(value); return d ? "https://wa.me/" + (d.length <= 11 ? "55" : "") + d : ""; }
+function institutionTypeLabel(type) {
+  return type === "ensino_superior" ? "Faculdade ou universidade" : "Escola ou colégio";
+}
+function recordProgress(row) {
+  const fields = [row.phone || row.whatsapp, row.email, row.contactName, row.pain, row.nextAction || row.meetingAt];
+  return Math.round(fields.filter(Boolean).length / fields.length * 100);
 }
 
 function pipeLabel(id) {
@@ -153,7 +211,7 @@ function showApp() {
   el.who.textContent = `${session.name} · ${session.role}`;
   el.nav.innerHTML = navHtml("nav");
   el.bottom.innerHTML = [
-    ["dash", "Hoje"], ["crm", "CRM"], ["cockpit", "Call"], ["follow", "Agenda"], ["more", "Mais"]
+    ["dash", "Hoje"], ["crm", "Contatos"], ["cockpit", "Ligação"], ["follow", "Agenda"], ["more", "Mais"]
   ].map(([id, l]) => `<button type="button" data-view="${id}" class="${view === id ? "on" : ""}">${l}</button>`).join("");
   render();
 }
@@ -257,6 +315,37 @@ async function seedPartnersIfNeeded() {
   toast("56 parceiras de Salvador importadas da lista oficial.");
 }
 
+async function seedStarterDirectory() {
+  const existing = new Set(inst.map((i) => slugInst(i.name, i.city)));
+  const missing = KB.PROSPECT_STARTER.filter((item) => !existing.has(slugInst(item.name, item.city)));
+  if (!missing.length) return;
+  const batch = writeBatch(db);
+  const at = nowIso();
+  missing.forEach((item) => {
+    const id = slugInst(item.name, item.city);
+    batch.set(doc(db, COL_INST, id), {
+      ...item,
+      id,
+      country: "Brasil",
+      region: "Nordeste",
+      status: "prospect",
+      directoryStatus: "novo",
+      directoryOnly: true,
+      partnerIsaac: false,
+      priorHistory: "desconhecido",
+      contactSource: item.sourceUrl,
+      origin: "pesquisa pública verificada",
+      createdBy: session.email,
+      createdAt: at,
+      updatedAt: at,
+      log: [{ at, by: session.email, action: "directory_import", note: item.sourceLabel }]
+    });
+  });
+  await batch.commit();
+  await loadAll();
+  toast(missing.length + " instituições verificadas adicionadas à lista.");
+}
+
 function findDup(name, city, exceptId) {
   const s = slugInst(name, city);
   return inst.find((i) => i.id !== exceptId && (i.id === s || slugInst(i.name, i.city) === s));
@@ -345,13 +434,13 @@ function preCall(row) {
     `Dor: ${row.pain || "ainda não mapeada"}`,
     `Objeção: ${row.objection || "—"}`,
     row.partnerIsaac ? "CUIDADO: já parceira." : (row.priorHistory && row.priorHistory !== "desconhecido" && row.priorHistory !== "nunca_contatado" ? "CUIDADO: já existe histórico." : ""),
-    `Objetivo desta call: ${obj}`
+    `Objetivo desta ligação: ${obj}`
   ].filter(Boolean).join("\n");
 }
 
 function summaryOf(row) {
   return [
-    "Resumo de call — ISAAC SDR OS",
+    "Resumo da ligação — ISAAC SDR OS",
     `Instituição: ${row.name}`,
     `Cidade: ${row.city || ""} / ${row.state || ""}`,
     `Pessoa: ${row.contactName || "—"} · ${row.role || "—"}`,
@@ -363,7 +452,7 @@ function summaryOf(row) {
     `Objeções: ${row.objection || "—"}`,
     `O que chamou atenção: ${row.valueHook || "—"}`,
     `Autoridade: ${row.authority || "—"}`,
-    `Timing: ${row.timing || "—"}`,
+    `Momento para decidir: ${row.timing || "—"}`,
     `Reunião: ${row.meetingAt ? fmt(row.meetingAt) : "—"} · ${row.meetingStatus || "—"}`,
     `Participantes: ${row.meetingParticipants || "—"}`,
     `Pergunta para o time: ${row.teamQuestion || row.commitmentQuestion || "—"}`,
@@ -382,11 +471,11 @@ function followMsg(row) {
 
 function teamMsg(row) {
   return [
-    "Encaminhamento SDR → time isaac",
+    "Encaminhamento para o time isaac",
     summaryOf(row),
     "",
     `Fontes usadas: ${row.contactSource || row.sourceUrl || "não registradas"}`,
-    "Pedido: conversa de diagnóstico/fechamento. O SDR NÃO negociou taxa, contrato ou aprovação de crédito."
+    "Pedido: conversa de diagnóstico/fechamento. A pessoa que fez o primeiro contato NÃO negociou taxa, contrato ou aprovação de crédito."
   ].join("\n");
 }
 
@@ -421,11 +510,11 @@ function downloadIcs(row) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a"); a.href = url; a.download = `reuniao-isaac-${norm(row.name).replace(/[^a-z0-9]+/g,"-")}.ics`; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-  toast("Convite .ics baixado. Nada foi enviado.");
+  toast("Arquivo de calendário (.ics) baixado. Nada foi enviado.");
 }
 
 function dashStats() {
-  const f = inst.filter((i) => !i.partnerIsaac);
+  const f = inst.filter((i) => !i.partnerIsaac && i.directoryOnly !== true);
   const count = (st) => f.filter((i) => i.status === st).length;
   const today = new Date().toISOString().slice(0, 10);
   const follows = f.filter((i) => i.nextActionAt);
@@ -447,7 +536,7 @@ function dashStats() {
 
 function renderDash() {
   const s = dashStats();
-  const eligible = inst.filter((i) => !i.partnerIsaac && !["perdido","parceiro"].includes(i.status));
+  const eligible = inst.filter((i) => !i.partnerIsaac && i.directoryOnly !== true && !["perdido","parceiro"].includes(i.status));
   const ranked = (rows) => rows.slice().sort((a,b) => contactability(b).score - contactability(a).score || String(a.nextActionAt || "").localeCompare(String(b.nextActionAt || ""))).slice(0,6);
   const queues = [
     ["Ligar agora", ranked(eligible.filter((i) => i.phone)), "phone"],
@@ -465,7 +554,7 @@ function renderDash() {
       <div class="goal-line"><strong>${s.contatosHoje}/15 contatos</strong><div class="progress"><i style="width:${progress}%"></i></div><span>${s.ganhos}/90 ganhos até 31/12</span></div>
     </section>
     <div class="metric-grid">
-      ${[["Contatos hoje",s.contatosHoje],["Responsáveis alcançados",s.alcancados],["Conversas qualificadas",s.qualificadas],["Reuniões agendadas",s.calls],["Reuniões hoje",s.callsHoje],["Follow-ups atrasados",s.atrasados],["Remarcações",s.remarcacoes],["Sem próxima ação",s.semAcao]].map(([l,n])=>`<article class="metric"><strong>${n}</strong><span>${l}</span></article>`).join("")}
+      ${[["Contatos hoje",s.contatosHoje],["Responsáveis alcançados",s.alcancados],["Conversas qualificadas",s.qualificadas],["Reuniões agendadas",s.calls],["Reuniões hoje",s.callsHoje],["Retornos atrasados",s.atrasados],["Remarcações",s.remarcacoes],["Sem próxima ação",s.semAcao]].map(([l,n])=>`<article class="metric"><strong>${n}</strong><span>${l}</span></article>`).join("")}
     </div>
     <div class="card" style="margin-bottom:12px"><div class="goal-line"><strong>Progresso da meta de 90</strong><div class="progress"><i style="width:${winProgress}%"></i></div><span>${winProgress}%</span></div></div>
     <div class="queue-grid">${queues.map(([title,rows,kind])=>`<section class="queue"><div class="queue-head"><h3>${title}</h3><span>${rows.length} prioridade(s)</span></div>${rows.map((i)=>{const c=contactability(i);return `<div class="queue-item"><div><strong>${esc(i.name)}</strong><small>${esc(i.city||"")} · ${c.grade} ${c.score}/100 · ${esc((kind==="phone"?i.phone:kind==="whatsapp"?i.whatsapp:kind==="email"?i.email:histLabel(i.priorHistory))||"")}</small></div><button class="btn" data-call="${esc(i.id)}" type="button">Abrir</button></div>`}).join("")||`<div class="empty">Nenhuma ação disponível com dados reais.</div>`}</section>`).join("")}</div>
@@ -474,71 +563,85 @@ function renderDash() {
 }
 
 function renderCrm() {
-  const rows = filtered();
+  const rows = filtered().filter((i) => i.directoryOnly !== true && !i.partnerIsaac);
+  const withMeeting = rows.filter((i) => i.meetingAt).length;
+  const needAction = rows.filter((i) => !i.nextActionAt && !i.meetingAt).length;
   return `
-    <div class="cols cols-2">
-      <div>
-        <p class="kicker">CRM</p>
-        <h2>Instituições</h2>
-        <form id="newInst" class="card">
-          <p class="kicker">Nova oportunidade</p>
-          <label>Instituição <input name="name" required placeholder="Nome da escola"></label>
-          <div class="duo">
-            <label>Cidade <input name="city" value="Salvador"></label>
-            <label>Tipo <select name="type">${KB.INST_TYPES.map((t) => `<option value="${t.id}">${t.label}</option>`).join("")}</select></label>
-          </div>
-          <div class="duo">
-            <label>Responsável <input name="contactName"></label>
-            <label>Cargo <input name="role" placeholder="Mantenedor, diretor..."></label>
-          </div>
-          <div class="duo">
-            <label>WhatsApp <input name="whatsapp" inputmode="tel"></label>
-            <label>Telefone <input name="phone" inputmode="tel"></label>
-          </div>
-          <div class="duo">
-            <label>Email institucional <input name="email" type="email"></label>
-            <label>Site oficial <input name="site" type="url" placeholder="https://"></label>
-          </div>
-          <label>Fonte pública dos contatos <input name="contactSource" placeholder="site oficial, página de contato..."></label>
-          <label>Origem <input name="origin" placeholder="indicação, mapa, visita..."></label>
-          <div class="row"><button class="btn btn-p" type="submit">Cadastrar</button></div>
-          <p class="muted" id="dupWarn" style="margin-top:8px"></p>
-        </form>
-      </div>
-      <div>
-        <p class="muted">${rows.length} registros</p>
-        <div class="list" style="margin-top:8px">
-          ${rows.map((i) => `
-            <article class="item">
-              <div class="row" style="justify-content:space-between">
-                <h3>${esc(i.name)}</h3>
-                <span class="st ${esc(i.status)}">${esc(pipeLabel(i.status))}</span>
-              </div>
-              ${(()=>{const c=contactability(i);return `<p class="muted">${esc(i.city || "")} · ${esc(i.contactName || "sem contato")} · prioridade ${c.grade} ${c.score}/100</p><p class="safe-note">${esc(c.parts.join(" · ") || "dados insuficientes")}</p>`})()}
-              ${i.partnerIsaac ? "<p class='ok'>Já parceira da isaac — não prospectar.</p>" : ""}
-              <div class="row">
-                <button class="btn" data-open="${esc(i.id)}" type="button">Abrir</button>
-                <button class="btn btn-p" data-call="${esc(i.id)}" type="button">Call</button>
-              </div>
-            </article>`).join("") || "<p class='muted'>Nenhuma instituição.</p>"}
+    <p class="kicker">CONTATOS EM ANDAMENTO</p>
+    <h2>Registros fáceis de acompanhar</h2>
+    <p class="plain-help">Aqui ficam somente as instituições que você decidiu trabalhar. “CRM” significa apenas organização dos contatos e das conversas.</p>
+    <div class="record-overview">
+      <div><b>${rows.length}</b><span>em andamento</span></div>
+      <div><b>${withMeeting}</b><span>com reunião</span></div>
+      <div><b>${needAction}</b><span>precisam de próximo passo</span></div>
+    </div>
+    <details class="card new-record">
+      <summary>＋ Cadastrar uma instituição manualmente</summary>
+      <form id="newInst" style="margin-top:14px">
+        <label>Nome da instituição <input name="name" required placeholder="Nome da escola ou faculdade"></label>
+        <div class="duo">
+          <label>Cidade <input name="city" value="Salvador"></label>
+          <label>Tipo <select name="type">${KB.INST_TYPES.map((t) => `<option value="${t.id}">${t.label}</option>`).join("")}</select></label>
         </div>
-      </div>
+        <div class="duo">
+          <label>Nome do responsável <input name="contactName"></label>
+          <label>Função dessa pessoa <input name="role" placeholder="Diretor, mantenedor, financeiro..."></label>
+        </div>
+        <div class="duo">
+          <label>WhatsApp <input name="whatsapp" inputmode="tel"></label>
+          <label>Telefone <input name="phone" inputmode="tel"></label>
+        </div>
+        <div class="duo">
+          <label>E-mail da instituição <input name="email" type="email"></label>
+          <label>Site oficial <input name="site" type="url" placeholder="https://"></label>
+        </div>
+        <label>Onde você encontrou o contato <input name="contactSource" placeholder="Site oficial, indicação..."></label>
+        <label>Como chegou até ela <input name="origin" placeholder="Indicação, pesquisa, visita..."></label>
+        <div class="row"><button class="btn btn-p" type="submit">Salvar e abrir registro</button></div>
+        <p class="muted" id="dupWarn" style="margin-top:8px"></p>
+      </form>
+    </details>
+    <div class="record-list">
+      ${rows.map((i) => {
+        const c = contactability(i);
+        const progress = recordProgress(i);
+        const next = i.meetingAt ? `Reunião: ${fmt(i.meetingAt)}` : i.nextActionAt ? `${i.nextAction || "Próximo contato"}: ${i.nextActionAt}` : "Defina o próximo passo";
+        return `<article class="record-card">
+          <div class="record-head">
+            <div><span class="record-kind">${esc(institutionTypeLabel(i.type))}</span><h3>${esc(i.name)}</h3><p>${esc(i.city || "")} / ${esc(i.state || "")}</p></div>
+            <span class="st ${esc(i.status)}">${esc(pipeLabel(i.status))}</span>
+          </div>
+          <div class="record-progress"><span style="width:${progress}%"></span></div>
+          <div class="record-grid">
+            <p><small>Contato</small><b>${esc(i.contactName || "Ainda não identificado")}</b></p>
+            <p><small>Facilidade de contato</small><b>Prioridade ${c.grade} · ${c.score}/100</b></p>
+            <p class="${i.nextActionAt || i.meetingAt ? "ok-text" : "attention-text"}"><small>Próximo movimento</small><b>${esc(next)}</b></p>
+            <p><small>Última atualização</small><b>${esc(fmt(i.updatedAt))}</b></p>
+          </div>
+          <div class="record-actions">
+            ${i.phone ? `<a class="btn" href="${esc(telLink(i.phone))}">Ligar</a>` : ""}
+            ${i.whatsapp ? `<a class="btn" href="${esc(whatsappLink(i.whatsapp))}" target="_blank" rel="noopener">Abrir WhatsApp</a>` : ""}
+            <button class="btn" data-open="${esc(i.id)}" type="button">Ver e editar</button>
+            <button class="btn btn-p" data-call="${esc(i.id)}" type="button">Abrir ligação</button>
+          </div>
+        </article>`;
+      }).join("") || '<div class="empty">Nenhum contato em andamento. Escolha uma instituição na Lista de instituições.</div>'}
     </div>`;
 }
 
 function renderPipe() {
   const cols = KB.PIPELINE.map((p) => {
-    const items = filtered().filter((i) => i.status === p.id);
+    const items = filtered().filter((i) => i.directoryOnly !== true && !i.partnerIsaac && i.status === p.id);
     return `<div class="col"><h4>${p.label} · ${items.length}</h4>${items.map((i) =>
       `<button class="pill" data-open="${esc(i.id)}" type="button">${esc(i.name)}<br><small class="muted">${esc(i.city || "")}</small></button>`
     ).join("")}</div>`;
   }).join("");
-  return `<p class="kicker">Pipeline</p><h2>Oportunidades</h2><div class="kanban">${cols}</div>`;
+  return `<p class="kicker">ETAPAS</p><h2>Onde está cada conversa</h2><p class="plain-help">As colunas mostram o avanço de cada instituição, do primeiro contato até a reunião.</p><div class="kanban">${cols}</div>`;
 }
 
 function renderFollow() {
   const today = new Date().toISOString().slice(0, 10);
-  const list = filtered().filter((i) => !["parceiro", "perdido"].includes(i.status));
+  const list = filtered().filter((i) => i.directoryOnly !== true && !i.partnerIsaac && !["parceiro", "perdido"].includes(i.status));
   const buckets = [
     ["Reuniões agendadas", list.filter((i) => i.meetingAt && !["realizada","cancelada","no_show"].includes(i.meetingStatus))],
     ["Hoje", list.filter((i) => String(i.nextActionAt || "").slice(0, 10) === today)],
@@ -546,7 +649,7 @@ function renderFollow() {
     ["Próximos", list.filter((i) => i.nextActionAt && String(i.nextActionAt).slice(0, 10) > today)],
     ["Sem próxima ação", list.filter((i) => !i.nextActionAt)]
   ];
-  return `<p class="kicker">Follow-up</p><h2>Agenda</h2>` + buckets.map(([t, rows]) => `
+  return `<p class="kicker">RETORNOS E REUNIÕES</p><h2>Agenda</h2><p class="plain-help">“Retorno” é o dia combinado para falar novamente com a instituição.</p>` + buckets.map(([t, rows]) => `
     <div class="card" style="margin-bottom:10px">
       <h2>${t} · ${rows.length}</h2>
       <div class="list">${rows.map((i) => `
@@ -559,34 +662,105 @@ function renderFollow() {
 }
 
 function renderDirectory() {
-  const rows = filtered().filter((i) => i.directoryOnly === true);
-  return `<p class="kicker">Diretório</p><h2>Instituições pesquisadas</h2>
-    <p class="hint">O Diretório é separado do CRM. Só uma instituição escolhida para prospecção deve virar oportunidade. O mecanismo nacional será alimentado por arquivos oficiais por UF, sem carregar o Brasil inteiro.</p>
-    <div class="list" style="margin-top:12px">${rows.map((i)=>{const c=contactability(i);return `<article class="item"><div class="row" style="justify-content:space-between"><strong>${esc(i.name)}</strong><span class="score">${c.grade} ${c.score}</span></div><p class="muted">${esc(i.city||"")} / ${esc(i.state||"")} · ${esc(c.parts.join(" · ")||"contatos não localizados")}</p><button class="btn" data-open="${esc(i.id)}" type="button">Abrir pesquisa</button></article>`}).join("")||`<div class="empty">Nenhum registro de diretório importado. O CRM e as 56 parceiras permanecem intactos.</div>`}</div>`;
+  const all = filtered().filter((i) => i.directoryOnly === true && !i.partnerIsaac);
+  const cities = [...new Set(all.map((i) => i.city).filter(Boolean))].sort((a,b) => a.localeCompare(b, "pt-BR"));
+  const rows = all.filter((i) =>
+    (directoryTypeFilter === "all" || i.type === directoryTypeFilter) &&
+    (directoryStatusFilter === "all" || (i.directoryStatus || "novo") === directoryStatusFilter) &&
+    (directoryCityFilter === "all" || i.city === directoryCityFilter)
+  );
+  const untouched = all.filter((i) => (i.directoryStatus || "novo") === "novo").length;
+  const schools = all.filter((i) => i.type === "educacao_basica").length;
+  const colleges = all.filter((i) => i.type === "ensino_superior").length;
+  return `
+    <p class="kicker">LISTA DE INSTITUIÇÕES</p>
+    <h2>Escolha, contate e marque o resultado</h2>
+    <p class="plain-help">Esta lista é separada dos contatos em andamento. Escolha uma instituição e toque em “Começar contato” para levá-la ao seu trabalho diário.</p>
+    <div class="directory-summary">
+      <div><b>${all.length}</b><span>verificadas</span></div>
+      <div><b>${schools}</b><span>escolas</span></div>
+      <div><b>${colleges}</b><span>faculdades</span></div>
+      <div><b>${untouched}</b><span>ainda não tentadas</span></div>
+    </div>
+    <div class="directory-toolbar">
+      <div class="segmented">
+        <button type="button" data-dir-type="all" class="${directoryTypeFilter === "all" ? "on" : ""}">Todas</button>
+        <button type="button" data-dir-type="educacao_basica" class="${directoryTypeFilter === "educacao_basica" ? "on" : ""}">Escolas</button>
+        <button type="button" data-dir-type="ensino_superior" class="${directoryTypeFilter === "ensino_superior" ? "on" : ""}">Faculdades</button>
+      </div>
+      <label>Cidade
+        <select id="directoryCity"><option value="all">Todas</option>${cities.map((c)=>`<option value="${esc(c)}" ${directoryCityFilter === c ? "selected" : ""}>${esc(c)}</option>`).join("")}</select>
+      </label>
+      <label>Situação do contato
+        <select id="directoryStatus"><option value="all">Todas</option>${Object.entries(DIRECTORY_STATUS).map(([id,s])=>`<option value="${id}" ${directoryStatusFilter === id ? "selected" : ""}>${esc(s.label)}</option>`).join("")}</select>
+      </label>
+    </div>
+    <p class="result-count">${rows.length} instituições visíveis</p>
+    <div class="directory-list">${rows.map((i) => {
+      const c = contactability(i);
+      const ds = i.directoryStatus || "novo";
+      const done = ds !== "novo";
+      const editing = directoryEditId === i.id;
+      const source = validHttpUrl(i.sourceUrl || i.contactSource);
+      return `<article class="directory-card status-${esc(ds)} ${done ? "done" : ""}">
+        <div class="directory-main">
+          <div class="directory-title">
+            <span class="record-kind">${esc(institutionTypeLabel(i.type))}</span>
+            <h3 class="dir-name">${esc(i.name)}</h3>
+            <p>${esc(i.city || "")} / ${esc(i.state || "")} · prioridade ${esc(i.priority || c.grade)}</p><p class="verified-line">Contato conferido em ${esc(i.verifiedAt ? i.verifiedAt.split("-").reverse().join("/") : "data não informada")} · ${esc(i.sourceLabel || "fonte pública")}</p>
+          </div>
+          <span class="directory-state">${esc(directoryStatusOf(i).short)}</span>
+        </div>
+        <div class="contact-chips">
+          ${i.whatsapp ? `<a href="${esc(whatsappLink(i.whatsapp))}" target="_blank" rel="noopener"><small>WhatsApp</small><b>${esc(i.whatsapp)}</b></a>` : ""}
+          ${i.phone ? `<a href="${esc(telLink(i.phone))}"><small>Telefone</small><b>${esc(i.phone)}</b></a>` : ""}
+          ${i.email ? `<a href="mailto:${esc(i.email)}"><small>E-mail</small><b>${esc(i.email)}</b></a>` : ""}
+          ${i.site ? `<a href="${esc(i.site)}" target="_blank" rel="noopener"><small>Site</small><b>Abrir site oficial</b></a>` : ""}
+        </div>
+        <div class="directory-check">
+          <span>Marque o que aconteceu:</span>
+          ${Object.entries(DIRECTORY_STATUS).map(([id,s])=>`<button type="button" data-dir-status="${id}" data-id="${esc(i.id)}" class="${ds === id ? "on" : ""}">${esc(s.short)}</button>`).join("")}
+        </div>
+        <div class="directory-actions">
+          <button class="btn" data-dir-edit="${esc(i.id)}" type="button">${editing ? "Fechar edição" : "Editar informações"}</button>
+          ${source ? `<a class="btn" href="${esc(source)}" target="_blank" rel="noopener">Ver fonte pública</a>` : ""}
+          <button class="btn btn-p" data-promote="${esc(i.id)}" type="button">Começar contato</button>
+        </div>
+        ${editing ? `<form class="directory-edit" data-directory-form>
+          <input type="hidden" name="id" value="${esc(i.id)}">
+          <div class="duo"><label>Nome <input name="name" value="${esc(i.name || "")}" required></label><label>Cidade <input name="city" value="${esc(i.city || "")}"></label></div>
+          <div class="duo"><label>Tipo <select name="type">${KB.INST_TYPES.map((t)=>`<option value="${t.id}" ${t.id===i.type?"selected":""}>${esc(t.label)}</option>`).join("")}</select></label><label>Estado <input name="state" value="${esc(i.state || "BA")}" maxlength="2"></label></div>
+          <div class="duo"><label>WhatsApp <input name="whatsapp" value="${esc(i.whatsapp || "")}"></label><label>Telefone <input name="phone" value="${esc(i.phone || "")}"></label></div>
+          <div class="duo"><label>E-mail <input name="email" type="email" value="${esc(i.email || "")}"></label><label>Site oficial <input name="site" type="url" value="${esc(i.site || "")}"></label></div>
+          <label>Fonte pública <input name="contactSource" value="${esc(i.contactSource || i.sourceUrl || "")}"></label>
+          <button class="btn btn-ok" type="submit">Salvar alterações</button>
+        </form>` : ""}
+      </article>`;
+    }).join("") || '<div class="empty">Nenhuma instituição combina com os filtros escolhidos.</div>'}</div>`;
 }
 
 function renderReact() {
-  const rows = filtered().filter((i) => !i.partnerIsaac && (i.status === "reativacao" || ["ja_recebeu_contato","conversou_sem_call","nao_compareceu","participou_call","recebeu_proposta","nao_avancou"].includes(i.priorHistory)));
+  const rows = filtered().filter((i) => i.directoryOnly !== true && !i.partnerIsaac && (i.status === "reativacao" || ["ja_recebeu_contato","conversou_sem_call","nao_compareceu","participou_call","recebeu_proposta","nao_avancou"].includes(i.priorHistory)));
   return `<p class="kicker">Reativação</p><h2>Retomar do ponto certo</h2><div class="list">${rows.map((i)=>`<article class="item"><div class="row" style="justify-content:space-between"><strong>${esc(i.name)}</strong><span class="st reativacao">${esc(histLabel(i.priorHistory))}</span></div><p class="muted">Último contato: ${esc(fmt(i.updatedAt))} · tentativas: ${Number(i.attemptCount||0)} · remarcações: ${Number(i.meetingRescheduleCount||0)}</p><p><b>Última objeção:</b> ${esc(i.objection||"—")}</p><p><b>O que interessou:</b> ${esc(i.valueHook||"—")}</p><p><b>Próxima pergunta:</b> ${esc(i.teamQuestion||"O que mudou desde a última conversa?")}</p><div class="row"><button class="btn btn-p" data-call="${esc(i.id)}" type="button">Abrir reativação</button></div></article>`).join("")||`<div class="empty">Nenhuma reativação identificada no histórico atual.</div>`}</div>`;
 }
 
 function renderProof() {
-  return `<p class="kicker">Proof Vault</p><h2>Use somente evidência autorizada</h2><p class="warn">Deck de escolas e deck de ensino superior permanecem separados. Se o status for “revisar”, não trate como promessa.</p><div class="proof-grid" style="margin-top:12px">${KB.PROOF_VAULT.map((p)=>`<article class="proof-card"><span class="${p.status === "aprovado" ? "approved" : "review"}">${esc(p.status.toUpperCase())}</span><h3>${esc(p.claim)}</h3><p>${esc(p.segment)} · ${esc(p.product)}</p><small>Fonte: ${esc(p.source)}</small><small>Usar em: ${esc(p.use)}</small><small><b>Restrição:</b> ${esc(p.restriction)}</small></article>`).join("")}</div>`;
+  return `<p class="kicker">PROVAS E DADOS CONFIRMADOS</p><h2>Informações seguras para usar na conversa</h2><p class="warn">Deck de escolas e deck de ensino superior permanecem separados. Se o status for “revisar”, não trate como promessa.</p><div class="proof-grid" style="margin-top:12px">${KB.PROOF_VAULT.map((p)=>`<article class="proof-card"><span class="${p.status === "aprovado" ? "approved" : "review"}">${esc(p.status.toUpperCase())}</span><h3>${esc(p.claim)}</h3><p>${esc(p.segment)} · ${esc(p.product)}</p><small>Fonte: ${esc(p.source)}</small><small>Usar em: ${esc(p.use)}</small><small><b>Restrição:</b> ${esc(p.restriction)}</small></article>`).join("")}</div>`;
 }
 
 function renderMore() {
   const items = VIEWS.filter(([id]) => !["dash","crm","cockpit","follow","more"].includes(id) && (id !== "access" || session.admin));
-  return `<p class="kicker">Mais</p><h2>Ferramentas da operação</h2><div class="cards">${items.map(([id,label])=>`<button class="card" style="color:inherit;text-align:left" data-view="${id}" type="button"><strong>${esc(label)}</strong><span>Abrir módulo</span></button>`).join("")}</div>`;
+  return `<p class="kicker">MAIS</p><h2>Ferramentas da operação</h2><div class="cards">${items.map(([id,label])=>`<button class="card" style="color:inherit;text-align:left" data-view="${id}" type="button"><strong>${esc(label)}</strong><span>Abrir área</span></button>`).join("")}</div><div class="card glossary"><h3>Palavras do aplicativo</h3><p><b>CRM:</b> organização dos contatos e das conversas.</p><p><b>Etapas:</b> caminho desde o primeiro contato até a reunião.</p><p><b>SDR:</b> pessoa que pesquisa, conversa, identifica interesse e agenda a reunião.</p><p><b>Provas e dados:</b> informações confirmadas que podem ser usadas na conversa.</p><p><b>Retorno:</b> dia marcado para falar novamente.</p><p><b>Prioridade A, B, C ou D:</b> mostra quantas formas de contato foram encontradas. A tem mais informações; D tem menos.</p></div>`;
 }
 
 function renderCockpit() {
   const row = current();
   if (!row) {
-    const recent = filtered().slice(0, 12);
-    return `<p class="kicker">Call cockpit</p><h2>Escolha uma instituição</h2>
+    const recent = filtered().filter((i) => i.directoryOnly !== true && !i.partnerIsaac).slice(0, 12);
+    return `<p class="kicker">ROTEIRO DA LIGAÇÃO</p><h2>Escolha uma instituição</h2>
       <div class="list">${recent.map((i) => `<article class="item"><strong>${esc(i.name)}</strong>
         <span class="st ${esc(i.status)}">${esc(pipeLabel(i.status))}</span>
-        <div class="row"><button class="btn btn-p" data-call="${esc(i.id)}" type="button">Entrar na call</button></div>
+        <div class="row"><button class="btn btn-p" data-call="${esc(i.id)}" type="button">Entrar na ligação</button></div>
       </article>`).join("")}</div>`;
   }
   if (row.partnerIsaac) {
@@ -599,14 +773,14 @@ function renderCockpit() {
   const cscore = contactability(row);
   const obj = KB.OBJECTIONS.find((o) => o.id === row.objectionId);
   return `
-    <div class="call-mode-switch"><button type="button" data-call-mode="fast" class="${callMode === "fast" ? "on" : ""}">Rápido · 2 min</button><button type="button" data-call-mode="complete" class="${callMode === "complete" ? "on" : ""}">Completo</button></div><p class="safe-note">Você não precisa terminar o roteiro. Surgiu interesse, dor clara ou objeção resolvida? Vá direto para o horário.</p><div class="call-topline"><p class="kicker">CALL COCKPIT · ${callMode === "fast" ? "RÁPIDO" : "COMPLETO"} · ${callStep + 1}/${callSteps.length}</p><div class="row"><span class="timer" id="callTimer">${callStartedAt ? formatDuration(Date.now()-callStartedAt) : "00:00"}</span><button class="btn" id="timerToggle" type="button">${callStartedAt ? "Pausar" : "Iniciar"}</button><button class="btn" data-act="attempt" type="button">Registrar tentativa</button><button class="btn btn-ok" data-act="reached" type="button">Responsável alcançado</button></div></div>
+    <div class="call-mode-switch"><button type="button" data-call-mode="fast" class="${callMode === "fast" ? "on" : ""}">Rápido · 2 min</button><button type="button" data-call-mode="complete" class="${callMode === "complete" ? "on" : ""}">Completo</button></div><p class="safe-note">Você não precisa terminar o roteiro. Surgiu interesse, dor clara ou objeção resolvida? Vá direto para o horário.</p><div class="call-topline"><p class="kicker">ROTEIRO DA LIGAÇÃO · ${callMode === "fast" ? "RÁPIDO" : "COMPLETO"} · ${callStep + 1}/${callSteps.length}</p><div class="row"><span class="timer" id="callTimer">${callStartedAt ? formatDuration(Date.now()-callStartedAt) : "00:00"}</span><button class="btn" id="timerToggle" type="button">${callStartedAt ? "Pausar" : "Iniciar"}</button><button class="btn" data-act="attempt" type="button">Registrar tentativa</button><button class="btn btn-ok" data-act="reached" type="button">Responsável alcançado</button></div></div>
     <div class="cols cols-2">
       <div>
         <div class="card">
           <h2>${esc(row.name)}</h2>
           <p class="muted">${esc(row.city || "")} · ${esc((KB.INST_TYPES.find((t) => t.id === row.type) || {}).label || "")} · ${esc(row.contactName || "sem nome")} (${esc(row.role || "—")})</p>
            <p><span class="st ${esc(row.status)}">${esc(pipeLabel(row.status))}</span></p>
-          <p class="safe-note">Contatabilidade ${cscore.grade} · ${cscore.score}/100 · ${esc(cscore.parts.join(" · ") || "dados insuficientes")}</p>
+          <p class="safe-note">Facilidade de contato: prioridade ${cscore.grade} · ${cscore.score}/100 · ${esc(cscore.parts.join(" · ") || "dados insuficientes")}</p>
           <pre class="pre hint" style="margin-top:10px">${esc(preCall(row))}</pre>
           <label>Status
             <select id="stSel">${KB.PIPELINE.map((p) => `<option value="${p.id}" ${p.id === row.status ? "selected" : ""}>${p.label}</option>`).join("")}</select>
@@ -640,7 +814,7 @@ function renderCockpit() {
           <p class="intent"><b>Sinais para observar:</b> ${esc(step.watch)}</p>
           <div class="row">${step.quick.map((q) => `<button class="btn" data-quick="${esc(q)}" type="button">${esc(q)}</button>`).join("")}</div>
           <div class="booking-strip"><div><b>Percebeu abertura?</b><span>Pare o roteiro e marque o horário. O restante dos dados é opcional.</span></div><button class="btn btn-ok" data-act="jumpSchedule" type="button">Agendar agora</button></div>
-          <div class="call-support"><p><b>Apoio interno:</b> se pedirem números/provas, abra o Proof Vault; se perguntarem o que é ou como funciona, abra a Base isaac; se resistirem, use Objeções. Para voltar, toque em Call.</p><div class="row"><button class="btn" data-view="proof" type="button">Abrir Proof Vault</button><button class="btn" data-view="base" type="button">Abrir Base isaac</button><button class="btn" data-view="obj" type="button">Abrir Objeções</button></div></div>
+          <div class="call-support"><p><b>Apoio interno:</b> se pedirem números ou comprovação, abra Provas e dados; se perguntarem o que é ou como funciona, abra Como funciona; se resistirem, use Objeções. Para voltar, toque em Ligação.</p><div class="row"><button class="btn" data-view="proof" type="button">Abrir Provas e dados</button><button class="btn" data-view="base" type="button">Abrir Como funciona</button><button class="btn" data-view="obj" type="button">Abrir Objeções</button></div></div>
           <label>Anotação desta etapa <textarea id="stepNote" placeholder="o que a pessoa disse">${esc((row.answers && row.answers[step.id]) || "")}</textarea></label>
           <div class="row">
             <button class="btn" id="prevStep" type="button">Voltar</button>
@@ -657,7 +831,7 @@ function renderCockpit() {
           <label>Dor principal <input id="pain" value="${esc(row.pain || "")}"></label>
           <label>Interesse <input id="interest" value="${esc(row.interest || "")}"></label>
           <label>Autoridade <input id="authority" value="${esc(row.authority || "")}"></label>
-          <label>Timing <input id="timing" value="${esc(row.timing || "")}"></label>
+          <label>Momento para decidir <input id="timing" value="${esc(row.timing || "")}"></label>
           <label>O que chamou atenção <input id="valueHook" value="${esc(row.valueHook || "")}"></label>
           <label>Notas <textarea id="notes">${esc(row.notes || "")}</textarea></label>
         </div>
@@ -678,7 +852,7 @@ function renderCockpit() {
           <label>Expectativa para a reunião <input id="meetingExpectation" value="${esc(row.meetingExpectation||"")}" placeholder="o que será analisado"></label>
           <label>Dúvida que o time isaac precisa responder <input id="teamQuestion" value="${esc(row.teamQuestion||"")}"></label>
           <div class="anchor-box"><p class="kicker">ÂNCORA DE COMPROMISSO</p><label>Problema reconhecido <input id="commitmentProblem" value="${esc(row.commitmentProblem||row.pain||"")}"></label><label>Impacto percebido <input id="commitmentImpact" value="${esc(row.commitmentImpact||row.impact||"")}"></label><label>Resultado que deseja entender <input id="commitmentDesired" value="${esc(row.commitmentDesired||"")}"></label><label>Principal motivo para participar <input id="commitmentReason" value="${esc(row.commitmentReason||"")}"></label><label>Pergunta que deseja fazer <input id="commitmentQuestion" value="${esc(row.commitmentQuestion||"")}"></label></div>
-          <div class="row"><button class="btn btn-ok" data-act="schedule" type="button">Agendar reunião</button><button class="btn" data-act="copyConfirm" type="button">Copiar WhatsApp</button><button class="btn" data-act="copyEmail" type="button">Copiar email</button><button class="btn" data-act="copyReminder" type="button">Copiar lembrete</button><button class="btn" data-act="reschedule" type="button">Remarcar</button><button class="btn" data-act="ics" type="button">Baixar .ics</button></div>
+          <div class="row"><button class="btn btn-ok" data-act="schedule" type="button">Agendar reunião</button><button class="btn" data-act="copyConfirm" type="button">Copiar WhatsApp</button><button class="btn" data-act="copyEmail" type="button">Copiar email</button><button class="btn" data-act="copyReminder" type="button">Copiar lembrete</button><button class="btn" data-act="reschedule" type="button">Remarcar</button><button class="btn" data-act="ics" type="button">Baixar calendário (.ics)</button></div>
           <p class="safe-note">Nenhum botão envia mensagem. Copiar e baixar são ações locais.</p>
         </div>
         <div class="card" style="margin-top:10px">
@@ -687,16 +861,16 @@ function renderCockpit() {
           <label>Quando <input id="nextActionAt" type="date" value="${esc(String(row.nextActionAt || "").slice(0, 10))}"></label>
           <div class="row">
             <button class="btn" data-act="save" type="button">Salvar ficha</button>
-            <button class="btn btn-ok" data-act="end" type="button">Encerrar call</button>
+            <button class="btn btn-ok" data-act="end" type="button">Encerrar ligação</button>
             <button class="btn btn-p" data-act="fwd" type="button">Encaminhar</button>
             <button class="btn" data-act="copySum" type="button">Copiar resumo</button>
-            <button class="btn" data-act="copyFollow" type="button">Copiar follow-up</button>
-            <button class="btn" data-act="copyTeam" type="button">Copiar p/ time isaac</button>
+            <button class="btn" data-act="copyFollow" type="button">Copiar mensagem de retorno</button>
+            <button class="btn" data-act="copyTeam" type="button">Copiar para o time isaac</button>
             <button class="btn" data-act="ref" type="button">Registrar indicação</button>
-            <button class="btn btn-bad" data-act="nofit" type="button">Não é fit</button>
+            <button class="btn btn-bad" data-act="nofit" type="button">Não se encaixa</button>
           </div>
         </div>
-        <div class="log">${(row.log || []).slice(0, 8).map((l) => `<div>${esc(l.at || "")} · ${esc(l.by || "")} · ${esc(l.action || "")}</div>`).join("")}</div>
+        <div class="activity-log"><h3>Últimos registros</h3>${(row.log || []).slice(0, 8).map((l) => `<div><span></span><p><b>${esc(logActionLabel(l.action))}</b><small>${esc(fmt(l.at))} · ${esc(l.by || "usuário")}</small></p></div>`).join("") || "<p class='muted'>Nenhum registro ainda.</p>"}</div>
       </div>
     </div>`;
 }
@@ -719,7 +893,7 @@ function renderInd() {
 }
 
 function renderPlay() {
-  return `<p class="kicker">Playbook</p><h2>Treino interno</h2>
+  return `<p class="kicker">GUIA</p><h2>Treino interno explicado</h2>
     ${KB.PLAYBOOK.map((p) => `<article class="card" style="margin-bottom:8px"><h2>${esc(p.title)}</h2><p>${esc(p.body)}</p></article>`).join("")}
     <article class="card">
       <h2>Template de WhatsApp (SSA)</h2>
@@ -746,7 +920,7 @@ function renderObj() {
 }
 
 function renderBase() {
-  return `<p class="kicker">Base isaac</p><h2>O que está confirmado nos materiais</h2>
+  return `<p class="kicker">COMO FUNCIONA</p><h2>O que está confirmado nos materiais</h2>
     <div class="hint">${esc(KB.WHAT_ISAAC_IS.oneLiner)} · Fonte: ${esc(KB.WHAT_ISAAC_IS.source)}</div>
     <p style="margin:10px 0">${esc(KB.WHAT_ISAAC_IS.job)}</p>
     <div class="warn">${esc(KB.NUMBER_DIVERGENCE.warning)}</div>
@@ -765,7 +939,7 @@ function renderBase() {
 function renderParc() {
   const rows = inst.filter((i) => i.partnerIsaac);
   return `<p class="kicker">Parceiros</p><h2>Já fechadas em Salvador</h2>
-    <p class="hint">Fonte: ${esc(KB.SOURCES.ssa)} · ${rows.length} no CRM. Não prospectar.</p>
+    <p class="hint">Fonte: ${esc(KB.SOURCES.ssa)} · ${rows.length} registros. Não prospectar.</p>
     <div class="list" style="margin-top:10px">${rows.map((i) => `<div class="item"><strong>${esc(i.name)}</strong> <span class="st parceiro">parceira</span></div>`).join("")}</div>
     ${session.admin ? `<div class="row" style="margin-top:12px"><button class="btn" id="seedBtn" type="button">Reimportar lista SSA (merge)</button></div>` : ""}`;
 }
@@ -779,7 +953,7 @@ function renderEquipe() {
 
 function renderAccess() {
   if (!session.admin) return `<p class="warn">Só super admin libera acesso.</p>`;
-  return `<p class="kicker">Gestão de acessos</p><h2>Quem entra no SDR OS</h2>
+  return `<p class="kicker">GESTÃO DE ACESSOS</p><h2>Quem pode entrar no aplicativo</h2>
     <form id="grant" class="card">
       <label>Gmail <input name="email" type="email" required placeholder="pessoa@gmail.com"></label>
       <label>Função <select name="role"><option value="operator">operator</option><option value="admin">admin</option></select></label>
@@ -878,6 +1052,27 @@ $("btnGoogle").addEventListener("click", googleIn);
 $("btnOut").addEventListener("click", () => signOut(auth));
 
 el.view.addEventListener("click", async (e) => {
+  const dirType = e.target.closest("[data-dir-type]");
+  if (dirType) { directoryTypeFilter = dirType.dataset.dirType || "all"; render(); return; }
+  const dirEdit = e.target.closest("[data-dir-edit]");
+  if (dirEdit) { directoryEditId = directoryEditId === dirEdit.dataset.dirEdit ? null : dirEdit.dataset.dirEdit; render(); return; }
+  const dirStatus = e.target.closest("[data-dir-status]");
+  if (dirStatus) {
+    currentId = dirStatus.dataset.id;
+    const status = dirStatus.dataset.dirStatus;
+    await saveInst({ directoryStatus: status }, "directory_" + status);
+    toast("Lista atualizada: " + directoryStatusOf({ directoryStatus: status }).label + ".");
+    return;
+  }
+  const promote = e.target.closest("[data-promote]");
+  if (promote) {
+    currentId = promote.dataset.promote;
+    await saveInst({ directoryOnly: false, status: "prospect", nextAction: "fazer primeiro contato" }, "directory_promoted");
+    view = "cockpit"; callStep = 0; render();
+    toast("Instituição colocada nos contatos em andamento.");
+    return;
+  }
+
   const open = e.target.closest("[data-open]");
   const call = e.target.closest("[data-call]");
   const v = e.target.closest("[data-view]");
@@ -976,7 +1171,7 @@ el.view.addEventListener("click", async (e) => {
   }
   if (act.dataset.act === "end") {
     await saveInst({ status: fresh.nextActionAt ? "followup" : "contato" }, "end_call");
-    toast("Call encerrada. Resumo pronto para copiar.");
+    toast("Ligação encerrada. Resumo pronto para copiar.");
     return;
   }
   if (act.dataset.act === "fwd") {
@@ -996,6 +1191,8 @@ el.view.addEventListener("click", async (e) => {
 });
 
 el.view.addEventListener("change", async (e) => {
+  if (e.target.id === "directoryCity") { directoryCityFilter = e.target.value; render(); return; }
+  if (e.target.id === "directoryStatus") { directoryStatusFilter = e.target.value; render(); return; }
   if (e.target.id === "objSel") {
     const o = KB.OBJECTIONS.find((x) => x.id === e.target.value);
     await saveInst({ objectionId: e.target.value, objection: o ? o.said : "" }, "objection");
@@ -1011,6 +1208,17 @@ el.view.addEventListener("change", async (e) => {
 
 el.view.addEventListener("submit", async (e) => {
   e.preventDefault();
+  if (e.target.matches("[data-directory-form]")) {
+    const data = Object.fromEntries(new FormData(e.target).entries());
+    currentId = data.id;
+    delete data.id;
+    data.state = String(data.state || "BA").toUpperCase();
+    data.sourceUrl = data.contactSource || "";
+    directoryEditId = null;
+    await saveInst(data, "directory_edit");
+    toast("Informações atualizadas.");
+    return;
+  }
   if (e.target.id === "newInst") {
     const fd = new FormData(e.target);
     const data = Object.fromEntries(fd.entries());
@@ -1068,8 +1276,10 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
     await loadAll();
-    try { await seedPartnersIfNeeded(); }
-    catch (e) { console.warn("seed", e); }
+    try {
+      await seedPartnersIfNeeded();
+      await seedStarterDirectory();
+    } catch (e) { console.warn("seed", e); }
     showApp();
   } catch (e) {
     console.error(e);
