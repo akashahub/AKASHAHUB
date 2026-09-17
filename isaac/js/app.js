@@ -19,14 +19,17 @@ const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 
 const VIEWS = [
-  ["dash", "Painel"],
-  ["crm", "Instituições"],
+  ["dash", "Hoje"],
+  ["directory", "Diretório"],
+  ["crm", "CRM"],
   ["pipe", "Pipeline"],
   ["cockpit", "Call"],
-  ["follow", "Follow-ups"],
+  ["follow", "Agenda"],
+  ["react", "Reativação"],
   ["ind", "Indicações"],
   ["play", "Playbook"],
   ["obj", "Objeções"],
+  ["proof", "Proof Vault"],
   ["base", "Base isaac"],
   ["parc", "Parceiros"],
   ["equipe", "Equipe"],
@@ -49,6 +52,8 @@ let view = "dash";
 let currentId = null;
 let callStep = 0;
 let filterQ = "";
+let callStartedAt = null;
+let callTimerHandle = null;
 
 const $ = (id) => document.getElementById(id);
 const el = {
@@ -92,6 +97,45 @@ function histLabel(id) {
   return (KB.PRIOR_HISTORY.find((p) => p.id === id) || { label: id }).label;
 }
 
+function contactability(row) {
+  const parts = [];
+  let score = 0;
+  if (row.whatsapp) { score += 30; parts.push("WhatsApp +30"); }
+  if (row.phone) { score += 20; parts.push("telefone +20"); }
+  if (row.email) { score += 20; parts.push("email +20"); }
+  if (row.site) { score += 10; parts.push("site +10"); }
+  if (row.contactName || row.role) { score += 10; parts.push("responsável +10"); }
+  if (row.activeConfirmed === true) { score += 10; parts.push("ativa confirmada +10"); }
+  return { score, grade: score >= 80 ? "A" : score >= 55 ? "B" : score >= 30 ? "C" : "D", parts };
+}
+
+function sameLocalDay(value) {
+  if (!value) return false;
+  const d = value.toDate ? value.toDate() : new Date(value);
+  const now = new Date();
+  return !Number.isNaN(d.getTime()) && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+}
+
+function loggedToday(row, actions) {
+  return (row.log || []).some((l) => sameLocalDay(l.at) && actions.includes(l.action));
+}
+
+function validHttpUrl(value) {
+  if (!value) return "";
+  try { const u = new URL(value); return /^https?:$/.test(u.protocol) ? u.href : ""; }
+  catch { return ""; }
+}
+
+function formatDuration(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+}
+
+function updateCallTimer() {
+  const node = $("callTimer");
+  if (node) node.textContent = callStartedAt ? formatDuration(Date.now() - callStartedAt) : "00:00";
+}
+
 function navHtml(target) {
   return VIEWS.filter(([id]) => id !== "access" || session.admin)
     .map(([id, label]) => `<button type="button" data-view="${id}" class="${view === id ? "on" : ""}">${label}</button>`)
@@ -104,7 +148,7 @@ function showApp() {
   el.who.textContent = `${session.name} · ${session.role}`;
   el.nav.innerHTML = navHtml("nav");
   el.bottom.innerHTML = [
-    ["dash", "Painel"], ["crm", "CRM"], ["cockpit", "Call"], ["follow", "Follow"], ["play", "Mais"]
+    ["dash", "Hoje"], ["crm", "CRM"], ["cockpit", "Call"], ["follow", "Agenda"], ["more", "Mais"]
   ].map(([id, l]) => `<button type="button" data-view="${id}" class="${view === id ? "on" : ""}">${l}</button>`).join("");
   render();
 }
@@ -306,7 +350,7 @@ function summaryOf(row) {
     `Instituição: ${row.name}`,
     `Cidade: ${row.city || ""} / ${row.state || ""}`,
     `Pessoa: ${row.contactName || "—"} · ${row.role || "—"}`,
-    `WhatsApp: ${row.whatsapp || row.phone || "—"}`,
+    `Telefone: ${row.phone || "—"} · WhatsApp: ${row.whatsapp || "—"} · Email: ${row.email || "—"}`,
     `Cenário: ${pipeLabel(row.status)}`,
     `Histórico isaac: ${histLabel(row.priorHistory)}`,
     `Dores: ${row.pain || "—"}`,
@@ -315,6 +359,10 @@ function summaryOf(row) {
     `O que chamou atenção: ${row.valueHook || "—"}`,
     `Autoridade: ${row.authority || "—"}`,
     `Timing: ${row.timing || "—"}`,
+    `Reunião: ${row.meetingAt ? fmt(row.meetingAt) : "—"} · ${row.meetingStatus || "—"}`,
+    `Participantes: ${row.meetingParticipants || "—"}`,
+    `Pergunta para o time: ${row.teamQuestion || row.commitmentQuestion || "—"}`,
+    `Razão para participar: ${row.commitmentReason || "—"}`,
     `Próximo passo: ${row.nextAction || "—"} ${row.nextActionAt ? "em " + row.nextActionAt : ""}`,
     `Indicação: ${row.lastReferral || "—"}`,
     `Obs: ${row.notes || "—"}`,
@@ -332,23 +380,59 @@ function teamMsg(row) {
     "Encaminhamento SDR → time isaac",
     summaryOf(row),
     "",
-    "Pedido: conversa de diagnóstico/fechamento. SDR não negociou taxa."
+    `Fontes usadas: ${row.contactSource || row.sourceUrl || "não registradas"}`,
+    "Pedido: conversa de diagnóstico/fechamento. O SDR NÃO negociou taxa, contrato ou aprovação de crédito."
   ].join("\n");
 }
 
+function meetingConfirmMsg(row) {
+  const first = (row.contactName || "Olá").split(" ")[0];
+  return `Olá, ${first}! Confirmando nossa conversa com o time isaac sobre a ${row.name}:\n\n📅 ${row.meetingAt ? fmt(row.meetingAt) : "data a confirmar"}\n🎯 Objetivo: ${row.meetingExpectation || row.pain || "entender o cenário e avaliar aderência"}\n❓ Pergunta principal: ${row.teamQuestion || row.commitmentQuestion || "a definir"}\n${row.meetingLink ? `🔗 ${row.meetingLink}\n` : ""}\nSe surgir algum imprevisto, me avise para remarcarmos. Nenhuma mensagem foi enviada automaticamente por este sistema.`;
+}
+
+function meetingEmail(row) {
+  return `Assunto: Confirmação de diagnóstico — ${row.name}\n\nOlá, ${row.contactName || "responsável"},\n\nConfirmo a conversa com o time isaac em ${row.meetingAt ? fmt(row.meetingAt) : "data a confirmar"}.\n\nObjetivo: ${row.meetingExpectation || row.pain || "analisar o cenário da instituição e verificar aderência"}.\nPergunta que levaremos ao time: ${row.teamQuestion || row.commitmentQuestion || "a definir"}.\nParticipantes: ${row.meetingParticipants || "a confirmar"}.\n${row.meetingLink ? `Link: ${row.meetingLink}\n` : ""}\nCaso haja um imprevisto, podemos remarcar.\n\nAtenciosamente,\n${session.name}`;
+}
+
+function reminderMsg(row) {
+  const first = (row.contactName || "Olá").split(" ")[0];
+  return `Olá, ${first}! Passando para lembrar nossa conversa com o time isaac em ${row.meetingAt ? fmt(row.meetingAt) : "horário combinado"}. Vamos focar em: ${row.teamQuestion || row.commitmentQuestion || row.pain || "seu cenário atual"}. ${row.meetingLink ? `Link: ${row.meetingLink}` : "Se precisar do link, me avise."}`;
+}
+
+function rescheduleMsg(row) {
+  const first = (row.contactName || "Olá").split(" ")[0];
+  return `Olá, ${first}. Vi que não conseguimos realizar nossa conversa. Como o ponto sobre ${row.commitmentProblem || row.pain || "a operação da instituição"} continua relevante, posso reorganizar com o time isaac. Funciona melhor [opção A] ou [opção B]?`;
+}
+
+function downloadIcs(row) {
+  if (!row.meetingAt) return toast("Defina data e horário antes de baixar o convite.");
+  const start = new Date(row.meetingAt);
+  if (Number.isNaN(start.getTime())) return toast("Data da reunião inválida.");
+  const end = new Date(start.getTime() + 30 * 60 * 1000);
+  const stamp = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  const clean = (s) => String(s || "").replace(/[\\,;]/g, " ").replace(/\n/g, "\\n");
+  const body = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ISAAC SDR OS//PT-BR","BEGIN:VEVENT",`UID:${row.id}-${start.getTime()}@akashahub.com.br`,`DTSTAMP:${stamp(new Date())}`,`DTSTART:${stamp(start)}`,`DTEND:${stamp(end)}`,`SUMMARY:${clean(`Diagnóstico isaac — ${row.name}`)}`,`DESCRIPTION:${clean(row.meetingExpectation || row.pain || "Diagnóstico com o time isaac")}`,row.meetingLink ? `LOCATION:${clean(row.meetingLink)}` : "","END:VEVENT","END:VCALENDAR"].filter(Boolean).join("\r\n");
+  const blob = new Blob([body], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = `reuniao-isaac-${norm(row.name).replace(/[^a-z0-9]+/g,"-")}.ics`; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast("Convite .ics baixado. Nada foi enviado.");
+}
+
 function dashStats() {
-  const f = inst;
+  const f = inst.filter((i) => !i.partnerIsaac);
   const count = (st) => f.filter((i) => i.status === st).length;
   const today = new Date().toISOString().slice(0, 10);
   const follows = f.filter((i) => i.nextActionAt);
   return {
     total: f.length,
-    novos: count("prospect"),
-    tentativa: count("tentativa"),
-    contato: count("contato"),
-    interessado: count("interessado"),
-    calls: count("call_agendada"),
-    enc: count("encaminhado"),
+    contatosHoje: f.filter((i) => loggedToday(i, ["attempt", "responsavel_alcancado", "call_step", "status"])).length,
+    alcancados: f.filter((i) => loggedToday(i, ["responsavel_alcancado"])).length,
+    qualificadas: f.filter((i) => ["qualificado","interessado","call_agendada","encaminhado"].includes(i.status) && sameLocalDay(i.updatedAt)).length,
+    calls: f.filter((i) => i.meetingAt && !["cancelada","no_show"].includes(i.meetingStatus)).length,
+    callsHoje: f.filter((i) => sameLocalDay(i.meetingAt) && !["cancelada","no_show"].includes(i.meetingStatus)).length,
+    ganhos: f.filter((i) => i.status === "parceiro").length,
+    remarcacoes: f.reduce((n, i) => n + Number(i.meetingRescheduleCount || 0), 0),
     followToday: follows.filter((i) => String(i.nextActionAt).slice(0, 10) === today).length,
     atrasados: follows.filter((i) => String(i.nextActionAt).slice(0, 10) < today && !["parceiro", "perdido"].includes(i.status)).length,
     parceiros: f.filter((i) => i.partnerIsaac).length,
@@ -358,27 +442,29 @@ function dashStats() {
 
 function renderDash() {
   const s = dashStats();
-  const byOwner = {};
-  inst.forEach((i) => {
-    const k = i.ownerEmail || "(sem dono)";
-    byOwner[k] = (byOwner[k] || 0) + 1;
-  });
+  const eligible = inst.filter((i) => !i.partnerIsaac && !["perdido","parceiro"].includes(i.status));
+  const ranked = (rows) => rows.slice().sort((a,b) => contactability(b).score - contactability(a).score || String(a.nextActionAt || "").localeCompare(String(b.nextActionAt || ""))).slice(0,6);
+  const queues = [
+    ["Ligar agora", ranked(eligible.filter((i) => i.phone)), "phone"],
+    ["WhatsApp agora", ranked(eligible.filter((i) => i.whatsapp)), "whatsapp"],
+    ["E-mail agora", ranked(eligible.filter((i) => i.email)), "email"],
+    ["Reativar agora", ranked(eligible.filter((i) => i.status === "reativacao" || ["conversou_sem_call","nao_compareceu","nao_avancou"].includes(i.priorHistory))), "react"]
+  ];
+  const progress = Math.min(100, Math.round((s.contatosHoje / 15) * 100));
+  const winProgress = Math.min(100, Math.round((s.ganhos / 90) * 100));
   return `
-    <p class="kicker">Dashboard</p>
-    <h2>Operação</h2>
-    <div class="cards">
-      ${[
-        ["Instituições", s.total], ["Parceiras SSA", s.parceiros], ["Prospects", s.novos],
-        ["Tentativas", s.tentativa], ["Contatos", s.contato], ["Interessados", s.interessado],
-        ["Calls agendadas", s.calls], ["Encaminhados", s.enc],
-        ["Follows hoje", s.followToday], ["Atrasados", s.atrasados], ["Sem próxima ação", s.semAcao]
-      ].map(([l, n]) => `<article class="card"><b>${n}</b><span>${l}</span></article>`).join("")}
+    <section class="today-hero">
+      <p class="kicker">HOJE · CENTRAL DE EXECUÇÃO</p>
+      <h1>Abra uma ficha, alcance o responsável e saia com a reunião marcada.</h1>
+      <p>Seu papel é qualificar e preparar a ponte. Taxa, contrato e crédito ficam com o time isaac.</p>
+      <div class="goal-line"><strong>${s.contatosHoje}/15 contatos</strong><div class="progress"><i style="width:${progress}%"></i></div><span>${s.ganhos}/90 ganhos até 31/12</span></div>
+    </section>
+    <div class="metric-grid">
+      ${[["Contatos hoje",s.contatosHoje],["Responsáveis alcançados",s.alcancados],["Conversas qualificadas",s.qualificadas],["Reuniões agendadas",s.calls],["Reuniões hoje",s.callsHoje],["Follow-ups atrasados",s.atrasados],["Remarcações",s.remarcacoes],["Sem próxima ação",s.semAcao]].map(([l,n])=>`<article class="metric"><strong>${n}</strong><span>${l}</span></article>`).join("")}
     </div>
-    <div class="card">
-      <h2>Por responsável interno</h2>
-      <div class="list">${Object.entries(byOwner).map(([k, n]) => `<div class="item">${esc(k)} · ${n}</div>`).join("") || "<p class='muted'>Nada ainda.</p>"}</div>
-    </div>
-    <p class="hint" style="margin-top:12px">Fase 1: Salvador. Parceiras oficiais não entram como lead. Números de produto estão na Base isaac, com fonte.</p>
+    <div class="card" style="margin-bottom:12px"><div class="goal-line"><strong>Progresso da meta de 90</strong><div class="progress"><i style="width:${winProgress}%"></i></div><span>${winProgress}%</span></div></div>
+    <div class="queue-grid">${queues.map(([title,rows,kind])=>`<section class="queue"><div class="queue-head"><h3>${title}</h3><span>${rows.length} prioridade(s)</span></div>${rows.map((i)=>{const c=contactability(i);return `<div class="queue-item"><div><strong>${esc(i.name)}</strong><small>${esc(i.city||"")} · ${c.grade} ${c.score}/100 · ${esc((kind==="phone"?i.phone:kind==="whatsapp"?i.whatsapp:kind==="email"?i.email:histLabel(i.priorHistory))||"")}</small></div><button class="btn" data-call="${esc(i.id)}" type="button">Abrir</button></div>`}).join("")||`<div class="empty">Nenhuma ação disponível com dados reais.</div>`}</section>`).join("")}</div>
+    <p class="safe-note">As filas usam contatos existentes, histórico e score transparente. Parceiras oficiais são sempre excluídas.</p>
   `;
 }
 
@@ -404,7 +490,12 @@ function renderCrm() {
             <label>WhatsApp <input name="whatsapp" inputmode="tel"></label>
             <label>Telefone <input name="phone" inputmode="tel"></label>
           </div>
-          <label>Origem <input name="origin" placeholder=" indicação, mapa, visita..."></label>
+          <div class="duo">
+            <label>Email institucional <input name="email" type="email"></label>
+            <label>Site oficial <input name="site" type="url" placeholder="https://"></label>
+          </div>
+          <label>Fonte pública dos contatos <input name="contactSource" placeholder="site oficial, página de contato..."></label>
+          <label>Origem <input name="origin" placeholder="indicação, mapa, visita..."></label>
           <div class="row"><button class="btn btn-p" type="submit">Cadastrar</button></div>
           <p class="muted" id="dupWarn" style="margin-top:8px"></p>
         </form>
@@ -418,7 +509,7 @@ function renderCrm() {
                 <h3>${esc(i.name)}</h3>
                 <span class="st ${esc(i.status)}">${esc(pipeLabel(i.status))}</span>
               </div>
-              <p class="muted">${esc(i.city || "")} · ${esc(i.contactName || "sem contato")} · ${esc(i.ownerName || i.ownerEmail || "")}</p>
+              ${(()=>{const c=contactability(i);return `<p class="muted">${esc(i.city || "")} · ${esc(i.contactName || "sem contato")} · prioridade ${c.grade} ${c.score}/100</p><p class="safe-note">${esc(c.parts.join(" · ") || "dados insuficientes")}</p>`})()}
               ${i.partnerIsaac ? "<p class='ok'>Já parceira da isaac — não prospectar.</p>" : ""}
               <div class="row">
                 <button class="btn" data-open="${esc(i.id)}" type="button">Abrir</button>
@@ -444,6 +535,7 @@ function renderFollow() {
   const today = new Date().toISOString().slice(0, 10);
   const list = filtered().filter((i) => !["parceiro", "perdido"].includes(i.status));
   const buckets = [
+    ["Reuniões agendadas", list.filter((i) => i.meetingAt && !["realizada","cancelada","no_show"].includes(i.meetingStatus))],
     ["Hoje", list.filter((i) => String(i.nextActionAt || "").slice(0, 10) === today)],
     ["Atrasados", list.filter((i) => i.nextActionAt && String(i.nextActionAt).slice(0, 10) < today)],
     ["Próximos", list.filter((i) => i.nextActionAt && String(i.nextActionAt).slice(0, 10) > today)],
@@ -455,10 +547,31 @@ function renderFollow() {
       <div class="list">${rows.map((i) => `
         <article class="item">
           <strong>${esc(i.name)}</strong>
-          <p class="muted">${esc(i.nextAction || "—")} · ${esc(i.nextActionAt || "")}</p>
+          <p class="muted">${esc(i.meetingAt ? `Reunião · ${fmt(i.meetingAt)} · ${i.meetingStatus || "aguardando confirmação"}` : `${i.nextAction || "—"} · ${i.nextActionAt || ""}`)}</p>
           <button class="btn" data-open="${esc(i.id)}" type="button">Abrir</button>
         </article>`).join("") || "<p class='muted'>Vazio.</p>"}</div>
     </div>`).join("");
+}
+
+function renderDirectory() {
+  const rows = filtered().filter((i) => i.directoryOnly === true);
+  return `<p class="kicker">Diretório</p><h2>Instituições pesquisadas</h2>
+    <p class="hint">O Diretório é separado do CRM. Só uma instituição escolhida para prospecção deve virar oportunidade. O mecanismo nacional será alimentado por arquivos oficiais por UF, sem carregar o Brasil inteiro.</p>
+    <div class="list" style="margin-top:12px">${rows.map((i)=>{const c=contactability(i);return `<article class="item"><div class="row" style="justify-content:space-between"><strong>${esc(i.name)}</strong><span class="score">${c.grade} ${c.score}</span></div><p class="muted">${esc(i.city||"")} / ${esc(i.state||"")} · ${esc(c.parts.join(" · ")||"contatos não localizados")}</p><button class="btn" data-open="${esc(i.id)}" type="button">Abrir pesquisa</button></article>`}).join("")||`<div class="empty">Nenhum registro de diretório importado. O CRM e as 56 parceiras permanecem intactos.</div>`}</div>`;
+}
+
+function renderReact() {
+  const rows = filtered().filter((i) => !i.partnerIsaac && (i.status === "reativacao" || ["ja_recebeu_contato","conversou_sem_call","nao_compareceu","participou_call","recebeu_proposta","nao_avancou"].includes(i.priorHistory)));
+  return `<p class="kicker">Reativação</p><h2>Retomar do ponto certo</h2><div class="list">${rows.map((i)=>`<article class="item"><div class="row" style="justify-content:space-between"><strong>${esc(i.name)}</strong><span class="st reativacao">${esc(histLabel(i.priorHistory))}</span></div><p class="muted">Último contato: ${esc(fmt(i.updatedAt))} · tentativas: ${Number(i.attemptCount||0)} · remarcações: ${Number(i.meetingRescheduleCount||0)}</p><p><b>Última objeção:</b> ${esc(i.objection||"—")}</p><p><b>O que interessou:</b> ${esc(i.valueHook||"—")}</p><p><b>Próxima pergunta:</b> ${esc(i.teamQuestion||"O que mudou desde a última conversa?")}</p><div class="row"><button class="btn btn-p" data-call="${esc(i.id)}" type="button">Abrir reativação</button></div></article>`).join("")||`<div class="empty">Nenhuma reativação identificada no histórico atual.</div>`}</div>`;
+}
+
+function renderProof() {
+  return `<p class="kicker">Proof Vault</p><h2>Use somente evidência autorizada</h2><p class="warn">Deck de escolas e deck de ensino superior permanecem separados. Se o status for “revisar”, não trate como promessa.</p><div class="proof-grid" style="margin-top:12px">${KB.PROOF_VAULT.map((p)=>`<article class="proof-card"><span class="${p.status === "aprovado" ? "approved" : "review"}">${esc(p.status.toUpperCase())}</span><h3>${esc(p.claim)}</h3><p>${esc(p.segment)} · ${esc(p.product)}</p><small>Fonte: ${esc(p.source)}</small><small>Usar em: ${esc(p.use)}</small><small><b>Restrição:</b> ${esc(p.restriction)}</small></article>`).join("")}</div>`;
+}
+
+function renderMore() {
+  const items = VIEWS.filter(([id]) => !["dash","crm","cockpit","follow","more"].includes(id) && (id !== "access" || session.admin));
+  return `<p class="kicker">Mais</p><h2>Ferramentas da operação</h2><div class="cards">${items.map(([id,label])=>`<button class="card" style="color:inherit;text-align:left" data-view="${id}" type="button"><strong>${esc(label)}</strong><span>Abrir módulo</span></button>`).join("")}</div>`;
 }
 
 function renderCockpit() {
@@ -477,15 +590,17 @@ function renderCockpit() {
   }
   const step = KB.CALL_STEPS[Math.min(callStep, KB.CALL_STEPS.length - 1)];
   const sig = signalsOf(row);
+  const cscore = contactability(row);
   const obj = KB.OBJECTIONS.find((o) => o.id === row.objectionId);
   return `
-    <p class="kicker">Call cockpit · ${callStep + 1}/${KB.CALL_STEPS.length}</p>
+    <div class="call-topline"><p class="kicker">CALL COCKPIT · ${callStep + 1}/${KB.CALL_STEPS.length}</p><div class="row"><span class="timer" id="callTimer">${callStartedAt ? formatDuration(Date.now()-callStartedAt) : "00:00"}</span><button class="btn" id="timerToggle" type="button">${callStartedAt ? "Pausar" : "Iniciar"}</button><button class="btn" data-act="attempt" type="button">Registrar tentativa</button><button class="btn btn-ok" data-act="reached" type="button">Responsável alcançado</button></div></div>
     <div class="cols cols-2">
       <div>
         <div class="card">
           <h2>${esc(row.name)}</h2>
           <p class="muted">${esc(row.city || "")} · ${esc((KB.INST_TYPES.find((t) => t.id === row.type) || {}).label || "")} · ${esc(row.contactName || "sem nome")} (${esc(row.role || "—")})</p>
-          <p><span class="st ${esc(row.status)}">${esc(pipeLabel(row.status))}</span></p>
+           <p><span class="st ${esc(row.status)}">${esc(pipeLabel(row.status))}</span></p>
+          <p class="safe-note">Contatabilidade ${cscore.grade} · ${cscore.score}/100 · ${esc(cscore.parts.join(" · ") || "dados insuficientes")}</p>
           <pre class="pre hint" style="margin-top:10px">${esc(preCall(row))}</pre>
           <label>Status
             <select id="stSel">${KB.PIPELINE.map((p) => `<option value="${p.id}" ${p.id === row.status ? "selected" : ""}>${p.label}</option>`).join("")}</select>
@@ -499,18 +614,24 @@ function renderCockpit() {
           </div>
           <div class="duo">
             <label>WhatsApp <input id="cWa" value="${esc(row.whatsapp || "")}"></label>
-            <label>Dono interno
+            <label>Telefone <input id="cPhone" value="${esc(row.phone || "")}"></label>
+          </div>
+          <div class="duo">
+            <label>Email institucional <input id="cEmail" type="email" value="${esc(row.email || "")}"></label>
+            <label>Site oficial <input id="cSite" type="url" value="${esc(row.site || "")}"></label>
+          </div>
+          <label>Fonte pública do contato <input id="contactSource" value="${esc(row.contactSource || row.sourceUrl || "")}" placeholder="URL ou nome da fonte"></label>
+          <label>Dono interno
               <select id="cOwner">${(users.length ? users : [{ email: session.email, name: session.name }]).map((u) => {
                 const em = u.email || u.id;
                 return `<option value="${esc(em)}" ${em === row.ownerEmail ? "selected" : ""}>${esc(u.name || em)}</option>`;
               }).join("")}</select>
             </label>
-          </div>
         </div>
-        <div class="card" style="margin-top:10px">
+        <div class="call-stage" style="margin-top:10px">
           <p class="step">${esc(step.title)} · por que: ${esc(step.why)}</p>
-          <p class="speak">${esc(step.ask)}</p>
-          <p class="muted">${esc(step.watch)}</p>
+          <p class="call-question">${esc(step.ask)}</p>
+          <p class="intent"><b>Sinais para observar:</b> ${esc(step.watch)}</p>
           <div class="row">${step.quick.map((q) => `<button class="btn" data-quick="${esc(q)}" type="button">${esc(q)}</button>`).join("")}</div>
           <label>Anotação desta etapa <textarea id="stepNote" placeholder="o que a pessoa disse">${esc((row.answers && row.answers[step.id]) || "")}</textarea></label>
           <div class="row">
@@ -539,6 +660,18 @@ function renderCockpit() {
             ${KB.OBJECTIONS.map((o) => `<option value="${o.id}" ${row.objectionId === o.id ? "selected" : ""}>${esc(o.said)}</option>`).join("")}
           </select>
           ${obj ? `<p class="hint" style="margin-top:8px"><b>Pode querer dizer:</b> ${esc(obj.means)}<br><b>Pergunte:</b> ${esc(obj.ask)}<br><b>Valor:</b> ${esc(obj.value)}<br><b>Prova:</b> ${esc(obj.proof || "—")}<br><b>Avanço:</b> ${esc(obj.advance)}<br><b>Não insistir:</b> ${esc(obj.stop)}</p>` : ""}
+        </div>
+        <div class="card meeting-box" style="margin-top:10px">
+          <p class="kicker">CONVERSÃO PRINCIPAL</p><h2>Agendar reunião</h2>
+          <div class="duo"><label>Data e horário <input id="meetingAt" type="datetime-local" value="${esc(row.meetingAt ? new Date(new Date(row.meetingAt).getTime()-new Date(row.meetingAt).getTimezoneOffset()*60000).toISOString().slice(0,16) : "")}"></label><label>Fuso horário <select id="meetingTimezone"><option value="America/Bahia" ${(row.meetingTimezone||"America/Bahia") === "America/Bahia" ? "selected" : ""}>Bahia / Brasília</option><option value="Europe/Helsinki" ${row.meetingTimezone === "Europe/Helsinki" ? "selected" : ""}>Helsinque</option></select></label></div>
+          <div class="duo"><label>Status <select id="meetingStatus">${["aguardando_confirmacao","confirmada","realizada","no_show","remarcada","cancelada"].map((s)=>`<option value="${s}" ${s === row.meetingStatus ? "selected" : ""}>${s.replaceAll("_"," ")}</option>`).join("")}</select></label><label>Closer/time isaac <input id="isaacCloser" value="${esc(row.isaacCloser||"")}" placeholder="se conhecido"></label></div>
+          <label>Participantes necessários <input id="meetingParticipants" value="${esc(row.meetingParticipants||"")}" placeholder="responsável, sócio, financeiro..."></label>
+          <label>Link da reunião <input id="meetingLink" type="url" value="${esc(row.meetingLink||"")}" placeholder="somente se fornecido"></label>
+          <label>Expectativa para a reunião <input id="meetingExpectation" value="${esc(row.meetingExpectation||"")}" placeholder="o que será analisado"></label>
+          <label>Dúvida que o time isaac precisa responder <input id="teamQuestion" value="${esc(row.teamQuestion||"")}"></label>
+          <div class="anchor-box"><p class="kicker">ÂNCORA DE COMPROMISSO</p><label>Problema reconhecido <input id="commitmentProblem" value="${esc(row.commitmentProblem||row.pain||"")}"></label><label>Impacto percebido <input id="commitmentImpact" value="${esc(row.commitmentImpact||row.impact||"")}"></label><label>Resultado que deseja entender <input id="commitmentDesired" value="${esc(row.commitmentDesired||"")}"></label><label>Principal motivo para participar <input id="commitmentReason" value="${esc(row.commitmentReason||"")}"></label><label>Pergunta que deseja fazer <input id="commitmentQuestion" value="${esc(row.commitmentQuestion||"")}"></label></div>
+          <div class="row"><button class="btn btn-ok" data-act="schedule" type="button">Agendar reunião</button><button class="btn" data-act="copyConfirm" type="button">Copiar WhatsApp</button><button class="btn" data-act="copyEmail" type="button">Copiar email</button><button class="btn" data-act="copyReminder" type="button">Copiar lembrete</button><button class="btn" data-act="reschedule" type="button">Remarcar</button><button class="btn" data-act="ics" type="button">Baixar .ics</button></div>
+          <p class="safe-note">Nenhum botão envia mensagem. Copiar e baixar são ações locais.</p>
         </div>
         <div class="card" style="margin-top:10px">
           <p class="kicker">Próximo passo</p>
@@ -597,6 +730,7 @@ function renderObj() {
       <p><b>Pergunte:</b> ${esc(o.ask)}</p>
       <p><b>Valor:</b> ${esc(o.value)}</p>
       <p><b>Avanço:</b> ${esc(o.advance)}</p>
+      ${o.phone ? `<p><b>Ligação:</b> ${esc(o.phone)}</p><p><b>WhatsApp:</b> ${esc(o.whatsapp)}</p><p><b>Email:</b> ${esc(o.email)}</p>` : ""}
       <p class="muted">Quando não insistir: ${esc(o.stop)} · ${esc(o.source || "")}</p>
     </article>`).join("")}`;
 }
@@ -656,9 +790,9 @@ function renderAccess() {
 
 function render() {
   const map = {
-    dash: renderDash, crm: renderCrm, pipe: renderPipe, cockpit: renderCockpit,
-    follow: renderFollow, ind: renderInd, play: renderPlay, obj: renderObj,
-    base: renderBase, parc: renderParc, equipe: renderEquipe, access: renderAccess
+    dash: renderDash, directory: renderDirectory, crm: renderCrm, pipe: renderPipe, cockpit: renderCockpit,
+    follow: renderFollow, react: renderReact, ind: renderInd, play: renderPlay, obj: renderObj,
+    proof: renderProof, base: renderBase, parc: renderParc, equipe: renderEquipe, access: renderAccess, more: renderMore
   };
   el.view.innerHTML = (map[view] || renderDash)();
   el.nav.querySelectorAll("[data-view]").forEach((b) => b.classList.toggle("on", b.dataset.view === view));
@@ -682,6 +816,10 @@ async function persistFicha() {
     contactName: $("cName") ? $("cName").value.trim() : row.contactName,
     role: $("cRole") ? $("cRole").value.trim() : row.role,
     whatsapp: $("cWa") ? $("cWa").value.trim() : row.whatsapp,
+    phone: $("cPhone") ? $("cPhone").value.trim() : row.phone,
+    email: $("cEmail") ? $("cEmail").value.trim() : row.email,
+    site: $("cSite") ? validHttpUrl($("cSite").value.trim()) : row.site,
+    contactSource: $("contactSource") ? $("contactSource").value.trim() : row.contactSource,
     ownerEmail,
     ownerName: owner ? (owner.name || ownerEmail) : ownerEmail,
     pain: $("pain") ? $("pain").value.trim() : row.pain,
@@ -695,7 +833,20 @@ async function persistFicha() {
       ? (KB.OBJECTIONS.find((o) => o.id === $("objSel").value) || {}).said
       : row.objection,
     nextAction: $("nextAction") ? $("nextAction").value.trim() : row.nextAction,
-    nextActionAt: $("nextActionAt") ? $("nextActionAt").value : row.nextActionAt
+    nextActionAt: $("nextActionAt") ? $("nextActionAt").value : row.nextActionAt,
+    meetingAt: $("meetingAt") && $("meetingAt").value ? new Date($("meetingAt").value).toISOString() : row.meetingAt,
+    meetingTimezone: $("meetingTimezone") ? $("meetingTimezone").value : row.meetingTimezone,
+    meetingStatus: $("meetingStatus") ? $("meetingStatus").value : row.meetingStatus,
+    isaacCloser: $("isaacCloser") ? $("isaacCloser").value.trim() : row.isaacCloser,
+    meetingParticipants: $("meetingParticipants") ? $("meetingParticipants").value.trim() : row.meetingParticipants,
+    meetingLink: $("meetingLink") ? validHttpUrl($("meetingLink").value.trim()) : row.meetingLink,
+    meetingExpectation: $("meetingExpectation") ? $("meetingExpectation").value.trim() : row.meetingExpectation,
+    teamQuestion: $("teamQuestion") ? $("teamQuestion").value.trim() : row.teamQuestion,
+    commitmentProblem: $("commitmentProblem") ? $("commitmentProblem").value.trim() : row.commitmentProblem,
+    commitmentImpact: $("commitmentImpact") ? $("commitmentImpact").value.trim() : row.commitmentImpact,
+    commitmentDesired: $("commitmentDesired") ? $("commitmentDesired").value.trim() : row.commitmentDesired,
+    commitmentReason: $("commitmentReason") ? $("commitmentReason").value.trim() : row.commitmentReason,
+    commitmentQuestion: $("commitmentQuestion") ? $("commitmentQuestion").value.trim() : row.commitmentQuestion
   }, transferred ? "transfer" : "update");
 }
 
@@ -743,6 +894,14 @@ el.view.addEventListener("click", async (e) => {
     render();
     return;
   }
+  if (e.target.id === "timerToggle") {
+    if (callStartedAt) {
+      clearInterval(callTimerHandle); callTimerHandle = null; callStartedAt = null; e.target.textContent = "Iniciar"; updateCallTimer();
+    } else {
+      callStartedAt = Date.now(); e.target.textContent = "Pausar"; updateCallTimer(); callTimerHandle = setInterval(updateCallTimer, 1000);
+    }
+    return;
+  }
   const qbtn = e.target.closest("[data-quick]");
   if (qbtn) {
     const ta = $("stepNote");
@@ -766,10 +925,31 @@ el.view.addEventListener("click", async (e) => {
   if (!row) return;
   await persistFicha();
   const fresh = current();
+  if (act.dataset.act === "attempt") {
+    await saveInst({ status: fresh.status === "prospect" ? "tentativa" : fresh.status, attemptCount: Number(fresh.attemptCount || 0) + 1 }, "attempt");
+    toast("Tentativa registrada. Nenhuma mensagem foi enviada."); return;
+  }
+  if (act.dataset.act === "reached") {
+    await saveInst({ status: ["prospect","tentativa"].includes(fresh.status) ? "contato" : fresh.status }, "responsavel_alcancado");
+    toast("Responsável alcançado registrado."); return;
+  }
   if (act.dataset.act === "save") { toast("Ficha salva."); return; }
   if (act.dataset.act === "copySum") return copy(summaryOf(fresh));
   if (act.dataset.act === "copyFollow") return copy(followMsg(fresh));
   if (act.dataset.act === "copyTeam") return copy(teamMsg(fresh));
+  if (act.dataset.act === "schedule") {
+    if (!fresh.meetingAt) { toast("Informe data e horário completos."); return; }
+    await saveInst({ status: "call_agendada", meetingStatus: fresh.meetingStatus || "aguardando_confirmacao", nextAction: "confirmar reunião", nextActionAt: String(fresh.meetingAt).slice(0,10) }, "meeting_scheduled");
+    toast("Reunião registrada. Agora copie a confirmação."); return;
+  }
+  if (act.dataset.act === "copyConfirm") return copy(meetingConfirmMsg(fresh));
+  if (act.dataset.act === "copyEmail") return copy(meetingEmail(fresh));
+  if (act.dataset.act === "copyReminder") return copy(reminderMsg(fresh));
+  if (act.dataset.act === "ics") return downloadIcs(fresh);
+  if (act.dataset.act === "reschedule") {
+    await saveInst({ status: "call_agendada", meetingStatus: "remarcada", meetingRescheduleCount: Number(fresh.meetingRescheduleCount || 0) + 1 }, "meeting_rescheduled");
+    return copy(rescheduleMsg(current()));
+  }
   if (act.dataset.act === "end") {
     await saveInst({ status: fresh.nextActionAt ? "followup" : "contato" }, "end_call");
     toast("Call encerrada. Resumo pronto para copiar.");

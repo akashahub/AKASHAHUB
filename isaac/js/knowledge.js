@@ -172,10 +172,14 @@ export const VIDEO_NOTES = [
 ];
 
 export const PIPELINE = [
+  { id: "radar", label: "Radar" },
+  { id: "pesquisado", label: "Pesquisado" },
   { id: "prospect", label: "Prospects" },
   { id: "tentativa", label: "Tentativa de contato" },
   { id: "contato", label: "Contato realizado" },
+  { id: "conversa", label: "Conversa" },
   { id: "diagnostico", label: "Diagnóstico" },
+  { id: "qualificado", label: "Qualificado" },
   { id: "interessado", label: "Interessado" },
   { id: "followup", label: "Follow-up" },
   { id: "call_agendada", label: "Call agendada" },
@@ -443,6 +447,90 @@ export const OBJECTIONS = [
     proof: SOURCES.treino,
     advance: "Essa é exatamente a conversa da call com o isaac. Posso encaminhar?",
     stop: "Não descreva fluxo bancário que você não viu no contrato."
+  },
+  {
+    id: "sem_tempo",
+    said: "Estou sem tempo.",
+    kind: "framework",
+    means: "Pode ser agenda cheia, baixa prioridade ou tentativa educada de encerrar.",
+    ask: "Sem problema. É melhor eu ser breve agora ou reservarmos 20 minutos em outro dia?",
+    value: "Respeitar a agenda e chegar direto ao diagnóstico, sem apresentação longa.",
+    proof: "Framework operacional — nenhuma promessa comercial.",
+    advance: "Tenho [opção A] ou [opção B]. Qual pesa menos na sua agenda?",
+    phone: "Entendo. Prefere dois minutos agora só para ver se há aderência, ou marcamos 20 minutos com o time?",
+    whatsapp: "Se for melhor, organizo dois horários objetivos e você escolhe sem troca longa de mensagens.",
+    email: "Posso sugerir dois horários de 20 minutos para uma avaliação objetiva?",
+    stop: "Se pedir para encerrar ou não houver prioridade, agradeça e agende retorno somente com permissão."
+  },
+  {
+    id: "sociedade",
+    said: "Preciso falar com meu sócio.",
+    kind: "framework",
+    means: "Existe outro decisor ou a pessoa ainda não formou opinião.",
+    ask: "O que seu sócio precisaria entender para decidir se vale a conversa?",
+    value: "Levar os decisores certos para o diagnóstico e evitar informação pela metade.",
+    proof: "Handoff estruturado do SDR.",
+    advance: "Marcamos os dois e deixo a pergunta principal registrada para o time?",
+    phone: "Perfeito. Quem mais precisa estar e qual dúvida precisa ser respondida?",
+    whatsapp: "Posso mandar um resumo curto e marcar um horário em que vocês dois participem.",
+    email: "Sugiro incluir os decisores financeiros para a conversa ser conclusiva.",
+    stop: "Não use o contato para contornar ou pressionar o sócio ausente."
+  },
+  {
+    id: "nao_responsavel",
+    said: "Não sou a pessoa responsável.",
+    kind: "framework",
+    means: "Contato útil para direcionamento, mas não para qualificação final.",
+    ask: "Quem acompanha financeiro, cobrança e previsibilidade por aí?",
+    value: "Chegar ao responsável correto sem forçar pitch para recepção ou secretaria.",
+    proof: "Playbook operacional.",
+    advance: "Você consegue me indicar o nome e o melhor horário para falar com essa pessoa?",
+    phone: "Obrigado. Quem é a pessoa certa e quando costuma estar disponível?",
+    whatsapp: "Pode me indicar o responsável por financeiro/cobrança? Prometo ser objetivo.",
+    email: "Poderia encaminhar ou indicar o responsável por essa área?",
+    stop: "Não pressione por contato pessoal privado; aceite o canal institucional."
+  },
+  {
+    id: "agendou_nao_deu",
+    said: "Já agendamos antes e não deu certo.",
+    kind: "framework",
+    means: "Pode ser no-show, experiência ruim, horário inadequado ou falta de clareza.",
+    ask: "O que impediu a conversa — agenda, formato ou falta de clareza sobre o objetivo?",
+    value: "Corrigir a causa anterior antes de remarcar.",
+    proof: "Histórico registrado e âncora de compromisso.",
+    advance: "Se resolvermos esse ponto e o time já chegar preparado, vale remarcar?",
+    phone: "Quero evitar repetir o erro. O que precisamos mudar desta vez?",
+    whatsapp: "Registro o que aconteceu e remarco só se o novo formato fizer sentido.",
+    email: "Podemos retomar do ponto exato em que parou, sem repetir a apresentação.",
+    stop: "Não remarque sem entender a causa do encontro anterior ter falhado."
+  },
+  {
+    id: "sem_interesse",
+    said: "Não tivemos interesse.",
+    kind: "framework",
+    means: "A proposta pode não ter aderido, o timing pode ter mudado ou a pessoa pode querer encerrar.",
+    ask: "O que especificamente não fez sentido naquela época?",
+    value: "Descobrir se houve mudança real; não repetir pitch.",
+    proof: "Histórico anterior informado pelo responsável.",
+    advance: "Se esse ponto mudou, retomamos; se não mudou, eu encerro por aqui.",
+    phone: "O que não aderiu: solução, timing, investimento ou prioridade?",
+    whatsapp: "Só retomo se algo tiver mudado; qual foi a trava principal?",
+    email: "Para não insistir sem sentido, poderia indicar o principal motivo da decisão anterior?",
+    stop: "Diante de recusa clara ou pedido para não contatar, marque perdido e pare."
+  },
+  {
+    id: "outra_reuniao",
+    said: "Não quero outra reunião comercial.",
+    kind: "framework",
+    means: "Cansaço de pitches, baixa confiança ou falta de valor percebido.",
+    ask: "O que faria essa conversa ser útil em vez de só mais uma apresentação?",
+    value: "Diagnóstico breve focado no cenário da instituição, sem negociação pelo SDR.",
+    proof: "Agenda e handoff registram dores e perguntas antes da reunião.",
+    advance: "Se o time entrar já respondendo sua pergunta principal, vale 20 minutos?",
+    phone: "Não quero te colocar em apresentação genérica. Qual resposta justificaria a conversa?",
+    whatsapp: "A conversa só é marcada se houver uma pergunta real para o time responder.",
+    email: "O encontro será preparado a partir do contexto registrado, não uma apresentação genérica.",
+    stop: "Se não existir pergunta, problema ou curiosidade real, não agende."
   }
 ];
 
@@ -454,6 +542,14 @@ export const CALL_STEPS = [
     ask: "Posso falar 2 minutos com quem acompanha o financeiro da instituição?",
     watch: "Se cair na secretaria, peça o nome e o melhor horário do mantenedor/diretor. Não faça pitch longo para quem não decide.",
     quick: ["Falei com decisor", "Falei com secretaria", "Não atendeu", "Pediu para ligar depois"]
+  },
+  {
+    id: "permissao",
+    title: "Permissão e rapport",
+    why: "Ganhar atenção sem prender a pessoa.",
+    ask: "Peguei você num momento possível para dois minutos, ou prefere que eu ligue em outro horário?",
+    watch: "Tom calmo. Se estiver ocupado, marque horário. Não acelere o pitch.",
+    quick: ["Pode falar", "Só 2 minutos", "Ligar depois", "Sem disponibilidade"]
   },
   {
     id: "contexto",
@@ -496,6 +592,14 @@ export const CALL_STEPS = [
     quick: ["Quebra caixa", "Quebra tempo", "Quebra relação com família", "Impacto baixo"]
   },
   {
+    id: "timing_prioridade",
+    title: "Prioridade e timing",
+    why: "Entender se o problema merece ação agora.",
+    ask: "Isso é algo que vocês querem resolver neste semestre ou ficou para depois de algum marco?",
+    watch: "Registre evento, prazo e prioridade nas palavras do responsável.",
+    quick: ["Agora", "Neste semestre", "Após rematrícula", "Sem prioridade"]
+  },
+  {
     id: "valor",
     title: "Valor",
     why: "Ligar a dor ao que o material realmente entrega.",
@@ -520,6 +624,38 @@ export const CALL_STEPS = [
     quick: ["Sim, encaminhar", "Talvez, follow-up", "Não"]
   },
   {
+    id: "ponte",
+    title: "Ponte para o time isaac",
+    why: "Explicar a reunião antes de pedir agenda.",
+    ask: "O time pode analisar esse cenário com você, responder [dúvida] e verificar aderência sem eu negociar taxa ou contrato. Isso seria útil?",
+    watch: "O responsável precisa saber o que será analisado e por que vale participar.",
+    quick: ["Entendeu o objetivo", "Quer tirar dúvida", "Quer incluir sócio", "Ainda sem valor"]
+  },
+  {
+    id: "agendamento",
+    title: "Agendamento",
+    why: "Sair com data, hora e participantes.",
+    ask: "Funciona melhor [opção A] ou [opção B]? Quem mais precisa participar?",
+    watch: "Preencha o bloco Agendar reunião. Data sem horário não é reunião agendada.",
+    quick: ["Data e hora definidas", "Aguardando confirmação", "Precisa consultar agenda", "Remarcar"]
+  },
+  {
+    id: "compromisso",
+    title: "Confirmação do compromisso",
+    why: "Proteger comparecimento com valor real, não pressão.",
+    ask: "Qual é a principal pergunta que você quer sair dessa reunião tendo respondida?",
+    watch: "Registre problema, impacto, resultado desejado, motivo e pergunta.",
+    quick: ["Pergunta registrada", "Problema reconhecido", "Motivo claro", "Compromisso fraco"]
+  },
+  {
+    id: "handoff",
+    title: "Handoff",
+    why: "Entregar contexto e encerrar com clareza.",
+    ask: "Perfeito. Vou encaminhar este contexto ao time para vocês não começarem do zero. Posso confirmar seu melhor contato?",
+    watch: "Confirme contatos, participantes e horário. Gere o resumo; não negocie taxa, contrato ou crédito.",
+    quick: ["Contato confirmado", "Participantes confirmados", "Resumo pronto", "Encaminhado"]
+  },
+  {
     id: "proximo",
     title: "Próximo passo",
     why: "Nada de 'depois a gente se fala'.",
@@ -535,6 +671,14 @@ export const CALL_STEPS = [
     watch: "Só depois de conversa positiva. Sem percentual na boca.",
     quick: ["Indicou", "Não indicou", "Pediu para não perguntar"]
   }
+];
+
+export const PROOF_VAULT = [
+  { id:"repasse", claim:"100% das mensalidades na data combinada", segment:"Educação básica", product:"Receita", source:SOURCES.treino, status:"aprovado", use:"Previsibilidade e repasse", restriction:"Condições comerciais e análise ficam com o time isaac." },
+  { id:"familias", claim:"App para famílias com pix, boleto, cartão, negociação, faturas e comprovantes", segment:"Educação básica", product:"App das famílias", source:SOURCES.treino, status:"aprovado", use:"Experiência das famílias e operação de cobrança", restriction:"Não prometer integração não documentada." },
+  { id:"escolas", claim:"+1.900 escolas parceiras e +650 mil alunos impactados", segment:"Educação básica", product:"Institucional", source:SOURCES.treino, status:"aprovado", use:"Prova institucional para escolas", restriction:"Não somar com números do deck superior." },
+  { id:"superior", claim:"+2.800 instituições parceiras, 97% de retenção e NPS 89", segment:"Ensino superior", product:"Institucional", source:SOURCES.superior, status:"aprovado", use:"Somente em conversa de ensino superior", restriction:"Não usar em escola básica nem fundir com outro deck." },
+  { id:"credito", claim:"Crédito e antecipação existem no ecossistema", segment:"Educação básica", product:"Crédito", source:SOURCES.treino, status:"revisar", use:"Somente como possibilidade a ser avaliada", restriction:"Sujeito a aprovação; SDR não promete crédito nem taxa." }
 ];
 
 export const PLAYBOOK = [
