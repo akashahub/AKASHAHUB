@@ -63,6 +63,7 @@ let callTimerHandle = null;
 let callPanelOpen = false;
 let callPanelMinimized = false;
 let callPanelExpanded = false;
+let callPanelLocked = window.matchMedia("(max-width:720px)").matches ? localStorage.getItem("isaacCallPanelMobileMode") !== "free" : false;
 
 const $ = (id) => document.getElementById(id);
 const el = {
@@ -1020,17 +1021,18 @@ function renderFloatingCallPanel() {
   const step = steps[Math.min(callStep, steps.length - 1)];
   const answer = (row.answers && row.answers[step.id]) || "";
   const likelyObjections = (step.objectionIds || []).map((id) => KB.OBJECTIONS.find((o) => o.id === id)).filter(Boolean);
-  return `<aside id="callFloat" class="call-float ${callPanelMinimized ? "is-minimized" : ""} ${callPanelExpanded ? "is-expanded" : ""}" aria-label="Roteiro flutuante da ligação">
+  return `<aside id="callFloat" class="call-float ${callPanelMinimized ? "is-minimized" : ""} ${callPanelExpanded ? "is-expanded" : ""} ${callPanelLocked ? "is-locked" : "is-free"}" aria-label="Roteiro flutuante da ligação">
     <header class="call-float-head" id="callFloatDrag">
       <div><small>ROTEIRO ATIVO · ${callMode === "fast" ? "RÁPIDO" : "COMPLETO"}</small><b>${esc(row.name)}</b></div>
       <div class="call-float-window">
+        <button type="button" id="callFloatLock" title="${callPanelLocked ? "Liberar para mover" : "Travar posição"}">${callPanelLocked ? "🔒" : "🔓"}</button>
         <button type="button" id="callFloatMin" title="Minimizar">${callPanelMinimized ? "▢" : "—"}</button>
         <button type="button" id="callFloatExpand" title="Expandir ou restaurar">${callPanelExpanded ? "↙" : "↗"}</button>
         <button type="button" id="callFloatClose" title="Fechar">×</button>
       </div>
     </header>
     <div class="call-float-body">
-      <div class="call-float-progress"><span>Etapa ${callStep + 1} de ${steps.length}</span><span>Arraste pelo topo · redimensione pela margem</span></div>
+      <div class="call-float-progress"><span>Etapa ${callStep + 1} de ${steps.length}</span><span>${callPanelLocked ? "Posição travada · toque no cadeado para liberar" : "Arraste pelo topo · redimensione pelo canto"}</span></div>
       <h3>${esc(step.title)}</h3>
       <p class="call-float-question">${esc(callStepAsk(step, row))}</p>
       <p class="call-float-watch"><b>Observe:</b> ${esc(step.watch)}</p>
@@ -1049,6 +1051,7 @@ function renderFloatingCallPanel() {
         <button class="btn" data-view="cockpit" type="button">Ligação completa</button>
       </div>
     </div>
+    <button type="button" id="callFloatResize" class="call-float-resize" title="Arraste para mudar o tamanho" aria-label="Redimensionar roteiro">↘</button>
   </aside>`;
 }
 
@@ -1066,42 +1069,61 @@ async function saveStepAnswer(textareaId) {
 function setupFloatingCallPanel() {
   const panel = document.getElementById("callFloat");
   const head = document.getElementById("callFloatDrag");
-  if (!panel || !head || window.matchMedia("(max-width:720px)").matches || callPanelExpanded || callPanelMinimized) return;
+  const resizeHandle = document.getElementById("callFloatResize");
+  if (!panel || !head || callPanelExpanded || callPanelMinimized || callPanelLocked) return;
+  const mobile = window.matchMedia("(max-width:720px)").matches;
+  const storageKey = mobile ? "isaacCallPanelBoxMobile" : "isaacCallPanelBox";
+  const setBoxStyle = (name, value) => panel.style.setProperty(name, value, mobile ? "important" : "");
   try {
-    const saved = JSON.parse(localStorage.getItem("isaacCallPanelBox") || "null");
-    if (saved) {
-      panel.style.left = Math.max(8, Math.min(saved.left, window.innerWidth - 280)) + "px";
-      panel.style.top = Math.max(8, Math.min(saved.top, window.innerHeight - 120)) + "px";
-      panel.style.width = Math.max(340, Math.min(saved.width, window.innerWidth - 16)) + "px";
-      panel.style.height = Math.max(280, Math.min(saved.height, window.innerHeight - 16)) + "px";
-      panel.style.right = "auto";
-      panel.style.bottom = "auto";
+    const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
+    const box = saved || (mobile ? {
+      left: 12, top: Math.max(70, Math.round(window.innerHeight * .24)),
+      width: window.innerWidth - 24, height: Math.round(window.innerHeight * .58)
+    } : null);
+    if (box) {
+      const minWidth = mobile ? 270 : 340;
+      const minHeight = mobile ? 220 : 280;
+      setBoxStyle("left", Math.max(8, Math.min(box.left, window.innerWidth - minWidth - 8)) + "px");
+      setBoxStyle("top", Math.max(8, Math.min(box.top, window.innerHeight - minHeight - 8)) + "px");
+      setBoxStyle("width", Math.max(minWidth, Math.min(box.width, window.innerWidth - 16)) + "px");
+      setBoxStyle("height", Math.max(minHeight, Math.min(box.height, window.innerHeight - 16)) + "px");
+      setBoxStyle("right", "auto");
+      setBoxStyle("bottom", "auto");
     }
   } catch {}
   const saveBox = () => {
     const r = panel.getBoundingClientRect();
-    localStorage.setItem("isaacCallPanelBox", JSON.stringify({ left: r.left, top: r.top, width: r.width, height: r.height }));
+    localStorage.setItem(storageKey, JSON.stringify({ left:r.left, top:r.top, width:r.width, height:r.height }));
   };
-  if (window.ResizeObserver) new ResizeObserver(saveBox).observe(panel);
-  head.addEventListener("pointerdown", (event) => {
-    if (event.target.closest("button")) return;
+  if (window.ResizeObserver && !mobile) new ResizeObserver(saveBox).observe(panel);
+  const beginPointerOperation = (event, mode) => {
+    if (mode === "move" && event.target.closest("button")) return;
     event.preventDefault();
     const r = panel.getBoundingClientRect();
     const startX = event.clientX, startY = event.clientY;
     const move = (ev) => {
-      panel.style.left = Math.max(8, Math.min(r.left + ev.clientX - startX, window.innerWidth - panel.offsetWidth - 8)) + "px";
-      panel.style.top = Math.max(8, Math.min(r.top + ev.clientY - startY, window.innerHeight - panel.offsetHeight - 8)) + "px";
-      panel.style.right = "auto";
-      panel.style.bottom = "auto";
+      if (mode === "move") {
+        setBoxStyle("left", Math.max(8, Math.min(r.left + ev.clientX - startX, window.innerWidth - panel.offsetWidth - 8)) + "px");
+        setBoxStyle("top", Math.max(8, Math.min(r.top + ev.clientY - startY, window.innerHeight - panel.offsetHeight - 8)) + "px");
+        setBoxStyle("right", "auto"); setBoxStyle("bottom", "auto");
+      } else {
+        const minWidth = mobile ? 270 : 340, minHeight = mobile ? 220 : 280;
+        setBoxStyle("width", Math.max(minWidth, Math.min(r.width + ev.clientX - startX, window.innerWidth - r.left - 8)) + "px");
+        setBoxStyle("height", Math.max(minHeight, Math.min(r.height + ev.clientY - startY, window.innerHeight - r.top - 8)) + "px");
+      }
     };
     const up = () => {
       document.removeEventListener("pointermove", move);
       document.removeEventListener("pointerup", up);
+      document.removeEventListener("pointercancel", up);
       saveBox();
     };
     document.addEventListener("pointermove", move);
     document.addEventListener("pointerup", up);
-  });
+    document.addEventListener("pointercancel", up);
+  };
+  head.addEventListener("pointerdown", (event) => beginPointerOperation(event, "move"));
+  resizeHandle?.addEventListener("pointerdown", (event) => beginPointerOperation(event, "resize"));
 }
 
 function render() {
@@ -1187,6 +1209,17 @@ $("btnOut").addEventListener("click", () => signOut(auth));
 el.view.addEventListener("click", async (e) => {
   if (e.target.id === "openCallPanel") {
     callPanelOpen = true; callPanelMinimized = false; render(); return;
+  }
+  if (e.target.id === "callFloatLock") {
+    callPanelLocked = !callPanelLocked;
+    if (window.matchMedia("(max-width:720px)").matches) {
+      localStorage.setItem("isaacCallPanelMobileMode", callPanelLocked ? "locked" : "free");
+    }
+    callPanelExpanded = false;
+    callPanelMinimized = false;
+    render();
+    toast(callPanelLocked ? "Roteiro travado na tela." : "Roteiro livre: arraste pelo topo e pelo canto.");
+    return;
   }
   if (e.target.id === "callFloatClose") {
     callPanelOpen = false; render(); return;
