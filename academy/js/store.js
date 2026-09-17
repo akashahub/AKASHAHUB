@@ -1,17 +1,22 @@
-/** Store — one state tree, two adapters. UI never talks to Firestore. */
-const KEY = 'academy-os.v02';
+/** Store — profile + grants. UI never talks to Firestore. */
+const KEY = 'academy-os.v03';
 
 function blank() {
   return {
     tenantId: 'fluir',
+    signed: false,
     role: null,
+    workspace: null,
     unitId: 'pituba',
     name: '',
     email: '',
     uid: '',
+    job: 'recepcao',
+    alunoTrack: 'pilates',
     done: {},
     attend: {},
     dreUrl: '',
+    grants: {},
     cloud: 'local'
   };
 }
@@ -40,10 +45,6 @@ export function createStore(opts) {
 
   return {
     get: function () { return state; },
-    on: function (fn) { listeners.push(fn); return function () {
-      const i = listeners.indexOf(fn);
-      if (i >= 0) listeners.splice(i, 1);
-    }; },
     patch: function (partial) {
       state = Object.assign({}, state, partial);
       emit();
@@ -60,8 +61,20 @@ export function createStore(opts) {
       state = Object.assign({}, state, { attend: attend });
       emit();
     },
-    resetRole: function () {
-      state = Object.assign({}, state, { role: null });
+    setGrant: function (email, grant) {
+      const grants = Object.assign({}, state.grants);
+      grants[String(email || '').trim().toLowerCase()] = grant;
+      state = Object.assign({}, state, { grants: grants });
+      emit();
+    },
+    removeGrant: function (email) {
+      const grants = Object.assign({}, state.grants);
+      delete grants[String(email || '').trim().toLowerCase()];
+      state = Object.assign({}, state, { grants: grants });
+      emit();
+    },
+    signOut: function () {
+      state = Object.assign({}, state, { signed: false, workspace: null, role: null });
       emit();
     }
   };
@@ -73,12 +86,15 @@ export async function persistFirestore(db, state) {
     await db.collection('academy_profiles').doc(state.uid).set({
       tenantId: state.tenantId,
       role: state.role,
+      workspace: state.workspace,
       unitId: state.unitId,
       name: state.name,
       email: state.email,
+      job: state.job,
       done: state.done,
       attend: state.attend,
       dreUrl: state.dreUrl,
+      grants: state.grants,
       at: new Date().toISOString()
     }, { merge: true });
     return 'ok';
