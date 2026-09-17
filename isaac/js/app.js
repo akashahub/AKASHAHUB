@@ -681,6 +681,7 @@ function renderDirectory() {
     <p class="plain-help">Esta lista é separada dos contatos em andamento. Escolha uma instituição e toque em “Começar contato” para levá-la ao seu trabalho diário. As que têm mais telefone, WhatsApp e e-mail aparecem primeiro.</p>
     ${directoryLoadError ? `<div class="warn"><b>A lista não carregou:</b> ${esc(directoryLoadError)}. Toque em “Carregar/atualizar lista” ou peça para conferir as regras do banco.</div>` : ""}
     <div class="row" style="margin:12px 0"><button class="btn btn-p" id="seedDirectoryBtn" type="button">Carregar/atualizar lista</button><span class="muted">Não apaga nem muda os contatos que você já trabalhou.</span></div>
+    <details class="card" style="margin-bottom:12px"><summary><b>Adicionar escola ou faculdade manualmente</b></summary><form id="newDirectory" style="margin-top:12px"><div class="duo"><label>Nome da instituição <input name="name" required></label><label>Cidade <input name="city" required></label></div><div class="duo"><label>Estado <input name="state" maxlength="2" placeholder="BA" required></label><label>Tipo <select name="type">${KB.INST_TYPES.map((t)=>`<option value="${t.id}">${esc(t.label)}</option>`).join("")}</select></label></div><div class="duo"><label>WhatsApp <input name="whatsapp"></label><label>Telefone <input name="phone"></label></div><div class="duo"><label>E-mail <input name="email" type="email"></label><label>Site oficial <input name="site" type="url"></label></div><label>Fonte pública dos dados <input name="contactSource" placeholder="Link do site ou nome da fonte"></label><button class="btn btn-ok" type="submit">Adicionar à lista</button><p class="muted">Você pode preencher só nome, cidade, estado e tipo. Complete os contatos depois em “Editar informações”.</p></form></details>
     <div class="directory-summary">
       <div><b>${all.length}</b><span>verificadas</span></div>
       <div><b>${schools}</b><span>escolas</span></div>
@@ -1240,6 +1241,24 @@ el.view.addEventListener("submit", async (e) => {
     directoryEditId = null;
     await saveInst(data, "directory_edit");
     toast("Informações atualizadas.");
+    return;
+  }
+  if (e.target.id === "newDirectory") {
+    const data = Object.fromEntries(new FormData(e.target).entries());
+    data.state = String(data.state || "").toUpperCase();
+    data.directoryOnly = true;
+    data.directoryStatus = "novo";
+    data.sourceUrl = data.contactSource || data.site || "";
+    data.sourceLabel = data.contactSource ? "fonte informada no cadastro manual" : "cadastro manual; contato a conferir";
+    const res = await createInst(data);
+    if (res.dup) {
+      currentId = res.dup.id;
+      toast("Essa instituição já está cadastrada.");
+    } else {
+      toast("Instituição adicionada à lista.");
+    }
+    view = "directory";
+    render();
     return;
   }
   if (e.target.id === "newInst") {
