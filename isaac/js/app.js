@@ -1016,7 +1016,7 @@ function renderFloatingCallPanel() {
       <h3>${esc(step.title)}</h3>
       <p class="call-float-question">${esc(step.ask)}</p>
       <p class="call-float-watch"><b>Observe:</b> ${esc(step.watch)}</p>
-      <div class="row">${step.quick.map((q) => `<button class="btn" data-float-quick="${esc(q)}" type="button">${esc(q)}</button>`).join("")}</div>
+      <div class="row">${step.quick.map((q) => `<button class="btn ${String(answer).split(" · ").includes(q) ? "is-picked" : ""}" data-float-quick="${esc(q)}" type="button">${esc(q)}</button>`).join("")}</div>
       <label>O que a pessoa respondeu<textarea id="floatStepNote" placeholder="Anote aqui sem perder o roteiro">${esc(answer)}</textarea></label>
       <div class="call-float-nav">
         <button class="btn" id="floatPrev" type="button">Voltar</button>
@@ -1181,7 +1181,14 @@ el.view.addEventListener("click", async (e) => {
   const floatQuick = e.target.closest("[data-float-quick]");
   if (floatQuick) {
     const ta = document.getElementById("floatStepNote");
-    if (ta) ta.value = (ta.value ? ta.value + " · " : "") + floatQuick.dataset.floatQuick;
+    const choice = floatQuick.dataset.floatQuick;
+    if (ta) {
+      const parts = ta.value.split(" · ").map((part) => part.trim()).filter(Boolean);
+      if (!parts.includes(choice)) parts.push(choice);
+      ta.value = parts.join(" · ");
+      await saveStepAnswer("floatStepNote");
+      toast("Registrado: " + choice);
+    }
     return;
   }
   if (e.target.id === "floatPrev") {
