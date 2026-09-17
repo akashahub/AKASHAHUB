@@ -10,7 +10,7 @@ import {
   firebaseConfig, SUPER_ADMINS, COL_ACCESS, COL_INST, COL_REF,
   emailKey, isSuperAdmin
 } from "./config.js";
-import * as KB from "./knowledge.js";
+import * as KB from "./knowledge.js?v=20260917d";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -56,6 +56,7 @@ let directoryTypeFilter = "all";
 let directoryStatusFilter = "all";
 let directoryCityFilter = "all";
 let directoryEditId = null;
+let directoryLoadError = "";
 let filterQ = "";
 let callStartedAt = null;
 let callTimerHandle = null;
@@ -316,9 +317,10 @@ async function seedPartnersIfNeeded() {
 }
 
 async function seedStarterDirectory() {
+  directoryLoadError = "";
   const existing = new Set(inst.map((i) => slugInst(i.name, i.city)));
   const missing = KB.PROSPECT_STARTER.filter((item) => !existing.has(slugInst(item.name, item.city)));
-  if (!missing.length) return;
+  if (!missing.length) return 0;
   const batch = writeBatch(db);
   const at = nowIso();
   missing.forEach((item) => {
@@ -327,7 +329,7 @@ async function seedStarterDirectory() {
       ...item,
       id,
       country: "Brasil",
-      region: "Nordeste",
+      region: item.region || ({ BA: "Nordeste", SP: "Sudeste", RJ: "Sudeste", DF: "Centro-Oeste", SC: "Sul", RS: "Sul", AM: "Norte" }[item.state] || ""),
       status: "prospect",
       directoryStatus: "novo",
       directoryOnly: true,
@@ -343,7 +345,8 @@ async function seedStarterDirectory() {
   });
   await batch.commit();
   await loadAll();
-  toast(missing.length + " instituições verificadas adicionadas à lista.");
+  toast(missing.length + " instituições adicionadas à lista.");
+  return missing.length;
 }
 
 function findDup(name, city, exceptId) {
@@ -668,14 +671,16 @@ function renderDirectory() {
     (directoryTypeFilter === "all" || i.type === directoryTypeFilter) &&
     (directoryStatusFilter === "all" || (i.directoryStatus || "novo") === directoryStatusFilter) &&
     (directoryCityFilter === "all" || i.city === directoryCityFilter)
-  );
+  ).sort((a, b) => contactability(b).score - contactability(a).score || String(a.name).localeCompare(String(b.name), "pt-BR"));
   const untouched = all.filter((i) => (i.directoryStatus || "novo") === "novo").length;
   const schools = all.filter((i) => i.type === "educacao_basica").length;
   const colleges = all.filter((i) => i.type === "ensino_superior").length;
   return `
     <p class="kicker">LISTA DE INSTITUIÇÕES</p>
     <h2>Escolha, contate e marque o resultado</h2>
-    <p class="plain-help">Esta lista é separada dos contatos em andamento. Escolha uma instituição e toque em “Começar contato” para levá-la ao seu trabalho diário.</p>
+    <p class="plain-help">Esta lista é separada dos contatos em andamento. Escolha uma instituição e toque em “Começar contato” para levá-la ao seu trabalho diário. As que têm mais telefone, WhatsApp e e-mail aparecem primeiro.</p>
+    ${directoryLoadError ? `<div class="warn"><b>A lista não carregou:</b> ${esc(directoryLoadError)}. Toque em “Carregar/atualizar lista” ou peça para conferir as regras do banco.</div>` : ""}
+    <div class="row" style="margin:12px 0"><button class="btn btn-p" id="seedDirectoryBtn" type="button">Carregar/atualizar lista</button><span class="muted">Não apaga nem muda os contatos que você já trabalhou.</span></div>
     <div class="directory-summary">
       <div><b>${all.length}</b><span>verificadas</span></div>
       <div><b>${schools}</b><span>escolas</span></div>
@@ -1052,6 +1057,24 @@ $("btnGoogle").addEventListener("click", googleIn);
 $("btnOut").addEventListener("click", () => signOut(auth));
 
 el.view.addEventListener("click", async (e) => {
+  if (e.target.id === "seedDirectoryBtn") {
+    const btn = e.target;
+    btn.disabled = true;
+    btn.textContent = "Carregando…";
+    try {
+      const added = await seedStarterDirectory();
+      await loadAll();
+      directoryLoadError = "";
+      render();
+      toast(added ? added + " instituições adicionadas." : "Lista já está atualizada.");
+    } catch (err) {
+      console.error("directory seed", err);
+      directoryLoadError = err.code || err.message || "erro desconhecido";
+      render();
+      toast("Não foi possível carregar a lista.");
+    }
+    return;
+  }
   const dirType = e.target.closest("[data-dir-type]");
   if (dirType) { directoryTypeFilter = dirType.dataset.dirType || "all"; render(); return; }
   const dirEdit = e.target.closest("[data-dir-edit]");
@@ -1279,7 +1302,10 @@ onAuthStateChanged(auth, async (user) => {
     try {
       await seedPartnersIfNeeded();
       await seedStarterDirectory();
-    } catch (e) { console.warn("seed", e); }
+    } catch (e) {
+      console.warn("seed", e);
+      directoryLoadError = e.code || e.message || "erro desconhecido";
+    }
     showApp();
   } catch (e) {
     console.error(e);
