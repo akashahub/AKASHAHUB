@@ -1,7 +1,7 @@
-import { TENANT, EVENTS, isCeoEmail } from './domain.js';
-import { createStore, persistFirestore } from './store.js';
-import { joinLive } from './live.js';
-import { render } from './ui.js';
+import { TENANT, EVENTS, isCeoEmail } from 'https://cdn.jsdelivr.net/gh/akashahub/AKASHAHUB@b5f350aa1adffe7379ace4dc41c35731ee500aa3/academy/js/domain.js';
+import { createStore, persistFirestore } from 'https://cdn.jsdelivr.net/gh/akashahub/AKASHAHUB@b5f350aa1adffe7379ace4dc41c35731ee500aa3/academy/js/store.js';
+import { joinLive } from 'https://cdn.jsdelivr.net/gh/akashahub/AKASHAHUB@b5f350aa1adffe7379ace4dc41c35731ee500aa3/academy/js/live.js';
+import { render } from 'https://cdn.jsdelivr.net/gh/akashahub/AKASHAHUB@b5f350aa1adffe7379ace4dc41c35731ee500aa3/academy/js/ui.js';
 
 try {
   firebase.initializeApp({
