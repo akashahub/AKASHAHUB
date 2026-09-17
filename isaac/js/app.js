@@ -51,6 +51,7 @@ let users = [];
 let view = "dash";
 let currentId = null;
 let callStep = 0;
+let callMode = "fast";
 let filterQ = "";
 let callStartedAt = null;
 let callTimerHandle = null;
@@ -90,6 +91,10 @@ function fmt(ts) {
   if (Number.isNaN(d.getTime())) return "—";
   return d.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 }
+function activeCallSteps() {
+  return callMode === "fast" && Array.isArray(KB.FAST_CALL_STEPS) ? KB.FAST_CALL_STEPS : KB.CALL_STEPS;
+}
+
 function pipeLabel(id) {
   return (KB.PIPELINE.find((p) => p.id === id) || { label: id }).label;
 }
@@ -588,12 +593,13 @@ function renderCockpit() {
     return `<div class="warn"><b>Já parceira da isaac.</b> ${esc(row.name)} está na lista oficial de Salvador. Não prospectar. Fonte: ${esc(KB.SOURCES.ssa)}</div>
       <div class="row" style="margin-top:12px"><button class="btn" data-view="parc" type="button">Ver parceiras</button></div>`;
   }
-  const step = KB.CALL_STEPS[Math.min(callStep, KB.CALL_STEPS.length - 1)];
+  const callSteps = activeCallSteps();
+  const step = callSteps[Math.min(callStep, callSteps.length - 1)];
   const sig = signalsOf(row);
   const cscore = contactability(row);
   const obj = KB.OBJECTIONS.find((o) => o.id === row.objectionId);
   return `
-    <div class="call-topline"><p class="kicker">CALL COCKPIT · ${callStep + 1}/${KB.CALL_STEPS.length}</p><div class="row"><span class="timer" id="callTimer">${callStartedAt ? formatDuration(Date.now()-callStartedAt) : "00:00"}</span><button class="btn" id="timerToggle" type="button">${callStartedAt ? "Pausar" : "Iniciar"}</button><button class="btn" data-act="attempt" type="button">Registrar tentativa</button><button class="btn btn-ok" data-act="reached" type="button">Responsável alcançado</button></div></div>
+    <div class="call-mode-switch"><button type="button" data-call-mode="fast" class="${callMode === "fast" ? "on" : ""}">Rápido · 2 min</button><button type="button" data-call-mode="complete" class="${callMode === "complete" ? "on" : ""}">Completo</button></div><p class="safe-note">Você não precisa terminar o roteiro. Surgiu interesse, dor clara ou objeção resolvida? Vá direto para o horário.</p><div class="call-topline"><p class="kicker">CALL COCKPIT · ${callMode === "fast" ? "RÁPIDO" : "COMPLETO"} · ${callStep + 1}/${callSteps.length}</p><div class="row"><span class="timer" id="callTimer">${callStartedAt ? formatDuration(Date.now()-callStartedAt) : "00:00"}</span><button class="btn" id="timerToggle" type="button">${callStartedAt ? "Pausar" : "Iniciar"}</button><button class="btn" data-act="attempt" type="button">Registrar tentativa</button><button class="btn btn-ok" data-act="reached" type="button">Responsável alcançado</button></div></div>
     <div class="cols cols-2">
       <div>
         <div class="card">
@@ -633,6 +639,8 @@ function renderCockpit() {
           <p class="call-question">${esc(step.ask)}</p>
           <p class="intent"><b>Sinais para observar:</b> ${esc(step.watch)}</p>
           <div class="row">${step.quick.map((q) => `<button class="btn" data-quick="${esc(q)}" type="button">${esc(q)}</button>`).join("")}</div>
+          <div class="booking-strip"><div><b>Percebeu abertura?</b><span>Pare o roteiro e marque o horário. O restante dos dados é opcional.</span></div><button class="btn btn-ok" data-act="jumpSchedule" type="button">Agendar agora</button></div>
+          <div class="call-support"><p><b>Apoio interno:</b> se pedirem números/provas, abra o Proof Vault; se perguntarem o que é ou como funciona, abra a Base isaac; se resistirem, use Objeções. Para voltar, toque em Call.</p><div class="row"><button class="btn" data-view="proof" type="button">Abrir Proof Vault</button><button class="btn" data-view="base" type="button">Abrir Base isaac</button><button class="btn" data-view="obj" type="button">Abrir Objeções</button></div></div>
           <label>Anotação desta etapa <textarea id="stepNote" placeholder="o que a pessoa disse">${esc((row.answers && row.answers[step.id]) || "")}</textarea></label>
           <div class="row">
             <button class="btn" id="prevStep" type="button">Voltar</button>
@@ -659,9 +667,9 @@ function renderCockpit() {
             <option value="">— selecionar —</option>
             ${KB.OBJECTIONS.map((o) => `<option value="${o.id}" ${row.objectionId === o.id ? "selected" : ""}>${esc(o.said)}</option>`).join("")}
           </select>
-          ${obj ? `<p class="hint" style="margin-top:8px"><b>Pode querer dizer:</b> ${esc(obj.means)}<br><b>Pergunte:</b> ${esc(obj.ask)}<br><b>Valor:</b> ${esc(obj.value)}<br><b>Prova:</b> ${esc(obj.proof || "—")}${obj.reflection && obj.reflection.length ? `<br><br><b>Frases de impacto — fale com calma:</b><br>${obj.reflection.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}` : ""}<br><b>Avanço:</b> ${esc(obj.advance)}<br><b>Não insistir:</b> ${esc(obj.stop)}</p>` : ""}
+          ${obj ? `<div class="hint obj-live" style="margin-top:8px"><p><b>Pode querer dizer:</b> ${esc(obj.means)}</p><p class="obj-ask"><b>PERGUNTE:</b> ${esc(obj.ask)}</p><p><b>Valor:</b> ${esc(obj.value)}</p><p><b>Prova:</b> ${esc(obj.proof || "—")}</p>${obj.reflection && obj.reflection.length ? `<p><b>Frases de impacto — escolha uma:</b><br>${obj.reflection.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</p>` : ""}${obj.booking && obj.booking.length ? `<div class="booking-lines"><b>FECHAR O HORÁRIO AGORA:</b><br>${obj.booking.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</div>` : ""}<p class="obj-advance"><b>AVANÇO:</b> ${esc(obj.advance)}</p><p><b>Não insistir:</b> ${esc(obj.stop)}</p><button class="btn btn-ok" data-act="jumpSchedule" type="button">Ir direto para agendamento</button></div>` : ""}
         </div>
-        <div class="card meeting-box" style="margin-top:10px">
+        <div class="card meeting-box" id="meetingBox" style="margin-top:10px">
           <p class="kicker">CONVERSÃO PRINCIPAL</p><h2>Agendar reunião</h2>
           <div class="duo"><label>Data e horário <input id="meetingAt" type="datetime-local" value="${esc(row.meetingAt ? new Date(new Date(row.meetingAt).getTime()-new Date(row.meetingAt).getTimezoneOffset()*60000).toISOString().slice(0,16) : "")}"></label><label>Fuso horário <select id="meetingTimezone"><option value="America/Bahia" ${(row.meetingTimezone||"America/Bahia") === "America/Bahia" ? "selected" : ""}>Bahia / Brasília</option><option value="Europe/Helsinki" ${row.meetingTimezone === "Europe/Helsinki" ? "selected" : ""}>Helsinque</option></select></label></div>
           <div class="duo"><label>Status <select id="meetingStatus">${["aguardando_confirmacao","confirmada","realizada","no_show","remarcada","cancelada"].map((s)=>`<option value="${s}" ${s === row.meetingStatus ? "selected" : ""}>${s.replaceAll("_"," ")}</option>`).join("")}</select></label><label>Closer/time isaac <input id="isaacCloser" value="${esc(row.isaacCloser||"")}" placeholder="se conhecido"></label></div>
@@ -727,10 +735,11 @@ function renderObj() {
       <p class="kicker">${o.kind === "material" ? "Material oficial" : "Investigação"}</p>
       <h2>${esc(o.said)}</h2>
       <p><b>Pode querer dizer:</b> ${esc(o.means)}</p>
-      <p><b>Pergunte:</b> ${esc(o.ask)}</p>
+      <p class="obj-ask"><b>PERGUNTE:</b> ${esc(o.ask)}</p>
       <p><b>Valor:</b> ${esc(o.value)}</p>
       ${o.reflection && o.reflection.length ? `<div class="hint" style="margin:10px 0"><b>Frases de impacto — escolha uma e fale com calma:</b><br>${o.reflection.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</div>` : ""}
-      <p><b>Avanço:</b> ${esc(o.advance)}</p>
+      ${o.booking && o.booking.length ? `<div class="booking-lines"><b>FECHAR O HORÁRIO:</b><br>${o.booking.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</div>` : ""}
+      <p class="obj-advance"><b>AVANÇO:</b> ${esc(o.advance)}</p>
       ${o.phone ? `<p><b>Ligação:</b> ${esc(o.phone)}</p><p><b>WhatsApp:</b> ${esc(o.whatsapp)}</p><p><b>Email:</b> ${esc(o.email)}</p>` : ""}
       <p class="muted">Quando não insistir: ${esc(o.stop)} · ${esc(o.source || "")}</p>
     </article>`).join("")}`;
@@ -886,11 +895,12 @@ el.view.addEventListener("click", async (e) => {
   if (e.target.id === "nextStep") {
     const row = current();
     if (!row) return;
-    const step = KB.CALL_STEPS[callStep];
+    const callSteps = activeCallSteps();
+    const step = callSteps[callStep];
     const answers = { ...(row.answers || {}) };
     answers[step.id] = ($("stepNote") && $("stepNote").value.trim()) || answers[step.id] || "";
     await saveInst({ answers }, "call_step");
-    callStep = Math.min(KB.CALL_STEPS.length - 1, callStep + 1);
+    callStep = Math.min(callSteps.length - 1, callStep + 1);
     if (row.status === "prospect" || row.status === "tentativa") await saveInst({ status: "contato" }, "status");
     render();
     return;
@@ -920,6 +930,14 @@ el.view.addEventListener("click", async (e) => {
     await loadAll(); render(); toast("Reativado."); return;
   }
 
+  const modeBtn = e.target.closest("[data-call-mode]");
+  if (modeBtn) {
+    callMode = modeBtn.dataset.callMode === "complete" ? "complete" : "fast";
+    callStep = 0;
+    render();
+    return;
+  }
+
   const act = e.target.closest("[data-act]");
   if (!act) return;
   const row = current();
@@ -933,6 +951,11 @@ el.view.addEventListener("click", async (e) => {
   if (act.dataset.act === "reached") {
     await saveInst({ status: ["prospect","tentativa"].includes(fresh.status) ? "contato" : fresh.status }, "responsavel_alcancado");
     toast("Responsável alcançado registrado."); return;
+  }
+  if (act.dataset.act === "jumpSchedule") {
+    document.getElementById("meetingBox")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    toast("Agora escolha data e horário. O restante é opcional.");
+    return;
   }
   if (act.dataset.act === "save") { toast("Ficha salva."); return; }
   if (act.dataset.act === "copySum") return copy(summaryOf(fresh));
