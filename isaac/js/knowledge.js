@@ -297,6 +297,11 @@ export const OBJECTIONS = [
     ask: "Como vocês acompanham isso hoje — e o que aconteceria no caixa se um ciclo de rematrícula viesse mais fraco?",
     value: "Mesmo sem dor aguda de atraso, o isaac fala de previsibilidade, tempo e dados. Crescimento e gestão na palma da mão continuam no material oficial.",
     proof: "Treinamento Parceiros.pdf — resposta oficial: o isaac pode levar a escola a crescimento, tempo de qualidade e dados.",
+    reflection: [
+      "Ótimo — então a pergunta deixa de ser “como corrigir atraso?” e passa a ser: o caixa já é tão previsível quanto poderia ser?",
+      "Não é preciso esperar um problema aparecer para avaliar se existe uma forma mais eficiente de operar.",
+      "Quem olha o processo antes da dor crescer preserva mais escolhas para a instituição."
+    ],
     advance: "Faz sentido olhar juntos se a previsibilidade de caixa de vocês está no nível que o mantenedor gostaria?",
     stop: "Se o responsável for claro que não há espaço e não há decisor, não force reunião.",
     source: SOURCES.treino
@@ -309,6 +314,11 @@ export const OBJECTIONS = [
     ask: "O que, exatamente, vocês não abririam mão de decidir?",
     value: "O isaac não toma decisão pela escola. O gestor continua com autonomia na precificação e na gestão de contratos.",
     proof: SOURCES.treino,
+    reflection: [
+      "Autonomia não é precisar fazer tudo sozinho; é continuar decidindo sem ficar refém da operação.",
+      "Se uma solução retirasse peso operacional sem retirar poder de decisão, isso seria perda de autonomia ou ganho de controle?",
+      "Controle real é escolher conscientemente o que permanece com a escola e o que pode ser otimizado."
+    ],
     advance: "Se a autonomia de precificação permanece com vocês, vale ouvir como o repasse entra na prática?",
     stop: "Se o medo for jurídico/contratual fundo, encaminhe ao time isaac — SDR não interpreta contrato.",
     source: SOURCES.treino
@@ -321,6 +331,11 @@ export const OBJECTIONS = [
     ask: "Hoje, quem fala com a família quando o boleto atrasa — e como isso afeta a relação pedagógica?",
     value: "Cobrança e negociação ficam com o isaac, com atendimento humanizado. A escola pode construir relação ainda melhor no pedagógico.",
     proof: SOURCES.treino,
+    reflection: [
+      "Proteger o relacionamento com as famílias não significa que a direção precise carregar sozinha toda a fricção da cobrança.",
+      "Talvez a pergunta não seja “terceirizar a família”, mas separar o vínculo pedagógico do desgaste financeiro.",
+      "Se a cobrança desgasta o vínculo, melhorar o processo também pode ser uma forma de preservar o relacionamento."
+    ],
     advance: "Se a cobrança sair da mesa da direção, o que vocês fariam com esse tempo?",
     stop: "Não discuta 'terceirizar o cuidado'. Separe cobrança de vínculo.",
     source: SOURCES.treino
@@ -333,6 +348,11 @@ export const OBJECTIONS = [
     ask: "Posso te devolver com precisão depois da análise dos relatórios. O que mais pesa hoje: taxa, previsibilidade ou tempo da equipe?",
     value: "A taxa é personalizada. Sai de análise profunda dos relatórios financeiros. SDR não inventa número.",
     proof: SOURCES.treino,
+    reflection: [
+      "Taxa isolada diz pouco; a decisão precisa comparar custo atual, risco, tempo e impacto operacional.",
+      "Antes de perguntar apenas quanto custa mudar, vale entender quanto custa continuar exatamente como está.",
+      "O menor número nem sempre representa o menor custo total — por isso a análise precisa ser feita sobre a operação real."
+    ],
     advance: "Quer que o time isaac olhe os números e volte com a conta real da operação de vocês?",
     stop: "Não chute taxa. Não cite 1,99% / 2,99% de crédito como se fosse taxa da operação escolar.",
     source: SOURCES.treino
@@ -345,6 +365,11 @@ export const OBJECTIONS = [
     ask: "Comparando com o quê — o custo visível do boleto ou o custo invisível de atraso, retrabalho e tempo da direção?",
     value: "A taxa reflete os dados dos relatórios e inclui os custos de operação dos eventos financeiros.",
     proof: SOURCES.treino,
+    reflection: [
+      "Caro em comparação com o quê: com a alternativa, com o tempo da equipe ou com o custo de manter o cenário atual?",
+      "Algo só é caro ou barato quando é comparado ao problema que deveria resolver.",
+      "Se não fizer sentido econômico para a instituição, a decisão correta é não avançar; a conversa serve justamente para descobrir isso."
+    ],
     advance: "Se a gente colocar lado a lado o que vocês gastam hoje para receber, faz sentido uma conversa com o time?",
     stop: "Não barganhe taxa. Encaminhe.",
     source: SOURCES.treino
@@ -357,6 +382,11 @@ export const OBJECTIONS = [
     ask: "Com quem foi, faz tempo, e o que ficou pendente naquela conversa?",
     value: "Registrar histórico. Não recomeçar o pitch do zero.",
     proof: "Não há case obrigatório — use o que a pessoa contar.",
+    reflection: [
+      "Ter sido abordado antes não significa que o cenário de hoje seja igual ao daquela conversa.",
+      "A conversa anterior realmente esclareceu o modelo ou apenas apresentou uma solução?",
+      "Às vezes não é necessária uma solução nova, mas uma leitura mais precisa do momento atual."
+    ],
     advance: "O que precisaria ser diferente desta vez para valer uma conversa curta com o time?",
     stop: "Se a pessoa pedir para não ligarem mais, respeite e marque perdido/não avançou."
   },
@@ -368,6 +398,11 @@ export const OBJECTIONS = [
     ask: "O que travou depois — taxa, timing, sócio, ou a proposta em si?",
     value: "Reativação é descobrir a objeção verdadeira, não repetir o deck.",
     proof: "",
+    reflection: [
+      "Uma reunião anterior não encerra o assunto; ela mostra o que ainda não ficou claro ou não fez sentido.",
+      "O ponto mais útil agora é entender exatamente o que impediu o avanço naquela ocasião.",
+      "Se nada mudou, não precisamos repetir a conversa; se o cenário mudou, vale comparar com honestidade."
+    ],
     advance: "Se a trava mudou, o time isaac retoma a partir dali. Posso encaminhar com esse contexto?",
     stop: "Não remarque reunião só para 'apresentar de novo'."
   },
@@ -379,6 +414,11 @@ export const OBJECTIONS = [
     ask: "É 'agora não' de calendário (rematrícula, obra, sócio) ou de prioridade?",
     value: "Agendar follow-up concreto. Data na agenda, não 'depois'.",
     proof: "",
+    reflection: [
+      "Entendo. Quando alguém diz “agora não”, normalmente o ponto é timing ou prioridade — qual dos dois pesa mais aqui?",
+      "Adiar também é uma decisão; o importante é saber por que estamos adiando e quando o tema deve ser revisto.",
+      "Se este não é o momento, qual mudança mostraria que o momento chegou?"
+    ],
     advance: "Posso te ligar em que semana, depois de qual marco?",
     stop: "Se for recusa, não insista no mesmo dia."
   },
@@ -390,6 +430,11 @@ export const OBJECTIONS = [
     ask: "Esse sistema cobre previsibilidade de caixa, cobrança humanizada e a experiência da família — ou só emite cobrança?",
     value: "Material oficial: se já têm solução, perguntar se atende todas as necessidades, inadimplência e previsibilidade.",
     proof: SOURCES.videoAbordagem,
+    reflection: [
+      "Estar satisfeito é um ótimo sinal; a pergunta é se o sistema atual também sustenta o próximo estágio da instituição.",
+      "Não precisamos substituir o que funciona — precisamos apenas verificar se existe alguma lacuna relevante.",
+      "Satisfação com o presente e preparação para o futuro são perguntas diferentes."
+    ],
     advance: "Tem alguma ponta (atraso, tempo da secretaria, família reclamando) que ainda dói?",
     stop: "Não ataque o sistema atual."
   },
@@ -401,6 +446,11 @@ export const OBJECTIONS = [
     ask: "Quem cobra, quanto tempo por semana, e como fica quando a família é próxima da escola?",
     value: "Cobrança humanizada no material. Escola não precisa ser o banco.",
     proof: SOURCES.treino,
+    reflection: [
+      "A questão não é apenas se vocês conseguem cobrar, mas o que a direção deixa de fazer enquanto cuida da cobrança.",
+      "Fazer internamente pode funcionar; ainda assim, vale medir o custo invisível em tempo, energia e foco.",
+      "Se a cobrança ocupasse menos espaço na agenda, onde esse tempo produziria mais valor para a instituição?"
+    ],
     advance: "Se a cobrança sair do colo da direção, o que vocês fariam com as manhãs?",
     stop: "Não humilhe o processo interno."
   },
@@ -412,6 +462,11 @@ export const OBJECTIONS = [
     ask: "Quem assina o financeiro — e essa pessoa entra numa conversa de 20 minutos com o time isaac?",
     value: "Mapear autoridade. Não pressionar o não-decisor a fingir que decide.",
     proof: "",
+    reflection: [
+      "Perfeito — eu não preciso que você decida sozinho; preciso entender quem deve participar para a conversa ser útil.",
+      "Uma decisão bem conduzida começa colocando as pessoas certas na mesma conversa.",
+      "Se você enxergar sentido, pode me ajudar a levar o contexto correto para quem decide?"
+    ],
     advance: "Posso te ajudar a levar um resumo objetivo para o sócio, ou marcamos os dois?",
     stop: "Não peça para a secretária 'fechar'."
   },
@@ -423,6 +478,11 @@ export const OBJECTIONS = [
     ask: "O que você gostaria de ver primeiro — previsibilidade, app da família, ou como funciona o repasse?",
     value: "Portal do associado / Associadoteca existe. SDR pode mandar o que for público e marcar um horário para tirar dúvida.",
     proof: "https://olaisaac.my.site.com/Associados/s/login/",
+    reflection: [
+      "Material sem contexto costuma virar mais um arquivo esquecido; qual resposta você precisa encontrar nele?",
+      "Para eu não mandar algo genérico, qual ponto decidiria se vale ou não conversar?",
+      "Informação ajuda quando responde uma pergunta real — vamos identificar essa pergunta primeiro."
+    ],
     advance: "Te mando o recorte e te ligo quinta para ver se fez sentido. Qual horário?",
     stop: "Não despeje PDF e suma. Sem data = lead morto."
   },
@@ -434,6 +494,11 @@ export const OBJECTIONS = [
     ask: "O receio é cadastro das famílias, financeiro, ou os dois?",
     value: "Treino cita segurança nos dados. Detalhe jurídico é do time isaac — não inventar certificação.",
     proof: SOURCES.treino,
+    reflection: [
+      "Essa é uma pergunta essencial: sem confiança sobre os dados, nenhuma solução financeira deveria avançar.",
+      "Você não precisa aceitar uma resposta vaga; esse ponto deve ser esclarecido pelo time responsável com precisão.",
+      "Segurança de dados não é detalhe técnico — é condição para uma decisão consciente."
+    ],
     advance: "Anoto a pergunta para o time responder com precisão na call. Seguimos?",
     stop: "Não dê garantia jurídica."
   },
@@ -445,6 +510,11 @@ export const OBJECTIONS = [
     ask: "Hoje o dinheiro entra quando — e o que quebra o mês de vocês quando atrasa?",
     value: "Treino: garantia de 100% das mensalidades na data combinada. Mecânica contratual é do time.",
     proof: SOURCES.treino,
+    reflection: [
+      "Essa é uma pergunta central, e a resposta precisa considerar como a operação de vocês funciona hoje.",
+      "Antes de explicar o mecanismo, vale entender como e quando o dinheiro entra atualmente.",
+      "A utilidade do repasse só pode ser avaliada quando ligada ao problema real de previsibilidade da instituição."
+    ],
     advance: "Essa é exatamente a conversa da call com o isaac. Posso encaminhar?",
     stop: "Não descreva fluxo bancário que você não viu no contrato."
   },
@@ -456,6 +526,11 @@ export const OBJECTIONS = [
     ask: "Sem problema. É melhor eu ser breve agora ou reservarmos 20 minutos em outro dia?",
     value: "Respeitar a agenda e chegar direto ao diagnóstico, sem apresentação longa.",
     proof: "Framework operacional — nenhuma promessa comercial.",
+    reflection: [
+      "Justamente porque o tempo é escasso, vale medir quanto tempo o processo atual já consome sem aparecer na agenda.",
+      "Não quero tomar seu tempo agora; quero apenas saber se existe motivo suficiente para reservar um horário certo.",
+      "Quando nunca existe tempo para revisar um processo, é o próprio processo que continua definindo a agenda."
+    ],
     advance: "Tenho [opção A] ou [opção B]. Qual pesa menos na sua agenda?",
     phone: "Entendo. Prefere dois minutos agora só para ver se há aderência, ou marcamos 20 minutos com o time?",
     whatsapp: "Se for melhor, organizo dois horários objetivos e você escolhe sem troca longa de mensagens.",
@@ -470,6 +545,11 @@ export const OBJECTIONS = [
     ask: "O que seu sócio precisaria entender para decidir se vale a conversa?",
     value: "Levar os decisores certos para o diagnóstico e evitar informação pela metade.",
     proof: "Handoff estruturado do SDR.",
+    reflection: [
+      "Uma decisão compartilhada não precisa virar atraso; pode virar uma conversa objetiva com todos os envolvidos.",
+      "Em vez de você tentar traduzir tudo depois, podemos colocar as duas pessoas na mesma conversa.",
+      "Qual dúvida seu sócio precisaria ver respondida para avaliar isso com seriedade?"
+    ],
     advance: "Marcamos os dois e deixo a pergunta principal registrada para o time?",
     phone: "Perfeito. Quem mais precisa estar e qual dúvida precisa ser respondida?",
     whatsapp: "Posso mandar um resumo curto e marcar um horário em que vocês dois participem.",
@@ -484,6 +564,11 @@ export const OBJECTIONS = [
     ask: "Quem acompanha financeiro, cobrança e previsibilidade por aí?",
     value: "Chegar ao responsável correto sem forçar pitch para recepção ou secretaria.",
     proof: "Playbook operacional.",
+    reflection: [
+      "Perfeito — então o melhor resultado desta conversa é chegar à pessoa certa, não tentar convencer a pessoa errada.",
+      "Quem conhece a operação pode não assinar a decisão, mas pode indicar quem precisa participar.",
+      "Para eu respeitar seu tempo, quem é a pessoa adequada e qual é a melhor forma de abordá-la?"
+    ],
     advance: "Você consegue me indicar o nome e o melhor horário para falar com essa pessoa?",
     phone: "Obrigado. Quem é a pessoa certa e quando costuma estar disponível?",
     whatsapp: "Pode me indicar o responsável por financeiro/cobrança? Prometo ser objetivo.",
@@ -498,6 +583,11 @@ export const OBJECTIONS = [
     ask: "O que impediu a conversa — agenda, formato ou falta de clareza sobre o objetivo?",
     value: "Corrigir a causa anterior antes de remarcar.",
     proof: "Histórico registrado e âncora de compromisso.",
+    reflection: [
+      "Uma reunião que não aconteceu não invalida a oportunidade; mostra que o compromisso ainda não estava bem ancorado.",
+      "O problema foi apenas agenda ou o valor da conversa não ficou claro o suficiente?",
+      "Desta vez só faz sentido marcar se motivo, expectativa e participantes estiverem claros."
+    ],
     advance: "Se resolvermos esse ponto e o time já chegar preparado, vale remarcar?",
     phone: "Quero evitar repetir o erro. O que precisamos mudar desta vez?",
     whatsapp: "Registro o que aconteceu e remarco só se o novo formato fizer sentido.",
@@ -512,6 +602,11 @@ export const OBJECTIONS = [
     ask: "O que especificamente não fez sentido naquela época?",
     value: "Descobrir se houve mudança real; não repetir pitch.",
     proof: "Histórico anterior informado pelo responsável.",
+    reflection: [
+      "Sem problema. Para eu registrar corretamente: faltou necessidade, prioridade ou clareza sobre a proposta da conversa?",
+      "Um “não” claro é melhor do que um follow-up artificial; quero apenas compreender a razão real.",
+      "Se o cenário mudar, qual mudança faria este tema voltar a merecer atenção?"
+    ],
     advance: "Se esse ponto mudou, retomamos; se não mudou, eu encerro por aqui.",
     phone: "O que não aderiu: solução, timing, investimento ou prioridade?",
     whatsapp: "Só retomo se algo tiver mudado; qual foi a trava principal?",
@@ -526,6 +621,11 @@ export const OBJECTIONS = [
     ask: "O que faria essa conversa ser útil em vez de só mais uma apresentação?",
     value: "Diagnóstico breve focado no cenário da instituição, sem negociação pelo SDR.",
     proof: "Agenda e handoff registram dores e perguntas antes da reunião.",
+    reflection: [
+      "Concordo: ninguém precisa de mais uma apresentação comercial genérica.",
+      "Se for apenas um pitch, não vale seu tempo; se for uma análise da operação, a conversa pode ter outra utilidade.",
+      "O que precisaria acontecer para esta conversa merecer espaço na sua agenda?"
+    ],
     advance: "Se o time entrar já respondendo sua pergunta principal, vale 20 minutos?",
     phone: "Não quero te colocar em apresentação genérica. Qual resposta justificaria a conversa?",
     whatsapp: "A conversa só é marcada se houver uma pergunta real para o time responder.",
