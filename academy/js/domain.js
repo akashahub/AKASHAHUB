@@ -1,9 +1,9 @@
-/** Domain — rules only. No DOM, no Firebase, no LiveKit. */
+/** Domain — Hotmart-like catalog + policy. No DOM. */
 export const TENANT = {
   id: 'fluir',
   name: 'Fluir Academy',
   sector: 'franchise-lms',
-  version: '0.2.0'
+  version: '0.3.0'
 };
 
 export const UNITS = [
@@ -12,92 +12,63 @@ export const UNITS = [
   { id: 'lauro', name: 'Lauro de Freitas', city: 'RMS' }
 ];
 
-export const ROLES = [
-  { id: 'matriz', title: 'Matriz', desc: 'Rede, presenca, cofre, DRE.' },
-  { id: 'franqueado', title: 'Franqueado', desc: 'Unidade, equipe e auditoria.' },
-  { id: 'staff', title: 'Staff', desc: 'Trilha, quiz e QR do evento.' },
-  { id: 'aluno', title: 'Aluno', desc: 'Aulas em casa e replay.' },
-  { id: 'parceiro', title: 'Parceiro', desc: 'Conteudo tecnico B2B.' }
+export const WORKSPACES = [
+  { id: 'aluno', title: 'Aluno', tag: 'Eu sou aluno', desc: 'Pilates, ginastica, fisio e infantil. Sem treinamento de equipe.' },
+  { id: 'professor', title: 'Professor', tag: 'Eu sou professor', desc: 'Metodologia e as aulas que voce ministra para o aluno.' },
+  { id: 'colaborador', title: 'Colaborador', tag: 'Eu sou da equipe', desc: 'Recepcao, piscina, manobrista, vendas, RH e gestao.' },
+  { id: 'franqueado', title: 'Franqueado', tag: 'Eu sou franqueado', desc: 'Cultura, operacao e venda de franquia.' },
+  { id: 'ceo', title: 'CEO / socio', tag: 'Eu sou da matriz', desc: 'Rede, acessos, eventos e o que cada papel ve.' }
 ];
 
-export const ACTION = {
-  VIEW_HUB: 'view.hub',
-  VIEW_TRACKS: 'view.tracks',
-  VIEW_VAULT: 'view.vault',
-  VIEW_DRE: 'view.dre',
-  WRITE_DRE: 'write.dre',
-  VIEW_ATTENDANCE: 'view.attendance',
-  SCAN_PRESENCE: 'scan.presence',
-  GO_LIVE: 'live.join',
-  SWITCH_UNIT: 'unit.switch',
-  MANAGE_ROLES: 'roles.manage'
-};
+export const JOBS = [
+  { id: 'recepcao', title: 'Recepcao' },
+  { id: 'piscineiro', title: 'Piscineiro' },
+  { id: 'manobrista', title: 'Manobrista' },
+  { id: 'vendas', title: 'Vendas' },
+  { id: 'gestor', title: 'Gestor / gerente' },
+  { id: 'rh', title: 'RH' }
+];
 
-const POLICY = {
-  matriz: Object.values(ACTION),
-  franqueado: [
-    ACTION.VIEW_HUB, ACTION.VIEW_TRACKS, ACTION.VIEW_VAULT, ACTION.VIEW_DRE,
-    ACTION.WRITE_DRE, ACTION.VIEW_ATTENDANCE, ACTION.SCAN_PRESENCE,
-    ACTION.GO_LIVE, ACTION.SWITCH_UNIT
-  ],
-  staff: [ACTION.VIEW_HUB, ACTION.VIEW_TRACKS, ACTION.SCAN_PRESENCE, ACTION.GO_LIVE],
-  aluno: [ACTION.VIEW_HUB, ACTION.VIEW_TRACKS, ACTION.GO_LIVE],
-  parceiro: [ACTION.VIEW_HUB, ACTION.VIEW_TRACKS]
-};
+export const ALUNO_TRACKS = [
+  { id: 'pilates', title: 'Pilates' },
+  { id: 'ginastica', title: 'Ginastica' },
+  { id: 'fisio', title: 'Fisioterapia' },
+  { id: 'infantil', title: 'Aluno crianca' }
+];
 
-export const TRACKS = [
-  {
-    id: 'piscineiros', group: 'Piscineiros', title: 'Tratamento de piscinas',
-    audience: ['staff', 'franqueado', 'matriz'],
-    lessons: [
-      { id: 'p1', title: 'Quimica da agua', minutes: 8, url: 'https://www.youtube.com/embed/jNQXAC9IVRw' },
-      { id: 'p2', title: 'Checklist diario da raia', minutes: 6, url: 'https://www.youtube.com/embed/jNQXAC9IVRw' }
-    ]
-  },
-  {
-    id: 'natacao', group: 'Staff', title: 'Metodologia natacao infantil',
-    audience: ['staff', 'franqueado', 'matriz'],
-    lessons: [
-      { id: 'n1', title: 'Metodo Lucas Oliveira - base', minutes: 12, url: 'https://www.youtube.com/embed/jNQXAC9IVRw' }
-    ]
-  },
-  {
-    id: 'recepcao', group: 'Recepcao', title: 'Onboarding da recepcao',
-    audience: ['staff', 'franqueado', 'matriz'],
-    lessons: [
-      { id: 'r1', title: 'Atendimento e EVO no dia a dia', minutes: 9, url: 'https://www.youtube.com/embed/jNQXAC9IVRw' }
-    ]
-  },
-  {
-    id: 'casa', group: 'Alunos', title: 'Treino em casa e respiracao',
-    audience: ['aluno', 'matriz'],
-    lessons: [
-      { id: 'c1', title: 'Respiracao para natacao', minutes: 7, url: 'https://www.youtube.com/embed/jNQXAC9IVRw' }
-    ]
-  },
-  {
-    id: 'parceiros', group: 'Parceiros', title: 'Protocolo aquatico para fisio',
-    audience: ['parceiro', 'matriz'],
-    lessons: [
-      { id: 'x1', title: 'Hidroterapia - alinhamento', minutes: 10, url: 'https://www.youtube.com/embed/jNQXAC9IVRw' }
-    ]
-  }
+const YT = 'https://www.youtube.com/embed/jNQXAC9IVRw';
+
+export const COURSES = [
+  { id: 'a-pil-1', ws: ['aluno', 'professor'], track: 'pilates', title: 'Pilates — respiracao e core', minutes: 12, url: YT },
+  { id: 'a-gin-1', ws: ['aluno', 'professor'], track: 'ginastica', title: 'Ginastica — mobilidade em casa', minutes: 10, url: YT },
+  { id: 'a-fis-1', ws: ['aluno', 'professor'], track: 'fisio', title: 'Fisio aquatica — alinhamento', minutes: 11, url: YT },
+  { id: 'a-inf-1', ws: ['aluno', 'professor'], track: 'infantil', title: 'Natacao infantil — aula simples', minutes: 8, url: YT },
+  { id: 'p-met-1', ws: ['professor', 'ceo'], track: 'metodologia', title: 'Metodo Lucas Oliveira — base', minutes: 14, url: YT },
+  { id: 'c-all-1', ws: ['colaborador', 'franqueado', 'ceo'], track: 'todos', job: 'todos', title: 'Cultura Fluir para toda a equipe', minutes: 9, url: YT },
+  { id: 'c-rec-1', ws: ['colaborador', 'ceo'], track: 'recepcao', job: 'recepcao', title: 'Rapport e atendimento na recepcao', minutes: 11, url: YT },
+  { id: 'c-rec-2', ws: ['colaborador', 'ceo'], track: 'recepcao', job: 'recepcao', title: 'Tecnicas de venda no balcao', minutes: 10, url: YT },
+  { id: 'c-pis-1', ws: ['colaborador', 'ceo'], track: 'piscineiro', job: 'piscineiro', title: 'Quimica da agua e checklist da raia', minutes: 13, url: YT },
+  { id: 'c-man-1', ws: ['colaborador', 'ceo'], track: 'manobrista', job: 'manobrista', title: 'Fluxo do estacionamento e acolhimento', minutes: 7, url: YT },
+  { id: 'c-ven-1', ws: ['colaborador', 'franqueado', 'ceo'], track: 'vendas', job: 'vendas', title: 'Script de conversao da unidade', minutes: 12, url: YT },
+  { id: 'c-ges-1', ws: ['colaborador', 'franqueado', 'ceo'], track: 'gestor', job: 'gestor', title: 'Gestao de equipe na ponta', minutes: 15, url: YT },
+  { id: 'c-rh-1', ws: ['colaborador', 'ceo'], track: 'rh', job: 'rh', title: 'RH: contratacao e cultura', minutes: 10, url: YT },
+  { id: 'f-cul-1', ws: ['franqueado', 'ceo'], track: 'cultura', title: 'Onboarding do franqueado', minutes: 16, url: YT },
+  { id: 'f-ven-1', ws: ['franqueado', 'ceo'], track: 'vendas-franquia', title: 'Como vender a franquia Fluir', minutes: 14, url: YT },
+  { id: 'e-ges-1', ws: ['ceo'], track: 'rede', title: 'Visao da rede e DRE', minutes: 12, url: YT }
+];
+
+export const EVENTS = [
+  { id: 'ev-todos', title: 'Encontro da rede', when: 'Todo mes', audience: ['all'], liveRoom: 'fluir-demo', place: 'Digital + unidades' },
+  { id: 'ev-aluno', title: 'Festival dos alunos', when: 'Sabado', audience: ['aluno', 'professor', 'ceo'], liveRoom: 'fluir-alunos', place: 'Pituba' },
+  { id: 'ev-colab', title: 'Treinamento de equipe', when: 'Segunda 7h', audience: ['colaborador', 'ceo'], liveRoom: 'fluir-equipe', place: 'Cada unidade' },
+  { id: 'ev-franq', title: 'Imersao de franqueados', when: 'Trimestral', audience: ['franqueado', 'ceo'], liveRoom: 'fluir-franquia', place: 'Matriz' },
+  { id: 'ev-ceo', title: 'Council da matriz', when: 'Sob convite', audience: ['ceo'], liveRoom: 'fluir-council', place: 'Fechado' }
 ];
 
 export const VAULT = [
-  { id: 'onboard', title: 'Manual de Onboarding Geral v2.1', kind: 'pdf', audience: ['franqueado', 'matriz', 'staff'], url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
-  { id: 'abertura', title: 'Checklist de Abertura (Recepcao)', kind: 'pdf', audience: ['staff', 'franqueado', 'matriz'], url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
-  { id: 'marca', title: 'Identidade visual e contratos', kind: 'pdf', audience: ['franqueado', 'matriz'], url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }
+  { id: 'onboard', title: 'Manual de Onboarding Geral v2.1', ws: ['franqueado', 'ceo', 'colaborador'], url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+  { id: 'marca', title: 'Identidade visual e contratos', ws: ['franqueado', 'ceo'], url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }
 ];
-
-export const EVENT = {
-  id: 'pisc-2026',
-  title: 'Treinamento Tecnico - Tratamento de Piscinas',
-  place: 'Unidade Pituba',
-  when: 'Sabado · 10h',
-  qr: 'FLUIR-PISC-2026',
-  liveRoom: 'fluir-demo'
-};
 
 export const CEO_EMAILS = [
   'yanfili.simon@gmail.com',
@@ -106,36 +77,69 @@ export const CEO_EMAILS = [
   'opatricksimon@gmail.com'
 ];
 
-export function can(role, action) {
-  return (POLICY[role] || []).indexOf(action) >= 0;
+export function isCeoEmail(email) {
+  return CEO_EMAILS.indexOf(String(email || '').toLowerCase()) >= 0;
 }
 
-export function tracksFor(role) {
-  return TRACKS.filter(function (t) {
-    return role === 'matriz' || t.audience.indexOf(role) >= 0;
-  });
-}
-
-export function vaultFor(role) {
-  return VAULT.filter(function (v) {
-    return role === 'matriz' || v.audience.indexOf(role) >= 0;
-  });
+export function workspaceById(id) {
+  return WORKSPACES.filter(function (w) { return w.id === id; })[0] || WORKSPACES[0];
 }
 
 export function unitById(id) {
   return UNITS.filter(function (u) { return u.id === id; })[0] || UNITS[0];
 }
 
-export function roleById(id) {
-  return ROLES.filter(function (r) { return r.id === id; })[0] || ROLES[2];
+export function grantedWorkspaces(profile) {
+  if (!profile) return [];
+  if (profile.role === 'ceo' || isCeoEmail(profile.email)) return WORKSPACES.map(function (w) { return w.id; });
+  const extra = (profile.grants && profile.grants[normEmail(profile.email)]) || null;
+  if (extra && extra.workspaces && extra.workspaces.length) return extra.workspaces;
+  if (profile.role) return [profile.role];
+  return [];
 }
 
-export function progressOf(done, role) {
-  const lessons = tracksFor(role).reduce(function (a, t) { return a.concat(t.lessons); }, []);
-  const n = lessons.filter(function (l) { return done[l.id]; }).length;
-  return { done: n, total: lessons.length, pct: lessons.length ? Math.round(n * 100 / lessons.length) : 0 };
+export function jobOf(profile) {
+  const extra = profile.grants && profile.grants[normEmail(profile.email)];
+  return (extra && extra.job) || profile.job || 'recepcao';
 }
 
-export function isCeoEmail(email) {
-  return CEO_EMAILS.indexOf(String(email || '').toLowerCase()) >= 0;
+export function canManagePeople(profile) {
+  return profile.role === 'ceo' || isCeoEmail(profile.email) || !!(profile.grants && profile.grants[normEmail(profile.email)] && profile.grants[normEmail(profile.email)].admin);
+}
+
+export function canManageEvents(profile) {
+  if (canManagePeople(profile)) return true;
+  const extra = profile.grants && profile.grants[normEmail(profile.email)];
+  return !!(extra && extra.eventAdmin);
+}
+
+export function coursesFor(ws, profile) {
+  const job = jobOf(profile);
+  return COURSES.filter(function (c) {
+    if (c.ws.indexOf(ws) < 0 && c.ws.indexOf('all') < 0) return false;
+    if (ws === 'colaborador' && c.job && c.job !== 'todos' && c.job !== job && profile.role !== 'ceo') return false;
+    return true;
+  });
+}
+
+export function eventsFor(profile, ws) {
+  const rooms = grantedWorkspaces(profile);
+  return EVENTS.filter(function (e) {
+    if (e.audience.indexOf('all') >= 0) return true;
+    if (ws && e.audience.indexOf(ws) >= 0) return true;
+    return e.audience.some(function (a) { return rooms.indexOf(a) >= 0; });
+  });
+}
+
+export function vaultFor(ws) {
+  return VAULT.filter(function (v) { return v.ws.indexOf(ws) >= 0 || (v.ws.indexOf('ceo') >= 0 && ws === 'ceo'); });
+}
+
+export function normEmail(email) {
+  return String(email || '').trim().toLowerCase();
+}
+
+export function progressOf(done, list) {
+  const n = list.filter(function (c) { return done[c.id]; }).length;
+  return { done: n, total: list.length, pct: list.length ? Math.round(n * 100 / list.length) : 0 };
 }
