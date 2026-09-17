@@ -3,7 +3,7 @@
  * C:\Users\lomab\OneDrive\Área de Trabalho\isaac
  *
  * Tudo aqui é CONFIRMADO pelos materiais, salvo quando marcado HIPÓTESE.
- * Números de decks diferentes NÃO foram fundidos.
+ * Números de apresentações diferentes NÃO foram fundidos.
  */
 
 export const SOURCES = {
@@ -57,7 +57,7 @@ export const PRODUCTS = [
   {
     id: "receita",
     name: "Receita / repasse na data combinada",
-    note: "Promessa oficial do treino: 100% das mensalidades na data combinada. Condições comerciais saem na análise do time isaac — SDR não fecha taxa.",
+    note: "Promessa oficial do treino: 100% das mensalidades na data combinada. Condições comerciais saem na análise do time isaac — a pessoa do primeiro contato não fecha taxa.",
     source: SOURCES.treino
   },
   {
@@ -81,7 +81,7 @@ export const PRODUCTS = [
   {
     id: "seguro",
     name: "Seguro Familiar isaac (Porto Seguro)",
-    note: "Benefício da parceria. Cobre mensalidades em perda de emprego, perda de renda por incapacidade temporária e falecimento, com condições (idade, carência, CLT etc.). Não vender como seguro avulso na call de SDR.",
+    note: "Benefício da parceria. Cobre mensalidades em perda de emprego, perda de renda por incapacidade temporária e falecimento, com condições (idade, carência, CLT (emprego formal com carteira assinada) etc.). Não vender como seguro avulso na ligação do primeiro contato.",
     source: SOURCES.treino
   },
   {
@@ -93,14 +93,14 @@ export const PRODUCTS = [
   {
     id: "meu-arco",
     name: "Meu Arco (ensino superior)",
-    note: "No onepager de faculdades: pagamentos, negociações, comunicação e matrícula digital. Não usar esse nome em call de escola básica sem confirmar.",
+    note: "No resumo de uma página de faculdades: pagamentos, negociações, comunicação e matrícula digital. Não usar esse nome em call de escola básica sem confirmar.",
     source: SOURCES.superior
   }
 ];
 
 export const NUMBER_DIVERGENCE = {
   warning:
-    "Decks oficiais discordam nos totais. Não fundir. Não citar número se a conversa não for do segmento do material.",
+    "Apresentações oficiais discordam nos totais. Não fundir. Não citar número se a conversa não for do segmento do material.",
   escola: {
     source: SOURCES.treino,
     facts: ["+1.900 escolas parceiras", "+650 mil alunos impactados", "+50% de escolas indicadas"]
@@ -115,7 +115,7 @@ export const NUMBER_DIVERGENCE = {
       "+50 instituições abriram novas unidades com apoio do isaac",
       "+2.800 instituições parceiras",
       "97% de retenção",
-      "NPS 89",
+      "NPS 89 (nota de recomendação dos clientes)",
       "1 nova instituição parceira a cada 24h",
       "Grupo Arco; Top Educação 2024 e 2025 — Gestão Financeira"
     ]
@@ -135,11 +135,11 @@ export const POSITIONING = {
     "Como podemos tornar esta instituição mais previsível, organizada, segura e capaz de crescer?",
   neverPromise: [
     "percentual de redução de inadimplência inventado",
-    "ROI, ganho ou economia garantidos",
+    "ROI (retorno financeiro do investimento), ganho ou economia garantidos",
     "crédito aprovado",
     "taxa ou preço",
     "comissão",
-    "NPS / reputação de fonte que não seja o material em uso",
+    "NPS (nota de recomendação dos clientes) / reputação de fonte que não seja o material em uso",
     "aprovação, vaga, nota (isso é outro isaac — Teirson — e não entra aqui)"
   ]
 };
@@ -172,19 +172,19 @@ export const VIDEO_NOTES = [
 ];
 
 export const PIPELINE = [
-  { id: "radar", label: "Radar" },
+  { id: "radar", label: "Lista inicial" },
   { id: "pesquisado", label: "Pesquisado" },
-  { id: "prospect", label: "Prospects" },
+  { id: "prospect", label: "Ainda não contatado" },
   { id: "tentativa", label: "Tentativa de contato" },
   { id: "contato", label: "Contato realizado" },
   { id: "conversa", label: "Conversa" },
   { id: "diagnostico", label: "Diagnóstico" },
   { id: "qualificado", label: "Qualificado" },
   { id: "interessado", label: "Interessado" },
-  { id: "followup", label: "Follow-up" },
-  { id: "call_agendada", label: "Call agendada" },
+  { id: "followup", label: "Retorno marcado" },
+  { id: "call_agendada", label: "Reunião agendada" },
   { id: "encaminhado", label: "Encaminhado ao time isaac" },
-  { id: "call_realizada", label: "Call realizada" },
+  { id: "call_realizada", label: "Reunião realizada" },
   { id: "aguardando", label: "Aguardando resultado" },
   { id: "parceiro", label: "Ganho / parceiro" },
   { id: "nao_avancou", label: "Não avançou" },
@@ -196,10 +196,10 @@ export const PRIOR_HISTORY = [
   { id: "desconhecido", label: "Desconhecido" },
   { id: "nunca_contatado", label: "Responsável disse que nunca foi contatado" },
   { id: "ja_recebeu_contato", label: "Já recebeu contato" },
-  { id: "conversou_sem_call", label: "Já conversou, não marcou call" },
-  { id: "call_agendada_antes", label: "Call agendada anteriormente" },
+  { id: "conversou_sem_call", label: "Já conversou, não marcou reunião" },
+  { id: "call_agendada_antes", label: "Reunião agendada anteriormente" },
   { id: "nao_compareceu", label: "Não compareceu" },
-  { id: "participou_call", label: "Participou de call" },
+  { id: "participou_call", label: "Participou de reunião" },
   { id: "recebeu_proposta", label: "Recebeu proposta" },
   { id: "nao_avancou", label: "Não avançou" },
   { id: "reativacao", label: "Precisa de reativação" },
@@ -328,7 +328,7 @@ export const OBJECTIONS = [
       "Você não precisa decidir nada agora; apenas confirmar se o modelo preserva a autonomia. Prefere conversar no começo ou no fim da próxima semana?"
     ],
     advance: "Se a autonomia de precificação permanece com vocês, vale ouvir como o repasse entra na prática?",
-    stop: "Se o medo for jurídico/contratual fundo, encaminhe ao time isaac — SDR não interpreta contrato.",
+    stop: "Se o medo for jurídico/contratual fundo, encaminhe ao time isaac — a pessoa do primeiro contato não interpreta contrato.",
     source: SOURCES.treino
   },
   {
@@ -358,7 +358,7 @@ export const OBJECTIONS = [
     kind: "material",
     means: "Quer âncora de preço antes de valor. Ou já está comparando.",
     ask: "Posso te devolver com precisão depois da análise dos relatórios. O que mais pesa hoje: taxa, previsibilidade ou tempo da equipe?",
-    value: "A taxa é personalizada. Sai de análise profunda dos relatórios financeiros. SDR não inventa número.",
+    value: "A taxa é personalizada. Sai de análise profunda dos relatórios financeiros. a pessoa do primeiro contato não inventa número.",
     proof: SOURCES.treino,
     reflection: [
       "Taxa isolada diz pouco; a decisão precisa comparar custo atual, risco, tempo e impacto operacional.",
@@ -419,8 +419,8 @@ export const OBJECTIONS = [
     said: "Já fiz reunião.",
     kind: "framework",
     means: "Conhece o produto. A objeção real está depois da reunião.",
-    ask: "O que travou depois — taxa, timing, sócio, ou a proposta em si?",
-    value: "Reativação é descobrir a objeção verdadeira, não repetir o deck.",
+    ask: "O que travou depois — taxa, momento, sócio, ou a proposta em si?",
+    value: "Reativação é descobrir a objeção verdadeira, não repetir o apresentação.",
     proof: "",
     reflection: [
       "Uma reunião anterior não encerra o assunto; ela mostra o que ainda não ficou claro ou não fez sentido.",
@@ -438,12 +438,12 @@ export const OBJECTIONS = [
     id: "agora_nao",
     said: "Agora não.",
     kind: "framework",
-    means: "Timing, cansaço, ou recusa educada.",
+    means: "Momento, cansaço, ou recusa educada.",
     ask: "É 'agora não' de calendário (rematrícula, obra, sócio) ou de prioridade?",
-    value: "Agendar follow-up concreto. Data na agenda, não 'depois'.",
+    value: "Agendar retorno concreto. Data na agenda, não 'depois'.",
     proof: "",
     reflection: [
-      "Entendo. Quando alguém diz “agora não”, normalmente o ponto é timing ou prioridade — qual dos dois pesa mais aqui?",
+      "Entendo. Quando alguém diz “agora não”, normalmente o ponto é momento ou prioridade — qual dos dois pesa mais aqui?",
       "Adiar também é uma decisão; o importante é saber por que estamos adiando e quando o tema deve ser revisto.",
       "Se este não é o momento, qual mudança mostraria que o momento chegou?"
     ],
@@ -520,7 +520,7 @@ export const OBJECTIONS = [
     kind: "framework",
     means: "Pode ser interesse real ou adiamento.",
     ask: "O que você gostaria de ver primeiro — previsibilidade, app da família, ou como funciona o repasse?",
-    value: "Portal do associado / Associadoteca existe. SDR pode mandar o que for público e marcar um horário para tirar dúvida.",
+    value: "Portal do associado / Associadoteca existe. a pessoa do primeiro contato pode mandar o que for público e marcar um horário para tirar dúvida.",
     proof: "https://olaisaac.my.site.com/Associados/s/login/",
     reflection: [
       "Material sem contexto costuma virar mais um arquivo esquecido; qual resposta você precisa encontrar nele?",
@@ -551,7 +551,7 @@ export const OBJECTIONS = [
       "Essa dúvida merece resposta técnica do time oficial. Posso marcar uma conversa focada em dados e segurança para você avaliar com precisão?",
       "Você não precisa avançar sem essa resposta. Qual horário permite colocar essa pergunta diretamente para quem domina o assunto?"
     ],
-    advance: "Anoto a pergunta para o time responder com precisão na call. Seguimos?",
+    advance: "Anoto a pergunta para o time responder com precisão na reunião. Seguimos?",
     stop: "Não dê garantia jurídica."
   },
   {
@@ -571,7 +571,7 @@ export const OBJECTIONS = [
       "Essa é justamente uma das perguntas que o time precisa responder olhando a operação de vocês. Qual horário funciona para essa análise?",
       "Em vez de eu simplificar demais, posso te conectar com quem explica o repasse aplicado ao cenário da instituição. Prefere qual dia?"
     ],
-    advance: "Essa é exatamente a conversa da call com o isaac. Posso encaminhar?",
+    advance: "Essa é exatamente a conversa da reunião com o time isaac. Posso encaminhar?",
     stop: "Não descreva fluxo bancário que você não viu no contrato."
   },
   {
@@ -604,7 +604,7 @@ export const OBJECTIONS = [
     means: "Existe outro decisor ou a pessoa ainda não formou opinião.",
     ask: "O que seu sócio precisaria entender para decidir se vale a conversa?",
     value: "Levar os decisores certos para o diagnóstico e evitar informação pela metade.",
-    proof: "Handoff estruturado do SDR.",
+    proof: "Encaminhamento organizado para o time isaac.",
     reflection: [
       "Uma decisão compartilhada não precisa virar atraso; pode virar uma conversa objetiva com todos os envolvidos.",
       "Em vez de você tentar traduzir tudo depois, podemos colocar as duas pessoas na mesma conversa.",
@@ -627,7 +627,7 @@ export const OBJECTIONS = [
     means: "Contato útil para direcionamento, mas não para qualificação final.",
     ask: "Quem acompanha financeiro, cobrança e previsibilidade por aí?",
     value: "Chegar ao responsável correto sem forçar pitch para recepção ou secretaria.",
-    proof: "Playbook operacional.",
+    proof: "Guia operacional.",
     reflection: [
       "Perfeito — então o melhor resultado desta conversa é chegar à pessoa certa, não tentar convencer a pessoa errada.",
       "Quem conhece a operação pode não assinar a decisão, mas pode indicar quem precisa participar.",
@@ -670,13 +670,13 @@ export const OBJECTIONS = [
     id: "sem_interesse",
     said: "Não tivemos interesse.",
     kind: "framework",
-    means: "A proposta pode não ter aderido, o timing pode ter mudado ou a pessoa pode querer encerrar.",
+    means: "A proposta pode não ter aderido, o momento pode ter mudado ou a pessoa pode querer encerrar.",
     ask: "O que especificamente não fez sentido naquela época?",
     value: "Descobrir se houve mudança real; não repetir pitch.",
     proof: "Histórico anterior informado pelo responsável.",
     reflection: [
       "Sem problema. Para eu registrar corretamente: faltou necessidade, prioridade ou clareza sobre a proposta da conversa?",
-      "Um “não” claro é melhor do que um follow-up artificial; quero apenas compreender a razão real.",
+      "Um “não” claro é melhor do que um retorno artificial; quero apenas compreender a razão real.",
       "Se o cenário mudar, qual mudança faria este tema voltar a merecer atenção?"
     ],
     booking: [
@@ -684,7 +684,7 @@ export const OBJECTIONS = [
       "Se hoje não há motivo real, não marcamos. Mas se faltar clareza, qual horário permitiria uma avaliação objetiva com o time?"
     ],
     advance: "Se esse ponto mudou, retomamos; se não mudou, eu encerro por aqui.",
-    phone: "O que não aderiu: solução, timing, investimento ou prioridade?",
+    phone: "O que não aderiu: solução, momento, investimento ou prioridade?",
     whatsapp: "Só retomo se algo tiver mudado; qual foi a trava principal?",
     email: "Para não insistir sem sentido, poderia indicar o principal motivo da decisão anterior?",
     stop: "Diante de recusa clara ou pedido para não contatar, marque perdido e pare."
@@ -695,7 +695,7 @@ export const OBJECTIONS = [
     kind: "framework",
     means: "Cansaço de pitches, baixa confiança ou falta de valor percebido.",
     ask: "O que faria essa conversa ser útil em vez de só mais uma apresentação?",
-    value: "Diagnóstico breve focado no cenário da instituição, sem negociação pelo SDR.",
+    value: "Diagnóstico breve focado no cenário da instituição, sem negociação no primeiro contato.",
     proof: "Agenda e handoff registram dores e perguntas antes da reunião.",
     reflection: [
       "Concordo: ninguém precisa de mais uma apresentação comercial genérica.",
@@ -772,8 +772,8 @@ export const CALL_STEPS = [
     quick: ["Quebra caixa", "Quebra tempo", "Quebra relação com família", "Impacto baixo"]
   },
   {
-    id: "timing_prioridade",
-    title: "Prioridade e timing",
+    id: "momento_prioridade",
+    title: "Prioridade e momento",
     why: "Entender se o problema merece ação agora.",
     ask: "Isso é algo que vocês querem resolver neste semestre ou ficou para depois de algum marco?",
     watch: "Registre evento, prazo e prioridade nas palavras do responsável.",
@@ -784,7 +784,7 @@ export const CALL_STEPS = [
     title: "Valor",
     why: "Ligar a dor ao que o material realmente entrega.",
     ask: "Se a mensalidade entrasse inteira na data combinada e a cobrança saísse da mesa de vocês, o que mudaria no próximo trimestre?",
-    watch: "Fale só o que o treino confirma: previsibilidade, gestão, app da família, crescimento. Sem taxa, sem ROI inventado.",
+    watch: "Fale só o que o treino confirma: previsibilidade, gestão, app da família, crescimento. Sem taxa, sem retorno financeiro inventado.",
     quick: ["Previsibilidade chamou", "Tempo chamou", "Família/app chamou", "Crédito/crescimento chamou", "Frio"]
   },
   {
@@ -793,7 +793,7 @@ export const CALL_STEPS = [
     why: "Descobrir a objeção verdadeira.",
     ask: "O que te faria dizer não agora?",
     watch: "Abra o mapa de objeções. Investigue antes de responder.",
-    quick: ["Taxa", "Autonomia", "Relação com família", "Timing", "Já viram", "Não é fit"]
+    quick: ["Taxa", "Autonomia", "Relação com família", "Momento", "Já viram", "Não se encaixa"]
   },
   {
     id: "interesse",
@@ -801,7 +801,7 @@ export const CALL_STEPS = [
     why: "Separar educação de avanço.",
     ask: "Faz sentido uma conversa curta com o time da isaac sobre a operação de vocês?",
     watch: "Se sim, encaminhe. Você não substitui o fechamento.",
-    quick: ["Sim, encaminhar", "Talvez, follow-up", "Não"]
+    quick: ["Sim, encaminhar", "Talvez, retorno", "Não"]
   },
   {
     id: "ponte",
@@ -841,7 +841,7 @@ export const CALL_STEPS = [
     why: "Nada de 'depois a gente se fala'.",
     ask: "Qual o melhor dia e o melhor recado para o time isaac chegar preparado?",
     watch: "Data, responsável, canal. Sem isso, a call morreu.",
-    quick: ["Call agendada", "Follow-up com data", "Encaminhado", "Não avançou"]
+    quick: ["Reunião agendada", "Retorno com data", "Encaminhado", "Não avançou"]
   },
   {
     id: "indicacao",
@@ -897,7 +897,7 @@ export const FAST_CALL_STEPS = [
   {
     id: "rapida_agenda",
     title: "Fechar o horário · 10 segundos",
-    why: "O objetivo real desta call é sair com dia e horário.",
+    why: "O objetivo real desta ligação é sair com dia e horário.",
     ask: "Tenho possibilidade a partir da próxima semana. Funciona melhor no começo ou no fim da semana? E pela manhã ou pela tarde?",
     watch: "Abra Agendar reunião. Registre somente data, horário, responsável e pergunta principal. O restante é opcional.",
     quick: ["Data definida", "Consultar agenda", "Remarcar", "Agendado"]
@@ -908,9 +908,9 @@ export const FAST_CALL_STEPS = [
 export const PROOF_VAULT = [
   { id:"repasse", claim:"100% das mensalidades na data combinada", segment:"Educação básica", product:"Receita", source:SOURCES.treino, status:"aprovado", use:"Previsibilidade e repasse", restriction:"Condições comerciais e análise ficam com o time isaac." },
   { id:"familias", claim:"App para famílias com pix, boleto, cartão, negociação, faturas e comprovantes", segment:"Educação básica", product:"App das famílias", source:SOURCES.treino, status:"aprovado", use:"Experiência das famílias e operação de cobrança", restriction:"Não prometer integração não documentada." },
-  { id:"escolas", claim:"+1.900 escolas parceiras e +650 mil alunos impactados", segment:"Educação básica", product:"Institucional", source:SOURCES.treino, status:"aprovado", use:"Prova institucional para escolas", restriction:"Não somar com números do deck superior." },
-  { id:"superior", claim:"+2.800 instituições parceiras, 97% de retenção e NPS 89", segment:"Ensino superior", product:"Institucional", source:SOURCES.superior, status:"aprovado", use:"Somente em conversa de ensino superior", restriction:"Não usar em escola básica nem fundir com outro deck." },
-  { id:"credito", claim:"Crédito e antecipação existem no ecossistema", segment:"Educação básica", product:"Crédito", source:SOURCES.treino, status:"revisar", use:"Somente como possibilidade a ser avaliada", restriction:"Sujeito a aprovação; SDR não promete crédito nem taxa." }
+  { id:"escolas", claim:"+1.900 escolas parceiras e +650 mil alunos impactados", segment:"Educação básica", product:"Institucional", source:SOURCES.treino, status:"aprovado", use:"Prova institucional para escolas", restriction:"Não somar com números do apresentação superior." },
+  { id:"superior", claim:"+2.800 instituições parceiras, 97% de retenção e NPS 89 (nota de recomendação dos clientes)", segment:"Ensino superior", product:"Institucional", source:SOURCES.superior, status:"aprovado", use:"Somente em conversa de ensino superior", restriction:"Não usar em escola básica nem fundir com outro apresentação." },
+  { id:"credito", claim:"Crédito e antecipação existem no ecossistema", segment:"Educação básica", product:"Crédito", source:SOURCES.treino, status:"revisar", use:"Somente como possibilidade a ser avaliada", restriction:"Sujeito a aprovação; a pessoa do primeiro contato não promete crédito nem taxa." }
 ];
 
 export const PLAYBOOK = [
@@ -922,11 +922,11 @@ export const PLAYBOOK = [
   {
     id: "para-quem",
     title: "Para quem é",
-    body: "Instituições privadas. Fase 1 da operação: Salvador — BA, educação básica. Ensino superior tem material próprio (onepager). Não misturar argumentos dos dois decks."
+    body: "Instituições privadas. Fase 1 da operação: Salvador — BA, educação básica. Ensino superior tem material próprio (resumo de uma página). Não misturar argumentos dos dois apresentações."
   },
   {
     id: "como-funciona",
-    title: "Como funciona (o que o SDR precisa saber)",
+    title: "Como funciona para quem faz o primeiro contato",
     body: "Você encontra a instituição, conversa, diagnostica, aquece e encaminha para o time de fechamento da isaac. Você não fecha taxa, crédito nem contrato."
   },
   {
@@ -937,11 +937,11 @@ export const PLAYBOOK = [
   {
     id: "abrir",
     title: "Como abrir uma conversa",
-    body: "Template oficial do HTML de SSA. Local, curto, oferece ponte. Não despeje números do deck de faculdade numa escola de bairro."
+    body: "Template oficial do HTML de SSA. Local, curto, oferece ponte. Não despeje números do apresentação de faculdade numa escola de bairro."
   },
   {
     id: "discovery",
-    title: "Como fazer discovery",
+    title: "Como descobrir as necessidades",
     body: "Uma pergunta por vez. Histórico → dor → sistema atual → impacto. O Call Cockpit guia. Não leia 50 perguntas."
   },
   {
@@ -952,12 +952,12 @@ export const PLAYBOOK = [
   {
     id: "agendar",
     title: "Como agendar / encaminhar",
-    body: "Objetivo da sua call: o responsável pensar 'isso parece interessante, quero entender melhor' e chegar no time isaac consciente do problema, com objeção mapeada e dados organizados."
+    body: "Objetivo da sua ligação: o responsável pensar 'isso parece interessante, quero entender melhor' e chegar no time isaac consciente do problema, com objeção mapeada e dados organizados."
   },
   {
     id: "follow",
-    title: "Como fazer follow-up",
-    body: "Material SSA: 48h sem resposta → ligação. No app: data concreta. 'Me liga em 15 dias' vira follow-up com dia."
+    title: "Como fazer retorno",
+    body: "Material SSA: 48h sem resposta → ligação. No app: data concreta. 'Me liga em 15 dias' vira retorno com dia."
   },
   {
     id: "indicacao",
@@ -972,12 +972,114 @@ export const PLAYBOOK = [
   {
     id: "nao-prometer",
     title: "O que não prometer",
-    body: "Taxa, ROI, crédito aprovado, redução percentual de inadimplência, NPS, 'sem Reclame Aqui', comissão, integração mágica. Se o deck de escolas e o de faculdade discordam no número, não some os dois."
+    body: "Taxa, retorno financeiro, crédito aprovado, redução percentual de inadimplência, NPS, 'sem Reclame Aqui', comissão, integração mágica. Se o apresentação de escolas e o de faculdade discordam no número, não some os dois."
   },
   {
     id: "confianca",
     title: "Como passar confiança",
     body: "Calma, domínio, ouvir. Você verifica se existe oportunidade real de ajudar a instituição. Fechar muitas operações é consequência de gerar valor — não o texto da abertura."
+  }
+];
+
+
+export const PROSPECT_STARTER = [
+  {
+    name: "Colégio Anchieta",
+    city: "Salvador", state: "BA", type: "educacao_basica", priority: "A",
+    phone: "(71) 2107-9000", whatsapp: "(71) 98792-7034", email: "anchieta@anchietaba.com.br",
+    site: "https://www.anchietaba.com.br/", sourceUrl: "https://www.anchietaba.com.br/",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Colégio Oficina",
+    city: "Salvador", state: "BA", type: "educacao_basica", priority: "A",
+    phone: "(71) 3270-4131", email: "secretaria@colegiooficina.com.br",
+    site: "https://colegiooficina.com.br/", sourceUrl: "https://colegiooficina.com.br/",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Pan American School of Bahia",
+    city: "Salvador", state: "BA", type: "educacao_basica", priority: "A",
+    phone: "(71) 3368-8400",
+    site: "https://pasb.com.br/", sourceUrl: "https://pasb.com.br/",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Sartre Escola SEB — Itaigara",
+    city: "Salvador", state: "BA", type: "educacao_basica", priority: "A",
+    phone: "(71) 2201-2100", whatsapp: "(71) 2201-2100",
+    site: "https://sartre-itaigara-salvador.escolaseb.com.br/", sourceUrl: "https://sartre-itaigara-salvador.escolaseb.com.br/",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Sartre Escola SEB — Monet",
+    city: "Lauro de Freitas", state: "BA", type: "educacao_basica", priority: "A",
+    phone: "(71) 2201-2100", whatsapp: "(71) 2201-2100",
+    site: "https://sartre-monet-salvador.escolaseb.com.br/", sourceUrl: "https://sartre-monet-salvador.escolaseb.com.br/",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Colégio Bernoulli — Caminho das Árvores",
+    city: "Salvador", state: "BA", type: "educacao_basica", priority: "A",
+    phone: "(71) 3415-4199", whatsapp: "(71) 99298-0213",
+    site: "https://www.bernoulli.com.br/", sourceUrl: "https://www.bernoulli.com.br/",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Colégio Marista Salvador",
+    city: "Salvador", state: "BA", type: "educacao_basica", priority: "A",
+    phone: "(71) 3114-6350",
+    site: "https://colegiosmaristas.com.br/salvador/", sourceUrl: "https://maristabrasil.org/",
+    sourceLabel: "rede oficial Marista", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Escola Concept Salvador",
+    city: "Salvador", state: "BA", type: "educacao_basica", priority: "A",
+    whatsapp: "(71) 99617-7472", email: "visitsal@escolaconcept.com.br",
+    site: "https://www.escolaconcept.com.br/", sourceUrl: "https://www.escolaconcept.com.br/",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Centro Universitário Jorge Amado — UNIJORGE",
+    city: "Salvador", state: "BA", type: "ensino_superior", priority: "A",
+    phone: "(71) 3206-8000",
+    site: "https://www.unijorge.edu.br/", sourceUrl: "https://www.unijorge.edu.br/",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Universidade Salvador — UNIFACS",
+    city: "Salvador", state: "BA", type: "ensino_superior", priority: "A",
+    phone: "(71) 3021-2800",
+    site: "https://www.unifacs.br/", sourceUrl: "https://servidores.rhbahia.ba.gov.br/",
+    sourceLabel: "página pública do Governo da Bahia", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "UNIME — Lauro de Freitas",
+    city: "Lauro de Freitas", state: "BA", type: "ensino_superior", priority: "A",
+    whatsapp: "(71) 9998-8655",
+    site: "https://www.unime.edu.br/medicina", sourceUrl: "https://www.unime.edu.br/medicina",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Escola Bahiana de Medicina e Saúde Pública",
+    city: "Salvador", state: "BA", type: "ensino_superior", priority: "A",
+    phone: "(71) 2101-1900", whatsapp: "(71) 99957-4138",
+    site: "https://www.bahiana.edu.br/", sourceUrl: "https://www.bahiana.edu.br/secretarias/",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Faculdade Baiana de Direito e Gestão",
+    city: "Salvador", state: "BA", type: "ensino_superior", priority: "A",
+    phone: "(71) 3205-7700", whatsapp: "(71) 99931-2023",
+    site: "https://faculdadebaianadedireito.com.br/", sourceUrl: "https://faculdadebaianadedireito.com.br/",
+    sourceLabel: "site oficial e contato público", verifiedAt: "2026-09-17"
+  },
+  {
+    name: "Centro Universitário UniRuy — Wyden",
+    city: "Salvador", state: "BA", type: "ensino_superior", priority: "A",
+    phone: "0800 771 5001",
+    site: "https://www.wyden.com.br/unidades/uniruy", sourceUrl: "https://www.wyden.com.br/unidades/uniruy",
+    sourceLabel: "site oficial", verifiedAt: "2026-09-17"
   }
 ];
 
