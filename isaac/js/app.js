@@ -60,6 +60,9 @@ let directoryLoadError = "";
 let filterQ = "";
 let callStartedAt = null;
 let callTimerHandle = null;
+let callPanelOpen = false;
+let callPanelMinimized = false;
+let callPanelExpanded = false;
 
 const $ = (id) => document.getElementById(id);
 const el = {
@@ -787,7 +790,7 @@ function renderCockpit() {
   const cscore = contactability(row);
   const obj = KB.OBJECTIONS.find((o) => o.id === row.objectionId);
   return `
-    <div class="call-mode-switch"><button type="button" data-call-mode="fast" class="${callMode === "fast" ? "on" : ""}">Rápido · 2 min</button><button type="button" data-call-mode="complete" class="${callMode === "complete" ? "on" : ""}">Completo</button></div><p class="safe-note">Você não precisa terminar o roteiro. Surgiu interesse, dor clara ou objeção resolvida? Vá direto para o horário.</p><div class="call-topline"><p class="kicker">ROTEIRO DA LIGAÇÃO · ${callMode === "fast" ? "RÁPIDO" : "COMPLETO"} · ${callStep + 1}/${callSteps.length}</p><div class="row"><span class="timer" id="callTimer">${callStartedAt ? formatDuration(Date.now()-callStartedAt) : "00:00"}</span><button class="btn" id="timerToggle" type="button">${callStartedAt ? "Pausar" : "Iniciar"}</button><button class="btn" data-act="attempt" type="button">Registrar tentativa</button><button class="btn btn-ok" data-act="reached" type="button">Responsável alcançado</button></div></div>
+    <div class="call-mode-switch"><button type="button" data-call-mode="fast" class="${callMode === "fast" ? "on" : ""}">Rápido · 2 min</button><button type="button" data-call-mode="complete" class="${callMode === "complete" ? "on" : ""}">Completo</button><button type="button" class="btn" id="openCallPanel">Abrir roteiro flutuante</button></div><p class="safe-note">Você não precisa terminar o roteiro. Surgiu interesse, dor clara ou objeção resolvida? Vá direto para o horário.</p><div class="call-topline"><p class="kicker">ROTEIRO DA LIGAÇÃO · ${callMode === "fast" ? "RÁPIDO" : "COMPLETO"} · ${callStep + 1}/${callSteps.length}</p><div class="row"><span class="timer" id="callTimer">${callStartedAt ? formatDuration(Date.now()-callStartedAt) : "00:00"}</span><button class="btn" id="timerToggle" type="button">${callStartedAt ? "Pausar" : "Iniciar"}</button><button class="btn" data-act="attempt" type="button">Registrar tentativa</button><button class="btn btn-ok" data-act="reached" type="button">Responsável alcançado</button></div></div>
     <div class="cols cols-2">
       <div>
         <div class="card">
@@ -993,15 +996,105 @@ function renderAccess() {
     <p class="muted" style="margin-top:10px">Super admins fixos: ${SUPER_ADMINS.join(" · ")}. Cole também o arquivo RULES-ISAAC.txt no Firestore.</p>`;
 }
 
+function renderFloatingCallPanel() {
+  const row = current();
+  if (!callPanelOpen || !row || row.partnerIsaac) return "";
+  const steps = activeCallSteps();
+  const step = steps[Math.min(callStep, steps.length - 1)];
+  const answer = (row.answers && row.answers[step.id]) || "";
+  return `<aside id="callFloat" class="call-float ${callPanelMinimized ? "is-minimized" : ""} ${callPanelExpanded ? "is-expanded" : ""}" aria-label="Roteiro flutuante da ligação">
+    <header class="call-float-head" id="callFloatDrag">
+      <div><small>ROTEIRO ATIVO · ${callMode === "fast" ? "RÁPIDO" : "COMPLETO"}</small><b>${esc(row.name)}</b></div>
+      <div class="call-float-window">
+        <button type="button" id="callFloatMin" title="Minimizar">${callPanelMinimized ? "▢" : "—"}</button>
+        <button type="button" id="callFloatExpand" title="Expandir ou restaurar">${callPanelExpanded ? "↙" : "↗"}</button>
+        <button type="button" id="callFloatClose" title="Fechar">×</button>
+      </div>
+    </header>
+    <div class="call-float-body">
+      <div class="call-float-progress"><span>Etapa ${callStep + 1} de ${steps.length}</span><span>Arraste pelo topo · redimensione pela margem</span></div>
+      <h3>${esc(step.title)}</h3>
+      <p class="call-float-question">${esc(step.ask)}</p>
+      <p class="call-float-watch"><b>Observe:</b> ${esc(step.watch)}</p>
+      <div class="row">${step.quick.map((q) => `<button class="btn" data-float-quick="${esc(q)}" type="button">${esc(q)}</button>`).join("")}</div>
+      <label>O que a pessoa respondeu<textarea id="floatStepNote" placeholder="Anote aqui sem perder o roteiro">${esc(answer)}</textarea></label>
+      <div class="call-float-nav">
+        <button class="btn" id="floatPrev" type="button">Voltar</button>
+        <button class="btn btn-p" id="floatNext" type="button">Salvar e avançar</button>
+        <button class="btn btn-ok" id="floatSchedule" type="button">Agendar agora</button>
+      </div>
+      <div class="call-float-tools">
+        <button class="btn" data-view="proof" type="button">Provas e dados</button>
+        <button class="btn" data-view="base" type="button">Como funciona</button>
+        <button class="btn" data-view="obj" type="button">Objeções</button>
+        <button class="btn" data-view="cockpit" type="button">Ligação completa</button>
+      </div>
+    </div>
+  </aside>`;
+}
+
+async function saveStepAnswer(textareaId) {
+  const row = current();
+  const field = document.getElementById(textareaId);
+  if (!row || !field) return;
+  const steps = activeCallSteps();
+  const step = steps[Math.min(callStep, steps.length - 1)];
+  const answers = { ...(row.answers || {}) };
+  answers[step.id] = field.value.trim();
+  await saveInst({ answers }, "call_step");
+}
+
+function setupFloatingCallPanel() {
+  const panel = document.getElementById("callFloat");
+  const head = document.getElementById("callFloatDrag");
+  if (!panel || !head || window.matchMedia("(max-width:720px)").matches || callPanelExpanded || callPanelMinimized) return;
+  try {
+    const saved = JSON.parse(localStorage.getItem("isaacCallPanelBox") || "null");
+    if (saved) {
+      panel.style.left = Math.max(8, Math.min(saved.left, window.innerWidth - 280)) + "px";
+      panel.style.top = Math.max(8, Math.min(saved.top, window.innerHeight - 120)) + "px";
+      panel.style.width = Math.max(340, Math.min(saved.width, window.innerWidth - 16)) + "px";
+      panel.style.height = Math.max(280, Math.min(saved.height, window.innerHeight - 16)) + "px";
+      panel.style.right = "auto";
+      panel.style.bottom = "auto";
+    }
+  } catch {}
+  const saveBox = () => {
+    const r = panel.getBoundingClientRect();
+    localStorage.setItem("isaacCallPanelBox", JSON.stringify({ left: r.left, top: r.top, width: r.width, height: r.height }));
+  };
+  if (window.ResizeObserver) new ResizeObserver(saveBox).observe(panel);
+  head.addEventListener("pointerdown", (event) => {
+    if (event.target.closest("button")) return;
+    event.preventDefault();
+    const r = panel.getBoundingClientRect();
+    const startX = event.clientX, startY = event.clientY;
+    const move = (ev) => {
+      panel.style.left = Math.max(8, Math.min(r.left + ev.clientX - startX, window.innerWidth - panel.offsetWidth - 8)) + "px";
+      panel.style.top = Math.max(8, Math.min(r.top + ev.clientY - startY, window.innerHeight - panel.offsetHeight - 8)) + "px";
+      panel.style.right = "auto";
+      panel.style.bottom = "auto";
+    };
+    const up = () => {
+      document.removeEventListener("pointermove", move);
+      document.removeEventListener("pointerup", up);
+      saveBox();
+    };
+    document.addEventListener("pointermove", move);
+    document.addEventListener("pointerup", up);
+  });
+}
+
 function render() {
   const map = {
     dash: renderDash, directory: renderDirectory, crm: renderCrm, pipe: renderPipe, cockpit: renderCockpit,
     follow: renderFollow, react: renderReact, ind: renderInd, play: renderPlay, obj: renderObj,
     proof: renderProof, base: renderBase, parc: renderParc, equipe: renderEquipe, access: renderAccess, more: renderMore
   };
-  el.view.innerHTML = (map[view] || renderDash)();
+  el.view.innerHTML = (map[view] || renderDash)() + renderFloatingCallPanel();
   el.nav.querySelectorAll("[data-view]").forEach((b) => b.classList.toggle("on", b.dataset.view === view));
   el.bottom.querySelectorAll("[data-view]").forEach((b) => b.classList.toggle("on", b.dataset.view === view));
+  setupFloatingCallPanel();
 }
 
 async function copy(text) {
@@ -1073,6 +1166,46 @@ $("btnGoogle").addEventListener("click", googleIn);
 $("btnOut").addEventListener("click", () => signOut(auth));
 
 el.view.addEventListener("click", async (e) => {
+  if (e.target.id === "openCallPanel") {
+    callPanelOpen = true; callPanelMinimized = false; render(); return;
+  }
+  if (e.target.id === "callFloatClose") {
+    callPanelOpen = false; render(); return;
+  }
+  if (e.target.id === "callFloatMin") {
+    callPanelMinimized = !callPanelMinimized; callPanelExpanded = false; render(); return;
+  }
+  if (e.target.id === "callFloatExpand") {
+    callPanelExpanded = !callPanelExpanded; callPanelMinimized = false; render(); return;
+  }
+  const floatQuick = e.target.closest("[data-float-quick]");
+  if (floatQuick) {
+    const ta = document.getElementById("floatStepNote");
+    if (ta) ta.value = (ta.value ? ta.value + " · " : "") + floatQuick.dataset.floatQuick;
+    return;
+  }
+  if (e.target.id === "floatPrev") {
+    await saveStepAnswer("floatStepNote");
+    callStep = Math.max(0, callStep - 1);
+    render(); return;
+  }
+  if (e.target.id === "floatNext") {
+    await saveStepAnswer("floatStepNote");
+    const steps = activeCallSteps();
+    callStep = Math.min(steps.length - 1, callStep + 1);
+    const row = current();
+    if (row && ["prospect", "tentativa"].includes(row.status)) await saveInst({ status: "contato" }, "status");
+    render(); return;
+  }
+  if (e.target.id === "floatSchedule") {
+    await saveStepAnswer("floatStepNote");
+    view = "cockpit";
+    callPanelMinimized = true;
+    render();
+    setTimeout(() => document.getElementById("meetingBox")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+    toast("Escolha agora a data e o horário.");
+    return;
+  }
   if (e.target.id === "seedDirectoryBtn") {
     const btn = e.target;
     btn.disabled = true;
@@ -1107,7 +1240,7 @@ el.view.addEventListener("click", async (e) => {
   if (promote) {
     currentId = promote.dataset.promote;
     await saveInst({ directoryOnly: false, status: "prospect", nextAction: "fazer primeiro contato" }, "directory_promoted");
-    view = "cockpit"; callStep = 0; render();
+    view = "cockpit"; callStep = 0; callPanelOpen = true; callPanelMinimized = false; render();
     toast("Instituição colocada nos contatos em andamento.");
     return;
   }
@@ -1115,9 +1248,16 @@ el.view.addEventListener("click", async (e) => {
   const open = e.target.closest("[data-open]");
   const call = e.target.closest("[data-call]");
   const v = e.target.closest("[data-view]");
-  if (open) { currentId = open.dataset.open; view = "cockpit"; callStep = 0; render(); return; }
-  if (call) { currentId = call.dataset.call; view = "cockpit"; callStep = 0; render(); return; }
-  if (v) { view = v.dataset.view; render(); return; }
+  if (open) { currentId = open.dataset.open; view = "cockpit"; callStep = 0; callPanelOpen = true; callPanelMinimized = false; render(); return; }
+  if (call) { currentId = call.dataset.call; view = "cockpit"; callStep = 0; callPanelOpen = true; callPanelMinimized = false; render(); return; }
+  if (v) {
+    if (document.getElementById("floatStepNote")) await saveStepAnswer("floatStepNote");
+    else if (view === "cockpit" && document.getElementById("stepNote")) await saveStepAnswer("stepNote");
+    if (["proof", "base", "obj"].includes(v.dataset.view)) callPanelOpen = true;
+    view = v.dataset.view;
+    render();
+    return;
+  }
 
   if (e.target.id === "copyTpl") return copy(KB.APPROACH.template);
   if (e.target.id === "seedBtn") {
