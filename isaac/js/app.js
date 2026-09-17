@@ -87,7 +87,10 @@ function norm(s) {
   return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
 }
 function slugInst(name, city) {
-  return (norm(name) + "|" + norm(city || "salvador")).slice(0, 180);
+  return (norm(name) + "|" + norm(city || "salvador"))
+    .replace(/[\\/#?]/g, "-")
+    .replace(/\s+/g, " ")
+    .slice(0, 180);
 }
 function nowIso() { return new Date().toISOString(); }
 function fmt(ts) {
@@ -285,11 +288,14 @@ async function loadAll() {
 }
 
 async function seedPartnersIfNeeded() {
-  const has = inst.some((i) => i.partnerIsaac === true);
-  if (has) return;
+  const missing = KB.PARTNERS_SSA.filter((name) => {
+    const row = inst.find((i) => norm(i.name) === norm(name) && norm(i.city || "Salvador") === "salvador");
+    return !row || row.partnerIsaac !== true;
+  });
+  if (!missing.length) return 0;
   const batch = writeBatch(db);
   const at = nowIso();
-  KB.PARTNERS_SSA.forEach((name) => {
+  missing.forEach((name) => {
     const id = slugInst(name, "Salvador");
     const ref = doc(db, COL_INST, id);
     batch.set(ref, {
@@ -301,6 +307,7 @@ async function seedPartnersIfNeeded() {
       type: "educacao_basica",
       status: "parceiro",
       partnerIsaac: true,
+      directoryOnly: false,
       priorHistory: "parceiro",
       origin: "lista oficial SSA",
       sourceFile: KB.SOURCES.ssa,
@@ -313,7 +320,8 @@ async function seedPartnersIfNeeded() {
   });
   await batch.commit();
   await loadAll();
-  toast("56 parceiras de Salvador importadas da lista oficial.");
+  toast(missing.length + " parceiras de Salvador sincronizadas.");
+  return missing.length;
 }
 
 async function seedStarterDirectory() {
@@ -943,11 +951,18 @@ function renderBase() {
 }
 
 function renderParc() {
-  const rows = inst.filter((i) => i.partnerIsaac);
+  const official = KB.PARTNERS_SSA.map((name) => {
+    const saved = inst.find((i) => i.partnerIsaac && norm(i.name) === norm(name));
+    return saved || { name, pendingSync: true };
+  });
+  const officialNames = new Set(KB.PARTNERS_SSA.map(norm));
+  const extras = inst.filter((i) => i.partnerIsaac && !officialNames.has(norm(i.name)));
+  const rows = [...official, ...extras];
+  const synced = official.filter((i) => !i.pendingSync).length;
   return `<p class="kicker">Parceiros</p><h2>Já fechadas em Salvador</h2>
-    <p class="hint">Fonte: ${esc(KB.SOURCES.ssa)} · ${rows.length} registros. Não prospectar.</p>
-    <div class="list" style="margin-top:10px">${rows.map((i) => `<div class="item"><strong>${esc(i.name)}</strong> <span class="st parceiro">parceira</span></div>`).join("")}</div>
-    ${session.admin ? `<div class="row" style="margin-top:12px"><button class="btn" id="seedBtn" type="button">Reimportar lista SSA (merge)</button></div>` : ""}`;
+    <p class="hint">Fonte: ${esc(KB.SOURCES.ssa)} · ${KB.PARTNERS_SSA.length} escolas da lista que você enviou. Não prospectar.</p>
+    <div class="row" style="margin-top:12px"><button class="btn btn-p" id="seedBtn" type="button">Sincronizar lista de parceiras</button><span class="muted">${synced}/${KB.PARTNERS_SSA.length} salvas no banco.</span></div>
+    <div class="list" style="margin-top:10px">${rows.map((i) => `<div class="item"><strong>${esc(i.name)}</strong> <span class="st parceiro">parceira</span>${i.pendingSync ? ` <small class="muted">aguardando sincronização</small>` : ""}</div>`).join("")}</div>`;
 }
 
 function renderEquipe() {
@@ -1106,8 +1121,19 @@ el.view.addEventListener("click", async (e) => {
 
   if (e.target.id === "copyTpl") return copy(KB.APPROACH.template);
   if (e.target.id === "seedBtn") {
-    inst = inst.filter((i) => !i.partnerIsaac);
-    await seedPartnersIfNeeded();
+    const btn = e.target;
+    btn.disabled = true;
+    btn.textContent = "Sincronizando…";
+    try {
+      const added = await seedPartnersIfNeeded();
+      await loadAll();
+      render();
+      toast(added ? added + " parceiras sincronizadas." : "As 56 parceiras já estão sincronizadas.");
+    } catch (err) {
+      console.error("partner seed", err);
+      render();
+      toast("Não foi possível sincronizar: " + (err.code || err.message || "erro desconhecido"));
+    }
     return;
   }
   if (e.target.id === "prevStep") { callStep = Math.max(0, callStep - 1); render(); return; }
