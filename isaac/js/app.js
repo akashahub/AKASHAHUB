@@ -10,7 +10,7 @@ import {
   firebaseConfig, SUPER_ADMINS, COL_ACCESS, COL_INST, COL_REF,
   emailKey, isSuperAdmin
 } from "./config.js";
-import * as KB from "./knowledge.js?v=20260917d";
+import * as KB from "./knowledge.js?v=20260917i";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -104,6 +104,14 @@ function fmt(ts) {
 }
 function activeCallSteps() {
   return callMode === "fast" && Array.isArray(KB.FAST_CALL_STEPS) ? KB.FAST_CALL_STEPS : KB.CALL_STEPS;
+}
+function callStepAsk(step, row) {
+  return row && row.type === "ensino_superior" && step.askHigher ? step.askHigher : step.ask;
+}
+function objectionGroups() {
+  const byId = new Map(KB.OBJECTIONS.map((o) => [o.id, o]));
+  const flow = Array.isArray(KB.OBJECTION_FLOW) ? KB.OBJECTION_FLOW : [{ id:"todas", title:"Objeções", help:"", stepIds:[], objectionIds:KB.OBJECTIONS.map((o)=>o.id) }];
+  return flow.map((group) => ({ ...group, items: group.objectionIds.map((id) => byId.get(id)).filter(Boolean) }));
 }
 
 const LOG_ACTION_LABELS = {
@@ -431,6 +439,9 @@ function signalsOf(row) {
     historico: row.priorHistory || "desconhecido"
   };
 }
+
+const SIGNAL_LABELS = { fit:"Perfil adequado", dor:"Problema identificado", impacto:"Impacto percebido", autoridade:"Pessoa que decide", interesse:"Interesse demonstrado", timing:"Momento de decidir", historico:"Histórico com a isaac" };
+function signalFilled(value) { return Boolean(value && !["?", "desconhecido"].includes(String(value).toLowerCase())); }
 
 function preCall(row) {
   const hist = histLabel(row.priorHistory);
@@ -787,6 +798,7 @@ function renderCockpit() {
   const callSteps = activeCallSteps();
   const step = callSteps[Math.min(callStep, callSteps.length - 1)];
   const sig = signalsOf(row);
+  const qualificationDone = Object.values(sig).filter(signalFilled).length;
   const cscore = contactability(row);
   const obj = KB.OBJECTIONS.find((o) => o.id === row.objectionId);
   return `
@@ -827,7 +839,7 @@ function renderCockpit() {
         </div>
         <div class="call-stage" style="margin-top:10px">
           <p class="step">${esc(step.title)} · por que: ${esc(step.why)}</p>
-          <p class="call-question">${esc(step.ask)}</p>
+          <p class="call-question">${esc(callStepAsk(step, row))}</p>
           <p class="intent"><b>Sinais para observar:</b> ${esc(step.watch)}</p>
           <div class="row">${step.quick.map((q) => `<button class="btn" data-quick="${esc(q)}" type="button">${esc(q)}</button>`).join("")}</div>
           <div class="booking-strip"><div><b>Percebeu abertura?</b><span>Pare o roteiro e marque o horário. O restante dos dados é opcional.</span></div><button class="btn btn-ok" data-act="jumpSchedule" type="button">Agendar agora</button></div>
@@ -840,23 +852,23 @@ function renderCockpit() {
         </div>
       </div>
       <div>
-        <div class="card">
-          <p class="kicker">Qualificação</p>
-          <div class="sig">
-            ${Object.entries(sig).map(([k, v]) => `<i>${esc(k)}: ${esc(v)}</i>`).join("")}
+        <div class="card qualification-card">
+          <div class="qualification-title"><div><p class="kicker">QUALIFICAÇÃO</p><h2>O que já ficou claro</h2><p>Preencha durante a conversa, sem transformar a ligação em interrogatório.</p></div><div class="qualification-score"><b>${qualificationDone}/7</b><span>pontos entendidos</span></div></div>
+          <div class="qualification-signals">${Object.entries(sig).map(([key,value]) => `<div class="${signalFilled(value) ? "is-ready" : ""}"><small>${esc(SIGNAL_LABELS[key] || key)}</small><b>${esc(signalFilled(value) ? value : "Ainda não")}</b></div>`).join("")}</div>
+          <div class="qualification-fields">
+            <label><span>Dor principal</span><small>Qual problema mais pesa?</small><input id="pain" value="${esc(row.pain || "")}" placeholder="Ex.: atraso afeta o caixa"></label>
+            <label><span>Interesse</span><small>O que ela quer entender?</small><input id="interest" value="${esc(row.interest || "")}" placeholder="Ex.: previsibilidade"></label>
+            <label><span>Autoridade</span><small>Quem participa da decisão?</small><input id="authority" value="${esc(row.authority || "")}" placeholder="Ex.: mantenedor e financeiro"></label>
+            <label><span>Momento para decidir</span><small>Agora, semestre ou rematrícula?</small><input id="timing" value="${esc(row.timing || "")}" placeholder="Ex.: depois da rematrícula"></label>
+            <label class="wide"><span>O que chamou atenção</span><small>Use as palavras da própria pessoa.</small><input id="valueHook" value="${esc(row.valueHook || "")}" placeholder="Ex.: receber na data combinada"></label>
+            <label class="wide"><span>Notas importantes</span><small>Somente o necessário para o time de fechamento.</small><textarea id="notes" placeholder="Resumo curto da conversa">${esc(row.notes || "")}</textarea></label>
           </div>
-          <label>Dor principal <input id="pain" value="${esc(row.pain || "")}"></label>
-          <label>Interesse <input id="interest" value="${esc(row.interest || "")}"></label>
-          <label>Autoridade <input id="authority" value="${esc(row.authority || "")}"></label>
-          <label>Momento para decidir <input id="timing" value="${esc(row.timing || "")}"></label>
-          <label>O que chamou atenção <input id="valueHook" value="${esc(row.valueHook || "")}"></label>
-          <label>Notas <textarea id="notes">${esc(row.notes || "")}</textarea></label>
         </div>
         <div class="card" style="margin-top:10px">
           <p class="kicker">Objeção</p>
           <select id="objSel">
             <option value="">— selecionar —</option>
-            ${KB.OBJECTIONS.map((o) => `<option value="${o.id}" ${row.objectionId === o.id ? "selected" : ""}>${esc(o.said)}</option>`).join("")}
+            ${objectionGroups().map((group) => `<optgroup label="${esc(group.title)}">${group.items.map((o) => `<option value="${o.id}" ${row.objectionId === o.id ? "selected" : ""}>${esc(o.said)}</option>`).join("")}</optgroup>`).join("")}
           </select>
           ${obj ? `<div class="hint obj-live" style="margin-top:8px"><p><b>Pode querer dizer:</b> ${esc(obj.means)}</p><p class="obj-ask"><b>PERGUNTE:</b> ${esc(obj.ask)}</p><p><b>Valor:</b> ${esc(obj.value)}</p><p><b>Prova:</b> ${esc(obj.proof || "—")}</p>${obj.reflection && obj.reflection.length ? `<p><b>Frases de impacto — escolha uma:</b><br>${obj.reflection.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</p>` : ""}${obj.booking && obj.booking.length ? `<div class="booking-lines"><b>FECHAR O HORÁRIO AGORA:</b><br>${obj.booking.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</div>` : ""}<p class="obj-advance"><b>AVANÇO:</b> ${esc(obj.advance)}</p><p><b>Não insistir:</b> ${esc(obj.stop)}</p><button class="btn btn-ok" data-act="jumpSchedule" type="button">Ir direto para agendamento</button></div>` : ""}
         </div>
@@ -921,19 +933,24 @@ function renderPlay() {
 }
 
 function renderObj() {
-  return `<p class="kicker">Objeções</p><h2>Mapa</h2>
-    ${KB.OBJECTIONS.map((o) => `<article class="card" style="margin-bottom:8px">
-      <p class="kicker">${o.kind === "material" ? "Material oficial" : "Investigação"}</p>
-      <h2>${esc(o.said)}</h2>
-      <p><b>Pode querer dizer:</b> ${esc(o.means)}</p>
-      <p class="obj-ask"><b>PERGUNTE:</b> ${esc(o.ask)}</p>
-      <p><b>Valor:</b> ${esc(o.value)}</p>
-      ${o.reflection && o.reflection.length ? `<div class="hint" style="margin:10px 0"><b>Frases de impacto — escolha uma e fale com calma:</b><br>${o.reflection.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</div>` : ""}
-      ${o.booking && o.booking.length ? `<div class="booking-lines"><b>FECHAR O HORÁRIO:</b><br>${o.booking.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</div>` : ""}
-      <p class="obj-advance"><b>AVANÇO:</b> ${esc(o.advance)}</p>
-      ${o.phone ? `<p><b>Ligação:</b> ${esc(o.phone)}</p><p><b>WhatsApp:</b> ${esc(o.whatsapp)}</p><p><b>Email:</b> ${esc(o.email)}</p>` : ""}
-      <p class="muted">Quando não insistir: ${esc(o.stop)} · ${esc(o.source || "")}</p>
-    </article>`).join("")}`;
+  const steps = activeCallSteps();
+  const activeStep = steps[Math.min(callStep, steps.length - 1)];
+  const selectedId = (current() || {}).objectionId;
+  return `<p class="kicker">OBJEÇÕES NA ORDEM DA CONVERSA</p><h2>Encontre sem procurar</h2>
+    <p class="plain-help">As objeções seguem a sequência do roteiro. A etapa mais provável agora fica destacada.</p>
+    ${objectionGroups().map((group) => {
+      const active = (group.stepIds || []).includes(activeStep && activeStep.id);
+      return `<section class="objection-group ${active ? "is-current" : ""}">
+        <header><div><p class="kicker">${esc(group.title)}</p><h3>${esc(group.help)}</h3></div>${active ? "<span>ETAPA ATUAL</span>" : ""}</header>
+        ${group.items.map((o) => `<article class="card objection-card ${selectedId === o.id ? "is-selected" : ""}" id="objection-${esc(o.id)}">
+          <p class="kicker">${o.kind === "material" ? "Material oficial" : "Investigação"}</p><h2>${esc(o.said)}</h2>
+          <p><b>Pode querer dizer:</b> ${esc(o.means)}</p><p class="obj-ask"><b>PERGUNTE:</b> ${esc(o.ask)}</p><p><b>Valor:</b> ${esc(o.value)}</p>
+          ${o.reflection?.length ? `<div class="hint" style="margin:10px 0"><b>Frases de impacto — escolha uma:</b><br>${o.reflection.map((p,n)=>`${n+1}. ${esc(p)}`).join("<br>")}</div>` : ""}
+          ${o.booking?.length ? `<div class="booking-lines"><b>FECHAR O HORÁRIO:</b><br>${o.booking.map((p,n)=>`${n+1}. ${esc(p)}`).join("<br>")}</div>` : ""}
+          <p class="obj-advance"><b>AVANÇO:</b> ${esc(o.advance)}</p><p class="muted">Quando não insistir: ${esc(o.stop)} · ${esc(o.source || "")}</p>
+        </article>`).join("")}
+      </section>`;
+    }).join("")}`;
 }
 
 function renderBase() {
@@ -1002,6 +1019,7 @@ function renderFloatingCallPanel() {
   const steps = activeCallSteps();
   const step = steps[Math.min(callStep, steps.length - 1)];
   const answer = (row.answers && row.answers[step.id]) || "";
+  const likelyObjections = (step.objectionIds || []).map((id) => KB.OBJECTIONS.find((o) => o.id === id)).filter(Boolean);
   return `<aside id="callFloat" class="call-float ${callPanelMinimized ? "is-minimized" : ""} ${callPanelExpanded ? "is-expanded" : ""}" aria-label="Roteiro flutuante da ligação">
     <header class="call-float-head" id="callFloatDrag">
       <div><small>ROTEIRO ATIVO · ${callMode === "fast" ? "RÁPIDO" : "COMPLETO"}</small><b>${esc(row.name)}</b></div>
@@ -1014,8 +1032,9 @@ function renderFloatingCallPanel() {
     <div class="call-float-body">
       <div class="call-float-progress"><span>Etapa ${callStep + 1} de ${steps.length}</span><span>Arraste pelo topo · redimensione pela margem</span></div>
       <h3>${esc(step.title)}</h3>
-      <p class="call-float-question">${esc(step.ask)}</p>
+      <p class="call-float-question">${esc(callStepAsk(step, row))}</p>
       <p class="call-float-watch"><b>Observe:</b> ${esc(step.watch)}</p>
+      ${likelyObjections.length ? `<div class="call-float-objections"><b>Se a pessoa responder com uma objeção:</b><div>${likelyObjections.map((o) => `<button type="button" data-pick-objection="${esc(o.id)}">${esc(o.said)}</button>`).join("")}</div></div>` : ""}
       <div class="row">${step.quick.map((q) => `<button class="btn ${String(answer).split(" · ").includes(q) ? "is-picked" : ""}" data-float-quick="${esc(q)}" type="button">${esc(q)}</button>`).join("")}</div>
       <label>O que a pessoa respondeu<textarea id="floatStepNote" placeholder="Anote aqui sem perder o roteiro">${esc(answer)}</textarea></label>
       <div class="call-float-nav">
@@ -1177,6 +1196,18 @@ el.view.addEventListener("click", async (e) => {
   }
   if (e.target.id === "callFloatExpand") {
     callPanelExpanded = !callPanelExpanded; callPanelMinimized = false; render(); return;
+  }
+  const objectionPick = e.target.closest("[data-pick-objection]");
+  if (objectionPick) {
+    if (document.getElementById("floatStepNote")) await saveStepAnswer("floatStepNote");
+    const picked = KB.OBJECTIONS.find((o) => o.id === objectionPick.dataset.pickObjection);
+    if (picked) {
+      await saveInst({ objectionId: picked.id, objection: picked.said }, "objection");
+      view = "obj"; callPanelOpen = true; render();
+      setTimeout(() => document.getElementById("objection-" + picked.id)?.scrollIntoView({ behavior:"smooth", block:"start" }), 60);
+      toast("Objeção aberta na ordem do roteiro.");
+    }
+    return;
   }
   const floatQuick = e.target.closest("[data-float-quick]");
   if (floatQuick) {
