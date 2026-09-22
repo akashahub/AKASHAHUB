@@ -62,6 +62,7 @@ function clockLabel() {
 function pack() {
   if (dealId === "ze" && typeof PACK_ZE !== "undefined") return PACK_ZE;
   if (dealId === "artur" && typeof PACK_ARTUR !== "undefined") return PACK_ARTUR;
+  if (dealId === "vilas" && typeof PACK_VILAS !== "undefined") return PACK_VILAS;
   return {
     id: "francesca",
     hero: {
@@ -696,7 +697,7 @@ document.addEventListener("click", (e) => {
     dealId = d.getAttribute("data-deal");
     state = load(dealId);
     localStorage.setItem("af-mesa-current", dealId);
-    setView("mesa");
+    setView(dealId === "vilas" ? "caixa" : "mesa");
     return;
   }
   const sentido = e.target.closest("[data-sentido]");
