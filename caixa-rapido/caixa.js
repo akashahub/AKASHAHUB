@@ -70,7 +70,7 @@ function visible() {
     if (filterCat !== "all" && s.cat !== filterCat) return false;
     if (filterSt !== "all" && statusOf(s.id) !== filterSt) return false;
     if (!query) return true;
-    return (s.name + " " + s.where + " " + s.cat).toLowerCase().includes(query);
+    return (s.name + " " + s.where + " " + s.cat + " " + (s.ajuda || "") + " " + (s.ajudaLinha || "") + " " + (s.wa || "") + " " + (s.tel || "") + " " + (s.cel || "")).toLowerCase().includes(query);
   });
 }
 
@@ -111,6 +111,32 @@ function renderHoje() {
   }
 }
 
+function digits(s) { return String(s || "").replace(/\D/g, ""); }
+function prettyPhone(d) {
+  d = digits(d);
+  if (d.startsWith("55") && d.length > 11) d = d.slice(2);
+  if (d.length === 11) return "(" + d.slice(0, 2) + ") " + d.slice(2, 7) + "-" + d.slice(7);
+  if (d.length === 10) return "(" + d.slice(0, 2) + ") " + d.slice(2, 6) + "-" + d.slice(6);
+  return d || "";
+}
+function waLink(d) {
+  let n = digits(d);
+  if (!n.startsWith("55")) n = "55" + n;
+  return "https://wa.me/" + n;
+}
+function foneLine(s) {
+  if (s.wa) return "WhatsApp " + prettyPhone(s.wa) + (s.waNote ? " · " + s.waNote : "");
+  if (s.cel) return "Celular " + prettyPhone(s.cel) + " · não confirmei WhatsApp · pedir na porta";
+  if (s.tel) return "Fixo " + prettyPhone(s.tel) + " · não é WhatsApp · pedir o Zap na porta";
+  return "WhatsApp: não achei · pedir na porta";
+}
+function recado(s) {
+  return s.recado || ("Oi. Passei na " + s.name + ". Vi um ponto simples no celular de quem ainda não entrou. Posso mostrar em 40 segundos, sem trocar o que já funciona?");
+}
+function waHref(s) {
+  return waLink(s.wa) + "?text=" + encodeURIComponent(recado(s));
+}
+
 function render() {
   document.body.classList.toggle("show", showMode);
   const c = counts();
@@ -129,8 +155,8 @@ function render() {
       return `<button type="button" class="card${s.hot ? " hot" : ""}" data-open="${s.id}">
         <div class="meta">${s.hot ? "Porta quente · " : ""}${catLabel(s.cat)} · ${s.where}</div>
         <h3>${esc(s.name)}</h3>
-        <p class="where">${s.draft ? "Ainda sem nome de fachada — completar na rua." : esc(s.gap)}</p>
-        <p class="kid">${esc(caixaKid(s.cat))}</p>
+        <p class="help"><b>${esc(s.ajuda || "Ver")}</b>${esc(s.ajudaLinha || s.gap)}</p>
+        <p class="fone">${esc(foneLine(s))}</p>
         <span class="st ${st}">${esc(stLabel(st))}</span>
       </button>`;
     }).join("");
@@ -168,9 +194,21 @@ function renderSheet() {
     s.insta ? `<p class="hint">${esc(s.insta)}</p>` : "",
     s.demo ? `<div class="row"><a class="btn gold" href="${esc(s.demo)}">Abrir demo no notebook</a></div>` : ""
   ].join("");
+  const play = showMode ? "" : `
+    <div class="ajuda-box">
+      <p class="kicker">${esc(s.ajuda || "Ajuda")}</p>
+      <p>${esc(s.ajudaLinha || s.gap)}</p>
+      <p class="fone">${esc(foneLine(s))}</p>
+      ${s.tel && s.wa ? `<p class="hint">Também tem fixo ${esc(prettyPhone(s.tel))}.</p>` : ""}
+      <p class="hint">Isto é pra você ler. Na porta, uma frase. Não despejar Academy nem Convergência.</p>
+    </div>`;
+  const waBtn = !showMode && s.wa
+    ? `<a class="btn gold" href="${esc(waHref(s))}" target="_blank" rel="noopener">Abrir WhatsApp</a>`
+    : "";
   document.getElementById("sheet").innerHTML = `
     <p class="kicker">${s.hot ? "Porta quente · " : ""}${esc(catLabel(s.cat))} · ${esc(s.where)}</p>
     <h2>${esc(s.name)}</h2>
+    ${play}
     <p class="kid">${esc(caixaKid(s.cat))}</p>
     <p class="hint">${esc(s.gap)}</p>
     ${extra}
@@ -182,7 +220,8 @@ function renderSheet() {
       <div class="row">${statuses}</div>
       <div class="row">
         <button type="button" class="btn gold" data-copy-script>Copiar fala de 90s</button>
-        <button type="button" class="btn" data-copy-wa>Copiar WhatsApp</button>
+        <button type="button" class="btn" data-copy-wa>${s.wa ? "Copiar recado + número" : "Copiar: pedir na porta"}</button>
+        ${waBtn}
         <a class="btn" href="${LEGADO_URL}" target="_blank" rel="noopener">Abrir Legado</a>
       </div>`}
     <div class="row"><button type="button" class="btn ghost" data-close>Fechar</button></div>
@@ -200,6 +239,9 @@ function addShop(ev) {
     cat: f.cat.value,
     where: f.where.value.trim() || "Vilas do Atlântico",
     gap: f.gap.value.trim() || "Mapear na porta: nome oficial, Instagram, quem decide.",
+    ajuda: (f.ajuda.value.trim() || "Mapear"),
+    ajudaLinha: f.gap.value.trim() || "Anotar na porta se tem site e se o Google acha. Sem site → site. Some no Google → SEO.",
+    wa: digits(f.wa.value).length >= 10 ? digits(f.wa.value) : "",
     build: ["site", "google", "posts", "whats"],
     next: "Entrar. Pedir quem manda. Mostrar a tela."
   };
@@ -256,7 +298,13 @@ document.addEventListener("click", (e) => {
   const st = e.target.closest("#sheet [data-st]");
   if (st && openId) { setStatus(openId, st.getAttribute("data-st")); return; }
   if (e.target.closest("[data-copy-script]")) { copy(CAIXA_OFFER.script90.join("\n")); return; }
-  if (e.target.closest("[data-copy-wa]")) { copy(PACK_VILAS.whatsapp); return; }
+  if (e.target.closest("[data-copy-wa]")) {
+    const s = shops().find((x) => x.id === openId);
+    if (!s) { copy(PACK_VILAS.whatsapp); return; }
+    if (s.wa) copy(recado(s) + "\n" + prettyPhone(s.wa) + "\n" + waLink(s.wa));
+    else copy(s.name + "\n" + foneLine(s) + "\n" + (s.ajudaLinha || ""));
+    return;
+  }
   const line = e.target.closest("[data-copy]");
   if (line) { copy(line.getAttribute("data-copy")); return; }
   if (e.target.closest("#btnShow")) { showMode = !showMode; render(); return; }
