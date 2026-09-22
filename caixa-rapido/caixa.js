@@ -12,7 +12,13 @@ if (!db.extra) db.extra = [];
 if (!db.notes) db.notes = {};
 
 function shops() {
-  return CAIXA_SHOPS.concat(db.extra);
+  const all = CAIXA_SHOPS.concat(db.extra);
+  return all.slice().sort((a, b) => {
+    const ha = a.hot ? 1 : 0;
+    const hb = b.hot ? 1 : 0;
+    if (hb !== ha) return hb - ha;
+    return 0;
+  });
 }
 function statusOf(id) { return db.status[id] || "mapa"; }
 function setStatus(id, st) { db.status[id] = st; saveStore(db); render(); }
@@ -68,6 +74,43 @@ function visible() {
   });
 }
 
+function renderHoje() {
+  const doors = document.getElementById("hojeDoors");
+  const recorte = document.getElementById("hojeRecorte");
+  const beats = document.getElementById("hojeBeats");
+  const never = document.getElementById("hojeNever");
+  if (!doors || typeof CAIXA_HOJE === "undefined") return;
+  doors.innerHTML = CAIXA_HOJE.map((d) =>
+    `<article class="door">
+      <p class="meta">${esc(d.label)}</p>
+      <h3>${esc(d.name)}</h3>
+      <p>${esc(d.why)}</p>
+      <p class="act"><strong>Agora:</strong> ${esc(d.act)}</p>
+      <p>${esc(d.tone)}</p>
+      <div class="row">
+        <a class="btn gold" href="${esc(d.demo)}">Abrir demo</a>
+        <button type="button" class="btn" data-open="${esc(d.id)}">Ficha</button>
+      </div>
+    </article>`
+  ).join("");
+  if (recorte && typeof CAMPO_CLOSE !== "undefined") {
+    recorte.innerHTML = `<b>${esc(CAMPO_CLOSE.title)}</b>
+      <p>${esc(CAMPO_CLOSE.recorte.line)}</p>
+      <p>${esc(CAMPO_CLOSE.recorte.market)} ${esc(CAMPO_CLOSE.recorte.ciclo)}</p>
+      <div class="row">
+        <button type="button" class="btn" data-copy-recorte>Copiar recorte</button>
+      </div>`;
+  }
+  if (beats && CAMPO_CLOSE) {
+    beats.innerHTML = CAMPO_CLOSE.beats.map((b) =>
+      `<li><span class="n">${esc(b.n)}</span><div><strong>${esc(b.t)}</strong><span>${esc(b.d)}</span></div></li>`
+    ).join("");
+  }
+  if (never && CAMPO_CLOSE) {
+    never.innerHTML = CAMPO_CLOSE.never.map((n) => `<li>${esc(n)}</li>`).join("");
+  }
+}
+
 function render() {
   document.body.classList.toggle("show", showMode);
   const c = counts();
@@ -83,8 +126,8 @@ function render() {
   } else {
     root.innerHTML = list.map((s) => {
       const st = statusOf(s.id);
-      return `<button type="button" class="card" data-open="${s.id}">
-        <div class="meta">${catLabel(s.cat)} · ${s.where}</div>
+      return `<button type="button" class="card${s.hot ? " hot" : ""}" data-open="${s.id}">
+        <div class="meta">${s.hot ? "Porta quente · " : ""}${catLabel(s.cat)} · ${s.where}</div>
         <h3>${esc(s.name)}</h3>
         <p class="where">${s.draft ? "Ainda sem nome de fachada — completar na rua." : esc(s.gap)}</p>
         <p class="kid">${esc(caixaKid(s.cat))}</p>
@@ -120,11 +163,17 @@ function renderSheet() {
   const statuses = CAIXA_STATUS.map((x) =>
     `<button type="button" class="btn ${st === x.id ? "gold" : "ghost"}" data-st="${x.id}">${esc(x.t)}</button>`
   ).join("");
+  const extra = [
+    s.relation ? `<p class="hint"><strong>Relação:</strong> ${esc(s.relation)}</p>` : "",
+    s.insta ? `<p class="hint">${esc(s.insta)}</p>` : "",
+    s.demo ? `<div class="row"><a class="btn gold" href="${esc(s.demo)}">Abrir demo no notebook</a></div>` : ""
+  ].join("");
   document.getElementById("sheet").innerHTML = `
-    <p class="kicker">${esc(catLabel(s.cat))} · ${esc(s.where)}</p>
+    <p class="kicker">${s.hot ? "Porta quente · " : ""}${esc(catLabel(s.cat))} · ${esc(s.where)}</p>
     <h2>${esc(s.name)}</h2>
     <p class="kid">${esc(caixaKid(s.cat))}</p>
     <p class="hint">${esc(s.gap)}</p>
+    ${extra}
     <div class="build">${build}</div>
     ${showMode ? `<ol class="script" style="list-style:decimal;padding-left:18px;gap:10px">${kids}</ol>
       <p class="hint">${esc(CAIXA_OFFER.not[1])} ${esc(CAIXA_OFFER.not[3])}</p>` : `
@@ -178,6 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("offerScript").innerHTML = CAIXA_OFFER.script90.map((l) =>
     `<button type="button" class="line" data-copy="${esc(l)}"><span>${esc(l)}</span><i>copiar</i></button>`
   ).join("");
+  renderHoje();
   render();
 });
 
@@ -194,6 +244,10 @@ document.addEventListener("click", (e) => {
     filterSt = stf.getAttribute("data-st");
     document.querySelectorAll("#sts .chip").forEach((n) => n.classList.toggle("on", n === stf));
     render();
+    return;
+  }
+  if (e.target.closest("[data-copy-recorte]") && typeof CAMPO_CLOSE !== "undefined") {
+    copy(CAMPO_CLOSE.recorte.line + "\n" + CAMPO_CLOSE.recorte.ciclo);
     return;
   }
   const open = e.target.closest("[data-open]");

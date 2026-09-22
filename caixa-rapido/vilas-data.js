@@ -42,11 +42,60 @@ const CAIXA_PITCH = {
   salao: "Antes de marcar, a pessoa olha foto. Identidade + posts + botão. Agenda enche fora da cadeira.",
   pet: "Tutor pesquisa de madrugada. Google + site com horário e WhatsApp. Simples assim.",
   acougue: "Carne boa se conta. Foto, pedido, retirada. Quem só tem balcão, perde o jantar de quem não saiu de casa.",
-  tabacaria: "Cliente de hábito. Google e Instagram certos trazem o que passa na avenida e ainda não parou.",
+  tabacaria: "Cliente de hábito. Casa nova precisa de casa no celular. Google certo traz quem passa na avenida e ainda não parou.",
   loja: "Vitrine na rua, vitrine no celular. As duas precisam ter a mesma cara.",
   hotel: "Hóspede escolhe no Google antes de chegar. Foto, endereço, botão. Sem isso, o outro hotel ganha.",
   bar: "Noite se decide no celular. Cardápio, mapa, ‘estou aberto’."
 };
+
+const CAMPO_CLOSE = {
+  kicker: "Mesa da rua · Igor adaptado",
+  title: "Não é 50% off. É recorte de ciclo.",
+  beats: [
+    { n: "01", t: "Honra", d: "Entra. Pede suco ou café. Olha a casa. Não abre o notebook nos primeiros minutos." },
+    { n: "02", t: "Olhar o que tem", d: "Instagram, Google, o site antigo se existir. O que funciona fica. A gente não joga nada no lixo." },
+    { n: "03", t: "Espelho", d: "Na rua vocês estão claros. No celular, quem ainda não te conhece não acha a casa nova." },
+    { n: "04", t: "PIT", d: "De 0 a 10, isso importa agora? Só mostra o recorte no 10. No 7, pergunta o que falta." },
+    { n: "05", t: "Mostra", d: "Vira o notebook. Demo com o nome deles. 40 segundos. Não o Mesa inteiro. Não codear 4 horas no wifi." },
+    { n: "06", t: "Recorte", d: "Ciclo 1 da vizinhança: casa no celular, Google, cara, botão. Agência cobra 8 a 12 mil pela obra. Aqui não é desconto. É um ciclo, não a obra infinita." },
+    { n: "07", t: "Fecha", d: "PIX do diagnóstico ou do ciclo. Se não for 10, agradece e segue. Sem follow-up morno." }
+  ],
+  recorte: {
+    market: "Agência local cobra 8 a 12 mil por site + identidade + Google.",
+    ciclo: "Ciclo 1 · Casa: site, cara, Google, botão de pedir. Faixa 2,5 a 4,5 mil.",
+    line: "Não falo 50% off. Falo recorte. Você não está comprando a agência. Está comprando o primeiro ciclo da casa no celular."
+  },
+  never: [
+    "Não falar 50% abaixo do mercado.",
+    "Não construir 4 horas no wifi deles.",
+    "Não vender cannabis, SKU ilegal, delivery de erva.",
+    "Não falar Francesca, AF mentoria, tantra, frequência, magnetismo.",
+    "Não xingar o Instagram atual nem o site antigo.",
+    "Não reconstruir o Lounge. Camada em cima.",
+    "Não caçar esse fechamento no Instagram, Facebook ou TikTok. A porta é a rua."
+  ]
+};
+
+const CAIXA_HOJE = [
+  {
+    id: "seplante",
+    label: "Porta 1 · quente",
+    name: "Se Plante Dispensário",
+    why: "Collab Matinê já existe. Era tabacaria/cachimbo. Virou casa nova. Tinha site. Agora não tem.",
+    act: "Sentar. Suco ou café. Abrir o demo. Não codear na hora.",
+    demo: "/caixa-rapido/seplante/index.html",
+    tone: "Casa nova precisa de casa no celular. O que já era, honra. O que mudou, a gente constrói."
+  },
+  {
+    id: "loungevilas",
+    label: "Porta 2 · inbound",
+    name: "Lounge Vilas",
+    why: "Pediu pra seguir. Já tem ecossistema. Não trocar.",
+    act: "Honrar o que já funciona. Mostrar a camada, não um site novo.",
+    demo: "/caixa-rapido/lounge/index.html",
+    tone: "Camada em cima: Google certo, botão de pedir, mesma cara. O que já vende, fica."
+  }
+];
 
 const CAIXA_STATUS = [
   { id: "mapa", t: "Mapa" },
@@ -81,6 +130,8 @@ function caixaKid(cat) {
 }
 
 const CAIXA_SHOPS = [
+  { id: "seplante", name: "Se Plante Dispensário", cat: "tabacaria", where: "Vilas do Atlântico", hot: true, insta: "@seplantedispensarioofc", demo: "/caixa-rapido/seplante/index.html", relation: "Matinê já existe. Collab Lifestyle × Se Plante. Porta quente, não frio.", gap: "Era tabacaria e cachimbo. Virou Se Plante. Tinha site. Depois da mudança, a casa nova não tem casa no celular.", build: ["site", "logo", "id", "google", "posts", "whats"], next: "Sentar. Pedir suco ou café. Abrir o demo no notebook. Não construir na hora." },
+  { id: "loungevilas", name: "Lounge Vilas", cat: "tabacaria", where: "Vilas do Atlântico", hot: true, demo: "/caixa-rapido/lounge/index.html", relation: "Inbound. Eles pediram pra seguir. Camada em cima, nunca substituição.", gap: "Já pediu pra seguir. Já tem ecossistema. Não trocar. Pôr a camada que falta: Google certo, botão, mesma cara.", build: ["google", "whats", "id", "posts"], next: "Honrar o que já funciona. Mostrar a camada, não um site novo." },
   { id: "donana", name: "Donana", cat: "restaurante", where: "Vilas do Atlântico", since: "1987", gap: "Casa histórica. A rua já conhece. O celular do turista talvez não.", build: ["site", "google", "posts", "whats"], next: "Pedir o dono. 90 segundos. Mostrar a tela clara." },
   { id: "kimukeka", name: "Ki-Mukeka", cat: "restaurante", where: "Vilas do Atlântico", gap: "Moqueca famosa. Precisa da mesma fama no Google.", build: ["site", "google", "id", "posts"], next: "Entrar fora do pico. Falar com quem manda." },
   { id: "casapalha", name: "Casa de Palha", cat: "restaurante", where: "Vilas do Atlântico", since: "2008", gap: "Cardápio enorme. Precisa de um caminho único no celular.", build: ["site", "logo", "posts", "whats"], next: "Mostrar: um botão, um cardápio, um Google." },
@@ -108,7 +159,7 @@ const CAIXA_SHOPS = [
   { id: "malibu", name: "Hotel Malibu", cat: "hotel", where: "Av. Praia de Itapuã · marco de Vilas", gap: "Marco da avenida. Hóspede escolhe no Google antes de chegar.", build: ["google", "site", "posts", "id"], next: "Recepção / gerência. Fora do check-in." },
   { id: "map-padaria", name: "Padaria da rua (a mapear)", cat: "padaria", where: "Vilas · avenida e alamedas", gap: "Entrar, anotar o nome da fachada, o Instagram da caixa.", build: ["google", "posts", "site"], next: "Caminhar Av. Praia de Itapuã de manhã.", draft: true },
   { id: "map-acougue", name: "Açougue da rua (a mapear)", cat: "acougue", where: "Vilas e Buraquinho", gap: "Foto da vitrine + pedido no WhatsApp.", build: ["posts", "whats", "google"], next: "Final da manhã, antes do almoço.", draft: true },
-  { id: "map-tabacaria", name: "Tabacaria da avenida (a mapear)", cat: "tabacaria", where: "Av. Praia de Itapuã", gap: "Quem passa, para se te achar no mapa.", build: ["google", "id", "posts"], next: "Anotar fachada e quem atende.", draft: true },
+  { id: "map-tabacaria", name: "Outra tabacaria (a mapear)", cat: "tabacaria", where: "Av. Praia de Itapuã", gap: "Se Plante e Lounge já estão no topo. Anotar as outras fachadas.", build: ["google", "id", "posts"], next: "Anotar fachada e quem atende.", draft: true },
   { id: "map-salao", name: "Salão / barbearia (a mapear)", cat: "salao", where: "Vilas", gap: "Agenda vive de foto. Identidade + posts + botão.", build: ["id", "posts", "whats", "site"], next: "Meio de tarde, cadeira vazia.", draft: true },
   { id: "map-pet", name: "Pet shop / vet (a mapear)", cat: "pet", where: "Vilas", gap: "Tutor pesquisa de madrugada. Horário e WhatsApp.", build: ["google", "site", "whats"], next: "Pedir o nome oficial na nota fiscal.", draft: true },
   { id: "map-loja", name: "Loja de rua (a mapear)", cat: "loja", where: "Vilas · comércio da avenida", gap: "Vitrine física + vitrine no celular, mesma cara.", build: ["id", "site", "posts", "google"], next: "Entrar, elogiar a loja, mostrar a tela.", draft: true },
@@ -134,11 +185,14 @@ const PACK_VILAS = {
     role: "Comércios locais · Legado",
     facts: [
       "Vilas do Atlântico, Lauro de Freitas. Região: Buraquinho, Portão, Ipitanga.",
+      "Duas portas quentes agora: Se Plante Dispensário (Matinê) e Lounge Vilas (inbound).",
       "Oferta única: akashahub.com.br/legado",
       "Falar como se tivesse 7 anos na frente: o que a loja ganha, não o jargão.",
-      "Não empurrar Francesca, AF mentoria, Convergência, tantra."
+      "Não empurrar Francesca, AF mentoria, Convergência, tantra.",
+      "Instagram, Facebook e TikTok desligados. A porta é a rua. Demo no notebook."
     ],
     ecosystems: [
+      { name: "Quente", body: "Se Plante. Lounge Vilas. Relação já existe." },
       { name: "Rua", body: "Padaria, farmácia, açougue, salão, tabacaria." },
       { name: "Orla", body: "Restaurante, barraca, bar, hotel." },
       { name: "Corpo", body: "Academia, clínica, laboratório, pet." }
@@ -147,7 +201,8 @@ const PACK_VILAS = {
       "Dono para dono. Sem guru.",
       "Mostrar a tela. Não explicar nuvem.",
       "Um ciclo. Uma prioridade.",
-      "Se não for 10, não força."
+      "Se não for 10, não força.",
+      "Recorte, nunca 50% off."
     ]
   },
   whatsapp: "Oi. Passei na loja e vi uma coisa simples: na rua vocês estão claros. No celular, muita gente ainda não acha. Eu construo isso — site, Google, cara da marca, posts e um botão para pedir. Sem enrolação. Posso te mostrar em 40 segundos?",
@@ -155,7 +210,11 @@ const PACK_VILAS = {
     "Não falar mentoria, frequência, magnetismo, Convergência.",
     "Não falar preço na porta se a pessoa não pediu.",
     "Não xingar o Instagram atual.",
-    "Não prometer ‘vamos viralizar’."
+    "Não prometer ‘vamos viralizar’.",
+    "Não falar 50% abaixo do mercado. Recorte de ciclo.",
+    "Não construir 4 horas no wifi deles. Demo já existe.",
+    "Não vender cannabis nem SKU ilegal.",
+    "Não caçar fechamento no Instagram, Facebook ou TikTok."
   ],
   acts: [
     { id: "olho", n: 1, label: "Olho", minutes: "0–20 s", intent: "Ver a fachada. Nome certo. Quem atende.",
@@ -168,26 +227,32 @@ const PACK_VILAS = {
       questions: ["Você é quem decide a frente da loja?"],
       never: ["Não despejar SEO, funil, tráfego."],
       nextIfCold: "Deixar o recado e o link do Legado." },
-    { id: "mostra", n: 3, label: "Mostra", minutes: "40 s", intent: "Virar o telefone. Modo mostrar.",
-      script: [CAIXA_OFFER.kid, "Site, cara, Google, posts, botão de pedir."],
+    { id: "mostra", n: 3, label: "Mostra", minutes: "40 s", intent: "Virar o notebook. Demo com o nome deles.",
+      script: [CAIXA_OFFER.kid, "Site, cara, Google, posts, botão de pedir.", "Isto já está no seu nome. Não é um rascunho de 4 horas."],
       questions: ["Isso, no seu nome, faria sentido agora?"],
-      never: ["Não abrir o Mesa inteiro."],
-      nextIfCold: "Fechar o telefone. Agradecer." },
-    { id: "fecha", n: 4, label: "Fecha", minutes: "se for 10", intent: "Diagnóstico. Não obra infinita.",
-      script: ["A gente olha o que você já tem. O que funciona fica. O que falta, a gente constrói.", "akashahub.com.br/legado"],
-      questions: ["Amanhã ou hoje, 20 minutos?"],
-      never: ["Não inventar desconto na calçada."],
+      never: ["Não abrir o Mesa inteiro.", "Não codear na mesa do café."],
+      nextIfCold: "Fechar o notebook. Agradecer." },
+    { id: "fecha", n: 4, label: "Fecha", minutes: "se for 10", intent: "Recorte de ciclo. Não desconto. Não obra infinita.",
+      script: [
+        "A gente olha o que você já tem. O que funciona fica. O que falta, a gente constrói.",
+        CAMPO_CLOSE.recorte.line,
+        "akashahub.com.br/legado"
+      ],
+      questions: ["Amanhã ou hoje, 20 minutos?", "De 0 a 10, isso importa agora?"],
+      never: ["Não inventar desconto na calçada.", "Não falar 50% off."],
       nextIfCold: "WhatsApp do script. Sem perseguir." }
   ],
   objecoes: [
     { title: "Já tenho Instagram", hear: "A gente já posta.", break: ["Instagram é a rua. Site e Google são a casa. Se a rua fecha, a casa continua."] },
     { title: "Está caro", hear: "Não é prioridade.", break: ["Não é um site. É a loja no celular. A gente recorta um ciclo, não desconto vazio."] },
     { title: "Meu sobrinho faz", hear: "Tem alguém da família.", break: ["Ótimo. A gente não compete com família. A gente deixa pronto o que a família não termina."] },
-    { title: "Depois", hear: "Me chama semana que vem.", break: ["Pode. O que não faço é conversa fria. Hoje eu mostro. Você decide."] }
+    { title: "Depois", hear: "Me chama semana que vem.", break: ["Pode. O que não faço é conversa fria. Hoje eu mostro. Você decide."] },
+    { title: "Já tem site / app", hear: "A gente já tem um ecossistema.", break: ["Perfeito. Não vou reconstruir. Mostro a camada que falta no celular de quem ainda não parou na porta."] }
   ],
   posture: [
     "Clareza. Uma criança de 7 anos entende o benefício.",
     "Um comércio por vez.",
-    "Legado é a oferta. Mesa é o quadro. Rua é o campo."
+    "Legado é a oferta. Mesa é o quadro. Rua é o campo.",
+    "Recorte. Nunca 50% off."
   ]
 };
