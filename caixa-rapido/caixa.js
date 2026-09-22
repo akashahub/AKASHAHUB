@@ -35,6 +35,7 @@ function pieceOf(id) {
 }
 
 let filterCat = "all";
+let filterZona = "all";
 let filterSt = "all";
 let q = "";
 let openId = null;
@@ -68,9 +69,10 @@ function visible() {
   const query = q.trim().toLowerCase();
   return shops().filter((s) => {
     if (filterCat !== "all" && s.cat !== filterCat) return false;
+    if (filterZona !== "all" && zonaOf(s) !== filterZona) return false;
     if (filterSt !== "all" && statusOf(s.id) !== filterSt) return false;
     if (!query) return true;
-    return (s.name + " " + s.where + " " + s.cat + " " + (s.ajuda || "") + " " + (s.ajudaLinha || "") + " " + (s.wa || "") + " " + (s.tel || "") + " " + (s.cel || "")).toLowerCase().includes(query);
+    return (s.name + " " + s.where + " " + s.cat + " " + zonaOf(s) + " " + (s.ajuda || "") + " " + (s.ajudaLinha || "") + " " + (s.wa || "") + " " + (s.tel || "") + " " + (s.cel || "")).toLowerCase().includes(query);
   });
 }
 
@@ -152,8 +154,8 @@ function render() {
   } else {
     root.innerHTML = list.map((s) => {
       const st = statusOf(s.id);
-      return `<button type="button" class="card${s.hot ? " hot" : ""}" data-open="${s.id}">
-        <div class="meta">${s.hot ? "Porta quente · " : ""}${catLabel(s.cat)} · ${s.where}</div>
+      return `<button type="button" class="card${s.hot ? " hot" : ""}${zonaOf(s) === "abrantes" ? " zona-abrantes" : ""}" data-open="${s.id}">
+        <div class="meta">${s.hot ? "Porta quente · " : ""}${esc(zonaLabel(s))} · ${esc(catLabel(s.cat))} · ${esc(s.where)}</div>
         <h3>${esc(s.name)}</h3>
         <p class="help"><b>${esc(s.ajuda || "Ver")}</b>${esc(s.ajudaLinha || s.gap)}</p>
         <p class="fone">${esc(foneLine(s))}</p>
@@ -206,7 +208,7 @@ function renderSheet() {
     ? `<a class="btn gold" href="${esc(waHref(s))}" target="_blank" rel="noopener">Abrir WhatsApp</a>`
     : "";
   document.getElementById("sheet").innerHTML = `
-    <p class="kicker">${s.hot ? "Porta quente · " : ""}${esc(catLabel(s.cat))} · ${esc(s.where)}</p>
+    <p class="kicker">${s.hot ? "Porta quente · " : ""}${esc(zonaLabel(s))} · ${esc(catLabel(s.cat))} · ${esc(s.where)}</p>
     <h2>${esc(s.name)}</h2>
     ${play}
     <p class="kid">${esc(caixaKid(s.cat))}</p>
@@ -238,6 +240,7 @@ function addShop(ev) {
     name,
     cat: f.cat.value,
     where: f.where.value.trim() || "Vilas do Atlântico",
+    zona: (f.zona && f.zona.value) || "vilas",
     gap: f.gap.value.trim() || "Mapear na porta: nome oficial, Instagram, quem decide.",
     ajuda: (f.ajuda.value.trim() || "Mapear"),
     ajudaLinha: f.gap.value.trim() || "Anotar na porta se tem site e se o Google acha. Sem site → site. Some no Google → SEO.",
@@ -255,6 +258,11 @@ function addShop(ev) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  const zonaBox = document.getElementById("zonas");
+  if (zonaBox && typeof CAIXA_ZONAS !== "undefined") {
+    zonaBox.innerHTML = `<button type="button" class="chip on" data-zona="all">Vilas e Abrantes</button>` +
+      CAIXA_ZONAS.map((z) => `<button type="button" class="chip" data-zona="${z.id}">${esc(z.t)}</button>`).join("");
+  }
   const catBox = document.getElementById("cats");
   catBox.innerHTML = `<button type="button" class="chip on" data-cat="all">Tudo</button>` +
     CAIXA_CATS.map((c) => `<button type="button" class="chip" data-cat="${c.id}">${esc(c.t)}</button>`).join("");
@@ -263,6 +271,10 @@ document.addEventListener("DOMContentLoaded", () => {
     CAIXA_STATUS.map((s) => `<button type="button" class="chip" data-st="${s.id}">${esc(s.t)}</button>`).join("");
   const sel = document.getElementById("newCat");
   sel.innerHTML = CAIXA_CATS.map((c) => `<option value="${c.id}">${esc(c.t)}</option>`).join("");
+  const zonaSel = document.getElementById("newZona");
+  if (zonaSel && typeof CAIXA_ZONAS !== "undefined") {
+    zonaSel.innerHTML = CAIXA_ZONAS.map((z) => `<option value="${z.id}">${esc(z.t)}</option>`).join("");
+  }
   document.getElementById("offerPieces").innerHTML = CAIXA_OFFER.pieces.map((p) =>
     `<div class="piece"><b>${esc(p.t)}</b><p>${esc(p.kid)}</p></div>`
   ).join("");
@@ -274,6 +286,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("click", (e) => {
+  const zona = e.target.closest("#zonas [data-zona]");
+  if (zona) {
+    filterZona = zona.getAttribute("data-zona");
+    document.querySelectorAll("#zonas .chip").forEach((n) => n.classList.toggle("on", n === zona));
+    render();
+    return;
+  }
   const cat = e.target.closest("[data-cat]");
   if (cat) {
     filterCat = cat.getAttribute("data-cat");
