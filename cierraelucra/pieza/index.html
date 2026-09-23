@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Pieza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,460;9..144,560&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root { --bg:#f6f1e8; --ink:#1a140e; --muted:#5e5348; --gold:#8a6a2f; --line:#e4d8c8; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: Outfit, system-ui, sans-serif; }
+  .sheet { width: min(760px, calc(100% - 32px)); margin: 28px auto 64px; }
+  .kicker { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
+  h1 { font-family: Fraunces, serif; font-weight: 460; font-size: clamp(42px, 8vw, 72px); line-height: .95; margin: 8px 0 12px; }
+  .lede { font-size: 18px; line-height: 1.45; max-width: 40ch; }
+  .grid { display: grid; gap: 12px; margin-top: 22px; }
+  @media (min-width: 720px) { .grid { grid-template-columns: 1fr 1fr; } }
+  article { border-top: 1px solid var(--line); padding-top: 12px; }
+  h2 { font-family: Fraunces, serif; font-weight: 460; font-size: 28px; margin-bottom: 8px; }
+  ul { margin: 8px 0 0 18px; }
+  li { margin: 4px 0; line-height: 1.4; }
+  .ask { margin-top: 28px; font-family: Fraunces, serif; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; }
+  .silence { letter-spacing: .2em; text-transform: uppercase; color: var(--gold); font-size: 12px; margin-top: 8px; }
+  .bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  button, a.btn {
+    min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--ink);
+    background: var(--ink); color: var(--bg); text-decoration: none; display: inline-flex; align-items: center;
+    font: inherit; cursor: pointer;
+  }
+  a.ghost { background: transparent; color: var(--ink); }
+  .foot { margin-top: 22px; color: var(--muted); font-size: 13px; }
+  @media print {
+    .bar { display: none; }
+    body { background: white; }
+    .sheet { margin: 0; width: 100%; }
+  }
+</style>
+</head>
+<body>
+<main class="sheet">
+  <p class="kicker" id="kicker">Pieza de llamada</p>
+  <h1 id="nombre">La casa</h1>
+  <p class="lede" id="lede"></p>
+  <div class="grid">
+    <article>
+      <h2>Ya tienen</h2>
+      <p id="has"></p>
+    </article>
+    <article>
+      <h2>Falta</h2>
+      <p id="falta"></p>
+    </article>
+    <article>
+      <h2>Entra en este ciclo</h2>
+      <ul id="entra"></ul>
+    </article>
+    <article>
+      <h2>No entra</h2>
+      <ul id="no"></ul>
+    </article>
+  </div>
+  <p class="ask" id="ask"></p>
+  <p class="silence">Silencio.</p>
+  <div class="bar">
+    <button type="button" onclick="window.print()">Imprimir checklist</button>
+    <a class="btn ghost" href="../index.html">Volver al mapa</a>
+  </div>
+  <p class="foot">Pieza de esta llamada. No es la web oficial. No es la obra. Es el primer ciclo, con el nombre de la casa.</p>
+</main>
+<script src="../data.js"></script>
+<script>
+  function esc(s) {
+    return String(s ?? "")
+      .replace(/&/g, "&" + "amp;")
+      .replace(/</g, "&" + "lt;")
+      .replace(/>/g, "&" + "gt;");
+  }
+  const q = new URLSearchParams(location.search);
+  const nombre = q.get("nombre") || "La casa";
+  const ciudad = q.get("ciudad") || "";
+  const sistema = (typeof cierraSistema === "function") ? cierraSistema(q.get("sistema")) : null;
+  const sys = sistema || { t: "Sistema", kid: "", entra: [], no: [] };
+  document.title = nombre + " · pieza";
+  document.getElementById("kicker").textContent = "Pieza de llamada" + (ciudad ? " · " + ciudad : "") + " · " + sys.t;
+  document.getElementById("nombre").textContent = nombre;
+  document.getElementById("lede").textContent = sys.kid;
+  document.getElementById("has").textContent = q.get("has") || "Lo que ya funciona, se queda.";
+  document.getElementById("falta").textContent = q.get("falta") || "Una capa. No una obra.";
+  document.getElementById("entra").innerHTML = (sys.entra || []).map((x) => "<li>" + esc(x) + "</li>").join("");
+  document.getElementById("no").innerHTML = (sys.no || []).map((x) => "<li>" + esc(x) + "</li>").join("");
+  document.getElementById("ask").textContent = (typeof CIERRA_PREGUNTA !== "undefined") ? CIERRA_PREGUNTA : "De cero a diez, ¿resolver esto ahora te importa?";
+</script>
+</body>
+</html>
