@@ -1,5 +1,5 @@
 window.AKASHA_SAAS = {
-  functionsBase: "https://us-central1-hub-akasha.cloudfunctions.net",
+  functionsBase: "https://jsonmxbuzagmwuucruem.supabase.co/functions/v1",
   plans: [
     { id: "anubis", nivel: 1, name: "Anúbis", subtitle: "Faixa azul", priceLabel: "US$ 34 / mês", priceUsd: 34 },
     { id: "horus", nivel: 2, name: "Hórus", subtitle: "Faixa roxa", priceLabel: "US$ 65 / mês", priceUsd: 65 },
