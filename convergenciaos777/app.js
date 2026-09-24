@@ -47,7 +47,8 @@ try {
     appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b",
   });
 } catch (e) {}
-const state = { route: "boot", pillar: "business", room: null, people: [], presenters: [], ticket: null, emailDraft: "" };
+const state = { route: "boot", pillar: "business", room: null, people: [], presenters: [], ticket: null, emailDraft: "", busy: "", loginError: "" };
+const LIVE_URL = "wss://akashahub-vlya29kl.livekit.cloud";
 let session = null;
 let lk = null;
 
@@ -145,7 +146,7 @@ function shell(html) {
 }
 
 function viewLogin() {
-  return '<div class="gate"><div class="k">Convergência · teste aberto</div><h1>Entra com Google.</h1><p class="q">Os gestores entram sem ingresso. Os outros escolhem Digital ou Presencial e pagam no Stripe.</p><button class="btn" data-act="google">Continuar com Google</button><p class="m" style="margin-top:18px">Se o Google não abrir, entra com o código do e-mail.</p><label class="m">E-mail</label><input id="mail" type="email" value="' + esc(state.emailDraft) + '" placeholder="voce@gmail.com"><button class="btn btn2" data-act="send">Receber código</button><input id="code" inputmode="numeric" placeholder="000000"><button class="btn btn2" data-act="code">Entrar com o código</button></div>';
+  return '<div class="gate"><div class="k">Convergência · teste aberto</div><h1>Entra com Google.</h1><p class="q">Depois do Google a plataforma abre nos três pilares. Gestor entra sem ingresso.</p><button class="btn" data-act="google">' + (state.busy === "google" ? "Abrindo a plataforma..." : "Continuar com Google") + '</button>' + (state.loginError ? '<p class="q" style="color:#f0b2ac">' + esc(state.loginError) + "</p>" : "") + '<p class="m" style="margin-top:18px">Se o Google não abrir, entra com o código do e-mail.</p><label class="m">E-mail</label><input id="mail" type="email" value="' + esc(state.emailDraft) + '" placeholder="voce@gmail.com"><button class="btn btn2" data-act="send">Receber código</button><input id="code" inputmode="numeric" placeholder="000000"><button class="btn btn2" data-act="code">Entrar com o código</button></div>';
 }
 function viewTickets() {
   const cards = TICKETS.map((t) => '<article class="card"><div class="row"><h3>' + t.name + '</h3><span class="pill">' + t.price + '</span></div><p class="q">' + t.text + '</p><button class="btn" data-act="buy" data-id="' + t.id + '">Pagar ' + t.price + '</button></article>').join("");
@@ -153,7 +154,7 @@ function viewTickets() {
 }
 function viewHome() {
   const cards = PILLARS.map((p) => '<button class="card" data-act="open-pillar" data-id="' + p.id + '"><div class="row"><div class="mark">' + p.mark + '</div><div><div class="k" style="margin:0">1 live · 3 palcos</div><h3>' + p.name + '</h3><div class="m">Apresenta ' + esc(presenterName(p.id)) + '</div></div><span class="pill hot"><i class="dot"></i> no ar</span></div></button>').join("");
-  return shell('<div class="k">Teste aberto agora</div><h1>Três pilares. Uma live em cada.</h1><p class="q">Business, Tech e Mindset. A live é o que todo ingresso assiste. Cada pilar abre três palcos, e cada palco é um nicho com a sua gente.</p>' + cards);
+  return shell('<div class="k">Você entrou · ' + esc(email()) + '</div><h1>Escolhe o pilar e entra na live.</h1><p class="q">Business, Tech e Mindset estão abertos agora. Toca o pilar, depois entra na live ou num palco.</p>' + cards);
 }
 function viewPillar() {
   const pillar = PILLARS.find((p) => p.id === state.pillar) || PILLARS[0];
@@ -200,17 +201,22 @@ function render() {
 }
 
 async function loginGoogle() {
+  state.busy = "google";
+  state.loginError = "";
+  render();
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: "select_account" });
   try {
     const result = await firebase.auth().signInWithPopup(provider);
     await exchangeGoogle(result.user);
   } catch (err) {
+    state.busy = "";
     if (err && err.code === "auth/popup-blocked") {
       await firebase.auth().signInWithRedirect(provider);
       return;
     }
-    toast(err && err.message ? err.message : "Google não abriu.");
+    state.loginError = err && err.message ? err.message : "Google não abriu.";
+    render();
   }
 }
 async function exchangeGoogle(user) {
@@ -222,9 +228,25 @@ async function exchangeGoogle(user) {
     body: JSON.stringify({ token }),
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok || !data.token_hash) throw new Error(data.error || "Não abri a sessão.");
-  const { error } = await sb.auth.verifyOtp({ token_hash: data.token_hash, type: "magiclink" });
+  if (!res.ok) throw new Error(data.error || "Não abri a sessão.");
+  let error = null;
+  if (data.email_otp) {
+    const otp = await sb.auth.verifyOtp({ email: data.email || user.email, token: data.email_otp, type: "email" });
+    error = otp.error;
+  }
+  if (error && data.token_hash) {
+    const hash = await sb.auth.verifyOtp({ token_hash: data.token_hash, type: "magiclink" });
+    error = hash.error;
+  }
+  if (!data.email_otp && data.token_hash && !error) {
+    const hash = await sb.auth.verifyOtp({ token_hash: data.token_hash, type: "magiclink" });
+    error = hash.error;
+  }
   if (error) throw new Error(error.message);
+  state.busy = "";
+  await loadAccess();
+  state.route = myTicket() ? "home" : "ticket";
+  render();
 }
 async function sendCode() {
   const mail = (document.getElementById("mail").value || "").trim().toLowerCase();
@@ -294,6 +316,7 @@ async function joinRoom() {
     });
     const data = await res.json();
     if (!data.token) throw new Error("sem sinal");
+    const liveUrl = data.url || LIVE_URL;
     if (lk) { try { await lk.disconnect(); } catch (e) {} }
     lk = new LivekitClient.Room();
     const placeVideo = (el) => {
@@ -312,11 +335,14 @@ async function joinRoom() {
     lk.on(LivekitClient.RoomEvent.LocalTrackPublished, (pub) => {
       if (pub.track && pub.track.kind === "video") placeVideo(pub.track.attach());
     });
-    await lk.connect(data.url, data.token);
+    await lk.connect(liveUrl, data.token);
     if (publish) await lk.localParticipant.enableCameraAndMicrophone();
     toast(publish ? "Você está publicando." : "Você está assistindo.");
   } catch (err) {
-    toast("A sala não abriu o sinal. Tenta de novo em instantes.");
+    const stage = document.getElementById("stage");
+    const message = err && err.message ? err.message : "sinal indisponível";
+    if (stage) stage.innerHTML = '<p class="q">A sala não conectou: ' + esc(message) + "</p>";
+    toast("A sala não conectou.");
   }
 }
 async function leaveRoom() {
