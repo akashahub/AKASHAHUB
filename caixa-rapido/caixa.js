@@ -37,6 +37,7 @@ function pieceOf(id) {
 let filterCat = "all";
 let filterZona = "all";
 let filterSt = "all";
+let filterZap = "sim";
 let q = "";
 let openId = null;
 let showMode = false;
@@ -68,12 +69,29 @@ function counts() {
 function visible() {
   const query = q.trim().toLowerCase();
   return shops().filter((s) => {
+    if (filterZap === "sim" && !s.zap) return false;
+    if (filterZap === "quase" && !s.quase) return false;
     if (filterCat !== "all" && s.cat !== filterCat) return false;
     if (filterZona !== "all" && zonaOf(s) !== filterZona) return false;
     if (filterSt !== "all" && statusOf(s.id) !== filterSt) return false;
     if (!query) return true;
-    return (s.name + " " + s.where + " " + s.cat + " " + zonaOf(s) + " " + (s.ajuda || "") + " " + (s.ajudaLinha || "") + " " + (s.wa || "") + " " + (s.tel || "") + " " + (s.cel || "")).toLowerCase().includes(query);
+    return (s.name + " " + s.where + " " + s.cat + " " + zonaOf(s) + " " + (s.ajuda || "") + " " + (s.ident || "") + " " + (s.ajudaLinha || "") + " " + (s.wa || "") + " " + (s.tel || "") + " " + (s.cel || "")).toLowerCase().includes(query);
   });
+}
+
+function demoHref(s) {
+  if (s.demo) return s.demo;
+  return "/caixa-rapido/demo/index.html?id=" + encodeURIComponent(s.id);
+}
+function telHref(s) {
+  let n = digits(s.wa || "");
+  if (!n) return "";
+  if (!n.startsWith("55")) n = "55" + n;
+  if (n.length < 12) return "";
+  return "tel:+" + n;
+}
+function identOf(s) {
+  return s.ident || (s.site && s.insta ? "Site e Instagram" : s.site ? "Tem site" : s.insta ? "Tem Instagram" : s.zap ? "Só o WhatsApp" : "");
 }
 
 function renderHoje() {
@@ -82,6 +100,25 @@ function renderHoje() {
   const beats = document.getElementById("hojeBeats");
   const never = document.getElementById("hojeNever");
   if (!doors || typeof CAIXA_HOJE === "undefined") return;
+  const queue = document.getElementById("callQueue");
+  if (queue) {
+    const fila = shops().filter((s) => s.zap);
+    queue.innerHTML = fila.map((s) => {
+      const tel = telHref(s);
+      return `<article class="door">
+        <p class="meta">${esc(zonaLabel(s))} · ${esc(identOf(s) || "Zap")} · ${esc(s.ajuda || "")}</p>
+        <h3>${esc(s.name)}</h3>
+        <p>${esc(s.liga || s.recado || s.gap)}</p>
+        <p class="act"><strong>Na fonte:</strong> ${esc(s.waNote || "WhatsApp")}</p>
+        <p class="fone">${esc(prettyPhone(s.wa))}${s.site ? " · " + esc(s.site.replace(/^https?:\/\//, "")) : ""}${s.insta ? " · " + esc(s.insta) : ""}</p>
+        <div class="row">
+          ${tel ? `<a class="btn gold" href="${esc(tel)}">Ligar</a>` : ""}
+          <a class="btn" href="${esc(demoHref(s))}">Mini demo</a>
+          <button type="button" class="btn" data-open="${esc(s.id)}">Ficha</button>
+        </div>
+      </article>`;
+    }).join("") || `<p class="hint">Nenhum WhatsApp confirmado na fonte.</p>`;
+  }
   doors.innerHTML = CAIXA_HOJE.map((d) =>
     `<article class="door">
       <p class="meta">${esc(d.label)}</p>
@@ -150,12 +187,12 @@ function render() {
   const list = visible();
   const root = document.getElementById("list");
   if (!list.length) {
-    root.innerHTML = `<p class="empty">Nada neste filtro. Muda a categoria ou adiciona um comércio.</p>`;
+    root.innerHTML = `<p class="empty">${filterZap === "sim" ? "Nenhum WhatsApp confirmado neste filtro." : "Nada neste filtro."}</p>`;
   } else {
     root.innerHTML = list.map((s) => {
       const st = statusOf(s.id);
-      return `<button type="button" class="card${s.hot ? " hot" : ""}${zonaOf(s) === "abrantes" ? " zona-abrantes" : ""}" data-open="${s.id}">
-        <div class="meta">${s.hot ? "Porta quente · " : ""}${esc(zonaLabel(s))} · ${esc(catLabel(s.cat))} · ${esc(s.where)}</div>
+      return `<button type="button" class="card${s.hot ? " hot" : ""}${s.zap ? " zap" : ""}${zonaOf(s) === "abrantes" ? " zona-abrantes" : ""}" data-open="${s.id}">
+        <div class="meta">${s.zap ? "Zap · " : ""}${s.hot ? "Porta quente · " : ""}${esc(zonaLabel(s))} · ${esc(catLabel(s.cat))}${identOf(s) ? " · " + esc(identOf(s)) : ""}</div>
         <h3>${esc(s.name)}</h3>
         <p class="help"><b>${esc(s.ajuda || "Ver")}</b>${esc(s.ajudaLinha || s.gap)}</p>
         <p class="fone">${esc(foneLine(s))}</p>
@@ -194,7 +231,8 @@ function renderSheet() {
   const extra = [
     s.relation ? `<p class="hint"><strong>Relação:</strong> ${esc(s.relation)}</p>` : "",
     s.insta ? `<p class="hint">${esc(s.insta)}</p>` : "",
-    s.demo ? `<div class="row"><a class="btn gold" href="${esc(s.demo)}">Abrir demo no notebook</a></div>` : ""
+    s.site ? `<p class="hint">${esc(s.site)}</p>` : "",
+    `<div class="row"><a class="btn gold" href="${esc(demoHref(s))}">Mini demo</a>${telHref(s) ? `<a class="btn" href="${esc(telHref(s))}">Ligar</a>` : ""}</div>`
   ].join("");
   const play = showMode ? "" : `
     <div class="ajuda-box">
@@ -260,8 +298,19 @@ function addShop(ev) {
 document.addEventListener("DOMContentLoaded", () => {
   const zonaBox = document.getElementById("zonas");
   if (zonaBox && typeof CAIXA_ZONAS !== "undefined") {
-    zonaBox.innerHTML = `<button type="button" class="chip on" data-zona="all">Vilas e Abrantes</button>` +
+    zonaBox.innerHTML = `<button type="button" class="chip on" data-zona="all">Todas as ruas</button>` +
       CAIXA_ZONAS.map((z) => `<button type="button" class="chip" data-zona="${z.id}">${esc(z.t)}</button>`).join("");
+  }
+  const zapBox = document.getElementById("zapf");
+  if (zapBox) {
+    const chips = [
+      ["sim", "Só WhatsApp"],
+      ["quase", "Celular a confirmar"],
+      ["all", "Mapa inteiro"]
+    ];
+    zapBox.innerHTML = chips.map(([id, t]) =>
+      `<button type="button" class="chip${id === filterZap ? " on" : ""}" data-zap="${id}">${esc(t)}</button>`
+    ).join("");
   }
   const catBox = document.getElementById("cats");
   catBox.innerHTML = `<button type="button" class="chip on" data-cat="all">Tudo</button>` +
@@ -290,6 +339,13 @@ document.addEventListener("click", (e) => {
   if (zona) {
     filterZona = zona.getAttribute("data-zona");
     document.querySelectorAll("#zonas .chip").forEach((n) => n.classList.toggle("on", n === zona));
+    render();
+    return;
+  }
+  const zap = e.target.closest("#zapf [data-zap]");
+  if (zap) {
+    filterZap = zap.getAttribute("data-zap");
+    document.querySelectorAll("#zapf .chip").forEach((n) => n.classList.toggle("on", n === zap));
     render();
     return;
   }

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Mini demo</title>
+<meta name="theme-color" content="#f4efe6"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--paper:#f4efe6;--ink:#161411;--muted:#5e584e;--line:rgba(22,20,17,.12);--gold:#8a6a12;--btn:#1c1915}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--paper);color:var(--ink)}
+body{font-family:"IBM Plex Sans",system-ui,sans-serif;line-height:1.45}
+a{color:inherit}
+button,a.btn{cursor:pointer}
+.sheet{width:min(720px,calc(100% - 28px));margin:0 auto;padding:28px 0 48px;min-height:100dvh;display:flex;flex-direction:column}
+.kicker{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:clamp(46px,10vw,84px);line-height:.92;letter-spacing:-.03em;margin:10px 0 14px}
+.lede{font-size:18px;max-width:34rem;color:var(--muted)}
+.facts{display:grid;gap:10px;margin:28px 0;grid-template-columns:1fr}
+@media(min-width:640px){.facts{grid-template-columns:1fr 1fr 1fr}}
+.fact{border:1px solid var(--line);border-radius:16px;padding:14px 14px 16px;background:#fffdf8;min-height:108px}
+.fact b{display:block;font-family:"Instrument Serif",Georgia,serif;font-size:26px;font-weight:400;margin:6px 0}
+.fact span{color:var(--muted);font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 18px;border-radius:999px;background:var(--btn);color:var(--paper);text-decoration:none;font-weight:600}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.foot{margin-top:22px;color:var(--muted);font-size:12px}
+.list{display:grid;gap:8px;margin-top:18px}
+.list a{display:block;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none}
+</style>
+</head>
+<body>
+<main class="sheet" id="app"></main>
+<script src="../vilas-data.js?v=20260924a"></script>
+<script>
+function esc(s){
+  return String(s ?? "")
+    .split("&").join("&" + "amp;")
+    .split("<").join("&" + "lt;")
+    .split(">").join("&" + "gt;")
+    .split('"').join("&" + "quot;");
+}
+function digits(s){ return String(s || "").replace(/\D/g,""); }
+function wa(n){
+  let d = digits(n);
+  if (!d) return "";
+  if (!d.startsWith("55")) d = "55" + d;
+  return "https://wa.me/" + d;
+}
+const id = new URLSearchParams(location.search).get("id");
+const shop = (typeof CAIXA_SHOPS !== "undefined" ? CAIXA_SHOPS : []).find((s) => s.id === id);
+const app = document.getElementById("app");
+if (!shop) {
+  document.title = "Mini demo";
+  const fila = (CAIXA_SHOPS || []).filter((s) => s.zap);
+  app.innerHTML = `<p class="kicker">Escolher a casa</p><h1>Demo.</h1><p class="lede">Abre com o nome de quem tem WhatsApp na fonte.</p><div class="list">${fila.map((s) => `<a href="?id=${esc(s.id)}">${esc(s.name)}</a>`).join("")}</div>`;
+} else {
+  document.title = shop.name + " · esboço";
+  const temSite = !!shop.site;
+  const temInsta = !!shop.insta;
+  const entra = shop.ajuda === "SEO"
+    ? "A casa fica. A busca passa a cair nela."
+    : shop.ajuda === "Conteúdo" || shop.ajuda === "Collab"
+      ? "O que já vende fica. Entra o ritmo: prato, reserva, movimento."
+      : "Nome, endereço e um botão. Quem não tem o número acha a casa.";
+  const cta = wa(shop.wa);
+  app.innerHTML = `
+    <p class="kicker">esboço · ${esc(shop.ident || "a casa")} · não está no ar</p>
+    <h1>${esc(shop.name)}</h1>
+    <p class="lede">${esc(shop.gap || "")}</p>
+    <section class="facts">
+      <div class="fact"><p class="kicker">Onde</p><b>A rua</b><span>${esc(shop.where || "")}</span></div>
+      <div class="fact"><p class="kicker">Já tem</p><b>${temSite ? "Site" : temInsta ? "Instagram" : "WhatsApp"}</b><span>${esc(temSite ? String(shop.site).replace("https://", "").replace("http://", "") : temInsta ? shop.insta : "O botão que já atende")}</span></div>
+      <div class="fact"><p class="kicker">Entra</p><b>${esc(shop.ajuda || "Casa")}</b><span>${esc(entra)}</span></div>
+    </section>
+    <div class="row">
+      ${cta ? `<a class="btn" href="${esc(cta)}" target="_blank" rel="noopener">Chamar no WhatsApp</a>` : ""}
+      ${temSite ? `<a class="btn ghost" href="${esc(shop.site)}" target="_blank" rel="noopener">O site que já existe</a>` : ""}
+    </div>
+    <p class="foot">O que funciona fica. Isto é o recorte de 40 segundos, não uma obra e não um preço.</p>`;
+}
+</script>
+</body>
+</html>
