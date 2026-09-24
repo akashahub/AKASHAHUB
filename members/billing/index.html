@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assinatura · Akasha Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0a0908;--gold:#c9a227;--papyrus:#e9e1cd;--dim:#aba18a;--line:rgba(201,162,39,.24)}
+    body{background:var(--bg);color:var(--papyrus);font-family:'EB Garamond',serif;min-height:100vh;padding:48px 20px}
+    .wrap{max-width:480px;margin:0 auto}
+    h1{font-family:'Cinzel',serif}
+    .muted{color:var(--dim)}
+    .btn{display:inline-block;margin-top:20px;padding:14px 22px;border:1px solid var(--gold);color:var(--gold);text-decoration:none;letter-spacing:.12em;text-transform:uppercase;font-family:'Cinzel',serif;font-size:12px;background:transparent;cursor:pointer}
+    .err{color:#e08a7a;margin-top:16px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="muted" style="letter-spacing:.28em;text-transform:uppercase;font-size:11px;color:var(--gold)">Cobrança</p>
+    <h1>Sua assinatura</h1>
+    <p class="muted" id="status">Carregando…</p>
+    <button class="btn" id="portal">Abrir portal Stripe</button>
+    <p class="muted" style="margin-top:24px"><a class="btn" href="/members/" style="border:0;padding:0;text-transform:none;letter-spacing:0">← sala</a></p>
+    <p class="err" id="err"></p>
+  </div>
+  <script src="/js/saas-plans.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const app = initializeApp({
+      apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+      authDomain: "hub-akasha.firebaseapp.com",
+      projectId: "hub-akasha",
+      storageBucket: "hub-akasha.firebasestorage.app",
+      messagingSenderId: "370851875474",
+      appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+    });
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, async user => {
+      if (!user) { location.href = "/login/?next=/members/billing/"; return; }
+      const snap = await getDoc(doc(db, "users", user.uid));
+      const d = snap.exists() ? snap.data() : {};
+      const plan = AKASHA_SAAS.planById(d.planId);
+      document.getElementById("status").textContent =
+        (plan ? plan.name + " · " : "") +
+        (d.subscriptionStatus || "sem assinatura ativa") +
+        " · nível " + (d.nivel || 0);
+    });
+
+    document.getElementById("portal").onclick = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch(AKASHA_SAAS.functionsBase + "/createPortalSession", {
+          method: "POST",
+          headers: { Authorization: "Bearer " + token }
+        });
+        const data = await res.json();
+        if (!res.ok || !data.url) throw new Error(data.error || "portal_failed");
+        location.href = data.url;
+      } catch (e) {
+        document.getElementById("err").textContent = e.message === "no_customer"
+          ? "Nenhuma cobrança Stripe ainda. Assine primeiro."
+          : e.message;
+      }
+    };
+  </script>
+</body>
+</html>

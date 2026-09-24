@@ -160,9 +160,14 @@
   const db   = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
-  // Se já logado, vai direto pro dashboard
+  function safeNext() {
+    const n = new URLSearchParams(location.search).get("next") || "";
+    if (!n.startsWith("/") || n.startsWith("//") || n.includes("://")) return "/dashboard/";
+    return n;
+  }
+
   onAuthStateChanged(auth, user => {
-    if (user) window.location.href = '/dashboard/';
+    if (user) window.location.href = safeNext();
   });
 
   async function ensureUser(user) {
@@ -206,7 +211,7 @@
 
   async function run(fn) {
     hideErr(); setLoad(true);
-    try { await fn(); window.location.href = '/dashboard/'; }
+    try { await fn(); window.location.href = safeNext(); }
     catch(e) { showErr(ERROS[e.code] || 'Ocorreu um erro. Tente novamente.'); }
     finally { setLoad(false); }
   }

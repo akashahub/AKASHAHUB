@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assinar · Akasha Hub</title>
+  <link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0a0908;--gold:#c9a227;--papyrus:#e9e1cd;--dim:#aba18a;--line:rgba(201,162,39,.24);}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--papyrus);font-family:'EB Garamond',serif;min-height:100vh;padding:48px 20px}
+    .wrap{max-width:520px;margin:0 auto}
+    h1{font-family:'Cinzel',serif;font-size:1.8rem;margin:12px 0 8px}
+    .kicker{letter-spacing:.28em;text-transform:uppercase;font-size:11px;color:var(--gold)}
+    .muted{color:var(--dim);margin-bottom:28px}
+    .card{border:1px solid var(--line);padding:22px;margin-bottom:12px;cursor:pointer;background:#131110}
+    .card.on{border-color:var(--gold);background:rgba(201,162,39,.06)}
+    .card h2{font-family:'Cinzel',serif;font-size:1.1rem}
+    .price{color:var(--gold);margin-top:6px}
+    .btn{display:block;width:100%;margin-top:22px;padding:16px;border:1px solid var(--gold);background:transparent;color:var(--gold);font-family:'Cinzel',serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+    .btn:disabled{opacity:.4;cursor:wait}
+    .err{display:none;margin-top:16px;color:#e08a7a}
+    .err.show{display:block}
+    a{color:var(--gold)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">SaaS próprio · sem Hotmart</p>
+    <h1>Escolha a faixa.</h1>
+    <p class="muted">Os mesmos preços de /membros. O pagamento vai direto para a Akasha Hub via Stripe. Depois o webhook libera o nível na sala.</p>
+    <div id="plans"></div>
+    <button class="btn" id="pay">Continuar para o pagamento</button>
+    <p class="err" id="err"></p>
+    <p class="muted" style="margin-top:20px"><a href="/membros/">← ver comparativo</a> · <a href="/members/">sala</a></p>
+  </div>
+  <script src="/js/saas-plans.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const app = initializeApp({
+      apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+      authDomain: "hub-akasha.firebaseapp.com",
+      projectId: "hub-akasha",
+      storageBucket: "hub-akasha.firebasestorage.app",
+      messagingSenderId: "370851875474",
+      appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+    });
+    const auth = getAuth(app);
+    const params = new URLSearchParams(location.search);
+    let selected = params.get("plan") || "anubis";
+    const box = document.getElementById("plans");
+    const err = document.getElementById("err");
+
+    function render() {
+      box.innerHTML = AKASHA_SAAS.plans.map(p => `
+        <div class="card ${p.id===selected?'on':''}" data-id="${p.id}">
+          <p class="kicker">${p.subtitle}</p>
+          <h2>${p.name}</h2>
+          <p class="price">${p.priceLabel}</p>
+        </div>`).join("");
+      box.querySelectorAll(".card").forEach(el => {
+        el.onclick = () => { selected = el.dataset.id; render(); };
+      });
+    }
+    render();
+
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        const next = "/members/checkout/?plan=" + encodeURIComponent(selected);
+        location.href = "/login/?next=" + encodeURIComponent(next);
+      }
+    });
+
+    document.getElementById("pay").onclick = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      err.classList.remove("show");
+      const btn = document.getElementById("pay");
+      btn.disabled = true;
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch(AKASHA_SAAS.functionsBase + "/createCheckoutSession", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+          body: JSON.stringify({ planId: selected })
+        });
+        const data = await res.json();
+        if (res.status === 503) throw new Error("Pagamento ainda não configurado. Coloque as chaves Stripe nas Cloud Functions (veja functions/SETUP-STRIPE.md).");
+        if (!res.ok || !data.url) throw new Error(data.error || "Falha no checkout");
+        location.href = data.url;
+      } catch (e) {
+        err.textContent = e.message;
+        err.classList.add("show");
+        btn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>
