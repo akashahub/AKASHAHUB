@@ -141,6 +141,12 @@ function studio() {
     return "<article class=\"block " + esc(block.type || "") + "\"><header><span>" + esc(block.label || TYPE_LABEL[block.type] || "") + "</span><span>" + esc(block.time || "") + "</span></header><div class=\"say\">" + say + "</div>" + (block.dir ? "<p class=\"dir\">" + esc(block.dir) + "</p>" : "") + "</article>";
   }).join("");
   const visual = (ep.visual || []).map((item) => "<p><strong>" + esc(item.k) + ".</strong> " + esc(item.v) + "</p>").join("");
+  const titles = (ep.titles || []).map((item) => "<p>" + esc(item) + "</p>").join("");
+  const fontes = (ep.fontes || []).map((item) => "<p>" + esc(item) + "</p>").join("");
+  const extra =
+    (titles ? "<div class=\"panel\"><p class=\"label\">Três títulos</p>" + titles + "</div>" : "") +
+    (ep.short ? "<div class=\"panel\"><p class=\"label\">Corte curto</p><p>" + esc(ep.short) + "</p></div>" : "") +
+    (fontes ? "<div class=\"panel\"><p class=\"label\">Fontes</p>" + fontes + "</div>" : "");
   const done = localStorage.getItem(gravadoKey(ep.id)) === "1";
   return (
     "<p class=\"ep-num\">" + esc(ep.num || "") + "</p>" +
@@ -159,6 +165,7 @@ function studio() {
     "<div class=\"panel\"><p class=\"label\">Mapa de retenção · " + clock(stat.sec) + "</p><div class=\"rail\">" + rail + "</div></div>" +
     "<p class=\"script-label\">Fala por pilares · a direção não entra na boca</p>" +
     blocks +
+    extra +
     "<aside class=\"phrase\"><p class=\"label\">Frase salva</p><p>«" + esc(ep.phrase || "") + "»</p></aside>" +
     "<div class=\"panel look\"><p class=\"label\">Direção visual</p>" + visual + "</div>"
   );
