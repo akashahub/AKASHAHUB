@@ -1,6 +1,7 @@
 const SB_URL = "https://jsonmxbuzagmwuucruem.supabase.co";
 const SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ";
 const FN = SB_URL + "/functions/v1/os-ticket";
+const FN_GOOGLE = SB_URL + "/functions/v1/os-google";
 const WORKER = "https://akasha.yanfili-simon.workers.dev";
 const ADMINS = ["yanfili.simon@gmail.com", "sendatantrica@gmail.com"];
 const TICKETS = [
@@ -38,6 +39,14 @@ const PILLARS = [
 ];
 
 const sb = supabase.createClient(SB_URL, SB_ANON);
+try {
+  firebase.initializeApp({
+    apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+    authDomain: "hub-akasha.firebaseapp.com",
+    projectId: "hub-akasha",
+    appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b",
+  });
+} catch (e) {}
 const state = { route: "boot", pillar: "business", room: null, people: [], presenters: [], ticket: null, emailDraft: "" };
 let session = null;
 let lk = null;
@@ -127,24 +136,24 @@ async function api(body) {
 
 function shell(html) {
   const nav = [
-    ["home", "Amanhã"],
+    ["home", "Agora"],
     ["pillar", "Pilar"],
     ["ticket", "Ingresso"],
     ["eu", "Eu"]
   ].map((item) => '<button class="' + (state.route === item[0] ? "on" : "") + '" data-act="go" data-id="' + item[0] + '">' + item[1] + "</button>").join("");
-  return '<div class="wrap"><div class="row"><div class="brand">Convergência</div><div class="m">25 set</div></div>' + html + '<nav class="nav">' + nav + "</nav></div>";
+  return '<div class="wrap"><div class="row"><div class="brand">Convergência</div><div class="m">no ar</div></div>' + html + '<nav class="nav">' + nav + "</nav></div>";
 }
 
 function viewLogin() {
-  return '<div class="gate"><div class="k">Convergência · 25 de setembro</div><h1>O evento abre amanhã.</h1><p class="q">Entra com o e-mail. Os gestores entram sem ingresso. Os outros escolhem Digital ou Presencial e pagam no Stripe.</p><label class="m">E-mail</label><input id="mail" type="email" value="' + esc(state.emailDraft) + '" placeholder="voce@gmail.com"><button class="btn" data-act="send">Receber código</button><p class="m" style="margin-top:14px">Chega um código de 6 dígitos. Cola aqui embaixo.</p><input id="code" inputmode="numeric" placeholder="000000"><button class="btn btn2" data-act="code">Entrar com o código</button></div>';
+  return '<div class="gate"><div class="k">Convergência · teste aberto</div><h1>Entra com Google.</h1><p class="q">Os gestores entram sem ingresso. Os outros escolhem Digital ou Presencial e pagam no Stripe.</p><button class="btn" data-act="google">Continuar com Google</button><p class="m" style="margin-top:18px">Se o Google não abrir, entra com o código do e-mail.</p><label class="m">E-mail</label><input id="mail" type="email" value="' + esc(state.emailDraft) + '" placeholder="voce@gmail.com"><button class="btn btn2" data-act="send">Receber código</button><input id="code" inputmode="numeric" placeholder="000000"><button class="btn btn2" data-act="code">Entrar com o código</button></div>';
 }
 function viewTickets() {
   const cards = TICKETS.map((t) => '<article class="card"><div class="row"><h3>' + t.name + '</h3><span class="pill">' + t.price + '</span></div><p class="q">' + t.text + '</p><button class="btn" data-act="buy" data-id="' + t.id + '">Pagar ' + t.price + '</button></article>').join("");
   return shell('<div class="k">Ingresso</div><h1>Escolhe como entra.</h1><p class="q">O Stripe deste projeto ainda está em teste. Use o cartão 4242 4242 4242 4242, uma data futura e qualquer CVC. Nada disso vira cobrança real.</p>' + cards + (isAdmin() ? '<button class="btn btn3" data-act="go" data-id="gestao">Gestão de quem entra</button>' : ""));
 }
 function viewHome() {
-  const cards = PILLARS.map((p) => '<button class="card" data-act="open-pillar" data-id="' + p.id + '"><div class="row"><div class="mark">' + p.mark + '</div><div><div class="k" style="margin:0">1 live · 3 palcos</div><h3>' + p.name + '</h3><div class="m">Apresenta ' + esc(presenterName(p.id)) + '</div></div><span class="pill hot"><i class="dot"></i> amanhã</span></div></button>').join("");
-  return shell('<div class="k">Amanhã · 25 de setembro</div><h1>Três pilares. Uma live em cada.</h1><p class="q">Business, Tech e Mindset. A live é o que todo ingresso assiste. Cada pilar abre três palcos, e cada palco é um nicho com a sua gente.</p>' + cards);
+  const cards = PILLARS.map((p) => '<button class="card" data-act="open-pillar" data-id="' + p.id + '"><div class="row"><div class="mark">' + p.mark + '</div><div><div class="k" style="margin:0">1 live · 3 palcos</div><h3>' + p.name + '</h3><div class="m">Apresenta ' + esc(presenterName(p.id)) + '</div></div><span class="pill hot"><i class="dot"></i> no ar</span></div></button>').join("");
+  return shell('<div class="k">Teste aberto agora</div><h1>Três pilares. Uma live em cada.</h1><p class="q">Business, Tech e Mindset. A live é o que todo ingresso assiste. Cada pilar abre três palcos, e cada palco é um nicho com a sua gente.</p>' + cards);
 }
 function viewPillar() {
   const pillar = PILLARS.find((p) => p.id === state.pillar) || PILLARS[0];
@@ -190,6 +199,33 @@ function render() {
   document.title = "Convergência OS";
 }
 
+async function loginGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+  try {
+    const result = await firebase.auth().signInWithPopup(provider);
+    await exchangeGoogle(result.user);
+  } catch (err) {
+    if (err && err.code === "auth/popup-blocked") {
+      await firebase.auth().signInWithRedirect(provider);
+      return;
+    }
+    toast(err && err.message ? err.message : "Google não abriu.");
+  }
+}
+async function exchangeGoogle(user) {
+  if (!user) return;
+  const token = await user.getIdToken();
+  const res = await fetch(FN_GOOGLE, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: SB_ANON },
+    body: JSON.stringify({ token }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.token_hash) throw new Error(data.error || "Não abri a sessão.");
+  const { error } = await sb.auth.verifyOtp({ token_hash: data.token_hash, type: "magiclink" });
+  if (error) throw new Error(error.message);
+}
 async function sendCode() {
   const mail = (document.getElementById("mail").value || "").trim().toLowerCase();
   if (!mail.includes("@")) { toast("Coloca um e-mail."); return; }
@@ -297,6 +333,7 @@ document.getElementById("app").addEventListener("click", async (event) => {
   if (!button) return;
   const act = button.dataset.act;
   const id = button.dataset.id || "";
+  if (act === "google") return loginGoogle();
   if (act === "send") return sendCode();
   if (act === "code") return verifyCode();
   if (!session) return;
@@ -314,6 +351,9 @@ document.getElementById("app").addEventListener("click", async (event) => {
   if (act === "set-pres") return setPresenter(id);
 });
 
+firebase.auth().getRedirectResult().then((result) => {
+  if (result && result.user) exchangeGoogle(result.user).catch((err) => toast(err.message || "Google não concluiu."));
+}).catch(() => {});
 sb.auth.onAuthStateChange(async (_event, next) => {
   session = next;
   if (!session) { state.route = "boot"; render(); return; }
