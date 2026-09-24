@@ -177,14 +177,20 @@ function line(text, italic) {
 }
 
 function closePanel() {
-  const engine = typeof CLOSE_ENGINE !== "undefined" ? CLOSE_ENGINE : null;
+  const own = pack().close;
+  const engine = own || (typeof CLOSE_ENGINE !== "undefined" ? CLOSE_ENGINE : null);
   if (!engine) return "";
   const who = deal().name;
+  const skip = !!(own && own.skipSentido);
+  const termo = pack().termo || [];
   return `
     <section class="panel">
       <h3>Pagamento na call · ${esc(who)}</h3>
       <p class="muted">${esc(engine.lede)}</p>
-      <p class="lbl">Faz sentido?</p>
+      ${
+        skip
+          ? `<p class="lbl">Perguntar · e calar</p>${line(engine.ask || "Qual valor você tem disponível agora?", true)}`
+          : `<p class="lbl">Faz sentido?</p>
       <div class="vals">
         <button type="button" class="btn ${state.fazSentido === true ? "btn-primary" : "btn-outline"}" data-sentido="1">Sim</button>
         <button type="button" class="btn ${state.fazSentido === false ? "btn-primary" : "btn-outline"}" data-sentido="0">Ainda não</button>
@@ -195,7 +201,8 @@ function closePanel() {
           : state.pit < 10
             ? "PIT abaixo de 10. Não apresenta solução."
             : "Autorizado. Qual valor faz sentido agora?"
-      }</p>
+      }</p>`
+      }
       <p class="lbl">Forma</p>
       <div class="vals">
         ${engine.methods
@@ -220,7 +227,14 @@ function closePanel() {
              <button type="button" class="btn ${state.calledNow ? "btn-primary" : "btn-outline"}" data-called="1" style="margin-top:8px">${
                state.calledNow ? "Ligou na call" : "Marcar: ligou agora"
              }</button>`
-          : `<p class="muted" style="margin-top:8px">Se aparecer esposa, sócio, equipe ou “depois”: liga agora. Não espera Pix depois.</p>`
+          : `<p class="muted" style="margin-top:8px">${skip ? "Se outra pessoa decide: liga agora." : "Se aparecer esposa, sócio, equipe ou “depois”: liga agora. Não espera Pix depois."}</p>`
+      }
+      ${
+        termo.length
+          ? `<p class="lbl" style="margin-top:14px">Mini termo · copiar</p><div>${termo.map((t) => line(t, false)).join("")}</div>
+             <p class="lbl">Protótipo · só depois do número</p>
+             <p><a class="btn btn-primary" href="https://akashahub.com.br/academy" target="_blank" rel="noopener">Abrir Academy</a></p>`
+          : ""
       }
     </section>
   `;
@@ -290,6 +304,13 @@ function renderMesa() {
         <button type="button" class="btn btn-ghost" id="btnReset">Resetar mesa</button>
       </div>
     </div>
+    ${
+      p.triade
+        ? `<section class="panel"><div class="split">${p.triade
+            .map((t) => `<div class="box"><p class="lbl">${esc(t.t)}</p><p>${esc(t.d)}</p></div>`)
+            .join("")}</div></section>`
+        : ""
+    }
 
     <ol class="acts">
       ${list
@@ -320,8 +341,11 @@ function renderMesa() {
           </div>
           <p class="lbl">Falar</p>
           <div>${act.script.map((l) => line(l, true)).join("")}</div>
-          <p class="lbl">Perguntar · e calar</p>
-          <div>${act.questions.map((q) => line(q, false)).join("")}</div>
+          ${
+            act.questions && act.questions.length
+              ? `<p class="lbl">Perguntar · e calar</p><div>${act.questions.map((q) => line(q, false)).join("")}</div>`
+              : ""
+          }
           <p class="lbl">Nota desta etapa</p>
           <textarea data-act-note="${esc(act.id)}" placeholder="O que ela disse neste ato…">${esc((state.actNotes && state.actNotes[act.id]) || "")}</textarea>
           <p style="margin-top:8px"><button type="button" class="btn btn-outline" data-copy-notes>Copiar todas as anotações</button></p>
@@ -360,7 +384,10 @@ function renderMesa() {
       </div>
 
       <div class="stack">
-        <section class="panel">
+        ${
+          p.hidePit
+            ? ""
+            : `<section class="panel">
           <h3>PIT 01 · 0 a 10</h3>
           <div class="pit">
             ${Array.from({ length: 11 }, (_, n) => {
@@ -372,11 +399,19 @@ function renderMesa() {
           <p class="flag ${state.pit < 10 ? "danger" : "ok"}">${
             state.pit < 10 ? "Não apresentar solução" : "Autorizado a avançar"
           }</p>
-        </section>
+        </section>`
+        }
 
         <section class="panel">
           <h3>Recurso nomeado</h3>
-          <p class="flag danger">Interno · piso R$ ${MESA_PRIVATE && MESA_PRIVATE.floor ? MESA_PRIVATE.floor.toLocaleString("pt-BR") : "5.000"} · proposta R$ ${MESA_PRIVATE && MESA_PRIVATE.offer ? MESA_PRIVATE.offer.toLocaleString("pt-BR") : "17.000"}. Ela fala primeiro.</p>
+          <p class="flag danger">${esc(
+            p.moneyNote ||
+              "Interno · piso R$ " +
+                (MESA_PRIVATE && MESA_PRIVATE.floor ? MESA_PRIVATE.floor.toLocaleString("pt-BR") : "5.000") +
+                " · proposta R$ " +
+                (MESA_PRIVATE && MESA_PRIVATE.offer ? MESA_PRIVATE.offer.toLocaleString("pt-BR") : "17.000") +
+                ". Ela fala primeiro."
+          )}</p>
           <p class="muted">A pessoa fala o número. Você não fala o piso. Digite o que ela disser.</p>
           <div class="vals">
             ${valuesList().map(
