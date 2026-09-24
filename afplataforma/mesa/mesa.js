@@ -342,6 +342,11 @@ function renderMesa() {
           <p class="lbl">Falar</p>
           <div>${act.script.map((l) => line(l, true)).join("")}</div>
           ${
+            act.showUrl
+              ? `<p style="margin-top:14px"><a class="btn btn-primary" href="${esc(act.showUrl)}" target="_blank" rel="noopener">Abrir na tela da call</a></p><p class="muted">Arrasta essa aba para o compartilhamento. O fechamento continua neste notebook.</p>`
+              : ""
+          }
+          ${
             act.questions && act.questions.length
               ? `<p class="lbl">Perguntar · e calar</p><div>${act.questions.map((q) => line(q, false)).join("")}</div>`
               : ""
