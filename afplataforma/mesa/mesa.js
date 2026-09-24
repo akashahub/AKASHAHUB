@@ -62,6 +62,7 @@ function clockLabel() {
 function pack() {
   if (dealId === "ze" && typeof PACK_ZE !== "undefined") return PACK_ZE;
   if (dealId === "artur" && typeof PACK_ARTUR !== "undefined") return PACK_ARTUR;
+  if (dealId === "rede" && typeof PACK_REDE !== "undefined") return PACK_REDE;
   if (dealId === "vilas" && typeof PACK_VILAS !== "undefined") return PACK_VILAS;
   return {
     id: "francesca",
@@ -177,6 +178,7 @@ function line(text, italic) {
 }
 
 function closePanel() {
+  if (pack().hideClose) return "";
   const own = pack().close;
   const engine = own || (typeof CLOSE_ENGINE !== "undefined" ? CLOSE_ENGINE : null);
   if (!engine) return "";
@@ -407,7 +409,10 @@ function renderMesa() {
         </section>`
         }
 
-        <section class="panel">
+        ${
+          p.hideMoney
+            ? ""
+            : `<section class="panel">
           <h3>Recurso nomeado</h3>
           <p class="flag danger">${esc(
             p.moneyNote ||
@@ -437,7 +442,8 @@ function renderMesa() {
                   typeof formatHint === "function" ? formatHint() : "Aguarde o número dela. Se perguntar o preço, recorte o nível — não o piso."
                 )}</p>`
           }
-        </section>
+        </section>`
+        }
 
         ${closePanel()}
 
@@ -737,7 +743,7 @@ document.addEventListener("click", (e) => {
     dealId = d.getAttribute("data-deal");
     state = load(dealId);
     localStorage.setItem("af-mesa-current", dealId);
-    setView(dealId === "vilas" ? "caixa" : "mesa");
+    setView(dealId === "vilas" ? "caixa" : dealId === "rede" ? "rede" : "mesa");
     return;
   }
   const sentido = e.target.closest("[data-sentido]");

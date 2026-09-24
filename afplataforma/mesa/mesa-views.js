@@ -246,7 +246,8 @@ const VIEWS = {
   garantia: () => renderGarantia(),
   pos: () => renderPosSim(),
   diagnostico: () => (typeof renderDiagnostico === "function" ? renderDiagnostico() : head("Diagnóstico", "Carregue mesa-diagnostico.js", "")),
-  caixa: () => (typeof renderCaixaVilas === "function" ? renderCaixaVilas() : head("Caixa", "Carregue mesa-caixa-vilas.js", ""))
+  caixa: () => (typeof renderCaixaVilas === "function" ? renderCaixaVilas() : head("Caixa", "Carregue mesa-caixa-vilas.js", "")),
+  rede: () => (typeof renderRede === "function" ? renderRede() : head("Redes", "Carregue mesa-rede.js", ""))
 };
 
 function brl(n) {
