@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mesa em branco · próximo FC</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;background:#07110e;color:#f4efe6;font-family:Manrope,system-ui,sans-serif;padding:18px 16px 80px}
+.k{letter-spacing:.16em;text-transform:uppercase;font-size:11px;color:#d6c08a}
+h1{font-family:Georgia,serif;font-weight:400;font-size:1.8rem;margin:.3rem 0 1rem}
+label{display:block;margin:12px 0 4px;color:#d6c08a;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+input,textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(214,192,138,.28);color:#f4efe6;border-radius:10px;padding:10px;font:inherit}
+textarea{min-height:72px}
+.grid{display:grid;gap:4px}
+.note{margin-top:22px;color:#cfc6b4;font-size:.95rem;line-height:1.45}
+</style>
+</head>
+<body>
+<p class="k">Template · preenche depois da call e antes da próxima</p>
+<h1>Mesa em branco</h1>
+<p class="note">Diagnóstico → visualização → arquitetura → compromisso. Parceria financia upside. Entrada financia execução. Não mostre a engenharia inteira antes do compromisso.</p>
+<div class="grid" id="form"></div>
+<p class="note" id="saved"></p>
+<script>
+const FIELDS=[
+  ["nome","Pessoa"],
+  ["mundo","Mundo que ela quer construir"],
+  ["ativos","Ativos que já possui"],
+  ["ideias","Ideias ainda não materializadas"],
+  ["problema","Problema declarado"],
+  ["estrutural","Problema estrutural percebido"],
+  ["emocional","Desejo emocional"],
+  ["economico","Desejo econômico"],
+  ["autoridade","Autoridade percebida de você · baixa / média / alta"],
+  ["capital","Capital · desconhecido / estimado / confirmado"],
+  ["velocidade","Velocidade desejada"],
+  ["objecao","Objeção dominante"],
+  ["lingua","Linguagem usada pela própria pessoa"],
+  ["minima","Solução mínima"],
+  ["completa","Solução completa"],
+  ["prova","Prova a mostrar"],
+  ["esconder","O que NÃO entregar antecipadamente"],
+  ["entrada","Entrada financeira"],
+  ["upside","Possível upside / parceria"],
+  ["proximo","Próximo compromisso"],
+  ["data","Data / marco de decisão"],
+  ["pos","Pós-call · frases exatas, promessas, dinheiro, pessoas citadas"]
+];
+const key="af-mesa-branco-v1";
+let data={};
+try{data=JSON.parse(localStorage.getItem(key)||"{}")}catch(e){data={}}
+const box=document.getElementById("form");
+box.innerHTML=FIELDS.map(([id,label])=>`<label>${label}</label><textarea id="${id}">${(data[id]||"").replace(/</g,"")}</textarea>`).join("");
+box.addEventListener("input",()=>{
+  FIELDS.forEach(([id])=>{data[id]=document.getElementById(id).value});
+  localStorage.setItem(key,JSON.stringify(data));
+  document.getElementById("saved").textContent="Salvo neste aparelho.";
+});
+</script>
+</body>
+</html>

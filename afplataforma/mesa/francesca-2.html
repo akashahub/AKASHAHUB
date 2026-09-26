@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mesa 2 · Francesca · Da visão para a construção</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;background:#07110e;color:#f4efe6;font-family:Manrope,system-ui,sans-serif;padding:18px 16px 80px}
+.k{letter-spacing:.16em;text-transform:uppercase;font-size:11px;color:#d6c08a}
+h1{font-family:Georgia,serif;font-weight:400;font-size:1.8rem;margin:.3rem 0 1rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.chips button{border:1px solid rgba(214,192,138,.35);background:transparent;color:#d6c08a;border-radius:999px;padding:6px 10px}
+.chips button.on{background:#d6c08a;color:#1a1408}
+.line{font-size:1.25rem;line-height:1.4;margin:16px 0;max-width:40rem}
+.dir,.nao,.pode{margin-top:10px;font-size:.95rem;line-height:1.4}
+.nao{color:#e07a72}
+.pode{color:#9dccb2}
+.row{display:flex;gap:8px;margin-top:16px}
+.row button{flex:1;padding:12px;border:0;border-radius:12px;background:#d6c08a;color:#1a1408;font-weight:600}
+.row button.ghost{background:transparent;border:1px solid rgba(214,192,138,.35);color:#f4efe6}
+.note{margin-top:22px;border-top:1px solid rgba(214,192,138,.2);padding-top:14px;color:#cfc6b4;font-size:.9rem}
+</style>
+</head>
+<body>
+<p class="k">Call 2 · não é venda pressionada</p>
+<h1>Da visão para a construção</h1>
+<p class="k">Regra no topo: parceria financia upside. Entrada financia execução.</p>
+<div class="chips" id="chips"></div>
+<p class="line" id="line"></p>
+<p class="dir" id="dir"></p>
+<div id="pode"></div>
+<div id="nao"></div>
+<div class="row">
+  <button class="ghost" id="prev">Volta</button>
+  <button id="next">Próxima</button>
+</div>
+<div class="note">
+Call 1 fechou visão. Não fechou dinheiro. Ela associou: “é o que eu já penso”. Ainda não associou: “é a operação que eu preciso com este médico.” Não discuta colaborocracia. Separe colaboração de execução.
+</div>
+<script>
+const FIO = [
+  {chip:"Reentra", lines:["Eu não vim vender de novo o que a gente já viu. A visão bateu. Isso ficou claro.","O que eu não mostrei direito foi a distância entre conversar sobre esse mundo e construir a infraestrutura pra ele existir."], dir:"Calmo. Sem ego. Sem pressa.", nao:["Não fala que você é autoridade. Não fala da sua idade. Não reabre o Imagina inteiro."]},
+  {chip:"Separação", lines:["Eu posso colaborar com você. Inclusive quero. São duas coisas diferentes: colaboração e execução.","Na colaboração a gente constrói relação, conteúdo, ideia, participação e upside. Na execução existe equipe, tecnologia, produção e tempo. Essa parte precisa de capital."], dir:"A frase da mesa. Deixa cair.", nao:["Não ataca colaborocracia. Não fala que ela está errada."]},
+  {chip:"O gap", lines:["Onde está o ativo? Onde o Beautiful Living opera sem você na sala? Onde o Freedom é experiência, não só conversa?","Você já tem visão, países, gente, doutrina. O que ainda não saiu da cabeça pra operação é o que eu construo."], dir:"Pergunta e cala.", pode:["Se ela puxar T e C: você carrega o C. Código, sistema, execução. Sem virar briga de tipo."]},
+  {chip:"Mostra", lines:["Eu te mostro só o bastante pra você decidir. Não a obra inteira.","Olha o corpo. Beautiful Living e Freedom habitam. O resto dos pilares é o organismo em volta."], dir:"Abre o mapa ou a Convergência. Uma tela. Fecha.", nao:["Não entrega arquitetura completa, código, cronograma de 12 meses detalhado."]},
+  {chip:"Restaurante", lines:["Colaboração não elimina infraestrutura. Um restaurante pode nascer de uma sociedade. Alguém ainda financia cozinha, ingrediente, aluguel e equipe.","Quando você vai no médico, você não entra em colaborocracia com o consultório. Você entra na consulta. Depois a obra, se houver obra."], dir:"Só se ela insistir que tudo é parceria. Elegante. Sem pezinho de conta de jantar.", nao:["Não lista notebook, casa, Uber. Uma imagem só."]},
+  {chip:"Três portas", lines:["Eu vejo três formas de a gente continuar. Quero entender qual relação você está imaginando.","Uma: colaboração leve. Troca, ponte, ferramenta pontual, algumas portas. Acesso limitado.","Duas: arquitetura. Eu organizo o que já é seu. Scan, direção, propriedade. Você entra como colega com recorte.","Três: construção. Capital, calendário e responsabilidade. Aí o ecossistema ganha corpo: app, evento, Academy, conteúdo, receita."], dir:"Não pergunta se quer fechar. Pergunta qual porta.", nao:["Não anuncia 5 mil nem 17 mil."]},
+  {chip:"A pergunta", lines:["Qual dessas três você imaginava quando falou em colaborocracia?"], dir:"Cala. Anota a palavra dela.", nao:["Não completa a frase dela."]},
+  {chip:"Entrada", lines:["Parceria pode financiar o que vem depois. Entrada financia o que começa agora.","Pra eu abrir a construção, precisa entrar agora. Em euro, se for o caminho mais simples. Depois a gente desenha a receita em cima do que entrou."], dir:"Ela fala o caminho. Você não inventa o número primeiro se ela ainda não falou faixa.", pode:["Se ela pedir preço: eu não desenho a obra em cima de um número que existe só na minha cabeça. Qual faixa é real pra assumir a porta três?"], nao:["Não oferece graça. Não abre a máquina inteira na porta um."]},
+  {chip:"Fecha a porta", lines:["Se a porta for a um, a gente troca e eu protejo a produção. Se for a duas, eu abro o scan e a mentoria com limite. Se for a três, a gente começa a obra.","Qual porta é hoje?"], dir:"Uma pergunta. Depois silêncio."}
+];
+let i=0, n=0;
+function paint(){
+  const b=FIO[i], line=b.lines[n];
+  document.getElementById("chips").innerHTML=FIO.map((x,k)=>`<button class="${k===i?'on':''}" data-i="${k}">${x.chip}</button>`).join("");
+  document.getElementById("line").textContent=line;
+  document.getElementById("dir").textContent=b.dir||"";
+  document.getElementById("pode").innerHTML=(b.pode||[]).map(t=>`<p class="pode">Pode · ${t}</p>`).join("");
+  document.getElementById("nao").innerHTML=(b.nao||[]).map(t=>`<p class="nao">Não · ${t}</p>`).join("");
+}
+document.getElementById("chips").onclick=e=>{const t=e.target.closest("[data-i]"); if(!t)return; i=+t.dataset.i; n=0; paint();};
+document.getElementById("next").onclick=()=>{const b=FIO[i]; if(n<b.lines.length-1)n++; else if(i<FIO.length-1){i++; n=0;} paint();};
+document.getElementById("prev").onclick=()=>{if(n>0)n--; else if(i>0){i--; n=FIO[i].lines.length-1;} paint();};
+paint();
+</script>
+</body>
+</html>
