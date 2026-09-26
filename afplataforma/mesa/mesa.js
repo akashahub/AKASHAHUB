@@ -702,6 +702,8 @@ document.addEventListener("click", (e) => {
   const act = e.target.closest("[data-act]");
   if (act) {
     state.act = Number(act.getAttribute("data-act"));
+    state.fcLine = 0;
+    state.fcObj = "";
     render();
     return;
   }

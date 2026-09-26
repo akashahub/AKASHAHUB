@@ -226,7 +226,7 @@ function renderFaixasFull() {
 }
 
 const VIEWS = {
-  mesa: () => renderMesa(),
+  mesa: () => (dealId === "francesca" && typeof renderFrancescaMesa === "function" ? renderFrancescaMesa() : renderMesa()),
   caderno: () => renderCaderno(),
   fechamento: () => renderIgor(),
   af: () => renderAfBrief(),
