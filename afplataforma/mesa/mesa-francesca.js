@@ -45,8 +45,8 @@ const FRANCESCA_FIO = [
       "Você já constrói em 67 países e 10 mil conversas. O gargalo raramente é visão. Quase sempre é a visão virar um organismo que executa.",
       "Colaborocracia (quem entra na obra vira sócio, não plateia) de longo prazo precisa de uma entrada que gere atenção, sistema e caixa. Senão vira conversa eterna."
     ],
-    abrir: [{ t: "Abrir o mapa na tela dela", href: "francesca-mapa.html", share: true }],
-    dir: "Compartilha só o mapa. Esta conversa fica no notebook."
+    nao: ["Não abre o ecossistema ainda. O mapa dela é depois que ela falar o valor."],
+    dir: "Só a frase. O mapa fica fechado."
   },
   {
     id: "frase",
@@ -103,17 +103,16 @@ const FRANCESCA_FIO = [
     id: "mostra",
     chip: "Agora mostra",
     lines: [
-      "Olha o que eu construí. Não pra você fazer a minha mentoria. Pra você ver como eu estruturo.",
-      "Você entra como peer (colega, não aluna). Eu te mostro o que pode entrar no seu sistema, e o que não entra.",
-      "Essência vira código. Código vira método. Método vira marca. Marca vira produto. Produto vira sistema. Sistema vira legado.",
-      "A execução não mora em PDF.",
+      "Vou te mostrar o seu ecossistema. É isso aqui. Eu resolvo.",
+      "Olha o que entra: o conteúdo dela, o aplicativo, o evento, a Academy (a casa das aulas, pagamento e dados na plataforma dela), o Google, as redes.",
+      "Você entra como colega, não como aluna. Uma vez por semana.",
       "Tu entendeu? Isso aqui resolve. A gente começa."
     ],
     abrir: [
+      { t: "Abrir o ecossistema na tela dela", href: "francesca-mapa.html?v=eco1", share: true },
+      { t: "Academy · versão simples", href: "https://akashahub.com.br/academy", share: true },
       { t: "Alinhamento · página 1", href: "/alinhamentofinanceiro/", share: true },
-      { t: "Alinhamento · página 2", href: "/alinhamentofinanceirov2/", share: true },
-      { t: "Mapa mãe · notebook", href: "index.html#mapa", share: false },
-      { t: "Convergência · notebook", href: "index.html#convergencia", share: false }
+      { t: "Alinhamento · página 2", href: "/alinhamentofinanceirov2/", share: true }
     ],
     nao: ["Não decide percentual nesta call. Não promete patente. Não fala de madrugada."],
     dir: "Só depois que ela falou o valor. Uma aba por vez. Esta conversa não vai pra tela dela."
@@ -123,7 +122,7 @@ const FRANCESCA_FIO = [
     chip: "A obra",
     lines: [
       "Na prática, eu começo a construir agora.",
-      "Dois encontros por semana. Um de alinhamento financeiro (caixa, decisão e legado). Um de arquitetura de essência (a estrutura da sua obra, não uma aula solta).",
+      "Um encontro por semana. A estrutura da mentoria, a plataforma, a mentalidade e os módulos.",
       "A primeira versão da casa do evento sai o quanto antes. O que passar dessa obra é outra obra."
     ],
     pode: ["O conteúdo do Beeter, do Beautiful Living e do Freedom entra nessa construção. A palestra em inglês, se o evento estiver marcado. Só se ela perguntar o que cabe."],
