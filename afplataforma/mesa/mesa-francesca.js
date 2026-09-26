@@ -45,7 +45,7 @@ const FRANCESCA_FIO = [
       "Você já constrói em 67 países e 10 mil conversas. O gargalo raramente é visão. Quase sempre é a visão virar um organismo que executa.",
       "Colaborocracia (quem entra na obra vira sócio, não plateia) de longo prazo precisa de uma entrada que gere atenção, sistema e caixa. Senão vira conversa eterna."
     ],
-    nao: ["Não abre o ecossistema ainda. O mapa dela é depois que ela falar o valor."],
+    nao: ["Não abre o mapa. Ele abre depois que ela confirmar a entrada."],
     dir: "Só a frase. O mapa fica fechado."
   },
   {
@@ -66,68 +66,72 @@ const FRANCESCA_FIO = [
     id: "imagina",
     chip: "Imagina",
     lines: [
-      "Daqui a uns meses. Não sou eu. É uma mulher que ainda não te conhece.",
-      "Ela vê o que você fala. Se reconhece. Chega junto. Quer entrar. Quer fazer negócio.",
-      "Outra ouve o evento. Entende o que pode acontecer. Investe. Entra como sócia. O evento acontece, e a marca de vocês está nele.",
-      "No evento, a fala em inglês acontece. Quem assiste associa isso ao campo dela, não a um convidado solto.",
-      "A casa guarda o que foi dito. Quem não estava na sala vê depois. Ela não explica tudo de novo."
+      "Daqui a alguns meses, não sou eu olhando para isso. É uma mulher que ainda nem te conhece. Ela não conhece Beautiful Living (viver bonito: casa, corpo, relação). Não conhece Freedom (liberdade como campo de vida e negócio). Às vezes nem tem nome pro que procura. Encontra um conteúdo. Alguém compartilha. Pesquisa no Google. Acha um vídeo no Instagram, no TikTok ou no YouTube. Se reconhece. Continua. Aí descobre o Beautiful Living, o Freedom, a visão. Pode entrar numa experiência, comprar, fazer uma formação, virar parceira, ou trazer outra pessoa. São dois movimentos ao mesmo tempo. O conteúdo encontra as pessoas. E a gente procura, de propósito, quem deveria conhecer o projeto.",
+      "Agora o personagem muda. Não é só quem compra. É quem multiplica. Empresário, investidor, hotel, produtor de evento, artista, festival, tecnologia, wellness (bem-estar), hospitalidade, uma marca. Essa pessoa não vê um curso. Vê uma coisa maior sendo construída, e enxerga onde entra. Pode investir, produzir, patrocinar, virar parceira, levar um pedaço pra outro lugar, entrar na Convergência (o encontro do digital com o presencial), ou criar junto. Não é audiência. É gente que aumenta o campo.",
+      "Você fala de economias diferentes. A Convergência é isso acontecendo. Uma edição numa cidade. Hotel principal cheio. Gente de outras cidades e de outros países. Voo, transfer, Uber, restaurante, pousada, hotel ao redor, equipe, audiovisual, tecnologia, comida, artista, empresa. Não é só o ingresso. É a cadeia em volta, do jeito de um festival ou de um congresso grande. Sem eu te prometer esse tamanho. Dentro convivem Business, Tetic (tecnologia), Mindset, Holistic, Wellness, Terapias, Entretenimento, o físico, o digital, a transmissão e o negócio. Beautiful Living deixa de ser um conceito que você explica. Passa a ter imagem, gente, caso, ambiente e economia em volta.",
+      "Não acaba quando a luz apaga. Eu posso palestrar em inglês dentro disso. Eu já pratico o inglês, e a gente prepara de propósito. Roteiro, narrativa e fala ficam prontos antes. Quem assiste liga a ideia a você, ao Beautiful Living, ao Freedom, ao ecossistema. Não é propaganda. É o conteúdo. A palestra acontece na Convergência. É transmitida. É gravada. Depois fica disponível. Disso pode sair replay, corte, documentário curto, rede, aula, material de parceiro, arquivo e busca no Google.",
+      "Você quer soltar um curso. Hoje isso iria parar na plataforma de outra marca. Imagina abrir o Beautiful Living Academy (a sua casa de aulas), dentro do seu ecossistema. Curso, módulo, vídeo, texto, material, aluno, acesso, comunidade. E publicar. Sem colocar o Beautiful Living como produto de outra marca. É ter a própria estrutura de ensino. Não é copiar a Hotmart. Se você quiser, outros especialistas que você autorizar também publicam. Palestra vira aula. Live vira replay. Workshop vira módulo. Entrevista vira conteúdo. Evento vira documentário. O que durava algumas horas vira patrimônio digital."
     ],
-    nao: ["Alinhamento Financeiro, módulos, dashboard, PDF, blueprint (a planta da obra), app, percentual, patente."],
-    dir: "Hipótese. Terceira pessoa. Futuro. Se ela pegar uma cena, fica nela."
+    nao: ["Não lista aplicativo, módulo, dashboard, PDF. Não promete o tamanho de um festival. Não abre o mapa."],
+    dir: "Cinco cenas. Terceira pessoa. Se ela pegar uma, fica nela. Não vende a ferramenta."
+  },
+  {
+    id: "assume",
+    chip: "Assumir",
+    lines: [
+      "Deixa eu voltar pro diagnóstico. Existe uma diferença entre a gente ter uma conversa incrível sobre isso e eu assumir essa obra com você.",
+      "Assumir é doze meses. Eu produzo o que você já tem e transformo em ativo. Crio narrativa, formato e experiência. Desenvolvo plataforma, aplicativo e Academy. Propago no Instagram, no YouTube, no TikTok, na busca e na prospecção, com parceria. Ativo a Convergência digital e a presencial, a palestra e a live. Estruturo produto, evento, conteúdo e parceria como receita. Tudo ligado ao Beautiful Living e ao Freedom.",
+      "O conteúdo e a essência continuam seus. Eu não tomo a marca. Eu transformo isso em arquitetura, produto, comunicação e distribuição."
+    ],
+    nao: ["Não abre preço. Não fala 5 mil. Não fala 17 mil. Não abre o mapa ainda."],
+    dir: "Médico de novo. Diagnóstico, depois a dimensão da obra. Curto. Aí a pergunta."
   },
   {
     id: "valor",
     chip: "O valor",
     lines: [
-      "Existe uma diferença entre uma conversa incrível e assumir a obra.",
-      "Não é mensalidade. É a entrada que liga a máquina. O que vier depois é outro acordo.",
-      "Qual valor você tem disponível agora pra gente começar? Pode ser o total ou uma parcela. Você fala."
+      "Pra eu não desenhar isso em cima de um número que existe só na minha cabeça. Olhando pra essa construção e pros próximos doze meses, que faixa de investimento hoje é real pra você assumir, sem desmontar a sua vida ou a operação?"
     ],
     valor: true,
-    nao: ["Não anuncia valor. Nem o que você ganhava antes. Nem percentual. Nem doze meses."],
-    dir: "Ela fala o número. Você espera."
+    nao: ["Não anuncia o seu piso. Não oferece 5 mil nem 17 mil. Não induz o número."],
+    dir: "Ela fala a faixa. Você espera. O recorte vem depois, dentro do que ela disse."
   },
   {
     id: "entra",
     chip: "Como entra",
     lines: [
-      "Beleza. Como isso entra agora?",
-      "Você está na Finlândia. Em euro, em real, ou uma parte em cada?",
-      "Transferência, cartão, Pix (pagamento instantâneo no Brasil), ou os dois?"
+      "Como isso entra pra você?"
     ],
-    pode: ["Qual banco. Limite do cartão. Conta no Brasil ou em outro país. Boleto numa parte, cartão na outra. Só se a primeira resposta travar."],
+    pode: ["Só se ela perguntar como assim. Transferência. IBAN (conta internacional). Cartão. Pix (pagamento instantâneo no Brasil), quando couber. Uma combinação. Parcelar, se isso fizer parte do acordo. Você recebe por IBAN e também por meio brasileiro."],
     cobra: true,
-    dir: "Uma pergunta. Espera. Não faz entrevista de banco."
+    dir: "Uma pergunta. Ela fala. Não lista os meios antes."
   },
   {
     id: "mostra",
     chip: "Agora mostra",
     lines: [
-      "Vou te mostrar o seu ecossistema. É isso aqui. Eu resolvo.",
-      "Olha o que entra: o conteúdo dela, o aplicativo, o evento, a Academy (a casa das aulas, pagamento e dados na plataforma dela), o Google, as redes.",
-      "Você entra como colega, não como aluna. Uma vez por semana.",
-      "Tu entendeu? Isso aqui resolve. A gente começa."
+      "Isso resolve. Então agora eu paro de te vender uma ideia e começo a construir.",
+      "Agora eu te mostro como isso começa a acontecer."
     ],
     abrir: [
-      { t: "Abrir o ecossistema na tela dela", href: "francesca-mapa.html?v=eco1", share: true },
-      { t: "Academy · versão simples", href: "https://akashahub.com.br/academy", share: true },
-      { t: "Alinhamento · página 1", href: "/alinhamentofinanceiro/", share: true },
-      { t: "Alinhamento · página 2", href: "/alinhamentofinanceirov2/", share: true }
+      { t: "Abrir o mapa na tela dela", href: "francesca-mapa.html?v=eco2", share: true },
+      { t: "Mapa mãe · notebook", href: "index.html#mapa", share: false }
     ],
-    nao: ["Não decide percentual nesta call. Não promete patente. Não fala de madrugada."],
-    dir: "Só depois que ela falou o valor. Uma aba por vez. Esta conversa não vai pra tela dela."
+    nao: ["Não decide percentual. Não promete patente. Não abre a engenharia antes dela confirmar."],
+    dir: "Só depois da confirmação. Uma aba. O mapa mostra a arquitetura. Você não lê o mapa em voz alta."
   },
   {
     id: "obra",
     chip: "A obra",
     lines: [
-      "Na prática, eu começo a construir agora.",
-      "Um encontro por semana. A estrutura da mentoria, a plataforma, a mentalidade e os módulos.",
-      "A primeira versão da casa do evento sai o quanto antes. O que passar dessa obra é outra obra."
+      "Dois encontros por semana. Um de alinhamento financeiro (caixa, decisão e legado). Um de arquitetura de essência (a estrutura da sua obra, não uma aula solta).",
+      "A arquitetura de essência começa como um scan. Pessoa, história, o que é seu, conteúdo, Beautiful Living, Freedom, Colaborocracia, rede, produto, parceria, evento, receita, prioridade.",
+      "Enquanto a gente mapeia, eu já produzo. Não fica uma fase enorme em que nada acontece.",
+      "A primeira versão relevante, em até noventa dias. Antes, se a técnica deixar. A primeira forma do evento, o digital inicial, conteúdo, comunicação, protótipo, os primeiros movimentos de prospecção. O resto dos doze meses é testar, melhorar e consolidar."
     ],
-    pode: ["O conteúdo do Beeter, do Beautiful Living e do Freedom entra nessa construção. A palestra em inglês, se o evento estiver marcado. Só se ela perguntar o que cabe."],
-    nao: ["Percentual. Patente. Ligação de madrugada. Outdoor. Nome de bilionário. Custo de live dentro do ingresso. Black box."],
-    dir: "Só se ela já fechou. Curto. A obra tem começo e fim."
+    pode: ["A palestra em inglês, se o evento estiver marcado. Só se ela perguntar o que cabe agora."],
+    nao: ["Não promete tudo pronto em noventa dias. Percentual. Patente. Ligação de madrugada."],
+    dir: "Só se ela já confirmou. Diagnóstico e execução juntos. A obra tem começo. Não tem fim aberto."
   }
 ];
 
@@ -143,7 +147,7 @@ const FRANCESCA_GLOSS = [
 ];
 
 const FRANCESCA_OBJ = {
-  preco: "Eu não abro o preço. Você me diz o que tem disponível agora.",
+  preco: "Eu não abro o preço. A faixa é a sua. Dentro dela eu recorto a obra.",
   pensar: "O diagnóstico não muda pensando. O que trava é o recurso, ou é a decisão?",
   resumo: "Resumo não opera. Ou a gente começa agora, ou você me diz o que tem disponível.",
   socio: "Quem decide entra agora. Liga. A gente espera."
@@ -169,13 +173,13 @@ function fcBanda(n, moeda) {
 
 function fcFalaBanda(banda) {
   if (banda === "baixo") {
-    return "Pô. Eu tenho como te ajudar a partir de 5 mil reais, ou 1.500 euros. Pra ficar melhor, o meio é 17 mil reais, uns 3 mil euros. O meio é onde a primeira fase fica inteira.";
+    return "Dentro do que você falou, eu recorto a primeira obra. Não subo um número que não é o seu. A gente vê o que esses doze meses comportam com isso.";
   }
   if (banda === "cabe") {
-    return "É esse valor mesmo que você tem agora? Se for, beleza. A gente fecha por esse valor. Eu consigo resolver isso pra você com esse valor. Tranquilo?";
+    return "É essa faixa mesmo? Se for, eu desenho a obra dentro dela e a gente começa. Tranquilo?";
   }
   if (banda === "fecha") {
-    return "É esse valor. A gente fecha. Eu resolvo isso com esse valor. Tranquilo?";
+    return "É essa faixa. Eu assumo a obra dentro dela. A gente começa. Tranquilo?";
   }
   return "";
 }
@@ -249,7 +253,7 @@ function renderFrancescaMesa() {
           <button type="button" data-fc-moeda="EUR" class="${moeda === "EUR" ? "on" : ""}">Euro</button>
         </div>
         <label>Ela disse<input id="fcValor" inputmode="decimal" value="${state.named ? String(state.named).replace(".", ",") : ""}" placeholder="espera ela falar"></label>
-        ${state.named ? `<p class="fband">${esc(banda === "baixo" ? "Abaixo do chão. Sobe pro meio." : banda === "cabe" ? "Cabe. Confirma se é isso mesmo. Aí fecha." : "É o valor. Fecha.")}</p>` : `<p class="fband">Silêncio. Ela fala o número.</p>`}
+        ${state.named ? `<p class="fband">${esc(banda === "baixo" ? "Ela falou. Não oferece o piso. Recorta dentro do número dela." : banda === "cabe" ? "Cabe. Confirma a faixa. Aí fecha." : "É a faixa. Fecha.")}</p>` : `<p class="fband">Silêncio. Ela fala a faixa.</p>`}
         <div class="fobj">
           <button type="button" data-fc-obj="preco">Se pedir o preço</button>
           <button type="button" data-fc-obj="pensar">Se for pensar</button>
