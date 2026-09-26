@@ -3,88 +3,111 @@ const FRANCESCA_FIO = [
   {
     id: "abre",
     chip: "Abre",
-    lines: ["A primeira call foi de escuta. Hoje eu quero te mostrar a casa e entender a sua."],
-    dir: "Olha pra ela. Não explica ferramenta."
-  },
-  {
-    id: "garante",
-    chip: "Garante",
-    lines: ["Isso aqui eu garanto que vai resolver."],
+    lines: [
+      "A primeira call foi de escuta. Hoje eu quero te mostrar a casa e entender a sua.",
+      "Isso aqui eu garanto que vai resolver."
+    ],
     dir: "Devagar. Sem sorriso de vendedor."
   },
   {
-    id: "diag",
-    chip: "Diagnóstico",
+    id: "conexao",
+    chip: "Conexão",
     lines: [
-      "Deixa eu te devolver o que eu estou vendo. Em uma frase.",
-      "Você tem um paraíso de conexão. E uma Colaborocracia (quem entra na obra vira sócio, não plateia) já desenhada.",
-      "O que ainda não está vivo é o organismo que faz isso acontecer no digital e no presencial ao mesmo tempo.",
-      "Se a gente não resolver isso, continua brilhante e lento. Se a gente resolve, deixa de depender da sua cabeça."
+      "Teve uma fase em que eu trabalhava muito e no fim do mês não sobrava. A casa cobrava. Energia e dinheiro vazavam.",
+      "Eu saí do presencial pro digital pra parar de vazar.",
+      "Nessa transição o Akasha virou um organismo. Nasceu da reorganização da vida, não de um aplicativo."
     ],
-    dir: "Médico. O diagnóstico já está feito. Não pergunta se faz sentido."
+    pode: ["A casa grande, o quarto de terapia, o atelier. Só se ela puxar a sua história. Não abre com isso."],
+    nao: ["Quanto você ganhava.", "Bugar o algoritmo.", "O nome da mentoria. Ainda não."],
+    dir: "Conexão curta. Aí volta pra ela."
   },
   {
-    id: "mapa",
-    chip: "O mapa",
+    id: "escuta",
+    chip: "Escuta",
     lines: [
-      "Antes de eu abrir qualquer casa, olha o seu campo.",
-      "Freedom (liberdade como campo de vida e negócio). Beautiful Living (viver bonito: casa, corpo, relação). Beeter (o seu projeto nesse mesmo campo). Operação. Conteúdo. Dinheiro. Equipe."
+      "Na nossa última conversa, o que ficou mais forte pra você?",
+      "O que você quer materializar em 90 dias?"
+    ],
+    pode: [
+      "Qual é o maior gargalo entre a visão e a execução?",
+      "Onde o sistema ainda depende de você?",
+      "O que a Colaborocracia precisa ter de concreto em 6, 9 ou 12 meses?",
+      "O que não pode continuar no improviso?"
+    ],
+    dir: "Anota calado. Não completa a frase dela."
+  },
+  {
+    id: "campo",
+    chip: "O campo",
+    lines: [
+      "Antes de eu abrir o Akasha, eu desenho o seu campo.",
+      "Freedom (liberdade como campo de vida e negócio). Beautiful Living (viver bonito: casa, corpo, relação). Beeter (o seu projeto nesse mesmo campo). Operação. Conteúdo. Dinheiro. Equipe.",
+      "Você já constrói em 67 países e 10 mil conversas. O gargalo raramente é visão. Quase sempre é a visão virar um organismo que executa.",
+      "Colaborocracia (quem entra na obra vira sócio, não plateia) de longo prazo precisa de uma entrada que gere atenção, sistema e caixa. Senão vira conversa eterna."
     ],
     abrir: [{ t: "Abrir o mapa na tela dela", href: "francesca-mapa.html", share: true }],
-    escuta: ["Na nossa última conversa, o que ficou mais forte pra você?", "O que você quer materializar em 90 dias?"],
-    dir: "Compartilha só o mapa. Esta conversa fica no notebook. Ela responde. Você anota e cala."
+    dir: "Compartilha só o mapa. Esta conversa fica no notebook."
   },
   {
-    id: "cena",
-    chip: "A solução",
+    id: "frase",
+    chip: "A frase",
     lines: [
-      "Imagina isso.",
-      "Uma pessoa vê o que você fala. Ela se reconhece. Chega junto. Quer entrar. Quer fazer negócio.",
-      "Outra ouve o evento. Entende o que pode acontecer. Investe. Entra como sócia. O evento sai do papel.",
-      "Você dentro da mentoria, como peer (colega, não aluna). E, se você quiser, outras pessoas fazendo mentoria dentro do seu negócio.",
-      "Eu no palco, se o evento estiver marcado. Inclusive em inglês.",
-      "Isso é a solução. É isso acontecendo. Não é uma lista do que eu vendo."
-    ],
-    dir: "Uma cena. Se ela pegar uma, fica nela. Não abre produto."
-  },
-  {
-    id: "custo",
-    chip: "O custo",
-    lines: [
+      "Deixa eu te devolver o que eu estou vendo. Em uma frase.",
+      "Você tem um paraíso de conexão e uma economia de Colaborocracia já desenhada. O que ainda não está vivo é o organismo que faz isso acontecer no digital e no presencial ao mesmo tempo.",
+      "Se a gente não resolver isso, continua brilhante e lento. Se a gente resolve, vira um ecossistema que se sustenta sem você repetir tudo.",
       "Se a gente terminar esta chamada só com uma conversa incrível, o que isso vai te custar?",
       "Se isso não sair do papel e ficar só em ideia, o que isso significa pra você?"
     ],
-    dir: "Cala. Não completa a frase dela."
+    pode: ["Você quer muito resolver isso? Só se ela esfriar. Melhor não pedir licença."],
+    nao: ["Faz sentido?", "De zero a dez.", "Qualquer produto, app ou mentoria."],
+    dir: "Médico. O diagnóstico já está feito. Na pergunta do custo, cala."
+  },
+  {
+    id: "imagina",
+    chip: "Imagina",
+    lines: [
+      "Daqui a uns meses. Não sou eu. É uma mulher que ainda não te conhece.",
+      "Ela vê o que você fala. Se reconhece. Chega junto. Quer entrar. Quer fazer negócio.",
+      "Outra ouve o evento. Entende o que pode acontecer. Investe. Entra como sócia. O evento acontece, e a marca de vocês está nele.",
+      "No evento, a fala em inglês acontece. Quem assiste associa isso ao campo dela, não a um convidado solto.",
+      "A casa guarda o que foi dito. Quem não estava na sala vê depois. Ela não explica tudo de novo."
+    ],
+    nao: ["Alinhamento Financeiro, módulos, dashboard, PDF, blueprint (a planta da obra), app, percentual, patente."],
+    dir: "Hipótese. Terceira pessoa. Futuro. Se ela pegar uma cena, fica nela."
   },
   {
     id: "valor",
     chip: "O valor",
     lines: [
-      "Você quer resolver isso.",
-      "Qual valor você tem disponível agora pra gente começar?",
-      "Pode ser o total. Pode ser uma parcela. Você fala."
+      "Existe uma diferença entre uma conversa incrível e assumir a obra.",
+      "Não é mensalidade. É a entrada que liga a máquina. O que vier depois é outro acordo.",
+      "Qual valor você tem disponível agora pra gente começar? Pode ser o total ou uma parcela. Você fala."
     ],
     valor: true,
-    dir: "Não fala número nenhum antes dela. Nem 5 mil, nem 17 mil, nem euro."
+    nao: ["Não anuncia valor. Nem o que você ganhava antes. Nem percentual. Nem doze meses."],
+    dir: "Ela fala o número. Você espera."
   },
   {
     id: "entra",
     chip: "Como entra",
     lines: [
       "Beleza. Como isso entra agora?",
-      "Você está na Finlândia. Recebe em euro? Tem cartão? Tem conta no Brasil também?",
-      "Transferência, cartão, Pix (pagamento instantâneo no Brasil), ou uma parte em euro e outra em real?"
+      "Você está na Finlândia. Em euro, em real, ou uma parte em cada?",
+      "Transferência, cartão, Pix (pagamento instantâneo no Brasil), ou os dois?"
     ],
+    pode: ["Qual banco. Limite do cartão. Conta no Brasil ou em outro país. Boleto numa parte, cartão na outra. Só se a primeira resposta travar."],
     cobra: true,
-    dir: "Uma pergunta. Espera a resposta. Não faz entrevista."
+    dir: "Uma pergunta. Espera. Não faz entrevista de banco."
   },
   {
     id: "mostra",
     chip: "Agora mostra",
     lines: [
-      "Então olha como isso se resolve.",
-      "Tu entendeu?",
-      "Isso aqui resolve. A gente começa."
+      "Olha o que eu construí. Não pra você fazer a minha mentoria. Pra você ver como eu estruturo.",
+      "Você entra como peer (colega, não aluna). Eu te mostro o que pode entrar no seu sistema, e o que não entra.",
+      "Essência vira código. Código vira método. Método vira marca. Marca vira produto. Produto vira sistema. Sistema vira legado.",
+      "A execução não mora em PDF.",
+      "Tu entendeu? Isso aqui resolve. A gente começa."
     ],
     abrir: [
       { t: "Alinhamento · página 1", href: "/alinhamentofinanceiro/", share: true },
@@ -92,7 +115,20 @@ const FRANCESCA_FIO = [
       { t: "Mapa mãe · notebook", href: "index.html#mapa", share: false },
       { t: "Convergência · notebook", href: "index.html#convergencia", share: false }
     ],
-    dir: "Só agora. Uma aba por vez. Esta conversa não vai pra tela dela."
+    nao: ["Não decide percentual nesta call. Não promete patente. Não fala de madrugada."],
+    dir: "Só depois que ela falou o valor. Uma aba por vez. Esta conversa não vai pra tela dela."
+  },
+  {
+    id: "obra",
+    chip: "A obra",
+    lines: [
+      "Na prática, eu começo a construir agora.",
+      "Dois encontros por semana. Um de alinhamento financeiro (caixa, decisão e legado). Um de arquitetura de essência (a estrutura da sua obra, não uma aula solta).",
+      "A primeira versão da casa do evento sai o quanto antes. O que passar dessa obra é outra obra."
+    ],
+    pode: ["O conteúdo do Beeter, do Beautiful Living e do Freedom entra nessa construção. A palestra em inglês, se o evento estiver marcado. Só se ela perguntar o que cabe."],
+    nao: ["Percentual. Patente. Ligação de madrugada. Outdoor. Nome de bilionário. Custo de live dentro do ingresso. Black box."],
+    dir: "Só se ela já fechou. Curto. A obra tem começo e fim."
   }
 ];
 
@@ -102,6 +138,7 @@ const FRANCESCA_GLOSS = [
   ["Beeter", "o projeto dela nesse campo"],
   ["Colaborocracia", "quem entra vira sócio, não plateia"],
   ["peer", "colega, não aluna"],
+  ["essência", "a estrutura da obra, não uma aula solta"],
   ["Pix", "pagamento instantâneo no Brasil"],
   ["blueprint", "a planta da obra, antes de construir"]
 ];
@@ -203,7 +240,8 @@ function renderFrancescaMesa() {
     })
     .join("");
 
-  const escuta = (beat.escuta || []).map((q) => `<p class="fher">${esc(q)}</p>`).join("");
+  const pode = (beat.pode || []).map((t) => `<p class="fpode">${esc(t)}</p>`).join("");
+  const nao = (beat.nao || []).map((t) => `<p class="fnao">${esc(t)}</p>`).join("");
 
   const valorBox = beat.valor
     ? `<div class="fvalor">
@@ -241,10 +279,11 @@ function renderFrancescaMesa() {
     <section class="ftable">
       <img class="fwash" src="../assets/img/lua/hero/lua-hero-02.webp" alt="">
       <div class="fchips">${chips}</div>
-      <p class="fk gold">${esc(beat.chip)} · ${line + 1}/${beat.lines.length}</p>
+      <p class="fk gold">Fala · ${esc(beat.chip)} · ${line + 1}/${beat.lines.length}</p>
       <p class="fsay">${esc(big)}</p>
       <p class="fdir">${esc(dir)}</p>
-      ${escuta}
+      ${pode}
+      ${nao}
       ${abrir ? `<div class="fopens">${abrir}</div>` : ""}
       ${valorBox}
       ${cobra}
