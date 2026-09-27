@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout · Akasha Store</title>
+  <link rel="canonical" href="https://akashahub.com.br/store/checkout/">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--gold:#d4af37;--bg:#0a0a0f;--card:#15151f;--text:#f4efe4;--dim:#9a9286}
+    *{box-sizing:border-box;margin:0}
+    body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh}
+    .wrap{max-width:880px;margin:0 auto;padding:28px 18px 80px}
+    .k{letter-spacing:.22em;text-transform:uppercase;font-size:11px;color:var(--gold)}
+    h1{font-family:'Cinzel',serif;font-size:1.7rem;margin:8px 0 22px}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    .card{background:var(--card);border:1px solid rgba(212,175,55,.2);border-radius:16px;padding:22px}
+    label{display:block;font-size:13px;color:var(--dim);margin:14px 0 6px}
+    input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0d0d14;color:#fff;font:15px 'Space Grotesk',sans-serif}
+    .price{color:var(--gold);font-size:1.6rem;font-weight:700;margin:10px 0}
+    .btn{display:block;width:100%;padding:14px;border:0;border-radius:10px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;margin-top:10px}
+    .gold{background:linear-gradient(135deg,#d4af37,#996515);color:#111}
+    .wa{background:#25d366;color:#072}
+    .ghost{background:transparent;border:1px solid rgba(212,175,55,.35);color:var(--gold)}
+    .err{display:none;margin-top:12px;color:#e08a7a;font-size:14px}
+    .err.show{display:block}
+    .muted{color:var(--dim);font-size:14px;line-height:1.5}
+    a{color:var(--gold)}
+    @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="k">Akasha Store · checkout Stripe</p>
+    <h1 id="title">Carregando…</h1>
+    <div class="grid">
+      <section class="card">
+        <p class="k">Seus dados</p>
+        <label>Nome</label>
+        <input id="name" autocomplete="name" placeholder="Como no cartão">
+        <label>E-mail da entrega</label>
+        <input id="email" type="email" autocomplete="email" placeholder="voce@email.com">
+        <p class="muted" style="margin-top:14px">O Stripe abre na próxima tela. Depois você cai na página de pedido confirmado.</p>
+        <button class="btn gold" id="pay">Pagar no Stripe</button>
+        <a class="btn wa" id="wa" href="#">Comprar pelo WhatsApp</a>
+        <a class="btn ghost" href="/store/">Voltar à loja</a>
+        <p class="err" id="err"></p>
+      </section>
+      <aside class="card" id="sum"></aside>
+    </div>
+  </div>
+  <script src="/store/catalog.js?v=1"></script>
+  <script>
+    const sku = new URLSearchParams(location.search).get("sku") || "";
+    const p = AKASHA_STORE.byId(sku);
+    const err = document.getElementById("err");
+    if (!p) {
+      document.getElementById("title").textContent = "Produto não encontrado";
+    } else {
+      document.getElementById("title").textContent = "Fechar pedido";
+      document.getElementById("sum").innerHTML =
+        '<p class="k">' + (p.type === "digital" ? "Entrega digital" : "Produto físico") + "</p>" +
+        "<h2 style=\"font-family:Cinzel,serif;margin:8px 0 6px\">" + p.name + "</h2>" +
+        '<p class="muted">' + p.desc + "</p>" +
+        '<p class="price">R$ ' + p.priceBRL.toFixed(2).replace(".", ",") + "</p>";
+      document.getElementById("wa").href = AKASHA_STORE.waUrl(p);
+    }
+    document.getElementById("pay").onclick = async function () {
+      if (!p) return;
+      err.classList.remove("show");
+      this.disabled = true;
+      try {
+        await AKASHA_STORE.startStripe({
+          sku: p.id,
+          email: document.getElementById("email").value,
+          name: document.getElementById("name").value
+        });
+      } catch (e) {
+        err.textContent = e.message + " Você pode concluir pelo WhatsApp.";
+        err.classList.add("show");
+        this.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>

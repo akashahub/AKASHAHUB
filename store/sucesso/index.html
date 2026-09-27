@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pedido confirmado · Akasha Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    body{background:#0a0908;color:#e9e1cd;font-family:'EB Garamond',serif;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:32px}
+    h1{font-family:'Cinzel',serif;font-size:2rem;margin:12px 0}
+    a{color:#c9a227}
+    p{color:#aba18a;max-width:46ch;margin:0 auto;line-height:1.5}
+    .k{letter-spacing:.28em;text-transform:uppercase;font-size:11px;color:#c9a227}
+    .row{margin-top:28px}
+  </style>
+</head>
+<body>
+  <div>
+    <p class="k">Confirmado</p>
+    <h1>O pedido foi pago.</h1>
+    <p id="msg">O Stripe registrou o pagamento. Digital vai no e-mail. Físico a Valentina confirma no WhatsApp.</p>
+    <p class="row">
+      <a href="/store/">Voltar à loja</a>
+      ·
+      <a id="wa" href="https://wa.me/5571983448621?text=Ol%C3%A1.%20Acabei%20de%20pagar%20na%20Akasha%20Store.">Falar no WhatsApp</a>
+      ·
+      <a href="/members/sucesso/">Pós-venda da sala</a>
+    </p>
+  </div>
+  <script src="/store/catalog.js?v=1"></script>
+  <script>
+    const sku = new URLSearchParams(location.search).get("sku") || "";
+    const p = window.AKASHA_STORE && AKASHA_STORE.byId(sku);
+    if (p) {
+      document.getElementById("msg").textContent = p.name + " — R$ " + p.priceBRL + ".";
+      document.getElementById("wa").href = AKASHA_STORE.waUrl(p, "Já paguei no Stripe. Segue para alinhar a entrega.");
+    }
+  </script>
+</body>
+</html>
