@@ -41,9 +41,9 @@
   <section class="hero">
     <p class="tag">Loja oficial</p>
     <h1>Comprar ficou simples.</h1>
-    <p class="sub">Stripe para pagar agora. WhatsApp para fechar com a Valentina. Depois do pagamento, a página de pedido confirmado já está programada.</p>
+    <p class="sub">Todo produto agora tem Stripe e WhatsApp. Os itens de encomenda estão com preço de teste de R$ 10 só para você validar o checkout.</p>
   </section>
-  <div class="marquee">STRIPE · WHATSAPP · PÓS-VENDA PRONTA</div>
+  <div class="marquee">TESTE STRIPE R$ 5 · ENCOMENDAS TAMBÉM NO STRIPE</div>
   <section id="colecao">
     <p class="tag">Checkout</p>
     <h2>Comprar agora</h2>
@@ -51,34 +51,23 @@
   </section>
   <section id="encomendas">
     <p class="tag">Sob encomenda</p>
-    <h2>Peças combinadas no WhatsApp</h2>
+    <h2>Também no Stripe</h2>
     <div class="grid" id="encomendaGrid"></div>
   </section>
   <footer>
     <a href="/store/sucesso/">Pós-venda da loja</a> ·
     <a href="/members/sucesso/">Pós-venda da sala</a> ·
-    <a href="/members/checkout/">Assinar a sala</a>
+    <a href="/store/checkout/?sku=teste-stripe">Testar Stripe R$ 5</a>
   </footer>
   <a class="whatsapp-float" href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20preciso%20de%20suporte%20na%20Akasha%20Store." target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
-  <script src="/store/catalog.js?v=1"></script>
+  <script src="/store/catalog.js?v=2"></script>
   <script>
-    const ENCOMENDA = [
-      ["Banheira de Imersão em Gelo Go Arctic", "https://res.cloudinary.com/dcbarseus/image/upload/v1784714204/01_banheira_go_arctic_h1ggwx.png"],
-      ["Cafeteira Portátil Hyllis", "https://res.cloudinary.com/dcbarseus/image/upload/v1784714205/02_cafeteira_hyllis_sbrza0.png"],
-      ["Escultura Decorativa Anubis", "https://res.cloudinary.com/dcbarseus/image/upload/v1784714205/03_escultura_anubis_yfpiv1.png"],
-      ["Kit 7 Cristais Brutos dos Chakras", "https://res.cloudinary.com/dcbarseus/image/upload/v1784714204/06_cristais_chakras_dhcop4.png"],
-      ["Coleção Óleos Essenciais Vitalize Aromas", "https://res.cloudinary.com/dcbarseus/image/upload/v1784714202/07_oleos_essenciais_lqh84a.png"],
-      ["Kit Ritual de Limpeza", "https://res.cloudinary.com/dcbarseus/image/upload/v1784714203/08_ritual_limpeza_il1ns6.png"],
-      ["Incensário de Vidro Nirvana", "https://res.cloudinary.com/dcbarseus/image/upload/v1784714202/09_incensario_nirvana_piyjha.png"],
-      ["Japamala Sagrado", "https://res.cloudinary.com/dcbarseus/image/upload/v1784714202/10_japamala_cnq9gi.png"]
-    ];
-    document.getElementById("stripeGrid").innerHTML = AKASHA_STORE.products.map(function (p) {
+    function card(p) {
       return '<article class="card"><img src="'+p.image+'" alt=""><div class="pad"><h3>'+p.name+'</h3><p style="color:#9a9286;font-size:.9rem;margin-top:6px">'+p.desc+'</p><p class="price">R$ '+p.priceBRL.toFixed(2).replace(".",",")+'</p><a class="btn gold" href="'+AKASHA_STORE.checkoutPage(p.id)+'">Comprar no Stripe</a><a class="btn wa" href="'+AKASHA_STORE.waUrl(p)+'" target="_blank" rel="noopener">Comprar no WhatsApp</a></div></article>';
-    }).join("");
-    document.getElementById("encomendaGrid").innerHTML = ENCOMENDA.map(function (item) {
-      var href = "https://wa.me/5571983448621?text=" + encodeURIComponent("Olá, tenho interesse em encomendar: " + item[0]);
-      return '<article class="card"><img src="'+item[1]+'" alt=""><div class="pad"><h3>'+item[0]+'</h3><a class="btn wa" href="'+href+'" target="_blank" rel="noopener">Encomendar no WhatsApp</a></div></article>';
-    }).join("");
+    }
+    var all = AKASHA_STORE.products;
+    document.getElementById("stripeGrid").innerHTML = all.filter(function (p) { return p.group !== "encomenda"; }).map(card).join("");
+    document.getElementById("encomendaGrid").innerHTML = all.filter(function (p) { return p.group === "encomenda"; }).map(card).join("");
   </script>
 </body>
 </html>
