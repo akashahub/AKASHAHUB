@@ -4,46 +4,19 @@ window.AKASHA_STORE = {
   successUrl: "https://akashahub.com.br/store/sucesso/",
   cancelUrl: "https://akashahub.com.br/store/",
   products: [
-    {
-      id: "energia-sexual",
-      name: "Mini curso Energia Sexual",
-      desc: "PDF. Força vital, limite, presença e poder pessoal. Entrega imediata após o pagamento.",
-      priceBRL: 97,
-      type: "digital",
-      image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png",
-      paymentLink: "",
-      stripePriceId: ""
-    },
-    {
-      id: "zero-ao-zen",
-      name: "Zero ao Zen — primeira edição",
-      desc: "Livro PDF. Do zero ao legado. Entrega imediata após o pagamento.",
-      priceBRL: 47,
-      type: "digital",
-      image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png",
-      paymentLink: "",
-      stripePriceId: ""
-    },
-    {
-      id: "codigos-de-origem",
-      name: "Códigos de Origem",
-      desc: "Livro. Mente, corpo e campo. Entrega digital após o pagamento.",
-      priceBRL: 97,
-      type: "digital",
-      image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png",
-      paymentLink: "",
-      stripePriceId: ""
-    },
-    {
-      id: "camiseta-akasha",
-      name: "Camiseta Akasha",
-      desc: "Peça física. Frete combinado no checkout ou no WhatsApp.",
-      priceBRL: 129,
-      type: "physical",
-      image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png",
-      paymentLink: "",
-      stripePriceId: ""
-    }
+    { id: "teste-stripe", name: "Teste Stripe", desc: "Cobrança de teste. R$ 5 só para validar o checkout.", priceBRL: 5, type: "digital", group: "teste", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png", paymentLink: "", stripePriceId: "" },
+    { id: "energia-sexual", name: "Mini curso Energia Sexual", desc: "PDF. Entrega após o pagamento.", priceBRL: 97, type: "digital", group: "digital", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png", paymentLink: "", stripePriceId: "" },
+    { id: "zero-ao-zen", name: "Zero ao Zen — primeira edição", desc: "Livro PDF. Entrega após o pagamento.", priceBRL: 47, type: "digital", group: "digital", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png", paymentLink: "", stripePriceId: "" },
+    { id: "codigos-de-origem", name: "Códigos de Origem", desc: "Livro digital. Entrega após o pagamento.", priceBRL: 97, type: "digital", group: "digital", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png", paymentLink: "", stripePriceId: "" },
+    { id: "camiseta-akasha", name: "Camiseta Akasha", desc: "Peça física. Preço de teste no Stripe.", priceBRL: 10, type: "physical", group: "encomenda", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png", paymentLink: "", stripePriceId: "" },
+    { id: "banheira-go-arctic", name: "Banheira de Imersão em Gelo Go Arctic", desc: "Preço de teste no Stripe. Valor final pode ser alinhado no WhatsApp.", priceBRL: 10, type: "physical", group: "encomenda", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714204/01_banheira_go_arctic_h1ggwx.png", paymentLink: "", stripePriceId: "" },
+    { id: "cafeteira-hyllis", name: "Cafeteira Portátil Hyllis", desc: "Preço de teste no Stripe.", priceBRL: 10, type: "physical", group: "encomenda", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714205/02_cafeteira_hyllis_sbrza0.png", paymentLink: "", stripePriceId: "" },
+    { id: "escultura-anubis", name: "Escultura Decorativa Anubis", desc: "Preço de teste no Stripe.", priceBRL: 10, type: "physical", group: "encomenda", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714205/03_escultura_anubis_yfpiv1.png", paymentLink: "", stripePriceId: "" },
+    { id: "kit-cristais-chakras", name: "Kit 7 Cristais Brutos dos Chakras", desc: "Preço de teste no Stripe.", priceBRL: 10, type: "physical", group: "encomenda", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714204/06_cristais_chakras_dhcop4.png", paymentLink: "", stripePriceId: "" },
+    { id: "oleos-essenciais", name: "Coleção Óleos Essenciais Vitalize Aromas", desc: "Preço de teste no Stripe.", priceBRL: 10, type: "physical", group: "encomenda", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714202/07_oleos_essenciais_lqh84a.png", paymentLink: "", stripePriceId: "" },
+    { id: "kit-ritual-limpeza", name: "Kit Ritual de Limpeza", desc: "Preço de teste no Stripe.", priceBRL: 10, type: "physical", group: "encomenda", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714203/08_ritual_limpeza_il1ns6.png", paymentLink: "", stripePriceId: "" },
+    { id: "incensario-nirvana", name: "Incensário de Vidro Nirvana", desc: "Preço de teste no Stripe.", priceBRL: 10, type: "physical", group: "encomenda", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714202/09_incensario_nirvana_piyjha.png", paymentLink: "", stripePriceId: "" },
+    { id: "japamala-sagrado", name: "Japamala Sagrado", desc: "Preço de teste no Stripe.", priceBRL: 10, type: "physical", group: "encomenda", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1784714202/10_japamala_cnq9gi.png", paymentLink: "", stripePriceId: "" }
   ]
 };
 

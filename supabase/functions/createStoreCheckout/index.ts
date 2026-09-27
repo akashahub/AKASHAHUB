@@ -1,10 +1,19 @@
 import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 
 const CATALOG = {
+  "teste-stripe": { name: "Teste Stripe", cents: 500 },
   "energia-sexual": { name: "Mini curso Energia Sexual", cents: 9700 },
   "zero-ao-zen": { name: "Zero ao Zen — primeira edição", cents: 4700 },
   "codigos-de-origem": { name: "Códigos de Origem", cents: 9700 },
-  "camiseta-akasha": { name: "Camiseta Akasha", cents: 12900 }
+  "camiseta-akasha": { name: "Camiseta Akasha", cents: 1000 },
+  "banheira-go-arctic": { name: "Banheira de Imersão em Gelo Go Arctic", cents: 1000 },
+  "cafeteira-hyllis": { name: "Cafeteira Portátil Hyllis", cents: 1000 },
+  "escultura-anubis": { name: "Escultura Decorativa Anubis", cents: 1000 },
+  "kit-cristais-chakras": { name: "Kit 7 Cristais Brutos dos Chakras", cents: 1000 },
+  "oleos-essenciais": { name: "Coleção Óleos Essenciais Vitalize Aromas", cents: 1000 },
+  "kit-ritual-limpeza": { name: "Kit Ritual de Limpeza", cents: 1000 },
+  "incensario-nirvana": { name: "Incensário de Vidro Nirvana", cents: 1000 },
+  "japamala-sagrado": { name: "Japamala Sagrado", cents: 1000 }
 };
 
 const cors = {
