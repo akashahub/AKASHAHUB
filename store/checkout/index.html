@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Checkout · Akasha Store</title>
-  <link rel="canonical" href="https://akashahub.com.br/store/checkout/">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root{--gold:#d4af37;--bg:#0a0a0f;--card:#15151f;--text:#f4efe4;--dim:#9a9286}
@@ -22,7 +21,7 @@
     .gold{background:linear-gradient(135deg,#d4af37,#996515);color:#111}
     .wa{background:#25d366;color:#072}
     .ghost{background:transparent;border:1px solid rgba(212,175,55,.35);color:var(--gold)}
-    .err{display:none;margin-top:12px;color:#e08a7a;font-size:14px}
+    .err{display:none;margin-top:12px;color:#e08a7a;font-size:14px;line-height:1.45}
     .err.show{display:block}
     .muted{color:var(--dim);font-size:14px;line-height:1.5}
     a{color:var(--gold)}
@@ -40,7 +39,7 @@
         <input id="name" autocomplete="name" placeholder="Como no cartão">
         <label>E-mail da entrega</label>
         <input id="email" type="email" autocomplete="email" placeholder="voce@email.com">
-        <p class="muted" style="margin-top:14px">O Stripe abre na próxima tela. Depois você cai na página de pedido confirmado.</p>
+        <p class="muted" style="margin-top:14px">O Stripe só abre quando a function <b>createStoreCheckout</b> estiver publicada no Supabase com a chave secreta.</p>
         <button class="btn gold" id="pay">Pagar no Stripe</button>
         <a class="btn wa" id="wa" href="#">Comprar pelo WhatsApp</a>
         <a class="btn ghost" href="/store/">Voltar à loja</a>
@@ -49,7 +48,7 @@
       <aside class="card" id="sum"></aside>
     </div>
   </div>
-  <script src="/store/catalog.js?v=1"></script>
+  <script src="/store/catalog.js?v=3"></script>
   <script>
     const sku = new URLSearchParams(location.search).get("sku") || "";
     const p = AKASHA_STORE.byId(sku);
@@ -76,7 +75,11 @@
           name: document.getElementById("name").value
         });
       } catch (e) {
-        err.textContent = e.message + " Você pode concluir pelo WhatsApp.";
+        var msg = String(e.message || e);
+        if (/failed to fetch|networkerror|load failed/i.test(msg)) {
+          msg = "A function createStoreCheckout ainda não está no ar no Supabase. Sem ela o Stripe não abre. Publique a function e coloque STRIPE_SECRET_KEY. Enquanto isso, feche pelo WhatsApp ou me mande um Payment Link.";
+        }
+        err.textContent = msg;
         err.classList.add("show");
         this.disabled = false;
       }
