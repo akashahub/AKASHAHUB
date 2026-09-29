@@ -19,7 +19,7 @@ export const WHAT_ISAAC_IS = {
   oneLiner:
     "A maior plataforma de soluções financeiras feita para escolas.",
   source: SOURCES.treino,
-  forWhom: "Instituições de ensino privadas — educação básica e, em material separado, ensino superior.",
+  forWhom: "Instituições de ensino privadas - educação básica e, em material separado, ensino superior.",
   job:
     "Ajudar a instituição a ter previsibilidade de caixa, reduzir o peso da inadimplência e da cobrança, e devolver tempo ao pedagógico.",
   not:
@@ -57,7 +57,7 @@ export const PRODUCTS = [
   {
     id: "receita",
     name: "Receita / repasse na data combinada",
-    note: "Promessa oficial do treino: 100% das mensalidades na data combinada. Condições comerciais saem na análise do time isaac — a pessoa do primeiro contato não fecha taxa.",
+    note: "Promessa oficial do treino: 100% das mensalidades na data combinada. Condições comerciais saem na análise do time isaac - a pessoa do primeiro contato não fecha taxa.",
     source: SOURCES.treino
   },
   {
@@ -117,7 +117,7 @@ export const NUMBER_DIVERGENCE = {
       "97% de retenção",
       "NPS 89 (nota de recomendação dos clientes)",
       "1 nova instituição parceira a cada 24h",
-      "Grupo Arco; Top Educação 2024 e 2025 — Gestão Financeira"
+      "Grupo Arco; Top Educação 2024 e 2025 - Gestão Financeira"
     ]
   }
 };
@@ -140,7 +140,7 @@ export const POSITIONING = {
     "taxa ou preço",
     "comissão",
     "NPS (nota de recomendação dos clientes) / reputação de fonte que não seja o material em uso",
-    "aprovação, vaga, nota (isso é outro isaac — Teirson — e não entra aqui)"
+    "aprovação, vaga, nota (isso é outro isaac - Teirson - e não entra aqui)"
   ]
 };
 
@@ -149,7 +149,7 @@ export const APPROACH = {
   tips: [
     "Personalize. Gestores prezam relacionamento local. Mencione previsibilidade, inadimplência, sazonalidade de rematrícula.",
     "Não venda só 'plataforma financeira'. Fale em devolver tempo ao pedagógico.",
-    "Para mantenedor, o gatilho citado no material é previsibilidade de caixa / inadimplência zero — use como hipótese de dor, não como diagnóstico.",
+    "Para mantenedor, o gatilho citado no material é previsibilidade de caixa / inadimplência zero - use como hipótese de dor, não como diagnóstico.",
     "WhatsApp ou e-mail sem resposta em 48h → ligação rápida de acompanhamento."
   ],
   template:
@@ -213,7 +213,7 @@ export const CONTEXT_MODE = [
   { id: "reuniao", label: "Já fez reunião" },
   { id: "nao_fechou", label: "Não fechou" },
   { id: "reativacao", label: "Reativação" },
-  { id: "parceiro", label: "Já parceiro — não prospectar" }
+  { id: "parceiro", label: "Já parceiro - não prospectar" }
 ];
 
 export const INST_TYPES = [
@@ -294,11 +294,11 @@ export const OBJECTIONS = [
     said: "Minha escola não tem inadimplência.",
     kind: "material",
     means: "Pode estar orgulhoso do controle, ou medindo só atraso visível, ou fechando a conversa.",
-    ask: "Como vocês acompanham isso hoje — e o que aconteceria no caixa se um ciclo de rematrícula viesse mais fraco?",
+    ask: "Como vocês acompanham isso hoje - e o que aconteceria no caixa se um ciclo de rematrícula viesse mais fraco?",
     value: "Mesmo sem dor aguda de atraso, o isaac fala de previsibilidade, tempo e dados. Crescimento e gestão na palma da mão continuam no material oficial.",
-    proof: "Treinamento Parceiros.pdf — resposta oficial: o isaac pode levar a escola a crescimento, tempo de qualidade e dados.",
+    proof: "Treinamento Parceiros.pdf - resposta oficial: o isaac pode levar a escola a crescimento, tempo de qualidade e dados.",
     reflection: [
-      "Ótimo — então a pergunta deixa de ser “como corrigir atraso?” e passa a ser: o caixa já é tão previsível quanto poderia ser?",
+      "Ótimo - então a pergunta deixa de ser “como corrigir atraso?” e passa a ser: o caixa já é tão previsível quanto poderia ser?",
       "Não é preciso esperar um problema aparecer para avaliar se existe uma forma mais eficiente de operar.",
       "Quem olha o processo antes da dor crescer preserva mais escolhas para a instituição."
     ],
@@ -328,7 +328,7 @@ export const OBJECTIONS = [
       "Você não precisa decidir nada agora; apenas confirmar se o modelo preserva a autonomia. Prefere conversar no começo ou no fim da próxima semana?"
     ],
     advance: "Se a autonomia de precificação permanece com vocês, vale ouvir como o repasse entra na prática?",
-    stop: "Se o medo for jurídico/contratual fundo, encaminhe ao time isaac — a pessoa do primeiro contato não interpreta contrato.",
+    stop: "Se o medo for jurídico/contratual fundo, encaminhe ao time isaac - a pessoa do primeiro contato não interpreta contrato.",
     source: SOURCES.treino
   },
   {
@@ -336,7 +336,7 @@ export const OBJECTIONS = [
     said: "Não vou terceirizar o relacionamento com minhas famílias.",
     kind: "material",
     means: "A escola se define pela proximidade. Cobrança parece agressão à relação.",
-    ask: "Hoje, quem fala com a família quando o boleto atrasa — e como isso afeta a relação pedagógica?",
+    ask: "Hoje, quem fala com a família quando o boleto atrasa - e como isso afeta a relação pedagógica?",
     value: "Cobrança e negociação ficam com o isaac, com atendimento humanizado. A escola pode construir relação ainda melhor no pedagógico.",
     proof: SOURCES.treino,
     reflection: [
@@ -363,7 +363,7 @@ export const OBJECTIONS = [
     reflection: [
       "Taxa isolada diz pouco; a decisão precisa comparar custo atual, risco, tempo e impacto operacional.",
       "Antes de perguntar apenas quanto custa mudar, vale entender quanto custa continuar exatamente como está.",
-      "O menor número nem sempre representa o menor custo total — por isso a análise precisa ser feita sobre a operação real."
+      "O menor número nem sempre representa o menor custo total - por isso a análise precisa ser feita sobre a operação real."
     ],
     booking: [
       "Para não te dar um número solto ou incorreto, o melhor é o time analisar o cenário e explicar as condições aplicáveis. Qual horário funciona para essa conversa?",
@@ -378,7 +378,7 @@ export const OBJECTIONS = [
     said: "O isaac é caro.",
     kind: "material",
     means: "Comparou com boleto próprio, ou ouviu de alguém, ou está testando desconto.",
-    ask: "Comparando com o quê — o custo visível do boleto ou o custo invisível de atraso, retrabalho e tempo da direção?",
+    ask: "Comparando com o quê - o custo visível do boleto ou o custo invisível de atraso, retrabalho e tempo da direção?",
     value: "A taxa reflete os dados dos relatórios e inclui os custos de operação dos eventos financeiros.",
     proof: SOURCES.treino,
     reflection: [
@@ -401,7 +401,7 @@ export const OBJECTIONS = [
     means: "Histórico existe. Pode ser lead queimado ou só ruído.",
     ask: "Com quem foi, faz tempo, e o que ficou pendente naquela conversa?",
     value: "Registrar histórico. Não recomeçar o pitch do zero.",
-    proof: "Não há case obrigatório — use o que a pessoa contar.",
+    proof: "Não há case obrigatório - use o que a pessoa contar.",
     reflection: [
       "Ter sido abordado antes não significa que o cenário de hoje seja igual ao daquela conversa.",
       "A conversa anterior realmente esclareceu o modelo ou apenas apresentou uma solução?",
@@ -419,7 +419,7 @@ export const OBJECTIONS = [
     said: "Já fiz reunião.",
     kind: "framework",
     means: "Conhece o produto. A objeção real está depois da reunião.",
-    ask: "O que travou depois — taxa, momento, sócio, ou a proposta em si?",
+    ask: "O que travou depois - taxa, momento, sócio, ou a proposta em si?",
     value: "Reativação é descobrir a objeção verdadeira, não repetir o apresentação.",
     proof: "",
     reflection: [
@@ -443,7 +443,7 @@ export const OBJECTIONS = [
     value: "Agendar retorno concreto. Data na agenda, não 'depois'.",
     proof: "",
     reflection: [
-      "Entendo. Quando alguém diz “agora não”, normalmente o ponto é momento ou prioridade — qual dos dois pesa mais aqui?",
+      "Entendo. Quando alguém diz “agora não”, normalmente o ponto é momento ou prioridade - qual dos dois pesa mais aqui?",
       "Adiar também é uma decisão; o importante é saber por que estamos adiando e quando o tema deve ser revisto.",
       "Se este não é o momento, qual mudança mostraria que o momento chegou?"
     ],
@@ -459,12 +459,12 @@ export const OBJECTIONS = [
     said: "Estamos satisfeitos / já temos sistema.",
     kind: "framework",
     means: "Podem ter boleto, ERP, outro financeiro.",
-    ask: "Esse sistema cobre previsibilidade de caixa, cobrança humanizada e a experiência da família — ou só emite cobrança?",
+    ask: "Esse sistema cobre previsibilidade de caixa, cobrança humanizada e a experiência da família - ou só emite cobrança?",
     value: "Material oficial: se já têm solução, perguntar se atende todas as necessidades, inadimplência e previsibilidade.",
     proof: SOURCES.videoAbordagem,
     reflection: [
       "Estar satisfeito é um ótimo sinal; a pergunta é se o sistema atual também sustenta o próximo estágio da instituição.",
-      "Não precisamos substituir o que funciona — precisamos apenas verificar se existe alguma lacuna relevante.",
+      "Não precisamos substituir o que funciona - precisamos apenas verificar se existe alguma lacuna relevante.",
       "Satisfação com o presente e preparação para o futuro são perguntas diferentes."
     ],
     booking: [
@@ -499,11 +499,11 @@ export const OBJECTIONS = [
     said: "Não sou quem decide / preciso falar com meu sócio.",
     kind: "framework",
     means: "Você pode estar no influenciador, não no mantenedor.",
-    ask: "Quem assina o financeiro — e essa pessoa entra numa conversa de 20 minutos com o time isaac?",
+    ask: "Quem assina o financeiro - e essa pessoa entra numa conversa de 20 minutos com o time isaac?",
     value: "Mapear autoridade. Não pressionar o não-decisor a fingir que decide.",
     proof: "",
     reflection: [
-      "Perfeito — eu não preciso que você decida sozinho; preciso entender quem deve participar para a conversa ser útil.",
+      "Perfeito - eu não preciso que você decida sozinho; preciso entender quem deve participar para a conversa ser útil.",
       "Uma decisão bem conduzida começa colocando as pessoas certas na mesma conversa.",
       "Se você enxergar sentido, pode me ajudar a levar o contexto correto para quem decide?"
     ],
@@ -519,13 +519,13 @@ export const OBJECTIONS = [
     said: "Me manda material.",
     kind: "framework",
     means: "Pode ser interesse real ou adiamento.",
-    ask: "O que você gostaria de ver primeiro — previsibilidade, app da família, ou como funciona o repasse?",
+    ask: "O que você gostaria de ver primeiro - previsibilidade, app da família, ou como funciona o repasse?",
     value: "Portal do associado / Associadoteca existe. a pessoa do primeiro contato pode mandar o que for público e marcar um horário para tirar dúvida.",
     proof: "https://olaisaac.my.site.com/Associados/s/login/",
     reflection: [
       "Material sem contexto costuma virar mais um arquivo esquecido; qual resposta você precisa encontrar nele?",
       "Para eu não mandar algo genérico, qual ponto decidiria se vale ou não conversar?",
-      "Informação ajuda quando responde uma pergunta real — vamos identificar essa pergunta primeiro."
+      "Informação ajuda quando responde uma pergunta real - vamos identificar essa pergunta primeiro."
     ],
     booking: [
       "Eu envio o material certo, mas já podemos deixar um horário curto marcado para responder o que o documento não explica. Qual dia funciona?",
@@ -540,12 +540,12 @@ export const OBJECTIONS = [
     kind: "framework",
     means: "LGPD, medo de vazar família.",
     ask: "O receio é cadastro das famílias, financeiro, ou os dois?",
-    value: "Treino cita segurança nos dados. Detalhe jurídico é do time isaac — não inventar certificação.",
+    value: "Treino cita segurança nos dados. Detalhe jurídico é do time isaac - não inventar certificação.",
     proof: SOURCES.treino,
     reflection: [
       "Essa é uma pergunta essencial: sem confiança sobre os dados, nenhuma solução financeira deveria avançar.",
       "Você não precisa aceitar uma resposta vaga; esse ponto deve ser esclarecido pelo time responsável com precisão.",
-      "Segurança de dados não é detalhe técnico — é condição para uma decisão consciente."
+      "Segurança de dados não é detalhe técnico - é condição para uma decisão consciente."
     ],
     booking: [
       "Essa dúvida merece resposta técnica do time oficial. Posso marcar uma conversa focada em dados e segurança para você avaliar com precisão?",
@@ -559,7 +559,7 @@ export const OBJECTIONS = [
     said: "Como funciona o repasse?",
     kind: "framework",
     means: "Pergunta boa. É o coração do produto.",
-    ask: "Hoje o dinheiro entra quando — e o que quebra o mês de vocês quando atrasa?",
+    ask: "Hoje o dinheiro entra quando - e o que quebra o mês de vocês quando atrasa?",
     value: "Treino: garantia de 100% das mensalidades na data combinada. Mecânica contratual é do time.",
     proof: SOURCES.treino,
     reflection: [
@@ -581,7 +581,7 @@ export const OBJECTIONS = [
     means: "Pode ser agenda cheia, baixa prioridade ou tentativa educada de encerrar.",
     ask: "Sem problema. É melhor eu ser breve agora ou reservarmos 20 minutos em outro dia?",
     value: "Respeitar a agenda e chegar direto ao diagnóstico, sem apresentação longa.",
-    proof: "Framework operacional — nenhuma promessa comercial.",
+    proof: "Framework operacional - nenhuma promessa comercial.",
     reflection: [
       "Justamente porque o tempo é escasso, vale medir quanto tempo o processo atual já consome sem aparecer na agenda.",
       "Não quero tomar seu tempo agora; quero apenas saber se existe motivo suficiente para reservar um horário certo.",
@@ -629,7 +629,7 @@ export const OBJECTIONS = [
     value: "Chegar ao responsável correto sem forçar pitch para recepção ou secretaria.",
     proof: "Guia operacional.",
     reflection: [
-      "Perfeito — então o melhor resultado desta conversa é chegar à pessoa certa, não tentar convencer a pessoa errada.",
+      "Perfeito - então o melhor resultado desta conversa é chegar à pessoa certa, não tentar convencer a pessoa errada.",
       "Quem conhece a operação pode não assinar a decisão, mas pode indicar quem precisa participar.",
       "Para eu respeitar seu tempo, quem é a pessoa adequada e qual é a melhor forma de abordá-la?"
     ],
@@ -648,7 +648,7 @@ export const OBJECTIONS = [
     said: "Já agendamos antes e não deu certo.",
     kind: "framework",
     means: "Pode ser no-show, experiência ruim, horário inadequado ou falta de clareza.",
-    ask: "O que impediu a conversa — agenda, formato ou falta de clareza sobre o objetivo?",
+    ask: "O que impediu a conversa - agenda, formato ou falta de clareza sobre o objetivo?",
     value: "Corrigir a causa anterior antes de remarcar.",
     proof: "Histórico registrado e âncora de compromisso.",
     reflection: [
@@ -743,14 +743,14 @@ export const CALL_STEPS = [
     id: "contexto",
     title: "Contexto",
     why: "Saber com quem você está e se a escola já é parceira.",
-    ask: "Você acompanha caixa e mensalidade aí — é diretor, mantenedor, ou financeiro?",
+    ask: "Você acompanha caixa e mensalidade aí - é diretor, mantenedor, ou financeiro?",
     watch: "Se o nome bater na lista de parceiras SSA, PARE de prospectar. Agradeça e saia.",
     quick: ["Mantenedor", "Diretor", "Financeiro", "Secretaria", "Já é parceira"]
   },
   {
     id: "historico",
     title: "Histórico com a isaac",
-    why: "Salvador provavelmente já foi abordada. Não invente o passado — pergunte.",
+    why: "Salvador provavelmente já foi abordada. Não invente o passado - pergunte.",
     ask: "Vocês já conversaram com a isaac, ou isso é novo para vocês?",
     watch: "Grave a resposta no campo de histórico. A conversa muda a partir daqui.",
     quick: ["Nunca ouviu", "Já ouviu", "Já ligaram", "Já fez reunião", "Recebeu proposta", "Não fechou"]
@@ -767,7 +767,7 @@ export const CALL_STEPS = [
     id: "diagnostico",
     title: "Diagnóstico",
     why: "Entender o sistema atual sem atacar.",
-    ask: "Como vocês recebem hoje — boleto próprio, outro sistema, planilha? E isso atende?",
+    ask: "Como vocês recebem hoje - boleto próprio, outro sistema, planilha? E isso atende?",
     watch: "Material: se já têm solução, pergunte se atende, se houve inadimplência ou falta de previsibilidade.",
     quick: ["Boleto próprio", "Outro sistema", "Misto", "Não ficou claro"]
   },
@@ -775,7 +775,7 @@ export const CALL_STEPS = [
     id: "impacto",
     title: "Impacto",
     why: "Saber se a dor mexe no mês.",
-    ask: "Quando atrasa, o que quebra primeiro — folha, fornecedor, obra, ou o humor da direção?",
+    ask: "Quando atrasa, o que quebra primeiro - folha, fornecedor, obra, ou o humor da direção?",
     watch: "Se não houver impacto, não force. Talvez o ganho seja tempo, não caixa.",
     quick: ["Quebra caixa", "Quebra tempo", "Quebra relação com família", "Impacto baixo"]
   },
@@ -936,7 +936,7 @@ export const PLAYBOOK = [
   {
     id: "para-quem",
     title: "Para quem é",
-    body: "Instituições privadas. Fase 1 da operação: Salvador — BA, educação básica. Ensino superior tem material próprio (resumo de uma página). Não misturar argumentos dos dois apresentações."
+    body: "Instituições privadas. Fase 1 da operação: Salvador - BA, educação básica. Ensino superior tem material próprio (resumo de uma página). Não misturar argumentos dos dois apresentações."
   },
   {
     id: "como-funciona",
@@ -991,7 +991,7 @@ export const PLAYBOOK = [
   {
     id: "confianca",
     title: "Como passar confiança",
-    body: "Calma, domínio, ouvir. Você verifica se existe oportunidade real de ajudar a instituição. Fechar muitas operações é consequência de gerar valor — não o texto da abertura."
+    body: "Calma, domínio, ouvir. Você verifica se existe oportunidade real de ajudar a instituição. Fechar muitas operações é consequência de gerar valor - não o texto da abertura."
   }
 ];
 
@@ -1019,21 +1019,21 @@ export const PROSPECT_STARTER = [
     sourceLabel: "site oficial", verifiedAt: "2026-09-17"
   },
   {
-    name: "Sartre Escola SEB — Itaigara",
+    name: "Sartre Escola SEB - Itaigara",
     city: "Salvador", state: "BA", type: "educacao_basica", priority: "A",
     phone: "(71) 2201-2100", whatsapp: "(71) 2201-2100",
     site: "https://sartre-itaigara-salvador.escolaseb.com.br/", sourceUrl: "https://sartre-itaigara-salvador.escolaseb.com.br/",
     sourceLabel: "site oficial", verifiedAt: "2026-09-17"
   },
   {
-    name: "Sartre Escola SEB — Monet",
+    name: "Sartre Escola SEB - Monet",
     city: "Lauro de Freitas", state: "BA", type: "educacao_basica", priority: "A",
     phone: "(71) 2201-2100", whatsapp: "(71) 2201-2100",
     site: "https://sartre-monet-salvador.escolaseb.com.br/", sourceUrl: "https://sartre-monet-salvador.escolaseb.com.br/",
     sourceLabel: "site oficial", verifiedAt: "2026-09-17"
   },
   {
-    name: "Colégio Bernoulli — Caminho das Árvores",
+    name: "Colégio Bernoulli - Caminho das Árvores",
     city: "Salvador", state: "BA", type: "educacao_basica", priority: "A",
     phone: "(71) 3415-4199", whatsapp: "(71) 99298-0213",
     site: "https://www.bernoulli.com.br/", sourceUrl: "https://www.bernoulli.com.br/",
@@ -1054,21 +1054,21 @@ export const PROSPECT_STARTER = [
     sourceLabel: "site oficial", verifiedAt: "2026-09-17"
   },
   {
-    name: "Centro Universitário Jorge Amado — UNIJORGE",
+    name: "Centro Universitário Jorge Amado - UNIJORGE",
     city: "Salvador", state: "BA", type: "ensino_superior", priority: "A",
     phone: "(71) 3206-8000",
     site: "https://www.unijorge.edu.br/", sourceUrl: "https://www.unijorge.edu.br/",
     sourceLabel: "site oficial", verifiedAt: "2026-09-17"
   },
   {
-    name: "Universidade Salvador — UNIFACS",
+    name: "Universidade Salvador - UNIFACS",
     city: "Salvador", state: "BA", type: "ensino_superior", priority: "A",
     phone: "(71) 3021-2800",
     site: "https://www.unifacs.br/", sourceUrl: "https://servidores.rhbahia.ba.gov.br/",
     sourceLabel: "página pública do Governo da Bahia", verifiedAt: "2026-09-17"
   },
   {
-    name: "UNIME — Lauro de Freitas",
+    name: "UNIME - Lauro de Freitas",
     city: "Lauro de Freitas", state: "BA", type: "ensino_superior", priority: "A",
     whatsapp: "(71) 9998-8655",
     site: "https://www.unime.edu.br/medicina", sourceUrl: "https://www.unime.edu.br/medicina",
@@ -1089,46 +1089,46 @@ export const PROSPECT_STARTER = [
     sourceLabel: "site oficial e contato público", verifiedAt: "2026-09-17"
   },
   {
-    name: "Centro Universitário UniRuy — Wyden",
+    name: "Centro Universitário UniRuy - Wyden",
     city: "Salvador", state: "BA", type: "ensino_superior", priority: "A",
     phone: "0800 771 5001",
     site: "https://www.wyden.com.br/unidades/uniruy", sourceUrl: "https://www.wyden.com.br/unidades/uniruy",
     sourceLabel: "site oficial", verifiedAt: "2026-09-17"
   },
-  {"name":"Avenues São Paulo","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 2838-1800","inepCode":"35005594","sourceUrl":"https://qedu.org.br/escola/35005594","sourceLabel":"QEdu/Censo Escolar — INEP 35005594","verifiedAt":"2026-09-17"},
-  {"name":"Lycée International Français de São Paulo","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 5904-7822","inepCode":"35807813","sourceUrl":"https://qedu.org.br/escola/35807813","sourceLabel":"QEdu/Censo Escolar — INEP 35807813","verifiedAt":"2026-09-17"},
-  {"name":"Prima Escola Montessori SP","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 5563-1392","inepCode":"35134983","sourceUrl":"https://qedu.org.br/escola/35134983","sourceLabel":"QEdu/Censo Escolar — INEP 35134983","verifiedAt":"2026-09-17"},
-  {"name":"Colégio Poliedro de Educação","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 2039-1616","inepCode":"35134132","sourceUrl":"https://qedu.org.br/escola/35134132","sourceLabel":"QEdu/Censo Escolar — INEP 35134132","verifiedAt":"2026-09-17"},
-  {"name":"Colégio São Paulo — Água Fria","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 3881-6257","inepCode":"35004934","sourceUrl":"https://qedu.org.br/escola/35004934","sourceLabel":"QEdu/Censo Escolar — INEP 35004934","verifiedAt":"2026-09-17"},
-  {"name":"Êxito São Paulo Colégio","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 2944-2852","inepCode":"35164636","sourceUrl":"https://qedu.org.br/escola/35164636","sourceLabel":"QEdu/Censo Escolar — INEP 35164636","verifiedAt":"2026-09-17"},
-  {"name":"Santo André Colégio","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 2751-4558","inepCode":"35806298","sourceUrl":"https://qedu.org.br/escola/35806298","sourceLabel":"QEdu/Censo Escolar — INEP 35806298","verifiedAt":"2026-09-17"},
-  {"name":"Escola Americana de Brasília","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3442-9700","inepCode":"53001915","sourceUrl":"https://qedu.org.br/escola/53001915","sourceLabel":"QEdu/Censo Escolar — INEP 53001915","verifiedAt":"2026-09-17"},
-  {"name":"Centro Integrado Excelsus","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3321-8817","inepCode":"53011791","sourceUrl":"https://qedu.org.br/escola/53011791","sourceLabel":"QEdu/Censo Escolar — INEP 53011791","verifiedAt":"2026-09-17"},
-  {"name":"Centro de Ensino do SESI-DF — Taguatinga","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3355-9547","inepCode":"53003551","sourceUrl":"https://qedu.org.br/escola/53003551","sourceLabel":"QEdu/Censo Escolar — INEP 53003551","verifiedAt":"2026-09-17"},
-  {"name":"Centro Recreativo São Vicente de Paulo","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3361-5874","inepCode":"53012836","sourceUrl":"https://qedu.org.br/escola/53012836","sourceLabel":"QEdu/Censo Escolar — INEP 53012836","verifiedAt":"2026-09-17"},
-  {"name":"Instituição Educacional Santa Luzia","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3357-8598","inepCode":"53012763","sourceUrl":"https://qedu.org.br/escola/53012763","sourceLabel":"QEdu/Censo Escolar — INEP 53012763","verifiedAt":"2026-09-17"},
-  {"name":"Centro Educacional CCI Senior","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3048-8200","inepCode":"53014707","sourceUrl":"https://qedu.org.br/escola/53014707","sourceLabel":"QEdu/Censo Escolar — INEP 53014707","verifiedAt":"2026-09-17"},
-  {"name":"Colégio Altaneiro","city":"Brasília","state":"DF","type":"educacao_basica","priority":"A","phone":"(61) 99572-9465","inepCode":"53020464","sourceUrl":"https://qedu.org.br/escola/53020464","sourceLabel":"QEdu/Censo Escolar — INEP 53020464","verifiedAt":"2026-09-17","whatsapp":"(61) 99572-9465"},
-  {"name":"Colégio Objetivo DF — Unidade VIII","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 4042-6912","inepCode":"53018796","sourceUrl":"https://qedu.org.br/escola/53018796","sourceLabel":"QEdu/Censo Escolar — INEP 53018796","verifiedAt":"2026-09-17"},
-  {"name":"Colégio Guinness","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3081-9334","inepCode":"53012534","sourceUrl":"https://qedu.org.br/escola/53012534","sourceLabel":"QEdu/Censo Escolar — INEP 53012534","verifiedAt":"2026-09-17"},
-  {"name":"Instituto de Educação Montesquieu","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3397-1639","inepCode":"53013140","sourceUrl":"https://qedu.org.br/escola/53013140","sourceLabel":"QEdu/Censo Escolar — INEP 53013140","verifiedAt":"2026-09-17"},
-  {"name":"Jardim Escola No Mundo do Faz de Conta","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 3019-5963","inepCode":"33108560","sourceUrl":"https://qedu.org.br/escola/33108560","sourceLabel":"QEdu/Censo Escolar — INEP 33108560","verifiedAt":"2026-09-17"},
-  {"name":"Escola Pio XII","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"A","phone":"(21) 98297-0018","inepCode":"33074771","sourceUrl":"https://qedu.org.br/escola/33074771","sourceLabel":"QEdu/Censo Escolar — INEP 33074771","verifiedAt":"2026-09-17","whatsapp":"(21) 98297-0018"},
-  {"name":"Colégio e Escola Técnica Silva e Souza","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 2567-3961","inepCode":"33155798","sourceUrl":"https://qedu.org.br/escola/33155798","sourceLabel":"QEdu/Censo Escolar — INEP 33155798","verifiedAt":"2026-09-17"},
-  {"name":"Colégio Pinheiro","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"A","phone":"(21) 98046-5232","inepCode":"33070350","sourceUrl":"https://qedu.org.br/escola/33070350","sourceLabel":"QEdu/Censo Escolar — INEP 33070350","verifiedAt":"2026-09-17","whatsapp":"(21) 98046-5232"},
-  {"name":"Centro Educacional Reynaldo Nascimento","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 3137-6790","inepCode":"33117306","sourceUrl":"https://qedu.org.br/escola/33117306","sourceLabel":"QEdu/Censo Escolar — INEP 33117306","verifiedAt":"2026-09-17"},
-  {"name":"Santa Mônica Rede de Ensino — Freguesia","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 3116-4601","inepCode":"33148937","sourceUrl":"https://qedu.org.br/escola/33148937","sourceLabel":"QEdu/Censo Escolar — INEP 33148937","verifiedAt":"2026-09-17"},
-  {"name":"Colégio Integrado do Méier","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 2595-9519","inepCode":"33071756","sourceUrl":"https://qedu.org.br/escola/33071756","sourceLabel":"QEdu/Censo Escolar — INEP 33071756","verifiedAt":"2026-09-17"},
-  {"name":"Centro de Ensino Cafa Kids","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 2415-1664","inepCode":"33367205","sourceUrl":"https://qedu.org.br/escola/33367205","sourceLabel":"QEdu/Censo Escolar — INEP 33367205","verifiedAt":"2026-09-17"},
-  {"name":"Colégio Oliveira Ferreira","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 2418-2329","inepCode":"33133573","sourceUrl":"https://qedu.org.br/escola/33133573","sourceLabel":"QEdu/Censo Escolar — INEP 33133573","verifiedAt":"2026-09-17"},
-  {"name":"Centro Educacional Batista da Chapada","city":"Manaus","state":"AM","type":"educacao_basica","priority":"B","phone":"(92) 3236-1155","inepCode":"13073885","sourceUrl":"https://qedu.org.br/escola/13073885","sourceLabel":"QEdu/Censo Escolar — INEP 13073885","verifiedAt":"2026-09-17"},
-  {"name":"Centro de Ensino Floripa","city":"Florianópolis","state":"SC","type":"educacao_basica","priority":"A","phone":"(48) 99650-0100","inepCode":"42159423","sourceUrl":"https://qedu.org.br/escola/42159423","sourceLabel":"QEdu/Censo Escolar — INEP 42159423","verifiedAt":"2026-09-17","whatsapp":"(48) 99650-0100"},
-  {"name":"Escola Nosso Mundo","city":"Florianópolis","state":"SC","type":"educacao_basica","priority":"B","phone":"(48) 3209-6700","inepCode":"42159750","sourceUrl":"https://qedu.org.br/escola/42159750","sourceLabel":"QEdu/Censo Escolar — INEP 42159750","verifiedAt":"2026-09-17"},
-  {"name":"Escola Internacional de Joinville","city":"Joinville","state":"SC","type":"educacao_basica","priority":"B","phone":"(47) 3121-6700","inepCode":"42073790","sourceUrl":"https://qedu.org.br/escola/42073790","sourceLabel":"QEdu/Censo Escolar — INEP 42073790","verifiedAt":"2026-09-17"},
+  {"name":"Avenues São Paulo","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 2838-1800","inepCode":"35005594","sourceUrl":"https://qedu.org.br/escola/35005594","sourceLabel":"QEdu/Censo Escolar - INEP 35005594","verifiedAt":"2026-09-17"},
+  {"name":"Lycée International Français de São Paulo","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 5904-7822","inepCode":"35807813","sourceUrl":"https://qedu.org.br/escola/35807813","sourceLabel":"QEdu/Censo Escolar - INEP 35807813","verifiedAt":"2026-09-17"},
+  {"name":"Prima Escola Montessori SP","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 5563-1392","inepCode":"35134983","sourceUrl":"https://qedu.org.br/escola/35134983","sourceLabel":"QEdu/Censo Escolar - INEP 35134983","verifiedAt":"2026-09-17"},
+  {"name":"Colégio Poliedro de Educação","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 2039-1616","inepCode":"35134132","sourceUrl":"https://qedu.org.br/escola/35134132","sourceLabel":"QEdu/Censo Escolar - INEP 35134132","verifiedAt":"2026-09-17"},
+  {"name":"Colégio São Paulo - Água Fria","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 3881-6257","inepCode":"35004934","sourceUrl":"https://qedu.org.br/escola/35004934","sourceLabel":"QEdu/Censo Escolar - INEP 35004934","verifiedAt":"2026-09-17"},
+  {"name":"Êxito São Paulo Colégio","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 2944-2852","inepCode":"35164636","sourceUrl":"https://qedu.org.br/escola/35164636","sourceLabel":"QEdu/Censo Escolar - INEP 35164636","verifiedAt":"2026-09-17"},
+  {"name":"Santo André Colégio","city":"São Paulo","state":"SP","type":"educacao_basica","priority":"B","phone":"(11) 2751-4558","inepCode":"35806298","sourceUrl":"https://qedu.org.br/escola/35806298","sourceLabel":"QEdu/Censo Escolar - INEP 35806298","verifiedAt":"2026-09-17"},
+  {"name":"Escola Americana de Brasília","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3442-9700","inepCode":"53001915","sourceUrl":"https://qedu.org.br/escola/53001915","sourceLabel":"QEdu/Censo Escolar - INEP 53001915","verifiedAt":"2026-09-17"},
+  {"name":"Centro Integrado Excelsus","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3321-8817","inepCode":"53011791","sourceUrl":"https://qedu.org.br/escola/53011791","sourceLabel":"QEdu/Censo Escolar - INEP 53011791","verifiedAt":"2026-09-17"},
+  {"name":"Centro de Ensino do SESI-DF - Taguatinga","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3355-9547","inepCode":"53003551","sourceUrl":"https://qedu.org.br/escola/53003551","sourceLabel":"QEdu/Censo Escolar - INEP 53003551","verifiedAt":"2026-09-17"},
+  {"name":"Centro Recreativo São Vicente de Paulo","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3361-5874","inepCode":"53012836","sourceUrl":"https://qedu.org.br/escola/53012836","sourceLabel":"QEdu/Censo Escolar - INEP 53012836","verifiedAt":"2026-09-17"},
+  {"name":"Instituição Educacional Santa Luzia","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3357-8598","inepCode":"53012763","sourceUrl":"https://qedu.org.br/escola/53012763","sourceLabel":"QEdu/Censo Escolar - INEP 53012763","verifiedAt":"2026-09-17"},
+  {"name":"Centro Educacional CCI Senior","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3048-8200","inepCode":"53014707","sourceUrl":"https://qedu.org.br/escola/53014707","sourceLabel":"QEdu/Censo Escolar - INEP 53014707","verifiedAt":"2026-09-17"},
+  {"name":"Colégio Altaneiro","city":"Brasília","state":"DF","type":"educacao_basica","priority":"A","phone":"(61) 99572-9465","inepCode":"53020464","sourceUrl":"https://qedu.org.br/escola/53020464","sourceLabel":"QEdu/Censo Escolar - INEP 53020464","verifiedAt":"2026-09-17","whatsapp":"(61) 99572-9465"},
+  {"name":"Colégio Objetivo DF - Unidade VIII","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 4042-6912","inepCode":"53018796","sourceUrl":"https://qedu.org.br/escola/53018796","sourceLabel":"QEdu/Censo Escolar - INEP 53018796","verifiedAt":"2026-09-17"},
+  {"name":"Colégio Guinness","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3081-9334","inepCode":"53012534","sourceUrl":"https://qedu.org.br/escola/53012534","sourceLabel":"QEdu/Censo Escolar - INEP 53012534","verifiedAt":"2026-09-17"},
+  {"name":"Instituto de Educação Montesquieu","city":"Brasília","state":"DF","type":"educacao_basica","priority":"B","phone":"(61) 3397-1639","inepCode":"53013140","sourceUrl":"https://qedu.org.br/escola/53013140","sourceLabel":"QEdu/Censo Escolar - INEP 53013140","verifiedAt":"2026-09-17"},
+  {"name":"Jardim Escola No Mundo do Faz de Conta","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 3019-5963","inepCode":"33108560","sourceUrl":"https://qedu.org.br/escola/33108560","sourceLabel":"QEdu/Censo Escolar - INEP 33108560","verifiedAt":"2026-09-17"},
+  {"name":"Escola Pio XII","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"A","phone":"(21) 98297-0018","inepCode":"33074771","sourceUrl":"https://qedu.org.br/escola/33074771","sourceLabel":"QEdu/Censo Escolar - INEP 33074771","verifiedAt":"2026-09-17","whatsapp":"(21) 98297-0018"},
+  {"name":"Colégio e Escola Técnica Silva e Souza","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 2567-3961","inepCode":"33155798","sourceUrl":"https://qedu.org.br/escola/33155798","sourceLabel":"QEdu/Censo Escolar - INEP 33155798","verifiedAt":"2026-09-17"},
+  {"name":"Colégio Pinheiro","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"A","phone":"(21) 98046-5232","inepCode":"33070350","sourceUrl":"https://qedu.org.br/escola/33070350","sourceLabel":"QEdu/Censo Escolar - INEP 33070350","verifiedAt":"2026-09-17","whatsapp":"(21) 98046-5232"},
+  {"name":"Centro Educacional Reynaldo Nascimento","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 3137-6790","inepCode":"33117306","sourceUrl":"https://qedu.org.br/escola/33117306","sourceLabel":"QEdu/Censo Escolar - INEP 33117306","verifiedAt":"2026-09-17"},
+  {"name":"Santa Mônica Rede de Ensino - Freguesia","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 3116-4601","inepCode":"33148937","sourceUrl":"https://qedu.org.br/escola/33148937","sourceLabel":"QEdu/Censo Escolar - INEP 33148937","verifiedAt":"2026-09-17"},
+  {"name":"Colégio Integrado do Méier","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 2595-9519","inepCode":"33071756","sourceUrl":"https://qedu.org.br/escola/33071756","sourceLabel":"QEdu/Censo Escolar - INEP 33071756","verifiedAt":"2026-09-17"},
+  {"name":"Centro de Ensino Cafa Kids","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 2415-1664","inepCode":"33367205","sourceUrl":"https://qedu.org.br/escola/33367205","sourceLabel":"QEdu/Censo Escolar - INEP 33367205","verifiedAt":"2026-09-17"},
+  {"name":"Colégio Oliveira Ferreira","city":"Rio de Janeiro","state":"RJ","type":"educacao_basica","priority":"B","phone":"(21) 2418-2329","inepCode":"33133573","sourceUrl":"https://qedu.org.br/escola/33133573","sourceLabel":"QEdu/Censo Escolar - INEP 33133573","verifiedAt":"2026-09-17"},
+  {"name":"Centro Educacional Batista da Chapada","city":"Manaus","state":"AM","type":"educacao_basica","priority":"B","phone":"(92) 3236-1155","inepCode":"13073885","sourceUrl":"https://qedu.org.br/escola/13073885","sourceLabel":"QEdu/Censo Escolar - INEP 13073885","verifiedAt":"2026-09-17"},
+  {"name":"Centro de Ensino Floripa","city":"Florianópolis","state":"SC","type":"educacao_basica","priority":"A","phone":"(48) 99650-0100","inepCode":"42159423","sourceUrl":"https://qedu.org.br/escola/42159423","sourceLabel":"QEdu/Censo Escolar - INEP 42159423","verifiedAt":"2026-09-17","whatsapp":"(48) 99650-0100"},
+  {"name":"Escola Nosso Mundo","city":"Florianópolis","state":"SC","type":"educacao_basica","priority":"B","phone":"(48) 3209-6700","inepCode":"42159750","sourceUrl":"https://qedu.org.br/escola/42159750","sourceLabel":"QEdu/Censo Escolar - INEP 42159750","verifiedAt":"2026-09-17"},
+  {"name":"Escola Internacional de Joinville","city":"Joinville","state":"SC","type":"educacao_basica","priority":"B","phone":"(47) 3121-6700","inepCode":"42073790","sourceUrl":"https://qedu.org.br/escola/42073790","sourceLabel":"QEdu/Censo Escolar - INEP 42073790","verifiedAt":"2026-09-17"},
   {"name":"Colégio Farroupilha","city":"Porto Alegre","state":"RS","type":"educacao_basica","priority":"D","phone":"","inepCode":"","sourceUrl":"https://colegiofarroupilha.com.br/","sourceLabel":"site oficial; telefone a completar","verifiedAt":"2026-09-17","site":"https://colegiofarroupilha.com.br/"},
-  {"name":"Colégio Anchieta — Porto Alegre","city":"Porto Alegre","state":"RS","type":"educacao_basica","priority":"D","phone":"","inepCode":"","sourceUrl":"https://www.colegioanchieta.g12.br/","sourceLabel":"site oficial; telefone a completar","verifiedAt":"2026-09-17","site":"https://www.colegioanchieta.g12.br/"},
+  {"name":"Colégio Anchieta - Porto Alegre","city":"Porto Alegre","state":"RS","type":"educacao_basica","priority":"D","phone":"","inepCode":"","sourceUrl":"https://www.colegioanchieta.g12.br/","sourceLabel":"site oficial; telefone a completar","verifiedAt":"2026-09-17","site":"https://www.colegioanchieta.g12.br/"},
   {"name":"Colégio Marista Rosário","city":"Porto Alegre","state":"RS","type":"educacao_basica","priority":"D","phone":"","inepCode":"","sourceUrl":"https://colegiomarista.org.br/rosario/","sourceLabel":"site oficial; telefone a completar","verifiedAt":"2026-09-17","site":"https://colegiomarista.org.br/rosario/"},
-  {"name":"Colégio João XXIII — Porto Alegre","city":"Porto Alegre","state":"RS","type":"educacao_basica","priority":"D","phone":"","inepCode":"","sourceUrl":"https://www.joaoxxiii.com/","sourceLabel":"site oficial; telefone a completar","verifiedAt":"2026-09-17","site":"https://www.joaoxxiii.com/"},
+  {"name":"Colégio João XXIII - Porto Alegre","city":"Porto Alegre","state":"RS","type":"educacao_basica","priority":"D","phone":"","inepCode":"","sourceUrl":"https://www.joaoxxiii.com/","sourceLabel":"site oficial; telefone a completar","verifiedAt":"2026-09-17","site":"https://www.joaoxxiii.com/"},
   {"name":"Colégio Província de São Pedro","city":"Porto Alegre","state":"RS","type":"educacao_basica","priority":"D","phone":"","inepCode":"","sourceUrl":"https://colegioprovincia.com.br/","sourceLabel":"site oficial; telefone a completar","verifiedAt":"2026-09-17","site":"https://colegioprovincia.com.br/"},
   {"name":"Colégio Israelita Brasileiro","city":"Porto Alegre","state":"RS","type":"educacao_basica","priority":"D","phone":"","inepCode":"","sourceUrl":"https://colegioisraelita.com.br/","sourceLabel":"site oficial; telefone a completar","verifiedAt":"2026-09-17","site":"https://colegioisraelita.com.br/"},
   {"name":"Colégio Martha Falcão","city":"Manaus","state":"AM","type":"educacao_basica","priority":"D","phone":"","inepCode":"","sourceUrl":"https://qedu.org.br/","sourceLabel":"instituição pública na web; contato a completar","verifiedAt":"2026-09-17"},
