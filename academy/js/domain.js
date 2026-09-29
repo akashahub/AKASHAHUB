@@ -1,4 +1,4 @@
-/** Domain — Hotmart-like catalog + policy. No DOM. */
+/** Domain - Hotmart-like catalog + policy. No DOM. */
 export const TENANT = {
   id: 'fluir',
   name: 'Fluir Academy',
@@ -39,11 +39,11 @@ export const ALUNO_TRACKS = [
 const YT = 'https://www.youtube.com/embed/jNQXAC9IVRw';
 
 export const COURSES = [
-  { id: 'a-pil-1', ws: ['aluno', 'professor'], track: 'pilates', title: 'Pilates — respiracao e core', minutes: 12, url: YT },
-  { id: 'a-gin-1', ws: ['aluno', 'professor'], track: 'ginastica', title: 'Ginastica — mobilidade em casa', minutes: 10, url: YT },
-  { id: 'a-fis-1', ws: ['aluno', 'professor'], track: 'fisio', title: 'Fisio aquatica — alinhamento', minutes: 11, url: YT },
-  { id: 'a-inf-1', ws: ['aluno', 'professor'], track: 'infantil', title: 'Natacao infantil — aula simples', minutes: 8, url: YT },
-  { id: 'p-met-1', ws: ['professor', 'ceo'], track: 'metodologia', title: 'Metodo Lucas Oliveira — base', minutes: 14, url: YT },
+  { id: 'a-pil-1', ws: ['aluno', 'professor'], track: 'pilates', title: 'Pilates - respiracao e core', minutes: 12, url: YT },
+  { id: 'a-gin-1', ws: ['aluno', 'professor'], track: 'ginastica', title: 'Ginastica - mobilidade em casa', minutes: 10, url: YT },
+  { id: 'a-fis-1', ws: ['aluno', 'professor'], track: 'fisio', title: 'Fisio aquatica - alinhamento', minutes: 11, url: YT },
+  { id: 'a-inf-1', ws: ['aluno', 'professor'], track: 'infantil', title: 'Natacao infantil - aula simples', minutes: 8, url: YT },
+  { id: 'p-met-1', ws: ['professor', 'ceo'], track: 'metodologia', title: 'Metodo Lucas Oliveira - base', minutes: 14, url: YT },
   { id: 'c-all-1', ws: ['colaborador', 'franqueado', 'ceo'], track: 'todos', job: 'todos', title: 'Cultura Fluir para toda a equipe', minutes: 9, url: YT },
   { id: 'c-rec-1', ws: ['colaborador', 'ceo'], track: 'recepcao', job: 'recepcao', title: 'Rapport e atendimento na recepcao', minutes: 11, url: YT },
   { id: 'c-rec-2', ws: ['colaborador', 'ceo'], track: 'recepcao', job: 'recepcao', title: 'Tecnicas de venda no balcao', minutes: 10, url: YT },
