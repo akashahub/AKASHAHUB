@@ -32,7 +32,7 @@ function renderComando() {
     (c) => `<div class="card">
       <div class="glow" style="background:${c.color}"></div>
       <p class="cont-name" style="color:${c.color}">${c.name}</p>
-      <p class="metric">—</p>
+      <p class="metric">-</p>
       <p>${c.metric}</p>
     </div>`
   ).join("");
@@ -53,7 +53,7 @@ function initFabrica() {
   };
   $("#btnAv").onclick = () => {
     const musics = [
-      "Einaudi — piano esparso, respiração",
+      "Einaudi - piano esparso, respiração",
       "Grave tribal controlado",
       "432 Hz + sussurro",
       "Silêncio + um hit de presença"

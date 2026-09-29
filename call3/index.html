@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Akasha Hub — Sessão ao Vivo</title>
+<title>Akasha Hub - Sessão ao Vivo</title>
 <link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet">
 <style>
@@ -207,7 +207,7 @@ input,textarea{font-family:inherit;outline:none;}
   position:relative;
 }
 
-/* Primary video (remote — tela cheia) */
+/* Primary video (remote - tela cheia) */
 .vid-primary{
   flex:1;position:relative;background:#000;overflow:hidden;min-height:0;
 }
@@ -327,7 +327,7 @@ input,textarea{font-family:inherit;outline:none;}
 }
 .ctrl-sep{width:1px;height:30px;background:rgba(255,255,255,.06);margin:0 4px;}
 
-/* Botão encerrar — maior e vermelho */
+/* Botão encerrar - maior e vermelho */
 .ctrl-end .ctrl-btn{
   width:48px;height:48px;border-radius:12px;
   background:rgba(226,75,74,.14);border-color:rgba(226,75,74,.4);
@@ -347,7 +347,7 @@ input,textarea{font-family:inherit;outline:none;}
 .log-er{color:var(--red);}
 
 /* ══════════════════════════════════════════════════════
-   NOTES DRAWER — estilo WhatsApp (slide da direita)
+   NOTES DRAWER - estilo WhatsApp (slide da direita)
 ══════════════════════════════════════════════════════ */
 .notes-drawer{
   position:fixed;top:0;right:0;bottom:0;
@@ -618,7 +618,7 @@ input,textarea{font-family:inherit;outline:none;}
       <div class="status-pill">
         <div class="status-dot" id="sDot"></div>
         <div>
-          <div class="status-room" id="sRoom">—</div>
+          <div class="status-room" id="sRoom">-</div>
           <div class="status-txt" id="sTxt">Iniciando...</div>
         </div>
       </div>
@@ -678,7 +678,7 @@ input,textarea{font-family:inherit;outline:none;}
         <div class="ctrl-sep"></div>
 
         <div class="ctrl-wrap" onclick="App.pip()">
-          <button class="ctrl-btn" title="Picture-in-Picture — use outras abas sem desligar">⧉</button>
+          <button class="ctrl-btn" title="Picture-in-Picture - use outras abas sem desligar">⧉</button>
           <span class="ctrl-label">Popup</span>
         </div>
 
@@ -738,7 +738,7 @@ input,textarea{font-family:inherit;outline:none;}
   <!-- Aviso -->
   <div class="drawer-warning">
     <div class="warn-dot"></div>
-    Não salvas automaticamente — copie ou envie antes de encerrar
+    Não salvas automaticamente - copie ou envie antes de encerrar
   </div>
 
   <!-- Ações rápidas -->
@@ -891,7 +891,7 @@ window.Notes = (() => {
 
   function copyAll() {
     if (!list.length){ toast('Nenhuma anotação ainda ✦'); return; }
-    const head = `═══════════════════════\nAkasha Hub · Sessão ${roomId||'—'}\n${new Date().toLocaleDateString('pt-BR')}\n═══════════════════════\n\n`;
+    const head = `═══════════════════════\nAkasha Hub · Sessão ${roomId||'-'}\n${new Date().toLocaleDateString('pt-BR')}\n═══════════════════════\n\n`;
     const body = list.map(n=>`[${n.time}] ${n.author}:\n${n.text}`).join('\n\n---\n\n');
     const foot = `\n\n═══════════════════════\nakashahub.com.br ✦`;
     navigator.clipboard.writeText(head+body+foot).then(()=>{
@@ -904,7 +904,7 @@ window.Notes = (() => {
 
   function sendWpp() {
     if (!list.length){ toast('Nenhuma anotação para enviar'); return; }
-    const head = `✦ ANOTAÇÕES DA SESSÃO\nAkasha Hub · Sala ${roomId||'—'}\n━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+    const head = `✦ ANOTAÇÕES DA SESSÃO\nAkasha Hub · Sala ${roomId||'-'}\n━━━━━━━━━━━━━━━━━━━━━━\n\n`;
     const body = list.map(n=>`[${n.time}] ${n.author}: ${n.text}`).join('\n\n');
     const foot = `\n\n━━━━━━━━━━━━━━━━━━━━━━\nakashahub.com.br ✦`;
     window.open(`https://wa.me/${WPP}?text=${encodeURIComponent(head+body+foot)}`,'_blank');
@@ -973,7 +973,7 @@ window.App = {
   },
 
   endCall(){
-    if (Notes.hasNotes()) Notes.addSys('⚠ Sessão encerrada — copie suas anotações antes de sair');
+    if (Notes.hasNotes()) Notes.addSys('⚠ Sessão encerrada - copie suas anotações antes de sair');
     Drawer.close();
     cleanup();
     document.getElementById('callScreen').classList.remove('on');
@@ -998,7 +998,7 @@ window.App = {
         if (document.pictureInPictureElement) await document.exitPictureInPicture();
         await vid.requestPictureInPicture();
         document.getElementById('pipBadge').classList.add('show');
-        toast('✦ PiP ativo — você pode navegar em outras abas!',3500);
+        toast('✦ PiP ativo - você pode navegar em outras abas!',3500);
       }
     } catch(e){ toast('PiP: '+e.message); }
   },
@@ -1089,7 +1089,7 @@ async function initCall(isCreator, existId){
     try {
       localStream = await navigator.mediaDevices.getUserMedia({audio:true,video:false});
       L('Fallback: só áudio','');
-      Notes.addSys('⚠ Câmera bloqueada — conectando com áudio apenas');
+      Notes.addSys('⚠ Câmera bloqueada - conectando com áudio apenas');
     } catch(e2){
       toast('❌ Sem permissão de câmera/microfone. Verifique as configurações do browser.',5000);
       App.endCall(); return;
@@ -1128,7 +1128,7 @@ async function initCall(isCreator, existId){
   pc.oniceconnectionstatechange = ()=>{
     L(`ICE: ${pc.iceConnectionState}`,'');
     if (pc.iceConnectionState==='failed'){
-      L('ICE falhou — tentando restartIce()','er');
+      L('ICE falhou - tentando restartIce()','er');
       try{ pc.restartIce(); }catch(e){}
     }
   };

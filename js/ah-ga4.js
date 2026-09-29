@@ -1,4 +1,4 @@
-/* Akasha Hub — um arquivo só. ID de medição GA4. */
+/* Akasha Hub - um arquivo só. ID de medição GA4. */
 (function () {
   var ID = "G-TG0XJE0ZWS";
   if (!ID || ID.indexOf("G-") !== 0 || ID.length < 10) return;
@@ -14,7 +14,7 @@
 })();
 
 
-/* Experiências Transcendentais — carregamento isolado apenas na home. */
+/* Experiências Transcendentais - carregamento isolado apenas na home. */
 (function () {
   var path = (window.location.pathname || '/').replace(/\/+$/, '') || '/';
   if (path !== '/' && path !== '/index.html') return;

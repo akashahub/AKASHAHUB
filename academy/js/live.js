@@ -1,4 +1,4 @@
-/** Live adapter — Worker signs JWT. UI only calls join/leave. */
+/** Live adapter - Worker signs JWT. UI only calls join/leave. */
 const WORKER = 'https://akasha.yanfili-simon.workers.dev';
 const FALLBACK = 'wss://akashahub-vlya29kl.livekit.cloud';
 

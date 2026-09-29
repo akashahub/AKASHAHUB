@@ -56,12 +56,12 @@ const STEPS = [
     id: "mapa", n: "03", t: "30–48 min · Mapa",
     obj: "Classificar o que ouviu. Centro: NOME · MAPA DE ALINHAMENTO.",
     avancar: "As bolhas que existem estão preenchidas. Bolha vazia some.",
-    sair: "—",
+    sair: "-",
     speak: ["Isso entra no mapa como padrão. Agora eu preciso do valor."],
     body: `<p>Em volta só os vetores que existirem: Rotina. Tempo. Financeiro. Trabalho e renda. Saúde. Objetivos. Projetos. Tarefas. Compras. Ambiente. Conteúdo. Família.</p>
     <p>Cada bolha leva ação, não slogan. Saúde não fica “cuidar da saúde”. Fica “consulta X neste mês. Treino 3x. Sono neste horário.”</p>
     <p>Empresário, CLT, mãe, criador: mapas diferentes. Não force bolha vazia.</p>`,
-    plus: "Transcrição 01: jornada inteira, não um funil de uma venda. O mapa é o território. A mentoria, se vier, usa este mesmo mapa — não recomeça do zero."
+    plus: "Transcrição 01: jornada inteira, não um funil de uma venda. O mapa é o território. A mentoria, se vier, usa este mesmo mapa - não recomeça do zero."
   },
   {
     id: "diag", n: "04", t: "48–60 min · Diagnóstico",
@@ -77,7 +77,7 @@ const STEPS = [
     id: "sistema", n: "05", t: "60–72 min · Sistema simples",
     obj: "Ensinar a regra. Não criar dez aplicativos.",
     avancar: "Ela sabe onde cai hora, tarefa, lembrete e dinheiro.",
-    sair: "—",
+    sair: "-",
     speak: [
       "Tem hora → Agenda.",
       "Tem que fazer → Tarefas. Pendência com dono e prazo.",
@@ -91,7 +91,7 @@ const STEPS = [
     id: "7dias", n: "06", t: "72–78 min · Uma prioridade",
     obj: "De tudo no mapa, um movimento para os próximos 7 dias. Observável amanhã de manhã.",
     avancar: "Ação escrita no bloco. Ela repete com as palavras dela.",
-    sair: "—",
+    sair: "-",
     speak: ["Amanhã de manhã já dá para ver isto."],
     body: `<p>Pode abrir Quitei 3 minutos se o furo for dívida. Pode abrir cash-flow 3 minutos se o furo for vazamento. Não abre a plataforma inteira. Não dá aula dos 7 módulos.</p>`,
     plus: "Transcrição 01: compromisso, não tiro único. Os 7 dias são o primeiro passo do compromisso. Sem isso, mentoria vira conteúdo."
@@ -113,10 +113,10 @@ const STEPS = [
     id: "fim", n: "08", t: "88–90 min · Encerramento",
     obj: "Repetir a ação de 7 dias. Enviar mapa e dossiê. Encerrar no horário.",
     avancar: "WhatsApp enviado. Relógio respeitado.",
-    sair: "—",
+    sair: "-",
     speak: ["O mapa é o território. Os 7 dias são o primeiro passo."],
     body: `<p>Confirma envio do mapa e do dossiê no WhatsApp. Agradece. Encerra no horário.</p>`,
-    plus: "Se ela pediu mentoria com clareza, o próximo mapa é Fechamento de Call — outra call, outro mapa."
+    plus: "Se ela pediu mentoria com clareza, o próximo mapa é Fechamento de Call - outra call, outro mapa."
   }
 ];
 

@@ -1,4 +1,4 @@
-/** Store — profile + grants. UI never talks to Firestore. */
+/** Store - profile + grants. UI never talks to Firestore. */
 const KEY = 'academy-os.v03';
 
 function blank() {

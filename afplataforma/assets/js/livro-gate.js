@@ -1,5 +1,5 @@
 /**
- * Portão do Livro Operacional — só a conta do mentor lê.
+ * Portão do Livro Operacional - só a conta do mentor lê.
  * Mentorados (mesmo com afAccess) não passam.
  */
 import {

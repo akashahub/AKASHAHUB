@@ -1,5 +1,5 @@
 /**
- * Vídeos de Yoga / Treino — mesmo player.
+ * Vídeos de Yoga / Treino - mesmo player.
  * Mentor cadastra URL (YouTube ou Cloudinary) no frontend.
  * Persistência: localStorage + Firestore afMedia/{slotId} quando as rules permitirem.
  */
@@ -33,7 +33,7 @@ export async function hydrateMedia() {
       Object.assign(cache, urls);
     }
   } catch {
-    /* rules ainda não publicadas — localStorage continua válido neste aparelho */
+    /* rules ainda não publicadas - localStorage continua válido neste aparelho */
   }
 }
 

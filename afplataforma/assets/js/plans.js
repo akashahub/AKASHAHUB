@@ -1,5 +1,5 @@
 /**
- * Planos AF — Essencial / Premium / VIP
+ * Planos AF - Essencial / Premium / VIP
  * Módulos 1–7 são iguais nos três. Diferença = complementar, tempo, salas.
  * Override do mentor (features[id] true/false) ganha do pacote.
  */

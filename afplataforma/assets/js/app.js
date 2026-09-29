@@ -1,5 +1,5 @@
 /**
- * AF Plataforma — orquestrador
+ * AF Plataforma - orquestrador
  */
 import { isDemoEnabled } from "../../firebase/firebase-config.js";
 import {
@@ -70,11 +70,11 @@ function profileData() {
 
 function applyProfileUI() {
   const p = profileData();
-  const name = p.name || session.name || "—";
+  const name = p.name || session.name || "-";
   const elN = document.getElementById("userName");
   const elR = document.getElementById("userRole");
   if (elN) elN.textContent = name;
-  if (elR) elR.textContent = session.role || "—";
+  if (elR) elR.textContent = session.role || "-";
   const av = document.getElementById("userAv");
   if (av) {
     if (p.photo) {
@@ -147,7 +147,7 @@ function renderDashboard() {
     <div class="grid-3">
       <div class="stat-card"><div class="lbl">${esc(t(lang, "progress"))}</div><div class="val">${u}/7</div><div class="hint">módulos liberados</div></div>
       <div class="stat-card"><div class="lbl">Materiais</div><div class="val">${u * 3}/21</div><div class="hint">estimativa por liberação</div></div>
-      <div class="stat-card"><div class="lbl">${esc(t(lang, "next"))}</div><div class="val" style="font-size:1.1rem;padding-top:8px">${next ? esc(next.num + " · " + next.title.split(" ")[0]) : "Completo"}</div><div class="hint">${next ? esc(next.title) : "—"}</div></div>
+      <div class="stat-card"><div class="lbl">${esc(t(lang, "next"))}</div><div class="val" style="font-size:1.1rem;padding-top:8px">${next ? esc(next.num + " · " + next.title.split(" ")[0]) : "Completo"}</div><div class="hint">${next ? esc(next.title) : "-"}</div></div>
     </div>
     <h3 class="section-h">Jornada das 7 camadas</h3>
     <div class="module-list">

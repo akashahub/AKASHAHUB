@@ -9,11 +9,11 @@
 
   var profiles = {
     person: [
-      { id:'P01', name:'O Desperto', symbol:'◉', line:'Você está percebendo que existe um padrão por trás do que vive — e quer enxergá-lo com mais clareza.' },
+      { id:'P01', name:'O Desperto', symbol:'◉', line:'Você está percebendo que existe um padrão por trás do que vive - e quer enxergá-lo com mais clareza.' },
       { id:'P02', name:'O Autor', symbol:'✦', line:'Sua próxima fase pede autoria: separar o que é seu do que foi herdado, repetido ou simplesmente aceito.' },
       { id:'P03', name:'O Guardião', symbol:'◇', line:'Seu campo pede limite, estabilidade e uma presença que não se desfaz quando o mundo aperta.' },
       { id:'P04', name:'O Encarnado', symbol:'△', line:'A transformação precisa descer da cabeça para o corpo: presença, intimidade e experiência real.' },
-      { id:'P05', name:'O Magnetista', symbol:'⌁', line:'Você está num ciclo de presença, comunicação e influência — quer ser percebido sem precisar forçar.' },
+      { id:'P05', name:'O Magnetista', symbol:'⌁', line:'Você está num ciclo de presença, comunicação e influência - quer ser percebido sem precisar forçar.' },
       { id:'P06', name:'O Vínculo', symbol:'∞', line:'Sua atenção está na qualidade da conexão: consigo, com o outro e com aquilo que mantém a relação viva.' },
       { id:'P07', name:'O Alquimista', symbol:'☿', line:'Você busca integrar mente, corpo e campo em uma prática que mude estado, percepção e ação.' },
       { id:'P08', name:'O Estrategista', symbol:'⟐', line:'Você não precisa de mais intenção: precisa organizar decisão, dinheiro, rotina e execução.' },
@@ -43,7 +43,7 @@
       {
         q:'Onde você sente que a vida está pedindo mais atenção agora?',
         a:[
-          ['Identidade — quem eu sou e o que realmente é meu', {P02:3,P12:1,P11:1}],
+          ['Identidade - quem eu sou e o que realmente é meu', {P02:3,P12:1,P11:1}],
           ['Dinheiro, decisão e execução', {P08:3,P09:1,P11:1}],
           ['Mente, limites e estabilidade emocional', {P03:3,P01:1,P07:1}],
           ['Corpo, intimidade e presença', {P04:3,P06:2}]
@@ -273,7 +273,7 @@
       '<div class="xp-head">',
         '<span class="xp-overline">experiências transcendentais</span>',
         '<h2 id="xpTitle">Onde essa experiência precisa acontecer agora?</h2>',
-        '<p>Responda poucas perguntas. No final, você recebe um arquétipo — uma leitura de contexto, não um diagnóstico clínico.</p>',
+        '<p>Responda poucas perguntas. No final, você recebe um arquétipo - uma leitura de contexto, não um diagnóstico clínico.</p>',
       '</div>',
       '<div class="xp-route-grid">',
         '<button class="xp-route" data-mode="person" type="button"><span class="xp-route-symbol">◉</span><b>Em mim</b><small>Pessoa · identidade · corpo · dinheiro · direção</small></button>',
