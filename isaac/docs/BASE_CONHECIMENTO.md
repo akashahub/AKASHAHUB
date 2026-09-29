@@ -1,4 +1,4 @@
-# Base isaac — o que está confirmado
+# Base isaac - o que está confirmado
 
 Fonte operacional: `C:\Users\lomab\OneDrive\Área de Trabalho\isaac`
 Prompt: `C:\Users\lomab\Downloads\ISAAC SDR OS.pdf`
@@ -15,11 +15,11 @@ Operação aqui: SDR indica/qualifica escolas e encaminha ao time de fechamento 
 - Repasse de 100% das mensalidades na data combinada
 - Gestão na palma da mão
 - App das famílias: pix, boleto, cartão, negociação
-- Crédito/antecipação sujeito a aprovação (material cita taxas a partir de 1,99% e 2,99% a.m. — SDR não promete)
+- Crédito/antecipação sujeito a aprovação (material cita taxas a partir de 1,99% e 2,99% a.m. - SDR não promete)
 - Diagnóstico em piloto
 - Seguro Familiar isaac com Porto Seguro
 
-## Números — NÃO FUNDIR
+## Números - NÃO FUNDIR
 Deck escolas: +1.900 escolas, +650 mil alunos, +50% indicadas.
 Deck superior (Onepager): +2.800 instituições, NPS 89, 97% retenção, R$ 7 bi, etc.
 Usar o deck do segmento. Divergência registrada, não somada.
