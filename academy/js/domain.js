@@ -8,8 +8,17 @@ export const TENANT = {
 
 export const UNITS = [
   { id: 'pituba', name: 'Pituba', city: 'Salvador' },
+  { id: 'pituba-ville', name: 'Pituba Ville', city: 'Salvador' },
+  { id: 'vilas', name: 'Vilas', city: 'Lauro de Freitas' },
+  { id: 'stella', name: 'Stella', city: 'Salvador' },
+  { id: 'colina', name: 'Colina', city: 'Salvador' },
+  { id: 'busca-vida', name: 'Busca Vida', city: 'Camaçari' },
+  { id: 'caminho-das-arvores', name: 'Caminho das Árvores', city: 'Salvador' },
+  { id: 'aquarios', name: 'Aquários', city: 'Salvador' },
   { id: 'rio-vermelho', name: 'Rio Vermelho', city: 'Salvador' },
-  { id: 'lauro', name: 'Lauro de Freitas', city: 'RMS' }
+  { id: 'paralela', name: 'Paralela', city: 'Salvador' },
+  { id: 'patamares', name: 'Patamares', city: 'Salvador' },
+  { id: 'litoral-norte', name: 'Litoral Norte', city: 'Bahia' }
 ];
 
 export const WORKSPACES = [
