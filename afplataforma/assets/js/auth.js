@@ -1,5 +1,5 @@
 /**
- * Auth — login e-mail, Google, sessão, afAccess
+ * Auth - login e-mail, Google, sessão, afAccess
  * Segurança real = Firestore Rules
  */
 import {
