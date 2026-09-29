@@ -172,11 +172,11 @@
   };
 
   var images = {
-    route: ASSET + 'lua-route.webp',
+    route: ASSET + 'lua-person.webp',
     person: ASSET + 'lua-person.webp',
     business: ASSET + 'lua-business.webp',
-    writing: ASSET + 'lua-writing.webp',
-    digital: ASSET + 'lua-digital.webp'
+    writing: ASSET + 'lua-person.webp',
+    digital: ASSET + 'lua-business.webp'
   };
 
   var state = { mode:null, step:0, score:{}, answers:[] };
