@@ -1,7 +1,7 @@
-import { TENANT, EVENTS, isCeoEmail, isMonitored } from './domain.js';
+import { TENANT, EVENTS, isCeoEmail, isMonitored } from './domain.js?v=20260929c';
 import { createStore, persistFirestore, pushAccess, fetchAccess } from './store.js';
 import { joinLive } from './live.js';
-import { render } from './ui.js';
+import { render } from './ui.js?v=20260929c';
 
 try {
   firebase.initializeApp({
