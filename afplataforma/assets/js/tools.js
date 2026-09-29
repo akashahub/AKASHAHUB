@@ -1,5 +1,5 @@
 /**
- * Ferramentas operacionais — painel flutuante (segundo plano)
+ * Ferramentas operacionais - painel flutuante (segundo plano)
  * Pode ficar aberto junto com Call + Roteiro
  */
 import { session } from "./auth.js";
@@ -82,7 +82,7 @@ async function openTextTool(id, title, ph) {
   openFloat(
     title,
     `<textarea class="notes-area" id="toolText" placeholder="${esc(ph)}">${esc(saved?.text || "")}</textarea>
-     <p class="notes-meta" id="toolMeta">${saved?.updatedAt ? "Salvo · " + new Date(saved.updatedAt).toLocaleString("pt-BR") : "—"}</p>`,
+     <p class="notes-meta" id="toolMeta">${saved?.updatedAt ? "Salvo · " + new Date(saved.updatedAt).toLocaleString("pt-BR") : "-"}</p>`,
     `<button class="btn btn-inline" type="button" id="btnSaveTool">Salvar</button>`
   );
   document.getElementById("btnSaveTool").onclick = async () => {
@@ -290,7 +290,7 @@ async function openCashflow() {
 }
 
 
-/** Oratória — 7 músculos. Não é dom. */
+/** Oratória - 7 músculos. Não é dom. */
 async function openFono() {
   const saved = (await loadToolData("fono")) || { notes: "", reps: 0, done: [] };
   const drills = [
@@ -361,7 +361,7 @@ async function openFono() {
   };
 }
 
-/** Mapa de rede — contatos com telefone e e-mail */
+/** Mapa de rede - contatos com telefone e e-mail */
 async function openNetwork() {
   const saved = (await loadToolData("network")) || { contacts: [] };
   window._net = saved.contacts || [];
@@ -389,7 +389,7 @@ async function openNetwork() {
     document.getElementById("btnSaveEditNet").hidden = true;
   };
   const readForm = () => ({
-    name: document.getElementById("nName").value.trim() || "—",
+    name: document.getElementById("nName").value.trim() || "-",
     phone: document.getElementById("nPhone").value.trim(),
     email: document.getElementById("nEmail").value.trim(),
     val: document.getElementById("nVal").value.trim(),
@@ -401,9 +401,9 @@ async function openNetwork() {
     el.innerHTML = window._net.map((c, i) => `
       <article class="net-card">
         <h4>${esc(c.name)}</h4>
-        <p>${esc(c.val || "—")}</p>
+        <p>${esc(c.val || "-")}</p>
         <p class="net-meta">${esc(c.phone || "sem telefone")} · ${esc(c.email || "sem e-mail")}</p>
-        <p class="net-meta">Próxima: ${esc(c.next || "—")} · ${esc(c.when || "sem data")}</p>
+        <p class="net-meta">Próxima: ${esc(c.next || "-")} · ${esc(c.when || "sem data")}</p>
         <div class="net-actions">
           <button type="button" data-ed="${i}">Editar</button>
           <button type="button" data-rm="${i}">Remover</button>
@@ -457,7 +457,7 @@ export function renderToolsView() {
     { id: "legacy", name: "Declaração de legado", mod: "07" }
   ];
   return `<div class="view active">
-    ${pageHead("tools", "Operação", "Ferramentas", "Abrem em segundo plano — pode usar junto com Call e Roteiro.")}
+    ${pageHead("tools", "Operação", "Ferramentas", "Abrem em segundo plano - pode usar junto com Call e Roteiro.")}
     <div class="mat-grid">${list
       .map(
         (x) => `
