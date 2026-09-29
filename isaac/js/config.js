@@ -1,6 +1,6 @@
 /**
  * Firebase do projeto hub-akasha (já usado pela AF).
- * Chave web pública — autorização real está nas regras do Firestore.
+ * Chave web pública - autorização real está nas regras do Firestore.
  */
 export const firebaseConfig = {
   apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
