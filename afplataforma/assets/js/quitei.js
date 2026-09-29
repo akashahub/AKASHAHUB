@@ -1,5 +1,5 @@
 /**
- * QUITEI — ferramenta nativa AF de quitação de dívidas.
+ * QUITEI - ferramenta nativa AF de quitação de dívidas.
  * Fonte funcional: index Quitei (avalanche / bola de neve, plano, pagamentos).
  * Persistência: Store local + Firestore afTools/{uid}/tools/quitei (mesmo padrão das outras ferramentas).
  * Sem Firebase quitei777. Sem login paralelo. Usa a sessão AF.
@@ -11,7 +11,7 @@ import { esc } from "./navigation.js";
 import { pageHead } from "./covers.js";
 
 const AFFIRMATIONS = [
-  "Eu tenho capacidade de resolver qualquer situação financeira — uma de cada vez.",
+  "Eu tenho capacidade de resolver qualquer situação financeira - uma de cada vez.",
   "Minha situação atual não define quem eu serei. Ela define de onde eu parto.",
   "Cada real que pago hoje é um tijolo na fundação da minha liberdade.",
   "Eu não sou irresponsável. Eu estava sem estratégia. Agora eu tenho uma.",
@@ -50,7 +50,7 @@ function toast(msg, err = false) {
 }
 
 function fmt(n) {
-  if (!n && n !== 0) return "—";
+  if (!n && n !== 0) return "-";
   return "R$ " + Number(n).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
@@ -127,7 +127,7 @@ function renderPainel() {
   const name = (session.name || "").split(" ")[0] || "você";
   const subs = [
     name + ", cada dívida cadastrada é um passo de coragem.",
-    "Os primeiros passos são os mais difíceis — e você já os deu.",
+    "Os primeiros passos são os mais difíceis - e você já os deu.",
     "Você já quitou mais de um quarto. A jornada está acontecendo.",
     "Metade do caminho. A liberdade está mais perto do que a dívida.",
     "Você está quase lá. A linha de chegada é real.",
@@ -157,7 +157,7 @@ function renderPainel() {
     <div class="grid-3">
       <div class="stat-card"><div class="lbl">Quitado</div><div class="val">${pct.toFixed(0)}%</div><div class="hint">${esc(subs[subIdx])}</div></div>
       <div class="stat-card"><div class="lbl">Saldo em aberto</div><div class="val" style="font-size:1.35rem">${fmt(totalDevido)}</div><div class="hint">já pago ${fmt(totalPago)}</div></div>
-      <div class="stat-card"><div class="lbl">Previsão</div><div class="val">${meses > 0 && meses < 999 ? meses : "—"}</div><div class="hint">meses com orçamento de ${fmt(Q.budget)}</div></div>
+      <div class="stat-card"><div class="lbl">Previsão</div><div class="val">${meses > 0 && meses < 999 ? meses : "-"}</div><div class="hint">meses com orçamento de ${fmt(Q.budget)}</div></div>
     </div>
     ${
       top
@@ -189,15 +189,15 @@ function renderDebts() {
             <div>
               ${badge(activeIdx, paid)}
               <h4>${esc(d.nome)}</h4>
-              <p>${esc(d.tipo || "—")}${d.venc && d.venc !== "—" ? " · venc. dia " + esc(String(d.venc)) : ""}</p>
+              <p>${esc(d.tipo || "-")}${d.venc && d.venc !== "-" ? " · venc. dia " + esc(String(d.venc)) : ""}</p>
             </div>
             <div class="q-amt">${fmt(d.saldo)}<small>saldo</small></div>
           </div>
           <div class="q-prog-lab"><span>Progresso</span><span>${pct.toFixed(0)}%</span></div>
           <div class="q-track"><div class="q-fill ${fill}" style="width:${pct}%"></div></div>
           <div class="q-meta">
-            <div><span>Juros/mês</span><b class="${d.juros > 10 ? "bad" : d.juros > 5 ? "warn" : ""}">${d.juros > 0 ? d.juros + "%" : "—"}</b></div>
-            <div><span>Mínimo</span><b>${d.minimo > 0 ? fmt(d.minimo) : "—"}</b></div>
+            <div><span>Juros/mês</span><b class="${d.juros > 10 ? "bad" : d.juros > 5 ? "warn" : ""}">${d.juros > 0 ? d.juros + "%" : "-"}</b></div>
+            <div><span>Mínimo</span><b>${d.minimo > 0 ? fmt(d.minimo) : "-"}</b></div>
             <div><span>Status</span><b class="${d.status === "Em atraso" ? "bad" : ""}">${esc(d.status || "Em dia")}</b></div>
           </div>
           ${d.obs ? `<p class="notes-hint">${esc(d.obs)}</p>` : ""}
@@ -226,7 +226,7 @@ function renderDebts() {
         <div class="field"><label>Mínimo (R$)</label><input id="qMin" type="number" step="0.01" min="0" value="${ed ? ed.minimo || "" : ""}"></div>
       </div>
       <div class="form-row cols-2">
-        <div class="field"><label>Vencimento (dia)</label><input id="qVenc" type="number" min="1" max="31" placeholder="10" value="${ed && ed.venc && ed.venc !== "—" ? esc(String(ed.venc)) : ""}"></div>
+        <div class="field"><label>Vencimento (dia)</label><input id="qVenc" type="number" min="1" max="31" placeholder="10" value="${ed && ed.venc && ed.venc !== "-" ? esc(String(ed.venc)) : ""}"></div>
         <div class="field"><label>Status</label>
           <select id="qStatus">${["Em dia", "Em atraso", "Negociada", "Quitada"].map((s) => `<option${ed && ed.status === s ? " selected" : ""}>${s}</option>`).join("")}</select>
         </div>
@@ -255,7 +255,7 @@ function renderPlan() {
           <div class="q-step">${paid ? "✓" : idx + 1}</div>
           <div>
             <strong>${esc(d.nome)}</strong>
-            <p>${esc(d.tipo || "")} · ${d.juros > 0 ? d.juros + "%/mês" : "sem juros"} · mínimo ${d.minimo > 0 ? fmt(d.minimo) : "—"}</p>
+            <p>${esc(d.tipo || "")} · ${d.juros > 0 ? d.juros + "%/mês" : "sem juros"} · mínimo ${d.minimo > 0 ? fmt(d.minimo) : "-"}</p>
           </div>
           <div class="q-plan-amt">${paid ? "<em>Quitada</em>" : fmt(d.saldo)}${!paid && idx === 0 ? "<small>Atacar agora</small>" : ""}</div>
         </div>`;
@@ -291,7 +291,7 @@ function renderPlan() {
       <div class="field"><label>Orçamento mensal para dívidas</label>
         <input id="qBudget" type="number" step="0.01" min="0" value="${Q.budget || ""}">
       </div>
-      <div class="stat-card"><div class="lbl">Estimativa</div><div class="val" style="font-size:1.4rem">${meses > 0 && meses < 999 ? meses + " meses" : "—"}</div></div>
+      <div class="stat-card"><div class="lbl">Estimativa</div><div class="val" style="font-size:1.4rem">${meses > 0 && meses < 999 ? meses + " meses" : "-"}</div></div>
     </div>
     <button class="tool-btn" type="button" data-q="saveBudget">Salvar orçamento</button>
     <h3 class="section-h">Ordem do plano</h3>
@@ -387,7 +387,7 @@ async function onQClick(e) {
       saldo,
       juros: parseFloat(document.getElementById("qJuros")?.value) || 0,
       minimo: parseFloat(document.getElementById("qMin")?.value) || 0,
-      venc: document.getElementById("qVenc")?.value || "—",
+      venc: document.getElementById("qVenc")?.value || "-",
       status: document.getElementById("qStatus")?.value || "Em dia",
       obs: document.getElementById("qObs")?.value.trim() || ""
     };
