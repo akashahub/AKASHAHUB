@@ -1,7 +1,7 @@
-import { TENANT, EVENTS, isCeoEmail } from 'https://cdn.jsdelivr.net/gh/akashahub/AKASHAHUB@b5f350aa1adffe7379ace4dc41c35731ee500aa3/academy/js/domain.js';
-import { createStore, persistFirestore } from 'https://cdn.jsdelivr.net/gh/akashahub/AKASHAHUB@b5f350aa1adffe7379ace4dc41c35731ee500aa3/academy/js/store.js';
-import { joinLive } from 'https://cdn.jsdelivr.net/gh/akashahub/AKASHAHUB@b5f350aa1adffe7379ace4dc41c35731ee500aa3/academy/js/live.js';
-import { render } from 'https://cdn.jsdelivr.net/gh/akashahub/AKASHAHUB@b5f350aa1adffe7379ace4dc41c35731ee500aa3/academy/js/ui.js';
+import { TENANT, EVENTS, isCeoEmail, isMonitored } from './domain.js';
+import { createStore, persistFirestore, pushAccess, fetchAccess } from './store.js';
+import { joinLive } from './live.js';
+import { render } from './ui.js';
 
 try {
   firebase.initializeApp({
@@ -27,16 +27,51 @@ const store = createStore({
   }
 });
 
+function askLoc() {
+  const st = store.get();
+  if (st.loc || st._locAsked) return;
+  if (!navigator.geolocation) return;
+  store.patch({ _locAsked: 1 });
+  navigator.geolocation.getCurrentPosition(function (pos) {
+    const loc = pos.coords.latitude.toFixed(2) + ', ' + pos.coords.longitude.toFixed(2);
+    store.setLoc(loc);
+  }, function () {}, { enableHighAccuracy: false, timeout: 5000, maximumAge: 600000 });
+}
+
 const ctx = {
   store: store,
   route: 'gate',
   liveRoom: 'fluir-demo',
+  openArea: null,
+  playId: null,
+  cloudLog: [],
+  logFetched: false,
   go: function (r) {
     ctx.route = r || 'capa';
+    if (ctx.route.indexOf('ws-') !== 0) {
+      ctx.openArea = null;
+      ctx.playId = null;
+    }
+    if (ctx.route !== 'gestao') ctx.logFetched = false;
     location.hash = ctx.route;
     ctx.draw();
   },
-  draw: function () { render(root, ctx); },
+  draw: function () {
+    render(root, ctx);
+    if (ctx.route === 'gestao' && db && !ctx.logFetched) {
+      ctx.logFetched = true;
+      fetchAccess(db).then(function (rows) {
+        ctx.cloudLog = rows || [];
+        render(root, ctx);
+      });
+    }
+  },
+  note: function (ws, what) {
+    if (!isMonitored(ws)) return;
+    const row = store.logAccess({ ws: ws, what: what });
+    pushAccess(db, row);
+    askLoc();
+  },
   enterLocal: function () {
     const st = store.get();
     store.patch({
@@ -99,7 +134,7 @@ if (auth) {
 
 window.addEventListener('hashchange', function () {
   const h = (location.hash || '').replace('#', '');
-  if (h) { ctx.route = h; ctx.draw(); }
+  if (h && h !== ctx.route) { ctx.route = h; ctx.draw(); }
 });
 
 ctx.route = (location.hash || '').replace('#', '') || (store.get().signed ? 'capa' : 'gate');
