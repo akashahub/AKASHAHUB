@@ -33,11 +33,11 @@ const COMP_APPS = [
   { id: "alimentacao", name: "Alimentação saudável", desc: "Base corporal alinhada aos 7 vetores." },
   { id: "constelacao", name: "Constelação familiar", desc: "6 etapas: investigação → segredo. Material paralelo." },
   { id: "dicionario", name: "Dicionário", desc: "Termos de finanças, marketing, startups e operação." },
-  { id: "livros", name: "Livros dos 7 vetores", desc: "Bônus de membro — pedir cada um no WhatsApp." },
+  { id: "livros", name: "Livros dos 7 vetores", desc: "Bônus de membro - pedir cada um no WhatsApp." },
   { id: "audiolivros", name: "Áudiolivros autorizados", desc: "Slots para obras próprias, licenciadas ou domínio público." },
   { id: "treino", name: "Treino e exercícios", desc: "Máquinas + halteres · pirâmide · respiração." },
   { id: "yoga", name: "Yoga operacional", desc: "Slots prontos: 7 vetores, integrado, sol, lua, áudio." },
-  { id: "meditacao", name: "Meditação guiada", desc: "Camada de áudio — arquivos entram depois." },
+  { id: "meditacao", name: "Meditação guiada", desc: "Camada de áudio - arquivos entram depois." },
   { id: "etiqueta", name: "Etiqueta", desc: "Presença, mesa, call e networking." },
   { id: "habitos", name: "Hábitos", desc: "Consistência que transforma." },
   { id: "rotina", name: "Rotina", desc: "Calendário e tarefas do dia." },
@@ -45,7 +45,7 @@ const COMP_APPS = [
   { id: "mindzone", name: "MindZone", desc: "Respiração · meditação · jogos de foco." },
   { id: "produtividade", name: "Produtividade", desc: "Foco, tempo e performance." },
   { id: "sono", name: "Modo sono", desc: "Depósitos + 7 frequências dos vetores." },
-  { id: "coach", name: "AF Coach", desc: "IA Life Coach — desligada até você ativar." },
+  { id: "coach", name: "AF Coach", desc: "IA Life Coach - desligada até você ativar." },
   { id: "anamnese", name: "Anamnese · Essência", desc: "Arquitetura de essência (HTML complementar)." },
   { id: "encontros", name: "Encontros da mentoria", desc: "26 encontros · página complementar." },
   { id: "loja", name: "Lojinha Akasha", desc: "Pedido: produto → cor → dados → WhatsApp." }
@@ -56,12 +56,12 @@ const DICT = [
   { t: "Cash-flow", d: "Fluxo de caixa: entradas menos saídas em um período." },
   { t: "Deal flow", d: "Fluxo de oportunidades de negócio ou investimento." },
   { t: "Lean Canvas", d: "Mapa de uma página do modelo de negócio para validação rápida." },
-  { t: "MVP", d: "Produto mínimo viável — menor versão que testa a hipótese." },
+  { t: "MVP", d: "Produto mínimo viável - menor versão que testa a hipótese." },
   { t: "BATNA", d: "Melhor alternativa se a negociação falhar." },
   { t: "Runway", d: "Quanto tempo o caixa atual sustenta a operação." },
   { t: "LTV / CAC", d: "Valor do cliente no tempo versus custo de aquisição." },
   { t: "Pitch", d: "Narrativa curta do problema, solução e pedido." },
-  { t: "Sunk cost", d: "Custo já irrecuperável — não deve guiar a próxima decisão sozinho." },
+  { t: "Sunk cost", d: "Custo já irrecuperável - não deve guiar a próxima decisão sozinho." },
   { t: "Reserva de emergência", d: "3–6 meses de despesas essenciais em liquidez." },
   { t: "Pay yourself first", d: "Separar 10–20% da receita líquida antes do restante." },
   { t: "Unidade econômica", d: "Quanto sobra em cada venda depois dos custos variáveis." },
@@ -75,7 +75,7 @@ const DICT = [
   { t: "Stewardship", d: "Governar recurso como administrador, não dono absoluto." },
   { t: "Lealdade invisível", d: "Contrato inconsciente com o destino familiar que trava ativo." },
   { t: "Ordem do pertencimento", d: "Ninguém do sistema pode ser excluído sem custo no fluxo." },
-  { t: "Equilíbrio dar-tomar", d: "Troca justa — cobrar de menos ou receber de mais desequilibra." },
+  { t: "Equilíbrio dar-tomar", d: "Troca justa - cobrar de menos ou receber de mais desequilibra." },
   { t: "PSI / ADP / POC", d: "Estruturas de pitch: problema-solução-impacto; atenção-desejo-prova; prova-oferta-chamada." },
   { t: "Mínimo viável diário", d: "A menor ação que, se feita hoje, mantém o sistema vivo." },
   { t: "Reciprocidade estratégica", d: "Entregar valor real sem comprar afeto." },
@@ -110,14 +110,14 @@ export function renderComplementarHome() {
   const apps = COMP_APPS.slice();
   if (canEditCovers()) apps.push({ id: "imagens", name: "Imagens da plataforma", desc: "Só mentor: trocar capas e fotos." });
   return `<div class="view active">
-    ${pageHead("complementar", "Complementar", "Camada paralela", "Alimentação, constelação, livros, corpo, yoga e loja — no mesmo ecossistema AF.")}
+    ${pageHead("complementar", "Complementar", "Camada paralela", "Alimentação, constelação, livros, corpo, yoga e loja - no mesmo ecossistema AF.")}
     <div class="mat-grid">
       ${apps.map((a) => cardForApp(a)).join("")}
     </div>
     <article class="q-feature" data-nav="quitei">
       <p class="hero-line">Ferramenta</p>
       <h3>Quitei</h3>
-      <p>Estratégia de quitação nativa — avalanche ou bola de neve — com plano, pagamentos e previsão. Abaixo da camada complementar, com o mesmo peso da operação.</p>
+      <p>Estratégia de quitação nativa - avalanche ou bola de neve - com plano, pagamentos e previsão. Abaixo da camada complementar, com o mesmo peso da operação.</p>
       <button class="tool-btn" type="button" data-nav="quitei">Abrir Quitei</button>
     </article>
   </div>`;
@@ -136,7 +136,7 @@ function cardForApp(a) {
   return `<div class="mat-card is-locked">
         <h4>${esc(a.name)}</h4>
         <p>${esc(a.desc)}</p>
-        <p class="lock-note">🔒 ${esc(need)} — existe no método; o seu plano não abre esta porta.</p>
+        <p class="lock-note">🔒 ${esc(need)} - existe no método; o seu plano não abre esta porta.</p>
         <button class="tool-btn" type="button" data-act="afUpgrade" data-upgrade="${a.id}">Conhecer o ${esc(need)}</button>
       </div>`;
 }
@@ -187,7 +187,7 @@ function back() {
 function viewAlimentacao() {
   const vetores = [
     { n: "01", t: "Estabilidade", d: "Refeições regulares. Proteína e hidratação antes de decisões pesadas." },
-    { n: "02", t: "Variedade", d: "Cores e texturas — mente aberta sem caos de excesso." },
+    { n: "02", t: "Variedade", d: "Cores e texturas - mente aberta sem caos de excesso." },
     { n: "03", t: "Combustível", d: "Evitar pico de açúcar antes de blocos de foco." },
     { n: "04", t: "Mesa", d: "Uma refeição consciente por semana com alguém de valor." },
     { n: "05", t: "Voz", d: "Hidratação e menos irritantes antes de pitch/call." },
@@ -195,7 +195,7 @@ function viewAlimentacao() {
     { n: "07", t: "Ritmo", d: "Sono e limite de cafeína como política, não humor." }
   ];
   return `<div class="view active">${back()}
-    ${pageHead("alimentacao", "Complementar", "Alimentação saudável", "Mesma lógica dos 7 vetores — corpo como infraestrutura de performance.")}
+    ${pageHead("alimentacao", "Complementar", "Alimentação saudável", "Mesma lógica dos 7 vetores - corpo como infraestrutura de performance.")}
     <div class="cover-list">${vetores
       .map(
         (v) => `<article class="cover-row">
@@ -232,10 +232,10 @@ function viewConstelacao() {
     ["07", "O dinheiro serve a vida. Eu governo com responsabilidade."]
   ];
   return `<div class="view active">${back()}
-    ${pageHead("constelacao", "Chave mestra", "Constelação familiar", "Camada paralela aos 7 módulos. O mentor não se torna terapeuta clínico — engenheiro de performance sistêmica.")}
+    ${pageHead("constelacao", "Chave mestra", "Constelação familiar", "Camada paralela aos 7 módulos. O mentor não se torna terapeuta clínico - engenheiro de performance sistêmica.")}
     <div class="mat-card" style="margin-bottom:16px">
       <h4>Material do módulo</h4>
-      <p>Ciclo de 6 etapas, ordens do dinheiro e frases de força — documento completo, sem cortes.</p>
+      <p>Ciclo de 6 etapas, ordens do dinheiro e frases de força - documento completo, sem cortes.</p>
       ${materialButton("Constelação familiar · Chave mestra", "assets/materials/constelacao-chave-mestra.pdf")}
     </div>
     <div class="stat-card" style="margin-bottom:16px">
@@ -475,7 +475,7 @@ function viewEtiqueta() {
     { n: "07", title: "Governança · Legado de trato", do: "Agradeça por escrito. Cumpra o follow-up.", dont: "Não some depois do “vamos alinhar”.", tip: "Reputação é patrimônio composto." }
   ];
   return `<div class="view active">${back()}
-    ${pageHead("etiqueta", "Complementar", "Etiqueta", "Presença, mesa, call e networking — 7 vetores.")}
+    ${pageHead("etiqueta", "Complementar", "Etiqueta", "Presença, mesa, call e networking - 7 vetores.")}
     <div class="etiq-grid">${cards
       .map(
         (c) => `<div class="etiq-card">
@@ -504,7 +504,7 @@ function viewEncontros() {
   return `<div class="view active">${back()}
     <p class="hero-line">Mentoria</p>
     <h2 class="hero-title">Encontros</h2>
-    <p class="hero-sub">Página dos 26 encontros — anexa e independente, mesmo visual.</p>
+    <p class="hero-sub">Página dos 26 encontros - anexa e independente, mesmo visual.</p>
     <p><a class="tool-btn" href="complementar/encontros.html" target="_blank" rel="noopener">Abrir Encontros</a></p>
   </div>`;
 }
@@ -589,7 +589,7 @@ window.afAbrirPedido = (el) => {
 
 window.afEnviarPedido = () => {
   const prod = document.getElementById("pProd")?.value || "";
-  const cor = document.getElementById("pCor")?.value || "—";
+  const cor = document.getElementById("pCor")?.value || "-";
   const nome = document.getElementById("pNome")?.value?.trim();
   const email = document.getElementById("pEmail")?.value?.trim();
   const cep = document.getElementById("pCep")?.value?.trim();
