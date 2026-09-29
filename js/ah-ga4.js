@@ -12,3 +12,16 @@
   gtag("js", new Date());
   gtag("config", ID);
 })();
+
+
+/* Experiências Transcendentais — carregamento isolado apenas na home. */
+(function () {
+  var path = (window.location.pathname || '/').replace(/\/+$/, '') || '/';
+  if (path !== '/' && path !== '/index.html') return;
+  if (document.querySelector('script[data-ah-experiencias]')) return;
+  var s = document.createElement('script');
+  s.src = '/js/experiencias-transcendentais.js?v=1';
+  s.defer = true;
+  s.dataset.ahExperiencias = '1';
+  document.head.appendChild(s);
+})();
