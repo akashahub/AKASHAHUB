@@ -1,5 +1,5 @@
 /**
- * Presenca AF — online / offline / na call
+ * Presenca AF - online / offline / na call
  */
 import { session } from "./auth.js";
 import { Store } from "./storage.js";
