@@ -1,5 +1,5 @@
 import {
-  TENANT, WORKSPACES, JOBS, EVENTS, NOTICE,
+  TENANT, UNITS, WORKSPACES, JOBS, EVENTS, NOTICE,
   workspaceById, unitById, grantedWorkspaces, jobOf,
   canManagePeople, canEnter, isMonitored, areasFor, coursesFor, eventsFor, vaultFor,
   progressOf, normEmail, ytEmbed, whenLabel, isCeoEmail
@@ -78,7 +78,9 @@ function shell(state, route, inner) {
       (state.workspace ? '<button class="nav-i' + (route.indexOf('ws-') === 0 ? ' on' : '') + '" data-go="ws-' + state.workspace + '">' + esc(ws.title) + '</button>' : '') +
       '<button class="nav-i' + (route === 'eventos' ? ' on' : '') + '" data-go="eventos">Eventos</button>' +
       (admin ? '<button class="nav-i' + (route === 'gestao' ? ' on' : '') + '" data-go="gestao">Gestao</button>' : '') +
-      '<div class="rail-foot"><span class="chip dim">' + esc(unit.name) + '</span></div>' +
+      '<div class="rail-foot"><span class="muted" style="width:100%;margin-bottom:4px">Unidades Fluir</span>' +
+        UNITS.map(function (u) { return '<span class="chip dim">' + esc(u.name) + '</span>'; }).join('') +
+      '</div>' +
     '</aside>' +
     '<section class="stage">' + inner + '</section>' +
     '<nav class="dock">' +
@@ -129,12 +131,12 @@ function musicPlaceholder(area) {
 function peopleGrowth(wsId) {
   if (wsId !== 'professor' && wsId !== 'colaborador') return '';
   return '<section class="growth">' +
-    '<p class="eyebrow">desenvolvimento alem da funcao</p>' +
-    '<h3>A Fluir ajuda quem faz a rede acontecer a prosperar tambem fora da aula.</h3>' +
-    '<p class="muted">Conteudos curtos e praticos para organizar a vida financeira e entender direitos e deveres. A estrutura fica pronta agora; os materiais entram depois.</p>' +
+    '<p class="eyebrow">sessao especial para colaboradores</p>' +
+    '<h3>Alinhamento Financeiro + Direitos & Deveres</h3>' +
+    '<p class="muted">Uma area permanente para professores e colaboradores organizarem melhor a vida financeira e terem clareza sobre direitos, deveres e boas praticas profissionais.</p>' +
     '<div class="life-grid">' +
-      '<article class="life-card"><span class="life-icon">R$</span><b>Financas pessoais</b><span class="copy">Organizacao do dinheiro, contas, reserva, planejamento e decisoes financeiras do dia a dia.</span><span class="chip dim" style="margin-top:12px">em breve</span></article>' +
-      '<article class="life-card"><span class="life-icon">§</span><b>Direitos e deveres</b><span class="copy">Orientacoes simples para conhecer responsabilidades, beneficios e boas praticas na relacao de trabalho.</span><span class="chip dim" style="margin-top:12px">em breve</span></article>' +
+      '<article class="life-card"><span class="life-icon">R$</span><b>Alinhamento Financeiro</b><span class="copy">Organizacao financeira, contas, planejamento, reserva, prioridades e caminhos praticos para prosperar com mais clareza.</span><span class="chip dim" style="margin-top:12px">conteudos em breve</span></article>' +
+      '<article class="life-card"><span class="life-icon">§</span><b>Direitos & Deveres</b><span class="copy">Orientacoes simples sobre responsabilidades, direitos, deveres, beneficios e boas praticas na relacao profissional.</span><span class="chip dim" style="margin-top:12px">conteudos em breve</span></article>' +
     '</div></section>';
 }
 
