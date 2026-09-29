@@ -24,7 +24,7 @@ const TRACKS = [
     { id: 'p2', title: 'Checklist diario da raia', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 6 }
   ]},
   { id: 'natacao', group: 'Staff', title: 'Metodologia natacao infantil', audience: ['staff', 'franqueado', 'matriz'], lessons: [
-    { id: 'n1', title: 'Metodo Lucas Oliveira — base', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 12 }
+    { id: 'n1', title: 'Metodo Lucas Oliveira - base', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 12 }
   ]},
   { id: 'recepcao', group: 'Recepcao', title: 'Onboarding da recepcao', audience: ['staff', 'franqueado', 'matriz'], lessons: [
     { id: 'r1', title: 'Atendimento e EVO no dia a dia', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 9 }
@@ -33,7 +33,7 @@ const TRACKS = [
     { id: 'c1', title: 'Respiracao para natacao', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 7 }
   ]},
   { id: 'parceiros', group: 'Parceiros', title: 'Protocolo aquatico para fisio', audience: ['parceiro', 'matriz'], lessons: [
-    { id: 'x1', title: 'Hidroterapia — alinhamento', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 10 }
+    { id: 'x1', title: 'Hidroterapia - alinhamento', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 10 }
   ]}
 ];
 
@@ -45,7 +45,7 @@ const VAULT = [
 
 const EVENT = {
   id: 'pisc-2026',
-  title: 'Treinamento Tecnico — Tratamento de Piscinas',
+  title: 'Treinamento Tecnico - Tratamento de Piscinas',
   place: 'Unidade Pituba',
   when: 'Sabado, 10h',
   qr: 'FLUIR-PISC-2026',
