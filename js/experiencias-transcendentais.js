@@ -198,15 +198,18 @@
   }
 
   function button() {
-    var target = document.querySelector('.hero-ctas');
-    if (!target || document.getElementById('xpEntry')) return;
-    var a = document.createElement('button');
-    a.id = 'xpEntry';
-    a.type = 'button';
-    a.className = 'btn-xp btn-premium';
-    a.innerHTML = '<span class="xp-mini-mark">✦</span><span>EXPERIÊNCIAS TRANSCENDENTAIS</span>';
-    a.addEventListener('click', open);
-    target.insertBefore(a, target.firstChild);
+    var a = document.getElementById('audioToggle');
+    if (!a) return;
+    a.removeAttribute('onclick');
+    a.setAttribute('aria-label', 'Abrir Experiências Transcendentais');
+    a.setAttribute('data-xp-entry', 'true');
+    var label = document.getElementById('audioLabel');
+    if (label) label.textContent = 'EXPERIÊNCIAS TRANSCENDENTAIS';
+    a.classList.remove('audio-playing');
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      open();
+    });
   }
 
   function shell() {
