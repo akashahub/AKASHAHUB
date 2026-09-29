@@ -98,9 +98,9 @@ function slugInst(name, city) {
 }
 function nowIso() { return new Date().toISOString(); }
 function fmt(ts) {
-  if (!ts) return "—";
+  if (!ts) return "-";
   const d = ts.toDate ? ts.toDate() : new Date(ts);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "-";
   return d.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 }
 function activeCallSteps() {
@@ -451,14 +451,14 @@ function preCall(row) {
     : "Descobrir histórico + situação atual + interesse + chegar no responsável certo.";
   return [
     `Instituição: ${row.name}`,
-    `Cidade: ${row.city || "—"} · ${row.type || ""}`,
+    `Cidade: ${row.city || "-"} · ${row.type || ""}`,
     `Status: ${pipeLabel(row.status)}`,
     `Histórico anterior: ${hist}`,
-    `Responsável: ${row.contactName || "—"} (${row.role || "—"})`,
-    `Dono interno: ${row.ownerName || row.ownerEmail || "—"}`,
+    `Responsável: ${row.contactName || "-"} (${row.role || "-"})`,
+    `Dono interno: ${row.ownerName || row.ownerEmail || "-"}`,
     `Última interação: ${fmt(row.updatedAt)}`,
     `Dor: ${row.pain || "ainda não mapeada"}`,
-    `Objeção: ${row.objection || "—"}`,
+    `Objeção: ${row.objection || "-"}`,
     row.partnerIsaac ? "CUIDADO: já parceira." : (row.priorHistory && row.priorHistory !== "desconhecido" && row.priorHistory !== "nunca_contatado" ? "CUIDADO: já existe histórico." : ""),
     `Objetivo desta ligação: ${obj}`
   ].filter(Boolean).join("\n");
@@ -466,26 +466,26 @@ function preCall(row) {
 
 function summaryOf(row) {
   return [
-    "Resumo da ligação — ISAAC SDR OS",
+    "Resumo da ligação - ISAAC SDR OS",
     `Instituição: ${row.name}`,
     `Cidade: ${row.city || ""} / ${row.state || ""}`,
-    `Pessoa: ${row.contactName || "—"} · ${row.role || "—"}`,
-    `Telefone: ${row.phone || "—"} · WhatsApp: ${row.whatsapp || "—"} · Email: ${row.email || "—"}`,
+    `Pessoa: ${row.contactName || "-"} · ${row.role || "-"}`,
+    `Telefone: ${row.phone || "-"} · WhatsApp: ${row.whatsapp || "-"} · Email: ${row.email || "-"}`,
     `Cenário: ${pipeLabel(row.status)}`,
     `Histórico isaac: ${histLabel(row.priorHistory)}`,
-    `Dores: ${row.pain || "—"}`,
-    `Interesse: ${row.interest || "—"}`,
-    `Objeções: ${row.objection || "—"}`,
-    `O que chamou atenção: ${row.valueHook || "—"}`,
-    `Autoridade: ${row.authority || "—"}`,
-    `Momento para decidir: ${row.timing || "—"}`,
-    `Reunião: ${row.meetingAt ? fmt(row.meetingAt) : "—"} · ${row.meetingStatus || "—"}`,
-    `Participantes: ${row.meetingParticipants || "—"}`,
-    `Pergunta para o time: ${row.teamQuestion || row.commitmentQuestion || "—"}`,
-    `Razão para participar: ${row.commitmentReason || "—"}`,
-    `Próximo passo: ${row.nextAction || "—"} ${row.nextActionAt ? "em " + row.nextActionAt : ""}`,
-    `Indicação: ${row.lastReferral || "—"}`,
-    `Obs: ${row.notes || "—"}`,
+    `Dores: ${row.pain || "-"}`,
+    `Interesse: ${row.interest || "-"}`,
+    `Objeções: ${row.objection || "-"}`,
+    `O que chamou atenção: ${row.valueHook || "-"}`,
+    `Autoridade: ${row.authority || "-"}`,
+    `Momento para decidir: ${row.timing || "-"}`,
+    `Reunião: ${row.meetingAt ? fmt(row.meetingAt) : "-"} · ${row.meetingStatus || "-"}`,
+    `Participantes: ${row.meetingParticipants || "-"}`,
+    `Pergunta para o time: ${row.teamQuestion || row.commitmentQuestion || "-"}`,
+    `Razão para participar: ${row.commitmentReason || "-"}`,
+    `Próximo passo: ${row.nextAction || "-"} ${row.nextActionAt ? "em " + row.nextActionAt : ""}`,
+    `Indicação: ${row.lastReferral || "-"}`,
+    `Obs: ${row.notes || "-"}`,
     `Operador: ${session.name} <${session.email}>`
   ].join("\n");
 }
@@ -511,7 +511,7 @@ function meetingConfirmMsg(row) {
 }
 
 function meetingEmail(row) {
-  return `Assunto: Confirmação de diagnóstico — ${row.name}\n\nOlá, ${row.contactName || "responsável"},\n\nConfirmo a conversa com o time isaac em ${row.meetingAt ? fmt(row.meetingAt) : "data a confirmar"}.\n\nObjetivo: ${row.meetingExpectation || row.pain || "analisar o cenário da instituição e verificar aderência"}.\nPergunta que levaremos ao time: ${row.teamQuestion || row.commitmentQuestion || "a definir"}.\nParticipantes: ${row.meetingParticipants || "a confirmar"}.\n${row.meetingLink ? `Link: ${row.meetingLink}\n` : ""}\nCaso haja um imprevisto, podemos remarcar.\n\nAtenciosamente,\n${session.name}`;
+  return `Assunto: Confirmação de diagnóstico - ${row.name}\n\nOlá, ${row.contactName || "responsável"},\n\nConfirmo a conversa com o time isaac em ${row.meetingAt ? fmt(row.meetingAt) : "data a confirmar"}.\n\nObjetivo: ${row.meetingExpectation || row.pain || "analisar o cenário da instituição e verificar aderência"}.\nPergunta que levaremos ao time: ${row.teamQuestion || row.commitmentQuestion || "a definir"}.\nParticipantes: ${row.meetingParticipants || "a confirmar"}.\n${row.meetingLink ? `Link: ${row.meetingLink}\n` : ""}\nCaso haja um imprevisto, podemos remarcar.\n\nAtenciosamente,\n${session.name}`;
 }
 
 function reminderMsg(row) {
@@ -531,7 +531,7 @@ function downloadIcs(row) {
   const end = new Date(start.getTime() + 30 * 60 * 1000);
   const stamp = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
   const clean = (s) => String(s || "").replace(/[\\,;]/g, " ").replace(/\n/g, "\\n");
-  const body = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ISAAC SDR OS//PT-BR","BEGIN:VEVENT",`UID:${row.id}-${start.getTime()}@akashahub.com.br`,`DTSTAMP:${stamp(new Date())}`,`DTSTART:${stamp(start)}`,`DTEND:${stamp(end)}`,`SUMMARY:${clean(`Diagnóstico isaac — ${row.name}`)}`,`DESCRIPTION:${clean(row.meetingExpectation || row.pain || "Diagnóstico com o time isaac")}`,row.meetingLink ? `LOCATION:${clean(row.meetingLink)}` : "","END:VEVENT","END:VCALENDAR"].filter(Boolean).join("\r\n");
+  const body = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ISAAC SDR OS//PT-BR","BEGIN:VEVENT",`UID:${row.id}-${start.getTime()}@akashahub.com.br`,`DTSTAMP:${stamp(new Date())}`,`DTSTART:${stamp(start)}`,`DTEND:${stamp(end)}`,`SUMMARY:${clean(`Diagnóstico isaac - ${row.name}`)}`,`DESCRIPTION:${clean(row.meetingExpectation || row.pain || "Diagnóstico com o time isaac")}`,row.meetingLink ? `LOCATION:${clean(row.meetingLink)}` : "","END:VEVENT","END:VCALENDAR"].filter(Boolean).join("\r\n");
   const blob = new Blob([body], { type: "text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a"); a.href = url; a.download = `reuniao-isaac-${norm(row.name).replace(/[^a-z0-9]+/g,"-")}.ics`; a.click();
@@ -681,7 +681,7 @@ function renderFollow() {
       <div class="list">${rows.map((i) => `
         <article class="item">
           <strong>${esc(i.name)}</strong>
-          <p class="muted">${esc(i.meetingAt ? `Reunião · ${fmt(i.meetingAt)} · ${i.meetingStatus || "aguardando confirmação"}` : `${i.nextAction || "—"} · ${i.nextActionAt || ""}`)}</p>
+          <p class="muted">${esc(i.meetingAt ? `Reunião · ${fmt(i.meetingAt)} · ${i.meetingStatus || "aguardando confirmação"}` : `${i.nextAction || "-"} · ${i.nextActionAt || ""}`)}</p>
           <button class="btn" data-open="${esc(i.id)}" type="button">Abrir</button>
         </article>`).join("") || "<p class='muted'>Vazio.</p>"}</div>
     </div>`).join("");
@@ -770,7 +770,7 @@ function renderDirectory() {
 
 function renderReact() {
   const rows = filtered().filter((i) => i.directoryOnly !== true && !i.partnerIsaac && (i.status === "reativacao" || ["ja_recebeu_contato","conversou_sem_call","nao_compareceu","participou_call","recebeu_proposta","nao_avancou"].includes(i.priorHistory)));
-  return `<p class="kicker">Reativação</p><h2>Retomar do ponto certo</h2><div class="list">${rows.map((i)=>`<article class="item"><div class="row" style="justify-content:space-between"><strong>${esc(i.name)}</strong><span class="st reativacao">${esc(histLabel(i.priorHistory))}</span></div><p class="muted">Último contato: ${esc(fmt(i.updatedAt))} · tentativas: ${Number(i.attemptCount||0)} · remarcações: ${Number(i.meetingRescheduleCount||0)}</p><p><b>Última objeção:</b> ${esc(i.objection||"—")}</p><p><b>O que interessou:</b> ${esc(i.valueHook||"—")}</p><p><b>Próxima pergunta:</b> ${esc(i.teamQuestion||"O que mudou desde a última conversa?")}</p><div class="row"><button class="btn btn-p" data-call="${esc(i.id)}" type="button">Abrir reativação</button></div></article>`).join("")||`<div class="empty">Nenhuma reativação identificada no histórico atual.</div>`}</div>`;
+  return `<p class="kicker">Reativação</p><h2>Retomar do ponto certo</h2><div class="list">${rows.map((i)=>`<article class="item"><div class="row" style="justify-content:space-between"><strong>${esc(i.name)}</strong><span class="st reativacao">${esc(histLabel(i.priorHistory))}</span></div><p class="muted">Último contato: ${esc(fmt(i.updatedAt))} · tentativas: ${Number(i.attemptCount||0)} · remarcações: ${Number(i.meetingRescheduleCount||0)}</p><p><b>Última objeção:</b> ${esc(i.objection||"-")}</p><p><b>O que interessou:</b> ${esc(i.valueHook||"-")}</p><p><b>Próxima pergunta:</b> ${esc(i.teamQuestion||"O que mudou desde a última conversa?")}</p><div class="row"><button class="btn btn-p" data-call="${esc(i.id)}" type="button">Abrir reativação</button></div></article>`).join("")||`<div class="empty">Nenhuma reativação identificada no histórico atual.</div>`}</div>`;
 }
 
 function renderProof() {
@@ -808,7 +808,7 @@ function renderCockpit() {
       <div>
         <div class="card">
           <h2>${esc(row.name)}</h2>
-          <p class="muted">${esc(row.city || "")} · ${esc((KB.INST_TYPES.find((t) => t.id === row.type) || {}).label || "")} · ${esc(row.contactName || "sem nome")} (${esc(row.role || "—")})</p>
+          <p class="muted">${esc(row.city || "")} · ${esc((KB.INST_TYPES.find((t) => t.id === row.type) || {}).label || "")} · ${esc(row.contactName || "sem nome")} (${esc(row.role || "-")})</p>
            <p><span class="st ${esc(row.status)}">${esc(pipeLabel(row.status))}</span></p>
           <p class="safe-note">Facilidade de contato: prioridade ${cscore.grade} · ${cscore.score}/100 · ${esc(cscore.parts.join(" · ") || "dados insuficientes")}</p>
           <pre class="pre hint" style="margin-top:10px">${esc(preCall(row))}</pre>
@@ -868,10 +868,10 @@ function renderCockpit() {
         <div class="card" style="margin-top:10px">
           <p class="kicker">Objeção</p>
           <select id="objSel">
-            <option value="">— selecionar —</option>
+            <option value="">- selecionar -</option>
             ${objectionGroups().map((group) => `<optgroup label="${esc(group.title)}">${group.items.map((o) => `<option value="${o.id}" ${row.objectionId === o.id ? "selected" : ""}>${esc(o.said)}</option>`).join("")}</optgroup>`).join("")}
           </select>
-          ${obj ? `<div class="hint obj-live" style="margin-top:8px"><p><b>Pode querer dizer:</b> ${esc(obj.means)}</p><p class="obj-ask"><b>PERGUNTE:</b> ${esc(obj.ask)}</p><p><b>Valor:</b> ${esc(obj.value)}</p><p><b>Prova:</b> ${esc(obj.proof || "—")}</p>${obj.reflection && obj.reflection.length ? `<p><b>Frases de impacto — escolha uma:</b><br>${obj.reflection.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</p>` : ""}${obj.booking && obj.booking.length ? `<div class="booking-lines"><b>FECHAR O HORÁRIO AGORA:</b><br>${obj.booking.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</div>` : ""}<p class="obj-advance"><b>AVANÇO:</b> ${esc(obj.advance)}</p><p><b>Não insistir:</b> ${esc(obj.stop)}</p><button class="btn btn-ok" data-act="jumpSchedule" type="button">Ir direto para agendamento</button></div>` : ""}
+          ${obj ? `<div class="hint obj-live" style="margin-top:8px"><p><b>Pode querer dizer:</b> ${esc(obj.means)}</p><p class="obj-ask"><b>PERGUNTE:</b> ${esc(obj.ask)}</p><p><b>Valor:</b> ${esc(obj.value)}</p><p><b>Prova:</b> ${esc(obj.proof || "-")}</p>${obj.reflection && obj.reflection.length ? `<p><b>Frases de impacto - escolha uma:</b><br>${obj.reflection.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</p>` : ""}${obj.booking && obj.booking.length ? `<div class="booking-lines"><b>FECHAR O HORÁRIO AGORA:</b><br>${obj.booking.map((phrase, index) => `${index + 1}. ${esc(phrase)}`).join("<br>")}</div>` : ""}<p class="obj-advance"><b>AVANÇO:</b> ${esc(obj.advance)}</p><p><b>Não insistir:</b> ${esc(obj.stop)}</p><button class="btn btn-ok" data-act="jumpSchedule" type="button">Ir direto para agendamento</button></div>` : ""}
         </div>
         <div class="card meeting-box" id="meetingBox" style="margin-top:10px">
           <p class="kicker">CONVERSÃO PRINCIPAL</p><h2>Agendar reunião</h2>
@@ -946,7 +946,7 @@ function renderObj() {
         ${group.items.map((o) => `<article class="card objection-card ${selectedId === o.id ? "is-selected" : ""}" id="objection-${esc(o.id)}">
           <p class="kicker">${o.kind === "material" ? "Material oficial" : "Investigação"}</p><h2>${esc(o.said)}</h2>
           <p><b>Pode querer dizer:</b> ${esc(o.means)}</p><p class="obj-ask"><b>PERGUNTE:</b> ${esc(o.ask)}</p><p><b>Valor:</b> ${esc(o.value)}</p>
-          ${o.reflection?.length ? `<div class="hint" style="margin:10px 0"><b>Frases de impacto — escolha uma:</b><br>${o.reflection.map((p,n)=>`${n+1}. ${esc(p)}`).join("<br>")}</div>` : ""}
+          ${o.reflection?.length ? `<div class="hint" style="margin:10px 0"><b>Frases de impacto - escolha uma:</b><br>${o.reflection.map((p,n)=>`${n+1}. ${esc(p)}`).join("<br>")}</div>` : ""}
           ${o.booking?.length ? `<div class="booking-lines"><b>FECHAR O HORÁRIO:</b><br>${o.booking.map((p,n)=>`${n+1}. ${esc(p)}`).join("<br>")}</div>` : ""}
           <p class="obj-advance"><b>AVANÇO:</b> ${esc(o.advance)}</p><p class="muted">Quando não insistir: ${esc(o.stop)} · ${esc(o.source || "")}</p>
         </article>`).join("")}
@@ -1026,7 +1026,7 @@ function renderFloatingCallPanel() {
       <div><small>ROTEIRO ATIVO · ${callMode === "fast" ? "RÁPIDO" : "COMPLETO"}</small><b>${esc(row.name)}</b></div>
       <div class="call-float-window">
         <button type="button" id="callFloatLock" title="${callPanelLocked ? "Liberar para mover" : "Travar posição"}">${callPanelLocked ? "🔒" : "🔓"}</button>
-        <button type="button" id="callFloatMin" title="Minimizar">${callPanelMinimized ? "▢" : "—"}</button>
+        <button type="button" id="callFloatMin" title="Minimizar">${callPanelMinimized ? "▢" : "-"}</button>
         <button type="button" id="callFloatExpand" title="Expandir ou restaurar">${callPanelExpanded ? "↙" : "↗"}</button>
         <button type="button" id="callFloatClose" title="Fechar">×</button>
       </div>
