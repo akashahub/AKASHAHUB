@@ -1,5 +1,6 @@
-/** Store - profile + grants. UI never talks to Firestore. */
+/** Store - profile + grants + access log. UI never talks to Firestore. */
 const KEY = 'academy-os.v03';
+const LOG_CAP = 40;
 
 function blank() {
   return {
@@ -17,6 +18,8 @@ function blank() {
     attend: {},
     dreUrl: '',
     grants: {},
+    accessLog: [],
+    loc: '',
     cloud: 'local'
   };
 }
@@ -30,16 +33,15 @@ function readLocal() {
 }
 
 function writeLocal(state) {
-  localStorage.setItem(KEY, JSON.stringify(state));
+  const copy = Object.assign({}, state, { accessLog: (state.accessLog || []).slice(-LOG_CAP) });
+  localStorage.setItem(KEY, JSON.stringify(copy));
 }
 
 export function createStore(opts) {
-  const listeners = [];
   let state = readLocal();
 
   function emit() {
     writeLocal(state);
-    listeners.forEach(function (fn) { fn(state); });
     if (opts && opts.onPersist) opts.onPersist(state);
   }
 
@@ -59,6 +61,28 @@ export function createStore(opts) {
       const attend = Object.assign({}, state.attend);
       attend[eventId] = rec;
       state = Object.assign({}, state, { attend: attend });
+      emit();
+    },
+    logAccess: function (rec) {
+      const row = {
+        email: state.email || '',
+        name: state.name || 'local',
+        ws: rec.ws || '',
+        what: rec.what || '',
+        at: new Date().toISOString(),
+        loc: rec.loc || state.loc || ''
+      };
+      const accessLog = (state.accessLog || []).concat([row]).slice(-LOG_CAP);
+      state = Object.assign({}, state, { accessLog: accessLog });
+      emit();
+      return row;
+    },
+    setLoc: function (loc) {
+      const accessLog = (state.accessLog || []).slice();
+      if (accessLog.length && !accessLog[accessLog.length - 1].loc) {
+        accessLog[accessLog.length - 1] = Object.assign({}, accessLog[accessLog.length - 1], { loc: loc });
+      }
+      state = Object.assign({}, state, { loc: loc, accessLog: accessLog });
       emit();
     },
     setGrant: function (email, grant) {
@@ -95,10 +119,41 @@ export async function persistFirestore(db, state) {
       attend: state.attend,
       dreUrl: state.dreUrl,
       grants: state.grants,
+      loc: state.loc || '',
       at: new Date().toISOString()
     }, { merge: true });
     return 'ok';
   } catch (e) {
     return 'local';
+  }
+}
+
+export async function pushAccess(db, row) {
+  if (!db || !row) return;
+  try {
+    await db.collection('academy_access').add({
+      tenantId: 'fluir',
+      email: row.email || '',
+      name: row.name || '',
+      ws: row.ws || '',
+      what: String(row.what || '').slice(0, 80),
+      at: row.at,
+      loc: row.loc || ''
+    });
+  } catch (e) {}
+}
+
+export async function fetchAccess(db) {
+  if (!db) return [];
+  try {
+    const snap = await db.collection('academy_access').orderBy('at', 'desc').limit(30).get();
+    return snap.docs.map(function (d) { return d.data(); });
+  } catch (e) {
+    try {
+      const snap = await db.collection('academy_access').limit(30).get();
+      return snap.docs.map(function (d) { return d.data(); });
+    } catch (e2) {
+      return [];
+    }
   }
 }
