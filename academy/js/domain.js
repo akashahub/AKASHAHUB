@@ -3,7 +3,7 @@ export const TENANT = {
   id: 'fluir',
   name: 'Fluir Academy',
   sector: 'franchise-lms',
-  version: '0.4.0'
+  version: '0.5.0'
 };
 
 export const UNITS = [
@@ -13,7 +13,7 @@ export const UNITS = [
 ];
 
 export const WORKSPACES = [
-  { id: 'aluno', title: 'Aluno', tag: 'Eu sou aluno', desc: 'Areas livres: pilates, ginastica, fisio, natacao e infantil.' },
+  { id: 'aluno', title: 'Aluno', tag: 'Eu sou aluno', desc: 'Areas livres com aulas de Pilates, hidro, natacao, infantil, bebe e gestantes.' },
   { id: 'professor', title: 'Professor', tag: 'Eu sou professor', desc: 'Metodologia e as areas que voce ministra.' },
   { id: 'colaborador', title: 'Colaborador', tag: 'Eu sou da equipe', desc: 'Cursos fechados da funcao. Acesso monitorado.' },
   { id: 'franqueado', title: 'Franqueado', tag: 'Eu sou franqueado', desc: 'Cultura, operacao e venda de franquia. Acesso monitorado.' },
@@ -39,10 +39,12 @@ export function ytEmbed(id) {
 
 const TRACK_TITLE = {
   pilates: 'Pilates',
-  ginastica: 'Ginastica',
-  fisio: 'Fisioterapia',
-  natacao: 'Natacao',
-  infantil: 'Aluno crianca',
+  ginastica: 'Hidroginastica',
+  fisio: 'Hidroterapia',
+  natacao: 'Natacao adulto',
+  infantil: 'Natacao infantil',
+  bebe: 'Natacao bebe',
+  gestantes: 'Programa para gestantes',
   metodologia: 'Metodologia',
   todos: 'Cultura da rede',
   recepcao: 'Recepcao',
@@ -71,16 +73,20 @@ export const COURSES = [
   lesson('a-pil-2', ['aluno', 'professor'], 'pilates', 'Mobilidade de coluna', 9),
   lesson('a-pil-3', ['aluno', 'professor'], 'pilates', 'Forca de centro em casa', 11),
   lesson('a-pil-4', ['aluno', 'professor'], 'pilates', 'Sequencia curta de 15 minutos', 15),
-  lesson('a-gin-1', ['aluno', 'professor'], 'ginastica', 'Mobilidade em casa', 10),
-  lesson('a-gin-2', ['aluno', 'professor'], 'ginastica', 'Circuito leve sem equipamento', 12),
-  lesson('a-gin-3', ['aluno', 'professor'], 'ginastica', 'Alongamento depois da aula', 8),
-  lesson('a-fis-1', ['aluno', 'professor'], 'fisio', 'Alinhamento na agua', 11),
-  lesson('a-fis-2', ['aluno', 'professor'], 'fisio', 'Respiracao para dor lombar', 9),
+  lesson('a-gin-1', ['aluno', 'professor'], 'ginastica', 'Aquecimento e mobilidade na agua', 10),
+  lesson('a-gin-2', ['aluno', 'professor'], 'ginastica', 'Forca e resistencia com baixo impacto', 12),
+  lesson('a-gin-3', ['aluno', 'professor'], 'ginastica', 'Volta a calma e alongamento', 8),
+  lesson('a-fis-1', ['aluno', 'professor'], 'fisio', 'Alinhamento e mobilidade na agua', 11),
+  lesson('a-fis-2', ['aluno', 'professor'], 'fisio', 'Respiracao e cuidado da lombar', 9),
   lesson('a-nat-1', ['aluno', 'professor'], 'natacao', 'Respiracao na borda', 8),
   lesson('a-nat-2', ['aluno', 'professor'], 'natacao', 'Pernada e alinhamento', 10),
   lesson('a-nat-3', ['aluno', 'professor'], 'natacao', 'Treino curto de resistencia', 12),
   lesson('a-inf-1', ['aluno', 'professor'], 'infantil', 'Aula simples na raia', 8),
   lesson('a-inf-2', ['aluno', 'professor'], 'infantil', 'Jogo de adaptacao', 7),
+  lesson('a-beb-1', ['aluno', 'professor'], 'bebe', 'Adaptacao do bebe com acompanhante', 7),
+  lesson('a-beb-2', ['aluno', 'professor'], 'bebe', 'Ritmo, contato e seguranca na agua', 8),
+  lesson('a-ges-1', ['aluno', 'professor'], 'gestantes', 'Mobilidade segura na gestacao', 10),
+  lesson('a-ges-2', ['aluno', 'professor'], 'gestantes', 'Respiracao e exercicios na agua', 9),
   lesson('p-met-1', ['professor', 'ceo'], 'metodologia', 'Metodo Lucas Oliveira - base', 14),
   lesson('p-met-2', ['professor', 'ceo'], 'metodologia', 'Como conduzir a turma', 10),
   lesson('c-all-1', ['colaborador', 'franqueado', 'ceo'], 'todos', 'Cultura Fluir para toda a equipe', 9, 'todos'),
