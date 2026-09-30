@@ -1,7 +1,7 @@
-import { TENANT, EVENTS, isCeoEmail, isMonitored } from './domain.js?v=20260929c';
-import { createStore, persistFirestore, pushAccess, fetchAccess } from './store.js';
+import { TENANT, EVENTS, isCeoEmail, isMonitored } from './domain.js?v=20260929e';
+import { createStore, persistFirestore, pushAccess, fetchAccess, fetchProfiles } from './store.js?v=20260929e';
 import { joinLive } from './live.js';
-import { render } from './ui.js?v=20260929c';
+import { render } from './ui.js?v=20260929e';
 
 try {
   firebase.initializeApp({
@@ -46,6 +46,8 @@ const ctx = {
   playId: null,
   cloudLog: [],
   logFetched: false,
+  cloudProfiles: [],
+  profilesFetched: false,
   go: function (r) {
     ctx.route = r || 'capa';
     if (ctx.route.indexOf('ws-') !== 0) {
@@ -62,6 +64,16 @@ const ctx = {
       ctx.logFetched = true;
       fetchAccess(db).then(function (rows) {
         ctx.cloudLog = rows || [];
+        render(root, ctx);
+      });
+    }
+    const st = store.get();
+    const directoryRoute = ctx.route === 'rede' || ctx.route.indexOf('membros-') === 0;
+    const ceo = st.role === 'ceo' || isCeoEmail(st.email);
+    if (directoryRoute && ceo && db && !ctx.profilesFetched) {
+      ctx.profilesFetched = true;
+      fetchProfiles(db).then(function (rows) {
+        ctx.cloudProfiles = rows || [];
         render(root, ctx);
       });
     }
