@@ -157,3 +157,19 @@ export async function fetchAccess(db) {
     }
   }
 }
+
+
+export async function fetchProfiles(db) {
+  if (!db) return [];
+  try {
+    const snap = await db.collection('academy_profiles').limit(500).get();
+    return snap.docs.map(function (d) {
+      const row = d.data() || {};
+      row.id = d.id;
+      row.demo = false;
+      return row;
+    });
+  } catch (e) {
+    return [];
+  }
+}
