@@ -3,7 +3,7 @@ export const TENANT = {
   id: 'fluir',
   name: 'Fluir Academy',
   sector: 'franchise-lms',
-  version: '0.5.0'
+  version: '0.6.0'
 };
 
 export const UNITS = [
@@ -20,6 +20,74 @@ export const UNITS = [
   { id: 'patamares', name: 'Patamares', city: 'Salvador' },
   { id: 'litoral-norte', name: 'Litoral Norte', city: 'Bahia' }
 ];
+
+
+const DEMO_FIRST = ['Ana','Bruno','Camila','Daniel','Elisa','Felipe','Gabriela','Henrique','Isabela','Joao','Karina','Lucas','Marina','Nicolas','Olivia','Paulo','Rafaela','Samuel','Tatiana','Vinicius'];
+const DEMO_LAST = ['Almeida','Barbosa','Costa','Dias','Ferreira','Gomes','Lima','Mendes','Nascimento','Oliveira','Pereira','Rocha','Santos','Silva','Souza','Teixeira'];
+
+export const DEMO_MEMBERS = [];
+UNITS.forEach(function (unit, unitIndex) {
+  const roles = ['aluno','aluno','aluno','professor','professor','colaborador','colaborador','franqueado'];
+  const jobs = ['', '', '', 'Natacao', 'Pilates', 'Recepcao', 'Gestao', 'Franqueado'];
+  roles.forEach(function (role, i) {
+    const first = DEMO_FIRST[(unitIndex * 3 + i) % DEMO_FIRST.length];
+    const last = DEMO_LAST[(unitIndex * 5 + i * 2) % DEMO_LAST.length];
+    DEMO_MEMBERS.push({
+      id: 'demo-' + unit.id + '-' + (i + 1),
+      name: first + ' ' + last,
+      email: first.toLowerCase() + '.' + last.toLowerCase() + '@demo.fluir',
+      role: role,
+      unitId: unit.id,
+      job: jobs[i],
+      status: 'ativo',
+      demo: true
+    });
+  });
+});
+
+function profileRole(profile) {
+  if (!profile) return '';
+  if (isCeoEmail(profile.email)) return 'ceo';
+  return profile.role || profile.workspace || '';
+}
+
+export function directoryUnitsFor(profile) {
+  const role = profileRole(profile);
+  if (role === 'ceo') return UNITS.slice();
+  if (role === 'franqueado' || role === 'colaborador' || role === 'professor') {
+    return UNITS.filter(function (u) { return u.id === (profile.unitId || 'pituba'); });
+  }
+  return [];
+}
+
+export function canSeeDirectory(profile) {
+  return directoryUnitsFor(profile).length > 0;
+}
+
+export function directoryMembersFor(profile, unitId, source) {
+  const role = profileRole(profile);
+  const ownUnit = profile && profile.unitId ? profile.unitId : 'pituba';
+  if (role !== 'ceo' && unitId !== ownUnit) return [];
+  let list = (source && source.length ? source : DEMO_MEMBERS).filter(function (m) {
+    return (m.unitId || 'pituba') === unitId;
+  });
+  if (role === 'ceo' || role === 'franqueado') return list;
+  if (role === 'colaborador' || role === 'professor') {
+    return list.filter(function (m) { return m.role === 'colaborador' || m.role === 'professor'; });
+  }
+  return [];
+}
+
+export function directoryRoleLabel(role) {
+  const labels = {
+    aluno: 'Aluno',
+    professor: 'Professor',
+    colaborador: 'Colaborador',
+    franqueado: 'Franqueado',
+    ceo: 'CEO / socio'
+  };
+  return labels[role] || role || 'Membro';
+}
 
 export const WORKSPACES = [
   { id: 'aluno', title: 'Aluno', tag: 'Eu sou aluno', desc: 'Areas livres com aulas de Pilates, hidro, natacao, infantil, bebe e gestantes.' },
