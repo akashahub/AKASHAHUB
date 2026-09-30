@@ -114,6 +114,7 @@ export function viewCapa(state) {
     '<div class="ws-grid">' + show.map(function (w) {
       return '<button class="ws-card" data-ws="' + w.id + '"><span class="tag">' + esc(w.tag) + '</span><b>' + esc(w.title) + '</b><span>' + esc(w.desc) + '</span></button>';
     }).join('') + '</div>' +
+    (canSeeDirectory(state) ? '<button class="btn" data-go="rede">Abrir unidades e membros</button>' : '') +
     (canManagePeople(state) ? '<button class="btn ghost" data-go="gestao">Abrir gestao de acessos</button>' : '') +
     '<p class="muted"><button class="btn ghost slim" id="out">encerrar sessao</button></p>'
   );
