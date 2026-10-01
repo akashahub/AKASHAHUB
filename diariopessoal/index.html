@@ -13,13 +13,9 @@
 </head>
 <body>
   <section id="auth" class="auth card">
-    <h2>Diário privado</h2><p class="sub">Entre com seu e-mail autorizado.</p>
-    <form id="loginForm" class="stack">
-      <input id="email" type="email" autocomplete="email" placeholder="E-mail" required>
-      <input id="password" type="password" autocomplete="current-password" placeholder="Senha do Supabase" required>
-      <button class="primary" type="submit">Entrar</button>
-    </form>
-    <p class="muted">O cadastro público é desativado no Supabase. Apenas os dois e-mails autorizados podem usar este diário.</p>
+    <h2>Diário privado</h2><p class="sub">Entre com sua conta Google autorizada.</p>
+    <button id="googleLogin" class="primary" type="button" style="width:100%">Entrar com Google</button>
+    <p class="muted">Use uma destas contas: srklehn@gmail.com ou yanfili.simon@gmail.com. Outras contas serão bloqueadas.</p>
     <div id="configError" class="notice hidden"></div>
   </section>
 
@@ -39,17 +35,18 @@ const ALLOWED=['srklehn@gmail.com','yanfili.simon@gmail.com'];
 const BUCKET='diario-videos'; const EXTRA_KEY='diario_extra_pass_hash';
 const $=id=>document.getElementById(id); const toast=(m)=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600)};
 const configured=window.DIARIO_CONFIG && !window.DIARIO_CONFIG.url.includes('SEU_PROJETO') && !window.DIARIO_CONFIG.anonKey.includes('SUA_CHAVE');
-if(!configured){$('configError').textContent='Configuração pendente: copie config.example.js para config.js e informe a URL e a chave anon do seu projeto Supabase.';$('configError').classList.remove('hidden');$('loginForm').querySelector('button').disabled=true}
+if(!configured){$('configError').textContent='Configuração pendente: copie config.example.js para config.js e informe a URL e a chave anon do seu projeto Supabase.';$('configError').classList.remove('hidden');$('googleLogin').disabled=true}
 const supabase= configured ? window.supabase.createClient(DIARIO_CONFIG.url,DIARIO_CONFIG.anonKey) : null;
 let recorder,stream,chunks=[],blob,blobUrl,startedAt,timer;
 function fmtTime(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
 function fmtDate(v){return new Date(v).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}
 async function hash(v){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-function allowed(email){return ALLOWED.includes(email.toLowerCase())}
+function allowed(email){return !!email&&ALLOWED.includes(email.toLowerCase())}
 async function requireExtraPass(){let h=localStorage.getItem(EXTRA_KEY);if(!h){const p=prompt('Crie uma senha extra local para este dispositivo (opcional). Ela não substitui o Supabase Auth.');if(p){h=await hash(p);localStorage.setItem(EXTRA_KEY,h)}}else{const p=prompt('Senha extra local');if(!p||await hash(p)!==h){toast('Senha extra incorreta');return false}}return true}
-$('loginForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('email').value.trim().toLowerCase();if(!allowed(email)){toast('E-mail não autorizado');return}const {error}=await supabase.auth.signInWithPassword({email,password:$('password').value});if(error){toast('Não foi possível entrar');return}if(!(await requireExtraPass())){await supabase.auth.signOut();return}showApp()});
+$('googleLogin').onclick=async()=>{const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:new URL('./',location.href).href}});if(error)toast('Não foi possível iniciar o login Google')};
 $('logout').onclick=async()=>{await supabase.auth.signOut();$('app').classList.add('hidden');$('auth').classList.remove('hidden')};
 async function showApp(){$('auth').classList.add('hidden');$('app').classList.remove('hidden');$('mfaNotice').classList.remove('hidden');loadGallery()}
+async function finishSession(session){if(!session)return;if(!allowed(session.user.email)){await supabase.auth.signOut();toast('Esta conta Google não está autorizada');return}if(!(await requireExtraPass())){await supabase.auth.signOut();return}showApp()}
 $('start').onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});$('preview').srcObject=stream;$('placeholder').classList.add('hidden');const type=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(MediaRecorder.isTypeSupported)||'';recorder=new MediaRecorder(stream,type?{mimeType:type}:undefined);chunks=[];recorder.ondataavailable=e=>e.data.size&&chunks.push(e.data);recorder.onstop=()=>{blob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});blobUrl=URL.createObjectURL(blob);$('preview').srcObject=null;$('preview').src=blobUrl;$('preview').controls=true;setRecorder(false,true)};recorder.start();startedAt=Date.now();timer=setInterval(()=>{$('timer').textContent=fmtTime(Math.floor((Date.now()-startedAt)/1000))},250);setRecorder(true)}catch(e){toast('Permita o acesso à câmera e ao microfone')}};
 $('stop').onclick=()=>{if(recorder&&recorder.state!=='inactive')recorder.stop();stream?.getTracks().forEach(t=>t.stop());clearInterval(timer)};
 function setRecorder(recording,review=false){$('start').classList.toggle('hidden',recording||review);$('stop').classList.toggle('hidden',!recording);$('save').classList.toggle('hidden',!review);$('discard').classList.toggle('hidden',!review);$('titleBox').classList.toggle('hidden',!review);$('recBadge').classList.toggle('hidden',!recording)}
@@ -57,7 +54,7 @@ $('discard').onclick=()=>{if(blobUrl)URL.revokeObjectURL(blobUrl);blob=null;$('p
 $('save').onclick=async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user||!blob)return;const ext=blob.type.includes('mp4')?'mp4':'webm';const path=`${user.id}/${crypto.randomUUID()}.${ext}`;toast('Enviando vídeo…');const up=await supabase.storage.from(BUCKET).upload(path,blob,{contentType:blob.type,upsert:false});if(up.error){toast('Falha no upload');return}const duration=Math.floor((Date.now()-startedAt)/1000);const ins=await supabase.from('videos').insert({user_id:user.id,title:$('title').value.trim()||'Sem título',storage_path:path,duration,size:blob.size,mime_type:blob.type});if(ins.error){await supabase.storage.from(BUCKET).remove([path]);toast('Falha ao salvar metadados');return}toast('Salvo no diário');$('discard').click();loadGallery()};
 async function loadGallery(){const {data,error}=await supabase.from('videos').select('*').order('created_at',{ascending:false});if(error){toast('Não foi possível carregar os registros');return}$('count').textContent=data.length?`${data.length} ${data.length===1?'registro':'registros'}`:'';$('gallery').innerHTML='';if(!data.length){$('gallery').innerHTML='<div class="card muted">Nenhum registro ainda. Grave seu primeiro momento acima.</div>';return}for(const v of data){const signed=await supabase.storage.from(BUCKET).createSignedUrl(v.storage_path,3600);const el=document.createElement('article');el.className='item';el.innerHTML=`<p class="item-title"></p><p class="item-date">${fmtDate(v.created_at)}${v.duration?' · '+fmtTime(v.duration):''}</p><video controls preload="metadata" src="${signed.data?.signedUrl||''}"></video><div class="actions"><a class="ghost" style="padding:8px 14px;border-radius:10px;color:var(--muted);text-decoration:none" href="${signed.data?.signedUrl||'#'}" download>Baixar</a><button class="danger">Apagar</button></div>`;el.querySelector('.item-title').textContent=v.title||'Sem título';el.querySelector('button').onclick=()=>deleteVideo(v,el);$('gallery').appendChild(el)}}
 async function deleteVideo(v,el){if(!confirm(`Apagar “${v.title||'Sem título'}”?`))return;const s=await supabase.storage.from(BUCKET).remove([v.storage_path]);const d=await supabase.from('videos').delete().eq('id',v.id);if(s.error||d.error){toast('Não foi possível apagar');return}el.remove();toast('Registro apagado')}
-supabase?.auth.getSession().then(({data:{session}})=>{if(session&&allowed(session.user.email))showApp()});
+supabase?.auth.getSession().then(({data:{session}})=>finishSession(session));
 </script>
 </body>
 </html>
