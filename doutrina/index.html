@@ -1411,13 +1411,32 @@
 
     <script>
         // --- LOADER ---
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
+        // O loader não deve depender do carregamento de vídeos, áudios,
+        // imagens ou outros recursos externos. Caso algum deles demore,
+        // a página continua acessível normalmente.
+        let loaderHidden = false;
+
+        function hideLoader() {
+            if (loaderHidden) return;
+            loaderHidden = true;
+
+            const loader = document.getElementById('loader');
+            if (loader) {
                 loader.style.opacity = '0';
                 loader.style.visibility = 'hidden';
-                initObservers();
-            }, 2500);
+                loader.style.pointerEvents = 'none';
+            }
+
+            initObservers();
+        }
+
+        // Fallback principal: libera a página mesmo que algum recurso externo
+        // fique pendurado e impeça o evento "load" de acontecer.
+        setTimeout(hideLoader, 2500);
+
+        // Se todos os recursos carregarem antes, libera mais rápido.
+        window.addEventListener('load', () => {
+            setTimeout(hideLoader, 500);
         });
 
         // --- CURSOR CUSTOMIZADO ---
