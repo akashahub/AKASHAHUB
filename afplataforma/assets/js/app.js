@@ -24,7 +24,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js";
+} from "./navigation.js?v=rt9";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
@@ -104,7 +104,9 @@ function showApp() {
   buildNav();
   bindPersistentCallUI(navigate);
   startPresence();
-  navigate("dashboard");
+  const room = (location.hash || "").replace("#", "");
+  const rooms = ["criancas", "criancas-pais", "criancas-sala", "empresas"];
+  navigate(rooms.includes(room) ? room : "dashboard");
 }
 
 function showAccessDenied() {
@@ -321,6 +323,70 @@ function renderProfile() {
   </div>`;
 }
 
+function renderCriancas() {
+  return `<div class="view active">
+    <p class="hero-line">Dentro do acesso</p>
+    <h2 class="hero-title">Crianças</h2>
+    <p class="hero-sub">Duas salas. A fala do adulto não entra na sala da criança.</p>
+    <div class="grid-3">
+      <div class="stat-card" data-nav="criancas-pais" style="cursor:pointer">
+        <div class="lbl">Adulto</div>
+        <div class="val" style="font-size:1.35rem">Pais</div>
+        <div class="hint">Orientação para acompanhar o filho. A criança não lê isto sozinha.</div>
+      </div>
+      <div class="stat-card" data-nav="criancas-sala" style="cursor:pointer">
+        <div class="lbl">Criança</div>
+        <div class="val" style="font-size:1.35rem">Sala</div>
+        <div class="hint">Dinheiro, guardar, gastar, escolher, esperar.</div>
+      </div>
+    </div>
+    <p class="notes-hint">Aulas e faixa etária: conteúdo ainda não publicado.</p>
+  </div>`;
+}
+
+function renderCriancasPais() {
+  return `<div class="view active">
+    <div class="back-link" data-nav="criancas">← Crianças</div>
+    <p class="hero-line">Orientação dos pais</p>
+    <h2 class="hero-title">Você acompanha. Não faz no lugar.</h2>
+    <p class="hero-sub">Esta sala é para quem vai sentar junto. Não leve patrimônio, caixa, protocolo ou investimento para a conversa com a criança.</p>
+    <div class="module-list">
+      <div class="mod-row"><div class="mod-num">1</div><div class="mod-body"><h3>Antes de abrir a sala dela</h3><p>Você entra primeiro. A criança entra na outra sala, com você por perto.</p></div></div>
+      <div class="mod-row"><div class="mod-num">2</div><div class="mod-body"><h3>Como falar</h3><p>Dinheiro. Guardar. Gastar. Escolher. Esperar.</p></div></div>
+      <div class="mod-row"><div class="mod-num">3</div><div class="mod-body"><h3>O que ainda falta</h3><p>Roteiro de orientação e faixa etária. Conteúdo ainda não publicado.</p></div></div>
+    </div>
+  </div>`;
+}
+
+function renderCriancasSala() {
+  return `<div class="view active">
+    <div class="back-link" data-nav="criancas">← Crianças</div>
+    <h2 class="hero-title">Aqui é com você.</h2>
+    <p class="hero-sub">A gente fala de dinheiro com poucas palavras. Um adulto fica junto.</p>
+    <div class="module-list">
+      <div class="mod-row"><div class="mod-num">1</div><div class="mod-body"><h3>Olhar o dinheiro.</h3></div></div>
+      <div class="mod-row"><div class="mod-num">2</div><div class="mod-body"><h3>Escolher.</h3></div></div>
+      <div class="mod-row"><div class="mod-num">3</div><div class="mod-body"><h3>Guardar um pouco.</h3></div></div>
+      <div class="mod-row"><div class="mod-num">4</div><div class="mod-body"><h3>Esperar.</h3></div></div>
+    </div>
+    <p class="notes-hint">A história de cada passo ainda não foi escrita.</p>
+  </div>`;
+}
+
+function renderEmpresas() {
+  return `<div class="view active">
+    <p class="hero-line">Dentro do acesso</p>
+    <h2 class="hero-title">Empresas</h2>
+    <p class="hero-sub">Camada para a empresa desenvolver o colaborador. Não é a mentoria individual.</p>
+    <div class="module-list">
+      ${["Educação financeira", "Comunicação", "Atendimento", "Vendas", "Cultura", "Outros treinamentos"]
+        .map((name, i) => `<div class="mod-row"><div class="mod-num">${i + 1}</div><div class="mod-body"><h3>${name}</h3><p>Espaço reservado. Material ainda não publicado.</p></div></div>`)
+        .join("")}
+    </div>
+    <p class="notes-hint">Login de gestor e progresso por empresa ainda não existem. Quem entra aqui já passou pelo acesso da plataforma.</p>
+  </div>`;
+}
+
 registerRenderers({
   dashboard: renderDashboard,
   modules: renderModules,
@@ -341,6 +407,10 @@ registerRenderers({
   complementar: renderComplementarHome,
   compApp: renderComplementarApp,
   quitei: renderQuitei,
+  criancas: renderCriancas,
+  "criancas-pais": renderCriancasPais,
+  "criancas-sala": renderCriancasSala,
+  empresas: renderEmpresas,
   showLocked,
   openTool,
   pickProduct: pickNewProductImage
