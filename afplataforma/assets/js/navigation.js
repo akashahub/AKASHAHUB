@@ -34,6 +34,8 @@ export function buildNav() {
     { id: "call", label: t(lang, "call"), ico: "◎" },
     { id: "complementar", label: "Complementar", ico: "✦" },
     { id: "quitei", label: "Quitei", ico: "⬡" },
+    { id: "criancas", label: "Crianças", ico: "✶" },
+    { id: "empresas", label: "Empresas", ico: "▣" },
     { id: "profile", label: t(lang, "profile"), ico: "○" }
   ];
   if (isMentorSession()) {
@@ -61,6 +63,8 @@ function isActive(id) {
   if (currentView === id) return true;
   if (currentView.startsWith("module:") && id === "modules") return true;
   if (currentView.startsWith("comp:") && id === "complementar") return true;
+  if (currentView.startsWith("criancas") && id === "criancas") return true;
+  if (currentView === "empresas" && id === "empresas") return true;
   return false;
 }
 
@@ -71,7 +75,9 @@ function setActiveNav(view) {
       "active",
       id === view ||
         (view.startsWith("module:") && id === "modules") ||
-        (view.startsWith("comp:") && id === "complementar")
+        (view.startsWith("comp:") && id === "complementar") ||
+        (view.startsWith("criancas") && id === "criancas") ||
+        (view === "empresas" && id === "empresas")
     );
   });
 }
@@ -91,7 +97,11 @@ export async function navigate(view) {
     mentor: t(lang, "mentor"),
     ascensao: "Ascensão",
     complementar: "Complementar",
-    quitei: "Quitei"
+    quitei: "Quitei",
+    criancas: "Crianças",
+    "criancas-pais": "Orientação dos pais",
+    "criancas-sala": "Sala da criança",
+    empresas: "Empresas"
   };
   const top = document.getElementById("topTitle");
   if (top) {
