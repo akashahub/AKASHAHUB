@@ -256,5 +256,35 @@ service cloud.firestore {
         );
       allow create, update, delete: if isAfMentor();
     }
+
+    match /taAccess/{uid} {
+      allow read: if isSignedIn()
+        && (
+          request.auth.uid == uid
+          || isAfMentor()
+        );
+      allow create, update: if isAfMentor();
+      allow delete: if false;
+    }
+    match /taAccessRequests/{uid} {
+      allow read: if isSignedIn()
+        && (
+          request.auth.uid == uid
+          || isAfMentor()
+        );
+      allow create: if isSignedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == "pending";
+      allow update: if isAfMentor();
+      allow delete: if false;
+    }
+    match /taComercial/{uid} {
+      allow read, write: if isAfMentor();
+    }
+    match /taTools/{uid} {
+      allow read, write: if isSignedIn() && request.auth.uid == uid;
+      allow read: if isAfMentor();
+    }
   }
 }
