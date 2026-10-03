@@ -46,6 +46,12 @@ document.getElementById("pay").onclick = async function () {
   var mail = document.getElementById("mail").value.trim().toLowerCase();
   var note = document.getElementById("note");
   if (!mail.includes("@")) { note.textContent = "Coloca o Gmail de quem vai acessar."; return; }
+  var link = (window.AKASHA_LINKS || {})[oferta.ref];
+  if (link) {
+    note.textContent = "Abrindo o Stripe…";
+    location.href = link + "?prefilled_email=" + encodeURIComponent(mail) + "&client_reference_id=" + encodeURIComponent(mail);
+    return;
+  }
   note.textContent = "Abrindo o Stripe…";
   var success = "https://akashahub.com.br/members/?session_id={CHECKOUT_SESSION_ID}";
   try {
