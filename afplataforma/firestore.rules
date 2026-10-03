@@ -76,7 +76,7 @@ service cloud.firestore {
       );
       allow create, update: if isMembersAdmin()
         && request.resource.data.videoId is string
-        && request.resource.data.videoId.size() < 40
+        && request.resource.data.videoId.size() < 80
         && request.resource.data.area is string
         && request.resource.data.cursoKey is string;
       allow delete: if isMembersAdmin();
@@ -95,10 +95,8 @@ service cloud.firestore {
     }
 
     match /membrosGestao/{id} {
-      allow read, write: if request.auth != null && (
-        request.auth.token.email == "yanfili.simon@gmail.com"
-        || request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2"
-      );
+      allow read: if isMembersAdmin() || (id == "conteudo" && request.auth != null);
+      allow create, update, delete: if isMembersAdmin();
     }
 
     match /users/{uid} {
