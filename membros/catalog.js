@@ -123,6 +123,24 @@ window.akashaOferta = function (ref) {
   return { ref: kind + ":" + area + ":" + item, nome: titulo, cents: valor, label: window.akashaReais(valor) };
 };
 
+window.AKASHA_LINKS = {
+  "area:anubis": "https://buy.stripe.com/14AfZh2KV9WH1cYaq3djO00",
+  "area:horus": "https://buy.stripe.com/dRm9AT85fb0L7BmdCfdjO01",
+  "area:isis": "https://buy.stripe.com/fZu00j85f9WH4pa2XBdjO02",
+  "area:amon": "https://buy.stripe.com/00waEXetDb0L3l61TxdjO03",
+  "curso:anubis:alinhamento": "https://buy.stripe.com/14AdR9bhrgl51cYfKndjO04",
+  "curso:anubis:7-dias": "https://buy.stripe.com/28E28r4T3ecXdZK7dRdjO05",
+  "curso:anubis:casais": "https://buy.stripe.com/00w9AT0CNecXdZK55JdjO06",
+  "curso:anubis:tantra": "https://buy.stripe.com/5kQaEXbhr5Gr6xi7dRdjO07",
+  "curso:anubis:fascinacao": "https://buy.stripe.com/bJecN55X76Kv1cY9lZdjO08",
+  "curso:horus:senda": "https://buy.stripe.com/cNi28r0CN5Gr6xi41FdjO09",
+  "curso:horus:prosperidade": "https://buy.stripe.com/28E14nfxH7Oz8Fq7dRdjO0a",
+  "curso:horus:despertar": "https://buy.stripe.com/00w8wPdpz9WHdZK55JdjO0b",
+  "curso:isis:paladins": "https://buy.stripe.com/3cI28radn0m75te7dRdjO0c",
+  "curso:isis:jornada": "https://buy.stripe.com/9B66oH3OZ9WH08U1TxdjO0d",
+  "curso:amon:zero": "https://buy.stripe.com/3cI8wP1GRc4PaNy55JdjO0e"
+};
+
 window.AKASHA_YAN = "yanfili.simon@gmail.com";
 
 window.akashaArea = function (id) {
