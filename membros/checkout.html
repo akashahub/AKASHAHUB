@@ -3,59 +3,71 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Checkout · Akasha</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Jost:wght@400;500&display=swap" rel="stylesheet"/>
+<title>Pagamento · Akasha</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
 <style>
-body{margin:0;background:#07050b;color:#ede6d6;font-family:Jost,sans-serif}
+body{margin:0;background:#fbf8f3;color:#1c140c;font-family:"Josefin Sans",sans-serif;font-weight:300}
 main{max-width:520px;margin:0 auto;padding:48px 20px}
-h1{font-family:"Playfair Display",serif;font-weight:600;font-size:36px}
-p{color:#a89bb5;line-height:1.5}
-label{display:block;margin-top:16px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#c9a24b}
-input{width:100%;margin-top:8px;background:#120e16;border:1px solid rgba(201,162,75,.3);color:#ede6d6;border-radius:12px;padding:14px}
-button{margin-top:18px;border:0;background:#c9a24b;color:#402d00;border-radius:999px;padding:14px 18px;font-weight:600;cursor:pointer}
-a{color:#c9a24b}
+.moon{height:160px;overflow:hidden;background:#111}
+.moon img{width:100%;height:100%;object-fit:cover;object-position:center 40%}
+h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:40px;margin:8px 0}
+p{color:#6d6256;line-height:1.5}
+.price{font-family:"Cormorant Garamond",serif;font-size:32px;color:#8b6914;margin:0}
+label{display:block;margin-top:16px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8b6914}
+input{width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:14px}
+button{margin-top:18px;border:0;background:#8b6914;color:#fff;border-radius:999px;padding:14px 18px;font-weight:600;cursor:pointer}
+a{color:#8b6914}
 .note{margin-top:14px}
 </style>
 </head>
 <body>
+<div class="moon"><img alt="Lua" src="https://akashahub.com.br/afplataforma/assets/img/lua/hero/lua-hero-01.webp"></div>
 <main>
   <p>Stripe · real</p>
-  <h1 id="title">Checkout</h1>
-  <p id="lead">O pagamento é em real. Esta tela pede o e-mail e abre o Stripe. Se o preço desta faixa ainda não estiver cadastrado lá, a área abre para você ver o caminho, sem cobrar cartão.</p>
-  <label>E-mail</label>
-  <input id="mail" type="email" placeholder="voce@email.com" autocomplete="email"/>
+  <h1 id="title">Pagamento</h1>
+  <p class="price" id="price"></p>
+  <p id="lead">Use o mesmo Gmail com que você entra na área. Depois do pagamento, o Stripe libera só este item.</p>
+  <label>E-mail / Gmail</label>
+  <input id="mail" type="email" placeholder="voce@gmail.com" autocomplete="email"/>
   <button id="pay" type="button">Pagar no Stripe</button>
   <p class="note" id="note"></p>
-  <p><a href="/membros/">Voltar ao portal</a></p>
+  <p><a href="/membros/">Voltar</a></p>
 </main>
 <script src="./catalog.js"></script>
 <script>
 var params = new URLSearchParams(location.search);
-var area = akashaArea(params.get("area"));
-if (!area) location.replace("/membros/");
-document.getElementById("title").textContent = area.name;
+var ref = params.get("ref") || "";
+if (!ref && params.get("area")) ref = "area:" + params.get("area");
+var oferta = window.akashaOferta(ref);
+if (!oferta) location.replace("/membros/");
+document.getElementById("title").textContent = oferta.nome;
+document.getElementById("price").textContent = oferta.label;
 document.getElementById("pay").onclick = async function () {
   var mail = document.getElementById("mail").value.trim().toLowerCase();
   var note = document.getElementById("note");
-  if (!mail.includes("@")) { note.textContent = "Coloca o e-mail de quem vai acessar."; return; }
+  if (!mail.includes("@")) { note.textContent = "Coloca o Gmail de quem vai acessar."; return; }
   note.textContent = "Abrindo o Stripe…";
-  var success = location.origin + "/members/?pago=" + encodeURIComponent(area.id) + "&email=" + encodeURIComponent(mail);
+  var success = "https://akashahub.com.br/members/?session_id={CHECKOUT_SESSION_ID}";
   try {
     var res = await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/createStoreCheckout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        sku: "area-" + area.id,
+        ref: oferta.ref,
         email: mail,
         success_url: success,
-        cancel_url: location.origin + "/membros/"
+        cancel_url: "https://akashahub.com.br/membros/"
       })
     });
     var data = {};
     try { data = await res.json(); } catch (e) {}
     if (data.url) { location.href = data.url; return; }
-  } catch (e) {}
-  note.textContent = "O Stripe ainda não tem o preço desta faixa. Nada foi cobrado e o acesso não foi liberado.";
+    note.textContent = data.error === "unknown_ref"
+      ? "Esse item ainda não está no Stripe."
+      : "O Stripe não abriu. Nada foi cobrado.";
+  } catch (e) {
+    note.textContent = "O Stripe não abriu. Nada foi cobrado.";
+  }
 };
 </script>
 </body>
