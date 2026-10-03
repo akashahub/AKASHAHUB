@@ -1,835 +1,406 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Akasha Hub | Área de Membros</title>
-  <link rel="icon" type="image/webp" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;500&family=Raleway:wght@200;300;400;500&display=swap" rel="stylesheet">
-
-  <style>
-  :root{
-    --bg:#06050a; --bg2:#09071a;
-    --gold:#c8a04e; --gold-lt:#e8cb80;
-    --gold-border:rgba(200,160,78,.28); --gold-dim:rgba(200,160,78,.12);
-    --white:#f4ede0; --muted:rgba(244,237,224,.38);
-    --purple:#7c4dbd; --purple-lt:#a67fdc;
-    --teal:#2a9aad; --teal-lt:#56cfe1;
-    --surface:rgba(255,255,255,.022);
-    --r:3px;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{background:var(--bg);color:var(--white);font-family:'Raleway',sans-serif;font-weight:300;font-size:15px;line-height:1.75;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
-
-  .amb{position:fixed;inset:0;z-index:0;pointer-events:none;}
-  .orb{position:absolute;border-radius:50%;filter:blur(110px);animation:orbF 22s ease-in-out infinite;}
-  .o1{width:600px;height:600px;top:-10%;left:-15%;background:rgba(80,40,160,.07);}
-  .o2{width:400px;height:400px;top:40%;right:-10%;background:rgba(200,160,78,.05);animation-delay:-9s;}
-  .o3{width:500px;height:500px;bottom:-15%;left:25%;background:rgba(30,90,130,.06);animation-delay:-16s;}
-  @keyframes orbF{0%,100%{transform:translate(0,0);}40%{transform:translate(25px,-18px);}70%{transform:translate(-18px,22px);}}
-
-  .grid-veil{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(200,160,78,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(200,160,78,.018) 1px,transparent 1px);background-size:50px 50px;animation:gDrift 35s linear infinite;}
-  @keyframes gDrift{0%{background-position:0 0;}100%{background-position:50px 50px;}}
-
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:rgba(6,5,10,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(200,160,78,.07);}
-  .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-  .nav-logo img{width:34px;height:34px;border-radius:50%;filter:drop-shadow(0 0 6px rgba(200,160,78,.35));}
-  .nav-logo span{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:4px;color:var(--white);}
-  .nav-logo span b{color:var(--gold-lt);font-weight:400;}
-  .back{font-size:.6rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s;padding:8px 14px;border:1px solid rgba(255,255,255,.05);border-radius:2px;}
-  .back:hover{color:var(--gold);border-color:var(--gold-border);}
-
-  #ls{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .6s;}
-  #ls.hide{opacity:0;pointer-events:none;}
-  .ls-sym{font-size:2rem;color:var(--gold);opacity:.4;animation:spin 6s linear infinite;display:inline-block;margin-bottom:16px;}
-  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-  .ls-txt{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:.4;animation:pulse 1.8s ease-in-out infinite;}
-  @keyframes pulse{0%,100%{opacity:.25;}50%{opacity:.7;}}
-
-  main{position:relative;z-index:3;max-width:600px;margin:0 auto;padding:100px 22px 80px;}
-
-  .page-header{margin-bottom:38px;animation:riseIn .9s cubic-bezier(.16,1,.3,1) both;}
-  .page-eyebrow{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:.6;display:block;margin-bottom:10px;}
-  .page-title{font-family:'Playfair Display',serif;font-weight:400;font-size:2.2rem;letter-spacing:3px;line-height:1.1;color:var(--white);}
-  .page-title em{font-style:italic;color:var(--gold-lt);}
-  .page-sub{font-size:13px;letter-spacing:.4px;color:var(--muted);margin-top:10px;line-height:1.8;}
-
-  .user-strip{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--gold-border);border-radius:var(--r);background:rgba(200,160,78,.04);margin-bottom:32px;animation:riseIn .7s .15s cubic-bezier(.16,1,.3,1) both;}
-  .user-avatar{width:38px;height:38px;border-radius:50%;border:1px solid var(--gold-border);background:linear-gradient(135deg,rgba(200,160,78,.2),rgba(124,77,189,.15));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-lt);flex-shrink:0;}
-  .user-info{flex:1;}
-  .user-name{font-family:'Playfair Display',serif;font-size:1rem;letter-spacing:.8px;color:var(--white);display:block;}
-  .user-nivel{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.7;display:block;margin-top:2px;}
-  .user-logout{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);background:none;border:1px solid rgba(255,255,255,.06);border-radius:2px;padding:6px 12px;cursor:pointer;transition:all .3s;}
-  .user-logout:hover{color:var(--gold);border-color:var(--gold-border);}
-
-  .divider{display:flex;align-items:center;gap:12px;margin:28px 0 20px;}
-  .div-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-border),transparent);}
-  .div-gem{width:4px;height:4px;background:var(--gold);transform:rotate(45deg);opacity:.5;}
-
-  .sec-lbl{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-  .sec-lbl span{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);opacity:.55;white-space:nowrap;}
-  .sec-lbl::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--gold-border),transparent);}
-
-  .levels{display:flex;flex-direction:column;gap:10px;}
-
-  .lv{
-    width:100%;position:relative;overflow:hidden;
-    border-radius:var(--r);border:1px solid rgba(255,255,255,.06);
-    background:var(--surface);
-    cursor:pointer;transition:all .4s cubic-bezier(.25,1,.5,1);
-    animation:riseIn .7s cubic-bezier(.16,1,.3,1) both;
-    text-align:left;
-  }
-  .lv::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);transform:scaleY(0);transition:transform .4s;transform-origin:bottom;}
-  .lv::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent);transition:width .5s;}
-  .lv:hover{border-color:var(--gold-border);transform:translateX(4px);}
-  .lv:hover::before{transform:scaleY(1);}
-  .lv:hover::after{width:100%;}
-
-  .lv.nivel-1{border-color:rgba(200,160,78,.14);}
-  .lv.nivel-1::before{background:var(--gold);}
-  .lv.nivel-2{border-color:rgba(86,207,225,.12);}
-  .lv.nivel-2::before{background:var(--teal-lt);}
-  .lv.nivel-2::after{background:linear-gradient(90deg,var(--teal-lt),transparent);}
-  .lv.nivel-3{border-color:rgba(166,127,220,.14);}
-  .lv.nivel-3::before{background:var(--purple-lt);}
-  .lv.nivel-3::after{background:linear-gradient(90deg,var(--purple-lt),transparent);}
-  .lv.nivel-4{border-color:rgba(200,160,78,.28);background:linear-gradient(135deg,rgba(200,160,78,.06),rgba(124,77,189,.04));}
-  .lv.nivel-4::before{background:linear-gradient(var(--gold-lt),var(--purple-lt));}
-
-  .lv.locked{opacity:.3;cursor:default;pointer-events:none;}
-  .lv.locked::before,.lv.locked::after{display:none;}
-
-  .lv-inner{padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
-  .lv-left{display:flex;align-items:center;gap:16px;}
-
-  /* ── LOGO CIRCLE - substitui o círculo com número ── */
-  .lv-orb{
-    width:54px;height:54px;border-radius:50%;flex-shrink:0;
-    border:1px solid;position:relative;overflow:hidden;
-    display:flex;align-items:center;justify-content:center;
-    transition:box-shadow .4s;
-  }
-  .lv-orb img{
-    width:100%;height:100%;object-fit:cover;border-radius:50%;
-    display:block;
-    transition:transform .45s cubic-bezier(.25,1,.5,1),filter .45s;
-    filter:brightness(.9) saturate(1.1);
-  }
-  .lv:hover .lv-orb img{
-    transform:scale(1.08);
-    filter:brightness(1.06) saturate(1.25);
-  }
-  .lv.nivel-1 .lv-orb{border-color:var(--gold-border);box-shadow:0 0 10px rgba(200,160,78,.15);}
-  .lv.nivel-2 .lv-orb{border-color:rgba(86,207,225,.35);box-shadow:0 0 10px rgba(86,207,225,.13);}
-  .lv.nivel-3 .lv-orb{border-color:rgba(166,127,220,.35);box-shadow:0 0 10px rgba(166,127,220,.13);}
-  .lv.nivel-4 .lv-orb{border-color:var(--gold-border);box-shadow:0 0 14px rgba(200,160,78,.2),0 0 28px rgba(124,77,189,.08);}
-  .lv:hover.nivel-1 .lv-orb{box-shadow:0 0 22px rgba(200,160,78,.38);}
-  .lv:hover.nivel-2 .lv-orb{box-shadow:0 0 22px rgba(86,207,225,.3);}
-  .lv:hover.nivel-3 .lv-orb{box-shadow:0 0 22px rgba(166,127,220,.3);}
-  .lv:hover.nivel-4 .lv-orb{box-shadow:0 0 26px rgba(200,160,78,.45),0 0 44px rgba(124,77,189,.18);}
-
-  .lv-info{}
-  .lv-tag{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px;}
-  .lv.nivel-1 .lv-tag{color:rgba(200,160,78,.5);}
-  .lv.nivel-2 .lv-tag{color:rgba(86,207,225,.5);}
-  .lv.nivel-3 .lv-tag{color:rgba(166,127,220,.5);}
-  .lv.nivel-4 .lv-tag{color:rgba(200,160,78,.6);}
-  .lv-name{font-family:'Playfair Display',serif;font-weight:400;font-size:1.12rem;letter-spacing:1.5px;color:var(--white);}
-  .lv-desc{font-size:12px;letter-spacing:.4px;color:var(--muted);margin-top:3px;}
-  .lv-count{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:5px;}
-
-  .lv-right{display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;}
-  .badge-cur{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-border);padding:4px 10px;border-radius:20px;background:rgba(200,160,78,.06);}
-  .badge-open{font-size:.9rem;color:var(--gold);opacity:.6;}
-  .lv.nivel-2 .badge-open{color:var(--teal-lt);}
-  .lv.nivel-3 .badge-open{color:var(--purple-lt);}
-  .badge-lock{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.06);padding:4px 10px;border-radius:20px;}
-
-  /* CONTENT OVERLAY */
-  .content-overlay{
-    position:fixed;inset:0;z-index:300;
-    background:rgba(5,4,8,.94);backdrop-filter:blur(16px);
-    display:flex;align-items:flex-end;justify-content:center;
-    opacity:0;pointer-events:none;transition:opacity .4s ease;
-  }
-  .content-overlay.open{opacity:1;pointer-events:all;}
-
-  .content-sheet{
-    width:100%;max-width:620px;max-height:94vh;
-    background:linear-gradient(175deg,#0c0920 0%,#08071a 100%);
-    border:1px solid rgba(200,160,78,.15);border-bottom:none;
-    border-radius:18px 18px 0 0;position:relative;
-    transform:translateY(100%);transition:transform .5s cubic-bezier(.16,1,.3,1);
-    display:flex;flex-direction:column;overflow:hidden;
-  }
-  .content-overlay.open .content-sheet{transform:translateY(0);}
-
-  .cs-bg{position:absolute;inset:0;pointer-events:none;z-index:0;
-    background:radial-gradient(ellipse at 10% 0%,rgba(200,160,78,.1) 0%,transparent 50%),
-               radial-gradient(ellipse at 90% 100%,rgba(124,77,189,.08) 0%,transparent 50%);}
-  .cs-grid{position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.03;
-    background-image:linear-gradient(rgba(200,160,78,1) 1px,transparent 1px),linear-gradient(90deg,rgba(200,160,78,1) 1px,transparent 1px);
-    background-size:28px 28px;}
-
-  .cs-handle{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:14px 22px 0;flex-shrink:0;}
-  .cs-pill{width:40px;height:4px;border-radius:2px;background:rgba(200,160,78,.22);margin-bottom:14px;}
-  .cs-toprow{width:100%;display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid rgba(200,160,78,.08);}
-  .cs-badge{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:4px;text-transform:uppercase;color:rgba(200,160,78,.5);}
-  .cs-close{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.85rem;transition:all .25s;}
-  .cs-close:hover{background:rgba(200,160,78,.1);border-color:var(--gold-border);color:var(--gold);}
-
-  .cs-body{position:relative;z-index:2;overflow-y:auto;flex:1;padding:22px 22px 40px;scrollbar-width:thin;scrollbar-color:rgba(200,160,78,.15) transparent;}
-  .cs-body::-webkit-scrollbar{width:3px;}
-  .cs-body::-webkit-scrollbar-thumb{background:rgba(200,160,78,.15);border-radius:2px;}
-
-  .cs-header{margin-bottom:24px;}
-  .cs-nivel-tag{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:4px;text-transform:uppercase;display:block;margin-bottom:8px;opacity:.65;}
-  .cs-title{font-family:'Playfair Display',serif;font-weight:400;font-size:1.7rem;letter-spacing:2px;line-height:1.15;color:var(--white);}
-  .cs-title em{font-style:italic;}
-  .cs-desc{font-size:13.5px;letter-spacing:.35px;line-height:1.85;color:var(--muted);margin-top:10px;}
-
-  .cs-progress{margin-bottom:22px;}
-  .cs-progress-row{display:flex;justify-content:space-between;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-  .cs-progress-bar{width:100%;height:2px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;}
-  .cs-progress-fill{height:100%;border-radius:2px;transition:width .5s cubic-bezier(.25,1,.5,1);}
-
-  .modules{display:flex;flex-direction:column;gap:12px;}
-
-  .module{
-    border:1px solid rgba(255,255,255,.05);border-radius:var(--r);overflow:hidden;
-    background:rgba(255,255,255,.014);transition:border-color .3s;
-  }
-  .module:hover{border-color:rgba(200,160,78,.18);}
-
-  .module-head{
-    padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;
-    transition:background .3s;position:relative;
-  }
-  .module-head:hover{background:rgba(200,160,78,.03);}
-  .module-num{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:3px;color:var(--gold);opacity:.55;flex-shrink:0;min-width:28px;}
-  .module-name{font-family:'Playfair Display',serif;font-size:1rem;letter-spacing:1px;color:var(--white);flex:1;}
-  .module-count{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);flex-shrink:0;}
-  .module-chevron{font-size:.75rem;color:var(--gold);opacity:.5;flex-shrink:0;transition:transform .35s;}
-  .module.open .module-chevron{transform:rotate(90deg);}
-  .module-line{position:absolute;bottom:0;left:18px;right:18px;height:1px;background:linear-gradient(90deg,rgba(200,160,78,.12),transparent);}
-
-  .video-list{display:none;padding:4px 0 10px;}
-  .module.open .video-list{display:block;animation:slideDown .3s ease;}
-  @keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
-
-  .vitem{
-    display:flex;align-items:center;gap:14px;padding:12px 18px 12px 22px;
-    cursor:pointer;transition:all .25s;position:relative;
-    border-bottom:1px solid rgba(255,255,255,.03);
-  }
-  .vitem:last-child{border-bottom:none;}
-  .vitem:hover{background:rgba(200,160,78,.04);}
-  .vitem.watched .vitem-icon{opacity:1;}
-  .vitem.playing{background:rgba(200,160,78,.07);}
-  .vitem.playing::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);}
-
-  .vitem-icon{
-    width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.07);
-    display:flex;align-items:center;justify-content:center;flex-shrink:0;
-    font-size:.7rem;color:var(--muted);background:rgba(255,255,255,.02);
-    transition:all .3s;
-  }
-  .vitem:hover .vitem-icon{border-color:var(--gold-border);color:var(--gold);background:rgba(200,160,78,.06);}
-  .vitem.watched .vitem-icon{border-color:rgba(200,160,78,.3);color:var(--gold);background:rgba(200,160,78,.06);}
-  .vitem.playing .vitem-icon{border-color:var(--gold);color:var(--gold);background:rgba(200,160,78,.1);}
-
-  .vitem-info{flex:1;}
-  .vitem-title{font-size:13.5px;letter-spacing:.4px;color:var(--white);opacity:.85;line-height:1.45;}
-  .vitem-meta{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
-  .vitem-dur{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:2px;color:var(--muted);}
-
-  .player-overlay{
-    position:fixed;inset:0;z-index:500;
-    background:rgba(3,2,8,.97);backdrop-filter:blur(20px);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    opacity:0;pointer-events:none;transition:opacity .35s ease;
-    padding:20px;
-  }
-  .player-overlay.open{opacity:1;pointer-events:all;}
-
-  .player-top{width:100%;max-width:720px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-shrink:0;}
-  .player-back{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);background:none;border:1px solid rgba(255,255,255,.06);border-radius:2px;padding:8px 14px;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px;}
-  .player-back:hover{color:var(--gold);border-color:var(--gold-border);}
-  .player-title{font-family:'Playfair Display',serif;font-size:1rem;letter-spacing:1px;color:var(--white);opacity:.75;text-align:center;flex:1;padding:0 12px;}
-  .player-close{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all .25s;font-size:.9rem;}
-  .player-close:hover{background:rgba(200,160,78,.1);border-color:var(--gold-border);color:var(--gold);}
-
-  .player-wrap{
-    width:100%;max-width:720px;border-radius:4px;overflow:hidden;
-    border:1px solid rgba(200,160,78,.18);position:relative;
-    box-shadow:0 0 80px rgba(0,0,0,.8),0 0 40px rgba(200,160,78,.06);
-    flex-shrink:0;
-  }
-  .player-wrap iframe{display:block;width:100%;aspect-ratio:16/9;border:none;}
-
-  .player-nav{width:100%;max-width:720px;display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:10px;flex-shrink:0;}
-  .player-nav-btn{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:3px;text-transform:uppercase;padding:10px 18px;border:1px solid rgba(255,255,255,.06);border-radius:2px;background:rgba(255,255,255,.02);color:var(--muted);cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px;}
-  .player-nav-btn:hover{color:var(--gold);border-color:var(--gold-border);background:rgba(200,160,78,.04);}
-  .player-nav-btn:disabled{opacity:.2;cursor:default;}
-  .player-nav-info{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-align:center;}
-
-  @keyframes riseIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
-  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-  .d1{animation-delay:.1s;}.d2{animation-delay:.22s;}.d3{animation-delay:.34s;}.d4{animation-delay:.46s;}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barra Members</title>
+<link rel="icon" href="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07060c;--panel:#101018;--line:rgba(198,161,90,.28);--gold:#c6a15a;--gold2:#e8d5a3;--text:#f3ecdf;--muted:rgba(243,236,223,.55);--ok:#7dcea0}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Raleway,sans-serif;min-height:100%}
+button,a{font-family:inherit}a{color:inherit;text-decoration:none}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;border-bottom:1px solid rgba(198,161,90,.16)}
+.brand{display:flex;align-items:center;gap:10px;font-family:Cinzel,serif;letter-spacing:.14em;min-width:0}
+.brand small{display:block;letter-spacing:.22em;font-size:9px;color:var(--gold);margin-top:3px}
+#authBtn{background:transparent;color:var(--gold);border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer}
+.mid{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);text-align:center}
+.right{font-family:Cinzel,serif;font-size:10px;letter-spacing:.18em;text-align:right;color:var(--gold2)}
+.shell{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 74px)}
+.side{border-right:1px solid rgba(198,161,90,.16);padding:18px 12px}
+.side button,.side a.nav{display:flex;width:100%;text-align:left;gap:10px;align-items:center;background:transparent;color:var(--muted);border:0;border-radius:12px;padding:11px 12px;cursor:pointer;margin-bottom:4px}
+.side button.on,.side a.nav.on{background:rgba(198,161,90,.12);color:var(--gold2)}
+.main{padding:22px;max-width:1100px}
+.kicker{font-family:Cinzel,serif;letter-spacing:.2em;font-size:11px;color:var(--gold);text-transform:uppercase}
+h1{font-family:Cinzel,serif;font-weight:500;font-size:34px;margin:8px 0}
+.sub{color:var(--muted);max-width:38rem;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+.card{background:linear-gradient(180deg,#14141e,#0c0c12);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;text-align:left;color:inherit;padding:0}
+.card img{width:100%;height:120px;object-fit:cover;display:block}
+.card div{padding:12px}
+.card strong{display:block;font-family:Cinzel,serif;letter-spacing:.08em}
+.badge{display:inline-block;margin-top:8px;font-size:10px;letter-spacing:.16em;border-radius:99px;padding:4px 8px}
+.badge.on{color:#062;background:var(--ok)} .badge.off{color:var(--muted);border:1px solid rgba(255,255,255,.12)}
+.hero{display:grid;grid-template-columns:160px 1fr;gap:16px;border:1px solid var(--line);border-radius:18px;padding:16px;background:#101018;margin:16px 0}
+.hero img{width:160px;height:160px;object-fit:cover;border-radius:14px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{border:1px solid var(--line);border-radius:16px;padding:18px;background:#101018;cursor:pointer;color:inherit;text-align:left}
+.tile b{display:block;font-family:Cinzel,serif;letter-spacing:.14em;margin-bottom:6px}
+.courses{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.course{border:1px solid var(--line);border-radius:16px;padding:16px;background:#101018;cursor:pointer;color:inherit;text-align:left}
+.play{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold);margin-bottom:10px}
+.player{display:grid;grid-template-columns:220px 1fr;gap:16px}
+.mods button{width:100%;text-align:left;background:transparent;color:var(--muted);border:0;border-radius:10px;padding:10px;cursor:pointer}
+.mods button.on{background:rgba(198,161,90,.14);color:var(--gold2)}
+.stage{min-height:240px;border:1px solid var(--line);border-radius:16px;display:grid;place-items:center;text-align:center;padding:24px;background:#0c0c12;color:var(--muted)}
+.stage iframe{width:100%;height:320px;border:0;border-radius:12px}
+.lesson{display:flex;justify-content:space-between;gap:12px;width:100%;background:transparent;color:var(--text);border:0;border-bottom:1px solid rgba(255,255,255,.06);padding:12px 0;cursor:pointer}
+.row{display:flex;gap:10px;margin-top:14px}
+.row button,.buy{border:0;border-radius:999px;padding:12px 16px;cursor:pointer;background:var(--gold);color:#2a2108;font-weight:600}
+.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.books{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.book{border:1px solid var(--line);border-radius:16px;padding:16px;background:#101018}
+.book .cover{height:140px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold);font-family:Cinzel,serif;letter-spacing:.12em;margin-bottom:10px}
+.audio{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;background:#101018}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:8px}
+.crumb button{background:none;border:0;color:var(--gold);cursor:pointer;padding:0}
+.user{margin-top:24px;padding-top:14px;border-top:1px solid rgba(198,161,90,.16);font-size:12px;color:var(--muted)}
+.note{margin-top:14px;color:var(--muted)}
+@media(max-width:800px){
+  .mid,.right,.brand small{display:none}
+  .brand{font-size:14px}
+  .shell{grid-template-columns:1fr}
+  .side{display:flex;gap:6px;overflow:auto;border-right:0;border-bottom:1px solid rgba(198,161,90,.16)}
+  .side button,.side a.nav{width:auto;white-space:nowrap}
+  .grid,.tiles,.courses,.books,.player,.hero{grid-template-columns:1fr}
+  .hero img{width:100%;height:180px}
+  h1{font-size:28px}
+}
+</style>
 </head>
 <body>
-
-<div class="amb"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
-<div class="grid-veil"></div>
-
-<div id="ls">
-  <span class="ls-sym">✦</span>
-  <span class="ls-txt">Verificando acesso…</span>
+<header class="top">
+  <div class="brand">☥<div>BARRA MEMBERS<small>SUA JORNADA DE CONHECIMENTO</small></div></div>
+  <div class="mid">Todos os cursos + livros + áudios em um só lugar</div>
+  <div class="right">DO CONHECIMENTO<br>À TRANSFORMAÇÃO</div>
+</header>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main" id="app"></main>
 </div>
-
-<nav>
-  <a href="/dashboard/" class="nav-logo">
-    <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1773707211/IMG_20260104_135834_828_nsimow.webp" alt="Logo">
-    <span>AK<b>A</b>SHA <b>HUB</b></span>
-  </a>
-  <a href="/dashboard/" class="back">← Dashboard</a>
-</nav>
-
-<main>
-  <div class="page-header">
-    <span class="page-eyebrow">𓂀 Sua Jornada</span>
-    <h1 class="page-title"><em>Área de</em> Membros</h1>
-    <p class="page-sub">Selecione seu nível de acesso para começar ou continuar sua jornada.</p>
-  </div>
-
-  <div class="user-strip" id="userStrip" style="display:none;">
-    <div class="user-avatar" id="userAvatar">A</div>
-    <div class="user-info">
-      <span class="user-name" id="userName">Membro</span>
-      <span class="user-nivel" id="userNivel">Carregando…</span>
-    </div>
-    <button class="user-logout" id="logoutBtn">Sair</button>
-  </div>
-
-  <div class="divider"><div class="div-line"></div><div class="div-gem"></div><div class="div-line"></div></div>
-  <div class="sec-lbl"><span>Escolha seu nível</span></div>
-
-  <div class="levels" id="levelsWrap"></div>
-</main>
-
-<!-- CONTENT SHEET -->
-<div class="content-overlay" id="contentOverlay">
-  <div class="content-sheet" id="contentSheet">
-    <div class="cs-bg"></div>
-    <div class="cs-grid"></div>
-    <div class="cs-handle">
-      <div class="cs-pill"></div>
-      <div class="cs-toprow">
-        <span class="cs-badge" id="csLevelBadge">✦ Nível 1 · Iniciado</span>
-        <button class="cs-close" onclick="closeContent()" aria-label="Fechar">✕</button>
-      </div>
-    </div>
-    <div class="cs-body">
-      <div class="cs-header">
-        <span class="cs-nivel-tag" id="csTag"></span>
-        <h2 class="cs-title" id="csTitle"></h2>
-        <p class="cs-desc" id="csDesc"></p>
-      </div>
-      <div class="cs-progress">
-        <div class="cs-progress-row">
-          <span>Progresso</span>
-          <span id="csProgressPct">0%</span>
-        </div>
-        <div class="cs-progress-bar"><div class="cs-progress-fill" id="csProgressFill" style="width:0%;background:var(--gold);"></div></div>
-      </div>
-      <div class="modules" id="modulesWrap"></div>
-    </div>
-  </div>
-</div>
-
-<!-- VIDEO PLAYER -->
-<div class="player-overlay" id="playerOverlay">
-  <div class="player-top">
-    <button class="player-back" onclick="closePlayer()">← Voltar</button>
-    <span class="player-title" id="playerTitle"></span>
-    <button class="player-close" onclick="closePlayer()" aria-label="Fechar">✕</button>
-  </div>
-  <div class="player-wrap">
-    <iframe id="playerFrame" src="" allowfullscreen allow="autoplay; fullscreen; picture-in-picture"></iframe>
-  </div>
-  <div class="player-nav">
-    <button class="player-nav-btn" id="prevVideoBtn" onclick="navigateVideo(-1)">← Anterior</button>
-    <span class="player-nav-info" id="playerNavInfo"></span>
-    <button class="player-nav-btn" id="nextVideoBtn" onclick="navigateVideo(1)">Próxima →</button>
-  </div>
-</div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const app = initializeApp({
+const auth = getAuth(initializeApp({
   apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
   authDomain: "hub-akasha.firebaseapp.com",
   projectId: "hub-akasha",
   storageBucket: "hub-akasha.firebasestorage.app",
   messagingSenderId: "370851875474",
   appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
-});
-const auth = getAuth(app);
-const db   = getFirestore(app);
+}));
+const db = getFirestore(auth.app);
+const YAN = "yanfili.simon@gmail.com";
+const AREA = { 1: "anubis", 2: "horus", 3: "isis", 4: "amon" };
 
-const CONTEUDO = {
+function pack(mods, total) {
+  const base = Math.floor(total / mods);
+  let extra = total % mods;
+  return Array.from({ length: mods }, (_, i) => {
+    const n = base + (extra > 0 ? 1 : 0);
+    if (extra > 0) extra -= 1;
+    return {
+      nome: "Módulo " + (i + 1),
+      aulas: Array.from({ length: n }, (_, j) => ({ titulo: "Aula " + String(j + 1).padStart(2, "0"), ytId: "COLOQUE_AQUI" }))
+    };
+  });
+}
+function curso(id, titulo, mods, aulas) {
+  return { id, titulo, modules: pack(mods, aulas) };
+}
+function aulas(list) {
+  return list.map(titulo => ({ titulo, ytId: "COLOQUE_AQUI" }));
+}
+const FAIXAS = {
   1: {
-    nome: 'Anúbis 𓁢 Iniciado',
-    subtitulo: 'Fundamentos do Despertar',
-    desc: 'Os pilares essenciais para começar sua jornada no campo quântico. Aqui você constrói a base de tudo.',
-    cor: 'rgba(200,160,78,.6)',
-    corFill: 'var(--gold)',
-    logo: 'https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0001_dkra3y.jpg',
-    modules: [
-      {
-        nome: 'O Campo Quântico',
-        aulas: [
-          { titulo: 'O que é o Campo Akáshico', duracao: '18 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'A Física por Trás da Consciência', duracao: '22 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Sincronicidade e Padrões', duracao: '15 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Ativação do Campo Pessoal', duracao: '28 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Reprogramação Profunda',
-        aulas: [
-          { titulo: 'Como a Mente Cria a Realidade', duracao: '20 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'O Método das 3 Fases', duracao: '25 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Quebrando Padrões Limitantes', duracao: '18 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Prática: Protocolo dos 18 Minutos', duracao: '20 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Energia & Frequência',
-        aulas: [
-          { titulo: 'Mapa da Consciência', duracao: '22 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Como Elevar Sua Frequência', duracao: '19 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Ancoragem e Proteção Energética', duracao: '17 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Respiração Quântica - Guiada', duracao: '25 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Manifestação Aplicada',
-        aulas: [
-          { titulo: 'Os 4 Princípios da Realidade', duracao: '21 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Colapso de Onda na Prática', duracao: '24 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Alinhamento Mente-Emoção-Intenção', duracao: '18 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Exercício Final - Integração', duracao: '30 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      }
-    ]
+    nome: "Anúbis", tag: "Nível 1 · Faixa azul",
+    frase: "O início da jornada. Desperte a consciência e alinhe a energia com o universo.",
+    img: "https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0001_dkra3y.jpg",
+    fundamentos: [
+      { nome: "O Campo Quântico", aulas: aulas(["O que é o Campo Akáshico", "A Física por Trás da Consciência", "Sincronicidade e Padrões", "Ativação do Campo Pessoal"]) },
+      { nome: "Reprogramação Profunda", aulas: aulas(["Como a Mente Cria a Realidade", "O Método das 3 Fases", "Quebrando Padrões Limitantes", "Prática: Protocolo dos 18 Minutos"]) },
+      { nome: "Energia e Frequência", aulas: aulas(["Mapa da Consciência", "Como Elevar Sua Frequência", "Ancoragem e Proteção Energética", "Respiração Quântica"]) },
+      { nome: "Manifestação Aplicada", aulas: aulas(["Os 4 Princípios da Realidade", "Colapso de Onda na Prática", "Alinhamento Mente-Emoção-Intenção", "Exercício Final"]) }
+    ],
+    cursos: [
+      curso("alinhamento", "Código de Alinhamento", 4, 12),
+      curso("7-dias", "Desafio 7 Dias de Magnetismo", 7, 14),
+      curso("casais", "Ritual para Casais", 3, 8),
+      curso("tantra", "Tantra Diferente de Sexo", 5, 10),
+      curso("fascinacao", "O Poder da Fascinação", 2, 6)
+    ],
+    livros: ["O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas"],
+    audios: ["Mente Crística", "Pai Nosso", "Avê Maria", "Cura das Feridas Invisíveis", "O Código Secreto do Universo"]
   },
   2: {
-    nome: 'Hórus 𓂀 Despertar',
-    subtitulo: 'Expansão da Consciência',
-    desc: 'Aprofundamento do campo. Aqui você expande o que foi ativado no nível Iniciado e desenvolve sensibilidade real.',
-    cor: 'rgba(86,207,225,.6)',
-    corFill: 'var(--teal-lt)',
-    logo: 'https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0002_udbfpg.jpg',
-    modules: [
-      {
-        nome: 'Intuição Avançada',
-        aulas: [
-          { titulo: 'Tipos de Intuição e Como Reconhecê-los', duracao: '20 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Calibrando o Receptor Interno', duracao: '22 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Sonhos como Mensagens', duracao: '18 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Prática de Escuta Akáshica', duracao: '26 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Geometria Sagrada',
-        aulas: [
-          { titulo: 'Os Padrões da Criação', duracao: '24 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Merkabah e Campo Toroidal', duracao: '28 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Ativação Geométrica Guiada', duracao: '30 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Integração nas 24 Horas', duracao: '15 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Alquimia Emocional',
-        aulas: [
-          { titulo: 'Emoções como Combustível', duracao: '19 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Transmutação de Sombras', duracao: '22 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'O Coração como Centro', duracao: '20 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Meditação da Coerência Cardíaca', duracao: '25 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Campos Morfogenéticos',
-        aulas: [
-          { titulo: 'Sheldrake e os Campos da Memória', duracao: '21 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Linhagens e Padrões Familiares', duracao: '24 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Desvinculação de Campos Negativos', duracao: '20 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Criando Seu Novo Campo', duracao: '28 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      }
-    ]
+    nome: "Hórus", tag: "Nível 2 · Faixa roxa",
+    frase: "Expansão da consciência. O que foi ativado no Anúbis ganha alcance.",
+    img: "https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0002_udbfpg.jpg",
+    fundamentos: [
+      { nome: "Intuição Avançada", aulas: aulas(["Tipos de Intuição", "Calibrando o Receptor", "Sonhos como Mensagens", "Escuta Akáshica"]) },
+      { nome: "Geometria Sagrada", aulas: aulas(["Os Padrões da Criação", "Merkabah e Campo Toroidal", "Ativação Geométrica", "Integração nas 24 Horas"]) },
+      { nome: "Alquimia Emocional", aulas: aulas(["Emoções como Combustível", "Transmutação de Sombras", "O Coração como Centro", "Coerência Cardíaca"]) },
+      { nome: "Campos Morfogenéticos", aulas: aulas(["Campos da Memória", "Linhagens e Padrões", "Desvinculação", "Criando Seu Novo Campo"]) }
+    ],
+    cursos: [
+      curso("senda", "A Senda Tântrica", 3, 9),
+      curso("prosperidade", "Tantra Quântico e Prosperidade", 3, 9),
+      curso("despertar", "Despertar do Magnetismo", 3, 9)
+    ],
+    livros: ["Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado"],
+    audios: []
   },
   3: {
-    nome: 'Ísis 𓆃 Domínio',
-    subtitulo: 'Maestria Energética',
-    desc: 'Nível de domínio real. Aqui você trabalha as camadas mais profundas do ser e constrói autoridade sobre o campo.',
-    cor: 'rgba(166,127,220,.6)',
-    corFill: 'var(--purple-lt)',
-    logo: 'https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0003_ueh0c4.jpg',
-    modules: [
-      {
-        nome: 'Leitura de Campos',
-        aulas: [
-          { titulo: 'Como Ler Campos ao Vivo', duracao: '30 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Diagnóstico Energético Pessoal', duracao: '25 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Mapeamento de Bloqueios', duracao: '22 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Prática Supervisionada', duracao: '35 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Rituais de Maestria',
-        aulas: [
-          { titulo: 'Criando Rituais Pessoais de Poder', duracao: '26 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Lua e Ciclos Cósmicos', duracao: '20 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Ritual de Intenção Coletivo', duracao: '28 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Consolidação dos 90 Dias', duracao: '30 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Identidade Quântica',
-        aulas: [
-          { titulo: 'Quem Você É Além do Ego', duracao: '24 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Arquétipos e Missão de Alma', duracao: '28 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Expressão Autêntica do Ser', duracao: '22 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Exercício: Carta ao Eu Superior', duracao: '18 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Liderança & Impacto',
-        aulas: [
-          { titulo: 'Liderança pelo Campo', duracao: '26 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Comunicação que Ressoa', duracao: '22 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Criando Comunidade de Consciência', duracao: '24 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Legado Akáshico', duracao: '30 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      }
-    ]
+    nome: "Ísis", tag: "Nível 3 · Faixa marrom",
+    frase: "Maestria. Autoridade sobre o campo e sobre a própria expressão.",
+    img: "https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0003_ueh0c4.jpg",
+    fundamentos: [
+      { nome: "Leitura de Campos", aulas: aulas(["Como Ler Campos", "Diagnóstico Energético", "Mapeamento de Bloqueios", "Prática"]) },
+      { nome: "Rituais de Maestria", aulas: aulas(["Rituais Pessoais", "Lua e Ciclos", "Ritual de Intenção", "Consolidação"]) },
+      { nome: "Identidade Quântica", aulas: aulas(["Além do Ego", "Arquétipos e Missão", "Expressão Autêntica", "Carta ao Eu Superior"]) },
+      { nome: "Liderança e Impacto", aulas: aulas(["Liderança pelo Campo", "Comunicação que Ressoa", "Comunidade", "Legado"]) }
+    ],
+    cursos: [
+      curso("paladins", "Paladins: A Liderança dos Bons", 4, 12),
+      curso("jornada", "Jornada de Transformação", 3, 9)
+    ],
+    livros: ["Autoestima Blindada", "Como Blindar Sua Mente?", "Triplex na Mente"],
+    audios: []
   },
   4: {
-    nome: 'Rá 𓋹 Magnetismo Supremo',
-    subtitulo: 'Acesso Total + Exclusividades',
-    desc: 'Acesso completo ao Akasha Hub. Conteúdo exclusivo, sessões ao vivo gravadas, masterclasses e material de elite.',
-    cor: 'rgba(232,203,128,.7)',
-    corFill: 'linear-gradient(90deg,var(--gold-lt),var(--purple-lt))',
-    logo: 'https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0004_xn5dod.jpg',
-    modules: [
-      {
-        nome: 'Masterclass: Código Supremo',
-        aulas: [
-          { titulo: 'Os 7 Segredos do Magnetismo', duracao: '45 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'A Lei da Ressonância', duracao: '38 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Abundância como Estado Natural', duracao: '42 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Integração Total', duracao: '50 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Sessões Ao Vivo Gravadas',
-        aulas: [
-          { titulo: 'Sessão 01 - Ativação em Grupo', duracao: '60 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Sessão 02 - Perguntas & Respostas', duracao: '55 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Sessão 03 - Transmissão de Campo', duracao: '50 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Sessão 04 - Integração Coletiva', duracao: '65 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Acervo Esotérico Exclusivo',
-        aulas: [
-          { titulo: 'Hermetismo Aplicado ao Século XXI', duracao: '35 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Textos Ocultos e Decodificação', duracao: '40 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Cabala e Árvore da Vida', duracao: '38 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Enoque, Toth e os Guardiões', duracao: '42 min', ytId: 'COLOQUE_AQUI' },
-        ]
-      },
-      {
-        nome: 'Mentoria em Grupo',
-        aulas: [
-          { titulo: 'Grupo 01 - Estratégia & Essência', duracao: '75 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Grupo 02 - Vendas com Consciência', duracao: '70 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Grupo 03 - Marca Pessoal Akáshica', duracao: '68 min', ytId: 'COLOQUE_AQUI' },
-          { titulo: 'Grupo 04 - Expansão & Escala', duracao: '80 min', ytId: 'COLOQUE_AQUI' },
-        ]
+    nome: "Rá", tag: "Nível 4 · Faixa preta",
+    frase: "A faixa preta. O conhecimento vira obra, negócio e legado.",
+    img: "https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0004_xn5dod.jpg",
+    fundamentos: [
+      { nome: "Masterclass", aulas: aulas(["Os 7 Segredos do Magnetismo", "A Lei da Ressonância", "Abundância como Estado", "Integração Total"]) },
+      { nome: "Sessões Gravadas", aulas: aulas(["Ativação em Grupo", "Perguntas e Respostas", "Transmissão de Campo", "Integração Coletiva"]) },
+      { nome: "Acervo", aulas: aulas(["Hermetismo Aplicado", "Textos e Decodificação", "Cabala e Árvore da Vida", "Enoque e Toth"]) },
+      { nome: "Mentoria em Grupo", aulas: aulas(["Estratégia e Essência", "Vendas com Consciência", "Marca Pessoal", "Expansão"]) }
+    ],
+    cursos: [curso("zero", "Do Zero ao Zen e Negócios", 4, 12)],
+    livros: ["Coletânea Alinhamento Financeiro", "Códigos de Origem"],
+    audios: []
+  }
+};
+
+let user = null;
+let access = { areas: [] };
+let route = { view: "portal", nivel: 1, curso: "", mod: 0, aula: 0 };
+
+function esc(s) { return String(s || "").replace(/[&<>]/g, c => ({ "&": "&", "<": "<", ">": ">" }[c])); }
+function mail() { return ((user && user.email) || "").toLowerCase(); }
+function isYan() { return mail() === YAN; }
+function owns(nivel) { return isYan() || access.areas.includes(AREA[nivel]); }
+function faixa() { return FAIXAS[route.nivel]; }
+function cursoAtual() {
+  const f = faixa();
+  if (route.curso === "fundamentos") return { id: "fundamentos", titulo: "Fundamentos do Despertar", modules: f.fundamentos };
+  return f.cursos.find(item => item.id === route.curso) || f.cursos[0];
+}
+function go(next) { route = { ...route, ...next }; draw(); window.scrollTo(0, 0); }
+function comprar() { location.href = "/membros/checkout.html?area=" + AREA[route.nivel]; }
+
+function side() {
+  const f = route.view === "portal" ? null : faixa();
+  const items = [
+    ["portal", "Início"],
+    ["jornada", "Minha jornada"]
+  ];
+  document.getElementById("side").innerHTML = `
+    <button class="${route.view === "portal" ? "on" : ""}" data-go="portal">Início</button>
+    ${f ? `
+      <button class="${route.view === "area" ? "on" : ""}" data-go="area">Área ${esc(f.nome)}</button>
+      <button class="${route.view === "cursos" ? "on" : ""}" data-go="cursos">Cursos</button>
+      <button class="${route.view === "livros" ? "on" : ""}" data-go="livros">Livros</button>
+      <button class="${route.view === "audios" ? "on" : ""}" data-go="audios">Áudios</button>
+      <button class="${route.curso === "fundamentos" ? "on" : ""}" data-go="fundamentos">Fundamentos</button>
+    ` : `
+      <button data-go="cursos" ${route.view === "portal" ? "" : ""}>Cursos</button>
+      <button data-go="livros">Livros</button>
+      <button data-go="audios">Áudios</button>
+    `}
+    <div class="user">${esc(mail() || "Visitante")}<br>${isYan() ? "Acesso a todas as faixas" : "Membro"}<br><button id="authBtn" style="margin-top:8px">${user ? "Sair" : "Entrar"}</button></div>`;
+  document.getElementById("side").querySelectorAll("[data-go]").forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.go;
+      if (id === "portal") go({ view: "portal" });
+      else if (id === "area") go({ view: "area" });
+      else if (id === "fundamentos") go({ view: "player", curso: "fundamentos", mod: 0, aula: 0 });
+      else {
+        if (route.view === "portal") route.nivel = 1;
+        go({ view: id });
       }
-    ]
-  }
-};
+    };
+  });
+  document.getElementById("authBtn").onclick = async () => {
+    if (!user) { location.href = "/login/?next=/members/index.html"; return; }
+    await signOut(auth);
+  };
+}
 
-const LEVELS_META = [
-  { num:1, nome:'Anúbis 𓁢 Iniciado',          desc:'Fundamentos do despertar',     classe:'nivel-1' },
-  { num:2, nome:'Hórus 𓂀 Despertar',           desc:'Expansão da consciência',       classe:'nivel-2' },
-  { num:3, nome:'Ísis 𓆃 Domínio',             desc:'Maestria energética',           classe:'nivel-3' },
-  { num:4, nome:'Rá 𓋹 Magnetismo Supremo',    desc:'Acesso total + exclusividades',  classe:'nivel-4' },
-];
-
-let currentUser = null;
-let userNivel   = 0;
-let userDoc     = {};
-let currentLvl  = null;
-let openModIdx  = null;
-let playerQueue  = [];
-let playerIdx    = 0;
-
-onAuthStateChanged(auth, async user => {
-  if (!user) { window.location.href = '/login/'; return; }
-  currentUser = user;
-
-  const snap = await getDoc(doc(db, 'users', user.uid));
-  if (snap.exists()) {
-    userDoc   = snap.data();
-    userNivel = userDoc.nivel ?? 0;
-  } else {
-    userDoc = { email: user.email, nivel: 0, criadoEm: new Date() };
-    await setDoc(doc(db, 'users', user.uid), userDoc);
-  }
-
-  const strip = document.getElementById('userStrip');
-  strip.style.display = 'flex';
-  document.getElementById('userAvatar').textContent =
-    (user.displayName || user.email || 'M')[0].toUpperCase();
-  document.getElementById('userName').textContent =
-    user.displayName || user.email || 'Membro';
-  const nivelNames = ['Sem nível','Anúbis - Iniciado','Hórus - Despertar','Ísis - Domínio','Rá - Magnetismo Supremo'];
-  document.getElementById('userNivel').textContent =
-    '✦ Nível ' + userNivel + ' - ' + (nivelNames[userNivel] || 'Sem acesso');
-
-  renderLevels();
-  document.getElementById('ls').classList.add('hide');
-});
-
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  await signOut(auth);
-  window.location.href = '/login/';
-});
-
-function renderLevels() {
-  const wrap = document.getElementById('levelsWrap');
-  wrap.innerHTML = '';
-  LEVELS_META.forEach((lv, i) => {
-    const ok  = userNivel >= lv.num;
-    const cur = userNivel === lv.num;
-    const c   = CONTEUDO[lv.num];
-    const totalAulas = c.modules.length * 4;
-
-    const el = document.createElement('div');
-    el.className = `lv ${lv.classe} d${i+1} ${ok?'':'locked'}`;
-    el.innerHTML = `
-      <div class="lv-inner">
-        <div class="lv-left">
-          <div class="lv-orb">
-            <img src="${c.logo}" alt="${c.nome}" loading="lazy">
-          </div>
-          <div class="lv-info">
-            <span class="lv-tag">Nível 0${lv.num} · ${c.subtitulo}</span>
-            <div class="lv-name">${lv.nome}</div>
-            <div class="lv-desc">${lv.desc}</div>
-            <div class="lv-count">${c.modules.length} módulos · ${totalAulas} aulas</div>
-          </div>
-        </div>
-        <div class="lv-right">
-          ${cur ? '<span class="badge-cur">Seu nível</span>' : ''}
-          ${ok  ? '<span class="badge-open">›</span>' : '<span class="badge-lock">🔒</span>'}
-        </div>
-      </div>`;
-
-    if (ok) el.addEventListener('click', () => openContent(lv.num));
-    wrap.appendChild(el);
+function portal() {
+  const cards = Object.keys(FAIXAS).map(num => {
+    const f = FAIXAS[num];
+    const open = owns(Number(num));
+    return `<button class="card" data-nivel="${num}"><img alt="" src="${f.img}"><div><strong>${esc(f.nome)}</strong><span>${esc(f.tag)}</span><span class="badge ${open ? "on" : "off"}">${open ? "LIBERADO" : "BLOQUEADO"}</span></div></button>`;
+  }).join("");
+  document.getElementById("app").innerHTML = `
+    <p class="kicker">Portal</p>
+    <h1>Bem-vindo ao Barra Members</h1>
+    <p class="sub">Sua jornada começa aqui. Cada faixa abre os fundamentos, os cursos da Doutrina, os livros e os áudios. O arquivo entra depois.</p>
+    <div class="grid">${cards}</div>
+    <p class="note">${isYan() ? "Sua conta já entra em todas as faixas." : "A faixa bloqueada abre no checkout. Quem já pagou entra com o mesmo login."}</p>`;
+  document.getElementById("app").querySelectorAll("[data-nivel]").forEach(btn => {
+    btn.onclick = () => go({ view: "area", nivel: Number(btn.dataset.nivel) });
   });
 }
 
-function openContent(nivel) {
-  currentLvl = nivel;
-  openModIdx = null;
-  const c    = CONTEUDO[nivel];
-
-  document.getElementById('csLevelBadge').textContent = `✦ Nível ${nivel} · ${c.nome}`;
-  document.getElementById('csTag').textContent = `Nível 0${nivel} · ${c.subtitulo}`;
-  document.getElementById('csTag').style.color = c.cor;
-  document.getElementById('csTitle').innerHTML = `<em>${c.nome}</em>`;
-  document.getElementById('csTitle').querySelector('em').style.color = c.cor;
-  document.getElementById('csDesc').textContent = c.desc;
-  document.getElementById('csProgressFill').style.background = c.corFill;
-
-  const watched   = (userDoc.watched || {})[nivel] || {};
-  const totalVids = c.modules.reduce((s,m) => s + m.aulas.length, 0);
-  const doneVids  = Object.keys(watched).length;
-  const pct = totalVids > 0 ? Math.round((doneVids / totalVids) * 100) : 0;
-  document.getElementById('csProgressPct').textContent = pct + '%';
-  document.getElementById('csProgressFill').style.width = pct + '%';
-
-  playerQueue = [];
-  c.modules.forEach((mod, mi) => {
-    mod.aulas.forEach((a, ai) => { playerQueue.push({ modIdx: mi, aulIdx: ai, ...a }); });
-  });
-
-  renderModules(nivel, c, watched);
-  document.getElementById('contentOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+function area() {
+  const f = faixa();
+  const open = owns(route.nivel);
+  const aulasFund = f.fundamentos.reduce((n, m) => n + m.aulas.length, 0);
+  document.getElementById("app").innerHTML = `
+    <p class="crumb"><button data-back="portal">Início</button> · ${esc(f.nome)}</p>
+    <div class="hero"><img alt="" src="${f.img}"><div><p class="kicker">${esc(f.tag)}</p><h1>${esc(f.nome)}</h1><p class="sub">${esc(f.frase)}</p><p class="note">${open ? "Faixa liberada." : "Esta faixa ainda está bloqueada. Dá para ver a estrutura. O conteúdo abre depois do pagamento."}</p>${open ? "" : '<button class="buy" id="buy">Comprar esta faixa</button>'}</div></div>
+    <button class="tile" id="openFund" style="width:100%;margin-bottom:12px"><b>Fundamentos do Despertar</b>${f.fundamentos.length} módulos · ${aulasFund} aulas</button>
+    <div class="tiles">
+      <button class="tile" data-view="cursos"><b>Cursos</b>${f.cursos.length} cursos desta faixa</button>
+      <button class="tile" data-view="livros"><b>Livros</b>${f.livros.length} e-books</button>
+      <button class="tile" data-view="audios"><b>Áudios</b>${f.audios.length} áudios</button>
+    </div>`;
+  document.querySelector("[data-back]").onclick = () => go({ view: "portal" });
+  document.getElementById("openFund").onclick = () => go({ view: "player", curso: "fundamentos", mod: 0, aula: 0 });
+  document.querySelectorAll("[data-view]").forEach(btn => { btn.onclick = () => go({ view: btn.dataset.view }); });
+  const buy = document.getElementById("buy");
+  if (buy) buy.onclick = comprar;
 }
 
-function renderModules(nivel, c, watched) {
-  const wrap = document.getElementById('modulesWrap');
-  wrap.innerHTML = '';
-  c.modules.forEach((mod, mi) => {
-    const modEl = document.createElement('div');
-    modEl.className = 'module';
-    modEl.id = `mod-${mi}`;
-    const watchedInMod = mod.aulas.filter((a,ai) => watched[`${mi}-${ai}`]).length;
-    modEl.innerHTML = `
-      <div class="module-head" onclick="toggleModule(${mi})">
-        <span class="module-num">0${mi+1}</span>
-        <span class="module-name">${mod.nome}</span>
-        <span class="module-count">${watchedInMod}/${mod.aulas.length} aulas</span>
-        <span class="module-chevron">›</span>
-        <div class="module-line"></div>
+function cursos() {
+  const f = faixa();
+  document.getElementById("app").innerHTML = `
+    <p class="crumb"><button data-back="area">${esc(f.nome)}</button> · Cursos</p>
+    <h1>Cursos</h1>
+    <p class="sub">Os cursos da Doutrina deste nível. Toque para abrir módulos e aulas. O vídeo entra no quadro.</p>
+    <div class="courses">${f.cursos.map(item => {
+      const aulasN = item.modules.reduce((n, m) => n + m.aulas.length, 0);
+      return `<button class="course" data-curso="${item.id}"><div class="play">▶</div><strong>${esc(item.titulo)}</strong><p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p></button>`;
+    }).join("")}</div>`;
+  document.querySelector("[data-back]").onclick = () => go({ view: "area" });
+  document.querySelectorAll("[data-curso]").forEach(btn => {
+    btn.onclick = () => go({ view: "player", curso: btn.dataset.curso, mod: 0, aula: 0 });
+  });
+}
+
+function player() {
+  const f = faixa();
+  const item = cursoAtual();
+  const mod = item.modules[route.mod] || item.modules[0];
+  const aula = mod.aulas[route.aula] || mod.aulas[0];
+  const total = item.modules.reduce((n, m) => n + m.aulas.length, 0);
+  const open = owns(route.nivel);
+  const ready = aula.ytId && aula.ytId !== "COLOQUE_AQUI";
+  const stage = !open
+    ? `<div class="stage"><div><div class="play" style="margin:0 auto 10px">🔒</div><p>Esta aula abre quando a faixa estiver paga.</p><button class="buy" id="buy">Comprar esta faixa</button></div></div>`
+    : ready
+      ? `<iframe src="https://www.youtube-nocookie.com/embed/${aula.ytId}?rel=0" allowfullscreen></iframe>`
+      : `<div class="stage"><div><div class="play" style="margin:0 auto 10px">▶</div><p>Vídeo em breve</p><p>O arquivo desta aula entra aqui.</p></div></div>`;
+  document.getElementById("app").innerHTML = `
+    <p class="crumb"><button data-back="cursos">${esc(f.nome)}</button> · ${esc(item.titulo)}</p>
+    <div class="player">
+      <div class="mods">
+        <p class="kicker">${esc(item.titulo)}</p>
+        ${item.modules.map((m, i) => `<button class="${i === route.mod ? "on" : ""}" data-mod="${i}">${esc(m.nome)}</button>`).join("")}
+        <p class="note">0 de ${total} aulas</p>
       </div>
-      <div class="video-list" id="vlist-${mi}">
-        ${mod.aulas.map((a, ai) => {
-          const key  = `${mi}-${ai}`;
-          const done = !!watched[key];
-          const qIdx = playerQueue.findIndex(q => q.modIdx === mi && q.aulIdx === ai);
-          return `
-          <div class="vitem ${done?'watched':''}" id="vitem-${mi}-${ai}" onclick="openVideo(${qIdx})">
-            <div class="vitem-icon">${done?'✓':'▶'}</div>
-            <div class="vitem-info">
-              <div class="vitem-title">${a.titulo}</div>
-              <div class="vitem-meta">${done?'Concluída':'Disponível'}</div>
-            </div>
-            <span class="vitem-dur">${a.duracao}</span>
-          </div>`;
-        }).join('')}
-      </div>`;
-    wrap.appendChild(modEl);
+      <div>
+        <h1 style="font-size:26px">${esc(mod.nome)}</h1>
+        ${stage}
+        <div style="margin-top:12px">${mod.aulas.map((a, i) => `<button class="lesson" data-aula="${i}"><span>${esc(a.titulo)}</span><span>${ready && i === route.aula ? "No ar" : "Vídeo em breve"}</span></button>`).join("")}</div>
+        <div class="row">
+          <button class="ghost" id="prev">← Anterior</button>
+          <button id="next">Próxima aula →</button>
+        </div>
+      </div>
+    </div>`;
+  const back = document.querySelector("[data-back]");
+  back.onclick = () => go({ view: route.curso === "fundamentos" ? "area" : "cursos" });
+  document.querySelectorAll("[data-mod]").forEach(btn => { btn.onclick = () => go({ mod: Number(btn.dataset.mod), aula: 0 }); });
+  document.querySelectorAll("[data-aula]").forEach(btn => { btn.onclick = () => go({ aula: Number(btn.dataset.aula) }); });
+  document.getElementById("prev").onclick = () => passo(-1);
+  document.getElementById("next").onclick = () => passo(1);
+  const buy = document.getElementById("buy");
+  if (buy) buy.onclick = comprar;
+}
+function passo(dir) {
+  const item = cursoAtual();
+  let mod = route.mod;
+  let aula = route.aula + dir;
+  if (aula < 0) { mod -= 1; if (mod < 0) return; aula = item.modules[mod].aulas.length - 1; }
+  if (aula >= item.modules[mod].aulas.length) { mod += 1; if (mod >= item.modules.length) return; aula = 0; }
+  go({ mod, aula });
+}
+
+function livros() {
+  const f = faixa();
+  document.getElementById("app").innerHTML = `
+    <p class="crumb"><button data-back="area">${esc(f.nome)}</button> · Livros</p>
+    <h1>Livros</h1>
+    <p class="sub">E-books desta faixa. O arquivo entra em cada um.</p>
+    <div class="books">${f.livros.map(nome => `<article class="book"><div class="cover">E-BOOK</div><strong>${esc(nome)}</strong><div class="row"><button data-livro="${esc(nome)}">Abrir livro</button></div></article>`).join("") || "<p class='sub'>Nenhum livro neste nível ainda.</p>"}</div>
+    <p class="note" id="livroNote"></p>`;
+  document.querySelector("[data-back]").onclick = () => go({ view: "area" });
+  document.querySelectorAll("[data-livro]").forEach(btn => {
+    btn.onclick = () => {
+      if (!owns(route.nivel)) { comprar(); return; }
+      document.getElementById("livroNote").textContent = btn.dataset.livro + " · o arquivo ainda não entrou.";
+    };
   });
 }
 
-window.toggleModule = function(idx) {
-  const mod = document.getElementById(`mod-${idx}`);
-  if (!mod) return;
-  const isOpen = mod.classList.contains('open');
-  document.querySelectorAll('.module.open').forEach(m => m.classList.remove('open'));
-  if (!isOpen) { mod.classList.add('open'); openModIdx = idx; }
-};
+function audios() {
+  const f = faixa();
+  document.getElementById("app").innerHTML = `
+    <p class="crumb"><button data-back="area">${esc(f.nome)}</button> · Áudios</p>
+    <h1>Áudios</h1>
+    <p class="sub">Meditações e áudios desta faixa. O arquivo entra em cada linha.</p>
+    ${f.audios.map(nome => `<div class="audio"><strong>${esc(nome)}</strong><button class="buy" data-audio="${esc(nome)}">▶</button></div>`).join("") || "<p class='sub'>Nenhum áudio neste nível ainda.</p>"}
+    <p class="note" id="audioNote"></p>`;
+  const back = document.querySelector("[data-back]");
+  if (back) back.onclick = () => go({ view: "area" });
+  document.querySelectorAll("[data-audio]").forEach(btn => {
+    btn.onclick = () => {
+      if (!owns(route.nivel)) { comprar(); return; }
+      document.getElementById("audioNote").textContent = btn.dataset.audio + " · o áudio ainda não entrou.";
+    };
+  });
+}
 
-window.closeContent = function() {
-  document.getElementById('contentOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-  currentLvl = null;
-};
+function draw() {
+  side();
+  if (route.view === "portal") portal();
+  else if (route.view === "area") area();
+  else if (route.view === "cursos") cursos();
+  else if (route.view === "livros") livros();
+  else if (route.view === "audios") audios();
+  else player();
+}
 
-window.openVideo = function(queueIdx) {
-  if (queueIdx < 0 || queueIdx >= playerQueue.length) return;
-  playerIdx = queueIdx;
-  const v = playerQueue[queueIdx];
-
-  document.querySelectorAll('.vitem.playing').forEach(el => el.classList.remove('playing'));
-  const vEl = document.getElementById(`vitem-${v.modIdx}-${v.aulIdx}`);
-  if (vEl) vEl.classList.add('playing');
-
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${v.ytId}?autoplay=1&rel=0&modestbranding=1&cc_load_policy=0`;
-  document.getElementById('playerFrame').src = embedUrl;
-  document.getElementById('playerTitle').textContent = v.titulo;
-  document.getElementById('playerNavInfo').textContent = `${queueIdx + 1} / ${playerQueue.length}`;
-  document.getElementById('prevVideoBtn').disabled = queueIdx === 0;
-  document.getElementById('nextVideoBtn').disabled = queueIdx === playerQueue.length - 1;
-
-  document.getElementById('playerOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  markWatched(currentLvl, v.modIdx, v.aulIdx);
-};
-
-window.closePlayer = function() {
-  document.getElementById('playerOverlay').classList.remove('open');
-  document.getElementById('playerFrame').src = '';
-};
-
-window.navigateVideo = function(dir) {
-  const next = playerIdx + dir;
-  if (next >= 0 && next < playerQueue.length) openVideo(next);
-};
-
-async function markWatched(nivel, modIdx, aulIdx) {
-  if (!currentUser) return;
-  const key = `${modIdx}-${aulIdx}`;
-  if (!userDoc.watched) userDoc.watched = {};
-  if (!userDoc.watched[nivel]) userDoc.watched[nivel] = {};
-  if (userDoc.watched[nivel][key]) return;
-
-  userDoc.watched[nivel][key] = true;
+onAuthStateChanged(auth, async next => {
+  user = next;
+  access = { areas: [] };
   try {
-    await updateDoc(doc(db, 'users', currentUser.uid), { [`watched.${nivel}.${key}`]: true });
-  } catch(e) { console.warn('Firestore update failed:', e); }
-
-  const vEl = document.getElementById(`vitem-${modIdx}-${aulIdx}`);
-  if (vEl) {
-    vEl.classList.add('watched');
-    const icon = vEl.querySelector('.vitem-icon'); if (icon) icon.textContent = '✓';
-    const meta = vEl.querySelector('.vitem-meta'); if (meta) meta.textContent = 'Concluída';
+    const raw = JSON.parse(localStorage.getItem("akashaMembros") || "{}");
+    (raw.areas || []).forEach(id => { if (!access.areas.includes(id)) access.areas.push(id); });
+  } catch (e) {}
+  if (user && mail()) {
+    try {
+      const grant = await getDoc(doc(db, "membrosAcessos", mail()));
+      if (grant.exists()) (grant.data().areas || []).forEach(id => { if (!access.areas.includes(id)) access.areas.push(id); });
+    } catch (e) {}
   }
-
-  const c       = CONTEUDO[nivel];
-  const watched = userDoc.watched[nivel] || {};
-  const total   = c.modules.reduce((s,m) => s + m.aulas.length, 0);
-  const done    = Object.keys(watched).length;
-  const pct     = total > 0 ? Math.round((done / total) * 100) : 0;
-  document.getElementById('csProgressPct').textContent = pct + '%';
-  document.getElementById('csProgressFill').style.width = pct + '%';
-
-  const modEl = document.getElementById(`mod-${modIdx}`);
-  if (modEl) {
-    const mod   = c.modules[modIdx];
-    const mDone = mod.aulas.filter((_,ai) => watched[`${modIdx}-${ai}`]).length;
-    const cnt   = modEl.querySelector('.module-count');
-    if (cnt) cnt.textContent = `${mDone}/${mod.aulas.length} aulas`;
-  }
-}
-
-(function(){
-  const sheet = document.getElementById('contentSheet');
-  const body  = sheet.querySelector('.cs-body');
-  let sy = 0, dragging = false;
-  sheet.addEventListener('touchstart', e => {
-    if (body.scrollTop > 0) return;
-    sy = e.touches[0].clientY; dragging = true;
-  }, { passive: true });
-  sheet.addEventListener('touchmove', e => {
-    if (!dragging) return;
-    const dy = e.touches[0].clientY - sy;
-    if (dy > 0) sheet.style.transform = `translateY(${dy}px)`;
-  }, { passive: true });
-  sheet.addEventListener('touchend', e => {
-    if (!dragging) return;
-    dragging = false;
-    const dy = e.changedTouches[0].clientY - sy;
-    if (dy > 90) closeContent();
-    sheet.style.transform = '';
-  });
-})();
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    if (document.getElementById('playerOverlay').classList.contains('open')) closePlayer();
-    else if (document.getElementById('contentOverlay').classList.contains('open')) closeContent();
-  }
-});
-
-document.getElementById('contentOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeContent();
+  draw();
 });
 </script>
 </body>
