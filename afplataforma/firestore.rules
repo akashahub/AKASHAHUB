@@ -23,6 +23,84 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/afAccess/$(uid)).data.active == true;
     }
 
+    function isMembersAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == "yanfili.simon@gmail.com"
+        || request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2"
+        || (
+          exists(/databases/$(database)/documents/membersAdmins/$(request.auth.token.email))
+          && get(/databases/$(database)/documents/membersAdmins/$(request.auth.token.email)).data.active == true
+        )
+      );
+    }
+    function ownEntitlement() {
+      return get(/databases/$(database)/documents/entitlements/$(request.auth.token.email)).data;
+    }
+    function hasEntitlement() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && exists(/databases/$(database)/documents/entitlements/$(request.auth.token.email));
+    }
+
+    match /entitlements/{email} {
+      allow read: if request.auth != null && (
+        request.auth.token.email == email || isMembersAdmin()
+      );
+      allow create, update: if isMembersAdmin()
+        && request.resource.data.areas is list
+        && request.resource.data.cursos is list
+        && request.resource.data.livros is list
+        && request.resource.data.audios is list
+        && request.resource.data.keys().hasAll(["areas", "cursos", "livros", "audios", "source", "grantedBy"]);
+      allow delete: if isMembersAdmin();
+    }
+
+    match /membersAdmins/{email} {
+      allow read: if request.auth != null && (
+        request.auth.token.email == email || isMembersAdmin()
+      );
+      allow create, update: if isMembersAdmin()
+        && request.resource.data.active is bool
+        && email != "yanfili.simon@gmail.com";
+      allow delete: if isMembersAdmin()
+        && email != "yanfili.simon@gmail.com"
+        && email != request.auth.token.email;
+    }
+
+    match /aulas/{id} {
+      allow read: if isMembersAdmin() || (
+        hasEntitlement() && (
+          resource.data.area in ownEntitlement().areas
+          || resource.data.cursoKey in ownEntitlement().cursos
+        )
+      );
+      allow create, update: if isMembersAdmin()
+        && request.resource.data.videoId is string
+        && request.resource.data.videoId.size() < 40
+        && request.resource.data.area is string
+        && request.resource.data.cursoKey is string;
+      allow delete: if isMembersAdmin();
+    }
+
+    match /membrosAcessos/{id} {
+      allow read: if request.auth != null && (
+        request.auth.token.email == id
+        || request.auth.token.email == "yanfili.simon@gmail.com"
+        || request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2"
+        || (id == "_config" && request.auth.token.email != null
+            && exists(/databases/$(database)/documents/membrosAcessos/$(request.auth.token.email))
+            && "amon" in get(/databases/$(database)/documents/membrosAcessos/$(request.auth.token.email)).data.areas)
+      );
+      allow write: if isMembersAdmin();
+    }
+
+    match /membrosGestao/{id} {
+      allow read, write: if request.auth != null && (
+        request.auth.token.email == "yanfili.simon@gmail.com"
+        || request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2"
+      );
+    }
+
     match /users/{uid} {
       allow read, write: if request.auth.uid == uid;
       allow read: if isAfMentor();
