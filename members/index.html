@@ -55,7 +55,7 @@ h1{font-family:Cinzel,serif;font-weight:500;font-size:34px;margin:8px 0}
 .crumb{color:var(--muted);font-size:13px;margin-bottom:8px}
 .crumb button{background:none;border:0;color:var(--gold);cursor:pointer;padding:0}
 .user{margin-top:24px;padding-top:14px;border-top:1px solid rgba(198,161,90,.16);font-size:12px;color:var(--muted)}
-.note{margin-top:14px;color:var(--muted)}
+#grantBoxes label{display:block;margin:6px 0;color:var(--text)}
 @media(max-width:800px){
   .mid,.right,.brand small{display:none}
   .brand{font-size:14px}
@@ -81,7 +81,7 @@ h1{font-family:Cinzel,serif;font-weight:500;font-size:34px;margin:8px 0}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const auth = getAuth(initializeApp({
   apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
@@ -186,13 +186,25 @@ const FAIXAS = {
 };
 
 let user = null;
-let access = { areas: [] };
+let rights = { areas: [], cursos: [], livros: [], audios: [] };
+let catalogVideos = {};
+let adminOn = false;
 let route = { view: "portal", nivel: 1, curso: "", mod: 0, aula: 0 };
 
 function esc(s) { return String(s || "").replace(/[&<>]/g, c => ({ "&": "&", "<": "<", ">": ">" }[c])); }
 function mail() { return ((user && user.email) || "").toLowerCase(); }
 function isYan() { return mail() === YAN; }
-function owns(nivel) { return isYan() || access.areas.includes(AREA[nivel]); }
+function ownsArea(nivel) { return adminOn || rights.areas.includes(AREA[nivel]); }
+function keyCurso(nivel, id) { return AREA[nivel] + ":" + id; }
+function ownsCurso(nivel, id) { return ownsArea(nivel) || rights.cursos.includes(keyCurso(nivel, id)); }
+function ownsLivro(nivel, nome) { return ownsArea(nivel) || rights.livros.includes(AREA[nivel] + ":" + nome); }
+function ownsAudio(nivel, nome) { return ownsArea(nivel) || rights.audios.includes(AREA[nivel] + ":" + nome); }
+function ytId(url) {
+  const text = String(url || "").trim();
+  const m = text.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{6,})/);
+  return m ? m[1] : ( /^[A-Za-z0-9_-]{6,20}$/.test(text) ? text : "" );
+}
+function videoKey() { return AREA[route.nivel] + ":" + route.curso + ":" + route.mod + ":" + route.aula; }
 function faixa() { return FAIXAS[route.nivel]; }
 function cursoAtual() {
   const f = faixa();
@@ -221,11 +233,13 @@ function side() {
       <button data-go="livros">Livros</button>
       <button data-go="audios">Áudios</button>
     `}
-    <div class="user">${esc(mail() || "Visitante")}<br>${isYan() ? "Acesso a todas as faixas" : "Membro"}<br><button id="authBtn" style="margin-top:8px">${user ? "Sair" : "Entrar"}</button></div>`;
+    <div class="user">${esc(mail() || "Visitante")}<br>${adminOn ? "Administrador" : "Membro"}<br><button id="authBtn" style="margin-top:8px">${user ? "Sair" : "Entrar"}</button></div>
+    ${adminOn ? `<button class="${route.view === "gestao" ? "on" : ""}" data-go="gestao">Gestão de acesso</button>` : ""}`;
   document.getElementById("side").querySelectorAll("[data-go]").forEach(btn => {
     btn.onclick = () => {
       const id = btn.dataset.go;
       if (id === "portal") go({ view: "portal" });
+      else if (id === "gestao") go({ view: "gestao" });
       else if (id === "area") go({ view: "area" });
       else if (id === "fundamentos") go({ view: "player", curso: "fundamentos", mod: 0, aula: 0 });
       else {
@@ -243,7 +257,7 @@ function side() {
 function portal() {
   const cards = Object.keys(FAIXAS).map(num => {
     const f = FAIXAS[num];
-    const open = owns(Number(num));
+    const open = ownsArea(Number(num));
     return `<button class="card" data-nivel="${num}"><img alt="" src="${f.img}"><div><strong>${esc(f.nome)}</strong><span>${esc(f.tag)}</span><span class="badge ${open ? "on" : "off"}">${open ? "LIBERADO" : "BLOQUEADO"}</span></div></button>`;
   }).join("");
   document.getElementById("app").innerHTML = `
@@ -251,7 +265,7 @@ function portal() {
     <h1>Bem-vindo ao Barra Members</h1>
     <p class="sub">Sua jornada começa aqui. Cada faixa abre os fundamentos, os cursos da Doutrina, os livros e os áudios. O arquivo entra depois.</p>
     <div class="grid">${cards}</div>
-    <p class="note">${isYan() ? "Sua conta já entra em todas as faixas." : "A faixa bloqueada abre no checkout. Quem já pagou entra com o mesmo login."}</p>`;
+    <p class="note">${adminOn ? "Sua conta administra e entra em todas as faixas." : "O cadeado é o que esse login ainda não tem. Comprar a faixa, ou receber o direito no Pix, abre só aquilo."}</p>`;
   document.getElementById("app").querySelectorAll("[data-nivel]").forEach(btn => {
     btn.onclick = () => go({ view: "area", nivel: Number(btn.dataset.nivel) });
   });
@@ -259,7 +273,7 @@ function portal() {
 
 function area() {
   const f = faixa();
-  const open = owns(route.nivel);
+  const open = ownsArea(route.nivel);
   const aulasFund = f.fundamentos.reduce((n, m) => n + m.aulas.length, 0);
   document.getElementById("app").innerHTML = `
     <p class="crumb"><button data-back="portal">Início</button> · ${esc(f.nome)}</p>
@@ -285,7 +299,8 @@ function cursos() {
     <p class="sub">Os cursos da Doutrina deste nível. Toque para abrir módulos e aulas. O vídeo entra no quadro.</p>
     <div class="courses">${f.cursos.map(item => {
       const aulasN = item.modules.reduce((n, m) => n + m.aulas.length, 0);
-      return `<button class="course" data-curso="${item.id}"><div class="play">▶</div><strong>${esc(item.titulo)}</strong><p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p></button>`;
+      const open = ownsCurso(route.nivel, item.id);
+      return `<button class="course" data-curso="${item.id}"><div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong><p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p><span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : "BLOQUEADO"}</span></button>`;
     }).join("")}</div>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
   document.querySelectorAll("[data-curso]").forEach(btn => {
@@ -299,12 +314,13 @@ function player() {
   const mod = item.modules[route.mod] || item.modules[0];
   const aula = mod.aulas[route.aula] || mod.aulas[0];
   const total = item.modules.reduce((n, m) => n + m.aulas.length, 0);
-  const open = owns(route.nivel);
-  const ready = aula.ytId && aula.ytId !== "COLOQUE_AQUI";
+  const open = route.curso === "fundamentos" ? ownsArea(route.nivel) : ownsCurso(route.nivel, route.curso);
+  const saved = catalogVideos[videoKey()] || "";
+  const ready = !!saved;
   const stage = !open
     ? `<div class="stage"><div><div class="play" style="margin:0 auto 10px">🔒</div><p>Esta aula abre quando a faixa estiver paga.</p><button class="buy" id="buy">Comprar esta faixa</button></div></div>`
     : ready
-      ? `<iframe src="https://www.youtube-nocookie.com/embed/${aula.ytId}?rel=0" allowfullscreen></iframe>`
+      ? `<iframe src="https://www.youtube-nocookie.com/embed/${saved}?rel=0" allowfullscreen></iframe>`
       : `<div class="stage"><div><div class="play" style="margin:0 auto 10px">▶</div><p>Vídeo em breve</p><p>O arquivo desta aula entra aqui.</p></div></div>`;
   document.getElementById("app").innerHTML = `
     <p class="crumb"><button data-back="cursos">${esc(f.nome)}</button> · ${esc(item.titulo)}</p>
@@ -322,6 +338,7 @@ function player() {
           <button class="ghost" id="prev">← Anterior</button>
           <button id="next">Próxima aula →</button>
         </div>
+        ${adminOn ? `<label style="display:block;margin-top:16px">URL do vídeo desta aula</label><input id="videoUrl" placeholder="https://youtube.com/watch?v=..." style="width:100%;margin-top:8px;background:#120e16;border:1px solid rgba(198,161,90,.3);color:#f3ecdf;border-radius:12px;padding:12px"><button class="buy" id="saveVideo" style="margin-top:8px">Salvar vídeo</button><p class="note" id="videoNote"></p>` : ""}
       </div>
     </div>`;
   const back = document.querySelector("[data-back]");
@@ -332,6 +349,8 @@ function player() {
   document.getElementById("next").onclick = () => passo(1);
   const buy = document.getElementById("buy");
   if (buy) buy.onclick = comprar;
+  const saveVideo = document.getElementById("saveVideo");
+  if (saveVideo) saveVideo.onclick = saveLessonVideo;
 }
 function passo(dir) {
   const item = cursoAtual();
@@ -353,7 +372,7 @@ function livros() {
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
   document.querySelectorAll("[data-livro]").forEach(btn => {
     btn.onclick = () => {
-      if (!owns(route.nivel)) { comprar(); return; }
+      if (!ownsLivro(route.nivel, btn.dataset.livro)) { comprar(); return; }
       document.getElementById("livroNote").textContent = btn.dataset.livro + " · o arquivo ainda não entrou.";
     };
   });
@@ -371,7 +390,7 @@ function audios() {
   if (back) back.onclick = () => go({ view: "area" });
   document.querySelectorAll("[data-audio]").forEach(btn => {
     btn.onclick = () => {
-      if (!owns(route.nivel)) { comprar(); return; }
+      if (!ownsAudio(route.nivel, btn.dataset.audio)) { comprar(); return; }
       document.getElementById("audioNote").textContent = btn.dataset.audio + " · o áudio ainda não entrou.";
     };
   });
@@ -384,21 +403,193 @@ function draw() {
   else if (route.view === "cursos") cursos();
   else if (route.view === "livros") livros();
   else if (route.view === "audios") audios();
+  else if (route.view === "gestao") gestao();
   else player();
+}
+
+function checks() {
+  return Object.keys(FAIXAS).map(num => {
+    const f = FAIXAS[num];
+    const area = AREA[num];
+    const cursos = f.cursos.map(c => `<label><input type="checkbox" data-kind="curso" value="${area}:${c.id}"> ${esc(c.titulo)}</label>`).join("");
+    const livros = f.livros.map(nome => `<label><input type="checkbox" data-kind="livro" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
+    const audios = f.audios.map(nome => `<label><input type="checkbox" data-kind="audio" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
+    return `<div class="book" style="margin-top:12px"><strong>${esc(f.nome)}</strong><label><input type="checkbox" data-kind="area" value="${area}"> Faixa inteira</label>${cursos}${livros}${audios}</div>`;
+  }).join("");
+}
+
+function gestao() {
+  if (!adminOn) { portal(); return; }
+  document.getElementById("app").innerHTML = `
+    <p class="kicker">Pix e acesso manual</p>
+    <h1>Gestão de acesso</h1>
+    <p class="sub">Quem pagou fora do Stripe entra aqui. O e-mail liberado precisa ser o mesmo do login. A faixa inteira abre tudo dela. Um curso abre só aquele curso.</p>
+    <label>E-mail</label>
+    <input id="grantMail" type="email" placeholder="pessoa@email.com" style="width:100%;margin-top:8px;background:#120e16;border:1px solid rgba(198,161,90,.3);color:#f3ecdf;border-radius:12px;padding:12px">
+    <div class="row"><button id="findMail" class="ghost">Buscar</button></div>
+    <div id="grantBoxes">${checks()}</div>
+    <div class="row"><button id="grantBtn">Liberar</button><button id="revokeBtn" class="ghost">Revogar o marcado</button></div>
+    <p class="note" id="grantNote"></p>
+    <h1 style="font-size:26px;margin-top:28px">Administradores</h1>
+    <p class="sub">O seu Gmail já administra. Outro e-mail só administra depois que a regra do Firebase estiver publicada.</p>
+    <input id="adminMail" type="email" placeholder="outro@email.com" style="width:100%;margin-top:8px;background:#120e16;border:1px solid rgba(198,161,90,.3);color:#f3ecdf;border-radius:12px;padding:12px">
+    <div class="row"><button id="adminBtn">Adicionar administrador</button></div>`;
+  document.getElementById("findMail").onclick = loadGrant;
+  document.getElementById("grantBtn").onclick = () => saveGrant(false);
+  document.getElementById("revokeBtn").onclick = () => saveGrant(true);
+  document.getElementById("adminBtn").onclick = addAdmin;
+}
+
+function marked() {
+  const out = { areas: [], cursos: [], livros: [], audios: [] };
+  document.querySelectorAll("#grantBoxes input:checked").forEach(input => {
+    if (input.dataset.kind === "area") out.areas.push(input.value);
+    if (input.dataset.kind === "curso") out.cursos.push(input.value);
+    if (input.dataset.kind === "livro") out.livros.push(input.value);
+    if (input.dataset.kind === "audio") out.audios.push(input.value);
+  });
+  return out;
+}
+
+async function loadGrant() {
+  const email = document.getElementById("grantMail").value.trim().toLowerCase();
+  const note = document.getElementById("grantNote");
+  if (!email.includes("@")) { note.textContent = "Coloca o e-mail."; return; }
+  let data = { areas: [], cursos: [], livros: [], audios: [] };
+  try {
+    const snap = await getDoc(doc(db, "membrosAcessos", email));
+    if (snap.exists()) data = Object.assign(data, snap.data());
+  } catch (e) {}
+  try {
+    const snap = await getDoc(doc(db, "entitlements", email));
+    if (snap.exists()) data = Object.assign(data, snap.data());
+  } catch (e) {}
+  document.querySelectorAll("#grantBoxes input").forEach(input => {
+    const list = input.dataset.kind === "area" ? data.areas : input.dataset.kind === "curso" ? data.cursos : input.dataset.kind === "livro" ? data.livros : data.audios;
+    input.checked = (list || []).includes(input.value);
+  });
+  note.textContent = "Direitos deste e-mail carregados.";
+}
+
+async function writeRights(email, data) {
+  const payload = {
+    email,
+    areas: data.areas || [],
+    cursos: data.cursos || [],
+    livros: data.livros || [],
+    audios: data.audios || [],
+    videos: data.videos || {},
+    source: "manual_pix",
+    grantedBy: mail(),
+    status: "active"
+  };
+  await setDoc(doc(db, "membrosAcessos", email), payload, { merge: true });
+  try { await setDoc(doc(db, "entitlements", email), payload, { merge: true }); } catch (e) {}
+}
+
+async function saveGrant(revoke) {
+  const email = document.getElementById("grantMail").value.trim().toLowerCase();
+  const note = document.getElementById("grantNote");
+  if (!email.includes("@")) { note.textContent = "Coloca o e-mail."; return; }
+  const pick = marked();
+  let current = { areas: [], cursos: [], livros: [], audios: [], videos: {} };
+  try {
+    const snap = await getDoc(doc(db, "membrosAcessos", email));
+    if (snap.exists()) current = Object.assign(current, snap.data());
+  } catch (e) {}
+  ["areas", "cursos", "livros", "audios"].forEach(kind => {
+    const have = new Set(current[kind] || []);
+    pick[kind].forEach(id => { if (revoke) have.delete(id); else have.add(id); });
+    current[kind] = Array.from(have);
+  });
+  try {
+    await writeRights(email, current);
+    note.textContent = revoke ? "Direito removido." : "Direito liberado. A pessoa entra com esse e-mail.";
+  } catch (e) {
+    note.textContent = "Não foi possível gravar. Só o administrador consegue liberar.";
+  }
+}
+
+async function addAdmin() {
+  const email = document.getElementById("adminMail").value.trim().toLowerCase();
+  const note = document.getElementById("grantNote");
+  if (!email.includes("@")) { note.textContent = "Coloca o e-mail do administrador."; return; }
+  try {
+    await setDoc(doc(db, "membersAdmins", email), { active: true, by: mail() });
+    note.textContent = email + " foi adicionado. A regra do Firebase precisa estar publicada para ele gravar.";
+  } catch (e) {
+    note.textContent = "A lista de administradores ainda não aceita gravação. O seu Gmail continua sendo o administrador.";
+  }
+}
+
+async function saveLessonVideo() {
+  const input = document.getElementById("videoUrl");
+  const note = document.getElementById("videoNote");
+  const id = ytId(input.value);
+  if (!id) { note.textContent = "Cola o link do YouTube dessa aula."; return; }
+  const key = videoKey();
+  const cursoKey = AREA[route.nivel] + ":" + route.curso;
+  catalogVideos[key] = id;
+  try {
+    await setDoc(doc(db, "aulas", key.split(":").join("_")), {
+      videoId: id,
+      area: AREA[route.nivel],
+      cursoKey,
+      by: mail()
+    });
+  } catch (e) {}
+  try {
+    await setDoc(doc(db, "membrosGestao", "videos"), { [key]: id }, { merge: true });
+  } catch (e) {}
+  try {
+    const all = await getDocs(collection(db, "membrosAcessos"));
+    const area = AREA[route.nivel];
+    const cursoKey = area + ":" + route.curso;
+    for (const item of all.docs) {
+      const data = item.data();
+      const ok = (data.areas || []).includes(area) || (data.cursos || []).includes(cursoKey);
+      if (!ok) continue;
+      const videos = Object.assign({}, data.videos || {});
+      videos[key] = id;
+      await setDoc(item.ref, { videos }, { merge: true });
+    }
+  } catch (e) {}
+  note.textContent = "Vídeo desta aula salvo para quem já tem esse direito.";
+  draw();
+}
+
+function pullRights(data) {
+  (data.areas || []).forEach(id => { if (id && !rights.areas.includes(id)) rights.areas.push(id); });
+  (data.cursos || []).forEach(id => { if (id && !rights.cursos.includes(id)) rights.cursos.push(id); });
+  (data.livros || []).forEach(id => { if (id && !rights.livros.includes(id)) rights.livros.push(id); });
+  (data.audios || []).forEach(id => { if (id && !rights.audios.includes(id)) rights.audios.push(id); });
+  Object.assign(catalogVideos, data.videos || {});
 }
 
 onAuthStateChanged(auth, async next => {
   user = next;
-  access = { areas: [] };
-  try {
-    const raw = JSON.parse(localStorage.getItem("akashaMembros") || "{}");
-    (raw.areas || []).forEach(id => { if (!access.areas.includes(id)) access.areas.push(id); });
-  } catch (e) {}
+  rights = { areas: [], cursos: [], livros: [], audios: [] };
+  catalogVideos = {};
+  adminOn = isYan();
   if (user && mail()) {
     try {
-      const grant = await getDoc(doc(db, "membrosAcessos", mail()));
-      if (grant.exists()) (grant.data().areas || []).forEach(id => { if (!access.areas.includes(id)) access.areas.push(id); });
+      const admin = await getDoc(doc(db, "membersAdmins", mail()));
+      if (admin.exists() && admin.data().active) adminOn = true;
     } catch (e) {}
+    try {
+      const grant = await getDoc(doc(db, "membrosAcessos", mail()));
+      if (grant.exists()) pullRights(grant.data());
+    } catch (e) {}
+    try {
+      const grant = await getDoc(doc(db, "entitlements", mail()));
+      if (grant.exists()) pullRights(grant.data());
+    } catch (e) {}
+    if (adminOn) {
+      try {
+        const videos = await getDoc(doc(db, "membrosGestao", "videos"));
+        if (videos.exists()) Object.assign(catalogVideos, videos.data());
+      } catch (e) {}
+    }
   }
   draw();
 });
