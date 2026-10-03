@@ -52,6 +52,77 @@ window.AKASHA_AREAS = [
   }
 ];
 
+window.AKASHA_PRECO = {
+  area: { anubis: 4700, horus: 9700, isis: 14700, amon: 19700 },
+  curso: 2700,
+  livro: 1700,
+  audio: 700
+};
+
+window.AKASHA_ITENS = {
+  anubis: {
+    cursos: ["alinhamento", "7-dias", "casais", "tantra", "fascinacao"],
+    livros: ["O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas"],
+    audios: ["Mente Crística", "Pai Nosso", "Avê Maria", "Cura das Feridas Invisíveis", "O Código Secreto do Universo"]
+  },
+  horus: {
+    cursos: ["senda", "prosperidade", "despertar"],
+    livros: ["Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado"],
+    audios: []
+  },
+  isis: {
+    cursos: ["paladins", "jornada"],
+    livros: ["Autoestima Blindada", "Como Blindar Sua Mente?", "Triplex na Mente"],
+    audios: []
+  },
+  amon: {
+    cursos: ["zero"],
+    livros: ["Coletânea Alinhamento Financeiro", "Códigos de Origem"],
+    audios: []
+  }
+};
+
+window.akashaReais = function (cents) {
+  return (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+};
+
+window.akashaOferta = function (ref) {
+  var parts = String(ref || "").split(":");
+  var kind = parts[0];
+  var area = parts[1];
+  var item = parts.slice(2).join(":");
+  var faixa = window.akashaArea(area);
+  if (!faixa) return null;
+  if (kind === "area") {
+    var cents = window.AKASHA_PRECO.area[area];
+    return { ref: "area:" + area, nome: "Faixa " + faixa.name, cents: cents, label: window.akashaReais(cents) };
+  }
+  var lista = kind === "curso" ? window.AKASHA_ITENS[area].cursos : kind === "livro" ? window.AKASHA_ITENS[area].livros : kind === "audio" ? window.AKASHA_ITENS[area].audios : null;
+  if (!lista || lista.indexOf(item) < 0) return null;
+  var valor = window.AKASHA_PRECO[kind];
+  var titulo = item;
+  if (kind === "curso") {
+    for (var i = 0; i < faixa.courses.length; i++) {
+      if (faixa.courses[i][0] === item || window.AKASHA_ITENS[area].cursos.indexOf(item) >= 0) titulo = item;
+    }
+    var nomes = {
+      alinhamento: "Código de Alinhamento",
+      "7-dias": "Desafio 7 Dias de Magnetismo",
+      casais: "Ritual para Casais",
+      tantra: "Tantra Diferente de Sexo",
+      fascinacao: "O Poder da Fascinação",
+      senda: "A Senda Tântrica",
+      prosperidade: "Tantra Quântico e Prosperidade",
+      despertar: "Despertar do Magnetismo",
+      paladins: "Paladins: A Liderança dos Bons",
+      jornada: "Jornada de Transformação",
+      zero: "Do Zero ao Zen e Negócios"
+    };
+    titulo = nomes[item] || item;
+  }
+  return { ref: kind + ":" + area + ":" + item, nome: titulo, cents: valor, label: window.akashaReais(valor) };
+};
+
 window.AKASHA_YAN = "yanfili.simon@gmail.com";
 
 window.akashaArea = function (id) {
