@@ -45,7 +45,8 @@ h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:42px;margin:
 .mods button{width:100%;text-align:left;background:transparent;color:var(--muted);border:0;border-radius:10px;padding:10px;cursor:pointer}
 .mods button.on{background:rgba(139,105,20,.12);color:var(--gold)}
 .stage{min-height:240px;border:1px solid var(--line);border-radius:16px;display:grid;place-items:center;text-align:center;padding:24px;background:#fff;color:var(--muted)}
-.stage iframe{width:100%;height:320px;border:0;border-radius:12px}
+.stage iframe{width:100%;height:min(56vw,420px);min-height:220px;border:0;border-radius:12px}
+.lote{width:100%;min-height:148px;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px;color:#1c140c;font-family:inherit;font-size:14px;line-height:1.45}
 .lesson{display:flex;justify-content:space-between;gap:12px;width:100%;background:transparent;color:var(--text);border:0;border-bottom:1px solid var(--line);padding:12px 0;cursor:pointer}
 .row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
 .row button,.buy{border:0;border-radius:999px;padding:12px 16px;cursor:pointer;background:var(--gold);color:#fff;font-weight:600}
@@ -123,6 +124,20 @@ function curso(id, titulo, mods, aulas) {
   return { id, titulo, modules: pack(mods, aulas) };
 }
 const BUNNY_LIB = "769429";
+const TECHUB_GRADE=[["M1 Código",["M1.1 · O que é informação","M1.2 · Como a realidade é programada","M1.3 · O que é código","M1.4 · A arquitetura da internet","M1.5 · Engenharia da informação","M1.6 · Como Instagram, TikTok e YouTube funcionam","M1.7 · Sua mente como sistema operacional","M1.8 · Palavra cria realidade","M1.9 · Tecnologia ancestral"]],["M2 Linguagens",["M2.1 · HTML: a estrutura","M2.2 · CSS: a aparência","M2.3 · JavaScript: o cérebro","M2.4 · O que se vê e o que não se vê","M2.5 · Seu primeiro site do zero","M2.6 · Git e GitHub","M2.7 · Login e gaveta","M2.8 · IA como ajudante de código","M2.9 · Colocar no ar"]],["M3 Sistemas",["M3.1 · O que é o fundo","M3.2 · A gaveta","M3.3 · A chave por dentro","M3.4 · Quando duas casas conversam","M3.5 · O primeiro app que faz uma coisa","M3.6 · Hospedagem e domínio","M3.7 · Produto que vive sem você na sala","M3.8 · Celular sem reinventar o osso","M3.9 · Jogo: uma regra"]],["M4 IA",["M4.1 · O mapa das IAs","M4.2 · Como pedir","M4.3 · Site com IA, você no volante","M4.4 · Imagem, vídeo, áudio","M4.5 · Automatizar sem ficar oco","M4.6 · IA dentro do produto","M4.7 · Campo e máquina","M4.8 · Um agente, uma tarefa","M4.9 · O futuro sem filme"]],["M5 Marketing",["M5.1 · Bernays: consentimento","M5.2 · Gatilhos com caráter","M5.3 · Economia da atenção","M5.4 · O caminho até o sim","M5.5 · Palavra que vende","M5.6 · O post que para","M5.7 · Venda com presença","M5.8 · Lançamento com ordem","M5.9 · Preço é posição"]],["M6 Consciência",["M6.1 · O observador","M6.2 · Padrão que se espalha","M6.3 · O corpo lembra","M6.4 · Registro","M6.5 · Padrão de família","M6.6 · Causa e efeito","M6.7 · Vidas, hipótese, obra","M6.8 · A palavra que corta","M6.9 · O que foi esquecido"]],["M7 Legado",["M7.1 · Desenhar o campo","M7.2 · Página, caminho, pagamento","M7.3 · Produto é lugar","M7.4 · Marca da essência","M7.5 · Lugar sem concorrência","M7.6 · A cópia é sua","M7.7 · Quem segura a casa grande","M7.8 · O novo sem salvação","M7.9 · Manifesto do criador"]]];
+function cursoGrade(id, titulo, grade) {
+  return {
+    id,
+    titulo,
+    modules: grade.map(par => ({
+      nome: par[0],
+      aulas: par[1].map(nomeAula => ({
+        titulo: nomeAula,
+        video: { provider: "bunny", videoId: "", libraryId: BUNNY_LIB }
+      }))
+    }))
+  };
+}
 const ALINHAMENTO_AULAS = [
   "12921e88-6125-4570-885e-a1ca84556bab",
   "a38def1d-bbb3-405c-a65b-0e55a9a67c22",
@@ -183,6 +198,7 @@ const FAIXAS = {
       { nome: "Campos Morfogenéticos", aulas: aulas(["Campos da Memória", "Linhagens e Padrões", "Desvinculação", "Criando Seu Novo Campo"]) }
     ],
     cursos: [
+      cursoGrade("techub", "Tech Hub", TECHUB_GRADE),
       curso("senda", "A Senda Tântrica", 3, 9),
       curso("prosperidade", "Tantra Quântico e Prosperidade", 3, 9),
       curso("despertar", "Despertar do Magnetismo", 3, 9)
@@ -392,13 +408,18 @@ function area() {
     <div class="hero"><img alt="" src="${f.img}"><div><p class="kicker">${esc(f.tag)}</p><h1>${esc(f.nome)}</h1><p class="sub">${esc(f.frase)}</p><p class="note">${open ? "Faixa liberada." : "Esta faixa custa " + reais(precoDe("area")) + ". Dá para ver a estrutura. O conteúdo abre depois do pagamento."}</p>${open ? "" : '<button class="buy" id="buy">Pagar a faixa</button>'}</div></div>
     <button class="tile" id="openFund" style="width:100%;margin-bottom:12px"><b>Fundamentos do Despertar</b>${f.fundamentos.length} módulos · ${aulasFund} aulas</button>
     <div class="tiles">
-      <button class="tile" data-view="cursos"><b>Cursos</b>${f.cursos.length} cursos desta faixa</button>
+      <button class="tile" data-view="cursos"><b>Cursos</b>${listaCursos().length} cursos desta faixa</button>
       <button class="tile" data-view="livros"><b>Livros</b>${livrosVisiveis().length} e-books</button>
       <button class="tile" data-view="audios"><b>Áudios</b>${audiosVisiveis().length} áudios</button>
-    </div>`;
+    </div>
+    ${adminOn ? `<div class="tiles" style="margin-top:12px"><button class="tile" id="criarCurso"><b>Criar curso</b>Nesta faixa. Módulo, aula e link do Bunny. Quem tem a faixa vê quando publicar.</button><button class="tile" id="criarLivro"><b>Criar ebook</b>Nesta faixa. Cola o PDF. Quem tem a faixa abre.</button></div>` : ""}`;
   document.querySelector("[data-back]").onclick = () => go({ view: "portal" });
   document.getElementById("openFund").onclick = () => go({ view: "player", curso: "fundamentos", mod: 0, aula: 0 });
   document.querySelectorAll("[data-view]").forEach(btn => { btn.onclick = () => go({ view: btn.dataset.view }); });
+  const criarCurso = document.getElementById("criarCurso");
+  if (criarCurso) criarCurso.onclick = () => novoCursoNaFaixa(AREA[route.nivel]);
+  const criarLivro = document.getElementById("criarLivro");
+  if (criarLivro) criarLivro.onclick = () => novoLivroNaFaixa(AREA[route.nivel]);
   const buy = document.getElementById("buy");
   if (buy) buy.onclick = () => comprar("area");
 }
@@ -408,14 +429,16 @@ function cursos() {
   document.getElementById("app").innerHTML = `
     <p class="crumb"><button data-back="area">${esc(f.nome)}</button> · Cursos</p>
     <h1>Cursos</h1>
-    <p class="sub">Os cursos da Doutrina deste nível. Toque para abrir módulos e aulas. O vídeo entra no quadro.</p>
-    <div class="courses">${listaCursos().map(item => {
+    <p class="sub">${adminOn ? "Quem tem esta faixa vê o curso publicado. O card de criar fica aqui, sem GitHub." : "Os cursos desta faixa. Toque para abrir módulos e aulas."}</p>
+    <div class="courses">${(adminOn ? `<button class="course" id="criarCursoCard"><div class="play">+</div><strong>Criar novo curso</strong><p class="sub">Nasce nesta faixa, no mesmo padrão: módulo, aula, link do Bunny.</p></button>` : "") + listaCursos().map(item => {
       const aulasN = item.modules.reduce((n, m) => n + m.aulas.length, 0);
       const open = ownsCurso(route.nivel, item.id);
       const capa = item.capa ? `<img alt="" src="${esc(item.capa)}" style="width:100%;height:120px;object-fit:cover;border-radius:12px;margin-bottom:8px">` : "";
       return `<button class="course" data-curso="${item.id}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong><p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p><span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : reais(PRECO_ITEM.curso)}</span></button>`;
     }).join("")}</div>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
+  const criarCursoCard = document.getElementById("criarCursoCard");
+  if (criarCursoCard) criarCursoCard.onclick = () => novoCursoNaFaixa(AREA[route.nivel]);
   document.querySelectorAll("[data-curso]").forEach(btn => {
     btn.onclick = () => go({ view: "player", curso: btn.dataset.curso, mod: 0, aula: 0 });
   });
@@ -456,7 +479,8 @@ function player() {
           <button class="ghost" id="prev">← Anterior</button>
           <button id="next">Próxima aula →</button>
         </div>
-        ${adminOn ? `<label style="display:block;margin-top:16px">Vídeo</label><select id="videoProvider" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><option value="youtube">YouTube</option><option value="bunny">Bunny</option></select><input id="videoUrl" placeholder="Cole o link do Bunny ou do YouTube" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><input id="libraryId" placeholder="Library ID, só se o link não trouxer" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><div class="row"><button class="buy" id="saveVideo">Salvar vídeo</button><button class="ghost" id="previewVideo">Pré-visualizar</button></div><p class="note" id="videoNote"></p>` : ""}
+        ${adminOn && route.curso !== "fundamentos" ? `<div class="row"><button class="ghost" id="irLote">Colar os links do Bunny na ordem</button></div>` : ""}
+        ${adminOn ? `<label style="display:block;margin-top:16px">Vídeo desta aula</label><select id="videoProvider" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><option value="youtube">YouTube</option><option value="bunny">Bunny</option></select><input id="videoUrl" placeholder="Cole o link do Bunny ou do YouTube" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><input id="libraryId" placeholder="Library ID, só se o link não trouxer" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><div class="row"><button class="buy" id="saveVideo">Salvar vídeo</button><button class="ghost" id="previewVideo">Pré-visualizar</button></div><p class="note" id="videoNote"></p>` : ""}
       </div>
     </div>`;
   const back = document.querySelector("[data-back]");
@@ -467,6 +491,19 @@ function player() {
   document.getElementById("next").onclick = () => passo(1);
   const buy = document.getElementById("buy");
   if (buy) buy.onclick = () => comprar(route.curso === "fundamentos" ? "area" : "curso", route.curso);
+  const irLote = document.getElementById("irLote");
+  if (irLote) irLote.onclick = () => {
+    garantirTechub();
+    const id = AREA[route.nivel] + ":" + route.curso;
+    let index = (cms.cursos || []).findIndex(c => c.id === id);
+    if (index < 0) {
+      cms.cursos = cms.cursos || [];
+      cms.cursos.push({ id, faixa: AREA[route.nivel], titulo: item.titulo, descricao: "", capa: "", status: "publicado", ordem: cms.cursos.length, modules: (item.modules || []).map((m, mi) => ({ id: "m" + mi, titulo: m.nome, ordem: mi, aulas: (m.aulas || []).map((a, ai) => ({ id: "a" + ai, titulo: a.titulo, descricao: a.descricao || "", ordem: ai, status: a.status || "publicado", access: a.access || "exclusivo", video: a.video || { provider: "bunny", videoId: "", libraryId: BUNNY_LIB } })) })) });
+      index = cms.cursos.length - 1;
+    }
+    cmsAt = { mode: "curso", index, mod: 0, aula: 0 };
+    go({ view: "conteudo" });
+  };
   const saveVideo = document.getElementById("saveVideo");
   if (saveVideo) saveVideo.onclick = saveLessonVideo;
   const preview = document.getElementById("previewVideo");
@@ -496,9 +533,12 @@ function livros() {
     <p class="crumb"><button data-back="area">${esc(f.nome)}</button> · Livros</p>
     <h1>Livros</h1>
     <p class="sub">E-books desta faixa. Quem tem o direito abre o arquivo.</p>
+    ${adminOn ? `<div class="row"><button id="criarLivroCard">Criar ebook nesta faixa</button></div>` : ""}
     <div class="books">${livrosVisiveis().map(nome => `<article class="book"><div class="cover">E-BOOK</div><strong>${esc(nome)}</strong><div class="row"><button data-livro="${esc(nome)}">Abrir livro</button></div></article>`).join("") || "<p class='sub'>Nenhum livro neste nível ainda.</p>"}</div>
     <p class="note" id="livroNote"></p>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
+  const criarLivroCard = document.getElementById("criarLivroCard");
+  if (criarLivroCard) criarLivroCard.onclick = () => novoLivroNaFaixa(AREA[route.nivel]);
   document.querySelectorAll("[data-livro]").forEach(btn => {
     btn.onclick = () => {
       if (!adminOn && !ownsLivro(route.nivel, btn.dataset.livro)) { comprar("livro", btn.dataset.livro); return; }
@@ -936,7 +976,7 @@ function conteudo() {
       <div class="tile"><b>${semVideo}</b>Sem vídeo</div>
       <div class="tile"><b>${rascunhos}</b>Rascunhos</div>
     </div>
-    <div class="row"><button id="novoCurso">Novo curso</button><button id="trazer" class="ghost">Trazer os cursos atuais</button></div>
+    <div class="row"><button id="novoCurso">Novo curso nesta faixa</button><button id="trazer" class="ghost">Trazer os cursos atuais</button></div>
     <p class="note" id="cmsNote"></p>
     <div class="courses" style="margin-top:16px">${cursos.map((c, i) => `<button class="course" data-curso="${i}">${c.capa ? `<img alt="" src="${esc(c.capa)}" style="width:100%;height:90px;object-fit:cover;border-radius:12px;margin-bottom:8px">` : ""}<strong>${esc(c.titulo || "Sem nome")}</strong><p class="sub">${esc(c.faixa || "")} · ${esc(c.status || "rascunho")} · ${(c.modules || []).length} módulos</p></button>`).join("") || "<p class='sub'>Nenhum curso salvo ainda.</p>"}</div>
     <h1 style="font-size:28px;margin-top:28px">Livros</h1>
@@ -945,11 +985,7 @@ function conteudo() {
     <h1 style="font-size:28px;margin-top:28px">Áudios</h1>
     <div class="row"><button id="novoAudio">Novo áudio</button></div>
     <div style="margin-top:12px">${(cms.audios || []).map((a, i) => `<div class="audio"><strong>${esc(a.titulo || "Sem nome")}</strong><span><button data-audio="${i}">Editar</button></span></div>`).join("") || "<p class='sub'>Nenhum áudio extra ainda.</p>"}</div>`;
-  document.getElementById("novoCurso").onclick = async () => {
-    cms.cursos.push({ id: "anubis:novo-" + Date.now(), faixa: "anubis", titulo: "Novo curso", descricao: "", capa: "", status: "rascunho", ordem: cms.cursos.length, modules: [] });
-    cmsAt = { mode: "curso", index: cms.cursos.length - 1, mod: 0, aula: 0 };
-    await gravarCms("Curso criado.");
-  };
+  document.getElementById("novoCurso").onclick = () => novoCursoNaFaixa(AREA[route.nivel] || "anubis");
   document.getElementById("trazer").onclick = async () => {
     if (cms.cursos.length && !confirm("Isso recria a lista a partir dos cursos que já estão na área.")) return;
     seedCms();
@@ -985,7 +1021,7 @@ function livroEditor() {
     ${faixaSelect("iFaixa")}
     ${campo("iUrl", "Arquivo, link do PDF", item.url, "https://")}
     <label style="display:block;margin-top:12px">Status</label>
-    <select id="iStatus" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="publicado">Publicado</option><option value="oculto">Oculto</option></select>
+    <select id="iStatus" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="rascunho">Rascunho</option><option value="publicado">Publicado</option><option value="oculto">Oculto</option></select>
     <div class="row"><button id="salvarItem">Salvar livro</button><button id="apagarItem" class="ghost">Excluir</button></div>
     <p class="note" id="cmsNote"></p>`;
   document.getElementById("iFaixa").value = item.faixa || "anubis";
@@ -1049,7 +1085,11 @@ function cursoEditor() {
     <select id="cFaixa" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="anubis">Anúbis</option><option value="horus">Hórus</option><option value="isis">Ísis</option><option value="amon">Rá</option></select>
     <label style="display:block;margin-top:12px">Status</label>
     <select id="cStatus" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="rascunho">Rascunho</option><option value="publicado">Publicado</option><option value="oculto">Oculto</option></select>
-    <div class="row"><button id="salvarCurso">Salvar curso</button><button id="subirCurso" class="ghost">Subir</button><button id="descerCurso" class="ghost">Descer</button><button id="novoMod" class="ghost">Novo módulo</button></div>
+    <div class="row"><button id="salvarCurso">Salvar curso</button><button id="publicarCurso" class="ghost">Publicar para os alunos</button><button id="subirCurso" class="ghost">Subir</button><button id="descerCurso" class="ghost">Descer</button><button id="novoMod" class="ghost">Novo módulo</button></div>
+    <label style="display:block;margin-top:18px">Links do Bunny, um por linha, na ordem das aulas</label>
+    <textarea id="loteBunny" class="lote" placeholder="Cola aqui. Um link por linha.&#10;https://player.mediadelivery.net/play/769429/..."></textarea>
+    <div class="row"><button id="aplicarLote">Colocar os vídeos na ordem</button></div>
+    <p class="sub">A primeira linha entra na primeira aula. Se sobrar link, nasce aula nova no último módulo. Library ${BUNNY_LIB} quando o link não trouxer.</p>
     <div style="margin-top:16px">${(c.modules || []).map((m, i) => `<div class="audio"><strong>${esc(m.titulo)}</strong><span><button data-mod="${i}">Aulas</button> <button data-up="${i}">↑</button> <button data-down="${i}">↓</button> <button data-del="${i}">Excluir</button></span></div>`).join("")}</div>
     <p class="note" id="cmsNote"></p>`;
   document.getElementById("cFaixa").value = c.faixa || "anubis";
@@ -1064,6 +1104,24 @@ function cursoEditor() {
     const curto = c.id.split(":").slice(1).join(":") || "curso";
     c.id = c.faixa + ":" + curto;
     await gravarCms("Curso salvo.");
+  };
+  document.getElementById("publicarCurso").onclick = async () => {
+    document.getElementById("cStatus").value = "publicado";
+    c.titulo = document.getElementById("cTitulo").value.trim() || "Sem nome";
+    c.descricao = document.getElementById("cDesc").value.trim();
+    c.capa = document.getElementById("cCapa").value.trim();
+    c.faixa = document.getElementById("cFaixa").value;
+    c.status = "publicado";
+    const curto = c.id.split(":").slice(1).join(":") || "curso";
+    c.id = c.faixa + ":" + curto;
+    await gravarCms("Publicado. Quem tem esta faixa vê ao atualizar.");
+  };
+  document.getElementById("aplicarLote").onclick = async () => {
+    const n = aplicarLoteNoCurso(c, document.getElementById("loteBunny").value);
+    const note = document.getElementById("cmsNote");
+    if (!n) { if (note) note.textContent = "Cola pelo menos um link, um por linha."; return; }
+    c.status = "publicado";
+    await gravarCms(n + " vídeo(s) na ordem. Quem tem a faixa vê ao atualizar.");
   };
   document.getElementById("novoMod").onclick = async () => {
     c.modules = c.modules || [];
@@ -1147,6 +1205,108 @@ function aulaEditor() {
     cmsAt.aula = 0;
     await gravarCms("Aula excluída.");
   };
+}
+
+function novoCursoNaFaixa(faixa) {
+  const area = faixa || AREA[route.nivel] || "anubis";
+  cms.cursos = cms.cursos || [];
+  const stamp = Date.now();
+  cms.cursos.push({
+    id: area + ":curso-" + stamp,
+    faixa: area,
+    titulo: "Novo curso",
+    descricao: "",
+    capa: "",
+    status: "rascunho",
+    ordem: cms.cursos.length,
+    modules: [{
+      id: "m" + stamp,
+      titulo: "Módulo 1",
+      ordem: 0,
+      aulas: [{
+        id: "a" + stamp,
+        titulo: "Aula 01",
+        descricao: "",
+        ordem: 0,
+        status: "publicado",
+        access: "exclusivo",
+        video: { provider: "bunny", videoId: "", libraryId: BUNNY_LIB }
+      }]
+    }]
+  });
+  cmsAt = { mode: "curso", index: cms.cursos.length - 1, mod: 0, aula: 0 };
+  go({ view: "conteudo" });
+  gravarCms("Curso criado nesta faixa. Ainda é rascunho: só você vê. Publica quando os links estiverem na ordem.");
+}
+function novoLivroNaFaixa(faixa) {
+  const area = faixa || AREA[route.nivel] || "anubis";
+  cms.livros = cms.livros || [];
+  cms.livros.push({ titulo: "Novo ebook", faixa: area, url: "", status: "rascunho" });
+  cmsAt = { mode: "livro", index: cms.livros.length - 1, mod: 0, aula: 0 };
+  go({ view: "conteudo" });
+}
+function aplicarLoteNoCurso(c, text) {
+  const links = String(text || "").split(/\n+/).map(s => s.trim()).filter(Boolean);
+  if (!links.length) return 0;
+  c.modules = c.modules || [];
+  if (!c.modules.length) c.modules.push({ id: "m" + Date.now(), titulo: "Aulas", ordem: 0, aulas: [] });
+  const slots = [];
+  c.modules.forEach(m => (m.aulas || []).forEach(a => slots.push(a)));
+  links.forEach((link, i) => {
+    const lido = lerMidia(link);
+    const video = {
+      provider: lido.provider || "bunny",
+      videoId: lido.videoId || limpo(link),
+      libraryId: lido.libraryId || BUNNY_LIB
+    };
+    if (!video.videoId) return;
+    if (i < slots.length) {
+      slots[i].video = video;
+      if (!slots[i].status || slots[i].status === "rascunho") slots[i].status = "publicado";
+    } else {
+      const m = c.modules[c.modules.length - 1];
+      m.aulas = m.aulas || [];
+      m.aulas.push({
+        id: "a" + Date.now() + i,
+        titulo: "Aula " + String(m.aulas.length + 1).padStart(2, "0"),
+        descricao: "",
+        ordem: m.aulas.length,
+        status: "publicado",
+        access: "exclusivo",
+        video
+      });
+    }
+  });
+  return links.length;
+}
+function garantirTechub() {
+  const base = (FAIXAS[2].cursos || []).find(item => item.id === "techub");
+  if (!base) return;
+  cms.cursos = cms.cursos || [];
+  let c = cms.cursos.find(item => item.id === "horus:techub");
+  if (!c) {
+    c = { id: "horus:techub", faixa: "horus", titulo: "Tech Hub", descricao: "63 aulas, na ordem da gravação. O vídeo entra quando o link do Bunny é colado.", capa: "", status: "publicado", ordem: 0, modules: [] };
+    cms.cursos.unshift(c);
+  }
+  const temAula = (c.modules || []).some(m => (m.aulas || []).length);
+  if (temAula) return;
+  c.titulo = c.titulo && c.titulo !== "Novo curso" ? c.titulo : "Tech Hub";
+  c.faixa = "horus";
+  c.status = c.status || "publicado";
+  c.modules = base.modules.map((m, mi) => ({
+    id: "m" + mi,
+    titulo: m.nome,
+    ordem: mi,
+    aulas: (m.aulas || []).map((a, ai) => ({
+      id: "a" + mi + "_" + ai,
+      titulo: a.titulo,
+      descricao: "",
+      ordem: ai,
+      status: "publicado",
+      access: "exclusivo",
+      video: a.video && a.video.videoId ? a.video : { provider: "bunny", videoId: "", libraryId: BUNNY_LIB }
+    }))
+  }));
 }
 
 async function gravarCms(texto) {
@@ -1328,6 +1488,7 @@ onAuthStateChanged(auth, async next => {
     }
     await loadStripeGrants();
   }
+  garantirTechub();
   draw();
 });
 </script>
