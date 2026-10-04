@@ -78,7 +78,7 @@ input,label{color:var(--text)}
   <div class="mid">Todos os cursos + livros + áudios em um só lugar</div>
   <div class="right">DO CONHECIMENTO<br>À TRANSFORMAÇÃO</div>
 </header>
-<div class="moon"><img alt="Lua" src="https://akashahub.com.br/afplataforma/assets/img/lua/hero/lua-hero-06.webp.jpg"></div>
+<div class="moon"><img alt="Lua" src="https://akashahub.com.br/afplataforma/assets/img/lua/hero/lua-hero-01.webp"></div>
 <div class="shell">
   <aside class="side" id="side"></aside>
   <main class="main" id="app"></main>
@@ -251,7 +251,7 @@ const LIVROS_ARQ = {
   "Coletânea Alinhamento Financeiro": "/members/livros/raiz-da-riqueza.pdf"
 };
 let catalogVideos = {};
-let cms = { cursos: [] };
+let cms = { cursos: [], livros: [], audios: [] };
 let cmsAt = { mode: "lista", index: 0, mod: 0, aula: 0 };
 let adminOn = false;
 let route = { view: "portal", nivel: 1, curso: "", mod: 0, aula: 0 };
@@ -284,6 +284,7 @@ function moldarCurso(raw) {
   const curto = String(raw.id || "").includes(":") ? String(raw.id).split(":").slice(1).join(":") : raw.id;
   return {
     id: curto,
+    capa: raw.capa || "",
     titulo: raw.titulo,
     modules: (raw.modules || []).map(m => ({
       nome: m.titulo || m.nome || "Módulo",
@@ -392,8 +393,8 @@ function area() {
     <button class="tile" id="openFund" style="width:100%;margin-bottom:12px"><b>Fundamentos do Despertar</b>${f.fundamentos.length} módulos · ${aulasFund} aulas</button>
     <div class="tiles">
       <button class="tile" data-view="cursos"><b>Cursos</b>${f.cursos.length} cursos desta faixa</button>
-      <button class="tile" data-view="livros"><b>Livros</b>${f.livros.length} e-books</button>
-      <button class="tile" data-view="audios"><b>Áudios</b>${f.audios.length} áudios</button>
+      <button class="tile" data-view="livros"><b>Livros</b>${livrosVisiveis().length} e-books</button>
+      <button class="tile" data-view="audios"><b>Áudios</b>${audiosVisiveis().length} áudios</button>
     </div>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "portal" });
   document.getElementById("openFund").onclick = () => go({ view: "player", curso: "fundamentos", mod: 0, aula: 0 });
@@ -411,7 +412,8 @@ function cursos() {
     <div class="courses">${listaCursos().map(item => {
       const aulasN = item.modules.reduce((n, m) => n + m.aulas.length, 0);
       const open = ownsCurso(route.nivel, item.id);
-      return `<button class="course" data-curso="${item.id}"><div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong><p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p><span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : reais(PRECO_ITEM.curso)}</span></button>`;
+      const capa = item.capa ? `<img alt="" src="${esc(item.capa)}" style="width:100%;height:120px;object-fit:cover;border-radius:12px;margin-bottom:8px">` : "";
+      return `<button class="course" data-curso="${item.id}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong><p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p><span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : reais(PRECO_ITEM.curso)}</span></button>`;
     }).join("")}</div>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
   document.querySelectorAll("[data-curso]").forEach(btn => {
@@ -454,7 +456,7 @@ function player() {
           <button class="ghost" id="prev">← Anterior</button>
           <button id="next">Próxima aula →</button>
         </div>
-        ${adminOn ? `<label style="display:block;margin-top:16px">Provedor de vídeo</label><select id="videoProvider" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><option value="youtube">YouTube</option><option value="bunny">Bunny</option></select><input id="videoUrl" placeholder="Video ID ou link do YouTube" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><input id="libraryId" placeholder="Library ID, só no Bunny" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><div class="row"><button class="buy" id="saveVideo">Salvar vídeo</button><button class="ghost" id="previewVideo">Pré-visualizar</button></div><p class="note" id="videoNote"></p>` : ""}
+        ${adminOn ? `<label style="display:block;margin-top:16px">Vídeo</label><select id="videoProvider" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><option value="youtube">YouTube</option><option value="bunny">Bunny</option></select><input id="videoUrl" placeholder="Cole o link do Bunny ou do YouTube" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><input id="libraryId" placeholder="Library ID, só se o link não trouxer" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><div class="row"><button class="buy" id="saveVideo">Salvar vídeo</button><button class="ghost" id="previewVideo">Pré-visualizar</button></div><p class="note" id="videoNote"></p>` : ""}
       </div>
     </div>`;
   const back = document.querySelector("[data-back]");
@@ -494,13 +496,13 @@ function livros() {
     <p class="crumb"><button data-back="area">${esc(f.nome)}</button> · Livros</p>
     <h1>Livros</h1>
     <p class="sub">E-books desta faixa. Quem tem o direito abre o arquivo.</p>
-    <div class="books">${f.livros.map(nome => `<article class="book"><div class="cover">E-BOOK</div><strong>${esc(nome)}</strong><div class="row"><button data-livro="${esc(nome)}">Abrir livro</button></div></article>`).join("") || "<p class='sub'>Nenhum livro neste nível ainda.</p>"}</div>
+    <div class="books">${livrosVisiveis().map(nome => `<article class="book"><div class="cover">E-BOOK</div><strong>${esc(nome)}</strong><div class="row"><button data-livro="${esc(nome)}">Abrir livro</button></div></article>`).join("") || "<p class='sub'>Nenhum livro neste nível ainda.</p>"}</div>
     <p class="note" id="livroNote"></p>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
   document.querySelectorAll("[data-livro]").forEach(btn => {
     btn.onclick = () => {
       if (!adminOn && !ownsLivro(route.nivel, btn.dataset.livro)) { comprar("livro", btn.dataset.livro); return; }
-      const arquivo = LIVROS_ARQ[btn.dataset.livro];
+      const arquivo = arquivoLivro(btn.dataset.livro);
       if (!arquivo) { document.getElementById("livroNote").textContent = btn.dataset.livro + " · o arquivo ainda não entrou."; return; }
       window.open(arquivo, "_blank");
     };
@@ -513,14 +515,16 @@ function audios() {
     <p class="crumb"><button data-back="area">${esc(f.nome)}</button> · Áudios</p>
     <h1>Áudios</h1>
     <p class="sub">Meditações e áudios desta faixa. O arquivo entra em cada linha.</p>
-    ${f.audios.map(nome => `<div class="audio"><strong>${esc(nome)}</strong><button class="buy" data-audio="${esc(nome)}">▶</button></div>`).join("") || "<p class='sub'>Nenhum áudio neste nível ainda.</p>"}
+    ${audiosVisiveis().map(nome => `<div class="audio"><strong>${esc(nome)}</strong><button class="buy" data-audio="${esc(nome)}">▶</button></div>`).join("") || "<p class='sub'>Nenhum áudio neste nível ainda.</p>"}
     <p class="note" id="audioNote"></p>`;
   const back = document.querySelector("[data-back]");
   if (back) back.onclick = () => go({ view: "area" });
   document.querySelectorAll("[data-audio]").forEach(btn => {
     btn.onclick = () => {
       if (!ownsAudio(route.nivel, btn.dataset.audio)) { comprar("audio", btn.dataset.audio); return; }
-      document.getElementById("audioNote").textContent = btn.dataset.audio + " · o áudio ainda não entrou.";
+      const arquivo = arquivoAudio(btn.dataset.audio);
+      if (!arquivo) { document.getElementById("audioNote").textContent = btn.dataset.audio + " · o áudio ainda não entrou."; return; }
+      window.open(arquivo, "_blank");
     };
   });
 }
@@ -538,6 +542,48 @@ function draw() {
 }
 
 function limpo(s) { return String(s || "").replace(/[^A-Za-z0-9_-]/g, ""); }
+function lerMidia(text) {
+  const raw = String(text || "").trim();
+  const bunny = raw.match(/mediadelivery\.net\/(?:play|embed|video)\/([0-9]+)\/([A-Za-z0-9-]+)/i);
+  if (bunny) return { provider: "bunny", libraryId: bunny[1], videoId: bunny[2] };
+  const yt = ytId(raw);
+  if (yt && /youtu/.test(raw)) return { provider: "youtube", libraryId: "", videoId: yt };
+  return { provider: "", libraryId: "", videoId: limpo(raw) };
+}
+function livrosVisiveis() {
+  const area = AREA[route.nivel];
+  const nomes = faixa().livros.slice();
+  (cms.livros || []).forEach(item => {
+    if (item.faixa !== area || !item.titulo) return;
+    if (!adminOn && (item.status === "oculto" || item.status === "rascunho")) return;
+    if (!nomes.includes(item.titulo)) nomes.push(item.titulo);
+  });
+  return nomes;
+}
+function audiosVisiveis() {
+  const area = AREA[route.nivel];
+  const nomes = faixa().audios.slice();
+  (cms.audios || []).forEach(item => {
+    if (item.faixa !== area || !item.titulo) return;
+    if (!adminOn && (item.status === "oculto" || item.status === "rascunho")) return;
+    if (!nomes.includes(item.titulo)) nomes.push(item.titulo);
+  });
+  return nomes;
+}
+function arquivoLivro(nome) {
+  const extra = (cms.livros || []).find(item => item.titulo === nome && item.url);
+  return (extra && extra.url) || LIVROS_ARQ[nome] || "";
+}
+function arquivoAudio(nome) {
+  const extra = (cms.audios || []).find(item => item.titulo === nome && item.url);
+  return (extra && extra.url) || "";
+}
+function aplicarCms(data) {
+  if (!data) return;
+  if (Array.isArray(data.cursos) && data.cursos.length) cms.cursos = data.cursos;
+  if (Array.isArray(data.livros)) cms.livros = data.livros;
+  if (Array.isArray(data.audios)) cms.audios = data.audios;
+}
 function quadro(aula) {
   const v = Object.assign({ provider: "", videoId: "", libraryId: "" }, (aula && aula.video) || {});
   const salvo = String(catalogVideos[videoKey()] || "");
@@ -580,8 +626,8 @@ function checks() {
     const f = FAIXAS[num];
     const area = AREA[num];
     const cursos = f.cursos.map(c => `<label><input type="checkbox" data-kind="curso" value="${area}:${c.id}"> ${esc(c.titulo)}</label>`).join("");
-    const livros = f.livros.map(nome => `<label><input type="checkbox" data-kind="livro" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
-    const audios = f.audios.map(nome => `<label><input type="checkbox" data-kind="audio" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
+    const livros = f.livros.concat((cms.livros || []).filter(l => l.faixa === area && l.titulo && !f.livros.includes(l.titulo)).map(l => l.titulo)).map(nome => `<label><input type="checkbox" data-kind="livro" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
+    const audios = f.audios.concat((cms.audios || []).filter(a => a.faixa === area && a.titulo && !f.audios.includes(a.titulo)).map(a => a.titulo)).map(nome => `<label><input type="checkbox" data-kind="audio" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
     return `<div class="book" style="margin-top:12px"><strong>${esc(f.nome)}</strong><label><input type="checkbox" data-kind="area" value="${area}"> Faixa inteira</label>${cursos}${livros}${audios}</div>`;
   }).join("");
 }
@@ -598,16 +644,93 @@ function gestao() {
     <div id="grantBoxes">${checks()}</div>
     <div class="row"><button id="grantBtn">Liberar</button><button id="revokeBtn" class="ghost">Revogar o marcado</button></div>
     <p class="note" id="grantNote"></p>
-    <h1 style="font-size:26px;margin-top:28px">Administradores</h1>
-    <p class="sub">A lista fica nesta tela. Quem entra com esse e-mail administra acesso e conteúdo. Não precisa abrir o Firebase.</p>
-    <div id="adminList" class="sub"></div>
-    <input id="adminMail" type="email" placeholder="outro@email.com" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px">
-    <div class="row"><button id="adminBtn">Adicionar administrador</button></div>`;
+    <h1 style="font-size:26px;margin-top:28px">Quem entrou e o que está liberado</h1>
+    <p class="sub">Só o administrador vê esta lista. Quem já abriu /members aparece como entrou. A liberação mostra a faixa, o curso, o livro ou o áudio.</p>
+    <div id="peopleList" class="sub">Carregando…</div>`;
   document.getElementById("findMail").onclick = loadGrant;
   document.getElementById("grantBtn").onclick = () => saveGrant(false);
   document.getElementById("revokeBtn").onclick = () => saveGrant(true);
-  document.getElementById("adminBtn").onclick = addAdmin;
-  listarAdmins();
+  listarPessoas();
+}
+
+function nomeFaixa(id) {
+  const num = Object.keys(AREA).find(n => AREA[n] === id);
+  return num ? FAIXAS[num].nome : id;
+}
+function resumoDireito(data) {
+  if (!data) return "sem liberação";
+  const partes = [];
+  (data.areas || []).forEach(id => partes.push(nomeFaixa(id) + " inteira"));
+  if ((data.cursos || []).length) partes.push((data.cursos || []).length + " curso(s)");
+  if ((data.livros || []).length) partes.push((data.livros || []).length + " livro(s)");
+  if ((data.audios || []).length) partes.push((data.audios || []).length + " áudio(s)");
+  return partes.length ? partes.join(" · ") : "sem liberação";
+}
+function quando(ms) {
+  const n = Number(ms || 0);
+  if (!n) return "";
+  try { return new Date(n).toLocaleString("pt-BR"); } catch (e) { return ""; }
+}
+async function listarPessoas() {
+  const box = document.getElementById("peopleList");
+  if (!box) return;
+  const mapa = {};
+  function pessoa(email) {
+    const key = String(email || "").toLowerCase();
+    if (!key.includes("@")) return null;
+    if (!mapa[key]) mapa[key] = { email: key, seen: 0, entrou: false, grant: null };
+    return mapa[key];
+  }
+  const emailByUid = {};
+  try {
+    const users = await getDocs(collection(db, "users"));
+    users.docs.forEach(item => {
+      const d = item.data();
+      const email = String(d.email || "").toLowerCase();
+      if (email) emailByUid[item.id] = email;
+      if (!d.membersSeen && !d.membersAqui) return;
+      const p = pessoa(email);
+      if (!p) return;
+      p.entrou = true;
+      const seen = Number(d.membersSeen || 0);
+      if (seen > p.seen) p.seen = seen;
+    });
+  } catch (e) {}
+  try {
+    const painel = await getDoc(doc(db, "afMentorNotes", "membersPainel"));
+    if (painel.exists()) {
+      Object.keys(painel.data().grants || {}).forEach(email => {
+        const p = pessoa(email);
+        if (p) p.grant = painel.data().grants[email];
+      });
+    }
+  } catch (e) {}
+  try {
+    const acc = await getDocs(collection(db, "afAccess"));
+    acc.docs.forEach(item => {
+      const g = item.data().membersGrant;
+      if (!g) return;
+      const p = pessoa(emailByUid[item.id] || "");
+      if (p && !p.grant) p.grant = g;
+    });
+  } catch (e) {}
+  try {
+    const acessos = await getDocs(collection(db, "membrosAcessos"));
+    acessos.docs.forEach(item => {
+      if (!String(item.id).includes("@")) return;
+      const p = pessoa(item.id);
+      if (p) p.grant = item.data();
+    });
+  } catch (e) {}
+  const linhas = Object.values(mapa).sort((a, b) => (b.seen || 0) - (a.seen || 0) || a.email.localeCompare(b.email));
+  if (!linhas.length) {
+    box.innerHTML = "<p class='sub'>Ninguém apareceu ainda. A lista enche quando alguém entra em /members, ou quando você libera um e-mail.</p>";
+    return;
+  }
+  box.innerHTML = linhas.map(p => {
+    const visita = p.entrou ? (p.seen ? "Entrou · " + quando(p.seen) : "Já entrou") : "Ainda não entrou";
+    return `<div class="audio"><div><strong>${esc(p.email)}</strong><p class="sub">${esc(visita)} · ${esc(resumoDireito(p.grant))}</p></div></div>`;
+  }).join("");
 }
 
 function marked() {
@@ -683,6 +806,7 @@ async function saveGrant(revoke) {
   } else {
     note.textContent = "Não gravou. O Firebase recusou: " + resultado.falhas.join(", ");
   }
+  listarPessoas();
 }
 
 async function acharUid(email) {
@@ -732,38 +856,18 @@ async function gravarPessoa(email, extra) {
   return { feitos, falhas };
 }
 
-async function addAdmin() {
-  const email = document.getElementById("adminMail").value.trim().toLowerCase();
-  const note = document.getElementById("grantNote");
-  if (!email.includes("@")) { note.textContent = "Coloca o e-mail do administrador."; return; }
-  const resultado = await gravarPessoa(email, { admin: true });
-  if (resultado.feitos.length) {
-    note.textContent = resultado.falhas.includes("ainda-nao-entrou")
-      ? email + " ficou na lista. Pede para essa pessoa abrir /members uma vez e libera de novo."
-      : email + " foi liberado. Pede para sair e entrar de novo.";
-    listarAdmins();
-  } else {
-    note.textContent = "Não gravou. O Firebase recusou: " + resultado.falhas.join(", ");
-  }
-}
+async function addAdmin() { return; }
 
-async function listarAdmins() {
-  const box = document.getElementById("adminList");
-  if (!box) return;
-  const nomes = [];
-  try {
-    const snap = await getDocs(collection(db, "membersAdmins"));
-    snap.docs.forEach(item => { if (item.data().active) nomes.push(item.id); });
-  } catch (e) {}
-  try {
-    const snap = await getDoc(doc(db, "afMentorNotes", "membersPainel"));
-    if (snap.exists()) (snap.data().admins || []).forEach(email => { if (!nomes.includes(email)) nomes.push(email); });
-  } catch (e) {}
-  box.textContent = nomes.length ? "Administram: " + nomes.join(", ") : "Por enquanto só o seu Gmail administra.";
-}
+async function listarAdmins() { return; }
 
 async function saveCms() {
-  await setDoc(doc(db, "membrosGestao", "conteudo"), { cursos: cms.cursos || [], by: mail() });
+  const payload = { cursos: cms.cursos || [], livros: cms.livros || [], audios: cms.audios || [], by: mail() };
+  let publico = false;
+  let mentor = false;
+  try { await setDoc(doc(db, "membrosGestao", "conteudo"), payload); publico = true; } catch (e) {}
+  try { await setDoc(doc(db, "afMentorNotes", "membersConteudo"), payload); mentor = true; } catch (e) {}
+  if (!publico && !mentor) throw new Error("nao");
+  return publico;
 }
 
 function seedCms() {
@@ -819,6 +923,8 @@ function conteudo() {
   const rascunhos = cursos.reduce((n, c) => n + (c.status === "rascunho" ? 1 : 0) + (c.modules || []).reduce((m, mod) => m + (mod.aulas || []).filter(a => a.status === "rascunho").length, 0), 0);
   if (cmsAt.mode === "aula") return aulaEditor();
   if (cmsAt.mode === "curso") return cursoEditor();
+  if (cmsAt.mode === "livro") return livroEditor();
+  if (cmsAt.mode === "audio") return audioEditor();
   document.getElementById("app").innerHTML = `
     <p class="kicker">Admin</p>
     <h1>Gestão de conteúdo</h1>
@@ -832,7 +938,13 @@ function conteudo() {
     </div>
     <div class="row"><button id="novoCurso">Novo curso</button><button id="trazer" class="ghost">Trazer os cursos atuais</button></div>
     <p class="note" id="cmsNote"></p>
-    <div class="courses" style="margin-top:16px">${cursos.map((c, i) => `<button class="course" data-curso="${i}"><strong>${esc(c.titulo || "Sem nome")}</strong><p class="sub">${esc(c.faixa || "")} · ${esc(c.status || "rascunho")} · ${(c.modules || []).length} módulos</p></button>`).join("") || "<p class='sub'>Nenhum curso salvo ainda.</p>"}</div>`;
+    <div class="courses" style="margin-top:16px">${cursos.map((c, i) => `<button class="course" data-curso="${i}">${c.capa ? `<img alt="" src="${esc(c.capa)}" style="width:100%;height:90px;object-fit:cover;border-radius:12px;margin-bottom:8px">` : ""}<strong>${esc(c.titulo || "Sem nome")}</strong><p class="sub">${esc(c.faixa || "")} · ${esc(c.status || "rascunho")} · ${(c.modules || []).length} módulos</p></button>`).join("") || "<p class='sub'>Nenhum curso salvo ainda.</p>"}</div>
+    <h1 style="font-size:28px;margin-top:28px">Livros</h1>
+    <div class="row"><button id="novoLivro">Novo livro</button></div>
+    <div style="margin-top:12px">${(cms.livros || []).map((l, i) => `<div class="audio"><strong>${esc(l.titulo || "Sem nome")}</strong><span><button data-livro="${i}">Editar</button></span></div>`).join("") || "<p class='sub'>Nenhum livro extra ainda. Os que já estão na faixa continuam no ar.</p>"}</div>
+    <h1 style="font-size:28px;margin-top:28px">Áudios</h1>
+    <div class="row"><button id="novoAudio">Novo áudio</button></div>
+    <div style="margin-top:12px">${(cms.audios || []).map((a, i) => `<div class="audio"><strong>${esc(a.titulo || "Sem nome")}</strong><span><button data-audio="${i}">Editar</button></span></div>`).join("") || "<p class='sub'>Nenhum áudio extra ainda.</p>"}</div>`;
   document.getElementById("novoCurso").onclick = async () => {
     cms.cursos.push({ id: "anubis:novo-" + Date.now(), faixa: "anubis", titulo: "Novo curso", descricao: "", capa: "", status: "rascunho", ordem: cms.cursos.length, modules: [] });
     cmsAt = { mode: "curso", index: cms.cursos.length - 1, mod: 0, aula: 0 };
@@ -844,8 +956,85 @@ function conteudo() {
     await gravarCms("Cursos atuais copiados para a gestão.");
   };
   document.querySelectorAll("[data-curso]").forEach(btn => { btn.onclick = () => { cmsAt = { mode: "curso", index: Number(btn.dataset.curso), mod: 0, aula: 0 }; draw(); }; });
+  document.getElementById("novoLivro").onclick = () => {
+    cms.livros = cms.livros || [];
+    cms.livros.push({ titulo: "Novo livro", faixa: "anubis", url: "", status: "publicado" });
+    cmsAt = { mode: "livro", index: cms.livros.length - 1, mod: 0, aula: 0 };
+    draw();
+  };
+  document.getElementById("novoAudio").onclick = () => {
+    cms.audios = cms.audios || [];
+    cms.audios.push({ titulo: "Novo áudio", faixa: "anubis", url: "", status: "publicado" });
+    cmsAt = { mode: "audio", index: cms.audios.length - 1, mod: 0, aula: 0 };
+    draw();
+  };
+  document.querySelectorAll("[data-livro]").forEach(btn => { btn.onclick = () => { cmsAt = { mode: "livro", index: Number(btn.dataset.livro), mod: 0, aula: 0 }; draw(); }; });
+  document.querySelectorAll("[data-audio]").forEach(btn => { btn.onclick = () => { cmsAt = { mode: "audio", index: Number(btn.dataset.audio), mod: 0, aula: 0 }; draw(); }; });
 }
 
+function faixaSelect(id, valor) {
+  return `<label style="display:block;margin-top:12px">Faixa</label><select id="${id}" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="anubis">Anúbis</option><option value="horus">Hórus</option><option value="isis">Ísis</option><option value="amon">Rá</option></select>`;
+}
+function livroEditor() {
+  const item = (cms.livros || [])[cmsAt.index];
+  if (!item) { cmsAt.mode = "lista"; draw(); return; }
+  document.getElementById("app").innerHTML = `
+    <p class="crumb"><button id="voltarCms">Gestão de conteúdo</button> · Livro</p>
+    <h1>Editar livro</h1>
+    ${campo("iTitulo", "Nome", item.titulo, "Nome do livro")}
+    ${faixaSelect("iFaixa")}
+    ${campo("iUrl", "Arquivo, link do PDF", item.url, "https://")}
+    <label style="display:block;margin-top:12px">Status</label>
+    <select id="iStatus" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="publicado">Publicado</option><option value="oculto">Oculto</option></select>
+    <div class="row"><button id="salvarItem">Salvar livro</button><button id="apagarItem" class="ghost">Excluir</button></div>
+    <p class="note" id="cmsNote"></p>`;
+  document.getElementById("iFaixa").value = item.faixa || "anubis";
+  document.getElementById("iStatus").value = item.status || "publicado";
+  document.getElementById("voltarCms").onclick = () => { cmsAt.mode = "lista"; draw(); };
+  document.getElementById("salvarItem").onclick = async () => {
+    item.titulo = document.getElementById("iTitulo").value.trim() || "Sem nome";
+    item.faixa = document.getElementById("iFaixa").value;
+    item.url = document.getElementById("iUrl").value.trim();
+    item.status = document.getElementById("iStatus").value;
+    await gravarCms("Livro salvo.");
+  };
+  document.getElementById("apagarItem").onclick = async () => {
+    if (!confirm("Excluir este livro da área?")) return;
+    cms.livros.splice(cmsAt.index, 1);
+    cmsAt.mode = "lista";
+    await gravarCms("Livro excluído.");
+  };
+}
+function audioEditor() {
+  const item = (cms.audios || [])[cmsAt.index];
+  if (!item) { cmsAt.mode = "lista"; draw(); return; }
+  document.getElementById("app").innerHTML = `
+    <p class="crumb"><button id="voltarCms">Gestão de conteúdo</button> · Áudio</p>
+    <h1>Editar áudio</h1>
+    ${campo("iTitulo", "Nome", item.titulo, "Nome do áudio")}
+    ${faixaSelect("iFaixa")}
+    ${campo("iUrl", "Arquivo, link do áudio", item.url, "https://")}
+    <label style="display:block;margin-top:12px">Status</label>
+    <select id="iStatus" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="publicado">Publicado</option><option value="oculto">Oculto</option></select>
+    <div class="row"><button id="salvarItem">Salvar áudio</button><button id="apagarItem" class="ghost">Excluir</button></div>
+    <p class="note" id="cmsNote"></p>`;
+  document.getElementById("iFaixa").value = item.faixa || "anubis";
+  document.getElementById("iStatus").value = item.status || "publicado";
+  document.getElementById("voltarCms").onclick = () => { cmsAt.mode = "lista"; draw(); };
+  document.getElementById("salvarItem").onclick = async () => {
+    item.titulo = document.getElementById("iTitulo").value.trim() || "Sem nome";
+    item.faixa = document.getElementById("iFaixa").value;
+    item.url = document.getElementById("iUrl").value.trim();
+    item.status = document.getElementById("iStatus").value;
+    await gravarCms("Áudio salvo.");
+  };
+  document.getElementById("apagarItem").onclick = async () => {
+    if (!confirm("Excluir este áudio da área?")) return;
+    cms.audios.splice(cmsAt.index, 1);
+    cmsAt.mode = "lista";
+    await gravarCms("Áudio excluído.");
+  };
+}
 function cursoEditor() {
   const c = cms.cursos[cmsAt.index];
   if (!c) { cmsAt.mode = "lista"; draw(); return; }
@@ -855,6 +1044,7 @@ function cursoEditor() {
     ${campo("cTitulo", "Nome", c.titulo, "Curso de Alinhamento")}
     ${campo("cDesc", "Descrição", c.descricao, "Para quem é este curso")}
     ${campo("cCapa", "Capa, endereço da imagem", c.capa, "https://")}
+    ${c.capa ? `<img alt="" src="${esc(c.capa)}" style="width:180px;height:100px;object-fit:cover;border-radius:12px;margin-top:12px">` : ""}
     <label style="display:block;margin-top:12px">Faixa</label>
     <select id="cFaixa" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="anubis">Anúbis</option><option value="horus">Hórus</option><option value="isis">Ísis</option><option value="amon">Rá</option></select>
     <label style="display:block;margin-top:12px">Status</label>
@@ -908,7 +1098,7 @@ function aulaEditor() {
       <select id="aAccess" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="exclusivo">Exclusivo</option><option value="gratis">Gratuito</option></select>
       <label style="display:block;margin-top:12px">Provedor de vídeo</label>
       <select id="aProvider" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="youtube">YouTube</option><option value="bunny">Bunny</option></select>
-      ${campo("aVideo", "Video ID", (a.video || {}).videoId, "id do vídeo")}
+      ${campo("aVideo", "Link do Bunny ou do YouTube", (a.video || {}).videoId && (a.video || {}).libraryId ? "https://player.mediadelivery.net/play/" + (a.video || {}).libraryId + "/" + (a.video || {}).videoId : ((a.video || {}).videoId || ""), "https://player.mediadelivery.net/play/...")}
       ${campo("aLib", "Library ID", (a.video || {}).libraryId, "769429")}
       <div class="row"><button id="salvarAula">Salvar aula</button><button id="testeBunny" class="ghost">Usar vídeo de teste</button><button id="previa" class="ghost">Pré-visualizar</button><button id="sobeAula" class="ghost">Subir</button><button id="desceAula" class="ghost">Descer</button><button id="apagaAula" class="ghost">Excluir</button></div>` : "<p class='sub'>Nenhuma aula ainda.</p>"}
     <p class="note" id="cmsNote"></p>`;
@@ -934,7 +1124,13 @@ function aulaEditor() {
     a.descricao = document.getElementById("aDesc").value.trim();
     a.status = document.getElementById("aStatus").value;
     a.access = document.getElementById("aAccess").value;
-    a.video = { provider: document.getElementById("aProvider").value, videoId: limpo(document.getElementById("aVideo").value), libraryId: limpo(document.getElementById("aLib").value) };
+    const colado = document.getElementById("aVideo").value.trim();
+    const lido = lerMidia(colado);
+    a.video = {
+      provider: lido.provider || document.getElementById("aProvider").value,
+      videoId: lido.videoId || limpo(colado),
+      libraryId: lido.libraryId || limpo(document.getElementById("aLib").value)
+    };
     await gravarCms("Aula salva.");
     await gravarVideoAula(c, a);
   };
@@ -956,8 +1152,8 @@ function aulaEditor() {
 async function gravarCms(texto) {
   const note = document.getElementById("cmsNote");
   try {
-    await saveCms();
-    if (note) note.textContent = texto || "Salvo.";
+    const publico = await saveCms();
+    if (note) note.textContent = publico ? (texto || "Salvo.") : (texto || "Salvo.") + " Por enquanto só a sua conta vê esta edição.";
   } catch (e) {
     if (note) note.textContent = "Não gravou. Entre com o Gmail administrador.";
   }
@@ -1010,10 +1206,11 @@ function moverAula(dir) {
 
 async function saveLessonVideo() {
   const note = document.getElementById("videoNote");
-  const provider = (document.getElementById("videoProvider") || {}).value || "youtube";
   const raw = (document.getElementById("videoUrl") || {}).value || "";
-  const libraryId = limpo((document.getElementById("libraryId") || {}).value || "");
-  const videoId = provider === "youtube" ? (ytId(raw) || limpo(raw)) : limpo(raw);
+  const lido = lerMidia(raw);
+  const provider = lido.provider || (document.getElementById("videoProvider") || {}).value || "youtube";
+  const libraryId = lido.libraryId || limpo((document.getElementById("libraryId") || {}).value || "");
+  const videoId = lido.videoId || (provider === "youtube" ? (ytId(raw) || limpo(raw)) : limpo(raw));
   if (provider === "bunny" && (!libraryId || !videoId)) { note.textContent = "No Bunny, falta Library ID ou Video ID."; return; }
   if (!videoId) { note.textContent = "Cola o link do YouTube ou o Video ID."; return; }
   const ref = acharCms();
@@ -1080,7 +1277,7 @@ onAuthStateChanged(auth, async next => {
   catalogVideos = {};
   adminOn = isYan();
   if (user && mail()) {
-    try { await setDoc(doc(db, "users", user.uid), { email: mail() }, { merge: true }); } catch (e) {}
+    try { await setDoc(doc(db, "users", user.uid), { email: mail(), membersAqui: true, membersSeen: Date.now() }, { merge: true }); } catch (e) {}
     try {
       const admin = await getDoc(doc(db, "membersAdmins", mail()));
       if (admin.exists() && admin.data().active) adminOn = true;
@@ -1116,8 +1313,19 @@ onAuthStateChanged(auth, async next => {
     }
     try {
       const tree = await getDoc(doc(db, "membrosGestao", "conteudo"));
-      if (tree.exists() && Array.isArray(tree.data().cursos)) cms = { cursos: tree.data().cursos };
+      if (tree.exists()) aplicarCms(tree.data());
     } catch (e) {}
+    if (adminOn) {
+      try {
+        const copia = await getDoc(doc(db, "afMentorNotes", "membersConteudo"));
+        if (copia.exists()) {
+          const data = copia.data();
+          if (!(cms.cursos || []).length) aplicarCms(data);
+          if (!(cms.livros || []).length && Array.isArray(data.livros)) cms.livros = data.livros;
+          if (!(cms.audios || []).length && Array.isArray(data.audios)) cms.audios = data.audios;
+        }
+      } catch (e) {}
+    }
     await loadStripeGrants();
   }
   draw();
