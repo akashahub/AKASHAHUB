@@ -122,6 +122,32 @@ function pack(mods, total) {
 function curso(id, titulo, mods, aulas) {
   return { id, titulo, modules: pack(mods, aulas) };
 }
+const BUNNY_LIB = "769429";
+const ALINHAMENTO_AULAS = [
+  "12921e88-6125-4570-885e-a1ca84556bab",
+  "a38def1d-bbb3-405c-a65b-0e55a9a67c22",
+  "4d76f076-da9f-4705-ac51-5a8f950f1dc3",
+  "117354d9-e982-4b96-ba25-d17ddea268f0",
+  "5b6e1f44-c79f-4dba-889d-6908cc1f8584",
+  "09ac1143-9910-4bb5-8065-1cd903417564",
+  "68f77fb8-f1cb-4f9c-97b5-3286350db0d8",
+  "81c15d22-ca1a-4bda-8f39-3d319e769183",
+  "950989ff-d799-4318-972f-86eb291480de",
+  "3f5348fc-8f67-4531-9f98-9869a3a0959d"
+];
+function cursoBunny(id, titulo, ids) {
+  return {
+    id,
+    titulo,
+    modules: [{
+      nome: "Aulas",
+      aulas: ids.map((videoId, i) => ({
+        titulo: "Aula " + String(i + 1).padStart(2, "0"),
+        video: { provider: "bunny", videoId, libraryId: BUNNY_LIB }
+      }))
+    }]
+  };
+}
 function aulas(list) {
   return list.map(titulo => ({ titulo, ytId: "COLOQUE_AQUI" }));
 }
@@ -137,7 +163,7 @@ const FAIXAS = {
       { nome: "Manifestação Aplicada", aulas: aulas(["Os 4 Princípios da Realidade", "Colapso de Onda na Prática", "Alinhamento Mente-Emoção-Intenção", "Exercício Final"]) }
     ],
     cursos: [
-      curso("alinhamento", "Código de Alinhamento", 4, 12),
+      cursoBunny("alinhamento", "Código de Alinhamento", ALINHAMENTO_AULAS),
       curso("7-dias", "Desafio 7 Dias de Magnetismo", 7, 14),
       curso("casais", "Ritual para Casais", 3, 8),
       curso("tantra", "Tantra Diferente de Sexo", 5, 10),
@@ -254,7 +280,9 @@ function listaCursos() {
   f.cursos.forEach(item => {
     const custom = extras.find(c => c.id === area + ":" + item.id);
     if (custom && custom.status === "oculto" && !adminOn) return;
-    vistos.push(custom ? moldarCurso(custom) : moldarCurso(item));
+    const semVideo = custom && (custom.modules || []).every(m => (m.aulas || []).every(a => !(a.video && a.video.videoId)));
+    const pronto = (item.modules || []).some(m => (m.aulas || []).some(a => a.video && a.video.videoId));
+    vistos.push(semVideo && pronto ? moldarCurso(item) : moldarCurso(custom || item));
   });
   extras.forEach(c => {
     const curto = c.id.split(":").slice(1).join(":");
@@ -679,7 +707,9 @@ function seedCms() {
             ordem: ai,
             status: "publicado",
             access: "exclusivo",
-            video: { provider: "youtube", videoId: "", libraryId: "" }
+            video: a.video && a.video.videoId
+              ? { provider: a.video.provider || "bunny", videoId: a.video.videoId, libraryId: a.video.libraryId || BUNNY_LIB }
+              : { provider: "youtube", videoId: a.ytId && a.ytId !== "COLOQUE_AQUI" ? a.ytId : "", libraryId: "" }
           }))
         }))
       });
