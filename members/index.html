@@ -204,7 +204,7 @@ const FAIXAS = {
       curso("paladins", "Paladins: A Liderança dos Bons", 4, 12),
       curso("jornada", "Jornada de Transformação", 3, 9)
     ],
-    livros: ["Autoestima Blindada", "Como Blindar Sua Mente?", "Triplex na Mente"],
+    livros: ["Autoestima Blindada", "Como Blindar Sua Mente?", "Triplex na Mente", "O Fim das Trevas"],
     audios: []
   },
   4: {
@@ -218,13 +218,35 @@ const FAIXAS = {
       { nome: "Mentoria em Grupo", aulas: aulas(["Estratégia e Essência", "Vendas com Consciência", "Marca Pessoal", "Expansão"]) }
     ],
     cursos: [curso("zero", "Do Zero ao Zen e Negócios", 4, 12)],
-    livros: ["Coletânea Alinhamento Financeiro", "Códigos de Origem"],
+    livros: ["Coletânea Alinhamento Financeiro", "A Raiz da Riqueza", "A Criatividade Lucrativa", "O Poder da Prosperidade", "Amor pelo Sucesso Financeiro", "A Voz da Abundância", "A Visão da Fortuna", "A Conexão Divina com a Opulência", "Códigos de Origem", "Toth, Enoch e Trismegisto", "Kemet"],
     audios: []
   }
 };
 
 let user = null;
 let rights = { areas: [], cursos: [], livros: [], audios: [] };
+const LIVROS_ARQ = {
+  "O Código Secreto do Universo": "/members/livros/codigo-secreto-universo.pdf",
+  "Código Quântico": "/members/livros/codigo-quantico.pdf",
+  "Revelações Quânticas": "/members/livros/revelacoes-quanticas.pdf",
+  "Tantra Descomplicado": "/members/livros/tantra-descomplicado.pdf",
+  "Honrar a Deusa": "/members/livros/honrar-a-deusa.pdf",
+  "Autoestima Blindada": "/members/livros/autoestima-blindada.pdf",
+  "Como Blindar Sua Mente?": "/members/livros/blindar-mente.pdf",
+  "Triplex na Mente": "/members/livros/triplex-mente.pdf",
+  "O Fim das Trevas": "/members/livros/fim-das-trevas.pdf",
+  "Códigos de Origem": "/members/livros/codigos-de-origem.pdf",
+  "Toth, Enoch e Trismegisto": "/members/livros/toth-enoch-trismegisto.pdf",
+  "Kemet": "/members/livros/kemet.pdf",
+  "A Raiz da Riqueza": "/afplataforma/assets/materials/livros/01-raiz.pdf",
+  "A Criatividade Lucrativa": "/afplataforma/assets/materials/livros/02-criatividade.pdf",
+  "O Poder da Prosperidade": "/afplataforma/assets/materials/livros/03-poder.pdf",
+  "Amor pelo Sucesso Financeiro": "/afplataforma/assets/materials/livros/04-amor.pdf",
+  "A Voz da Abundância": "/afplataforma/assets/materials/livros/05-voz.pdf",
+  "A Visão da Fortuna": "/afplataforma/assets/materials/livros/06-visao.pdf",
+  "A Conexão Divina com a Opulência": "/afplataforma/assets/materials/livros/07-conexao.pdf",
+  "Coletânea Alinhamento Financeiro": "/afplataforma/assets/materials/livros/01-raiz.pdf"
+};
 let catalogVideos = {};
 let cms = { cursos: [] };
 let cmsAt = { mode: "lista", index: 0, mod: 0, aula: 0 };
@@ -468,14 +490,16 @@ function livros() {
   document.getElementById("app").innerHTML = `
     <p class="crumb"><button data-back="area">${esc(f.nome)}</button> · Livros</p>
     <h1>Livros</h1>
-    <p class="sub">E-books desta faixa. O arquivo entra em cada um.</p>
+    <p class="sub">E-books desta faixa. Quem tem o direito abre o arquivo.</p>
     <div class="books">${f.livros.map(nome => `<article class="book"><div class="cover">E-BOOK</div><strong>${esc(nome)}</strong><div class="row"><button data-livro="${esc(nome)}">Abrir livro</button></div></article>`).join("") || "<p class='sub'>Nenhum livro neste nível ainda.</p>"}</div>
     <p class="note" id="livroNote"></p>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
   document.querySelectorAll("[data-livro]").forEach(btn => {
     btn.onclick = () => {
-      if (!ownsLivro(route.nivel, btn.dataset.livro)) { comprar("livro", btn.dataset.livro); return; }
-      document.getElementById("livroNote").textContent = btn.dataset.livro + " · o arquivo ainda não entrou.";
+      if (!adminOn && !ownsLivro(route.nivel, btn.dataset.livro)) { comprar("livro", btn.dataset.livro); return; }
+      const arquivo = LIVROS_ARQ[btn.dataset.livro];
+      if (!arquivo) { document.getElementById("livroNote").textContent = btn.dataset.livro + " · o arquivo ainda não entrou."; return; }
+      window.open(arquivo, "_blank");
     };
   });
 }
