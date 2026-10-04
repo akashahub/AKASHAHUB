@@ -647,35 +647,92 @@ async function saveGrant(revoke) {
   });
   try {
     await writeRights(email, current);
-    note.textContent = revoke ? "Direito removido." : "Direito liberado. A pessoa entra com esse e-mail.";
-  } catch (e) {
-    note.textContent = "Não foi possível gravar. Só o administrador consegue liberar.";
+  } catch (e) {}
+  const resultado = await gravarPessoa(email, { grant: current });
+  if (resultado.feitos.includes("acesso") || resultado.feitos.includes("lista")) {
+    note.textContent = revoke ? "Direito removido." : "Direito liberado. A pessoa atualiza a página com esse e-mail.";
+  } else if (resultado.falhas.includes("ainda-nao-entrou")) {
+    note.textContent = "Esse Gmail ainda não abriu a área. Pede para entrar uma vez em /members e libera de novo.";
+  } else {
+    note.textContent = "Não gravou. O Firebase recusou: " + resultado.falhas.join(", ");
   }
+}
+
+async function acharUid(email) {
+  const snap = await getDocs(collection(db, "users"));
+  const hit = snap.docs.find(item => String(item.data().email || "").toLowerCase() === email);
+  return hit ? hit.id : "";
+}
+
+async function gravarPessoa(email, extra) {
+  const feitos = [];
+  const falhas = [];
+  const painel = doc(db, "afMentorNotes", "membersPainel");
+  try {
+    let atual = { admins: [], grants: {} };
+    const snap = await getDoc(painel);
+    if (snap.exists()) atual = Object.assign(atual, snap.data());
+    if (extra.admin && !(atual.admins || []).includes(email)) atual.admins = (atual.admins || []).concat([email]);
+    if (extra.grant) atual.grants = Object.assign({}, atual.grants || {}, { [email]: extra.grant });
+    await setDoc(painel, { admins: atual.admins || [], grants: atual.grants || {}, by: mail() }, { merge: true });
+    feitos.push("lista");
+  } catch (e) {
+    falhas.push(e.code || "lista");
+  }
+  if (extra.admin) {
+    try {
+      await setDoc(doc(db, "membersAdmins", email), { active: true, by: mail() });
+      feitos.push("admins");
+    } catch (e) {
+      falhas.push(e.code || "admins");
+    }
+  }
+  let uid = "";
+  try { uid = await acharUid(email); } catch (e) { falhas.push(e.code || "busca"); }
+  if (!uid) falhas.push("ainda-nao-entrou");
+  if (uid) {
+    try {
+      let prev = { areas: [], cursos: [], livros: [], audios: [], admin: false };
+      const acc = await getDoc(doc(db, "afAccess", uid));
+      if (acc.exists() && acc.data().membersGrant) prev = Object.assign(prev, acc.data().membersGrant);
+      const membersGrant = Object.assign(prev, extra.grant || {}, extra.admin ? { admin: true } : {});
+      await setDoc(doc(db, "afAccess", uid), { membersGrant }, { merge: true });
+      feitos.push("acesso");
+    } catch (e) {
+      falhas.push(e.code || "acesso");
+    }
+  }
+  return { feitos, falhas };
 }
 
 async function addAdmin() {
   const email = document.getElementById("adminMail").value.trim().toLowerCase();
   const note = document.getElementById("grantNote");
   if (!email.includes("@")) { note.textContent = "Coloca o e-mail do administrador."; return; }
-  try {
-    await setDoc(doc(db, "membersAdmins", email), { active: true, by: mail() });
-    note.textContent = email + " agora administra. Peça para a pessoa sair e entrar de novo.";
+  const resultado = await gravarPessoa(email, { admin: true });
+  if (resultado.feitos.length) {
+    note.textContent = resultado.falhas.includes("ainda-nao-entrou")
+      ? email + " ficou na lista. Pede para essa pessoa abrir /members uma vez e libera de novo."
+      : email + " foi liberado. Pede para sair e entrar de novo.";
     listarAdmins();
-  } catch (e) {
-    note.textContent = "Não gravou agora. O seu Gmail segue como administrador.";
+  } else {
+    note.textContent = "Não gravou. O Firebase recusou: " + resultado.falhas.join(", ");
   }
 }
 
 async function listarAdmins() {
   const box = document.getElementById("adminList");
   if (!box) return;
+  const nomes = [];
   try {
     const snap = await getDocs(collection(db, "membersAdmins"));
-    const nomes = snap.docs.filter(item => item.data().active).map(item => item.id);
-    box.textContent = nomes.length ? "Administram: " + nomes.join(", ") : "Por enquanto só o seu Gmail administra.";
-  } catch (e) {
-    box.textContent = "Por enquanto só o seu Gmail administra.";
-  }
+    snap.docs.forEach(item => { if (item.data().active) nomes.push(item.id); });
+  } catch (e) {}
+  try {
+    const snap = await getDoc(doc(db, "afMentorNotes", "membersPainel"));
+    if (snap.exists()) (snap.data().admins || []).forEach(email => { if (!nomes.includes(email)) nomes.push(email); });
+  } catch (e) {}
+  box.textContent = nomes.length ? "Administram: " + nomes.join(", ") : "Por enquanto só o seu Gmail administra.";
 }
 
 async function saveCms() {
@@ -996,9 +1053,25 @@ onAuthStateChanged(auth, async next => {
   catalogVideos = {};
   adminOn = isYan();
   if (user && mail()) {
+    try { await setDoc(doc(db, "users", user.uid), { email: mail() }, { merge: true }); } catch (e) {}
     try {
       const admin = await getDoc(doc(db, "membersAdmins", mail()));
       if (admin.exists() && admin.data().active) adminOn = true;
+    } catch (e) {}
+    try {
+      const acc = await getDoc(doc(db, "afAccess", user.uid));
+      if (acc.exists() && acc.data().membersGrant) {
+        pullRights(acc.data().membersGrant);
+        if (acc.data().membersGrant.admin) adminOn = true;
+      }
+    } catch (e) {}
+    try {
+      const painel = await getDoc(doc(db, "afMentorNotes", "membersPainel"));
+      if (painel.exists()) {
+        const grant = (painel.data().grants || {})[mail()];
+        if (grant) pullRights(grant);
+        if ((painel.data().admins || []).includes(mail())) adminOn = true;
+      }
     } catch (e) {}
     try {
       const grant = await getDoc(doc(db, "membrosAcessos", mail()));
