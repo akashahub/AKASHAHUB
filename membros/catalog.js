@@ -53,7 +53,7 @@ window.AKASHA_AREAS = [
 ];
 
 window.AKASHA_PRECO = {
-  area: { anubis: 4700, horus: 9700, isis: 14700, amon: 19700 },
+  area: { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 },
   curso: 2700,
   livro: 1700,
   audio: 700
@@ -124,10 +124,10 @@ window.akashaOferta = function (ref) {
 };
 
 window.AKASHA_LINKS = {
-  "area:anubis": "https://buy.stripe.com/14AfZh2KV9WH1cYaq3djO00",
-  "area:horus": "https://buy.stripe.com/dRm9AT85fb0L7BmdCfdjO01",
-  "area:isis": "https://buy.stripe.com/fZu00j85f9WH4pa2XBdjO02",
-  "area:amon": "https://buy.stripe.com/00waEXetDb0L3l61TxdjO03",
+  "area:anubis": "https://buy.stripe.com/bJe7sLetDb0L8Fqbu7djO0f",
+  "area:horus": "https://buy.stripe.com/14A4gz71becX08U8hVdjO0g",
+  "area:isis": "https://buy.stripe.com/8x2bJ11GR7OzaNy1TxdjO0h",
+  "area:amon": "https://buy.stripe.com/bJe9AT71bgl53l655JdjO0i",
   "curso:anubis:alinhamento": "https://buy.stripe.com/14AdR9bhrgl51cYfKndjO04",
   "curso:anubis:7-dias": "https://buy.stripe.com/28E28r4T3ecXdZK7dRdjO05",
   "curso:anubis:casais": "https://buy.stripe.com/00w9AT0CNecXdZK55JdjO06",

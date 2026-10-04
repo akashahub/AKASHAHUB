@@ -16,7 +16,7 @@ const CATALOG = {
   "japamala-sagrado": { name: "Japamala Sagrado", cents: 1000 },
 };
 
-const AREA_CENTS = { anubis: 4700, horus: 9700, isis: 14700, amon: 19700 };
+const AREA_CENTS = { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 };
 const ITEM_CENTS = { curso: 2700, livro: 1700, audio: 700 };
 const ITENS = {
   anubis: {
