@@ -34,6 +34,17 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clam
 .num{font-family:"Cormorant Garamond",serif;font-size:28px;color:var(--violet)}
 .card h2{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:500;margin:0 0 4px;line-height:1.05}
 .meta{color:var(--muted);font-size:13px}
+.card .meta{line-height:1.45}
+.card .meta strong{color:var(--ink);font-weight:600}
+.producer-brief{margin:0 0 28px;padding:18px 20px;background:rgba(255,255,255,.06);border:1px solid rgba(196,161,90,.28);border-radius:16px}
+.producer-brief h2{font-family:"Cormorant Garamond",serif;font-size:28px;font-weight:500;color:#f4dfae;margin:0 0 6px}
+.producer-brief .brief-lead{color:#d8cdbd;font-size:14px;margin:0 0 14px;max-width:70ch}
+.brief-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.brief-item{padding:11px 12px;background:rgba(0,0,0,.16);border-radius:11px}
+.brief-item b{display:block;color:#c4a15a;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.brief-item span{display:block;color:#f6f1e8;font-size:14px;line-height:1.45}
+.brief-note{margin:14px 0 0;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);color:#bfb3a2;font-size:12px;line-height:1.5}
+@media(max-width:800px){.brief-grid{grid-template-columns:1fr}}
 .tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);font-weight:600}
 .who-yan .tag{color:#9b7330}
 .read{position:fixed;inset:0;z-index:20;background:#120f0c;color:#f6f1e8;display:none;flex-direction:column}
@@ -78,7 +89,7 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clam
     <div><b>25–35s</b><span>Alívio. Uma saída, não três aulas.</span></div>
     <div><b>Chave</b><span>Uma frase. Um gesto. Para.</span></div>
   </div>
-  <p class="note">No ar, o nome é Yan Klehn. Quem grava os quinze primeiros é Yan Filipe. Os nove últimos são para quem faz a propaganda: ela não finge resultado, não promete faturamento, não diz que fez a mentoria. Vilas do Atlântico, Lauro de Freitas, praia, calçadão, padaria, condomínio, academia, conveniência, shop, perto do Boteco do Caranguejo. Você no quadro. Rosto de outra pessoa, fora. Mistério para entrar. Clareza para entender. Uma prova. Uma aplicação. Sem improvisar a chave.</p>
+  <p class="note">No ar, o nome é Yan Klehn. Quem grava os quinze primeiros é Yan Filipe. Os nove últimos são para quem faz a propaganda: ela não finge resultado, não promete faturamento, não diz que fez a mentoria. Os novos briefings mostram situação, público, sentimento e objetivo de cada vídeo. A persuasão deve parecer humana: autoridade por clareza, experiência e limites — nunca por pressão, urgência artificial ou promessa.</p>
   <div class="list" id="list"></div>
 </main>
 <section class="read" id="read" aria-hidden="true">
@@ -325,17 +336,39 @@ let current = null;
 let size = 34;
 let timer = null;
 
+function beat(s, type){ return s.beats.find(b=>b.t.toLowerCase()===type.toLowerCase())?.say || ""; }
+function briefFor(s){
+  const diagnosis = beat(s,"Diagnóstico");
+  const mirror = beat(s,"Espelho");
+  const turn = beat(s,"Virada");
+  const relief = beat(s,"Alívio");
+  const audience = s.who === "yan"
+    ? "Profissionais experientes que já entregam valor, mas ainda explicam, vendem ou operam sem uma estrutura clara."
+    : "Quem se reconhece na situação apresentada e precisa compreender a mensagem sem receber uma promessa ou uma indireta."
+  return {
+    audience,
+    situation: mirror || diagnosis,
+    feeling: "Reconhecimento nos primeiros segundos; depois, clareza, alívio e confiança para olhar a própria situação sem culpa.",
+    objective: turn || relief || diagnosis,
+    hook: diagnosis || s.title,
+    recording: s.place + " Ritmo: " + (s.format.toLowerCase().includes("direto") ? "direto e calmo, com pausas" : "natural, com pausas curtas") + ".",
+    objection: "Responder à objeção sem atacar: a solução não é mais exposição ou mais um curso; é clareza, método, limite e aplicação.",
+    integrity: "Deixar claro que é uma leitura geral, não uma indireta pessoal. Não prometer resultado, não criar urgência artificial e não fingir experiência de quem grava."
+  };
+}
 function fullText(s){
-  const lines = [s.title, s.who==="yan" ? "Grava: Yan Filipe" : "Grava: outra pessoa, propaganda", s.place, s.dur+" · "+s.format+" · "+s.day, "Gesto: "+s.gesture, ""];
+  const b = briefFor(s);
+  const lines = [s.title, s.who==="yan" ? "Grava: Yan Filipe" : "Grava: outra pessoa, propaganda", s.place, s.dur+" · "+s.format+" · "+s.day, "Gesto: "+s.gesture, "", "BRIEFING DE GRAVAÇÃO", "Situação: "+b.situation, "Sentimento: "+b.feeling, "Objetivo: "+b.objective, "Público: "+b.audience, "", "TELEPROMPTER"];
   s.beats.forEach(b=>{ lines.push(b.t.toUpperCase()); lines.push(b.say); lines.push(""); });
   return lines.join("\n").trim();
 }
 function card(s, i){
   const el = document.createElement("button");
+  const b = briefFor(s);
   el.type = "button";
   el.className = "card "+(s.who==="yan"?"who-yan":"who-outra");
   el.dataset.who = s.who;
-  el.innerHTML = '<div class="num">'+String(i+1).padStart(2,"0")+'</div><div><div class="tag">'+(s.who==="yan"?"Yan Filipe":"Outra pessoa")+' · '+s.day+' · '+s.format+'</div><h2>'+s.title+'</h2><div class="meta">'+s.place+' · '+s.dur+' · '+s.gesture+'</div></div><div class="open meta">Abrir</div>';
+  el.innerHTML = '<div class="num">'+String(i+1).padStart(2,"0")+'</div><div><div class="tag">'+(s.who==="yan"?"Yan Filipe":"Outra pessoa")+' · '+s.day+' · '+s.format+'</div><h2>'+s.title+'</h2><div class="meta"><strong>Sentimento:</strong> '+b.feeling+'<br><strong>Gravação:</strong> '+s.place+' · '+s.dur+' · '+s.gesture+'</div></div><div class="open meta">Abrir</div>';
   el.onclick = ()=>openScript(s);
   return el;
 }
@@ -345,7 +378,18 @@ function render(filter){
 }
 function openScript(s){
   current = s;
-  stage.innerHTML = s.beats.map(b=>'<article class="beat"><i>'+b.t+'</i><p>'+b.say+'</p></article>').join("");
+  const b = briefFor(s);
+  stage.innerHTML = '<section class="producer-brief"><h2>Briefing para quem vai gravar</h2><p class="brief-lead">Leia antes de apertar “Rodar”. O briefing orienta a intenção; ele não entra na fala.</p><div class="brief-grid">'+
+    '<div class="brief-item"><b>Situação</b><span>'+b.situation+'</span></div>'+
+    '<div class="brief-item"><b>Público</b><span>'+b.audience+'</span></div>'+
+    '<div class="brief-item"><b>Sentimento</b><span>'+b.feeling+'</span></div>'+
+    '<div class="brief-item"><b>Objetivo</b><span>'+b.objective+'</span></div>'+
+    '<div class="brief-item"><b>Primeiros segundos</b><span>'+b.hook+'</span></div>'+
+    '<div class="brief-item"><b>Sugestão de gravação</b><span>'+b.recording+'</span></div>'+
+    '<div class="brief-item"><b>Objeção a responder</b><span>'+b.objection+'</span></div>'+
+    '</div><p class="brief-note"><strong>Integridade da mensagem:</strong> '+b.integrity+'</p></section>'+
+    '<div class="script-start"><i>Teleprompter · fala revisada</i></div>'+
+    s.beats.map(b=>'<article class="beat"><i>'+b.t+'</i><p>'+b.say+'</p></article>').join("");
   stage.style.setProperty("--size", size+"px");
   stage.scrollTop = 0;
   read.classList.add("on");
