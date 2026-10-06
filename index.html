@@ -479,7 +479,31 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
     .reveal { opacity: 1; transform: none; filter: none; }
     .cursor-glow { display: none; }
+    .collar-track { transition: none !important; }
   }
+
+  .collar { padding: 28px 0 64px; }
+  .collar-grid { display: grid; gap: 28px; align-items: center; }
+  @media (min-width: 860px) { .collar-grid { grid-template-columns: 1.15fr .85fr; gap: 48px; } }
+  .collar-view { position: relative; overflow: hidden; height: min(62vh, 520px); }
+  .collar-view::before, .collar-view::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 64px; z-index: 2; pointer-events: none;
+  }
+  .collar-view::before { left: 0; background: linear-gradient(90deg, var(--void), transparent); }
+  .collar-view::after { right: 0; background: linear-gradient(270deg, var(--void), transparent); }
+  html.dark .collar-view::before { background: linear-gradient(90deg, var(--void), transparent); }
+  .collar-track { display: flex; height: 100%; transition: transform .7s var(--ease); }
+  .collar-track figure { flex: 0 0 100%; height: 100%; margin: 0; display: grid; place-items: center; }
+  .collar-track img {
+    max-width: 92%; max-height: 100%; object-fit: contain;
+    -webkit-mask-image: radial-gradient(ellipse 78% 74% at 50% 46%, #000 58%, transparent 100%);
+    mask-image: radial-gradient(ellipse 78% 74% at 50% 46%, #000 58%, transparent 100%);
+  }
+  .collar h2 { font-family: var(--serif); font-size: clamp(36px, 5vw, 56px); line-height: 1; margin: 0 0 8px; }
+  .collar-price { font-family: var(--serif); font-size: 32px; margin: 0 0 8px; }
+  .collar-meta, .collar-note { color: var(--muted); margin: 0 0 10px; line-height: 1.6; }
+  .collar-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+  @media (max-width: 859px) { .collar-copy { text-align: center; } .collar-cta { justify-content: center; } }
 </style>
 </head>
 <body>
@@ -555,6 +579,25 @@
   <div class="explore-hint">
     <span>Explorar</span>
     <i></i>
+  </div>
+</section>
+
+<section class="collar" id="colar-horus" aria-label="Colar Hórus">
+  <div class="wrap collar-grid">
+    <div class="collar-view" id="collarView" hidden>
+      <div class="collar-track" id="collarTrack"></div>
+    </div>
+    <div class="collar-copy">
+      <p class="eyebrow">peça do ecossistema</p>
+      <h2>Colar Hórus</h2>
+      <p class="collar-price">R$ 120</p>
+      <p class="collar-meta">Peça única • Unissex • Banhado a ouro</p>
+      <p class="collar-note">Frete grátis. Acompanha o dia, inclusive banho e mar.</p>
+      <div class="collar-cta">
+        <a class="btn-gold btn-premium" href="https://buy.stripe.com/7sYfZh5X71qb4pabu7djO0j">Comprar agora</a>
+        <a class="btn-ghost" href="https://wa.me/5571983448621?text=Ol%C3%A1%21%20Quero%20comprar%20o%20Colar%20H%C3%B3rus%20do%20Akasha%20Hub." target="_blank" rel="noopener">Comprar pelo WhatsApp</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -925,6 +968,37 @@
     const h=document.documentElement.scrollHeight-window.innerHeight;
     p.style.width=(h>0?(window.scrollY/h)*100:0)+'%';
   }, {passive:true});
+
+  (function collar(){
+    const images = [];
+    const view = document.getElementById('collarView');
+    const track = document.getElementById('collarTrack');
+    if(!view || !track || images.length < 1) return;
+    const frames = images.concat(images[0]);
+    frames.forEach(function(src){
+      const fig = document.createElement('figure');
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = 'Colar Hórus, Akasha Hub';
+      fig.appendChild(img);
+      track.appendChild(fig);
+    });
+    view.hidden = false;
+    if(images.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let i = 0;
+    setInterval(function(){
+      i += 1;
+      track.style.transition = 'transform .7s cubic-bezier(.22,1,.36,1)';
+      track.style.transform = 'translateX(' + (-i * 100) + '%)';
+      if(i === images.length){
+        setTimeout(function(){
+          track.style.transition = 'none';
+          i = 0;
+          track.style.transform = 'translateX(0)';
+        }, 720);
+      }
+    }, 2700);
+  })();
 
   document.addEventListener('keydown', function(e){
     if(e.key==='Escape'){ closeModal(); const d=document.getElementById('mobileNav'); if(d.classList.contains('is-open')) toggleNav(); }
