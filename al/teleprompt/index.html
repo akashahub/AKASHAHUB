@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Teleprompter · Vitrine · Akasha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#f4efe6;--ink:#17130f;--muted:#6d645b;--violet:#5c3d78;--gold:#9b7330;--line:rgba(23,19,15,.12);--paper:#fbf8f2}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif}
+a{color:var(--violet)}
+header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 18px;background:rgba(244,239,230,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{font-family:"Cormorant Garamond",Georgia,serif;font-size:26px;text-decoration:none;color:var(--ink)}
+.brand em{font-style:italic;color:var(--violet)}
+nav{display:flex;flex-wrap:wrap;gap:8px}
+button,select{font:inherit;cursor:pointer}
+.ghost{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 14px;color:var(--ink)}
+.ghost.on{background:var(--violet);color:#fff;border-color:var(--violet)}
+.wrap{width:min(980px,calc(100% - 28px));margin:0 auto;padding:28px 0 80px}
+.kicker{letter-spacing:.18em;text-transform:uppercase;font-size:11px;color:var(--violet);font-weight:600}
+h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clamp(40px,6vw,68px);line-height:.95;letter-spacing:-.03em;margin:8px 0 12px}
+.lead{color:#4e463e;max-width:68ch}
+.engine{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:22px 0}
+.engine div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}
+.engine b{display:block;font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:500}
+.engine span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.note{background:#fff;border-left:3px solid var(--violet);padding:14px 16px;border-radius:0 14px 14px 0;color:#4e463e;font-size:14px}
+.list{display:grid;gap:12px;margin-top:22px}
+.card{width:100%;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px 16px 14px;display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center}
+.card:hover{border-color:rgba(92,61,120,.45)}
+.num{font-family:"Cormorant Garamond",serif;font-size:28px;color:var(--violet)}
+.card h2{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:500;margin:0 0 4px;line-height:1.05}
+.meta{color:var(--muted);font-size:13px}
+.tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);font-weight:600}
+.who-yan .tag{color:#9b7330}
+.read{position:fixed;inset:0;z-index:20;background:#120f0c;color:#f6f1e8;display:none;flex-direction:column}
+.read.on{display:flex}
+.bar{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);flex:none}
+.bar .left,.bar .right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.bar button{background:transparent;color:#f6f1e8;border:1px solid rgba(255,255,255,.2);border-radius:999px;min-height:44px;padding:8px 14px}
+.bar button.gold{background:#c4a15a;color:#1a140c;border-color:#c4a15a;font-weight:600}
+.stage{flex:1;overflow:auto;padding:8vh 8vw 18vh;scroll-behavior:auto}
+.beat{margin:0 0 28px;max-width:18em}
+.beat i{display:block;font-style:normal;letter-spacing:.16em;text-transform:uppercase;font-size:12px;color:#c4a15a;margin-bottom:8px}
+.beat p{margin:0;font-size:var(--size,34px);line-height:1.28;font-weight:500}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#fff;color:#17130f;border-radius:999px;padding:10px 16px;display:none;z-index:30}
+.toast.on{display:block}
+@media(max-width:800px){
+  .engine{grid-template-columns:1fr 1fr}
+  .card{grid-template-columns:52px 1fr}
+  .card .open{display:none}
+  .beat p{font-size:var(--size,28px)}
+  header{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="../central/#conteudo">Vitrine <em>teleprompter</em></a>
+  <nav>
+    <button class="ghost on" type="button" data-filter="todos">Todos</button>
+    <button class="ghost" type="button" data-filter="yan">Yan grava</button>
+    <button class="ghost" type="button" data-filter="outra">Outra pessoa</button>
+  </nav>
+</header>
+<main class="wrap">
+  <p class="kicker">Engenharia do espelho e do alívio</p>
+  <h1>Fala simples. Estrutura densa.</h1>
+  <p class="lead">Quem assiste ouve uma frase e se reconhece. Por baixo, a ordem é sempre a mesma: diagnóstico, espelho, tensão, virada, alívio, chave. O incêndio é o problema de fora. O você é o problema de dentro. Não entrega a saída no segundo três. Não machuca e vai embora. Um gesto só no fim.</p>
+  <div class="engine">
+    <div><b>0–3s</b><span>Diagnóstico. A pessoa, não o produto.</span></div>
+    <div><b>3–8s</b><span>Espelho. Evidência que ela já viveu.</span></div>
+    <div><b>8–15s</b><span>Tensão. O custo de continuar assim.</span></div>
+    <div><b>15–25s</b><span>Virada. A leitura anterior quebra.</span></div>
+    <div><b>25–35s</b><span>Alívio. Uma saída, não três aulas.</span></div>
+    <div><b>Chave</b><span>Uma frase. Um gesto. Para.</span></div>
+  </div>
+  <p class="note">No ar, o nome é Yan Klehn. Quem grava os quinze primeiros é Yan Filipe. Os nove últimos são para quem faz a propaganda: ela não finge resultado, não promete faturamento, não diz que fez a mentoria. Vilas do Atlântico, Lauro de Freitas, praia, calçadão, padaria, condomínio, academia, conveniência, shop, perto do Boteco do Caranguejo. Você no quadro. Rosto de outra pessoa, fora. Mistério para entrar. Clareza para entender. Uma prova. Uma aplicação. Sem improvisar a chave.</p>
+  <div class="list" id="list"></div>
+</main>
+<section class="read" id="read" aria-hidden="true">
+  <div class="bar">
+    <div class="left">
+      <button type="button" id="back">Voltar</button>
+      <button type="button" id="play">Rodar</button>
+    </div>
+    <div class="right">
+      <button type="button" id="smaller">A−</button>
+      <button type="button" id="larger">A+</button>
+      <button type="button" class="gold" id="copy">Copiar tudo</button>
+    </div>
+  </div>
+  <div class="stage" id="stage"></div>
+</section>
+<div class="toast" id="toast">Copiado</div>
+<script>
+const SCRIPTS = [
+  {who:"yan", day:"Dia 1", format:"Reel", place:"Padaria em Vilas, do lado de fora, de manhã. Você no quadro.", dur:"35s", gesture:"Comenta: PROFISSÃO", title:"A palavra que sobra é a profissão",
+    beats:[
+      {t:"Diagnóstico", say:"Você resolve o problema. Na hora de explicar, volta para o nome da profissão."},
+      {t:"Espelho", say:"Te perguntam o que você faz. Você fala a formação. Fala o cargo. Fala há quantos anos. A pessoa continua sem saber o que muda quando entra com você."},
+      {t:"Tensão", say:"Aí cada conversa começa do zero. Você trabalha mais e explica de novo."},
+      {t:"Virada", say:"O problema não é falta de experiência. É que a experiência ainda não tem frase."},
+      {t:"Alívio", say:"A frase cabe em três partes. Quem você ajuda. Qual problema. Por qual caminho. Não precisa ficar bonita. Precisa ser repetível."},
+      {t:"Chave", say:"Comenta a palavra que sobrou quando você tentou se explicar. Profissão."}
+    ]},
+  {who:"yan", day:"Dia 3", format:"Reel", place:"Calçadão da praia de Vilas, caminhando devagar, mar atrás, sem apontar para banhista.", dur:"35s", gesture:"Manda para quem te apresentaria esta semana", title:"Alguém te apresenta e inventa você",
+    beats:[
+      {t:"Diagnóstico", say:"Pede para alguém te apresentar a uma terceira pessoa. Grava o que ela diz. Ou só escuta."},
+      {t:"Espelho", say:"Sai o seu nome. Sai a sua área. Sai um elogio genérico. Não sai o que você faz de diferente."},
+      {t:"Tensão", say:"Quem te indica está traduzindo no escuro. O cliente chega esperando outra coisa. Você corrige na sala. A sala acaba. A tradução continua torta."},
+      {t:"Virada", say:"Isso não se resolve com mais exposição. Se resolve com uma frase que a outra pessoa consegue repetir sem você do lado."},
+      {t:"Alívio", say:"Eu ajudo este público, com este problema, por este processo. Testa hoje com uma pessoa. Se ela travar, a frase ainda está grande."},
+      {t:"Chave", say:"Manda este vídeo para quem ia te apresentar esta semana."}
+    ]},
+  {who:"yan", day:"Dia 8", format:"Reel", place:"Porta do condomínio em Vilas, você saindo. Não filma portaria nem placa de apartamento.", dur:"32s", gesture:"Salva e escolhe um processo para escrever", title:"Quando você sai, o negócio senta",
+    beats:[
+      {t:"Diagnóstico", say:"Quando você sai da sala, o negócio continua ou senta e espera você voltar?"},
+      {t:"Espelho", say:"O cliente pede você. A equipe te chama. O arquivo está na sua cabeça. O combinado foi de boca."},
+      {t:"Tensão", say:"Você chama isso de padrão de qualidade. No fundo, é um negócio que ainda não sabe andar sem a sua voz."},
+      {t:"Virada", say:"O que falta não é mais presença. É uma etapa escrita. Entrada, o que acontece, saída."},
+      {t:"Alívio", say:"Uma etapa já muda a segunda-feira. Não o ano inteiro. Uma. A que se repete toda semana e hoje só você sabe fazer."},
+      {t:"Chave", say:"Salva. Escolhe esse processo e escreve a entrada e a saída ainda hoje."}
+    ]},
+  {who:"yan", day:"Alinhamento", format:"Reel", place:"Praia de Vilas, maré baixa, você parado, horizonte. Uma ideia.", dur:"40s", gesture:"Comenta: AMBIÇÃO ou FALTA", title:"Você chama de ambição",
+    beats:[
+      {t:"Diagnóstico", say:"Você diz que quer construir. Aí o dinheiro entra e a primeira pergunta é o que dá para comprar."},
+      {t:"Espelho", say:"Trabalha mais. Ganha mais. Continua com a sensação de que não chegou. Chama isso de ambição."},
+      {t:"Tensão", say:"Quanto mais você corre atrás, mais parece que escapa. Porque o dinheiro, nessa relação, não é ferramenta. É prova de que a falta acabou. E a falta não acaba com a compra."},
+      {t:"Virada", say:"O problema talvez não seja você não saber ganhar. Talvez seja você ter aprendido a se relacionar com dinheiro a partir da falta."},
+      {t:"Alívio", say:"Quando essa relação muda, o dinheiro deixa de ser fuga e volta a ser decisão. O que fica, o que sai, o que constrói a casa."},
+      {t:"Chave", say:"Você não precisa primeiro ganhar mais para pensar como quem constrói. Precisa parar de decidir como quem está fugindo. Comenta a palavra: ambição ou falta."}
+    ]},
+  {who:"yan", day:"Incêndio", format:"Reel", place:"Casa, mesa, um objeto simples na mão. Sem slide.", dur:"30s", gesture:"Comenta o incêndio do seu negócio em uma palavra", title:"Quem vende extintor mostra o fogo",
+    beats:[
+      {t:"Diagnóstico", say:"Se você quer que alguém queira uma casa para o próprio conhecimento, não comece pela casa. Mostre o que está queimando."},
+      {t:"Espelho", say:"O conhecimento cresceu. A forma não. A pessoa explica de novo. O cliente depende dela. O arquivo não existe."},
+      {t:"Tensão", say:"Isso é o incêndio. Método, oferta e página são o extintor. Sem o fogo visível, o extintor parece aula."},
+      {t:"Virada", say:"Eu não vendo três mentorias. Eu mostro onde a experiência já virou fumaça e ainda não virou estrutura."},
+      {t:"Alívio", say:"O alívio não é um curso a mais. É a experiência ganhar nome, etapa e uma frase que outra pessoa repete."},
+      {t:"Chave", say:"Comenta, numa palavra, o que está queimando no seu negócio hoje."}
+    ]},
+  {who:"yan", day:"Dia 11", format:"Reel", place:"Academia do condomínio ou da rua, entre uma série e outra. Toalha, não pose.", dur:"30s", gesture:"Comenta: CURSO ou ESTRUTURA", title:"Mais um curso, ou a casa",
+    beats:[
+      {t:"Diagnóstico", say:"Você já sabe fazer. Mesmo assim a próxima compra é mais uma formação."},
+      {t:"Espelho", say:"O certificado entra. O jeito de explicar o seu trabalho continua o mesmo. A oferta continua na cabeça."},
+      {t:"Tensão", say:"Curso resolve falta de competência. Se a competência já está aí e o negócio não anda sem você, o curso vira adiamento."},
+      {t:"Virada", say:"Não é ataque a estudo. É outra tarefa. Registrar o que você já repete. Dar nome. Testar a frase."},
+      {t:"Alívio", say:"Estrutura é o que fica quando a formação termina. Método, limite da oferta, e um lugar onde isso mora."},
+      {t:"Chave", say:"Comenta o que está na sua frente: curso ou estrutura."}
+    ]},
+  {who:"yan", day:"Dia 4", format:"Reel", place:"Comércio de rua em Vilas, calçada, sem filmar vitrine de terceiro em close.", dur:"32s", gesture:"Salva. A decisão vem antes do aplicativo.", title:"Antes da ferramenta",
+    beats:[
+      {t:"Diagnóstico", say:"Você abre o aplicativo novo achando que a clareza vem com o login."},
+      {t:"Espelho", say:"Tem página. Tem post. Tem ferramenta. Não tem a decisão de quem é o trabalho, para quem, e onde ele para."},
+      {t:"Tensão", say:"Ferramenta em cima de oferta confusa só publica a confusão mais rápido."},
+      {t:"Virada", say:"A ordem é método, oferta, estrutura. A ferramenta entra para segurar uma decisão que já existe."},
+      {t:"Alívio", say:"Se você souber a etapa, qualquer casa digital serve. Se não souber, nenhuma casa te salva."},
+      {t:"Chave", say:"Salva. Antes de assinar a próxima ferramenta, escreve a decisão que ela teria que guardar."}
+    ]},
+  {who:"yan", day:"Dia 2", format:"Reel ou carrossel falado", place:"Casa, papel na mesa, você escreve uma linha e mostra.", dur:"28s", gesture:"Salva e preenche uma etapa", title:"Uma etapa, não o método inteiro",
+    beats:[
+      {t:"Diagnóstico", say:"Você quer organizar o método e trava porque tenta escrever a vida inteira numa página."},
+      {t:"Espelho", say:"Abre o documento. Põe o título. Fecha. O talento continua solto. A culpa fica."},
+      {t:"Tensão", say:"Método inteiro é um ano. Uma etapa é uma tarde. Quem espera o inteiro não escreve a tarde."},
+      {t:"Virada", say:"Etapa tem três coisas. O que entra. O que você faz. O que sai. Se não tem saída, não é etapa. É conversa."},
+      {t:"Alívio", say:"Escolhe um caso que você resolveu no último mês. Escreve só essa etapa. O método nasce da repetição disso, não de um mapa bonito."},
+      {t:"Chave", say:"Salva e preenche uma. Não doze."}
+    ]},
+  {who:"yan", day:"Legado", format:"Reel", place:"Praia, fim de tarde, luz no rosto. Sem família de terceiro no quadro.", dur:"35s", gesture:"Manda para quem segura a empresa sozinho", title:"A empresa que só vive em você",
+    beats:[
+      {t:"Diagnóstico", say:"Tem negócio que parece de família e, na prática, mora numa pessoa só."},
+      {t:"Espelho", say:"Você segura o cliente, o preço, a briga e a memória. Os outros ajudam. A decisão volta para você."},
+      {t:"Tensão", say:"O dia em que você para, a casa para. Isso não é lealdade. É um risco sem nome."},
+      {t:"Virada", say:"Legado não é um discurso. É o que continua quando você não está na sala. Método, oferta com limite, e alguém que consegue repetir."},
+      {t:"Alívio", say:"Não precisa sair da empresa. Precisa tirar da cabeça a parte que se repete e colocar num lugar que outro vê."},
+      {t:"Chave", say:"Manda para a pessoa que segura tudo sozinha e acha que isso é o ofício."}
+    ]},
+  {who:"yan", day:"Dia 10", format:"Reel", place:"Casa, Códigos de Origem na mão. Uma página, não a capa o tempo todo.", dur:"30s", gesture:"Salva quem quer o caminho, não o resumo", title:"O livro não é a mentoria",
+    beats:[
+      {t:"Diagnóstico", say:"Tem gente que vê o livro e acha que a mentoria é o livro explicado."},
+      {t:"Espelho", say:"O livro é a linguagem. A origem. O jeito de ler a própria história sem transformar isso em produto separado."},
+      {t:"Tensão", say:"Quem compra a linguagem e não faz a arquitetura continua com frase boa e negócio na cabeça."},
+      {t:"Virada", say:"Códigos de Origem não é uma quarta mentoria. É o vocabulário. A casa é a Arquitetura de Legado. Essência, alma e alinhamento no mesmo ciclo."},
+      {t:"Alívio", say:"Você pode ler e se reconhecer. A construção, método, oferta e estrutura, pede o ciclo. Uma coisa não substitui a outra."},
+      {t:"Chave", say:"Salva se você quer o caminho, não um resumo de capítulo."}
+    ]},
+  {who:"yan", day:"Dia 7", format:"Reel", place:"Casa, três objetos na mesa: um caderno, um copo, uma chave. Cada um é um cômodo.", dur:"35s", gesture:"Comenta o cômodo vazio: ESSÊNCIA, ALMA ou VALOR", title:"Três cômodos, uma casa",
+    beats:[
+      {t:"Diagnóstico", say:"Você trata identidade, corpo e dinheiro como três vidas. Três cursos. Três pastas."},
+      {t:"Espelho", say:"Numa você se apresenta. Na outra você se aguenta. Na outra você cobra. Nenhuma conversa com a outra."},
+      {t:"Tensão", say:"O cliente sente a emenda. Você também. E chama de fase."},
+      {t:"Virada", say:"Não são três mentorias. São três cômodos da mesma casa. Essência é o método que é seu. Alma é como você opera. Alinhamento é o valor e a decisão."},
+      {t:"Alívio", say:"A estrutura é o corredor. O que outra pessoa consegue usar quando você sai. Sem corredor, os cômodos são visitas."},
+      {t:"Chave", say:"Comenta o cômodo que está vazio: essência, alma ou valor."}
+    ]},
+  {who:"yan", day:"Dia 6", format:"Reel", place:"Calçadão, você olhando a câmera, gente ao longe sem foco.", dur:"28s", gesture:"Manda para quem te indicou na última semana", title:"Quem te indica traduz no escuro",
+    beats:[
+      {t:"Diagnóstico", say:"A indicação chega. O cliente quer uma coisa. Você faz outra. Os dois saem educados."},
+      {t:"Espelho", say:"Quem indicou usou a palavra que tinha. Profissão. Apelido. Um caso antigo."},
+      {t:"Tensão", say:"Indicação sem frase não é rede. É telefone quebrado. Você paga a conta na primeira reunião."},
+      {t:"Virada", say:"A frase não é marketing. É o que a outra pessoa consegue dizer sem te ligar antes."},
+      {t:"Alívio", say:"Manda para quem te indicou a frase de três partes. Pede para ela repetir com as palavras dela. Onde ela trocar, ali ainda está frouxo."},
+      {t:"Chave", say:"Manda este vídeo para essa pessoa. Junto, a frase."}
+    ]},
+  {who:"yan", day:"Você", format:"Reel", place:"Praia de manhã cedo, Vilas, quase vazio. Rosto e natureza. Uma ideia.", dur:"40s", gesture:"Comenta: EU FAÇO ou EU DIGO", title:"Você diz que quer legado",
+    beats:[
+      {t:"Diagnóstico", say:"Você diz que quer deixar alguma coisa de pé. Método. Nome. Uma casa que não depende do seu humor."},
+      {t:"Espelho", say:"Aí você atende. Explica de novo. Aceita o cliente que não é. Adia a página. Chama isso de fase ocupada."},
+      {t:"Tensão", say:"O legado que você descreve e o dia que você repete não estão no mesmo endereço. Um é discurso. O outro é o ofício."},
+      {t:"Virada", say:"Não é falta de visão. É falta de arquitetura. Visão sem etapa vira culpa no domingo."},
+      {t:"Alívio", say:"Arquitetura, aqui, é simples de dizer e densa de fazer. Uma frase. Uma etapa. Uma oferta com limite. Um lugar onde isso fica. Doze meses para isso virar uso, não para virar promessa."},
+      {t:"Chave", say:"Comenta o que está mais alto hoje: eu faço, ou eu digo."}
+    ]},
+  {who:"yan", day:"Dia 13", format:"Reel direto", place:"Casa, sentado, luz de janela. Sem música por baixo. Este é o único com o número.", dur:"40s", gesture:"Aplicar. Só este pede a aplicação.", title:"O ciclo, dito uma vez",
+    beats:[
+      {t:"Diagnóstico", say:"Se você já tem prática e o que falta é método, oferta e uma estrutura que outra pessoa entende, existe um ciclo para isso."},
+      {t:"Espelho", say:"Não são três produtos. É uma mentoria. Arquitetura de Legado. Origem, essência, alma e alinhamento na mesma casa."},
+      {t:"Tensão", say:"Doze meses. Vinte e quatro encontros em grupo. Três imersões de dois dias. Três encontros individuais. Comunidade, plataforma e laboratório. O investimento é trinta e nove mil."},
+      {t:"Virada", say:"A aplicação não confirma vaga. A conversa vê se cabe. A consultoria de sessenta mil não está nesta página. Ela só aparece se o diagnóstico pedir mais acompanhamento."},
+      {t:"Alívio", say:"Não é promessa de faturamento. É escopo. Você traz o repertório e o que acontece entre um encontro e outro. Eu conduzo o método."},
+      {t:"Chave", say:"Se este é o trabalho deste ano, começa pela aplicação. Se não for, fica com a frase e a etapa. As duas saídas são adultas."}
+    ]},
+  {who:"yan", day:"Dia 15", format:"Reel", place:"Pé na areia, Vilas do Atlântico, Boteco do Caranguejo longe, só como geografia, não como anúncio. Você diz o lugar.", dur:"30s", gesture:"Segue, ou manda para alguém da sua cidade que trabalha assim", title:"Eu penso daqui",
+    beats:[
+      {t:"Diagnóstico", say:"Eu não gravo isso num estúdio em outra cidade. Eu moro em Vilas do Atlântico. A praia fica aqui. O dia também."},
+      {t:"Espelho", say:"O trabalho é o mesmo em qualquer lugar. Experiência que já resolve e ainda não tem forma. Gente que fatura e não consegue ser repetida por outra pessoa."},
+      {t:"Tensão", say:"Autoridade de palco alugado dura um story. Autoridade de quem mostra o próprio chão fica."},
+      {t:"Virada", say:"Yan Klehn. Akasha. Uma mentoria. O livro é a linguagem. A casa é a arquitetura. O resto, mesa, alma, dinheiro, entra como cômodo, não como produto vizinho."},
+      {t:"Alívio", say:"Se você se reconheceu nos vídeos desta semana, não precisa de mais conteúdo. Precisa de uma frase e de uma etapa. O ciclo, se for a hora, tem porta."},
+      {t:"Chave", say:"Manda para alguém que trabalha há anos e ainda explica o ofício pelo nome da profissão."}
+    ]},
+
+  {who:"outra", day:"Propaganda 1", format:"Reel", place:"Janela, rosto, fundo simples. Se não estiver em Vilas, não finja que está.", dur:"25s", gesture:"Manda para a pessoa que é a sala inteira", title:"O incêndio, na voz dela",
+    beats:[
+      {t:"Diagnóstico", say:"Tem gente que o trabalho só existe enquanto ela está na sala."},
+      {t:"Espelho", say:"Saiu, o cliente chama. A equipe espera. O preço mora na cabeça dela."},
+      {t:"Tensão", say:"Isso parece dedicação. É incêndio. O negócio queima em silêncio no domingo."},
+      {t:"Virada", say:"Quem mostra isso com calma, sem grito de curso, é o Yan Klehn."},
+      {t:"Alívio", say:"Ele organiza experiência em método, oferta e estrutura. Uma mentoria. Não três."},
+      {t:"Chave", say:"Manda para a pessoa que é a sala inteira da empresa dela."}
+    ]},
+  {who:"outra", day:"Propaganda 2", format:"Reel", place:"Em pé, falando com a câmera como quem conta para uma amiga. Sem tom de anúncio de loja.", dur:"28s", gesture:"Comenta: EU", title:"Você faz isso",
+    beats:[
+      {t:"Diagnóstico", say:"Você sabe fazer. Na hora de dizer o que você faz, sai a profissão."},
+      {t:"Espelho", say:"Anos de prática. Cliente que volta. E uma frase que não cabe na boca de ninguém além da sua."},
+      {t:"Tensão", say:"Aí você posta mais, estuda mais, e a explicação continua do mesmo tamanho."},
+      {t:"Virada", say:"Eu não vou te ensinar o seu ofício. Quem trabalha isso é o Yan Klehn, na Akasha."},
+      {t:"Alívio", say:"A saída que ele repete é pequena de propósito. Uma frase. Uma etapa. Um limite na oferta."},
+      {t:"Chave", say:"Se doeu logo no começo, comenta: eu."}
+    ]},
+  {who:"outra", day:"Propaganda 3", format:"Reel", place:"Rua comum, ela andando poucos passos e parando. Sem loja reconhecível.", dur:"22s", gesture:"Segue o Yan Klehn", title:"Eu não vou te ensinar",
+    beats:[
+      {t:"Diagnóstico", say:"Eu não vou te passar três dicas. Isso aqui não é aula."},
+      {t:"Espelho", say:"É um recado. Se o seu conhecimento só funciona quando você está presente, você não tem um método. Você tem um turno."},
+      {t:"Tensão", say:"Turno acaba. Método fica."},
+      {t:"Virada", say:"Quem eu vi desenhar isso com nome e sem promessa de dinheiro fácil foi o Yan Klehn."},
+      {t:"Alívio", say:"Olha o vídeo dele em que ele pede uma etapa só. Entrada, ação, saída."},
+      {t:"Chave", say:"Segue ele. Não segue mais um perfil de dica."}
+    ]},
+  {who:"outra", day:"Propaganda 4", format:"Reel", place:"Casa, luz lateral. Ela olha a lente no último segundo.", dur:"20s", gesture:"Manda agora, com o nome da pessoa", title:"Manda para essa pessoa",
+    beats:[
+      {t:"Diagnóstico", say:"Pensa numa pessoa que trabalha há mais de dez anos e ainda marca reunião para explicar o básico."},
+      {t:"Espelho", say:"Ela é boa. Justamente por isso ninguém escreveu o que ela faz. Parece que não precisa."},
+      {t:"Tensão", say:"Precisa. Senão a próxima indicação inventa o trabalho dela."},
+      {t:"Virada", say:"Manda o perfil do Yan Klehn para essa pessoa. Arquitetura de Legado. Uma casa, não três cursos."},
+      {t:"Alívio", say:"Você não está indicando um milagre. Está indicando uma conversa sobre forma."},
+      {t:"Chave", say:"Manda agora. Não deixa para quando lembrar."}
+    ]},
+  {who:"outra", day:"Propaganda 5", format:"Reel", place:"Academia ou rua, rápido, uma tomada.", dur:"20s", gesture:"Comenta: CURSO", title:"Não é mais um curso",
+    beats:[
+      {t:"Diagnóstico", say:"Se a pessoa já é boa no que faz, mais um curso pode ser fuga."},
+      {t:"Espelho", say:"Ela compra formação. Volta para o mesmo jeito de vender hora e de explicar o ofício."},
+      {t:"Tensão", say:"O que ela não comprou foi estrutura."},
+      {t:"Virada", say:"O Yan Klehn separa as duas coisas num vídeo só. Curso quando falta competência. Estrutura quando o ofício já existe e não tem forma."},
+      {t:"Alívio", say:"Não é deboche de quem estuda. É alívio para quem já estudou demais e continua sem frase."},
+      {t:"Chave", say:"Comenta curso se esse for o seu adiamento."}
+    ]},
+  {who:"outra", day:"Propaganda 6", format:"Reel", place:"Se estiver em Vilas, calçadão, ela diz o nome do bairro. Se não estiver, grava em casa e não cita a praia.", dur:"25s", gesture:"Olha o perfil, não um anúncio solto", title:"Ele grava em Vilas",
+    beats:[
+      {t:"Diagnóstico", say:"Repara onde ele grava. Praia, calçada, porta de casa. Vilas do Atlântico."},
+      {t:"Espelho", say:"Não é cenário de guru. É o bairro. Perto da praia, do comércio, do Boteco do Caranguejo, do dia normal."},
+      {t:"Tensão", say:"Gente que ensina legado e só aparece em estúdio alugado pede uma confiança que o chão não deu."},
+      {t:"Virada", say:"Yan Klehn mora aqui. O trabalho é organizar o que você já sabe em método, oferta e estrutura."},
+      {t:"Alívio", say:"A imagem é simples. A engenharia do que ele faz com essa experiência é que é densa. Não precisa caber num story."},
+      {t:"Chave", say:"Entra no perfil e vê a sequência. Um vídeo só não entrega a casa."}
+    ]},
+  {who:"outra", day:"Propaganda 7", format:"Reel", place:"Livro na mão só se ela tiver o exemplar. Se não tiver, não mostra capa falsa.", dur:"22s", gesture:"Salva o vídeo dele sobre o livro", title:"O livro na mão dele",
+    beats:[
+      {t:"Diagnóstico", say:"Códigos de Origem é livro. Não é a mentoria disfarçada."},
+      {t:"Espelho", say:"Tem gente que compra o livro esperando o acompanhamento. E gente que faz o contrário, quer a mentoria e acha que o livro é brinde."},
+      {t:"Tensão", say:"Os dois se frustram. Porque são camadas diferentes."},
+      {t:"Virada", say:"Ele mesmo separa. O livro é a linguagem da origem. A Arquitetura de Legado é o ciclo de doze meses."},
+      {t:"Alívio", say:"Dá para começar pela leitura. A construção do método pede a casa."},
+      {t:"Chave", say:"Salva o vídeo em que ele diz isso com o livro na mão. Não o resumo de terceiro."}
+    ]},
+  {who:"outra", day:"Propaganda 8", format:"Reel", place:"Mesa, três dedos. Um, dois, três. Sem texto na tela além do que ela falar.", dur:"24s", gesture:"Comenta o número do cômodo: 1, 2 ou 3", title:"Três coisas, um caminho",
+    beats:[
+      {t:"Diagnóstico", say:"Se você separou a sua identidade, o seu corpo e o seu dinheiro em três projetos, você não tem três caminhos. Você tem uma casa rachada."},
+      {t:"Espelho", say:"Um curso para se achar. Outro para aguentar. Outro para cobrar. Nenhum fala com o outro."},
+      {t:"Tensão", say:"O cliente percebe a emenda antes de você."},
+      {t:"Virada", say:"O Yan trata isso como três cômodos. Essência. Alma. Valor. Uma arquitetura só."},
+      {t:"Alívio", say:"Você não precisa jogar fora o que já estudou. Precisa de corredor entre as salas."},
+      {t:"Chave", say:"Comenta 1, 2 ou 3. O cômodo que está vazio."}
+    ]},
+  {who:"outra", day:"Propaganda 9", format:"Reel", place:"Sentada, séria, sem pressa de liquidação. Uma tomada.", dur:"28s", gesture:"Aplicar só se for o trabalho deste ano", title:"Se for este ano",
+    beats:[
+      {t:"Diagnóstico", say:"Se você já tem repertório e está cansada de conteúdo que não vira forma, existe uma porta."},
+      {t:"Espelho", say:"Não é grupo de promessa. Não são dois preços na mesma tela. Não é última vaga."},
+      {t:"Tensão", say:"A pressa falsa estraga a decisão. A falta de porta também. A pessoa assiste trinta vídeos e não sabe o que fazer na segunda."},
+      {t:"Virada", say:"A porta tem nome. Arquitetura de Legado. Yan Klehn. A aplicação é uma conversa, não uma compra automática."},
+      {t:"Alívio", say:"Se não for a hora, fica com a frase e com a etapa. Isso já é trabalho. Se for a hora, aplica e deixa ele ver se cabe."},
+      {t:"Chave", say:"Um gesto. Ou você manda para a pessoa certa, ou você mesma começa pela aplicação. Não os dois num impulso."}
+    ]}
+];
+
+const list = document.getElementById("list");
+const read = document.getElementById("read");
+const stage = document.getElementById("stage");
+const toast = document.getElementById("toast");
+let current = null;
+let size = 34;
+let timer = null;
+
+function fullText(s){
+  const lines = [s.title, s.who==="yan" ? "Grava: Yan Filipe" : "Grava: outra pessoa, propaganda", s.place, s.dur+" · "+s.format+" · "+s.day, "Gesto: "+s.gesture, ""];
+  s.beats.forEach(b=>{ lines.push(b.t.toUpperCase()); lines.push(b.say); lines.push(""); });
+  return lines.join("\n").trim();
+}
+function card(s, i){
+  const el = document.createElement("button");
+  el.type = "button";
+  el.className = "card "+(s.who==="yan"?"who-yan":"who-outra");
+  el.dataset.who = s.who;
+  el.innerHTML = '<div class="num">'+String(i+1).padStart(2,"0")+'</div><div><div class="tag">'+(s.who==="yan"?"Yan Filipe":"Outra pessoa")+' · '+s.day+' · '+s.format+'</div><h2>'+s.title+'</h2><div class="meta">'+s.place+' · '+s.dur+' · '+s.gesture+'</div></div><div class="open meta">Abrir</div>';
+  el.onclick = ()=>openScript(s);
+  return el;
+}
+function render(filter){
+  list.innerHTML = "";
+  SCRIPTS.forEach((s,i)=>{ if(filter==="todos" || s.who===filter) list.append(card(s,i)); });
+}
+function openScript(s){
+  current = s;
+  stage.innerHTML = s.beats.map(b=>'<article class="beat"><i>'+b.t+'</i><p>'+b.say+'</p></article>').join("");
+  stage.style.setProperty("--size", size+"px");
+  stage.scrollTop = 0;
+  read.classList.add("on");
+  read.setAttribute("aria-hidden","false");
+  stop();
+}
+function stop(){
+  if(timer){ clearInterval(timer); timer=null; }
+  document.getElementById("play").textContent = "Rodar";
+}
+document.getElementById("back").onclick = ()=>{ stop(); read.classList.remove("on"); read.setAttribute("aria-hidden","true"); };
+document.getElementById("play").onclick = ()=>{
+  if(timer){ stop(); return; }
+  document.getElementById("play").textContent = "Pausar";
+  timer = setInterval(()=>{
+    stage.scrollTop += 1;
+    if(stage.scrollTop + stage.clientHeight >= stage.scrollHeight - 2) stop();
+  }, 40);
+};
+document.getElementById("smaller").onclick = ()=>{ size = Math.max(22, size-2); stage.style.setProperty("--size", size+"px"); };
+document.getElementById("larger").onclick = ()=>{ size = Math.min(52, size+2); stage.style.setProperty("--size", size+"px"); };
+document.getElementById("copy").onclick = async ()=>{
+  if(!current) return;
+  const text = fullText(current);
+  try{ await navigator.clipboard.writeText(text); }
+  catch{
+    const ta = document.createElement("textarea");
+    ta.value = text; document.body.append(ta); ta.select();
+    document.execCommand("copy"); ta.remove();
+  }
+  toast.classList.add("on");
+  setTimeout(()=>toast.classList.remove("on"), 1400);
+};
+document.querySelectorAll("[data-filter]").forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll("[data-filter]").forEach(b=>b.classList.toggle("on", b===btn));
+    render(btn.dataset.filter);
+  };
+});
+addEventListener("keydown", e=>{
+  if(!read.classList.contains("on")) return;
+  if(e.key==="Escape") document.getElementById("back").click();
+  if(e.key===" "){ e.preventDefault(); document.getElementById("play").click(); }
+});
+render("todos");
+</script>
+</body>
+</html>
