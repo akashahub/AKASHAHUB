@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arquitetura de Legado | Akasha Hub</title>
+  <meta name="description" content="Arquitetura de Legado é a mentoria completa do Akasha Hub. Essência, alinhamento financeiro e tecnologia da alma numa jornada só." />
+  <meta name="theme-color" content="#F4EFE6" />
+  <link rel="canonical" href="https://akashahub.com.br/al/" />
+  <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dcbarseus/image/upload/v1789033070/WhatsApp_Image_2026-09-10_at_06.30.53_vtzzpy.jpg" />
+  <meta property="og:title" content="Arquitetura de Legado | Akasha Hub" />
+  <meta property="og:description" content="Uma mentoria. Origem, essência, alma e alinhamento na mesma arquitetura." />
+  <meta property="og:image" content="https://akashahub.com.br/al/assets/lua-moon.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg:#f4efe6;--paper:#fbf8f2;--ink:#17130f;--muted:#6f655b;--gold:#9b7330;--gold2:#c49a50;
+      --violet:#5c3d78;--dark:#171511;--line:rgba(34,27,20,.13);--shadow:0 28px 70px rgba(48,35,20,.13);--radius:24px;
+    }
+    *{box-sizing:border-box}
+    html{background:var(--bg);scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.22;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E")}
+    a{color:inherit;text-decoration:none}
+    img{display:block;max-width:100%}
+    .shell{width:min(1180px,calc(100% - 40px));margin:auto}
+    .eyebrow{font-size:11px;line-height:1.2;letter-spacing:.22em;text-transform:uppercase;color:var(--violet);font-weight:600}
+    h1,h2,h3,.serif{font-family:"Cormorant Garamond",Georgia,serif}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(54px,6.6vw,104px);line-height:.88;letter-spacing:-.045em;font-weight:500;margin-bottom:22px}
+    h2{font-size:clamp(40px,5vw,72px);line-height:.96;letter-spacing:-.035em;font-weight:500;margin-bottom:18px}
+    h3{font-size:30px;line-height:1.05;font-weight:500;margin-bottom:10px}
+    p{line-height:1.7}
+    .muted{color:var(--muted)}
+    .topbar{font-size:11px;letter-spacing:.18em;text-transform:uppercase;text-align:center;padding:9px 16px;border-bottom:1px solid var(--line);color:var(--muted)}
+    .nav{position:sticky;top:0;z-index:50;background:rgba(244,239,230,.9);backdrop-filter:blur(18px);border-bottom:1px solid rgba(34,27,20,.08)}
+    .nav-inner{height:74px;display:flex;align-items:center;justify-content:space-between;gap:28px}
+    .brand{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:600;letter-spacing:.02em;white-space:nowrap}
+    .brand em{font-weight:500;color:var(--violet);font-style:italic}
+    .nav-links{display:flex;gap:26px;align-items:center;font-size:12px;letter-spacing:.08em}
+    .nav-links a{position:relative;color:#4f463e}
+    .nav-links a:after{content:"";position:absolute;left:0;right:100%;bottom:-8px;height:1px;background:var(--violet);transition:right .25s ease}
+    .nav-links a:hover{color:var(--violet)}
+    .nav-links a:hover:after{right:0}
+    .menu-btn{display:none;border:0;background:none;font-size:25px;cursor:pointer}
+    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:15px 24px;border-radius:9px;border:1px solid transparent;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;overflow:hidden;transition:transform .25s ease,box-shadow .25s ease}
+    .btn:after{content:"";position:absolute;top:-30%;bottom:-30%;left:-70px;width:44px;background:rgba(255,255,255,.32);transform:rotate(22deg);transition:left .55s ease}
+    .btn:hover:after{left:calc(100% + 30px)}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-gold{background:linear-gradient(135deg,#8d6aa8,#5c3d78);color:white;box-shadow:0 12px 30px rgba(92,61,120,.22)}
+    .btn-dark{background:#181510;color:#f8f3ea}
+    .btn-outline{border-color:rgba(23,19,15,.22);color:var(--ink);background:rgba(255,255,255,.35)}
+    .hero{min-height:760px;display:grid;grid-template-columns:1.06fr .94fr;align-items:stretch;border-bottom:1px solid var(--line);overflow:hidden}
+    .hero-copy{padding:96px 58px 72px max(20px,calc((100vw - 1180px)/2));display:flex;flex-direction:column;justify-content:center;background:radial-gradient(circle at 18% 20%,rgba(92,61,120,.1),transparent 36%),radial-gradient(circle at 80% 80%,rgba(196,154,80,.12),transparent 28%),var(--bg)}
+    .hero-copy p.lead{font-family:"Cormorant Garamond",serif;font-size:24px;line-height:1.4;color:#493f36;max-width:640px;margin-bottom:26px}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:28px}
+    .hero-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:620px}
+    .benefit{border-top:1px solid rgba(92,61,120,.35);padding-top:14px}
+    .benefit strong{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:600;display:block}
+    .benefit span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .hero-photo{position:relative;min-height:760px;overflow:hidden;background:#201b16}
+    .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center 18%}
+    .hero-photo:before{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,rgba(244,239,230,.62) 0%,rgba(244,239,230,.05) 22%,transparent 42%)}
+    .hero-note{position:absolute;z-index:3;right:28px;bottom:32px;width:250px;color:#fff;text-align:right}
+    .hero-note .quote{font-family:"Cormorant Garamond",serif;font-size:30px;line-height:1.05}
+    .hero-note small{display:block;margin-top:12px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#e8d9bd}
+    .stats{padding:34px 0;border-bottom:1px solid var(--line);background:rgba(255,255,255,.28)}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+    .stat strong{font-family:"Cormorant Garamond",serif;font-size:38px;color:var(--violet);font-weight:500}
+    .stat span{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+    .split{padding:100px 0}
+    .split-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+    .photo-card{position:relative;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);background:#191611}
+    .photo-card img{width:100%;height:100%;object-fit:cover;object-position:center 20%}
+    .photo-tall{height:680px}
+    .photo-medium{height:560px}
+    .photo-overlay{position:absolute;z-index:2;left:28px;bottom:26px;color:#fff;max-width:280px}
+    .photo-overlay p{font-family:"Cormorant Garamond",serif;font-size:32px;line-height:1.04;margin:0}
+    .photo-overlay small{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#f0dfbf}
+    .layers{display:grid;gap:12px;margin-top:22px}
+    .layer{display:grid;grid-template-columns:168px 1fr;gap:16px;padding:16px 0;border-top:1px solid var(--line)}
+    .layer b{font-family:"Cormorant Garamond",serif;font-size:22px;font-weight:600;color:var(--violet)}
+    .layer span{color:var(--muted);font-size:14px;line-height:1.5}
+    .dark-section{background:linear-gradient(135deg,#1a1520,#261c2e);color:#f7f1e8;padding:105px 0}
+    .dark-grid{display:grid;grid-template-columns:.9fr .72fr 1fr;gap:42px;align-items:center}
+    .dark-section .muted{color:#cbbfd4}
+    .steps{display:grid;gap:18px}
+    .step{display:grid;grid-template-columns:44px 1fr;gap:14px}
+    .step-num{width:42px;height:42px;border:1px solid rgba(212,176,122,.55);border-radius:50%;display:grid;place-items:center;color:#e2c48a;font-family:"Cormorant Garamond",serif;font-size:20px}
+    .step h3{font-family:Inter,sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin:6px 0 6px;color:#fff}
+    .step p{font-size:13px;line-height:1.5;color:#d5cbe0;margin:0}
+    .dark-photo{height:620px;border-radius:20px;overflow:hidden}
+    .dark-photo img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+    .modules{padding:110px 0}
+    .center{text-align:center}
+    .maxcopy{max-width:740px;margin-left:auto;margin-right:auto}
+    .module-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+    .module{background:rgba(255,255,255,.55);border:1px solid var(--line);padding:26px 22px;border-radius:17px;min-height:190px}
+    .module .n{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--violet);font-weight:600}
+    .module h3{font-size:28px;margin:8px 0}
+    .module p{font-size:14px;color:var(--muted);margin:0}
+    .practice{padding:100px 0;background:linear-gradient(180deg,#f7f2ea,#efe4f4)}
+    .practice-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+    .delivery-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+    .delivery{padding:18px 4px 8px;border-top:1px solid rgba(92,61,120,.28)}
+    .delivery b{font-family:"Cormorant Garamond",serif;font-size:24px}
+    .delivery p{font-size:13px;color:var(--muted);margin:6px 0 0}
+    .note{margin-top:18px;padding:16px 18px;border-left:3px solid var(--violet);background:rgba(255,255,255,.55);color:#4c433b;font-size:14px}
+    .who{padding:90px 0}
+    .who-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .who-card{border-radius:18px;padding:32px;background:#fff;border:1px solid var(--line)}
+    .who-card.dark{background:#1b1522;color:#f6f0e7;border-color:#1b1522}
+    .who-card p{margin:0;color:var(--muted)}
+    .who-card.dark p{color:#d2c6dc}
+    .offer{padding:40px 0 100px}
+    .offer-wrap{max-width:920px;margin:auto;background:#19141f;color:#f7f0e7;border-radius:28px;padding:54px;position:relative;overflow:hidden;box-shadow:0 32px 70px rgba(42,30,17,.16)}
+    .offer-wrap:before{content:"";position:absolute;right:-80px;top:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(140,100,180,.35),transparent 68%)}
+    .offer-wrap .eyebrow{color:#e2c48a}
+    .offer-wrap .muted{color:#d4c9de}
+    .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;margin:26px 0 28px;position:relative}
+    .check{font-size:15px;color:#efe7f4}
+    .price{font-family:"Cormorant Garamond",serif;font-size:68px;line-height:.9;margin:8px 0 8px}
+    .faq{padding:20px 0 110px;max-width:850px;margin:auto;width:calc(100% - 40px)}
+    .faq-item{border-top:1px solid var(--line)}
+    .faq-item:last-child{border-bottom:1px solid var(--line)}
+    .faq-btn{width:100%;padding:20px 0;background:none;border:0;display:flex;justify-content:space-between;gap:20px;text-align:left;font-family:"Cormorant Garamond",serif;font-size:26px;cursor:pointer;color:var(--ink)}
+    .faq-btn span{font-family:Inter,sans-serif;color:var(--violet);font-size:22px}
+    .faq-answer{max-height:0;overflow:hidden;transition:max-height .35s ease}
+    .faq-answer p{color:var(--muted);font-size:15px;margin:0;padding:0 40px 18px 0}
+    .faq-item.open .faq-answer{max-height:320px}
+    .final{padding:110px 0;position:relative;overflow:hidden;color:white;text-align:center}
+    .final:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(18,12,22,.72),rgba(18,12,22,.45)),url('assets/lua-moon.jpg') center 30%/cover no-repeat}
+    .final-inner{position:relative;z-index:2;max-width:820px;margin:auto;padding:0 20px}
+    .final h2{font-size:clamp(46px,6vw,80px)}
+    .final p{color:#f0e6f6;font-family:"Cormorant Garamond",serif;font-size:26px}
+    footer{border-top:1px solid var(--line);padding:36px 0 96px;background:#efe6d8}
+    .footer-grid{display:flex;justify-content:space-between;gap:24px;color:var(--muted);font-size:12px}
+    .footer-links{display:flex;gap:18px;flex-wrap:wrap}
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s ease}
+    .reveal.in{opacity:1;transform:none}
+    .mobile-menu{display:none}
+    .sticky-cta{display:none}
+    @media(max-width:980px){
+      .nav-links{display:none}.menu-btn{display:block}
+      .mobile-menu{display:grid;max-height:0;overflow:hidden;transition:max-height .35s ease;background:rgba(244,239,230,.98)}
+      .mobile-menu.open{max-height:420px}
+      .mobile-menu a{padding:13px 20px;border-top:1px solid var(--line)}
+      .hero{grid-template-columns:1fr;min-height:auto}
+      .hero-copy{padding:72px 28px 36px}
+      .hero-photo{min-height:640px}
+      .hero-photo:before{background:linear-gradient(0deg,rgba(18,15,12,.35),transparent 40%)}
+      .stats-grid,.split-grid,.practice-grid,.who-grid,.check-grid{grid-template-columns:1fr}
+      .dark-grid{grid-template-columns:1fr}
+      .dark-photo{height:520px}
+      .module-grid,.delivery-grid{grid-template-columns:1fr 1fr}
+      .layer{grid-template-columns:1fr;gap:4px}
+    }
+    @media(max-width:680px){
+      .shell{width:min(100% - 28px,1180px)}
+      .nav .btn{display:none}
+      h1{font-size:52px}
+      .hero-copy{padding:56px 18px 28px}
+      .hero-actions{display:grid}
+      .hero-benefits{grid-template-columns:1fr}
+      .hero-photo{min-height:520px}
+      .hero-note{left:16px;right:16px;width:auto;text-align:left}
+      .module-grid,.delivery-grid{grid-template-columns:1fr}
+      .split,.modules,.practice,.who{padding:64px 0}
+      .offer-wrap{padding:28px 20px}
+      .price{font-size:54px}
+      .sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:rgba(244,239,230,.96);border-top:1px solid var(--line)}
+      .sticky-cta span{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+      body{padding-bottom:74px}
+      .footer-grid{display:grid}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .reveal{opacity:1;transform:none;transition:none}
+    }
+
+    .apply{padding:10px 0 130px;scroll-margin-top:90px}
+    .apply-wrap{max-width:860px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:28px;padding:48px 40px 32px;box-shadow:var(--shadow)}
+    .apply-wrap h2{font-size:clamp(36px,4vw,56px)}
+    .apply-step{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+    .progress{height:3px;background:rgba(92,61,120,.15);border-radius:99px;margin:8px 0 18px}
+    .progress i{display:block;height:100%;width:25%;background:linear-gradient(90deg,#8d6aa8,#c49a50)}
+    .apply fieldset{border:0;margin:0;padding:0}
+    .apply legend{font-family:"Cormorant Garamond",Georgia,serif;font-size:28px;margin-bottom:8px}
+    .apply .lbl{display:block;font-size:13px;font-weight:600;margin-top:16px}
+    .apply .hint{font-size:13px;color:var(--muted);margin:6px 0 0;line-height:1.5}
+    .apply input,.apply textarea,.apply select{width:100%;margin-top:8px;border:1px solid var(--line);background:#fbf8f2;border-radius:12px;padding:12px 14px;font:inherit;color:var(--ink)}
+    .apply textarea{min-height:108px;resize:vertical}
+    .apply .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{appearance:none;border:1px solid rgba(92,61,120,.28);background:#f6f1ea;color:#3c2c4c;border-radius:999px;padding:9px 12px;font-size:13px;line-height:1.35;letter-spacing:0;text-transform:none;font-weight:500;cursor:pointer;text-align:left;font-family:Inter,system-ui,sans-serif}
+    .chip:hover{border-color:var(--violet)}
+    .chip.on{background:#5c3d78;color:#fff;border-color:#5c3d78}
+    .apply-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+    .apply .check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:14px;line-height:1.45}
+    .apply .check input{width:auto;margin-top:4px}
+    .review{white-space:pre-wrap;background:#f7f2ea;border-radius:14px;padding:16px;font-size:14px;line-height:1.55;margin-top:8px}
+    .apply-error{color:#8a3030;min-height:1.2em;font-size:14px}
+    .apply-ok{color:#3d5c45;font-size:14px}
+    .layer a{color:var(--violet);text-underline-offset:3px}
+    .solucoes{padding:96px 0;background:linear-gradient(180deg,#f7f2ea,#f4efe6)}
+    .scene-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+    .scene{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 20px}
+    .scene h3{font-size:28px;margin:0 0 8px}
+    .scene p{margin:0;color:var(--muted);font-size:14px}
+    .diag{margin-top:28px;background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px 24px}
+    .diag h3{font-size:32px;margin-bottom:8px}
+    .need-ready{white-space:pre-wrap;background:#f7f2ea;border-radius:14px;padding:14px;font-size:14px;margin-top:14px}
+    .doors{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+    .door{border-radius:18px;padding:22px;border:1px solid var(--line);background:rgba(255,255,255,.7)}
+    .door.alt{background:#1b1522;color:#f6f0e7;border-color:#1b1522}
+    .door.alt p,.door.alt a{color:#d2c6dc}
+    .door a{color:var(--violet)}
+    .door h3{font-size:28px}
+    @media(max-width:800px){
+      .scene-grid,.doors{grid-template-columns:1fr}
+      .solucoes{padding:64px 0}
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">Uma mentoria · Akasha Hub · Yan Klehn</div>
+  <nav class="nav">
+    <div class="shell nav-inner">
+      <a class="brand" href="#top">Arquitetura de <em>Legado</em></a>
+      <div class="nav-links">
+        <a href="#integra">Integrações</a>
+        <a href="#estrutura">Estrutura</a>
+        <a href="#ciclo">O ciclo</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <a class="btn btn-dark" href="#aplicar">Sessão de Arquitetura</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#integra">Integrações</a>
+      <a href="#estrutura">Estrutura</a>
+      <a href="#ciclo">O ciclo</a>
+      <a href="#faq">FAQ</a>
+      <a href="#aplicar">Aplicar</a>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow reveal">A mentoria completa</span>
+        <h1 class="reveal">Arquitetura<br>de Legado</h1>
+        <p class="lead reveal">Você já tem origem, prática e repertório. Esta mentoria organiza isso numa coisa só: essência, alma e alinhamento, até virar método, oferta e uma estrutura que fica de pé.</p>
+        <div class="hero-actions reveal">
+          <a class="btn btn-gold" href="#aplicar">Aplicar para a sessão</a>
+          <a class="btn btn-outline" href="#integra">Ver o que entra</a>
+        </div>
+        <div class="hero-benefits reveal">
+          <div class="benefit"><strong>Uma página</strong><span>Uma mentoria</span></div>
+          <div class="benefit"><strong>Três integrações</strong><span>Não três produtos</span></div>
+          <div class="benefit"><strong>Doze meses</strong><span>Com direção</span></div>
+        </div>
+      </div>
+      <div class="hero-photo">
+        <img src="assets/lua-hero.jpg" alt="Lua, presença da Arquitetura de Legado" />
+        <div class="hero-note">
+          <div class="quote">O que fica quando você sai da sala.</div>
+          <small>Akasha Hub</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="shell stats-grid">
+        <div class="stat"><strong>12</strong><span>meses</span></div>
+        <div class="stat"><strong>24</strong><span>encontros em grupo</span></div>
+        <div class="stat"><strong>3</strong><span>imersões de 2 dias</span></div>
+        <div class="stat"><strong>39 mil</strong><span>mentoria em grupo</span></div>
+      </div>
+    </section>
+
+    <section class="split" id="integra">
+      <div class="shell split-grid">
+        <div class="photo-card photo-tall">
+          <img src="assets/lua-biblioteca.jpg" alt="Lua na biblioteca, origem e legado" />
+          <div class="photo-overlay"><p>Origem com nome.</p><small>Códigos de Origem</small></div>
+        </div>
+        <div>
+          <span class="eyebrow">Como isso se organiza</span>
+          <h2>Três mentorias viraram uma.</h2>
+          <p class="muted">Arquitetura de Essência, Alinhamento Financeiro e Tecnologia da Alma não se vendem mais lado a lado. São integrações da Arquitetura de Legado. A pessoa não escolhe um pedaço. Entra no todo. Cada integração continua existindo por dentro, no lugar em que já faz sentido.</p>
+          <div class="layers">
+            <div class="layer"><b>Essência</b><span>Identidade, método próprio e para quem o trabalho serve. O que antes era a Arquitetura de Essência.</span></div>
+            <div class="layer"><b>Alma</b><span>Mente, corpo e campo operando a mesma coisa. <a href="https://akashahub.com.br/ta">Tecnologia da Alma</a> entra aqui, com o livro como fundamento, não como produto à parte.</span></div>
+            <div class="layer"><b>Alinhamento</b><span>Dinheiro, decisão, caixa e autonomia. O <a href="https://akashahub.com.br/alinhamentofinanceiro">Alinhamento Financeiro</a> continua. A mesa, os modos e o som continuam. Nada disso foi desmontado, e nada disso se vende sozinho.</span></div>
+            <div class="layer"><b>Origem</b><span>Códigos de Origem é a linguagem. O livro abre a porta. Não é uma quarta mentoria.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dark-section" id="metodo">
+      <div class="shell dark-grid">
+        <div>
+          <span class="eyebrow">Método</span>
+          <h2>A.C.E.S.S.O. atravessa as três.</h2>
+          <p class="muted">O método não foi trocado. Ele agora atravessa origem, essência, alma e alinhamento, em vez de parar no ativo digital.</p>
+        </div>
+        <div class="dark-photo"><img src="assets/lua-seda.jpg" alt="Lua em seda preta e luz violeta" /></div>
+        <div class="steps">
+          <div class="step"><div class="step-num">A</div><div><h3>Anamnese</h3><p>De onde vem o travamento. A prática e a história, juntas.</p></div></div>
+          <div class="step"><div class="step-num">C</div><div><h3>Codificação</h3><p>Os padrões da prática viram etapas com nome.</p></div></div>
+          <div class="step"><div class="step-num">E</div><div><h3>Essência</h3><p>O que é seu. Para quem serve. A identidade da oferta.</p></div></div>
+          <div class="step"><div class="step-num">S</div><div><h3>Síntese</h3><p>Mensagem, método próprio e a oferta que cabe no estágio.</p></div></div>
+          <div class="step"><div class="step-num">S</div><div><h3>Sistema</h3><p>Mesa, alma e alinhamento dando forma ao ativo.</p></div></div>
+          <div class="step"><div class="step-num">O</div><div><h3>Operação</h3><p>Doze meses. Encontro, imersão, execução.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="modules">
+      <div class="shell center">
+        <span class="eyebrow">Dentro da mesma casa</span>
+        <h2>Não é prateleira.</h2>
+        <p class="muted maxcopy">Cada nome antigo ocupa um cômodo. A porta da rua é uma só. Infoprodutos e livros ficam na área de membros: alimentam, não substituem a mentoria.</p>
+        <div class="module-grid">
+          <article class="module"><div class="n">01 · Origem</div><h3>Códigos</h3><p>A história que a pessoa repete sem perceber, até virar linguagem clara.</p></article>
+          <article class="module"><div class="n">02 · Essência</div><h3>Método</h3><p>A prática deixa de morar só na cabeça e ganha etapas, critério e nome.</p></article>
+          <article class="module"><div class="n">03 · Alma</div><h3>Operação</h3><p>Mente, corpo e campo na mesma direção. Sem isso, a estratégia não segura.</p></article>
+          <article class="module"><div class="n">04 · Valor</div><h3>Alinhamento</h3><p>A relação com dinheiro, escolha e autonomia. A plataforma que já existe segue sendo o lugar disso.</p></article>
+          <article class="module"><div class="n">05 · Mesa</div><h3>Decisão</h3><p>Oferta, conversa e fechamento. A mesa continua ferramenta. Agora ela serve esta mentoria.</p></article>
+          <article class="module"><div class="n">06 · Obra</div><h3>Estrutura</h3><p>O primeiro ativo digital em circulação. O legado é o que permanece fora da agenda.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="practice" id="ciclo">
+      <div class="shell practice-grid">
+        <div>
+          <span class="eyebrow">O ciclo que não muda</span>
+          <h2>Doze meses com participação.</h2>
+          <p class="muted">Yan conduz o método e revisa as decisões. Você traz repertório, material e execução. Mais encontro individual não substitui essa parte.</p>
+          <div class="delivery-grid">
+            <div class="delivery"><b>24 encontros</b><p>Online, em grupo. A cadência do ciclo.</p></div>
+            <div class="delivery"><b>3 imersões</b><p>Presenciais, de dois dias.</p></div>
+            <div class="delivery"><b>3 individuais</b><p>Origem e prioridade. Método e oferta. Estrutura e operação.</p></div>
+            <div class="delivery"><b>Plataforma</b><p>Comunidade, laboratório e as ferramentas que já estão de pé.</p></div>
+          </div>
+          <p class="note">A mesa, os modos, o som e o restante da plataforma de Alinhamento Financeiro não foram reescritos. Continuam no lugar. O que muda é a casa: eles passam a servir a Arquitetura de Legado.</p>
+        </div>
+        <div class="photo-card photo-medium">
+          <img src="assets/lua-mesa.jpg" alt="Lua à mesa, a decisão da mentoria" />
+          <div class="photo-overlay"><p>A mesa continua.</p><small>Agora dentro do legado</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="solucoes" id="estrutura">
+      <div class="shell">
+        <span class="eyebrow">Soluções digitais</span>
+        <h2>O ofício é uma porta. A operação é outra.</h2>
+        <p class="muted" style="max-width:68ch">Isto veio da página de Legado e entra aqui sem virar um segundo cardápio. Se o que você tem é repertório, o caminho é a mentoria. Se o que você tem é uma operação, barbearia, clínica, escola ou empresa, o caminho é a estrutura. A tecnologia aparece depois do diagnóstico, não antes.</p>
+        <div class="doors">
+          <article class="door">
+            <span class="eyebrow">Pessoa</span>
+            <h3>A casa do que você já sabe</h3>
+            <p>Especialista, terapeuta, mentor, criador. O ciclo organiza método, oferta e o primeiro ativo. <a href="https://akashahub.com.br/alinhamentofinanceiro">Alinhamento Financeiro</a> e <a href="https://akashahub.com.br/ta">Tecnologia da Alma</a> são cômodos dessa casa. Não se compram por fora para cair aqui depois.</p>
+          </article>
+          <article class="door alt">
+            <span class="eyebrow">Negócio</span>
+            <h3>A estrutura que continua sem você explicar</h3>
+            <p>Site, agenda, área de alunos, sistema, automação. Sem preço nesta parte. A conversa chega pronta. Não é a mentoria de R$ 39 mil disfarçada de aplicativo.</p>
+          </article>
+        </div>
+        <div class="scene-grid">
+          <article class="scene"><h3>Barbearia</h3><p>A cadeira enche, o WhatsApp mistura horário com dúvida, e o cliente some depois do corte. Falta agenda, cliente e um jeito de ele voltar sem você caçar no direct.</p></article>
+          <article class="scene"><h3>Clínica</h3><p>A consulta existe. O caminho até ela ainda é recado, papel e memória. Cadastro, horário e o que acontece depois precisam morar no mesmo lugar.</p></article>
+          <article class="scene"><h3>Salão</h3><p>Vários profissionais, vários serviços, uma recepção só. A estrutura separa agenda, serviço e relacionamento para a casa não depender de um caderno.</p></article>
+          <article class="scene"><h3>Academia</h3><p>A aula acaba e o aluno vai embora. Horário, conteúdo e o treino da equipe continuam na cabeça de quem está na unidade.</p></article>
+          <article class="scene"><h3>Escola</h3><p>O conteúdo está nos professores. A comunicação está no grupo. Aula, equipe e recado pedem um lugar só.</p></article>
+          <article class="scene"><h3>Empresa</h3><p>Quem vende para outra empresa recomeça a proposta no PDF. O cliente não entra sozinho e não vê o que já foi entregue. Falta a porta, a proposta e o depois do sim.</p></article>
+        </div>
+        <div class="diag" id="diag">
+          <span class="eyebrow">Três respostas</span>
+          <h3>O que você precisa estruturar?</h3>
+          <p class="muted">Não é lista para comprar. Toque no que falta. No fim, a mensagem abre no WhatsApp para você enviar.</p>
+          <p class="lbl" style="margin-top:16px;font-size:13px;font-weight:600">Você chega como</p>
+          <div class="chips" id="structWho"></div>
+          <p class="lbl" style="margin-top:16px;font-size:13px;font-weight:600">O caso</p>
+          <div class="chips" id="structKind"></div>
+          <p class="lbl" style="margin-top:16px;font-size:13px;font-weight:600">O que melhorar</p>
+          <div class="chips" id="structNeeds"></div>
+          <div class="apply-actions">
+            <a class="btn btn-gold" id="structGo" href="#" target="_blank" rel="noopener noreferrer">Quero entender qual solução faria sentido</a>
+          </div>
+          <p class="need-ready" id="structReady" hidden></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="who">
+      <div class="shell who-grid">
+        <div class="who-card">
+          <span class="eyebrow">Para quem é</span>
+          <h3>Quem já construiu repertório</h3>
+          <p>Profissional com prática real, que sente o conhecimento disperso e quer método, posicionamento e uma estrutura que outras pessoas entendam e usem.</p>
+        </div>
+        <div class="who-card dark">
+          <span class="eyebrow">Para quem não é</span>
+          <h3>Não é promessa de faturamento</h3>
+          <p>Não há fórmula, retorno garantido nem execução ilimitada. O resultado também depende do que a pessoa faz entre um encontro e outro, e do mercado.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="offer">
+      <div class="shell">
+        <div class="offer-wrap">
+          <span class="eyebrow">Mentoria em grupo</span>
+          <h2>Um plano na aplicação pública.</h2>
+          <div class="price">R$ 39.000</div>
+          <p class="muted">Investimento total dos doze meses. Escopo, calendário e condições ficam na proposta. A consultoria de R$ 60.000, com seis encontros individuais, só aparece se o diagnóstico pedir mais acompanhamento. Não é um segundo botão nesta página.</p>
+          <div class="check-grid">
+            <div class="check">24 encontros online em grupo</div>
+            <div class="check">3 imersões presenciais de 2 dias</div>
+            <div class="check">3 encontros individuais</div>
+            <div class="check">Comunidade, plataforma e laboratório</div>
+            <div class="check">Essência, alma e alinhamento no mesmo ciclo</div>
+            <div class="check">Aplicar não confirma a entrada</div>
+          </div>
+          <a class="btn btn-gold" href="#aplicar">Começar a aplicação</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq" id="faq">
+      <span class="eyebrow">Antes de aplicar</span>
+      <h2>Perguntas diretas</h2>
+      <div class="faq-item">
+        <button class="faq-btn" type="button">Preciso ter um produto pronto? <span>+</span></button>
+        <div class="faq-answer"><p>Não. Você precisa de experiência e prática. Método, oferta e ativo nascem do seu estágio.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" type="button">E se eu já entrei numa das mentorias antigas? <span>+</span></button>
+        <div class="faq-answer"><p>Elas não competem mais. São integrações deste ciclo. Um fragmento pode ser nomeado numa conversa. A página de venda é esta.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" type="button">A plataforma de alinhamento mudou? <span>+</span></button>
+        <div class="faq-answer"><p>Não. Mesa, modos, som e as outras ferramentas seguem como estão. Elas passam a ser usadas dentro desta mentoria, sem uma reforma do código.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" type="button">Dá para comprar só o Alinhamento Financeiro? <span>+</span></button>
+        <div class="faq-answer"><p>Não. Vender o alinhamento, ou a Tecnologia da Alma, e entregar a Arquitetura de Legado seria outra conversa. Quem se reconhece naquelas páginas aplica aqui, para a casa inteira. Quem precisa da estrutura da operação, agenda, sistema, plataforma, usa o diagnóstico de cima. Não entra na mentoria por esse atalho.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" type="button">Aplicar confirma minha entrada? <span>+</span></button>
+        <div class="faq-answer"><p>Não. Você conta o cenário. A equipe lê o encaixe e, se fizer sentido, combina a conversa e a proposta.</p></div>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="final-inner">
+        <span class="eyebrow">O próximo passo</span>
+        <h2>O que merece sair da sua cabeça.</h2>
+        <p>Uma sessão para ver se esta arquitetura é o trabalho que você quer fazer agora.</p>
+        <a class="btn btn-gold" href="#aplicar">Aplicar para a sessão de arquitetura</a>
+      </div>
+    </section>
+  </main>
+
+    <section class="apply" id="aplicar">
+      <div class="shell">
+        <div class="apply-wrap">
+          <span class="eyebrow">Sessão de arquitetura</span>
+          <h2>Comece pelo que você já quer organizar.</h2>
+          <p class="muted">Toque no exemplo mais parecido com o seu. O texto entra no campo. Você só ajusta o que for seu. No fim, a mensagem abre no WhatsApp para você enviar. Nada parte sozinho.</p>
+          <div class="progress" aria-hidden="true"><i id="applyBar"></i></div>
+          <p class="apply-step" id="applyStep">Etapa 1 de 3</p>
+          <form id="apply" novalidate>
+            <fieldset class="formstep">
+              <legend>O que você quer organizar</legend>
+              <label class="lbl" for="projeto">Projeto que deseja organizar</label>
+              <p class="hint">Doze começos. Toque em um ou mais. Eles entram prontos.</p>
+              <div class="chips" id="chips-projeto"></div>
+              <textarea name="projeto" id="projeto" required maxlength="700" minlength="12" placeholder="Ou escreva o seu, se nenhum servir."></textarea>
+              <label class="lbl" for="objetivo">O que você quer ver de pé em 12 meses</label>
+              <p class="hint">Toque no que serve. Depois troque uma palavra pela sua.</p>
+              <div class="chips" id="chips-objetivo"></div>
+              <textarea name="objetivo" id="objetivo" required maxlength="700" minlength="12" placeholder="O que precisa existir daqui a um ano."></textarea>
+            </fieldset>
+            <fieldset class="formstep" hidden>
+              <legend>Seu contexto</legend>
+              <div class="formgrid">
+                <div>
+                  <label class="lbl" for="nome">Nome</label>
+                  <input name="nome" id="nome" required maxlength="100" minlength="2" autocomplete="name">
+                </div>
+                <div>
+                  <label class="lbl" for="profissao">Profissão ou área</label>
+                  <input name="profissao" id="profissao" required maxlength="120" autocomplete="organization-title">
+                </div>
+              </div>
+              <p class="hint">Se a sua área está aqui, toque. O campo aceita o que você escrever por cima.</p>
+              <div class="chips" id="chips-profissao"></div>
+              <div class="formgrid">
+                <div>
+                  <label class="lbl" for="experiencia">Anos de prática</label>
+                  <select name="experiencia" id="experiencia" required>
+                    <option value="">Selecione</option>
+                    <option>Até 3</option>
+                    <option>4–9</option>
+                    <option>10–19</option>
+                    <option>20+</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="lbl" for="whatsapp">WhatsApp com DDD</label>
+                  <input name="whatsapp" id="whatsapp" required maxlength="22" minlength="10" inputmode="tel" autocomplete="tel" placeholder="71 90000-0000">
+                </div>
+              </div>
+              <label class="lbl" for="email">E-mail (opcional)</label>
+              <input type="email" name="email" id="email" maxlength="150" autocomplete="email">
+              <label class="lbl" for="bloqueio">Onde trava hoje</label>
+              <select name="bloqueio" id="bloqueio" required>
+                <option value="">Selecione</option>
+                <option>Método</option>
+                <option>Posicionamento</option>
+                <option>Oferta</option>
+                <option>Estrutura digital</option>
+                <option>Execução</option>
+              </select>
+              <label class="lbl" for="presenca">Quanto da receita depende da sua presença?</label>
+              <select name="presenca" id="presenca" required>
+                <option value="">Selecione</option>
+                <option>Quase toda</option>
+                <option>Parte</option>
+                <option>Pouco</option>
+              </select>
+            </fieldset>
+            <fieldset class="formstep" hidden>
+              <legend>Seu momento de decisão</legend>
+              <label class="lbl" for="investimento">Como o investimento total de R$ 39.000 se encaixa no seu planejamento?</label>
+              <select name="investimento" id="investimento" required>
+                <option value="">Selecione</option>
+                <option>Tenho condição de avaliar agora</option>
+                <option>Preciso avaliar condições</option>
+                <option>Não cabe no momento</option>
+              </select>
+              <label class="lbl" for="decisao">Quem participa da decisão?</label>
+              <select name="decisao" id="decisao" required>
+                <option value="">Selecione</option>
+                <option>Decido sozinho</option>
+                <option>Decisão compartilhada</option>
+              </select>
+              <label class="lbl" for="inicio">Quando pretende iniciar?</label>
+              <select name="inicio" id="inicio" required>
+                <option value="">Selecione</option>
+                <option>Próximos 30 dias</option>
+                <option>31–90 dias</option>
+                <option>Ainda pesquisando</option>
+              </select>
+              <label class="lbl" for="tempo">Consegue reservar tempo para executar?</label>
+              <select name="tempo" id="tempo" required>
+                <option value="">Selecione</option>
+                <option>Sim</option>
+                <option>Preciso reorganizar</option>
+                <option>Não agora</option>
+              </select>
+            </fieldset>
+            <fieldset class="formstep" hidden>
+              <legend>Revise antes de encaminhar</legend>
+              <div class="review" id="review"></div>
+              <label class="check"><input type="checkbox" id="consent"> Concordo em encaminhar estas respostas à AKASHA Hub pelo WhatsApp para análise da aplicação e contato sobre esta sessão.</label>
+              <p class="hint">O WhatsApp abre com o texto pronto. Confira e toque em enviar. Abrir a conversa não confirma recebimento, agendamento ou aprovação.</p>
+              <div class="apply-actions">
+                <a class="btn btn-gold" id="send" href="#" target="_blank" rel="noopener noreferrer">Abrir WhatsApp e enviar</a>
+                <button type="button" class="btn btn-outline" id="copy">Copiar aplicação</button>
+              </div>
+            </fieldset>
+            <p class="apply-error" id="applyError" role="alert"></p>
+            <p class="apply-ok" id="applyFeedback" role="status"></p>
+            <div class="apply-actions">
+              <button type="button" class="btn btn-outline" id="back" hidden>Voltar</button>
+              <button type="submit" class="btn btn-gold" id="continue">Continuar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  <footer>
+    <div class="shell footer-grid">
+      <div><div class="brand">Akasha <em>Hub</em></div><p>Arquitetura de Legado · Yan Klehn</p></div>
+      <div class="footer-links">
+        <a href="#integra">Integrações</a>
+        <a href="#metodo">Método</a>
+        <a href="#ciclo">O ciclo</a>
+        <a href="https://akashahub.com.br/alinhamentofinanceiro">Alinhamento Financeiro</a>
+        <a href="apresentacao/">Apresentação</a>
+      </div>
+    </div>
+  </footer>
+  <div class="sticky-cta"><span>Sessão de Arquitetura</span><a class="btn btn-gold" href="#aplicar">Aplicar</a></div>
+  <script>
+    (function(){
+      const menuBtn=document.getElementById('menuBtn');
+      const mobileMenu=document.getElementById('mobileMenu');
+      if(menuBtn&&mobileMenu){
+        menuBtn.addEventListener('click',()=>mobileMenu.classList.toggle('open'));
+        mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mobileMenu.classList.remove('open')));
+      }
+      document.querySelectorAll('.faq-btn').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          const item=btn.closest('.faq-item');
+          const was=item.classList.contains('open');
+          document.querySelectorAll('.faq-item').forEach(x=>x.classList.remove('open'));
+          if(!was) item.classList.add('open');
+        });
+      });
+      const els=document.querySelectorAll('.reveal');
+      if(matchMedia('(prefers-reduced-motion: reduce)').matches){els.forEach(el=>el.classList.add('in'));return;}
+      const io=new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');io.unobserve(entry.target);}});
+      },{threshold:.12});
+      els.forEach(el=>io.observe(el));
+    })();
+  </script>
+  <script>
+  (function(){
+    const whoBox=document.getElementById('structWho');
+    const kindBox=document.getElementById('structKind');
+    const needBox=document.getElementById('structNeeds');
+    const go=document.getElementById('structGo');
+    const ready=document.getElementById('structReady');
+    if(!whoBox||!go) return;
+    const kinds={
+      pessoa:['Especialista','Terapeuta','Mentor','Criador','Outro'],
+      empresa:['Barbearia','Clínica','Salão','Academia','Escola','Empresa','Outro']
+    };
+    const needs=[
+      'criar a porta de entrada: página e caminho de quem ainda não é cliente',
+      'organizar minha operação',
+      'conseguir mais agendamentos',
+      'melhorar atendimento',
+      'criar um aplicativo',
+      'criar uma plataforma',
+      'organizar meus conteúdos',
+      'automatizar processos',
+      'criar uma área para clientes ou alunos',
+      'transformar meu conhecimento em produto digital',
+      'criar um sistema próprio',
+      'ainda não sei'
+    ];
+    const state={who:'',kind:'',needs:[]};
+    function chips(box, items, isOn, onPick){
+      box.replaceChildren();
+      items.forEach(function(text){
+        const b=document.createElement('button');
+        b.type='button';
+        b.className='chip'+(isOn(text)?' on':'');
+        b.textContent=text;
+        b.onclick=function(){ onPick(text); };
+        box.appendChild(b);
+      });
+    }
+    function message(){
+      const lista=state.needs.length?state.needs.join(', '):'ainda não sei por onde começar';
+      if(state.who==='empresa') return 'Olá, sou uma empresa do segmento '+state.kind+' e estou buscando uma solução para '+lista+'. Gostaria de entender o que poderia ser desenvolvido para o meu negócio.';
+      return 'Olá, sou um profissional de '+state.kind+' e estou buscando uma solução para '+lista+'. Gostaria de entender o que poderia ser desenvolvido para o meu trabalho.';
+    }
+    function render(){
+      chips(whoBox, ['Sou uma pessoa','Tenho uma empresa'], function(t){ return (t==='Sou uma pessoa'&&state.who==='pessoa')||(t==='Tenho uma empresa'&&state.who==='empresa'); }, function(t){
+        state.who=t==='Sou uma pessoa'?'pessoa':'empresa';
+        state.kind='';
+        state.needs=[];
+        render();
+      });
+      chips(kindBox, state.who?kinds[state.who]:[], function(t){ return state.kind===t; }, function(t){ state.kind=t; render(); });
+      chips(needBox, needs, function(t){ return state.needs.indexOf(t)>=0; }, function(t){
+        if(t==='ainda não sei') state.needs=['ainda não sei'];
+        else {
+          state.needs=state.needs.filter(function(x){ return x!=='ainda não sei'; });
+          const i=state.needs.indexOf(t);
+          if(i>=0) state.needs.splice(i,1); else state.needs.push(t);
+        }
+        render();
+      });
+      const ok=state.who&&state.kind&&state.needs.length;
+      if(ok){
+        const text=message();
+        go.href='https://wa.me/5571983448621?text='+encodeURIComponent(text);
+        go.style.opacity='1';
+        go.onclick=null;
+        ready.hidden=false;
+        ready.textContent=text;
+      } else {
+        go.href='#diag';
+        go.style.opacity='.45';
+        go.onclick=function(e){ e.preventDefault(); };
+        ready.hidden=true;
+      }
+    }
+    render();
+  })();
+  </script>
+
+  <script>
+  (function(){
+    const projetos=[
+      "Transformar anos de clínica num método com nome.",
+      "Organizar a mentoria que hoje só existe na minha cabeça.",
+      "Tirar o curso da dependência da minha presença.",
+      "Dar marca a um escritório que já fatura e ainda se explica mal.",
+      "Juntar aulas avulsas numa oferta de doze meses.",
+      "Colocar no digital um conhecimento que hoje só vendo no boca a boca.",
+      "Unir corpo e negócio numa arquitetura só.",
+      "Sair do conteúdo solto e ter um caminho que o cliente entende.",
+      "Fazer a empresa da família continuar sem depender só de mim.",
+      "Fazer o livro e a mentoria virarem um legado só.",
+      "Trocar hora vendida por uma oferta com começo, meio e fim.",
+      "Organizar o que já sei, sem inventar um produto do zero."
+    ];
+    const objetivos=[
+      "Um método com nome e uma frase que outra pessoa consegue repetir.",
+      "Uma oferta clara, com limite, que eu não preciso reexplicar toda vez.",
+      "A primeira turma ou o primeiro ciclo rodando com estrutura.",
+      "Uma página e uma aplicação que representam o que eu já faço.",
+      "Menos dependência da minha presença em cada entrega.",
+      "Posicionamento que para de tentar servir todo mundo.",
+      "Um plano de doze meses com a próxima decisão já escrita.",
+      "O negócio continuando quando eu saio da sala."
+    ];
+    const areas=["Clínica","Mentoria","Consultoria","Educação","Escritório","Empresa de serviço","Conteúdo e autoral","Saúde","Direito","Arquitetura e design","Beleza","Finanças"];
+    const $=id=>document.getElementById(id);
+    function mount(id, fieldId, items, mode){
+      const box=$(id);
+      const field=$(fieldId);
+      if(!box || !field) return;
+      box.replaceChildren();
+      items.forEach(text=>{
+        const b=document.createElement("button");
+        b.type="button";
+        b.className="chip";
+        b.dataset.text=text;
+        b.textContent=text;
+        box.appendChild(b);
+      });
+      box.addEventListener("click", ev=>{
+        const btn=ev.target.closest(".chip");
+        if(!btn) return;
+        const text=btn.dataset.text;
+        if(mode==="lines"){
+          const lines=field.value.split("\n").map(s=>s.trim()).filter(Boolean);
+          const i=lines.indexOf(text);
+          if(i>=0) lines.splice(i,1); else lines.push(text);
+          field.value=lines.join("\n");
+          [...box.children].forEach(b=>b.classList.toggle("on", field.value.split("\n").includes(b.dataset.text)));
+        }else{
+          field.value=text;
+          [...box.children].forEach(b=>b.classList.toggle("on", b===btn));
+        }
+      });
+    }
+    mount("chips-projeto", "projeto", projetos, "lines");
+    mount("chips-objetivo", "objetivo", objetivos, "lines");
+    mount("chips-profissao", "profissao", areas, "fill");
+    const steps=[...document.querySelectorAll("#apply .formstep")];
+    const form=$("apply");
+    if(!form) return;
+    let step=0;
+    const labels={nome:"Nome",profissao:"Profissão",experiencia:"Experiência",whatsapp:"WhatsApp",email:"E-mail",projeto:"Projeto",objetivo:"Objetivo em 12 meses",bloqueio:"Onde trava",presenca:"Dependência da presença",investimento:"Investimento",decisao:"Decisão",inicio:"Início",tempo:"Disponibilidade"};
+    function message(){
+      const a=["Olá, equipe AKASHA. Quero aplicar para a Sessão de Arquitetura da Mentoria em Grupo (R$ 39.000, 3 encontros individuais, ciclo de 12 meses).",""];
+      new FormData(form).forEach((v,k)=>{ if(labels[k] && String(v).trim()) a.push(labels[k]+": "+String(v).trim()); });
+      const p=new URLSearchParams(location.search);
+      a.push("","Origem: "+(p.get("origem")||"página Arquitetura de Legado").slice(0,80));
+      ["utm_source","utm_medium","utm_campaign"].forEach(k=>{ const v=p.get(k); if(v) a.push(k+": "+v.replace(/[\r\n]/g," ").slice(0,80)); });
+      return a.join("\n");
+    }
+    function valid(){
+      const controls=[...steps[step].querySelectorAll("input,select,textarea")];
+      for(const x of controls){
+        x.setCustomValidity("");
+        if(x.name==="whatsapp"){
+          let d=x.value.replace(/\D/g,"");
+          if(d.startsWith("55") && d.length>11) d=d.slice(2);
+          if(!/^[1-9][0-9]{9,10}$/.test(d)) x.setCustomValidity("Informe um telefone com DDD válido.");
+        }
+        if(x.required && x.value.trim().length<(Number(x.getAttribute("minlength"))||1)) x.setCustomValidity("Preencha este campo, ou toque num exemplo e ajuste.");
+        if(!x.checkValidity()){ x.reportValidity(); $("applyError").textContent=x.validationMessage; return false; }
+      }
+      return true;
+    }
+    function render(){
+      steps.forEach((x,i)=>x.hidden=i!==step);
+      $("back").hidden=step===0;
+      $("continue").hidden=step===3;
+      $("continue").textContent=step===2?"Revisar aplicação":"Continuar";
+      $("applyStep").textContent=step<3?"Etapa "+(step+1)+" de 3":"Revisão";
+      $("applyBar").style.width=((step+1)/4*100)+"%";
+      $("applyError").textContent="";
+      if(step===3){
+        $("review").textContent=message();
+        $("send").href="https://wa.me/5571983448621?text="+encodeURIComponent(message());
+      }
+      document.getElementById("aplicar").scrollIntoView({behavior:"smooth",block:"start"});
+    }
+    form.addEventListener("submit", ev=>{ ev.preventDefault(); if(step<3 && valid()){ step++; render(); } });
+    $("back").onclick=()=>{ step=Math.max(0,step-1); render(); };
+    $("send").onclick=ev=>{
+      if(!$("consent").checked){ ev.preventDefault(); $("applyError").textContent="Marque sua concordância antes de encaminhar."; return; }
+      $("applyFeedback").textContent="Confira a mensagem no WhatsApp e envie. O recebimento ainda precisa ser confirmado pela equipe.";
+    };
+    $("copy").onclick=async()=>{
+      if(!$("consent").checked){ $("applyError").textContent="Marque sua concordância para preparar o encaminhamento."; return; }
+      try{ await navigator.clipboard.writeText(message()); $("applyFeedback").textContent="Texto copiado. Cole na conversa da AKASHA e envie."; }
+      catch{ $("applyFeedback").textContent="Selecione e copie o texto da revisão acima."; }
+    };
+    steps.forEach((x,i)=>x.hidden=i!==0);
+  })();
+  </script>
+</body>
+</html>
