@@ -178,6 +178,35 @@
     @media(prefers-reduced-motion:reduce){
       .reveal{opacity:1;transform:none;transition:none}
     }
+
+    .apply{padding:10px 0 130px;scroll-margin-top:90px}
+    .apply-wrap{max-width:860px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:28px;padding:48px 40px 32px;box-shadow:var(--shadow)}
+    .apply-wrap h2{font-size:clamp(36px,4vw,56px)}
+    .apply-step{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+    .progress{height:3px;background:rgba(92,61,120,.15);border-radius:99px;margin:8px 0 18px}
+    .progress i{display:block;height:100%;width:25%;background:linear-gradient(90deg,#8d6aa8,#c49a50)}
+    .apply fieldset{border:0;margin:0;padding:0}
+    .apply legend{font-family:"Cormorant Garamond",Georgia,serif;font-size:28px;margin-bottom:8px}
+    .apply .lbl{display:block;font-size:13px;font-weight:600;margin-top:16px}
+    .apply .hint{font-size:13px;color:var(--muted);margin:6px 0 0;line-height:1.5}
+    .apply input,.apply textarea,.apply select{width:100%;margin-top:8px;border:1px solid var(--line);background:#fbf8f2;border-radius:12px;padding:12px 14px;font:inherit;color:var(--ink)}
+    .apply textarea{min-height:108px;resize:vertical}
+    .apply .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{appearance:none;border:1px solid rgba(92,61,120,.28);background:#f6f1ea;color:#3c2c4c;border-radius:999px;padding:9px 12px;font-size:13px;line-height:1.35;letter-spacing:0;text-transform:none;font-weight:500;cursor:pointer;text-align:left;font-family:Inter,system-ui,sans-serif}
+    .chip:hover{border-color:var(--violet)}
+    .chip.on{background:#5c3d78;color:#fff;border-color:#5c3d78}
+    .apply-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+    .apply .check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:14px;line-height:1.45}
+    .apply .check input{width:auto;margin-top:4px}
+    .review{white-space:pre-wrap;background:#f7f2ea;border-radius:14px;padding:16px;font-size:14px;line-height:1.55;margin-top:8px}
+    .apply-error{color:#8a3030;min-height:1.2em;font-size:14px}
+    .apply-ok{color:#3d5c45;font-size:14px}
+    @media(max-width:700px){
+      .apply-wrap{padding:28px 16px 22px}
+      .apply .formgrid{grid-template-columns:1fr}
+      .chip{font-size:14px}
+    }
   </style>
 </head>
 <body>
@@ -191,7 +220,7 @@
         <a href="#ciclo">O ciclo</a>
         <a href="#faq">FAQ</a>
       </div>
-      <a class="btn btn-dark" href="https://essence-architect-builder.lovable.app/aplicacao/index.html">Sessão de Arquitetura</a>
+      <a class="btn btn-dark" href="#aplicar">Sessão de Arquitetura</a>
       <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
@@ -209,7 +238,7 @@
         <h1 class="reveal">Arquitetura<br>de Legado</h1>
         <p class="lead reveal">Você já tem origem, prática e repertório. Esta mentoria organiza isso numa coisa só: essência, alma e alinhamento, até virar método, oferta e uma estrutura que fica de pé.</p>
         <div class="hero-actions reveal">
-          <a class="btn btn-gold" href="https://essence-architect-builder.lovable.app/aplicacao/index.html">Aplicar para a sessão</a>
+          <a class="btn btn-gold" href="#aplicar">Aplicar para a sessão</a>
           <a class="btn btn-outline" href="#integra">Ver o que entra</a>
         </div>
         <div class="hero-benefits reveal">
@@ -342,7 +371,7 @@
             <div class="check">Essência, alma e alinhamento no mesmo ciclo</div>
             <div class="check">Aplicar não confirma a entrada</div>
           </div>
-          <a class="btn btn-gold" href="https://essence-architect-builder.lovable.app/aplicacao/index.html">Começar a aplicação</a>
+          <a class="btn btn-gold" href="#aplicar">Começar a aplicação</a>
         </div>
       </div>
     </section>
@@ -373,10 +402,130 @@
         <span class="eyebrow">O próximo passo</span>
         <h2>O que merece sair da sua cabeça.</h2>
         <p>Uma sessão para ver se esta arquitetura é o trabalho que você quer fazer agora.</p>
-        <a class="btn btn-gold" href="https://essence-architect-builder.lovable.app/aplicacao/index.html">Aplicar para a sessão de arquitetura</a>
+        <a class="btn btn-gold" href="#aplicar">Aplicar para a sessão de arquitetura</a>
       </div>
     </section>
   </main>
+
+    <section class="apply" id="aplicar">
+      <div class="shell">
+        <div class="apply-wrap">
+          <span class="eyebrow">Sessão de arquitetura</span>
+          <h2>Comece pelo que você já quer organizar.</h2>
+          <p class="muted">Toque no exemplo mais parecido com o seu. O texto entra no campo. Você só ajusta o que for seu. No fim, a mensagem abre no WhatsApp para você enviar. Nada parte sozinho.</p>
+          <div class="progress" aria-hidden="true"><i id="applyBar"></i></div>
+          <p class="apply-step" id="applyStep">Etapa 1 de 3</p>
+          <form id="apply" novalidate>
+            <fieldset class="formstep">
+              <legend>O que você quer organizar</legend>
+              <label class="lbl" for="projeto">Projeto que deseja organizar</label>
+              <p class="hint">Doze começos. Toque em um ou mais. Eles entram prontos.</p>
+              <div class="chips" id="chips-projeto"></div>
+              <textarea name="projeto" id="projeto" required maxlength="700" minlength="12" placeholder="Ou escreva o seu, se nenhum servir."></textarea>
+              <label class="lbl" for="objetivo">O que você quer ver de pé em 12 meses</label>
+              <p class="hint">Toque no que serve. Depois troque uma palavra pela sua.</p>
+              <div class="chips" id="chips-objetivo"></div>
+              <textarea name="objetivo" id="objetivo" required maxlength="700" minlength="12" placeholder="O que precisa existir daqui a um ano."></textarea>
+            </fieldset>
+            <fieldset class="formstep" hidden>
+              <legend>Seu contexto</legend>
+              <div class="formgrid">
+                <div>
+                  <label class="lbl" for="nome">Nome</label>
+                  <input name="nome" id="nome" required maxlength="100" minlength="2" autocomplete="name">
+                </div>
+                <div>
+                  <label class="lbl" for="profissao">Profissão ou área</label>
+                  <input name="profissao" id="profissao" required maxlength="120" autocomplete="organization-title">
+                </div>
+              </div>
+              <p class="hint">Se a sua área está aqui, toque. O campo aceita o que você escrever por cima.</p>
+              <div class="chips" id="chips-profissao"></div>
+              <div class="formgrid">
+                <div>
+                  <label class="lbl" for="experiencia">Anos de prática</label>
+                  <select name="experiencia" id="experiencia" required>
+                    <option value="">Selecione</option>
+                    <option>Até 3</option>
+                    <option>4–9</option>
+                    <option>10–19</option>
+                    <option>20+</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="lbl" for="whatsapp">WhatsApp com DDD</label>
+                  <input name="whatsapp" id="whatsapp" required maxlength="22" minlength="10" inputmode="tel" autocomplete="tel" placeholder="71 90000-0000">
+                </div>
+              </div>
+              <label class="lbl" for="email">E-mail (opcional)</label>
+              <input type="email" name="email" id="email" maxlength="150" autocomplete="email">
+              <label class="lbl" for="bloqueio">Onde trava hoje</label>
+              <select name="bloqueio" id="bloqueio" required>
+                <option value="">Selecione</option>
+                <option>Método</option>
+                <option>Posicionamento</option>
+                <option>Oferta</option>
+                <option>Estrutura digital</option>
+                <option>Execução</option>
+              </select>
+              <label class="lbl" for="presenca">Quanto da receita depende da sua presença?</label>
+              <select name="presenca" id="presenca" required>
+                <option value="">Selecione</option>
+                <option>Quase toda</option>
+                <option>Parte</option>
+                <option>Pouco</option>
+              </select>
+            </fieldset>
+            <fieldset class="formstep" hidden>
+              <legend>Seu momento de decisão</legend>
+              <label class="lbl" for="investimento">Como o investimento total de R$ 39.000 se encaixa no seu planejamento?</label>
+              <select name="investimento" id="investimento" required>
+                <option value="">Selecione</option>
+                <option>Tenho condição de avaliar agora</option>
+                <option>Preciso avaliar condições</option>
+                <option>Não cabe no momento</option>
+              </select>
+              <label class="lbl" for="decisao">Quem participa da decisão?</label>
+              <select name="decisao" id="decisao" required>
+                <option value="">Selecione</option>
+                <option>Decido sozinho</option>
+                <option>Decisão compartilhada</option>
+              </select>
+              <label class="lbl" for="inicio">Quando pretende iniciar?</label>
+              <select name="inicio" id="inicio" required>
+                <option value="">Selecione</option>
+                <option>Próximos 30 dias</option>
+                <option>31–90 dias</option>
+                <option>Ainda pesquisando</option>
+              </select>
+              <label class="lbl" for="tempo">Consegue reservar tempo para executar?</label>
+              <select name="tempo" id="tempo" required>
+                <option value="">Selecione</option>
+                <option>Sim</option>
+                <option>Preciso reorganizar</option>
+                <option>Não agora</option>
+              </select>
+            </fieldset>
+            <fieldset class="formstep" hidden>
+              <legend>Revise antes de encaminhar</legend>
+              <div class="review" id="review"></div>
+              <label class="check"><input type="checkbox" id="consent"> Concordo em encaminhar estas respostas à AKASHA Hub pelo WhatsApp para análise da aplicação e contato sobre esta sessão.</label>
+              <p class="hint">O WhatsApp abre com o texto pronto. Confira e toque em enviar. Abrir a conversa não confirma recebimento, agendamento ou aprovação.</p>
+              <div class="apply-actions">
+                <a class="btn btn-gold" id="send" href="#" target="_blank" rel="noopener noreferrer">Abrir WhatsApp e enviar</a>
+                <button type="button" class="btn btn-outline" id="copy">Copiar aplicação</button>
+              </div>
+            </fieldset>
+            <p class="apply-error" id="applyError" role="alert"></p>
+            <p class="apply-ok" id="applyFeedback" role="status"></p>
+            <div class="apply-actions">
+              <button type="button" class="btn btn-outline" id="back" hidden>Voltar</button>
+              <button type="submit" class="btn btn-gold" id="continue">Continuar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
 
   <footer>
     <div class="shell footer-grid">
@@ -390,7 +539,7 @@
       </div>
     </div>
   </footer>
-  <div class="sticky-cta"><span>Sessão de Arquitetura</span><a class="btn btn-gold" href="https://essence-architect-builder.lovable.app/aplicacao/index.html">Aplicar</a></div>
+  <div class="sticky-cta"><span>Sessão de Arquitetura</span><a class="btn btn-gold" href="#aplicar">Aplicar</a></div>
   <script>
     (function(){
       const menuBtn=document.getElementById('menuBtn');
@@ -414,6 +563,122 @@
       },{threshold:.12});
       els.forEach(el=>io.observe(el));
     })();
+  </script>
+
+  <script>
+  (function(){
+    const projetos=[
+      "Transformar anos de clínica num método com nome.",
+      "Organizar a mentoria que hoje só existe na minha cabeça.",
+      "Tirar o curso da dependência da minha presença.",
+      "Dar marca a um escritório que já fatura e ainda se explica mal.",
+      "Juntar aulas avulsas numa oferta de doze meses.",
+      "Colocar no digital um conhecimento que hoje só vendo no boca a boca.",
+      "Unir corpo e negócio numa arquitetura só.",
+      "Sair do conteúdo solto e ter um caminho que o cliente entende.",
+      "Fazer a empresa da família continuar sem depender só de mim.",
+      "Fazer o livro e a mentoria virarem um legado só.",
+      "Trocar hora vendida por uma oferta com começo, meio e fim.",
+      "Organizar o que já sei, sem inventar um produto do zero."
+    ];
+    const objetivos=[
+      "Um método com nome e uma frase que outra pessoa consegue repetir.",
+      "Uma oferta clara, com limite, que eu não preciso reexplicar toda vez.",
+      "A primeira turma ou o primeiro ciclo rodando com estrutura.",
+      "Uma página e uma aplicação que representam o que eu já faço.",
+      "Menos dependência da minha presença em cada entrega.",
+      "Posicionamento que para de tentar servir todo mundo.",
+      "Um plano de doze meses com a próxima decisão já escrita.",
+      "O negócio continuando quando eu saio da sala."
+    ];
+    const areas=["Clínica","Mentoria","Consultoria","Educação","Escritório","Empresa de serviço","Conteúdo e autoral","Saúde","Direito","Arquitetura e design","Beleza","Finanças"];
+    const $=id=>document.getElementById(id);
+    function mount(id, fieldId, items, mode){
+      const box=$(id);
+      const field=$(fieldId);
+      if(!box || !field) return;
+      box.replaceChildren();
+      items.forEach(text=>{
+        const b=document.createElement("button");
+        b.type="button";
+        b.className="chip";
+        b.dataset.text=text;
+        b.textContent=text;
+        box.appendChild(b);
+      });
+      box.addEventListener("click", ev=>{
+        const btn=ev.target.closest(".chip");
+        if(!btn) return;
+        const text=btn.dataset.text;
+        if(mode==="lines"){
+          const lines=field.value.split("\n").map(s=>s.trim()).filter(Boolean);
+          const i=lines.indexOf(text);
+          if(i>=0) lines.splice(i,1); else lines.push(text);
+          field.value=lines.join("\n");
+          [...box.children].forEach(b=>b.classList.toggle("on", field.value.split("\n").includes(b.dataset.text)));
+        }else{
+          field.value=text;
+          [...box.children].forEach(b=>b.classList.toggle("on", b===btn));
+        }
+      });
+    }
+    mount("chips-projeto", "projeto", projetos, "lines");
+    mount("chips-objetivo", "objetivo", objetivos, "lines");
+    mount("chips-profissao", "profissao", areas, "fill");
+    const steps=[...document.querySelectorAll("#apply .formstep")];
+    const form=$("apply");
+    if(!form) return;
+    let step=0;
+    const labels={nome:"Nome",profissao:"Profissão",experiencia:"Experiência",whatsapp:"WhatsApp",email:"E-mail",projeto:"Projeto",objetivo:"Objetivo em 12 meses",bloqueio:"Onde trava",presenca:"Dependência da presença",investimento:"Investimento",decisao:"Decisão",inicio:"Início",tempo:"Disponibilidade"};
+    function message(){
+      const a=["Olá, equipe AKASHA. Quero aplicar para a Sessão de Arquitetura da Mentoria em Grupo (R$ 39.000, 3 encontros individuais, ciclo de 12 meses).",""];
+      new FormData(form).forEach((v,k)=>{ if(labels[k] && String(v).trim()) a.push(labels[k]+": "+String(v).trim()); });
+      const p=new URLSearchParams(location.search);
+      a.push("","Origem: "+(p.get("origem")||"página Arquitetura de Legado").slice(0,80));
+      ["utm_source","utm_medium","utm_campaign"].forEach(k=>{ const v=p.get(k); if(v) a.push(k+": "+v.replace(/[\r\n]/g," ").slice(0,80)); });
+      return a.join("\n");
+    }
+    function valid(){
+      const controls=[...steps[step].querySelectorAll("input,select,textarea")];
+      for(const x of controls){
+        x.setCustomValidity("");
+        if(x.name==="whatsapp"){
+          let d=x.value.replace(/\D/g,"");
+          if(d.startsWith("55") && d.length>11) d=d.slice(2);
+          if(!/^[1-9][0-9]{9,10}$/.test(d)) x.setCustomValidity("Informe um telefone com DDD válido.");
+        }
+        if(x.required && x.value.trim().length<(Number(x.getAttribute("minlength"))||1)) x.setCustomValidity("Preencha este campo, ou toque num exemplo e ajuste.");
+        if(!x.checkValidity()){ x.reportValidity(); $("applyError").textContent=x.validationMessage; return false; }
+      }
+      return true;
+    }
+    function render(){
+      steps.forEach((x,i)=>x.hidden=i!==step);
+      $("back").hidden=step===0;
+      $("continue").hidden=step===3;
+      $("continue").textContent=step===2?"Revisar aplicação":"Continuar";
+      $("applyStep").textContent=step<3?"Etapa "+(step+1)+" de 3":"Revisão";
+      $("applyBar").style.width=((step+1)/4*100)+"%";
+      $("applyError").textContent="";
+      if(step===3){
+        $("review").textContent=message();
+        $("send").href="https://wa.me/5571983448621?text="+encodeURIComponent(message());
+      }
+      document.getElementById("aplicar").scrollIntoView({behavior:"smooth",block:"start"});
+    }
+    form.addEventListener("submit", ev=>{ ev.preventDefault(); if(step<3 && valid()){ step++; render(); } });
+    $("back").onclick=()=>{ step=Math.max(0,step-1); render(); };
+    $("send").onclick=ev=>{
+      if(!$("consent").checked){ ev.preventDefault(); $("applyError").textContent="Marque sua concordância antes de encaminhar."; return; }
+      $("applyFeedback").textContent="Confira a mensagem no WhatsApp e envie. O recebimento ainda precisa ser confirmado pela equipe.";
+    };
+    $("copy").onclick=async()=>{
+      if(!$("consent").checked){ $("applyError").textContent="Marque sua concordância para preparar o encaminhamento."; return; }
+      try{ await navigator.clipboard.writeText(message()); $("applyFeedback").textContent="Texto copiado. Cole na conversa da AKASHA e envie."; }
+      catch{ $("applyFeedback").textContent="Selecione e copie o texto da revisão acima."; }
+    };
+    steps.forEach((x,i)=>x.hidden=i!==0);
+  })();
   </script>
 </body>
 </html>
