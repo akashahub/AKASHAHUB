@@ -34,7 +34,10 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clam
 .card.story{background:#3E1F6E;border-color:#2c164f;color:#f6f1e8}
 .card.story h2,.card.story .meta,.card.story .meta strong,.card.story .open{color:#f6f1e8}
 .card.story .tag,.card.story .num{color:#e7d7a8}
-.card.story:hover{border-color:#e7d7a8}
+.card.tiktok{background:#10211f;border-color:#10211f;color:#f3fff8}
+.card.tiktok h2,.card.tiktok .meta,.card.tiktok .meta strong,.card.tiktok .open{color:#f3fff8}
+.card.tiktok .tag,.card.tiktok .num{color:#9eefd8}
+.card.tiktok:hover{border-color:#9eefd8}
 .card:hover{border-color:rgba(92,61,120,.45)}
 .num{font-family:"Cormorant Garamond",serif;font-size:28px;color:var(--violet)}
 .card h2{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:500;margin:0 0 4px;line-height:1.05}
@@ -101,7 +104,7 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clam
     <div><b>Alívio</b><span>Lição: uma saída. Princípio, uso, consequência.</span></div>
     <div><b>Chave</b><span>Lição: uma frase. Um gesto. Para.</span></div>
   </div>
-  <p class="note">Embaixo de cada reel tem o story, em roxo. O story é a aula. Explica o reel para quem viu e para quem quer a engenharia. A linha lilás não se fala. A frase pequena, “na tela”, é o texto do vídeo. A legenda fica no briefing, acima da integridade. A legenda chama para a conversa. A casa já está pronta. O sim pode esperar.</p>
+  <p class="note">Cada peça tem três números. 01 é o reel. 01.2, roxo, é o story, a aula. 01.3, verde-escuro, é o TikTok: outro vídeo, mesma essência, outra frase. No mesmo dia, três tomadas. O TikTok não tem oi. A primeira frase é o corte. Dezoito a vinte e dois segundos. Texto grande no primeiro quadro. A última frase pode voltar para a primeira. Um comentário. Um envio. A casa já está pronta. O convite é a conversa.</p>
   <p class="note">No ar, o nome é Yan Klehn. Quem grava os quinze primeiros é Yan Filipe. Os nove últimos são para quem faz a propaganda: ela não finge resultado, não promete faturamento, não diz que fez a mentoria. A referência de cadência é: abrir no coletivo; usar o “você” para espelhar um comportamento que muita gente reconhece; usar o “eu” para mostrar uma escolha, experiência ou posição do narrador; trazer o contexto social; e fechar devolvendo a pergunta ao público. O conteúdo não é indireta, diagnóstico privado nem recado para uma pessoa. A persuasão deve parecer humana: autoridade por clareza, experiência e limites — nunca por pressão, humilhação, urgência artificial ou promessa.</p>
   <div class="list" id="list"></div>
 </main>
@@ -548,7 +551,7 @@ function lessonOf(s, b){
   const pack = SPECIFIC[s.parent || s.title];
   return (pack && pack[b.t]) || BASE[b.t] || "";
 }
-function layerOf(s){ return LAYERS[s.kind==="story" ? s.parent : s.title] || null; }
+function layerOf(s){ return LAYERS[s.parent || s.title] || null; }
 function screenOf(s, b){
   if(b.screen) return b.screen;
   const layer = layerOf(s);
@@ -565,6 +568,20 @@ function storyScript(s){
     dur:"50s", gesture:"Convite para a conversa. A casa já está pronta.",
     beats:layer.story
   };
+}
+function tiktokScript(s){
+  const cut = TIKTOK[s.title];
+  if(!cut) return null;
+  return {
+    kind:"tiktok", parent:s.title, who:"yan", day:s.day+" · TikTok", format:"TikTok",
+    title:"TikTok · "+s.title,
+    place:"Rosto perto. 9:16. Uma tomada. Sem oi. O primeiro quadro já entra com o texto.",
+    dur:"20s", gesture:cut.gesture, caption:cut.caption, beats:cut.beats
+  };
+}
+function numOf(i, part){
+  const n = String(i+1).padStart(2,"0");
+  return part ? n+"."+part : n;
 }
 
 const LAYERS = {
@@ -1769,6 +1786,1016 @@ const LAYERS = {
     ]
   }
 };
+const TIKTOK = {
+  "A palavra que sobra é a profissão": {
+    "gesture": "Comenta: PROFISSÃO",
+    "caption": "Para. A palavra que sobrou foi o cargo.\n\nNão é falta de ofício. É falta de frase. Quem você ajuda. Qual problema. Por qual caminho.\n\nComenta PROFISSÃO\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Para. Na hora de dizer o que você faz, sai o cargo.",
+        "lesson": "Lição: o corte é a primeira palavra. Sem oi.",
+        "screen": "PARA."
+      },
+      {
+        "t": "Espelho",
+        "say": "Formação. Cargo. Anos. A pessoa continua sem saber o que muda.",
+        "lesson": "Lição: três rótulos. A pessoa se vê.",
+        "screen": "Formação. Cargo. Anos."
+      },
+      {
+        "t": "Tensão",
+        "say": "Aí você explica de novo. Toda conversa. Do zero.",
+        "lesson": "Lição: o custo cabe numa linha.",
+        "screen": "De novo. Do zero."
+      },
+      {
+        "t": "Virada",
+        "say": "Não é falta de experiência. É frase que não existe.",
+        "lesson": "Lição: não é X. É Y.",
+        "screen": "Não é tempo. É frase."
+      },
+      {
+        "t": "Alívio",
+        "say": "Quem você ajuda. Qual problema. Por qual caminho.",
+        "lesson": "Lição: três frases. Uma saída.",
+        "screen": "Quem. Problema. Caminho."
+      },
+      {
+        "t": "Chave",
+        "say": "Comenta a palavra que sobrou. Profissão.",
+        "lesson": "Lição: para na palavra. O começo do vídeo responde.",
+        "screen": "PROFISSÃO"
+      }
+    ]
+  },
+  "Alguém te apresenta e inventa você": {
+    "gesture": "Manda para quem te apresenta",
+    "caption": "Pede para te apresentarem. Grava. Eles inventam você.\n\nNome, área, elogio. Não sai o que muda.\n\nManda para quem ia te apresentar.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Pede para te apresentarem. Não corrige. Só escuta.",
+        "lesson": "Lição: a ordem é o teste, não a teoria.",
+        "screen": "Pede. E escuta."
+      },
+      {
+        "t": "Espelho",
+        "say": "Sai o nome. A área. Um elogio. Não sai o que você faz de diferente.",
+        "lesson": "Lição: o que não sai é o espelho.",
+        "screen": "Nome. Área. Elogio."
+      },
+      {
+        "t": "Tensão",
+        "say": "O cliente chega esperando outra pessoa. Você conserta na sala.",
+        "lesson": "Lição: o custo é a sala errada.",
+        "screen": "Chega esperando outra."
+      },
+      {
+        "t": "Virada",
+        "say": "Não é mais post. É uma frase que o outro repete sem você.",
+        "lesson": "Lição: a quebra é a frase emprestada.",
+        "screen": "Uma frase. Sem você."
+      },
+      {
+        "t": "Alívio",
+        "say": "Eu ajudo este público, neste problema, por este caminho. Testa hoje.",
+        "lesson": "Lição: três partes. Um teste.",
+        "screen": "Testa hoje."
+      },
+      {
+        "t": "Chave",
+        "say": "Manda este vídeo para quem ia te apresentar.",
+        "lesson": "Lição: envio, não curtida. É o que o TikTok empurra.",
+        "screen": "Manda para quem te apresenta."
+      }
+    ]
+  },
+  "Quando você sai, o negócio senta": {
+    "gesture": "Salva. Escreve a etapa.",
+    "caption": "Se você sai da sala, o negócio senta.\n\nNão é padrão de qualidade. É uma etapa que só existe na sua cabeça.\n\nEscreve a entrada e a saída hoje.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Sai da sala. O negócio senta. Ou continua?",
+        "lesson": "Lição: pergunta no primeiro segundo.",
+        "screen": "Você sai. E aí?"
+      },
+      {
+        "t": "Espelho",
+        "say": "O cliente pede você. O arquivo está na sua cabeça. O combinado foi de boca.",
+        "lesson": "Lição: três provas. Sem discurso.",
+        "screen": "Pede você."
+      },
+      {
+        "t": "Tensão",
+        "say": "Você chama de qualidade. É um negócio que não anda sem a sua voz.",
+        "lesson": "Lição: o nome bonito é o custo.",
+        "screen": "Não é qualidade."
+      },
+      {
+        "t": "Virada",
+        "say": "Não falta presença. Falta entrada, o que acontece, e saída.",
+        "lesson": "Lição: três peças de uma etapa.",
+        "screen": "Entrada. Saída."
+      },
+      {
+        "t": "Alívio",
+        "say": "Uma etapa. A que se repete toda semana. Não o ano inteiro.",
+        "lesson": "Lição: uma, não o sistema.",
+        "screen": "Uma. Não o ano."
+      },
+      {
+        "t": "Chave",
+        "say": "Salva. Escreve essa entrada e essa saída hoje.",
+        "lesson": "Lição: um gesto. Fecha o loop do começo.",
+        "screen": "Escreve hoje."
+      }
+    ]
+  },
+  "Você chama de ambição": {
+    "gesture": "Comenta: FALTA",
+    "caption": "Você chama de ambição. Pode ser falta.\n\nO dinheiro entra e a pergunta é o que comprar. A compra não acaba a falta.\n\nComenta FALTA ou AMBIÇÃO.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Você chama de ambição. Olha de novo.",
+        "lesson": "Lição: o gancho é a palavra que ela usa para se defender.",
+        "screen": "Chama de ambição."
+      },
+      {
+        "t": "Espelho",
+        "say": "Trabalha mais. Ganha mais. Não chega. E acelera.",
+        "lesson": "Lição: o gesto é acelerar.",
+        "screen": "Mais. E não chega."
+      },
+      {
+        "t": "Tensão",
+        "say": "A compra prova que a falta acabou. A falta não acaba.",
+        "lesson": "Lição: o custo é a prova errada.",
+        "screen": "A compra não cura."
+      },
+      {
+        "t": "Virada",
+        "say": "Talvez você não tenha um problema de ganho. Tenha um problema de relação.",
+        "lesson": "Lição: não é X. É a relação.",
+        "screen": "Não é ganho."
+      },
+      {
+        "t": "Alívio",
+        "say": "Quando muda a relação, o dinheiro volta a ser decisão. Fica. Sai. Constrói.",
+        "lesson": "Lição: três usos. Uma saída.",
+        "screen": "Fica. Sai. Constrói."
+      },
+      {
+        "t": "Chave",
+        "say": "Comenta uma palavra. Falta. Ou ambição.",
+        "lesson": "Lição: duas palavras. A pessoa escolhe. Isso comenta.",
+        "screen": "FALTA"
+      }
+    ]
+  },
+  "Quem vende extintor mostra o fogo": {
+    "gesture": "Comenta o que queima",
+    "caption": "Se você vende a casa antes de mostrar o fogo, parece aula.\n\nO incêndio é o cliente dependente, o arquivo que não existe, a explicação de novo.\n\nComenta, numa palavra, o que está queimando.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Não começa pela casa. Começa pelo que está queimando.",
+        "lesson": "Lição: fogo no primeiro quadro.",
+        "screen": "Mostra o fogo."
+      },
+      {
+        "t": "Espelho",
+        "say": "O conhecimento cresceu. A forma não. O arquivo não existe.",
+        "lesson": "Lição: cresceu de um lado só.",
+        "screen": "Sem arquivo."
+      },
+      {
+        "t": "Tensão",
+        "say": "Sem o fogo, o método parece aula. Ninguém compra aula sem incêndio.",
+        "lesson": "Lição: ferramenta sem fogo não retém.",
+        "screen": "Parece aula."
+      },
+      {
+        "t": "Virada",
+        "say": "Eu não vendo três coisas. Eu mostro a fumaça que ainda não virou estrutura.",
+        "lesson": "Lição: uma casa. A fumaça é o gancho.",
+        "screen": "Não são três."
+      },
+      {
+        "t": "Alívio",
+        "say": "Nome. Etapa. Uma frase que outra pessoa repete.",
+        "lesson": "Lição: três peças. Para.",
+        "screen": "Nome. Etapa. Frase."
+      },
+      {
+        "t": "Chave",
+        "say": "Comenta uma palavra. O que está queimando aí.",
+        "lesson": "Lição: uma palavra. O vídeo pode recomeçar no fogo.",
+        "screen": "O que queima?"
+      }
+    ]
+  },
+  "Mais um curso, ou a casa": {
+    "gesture": "Comenta: ESTRUTURA",
+    "caption": "Você já sabe fazer. A próxima compra é mais um curso.\n\nCurso resolve falta de competência. Se a competência já está aí, é adiamento.\n\nComenta CURSO ou ESTRUTURA.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Já sabe fazer. Compra mais uma formação.",
+        "lesson": "Lição: o gancho é a compra absurda.",
+        "screen": "Mais um curso."
+      },
+      {
+        "t": "Espelho",
+        "say": "O certificado entra. A frase do seu trabalho não muda.",
+        "lesson": "Lição: o papel entra. A boca não.",
+        "screen": "O papel não mudou a frase."
+      },
+      {
+        "t": "Tensão",
+        "say": "Isso não é estudo. É adiamento com diploma.",
+        "lesson": "Lição: nomeie o custo sem humilhar.",
+        "screen": "Adiamento."
+      },
+      {
+        "t": "Virada",
+        "say": "A outra tarefa é registrar o que você já repete.",
+        "lesson": "Lição: não é ataque. É outra tarefa.",
+        "screen": "Registra o que repete."
+      },
+      {
+        "t": "Alívio",
+        "say": "Estrutura é o que fica quando o curso acaba.",
+        "lesson": "Lição: uma frase de alívio.",
+        "screen": "O que fica."
+      },
+      {
+        "t": "Chave",
+        "say": "Comenta. Curso. Ou estrutura.",
+        "lesson": "Lição: a escolha no comentário segura o vídeo.",
+        "screen": "CURSO ou ESTRUTURA"
+      }
+    ]
+  },
+  "Antes da ferramenta": {
+    "gesture": "Salva antes de assinar",
+    "caption": "O aplicativo não traz clareza. Traz velocidade.\n\nVelocidade em cima de oferta confusa só publica a confusão.\n\nEscreve a decisão antes de assinar.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Você acha que a clareza vem com o login.",
+        "lesson": "Lição: ataque o login no segundo um.",
+        "screen": "O login não clareia."
+      },
+      {
+        "t": "Espelho",
+        "say": "Tem página. Tem post. Tem ferramenta. Não tem a decisão.",
+        "lesson": "Lição: três tem. Um não tem.",
+        "screen": "Tem tudo. Menos a decisão."
+      },
+      {
+        "t": "Tensão",
+        "say": "Ferramenta em cima de confusão publica a confusão mais rápido.",
+        "lesson": "Lição: velocidade é o custo.",
+        "screen": "Mais rápido. Mais confuso."
+      },
+      {
+        "t": "Virada",
+        "say": "Primeiro o método. Depois a oferta. Depois a estrutura. A ferramenta guarda.",
+        "lesson": "Lição: a ordem é a virada.",
+        "screen": "A ordem."
+      },
+      {
+        "t": "Alívio",
+        "say": "Se você sabe a etapa, qualquer casa serve. Se não sabe, nenhuma salva.",
+        "lesson": "Lição: uma lei. Para.",
+        "screen": "Nenhuma casa salva."
+      },
+      {
+        "t": "Chave",
+        "say": "Antes de assinar a próxima, escreve a decisão que ela teria que guardar.",
+        "lesson": "Lição: o gesto fecha o login do começo.",
+        "screen": "Escreve antes."
+      }
+    ]
+  },
+  "Uma etapa, não o método inteiro": {
+    "gesture": "Salva. Uma, não doze.",
+    "caption": "Você trava porque tenta escrever a vida inteira.\n\nEtapa é o que entra, o que você faz, o que sai. Sem saída, é conversa.\n\nPreenche uma. Não doze.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Você quer o método inteiro. Por isso não escreve nada.",
+        "lesson": "Lição: o tamanho é o gancho.",
+        "screen": "O inteiro trava."
+      },
+      {
+        "t": "Espelho",
+        "say": "Abre o documento. Põe o título. Fecha.",
+        "lesson": "Lição: três verbos. A pessoa se vê.",
+        "screen": "Abre. Título. Fecha."
+      },
+      {
+        "t": "Tensão",
+        "say": "O inteiro é um ano. A etapa é uma tarde. Quem espera o ano perde a tarde.",
+        "lesson": "Lição: o custo é o calendário.",
+        "screen": "Perde a tarde."
+      },
+      {
+        "t": "Virada",
+        "say": "O que entra. O que você faz. O que sai. Sem saída, não é etapa.",
+        "lesson": "Lição: três testes.",
+        "screen": "Entra. Faz. Sai."
+      },
+      {
+        "t": "Alívio",
+        "say": "Um caso do mês passado. Só essa etapa.",
+        "lesson": "Lição: um caso. Não o mapa.",
+        "screen": "Um caso."
+      },
+      {
+        "t": "Chave",
+        "say": "Salva. Preenche uma. Não doze.",
+        "lesson": "Lição: o número do fim devolve o começo.",
+        "screen": "Uma. Não doze."
+      }
+    ]
+  },
+  "A empresa que só vive em você": {
+    "gesture": "Manda para quem segura tudo",
+    "caption": "Tem empresa que parece de família e mora numa pessoa.\n\nO dia em que essa pessoa para, a casa para. Isso não é lealdade. É risco.\n\nManda para quem segura tudo sozinho.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "A empresa tem vários nomes. A decisão tem um.",
+        "lesson": "Lição: um contra vários. Primeiro quadro.",
+        "screen": "A decisão tem um nome."
+      },
+      {
+        "t": "Espelho",
+        "say": "Cliente, preço, briga, memória. Tudo volta para você.",
+        "lesson": "Lição: a lista é o espelho.",
+        "screen": "Tudo volta."
+      },
+      {
+        "t": "Tensão",
+        "say": "No dia em que você para, a casa para.",
+        "lesson": "Lição: uma frase de custo. Deixa no ar.",
+        "screen": "Você para. A casa para."
+      },
+      {
+        "t": "Virada",
+        "say": "Legado é o que continua quando você não está na sala.",
+        "lesson": "Lição: a definição quebra o discurso.",
+        "screen": "O que continua."
+      },
+      {
+        "t": "Alívio",
+        "say": "Não sai da empresa. Tira da cabeça a parte que se repete.",
+        "lesson": "Lição: uma saída pequena.",
+        "screen": "Tira da cabeça."
+      },
+      {
+        "t": "Chave",
+        "say": "Manda para a pessoa que segura tudo e acha que isso é o ofício.",
+        "lesson": "Lição: envio. O TikTok distribui envio.",
+        "screen": "Manda."
+      }
+    ]
+  },
+  "O livro não é a mentoria": {
+    "gesture": "Salva se quer o caminho",
+    "caption": "O livro não é a mentoria explicada.\n\nO livro é a linguagem. A casa é o ciclo. Quem mistura os dois se frustra.\n\nSalva se você quer o caminho, não o resumo.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Viu o livro e achou que a mentoria é o livro falado.",
+        "lesson": "Lição: o erro no primeiro segundo.",
+        "screen": "Não é o livro falado."
+      },
+      {
+        "t": "Espelho",
+        "say": "O livro é a origem. A língua. Não é o acompanhamento.",
+        "lesson": "Lição: diga o que ele é, rápido.",
+        "screen": "É linguagem."
+      },
+      {
+        "t": "Tensão",
+        "say": "Frase boa. Negócio ainda na cabeça.",
+        "lesson": "Lição: o contraste é o custo.",
+        "screen": "Frase boa. Cabeça cheia."
+      },
+      {
+        "t": "Virada",
+        "say": "Não é uma quarta mentoria. É o vocabulário da mesma casa.",
+        "lesson": "Lição: tira o produto extra.",
+        "screen": "Não é a quarta."
+      },
+      {
+        "t": "Alívio",
+        "say": "Ler reconhece. Construir pede o ciclo.",
+        "lesson": "Lição: dois verbos. Não misture.",
+        "screen": "Ler não constrói."
+      },
+      {
+        "t": "Chave",
+        "say": "Salva se você quer o caminho. Não o resumo do capítulo.",
+        "lesson": "Lição: salvar é o gesto deste.",
+        "screen": "O caminho. Não o resumo."
+      }
+    ]
+  },
+  "Três cômodos, uma casa": {
+    "gesture": "Comenta o cômodo vazio",
+    "caption": "Identidade, corpo e dinheiro em três cursos não são três vidas. São uma casa rachada.\n\nEssência. Alma. Valor. Falta o corredor.\n\nComenta o cômodo vazio.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Três cursos. Três pastas. Uma vida rachada.",
+        "lesson": "Lição: o número três abre.",
+        "screen": "Três pastas."
+      },
+      {
+        "t": "Espelho",
+        "say": "Numa você se apresenta. Na outra aguenta. Na outra cobra.",
+        "lesson": "Lição: três verbos separados.",
+        "screen": "Apresenta. Aguenta. Cobra."
+      },
+      {
+        "t": "Tensão",
+        "say": "O cliente sente a emenda antes de você.",
+        "lesson": "Lição: o outro vê primeiro.",
+        "screen": "A emenda."
+      },
+      {
+        "t": "Virada",
+        "say": "Não são três mentorias. São três cômodos.",
+        "lesson": "Lição: a palavra cômodo troca a pasta.",
+        "screen": "Três cômodos."
+      },
+      {
+        "t": "Alívio",
+        "say": "O corredor é o que outro usa quando você sai.",
+        "lesson": "Lição: corredor, não mais curso.",
+        "screen": "Falta o corredor."
+      },
+      {
+        "t": "Chave",
+        "say": "Comenta o vazio. Essência. Alma. Ou valor.",
+        "lesson": "Lição: três opções. Comentário longo não. Uma palavra.",
+        "screen": "O cômodo vazio."
+      }
+    ]
+  },
+  "Quem te indica traduz no escuro": {
+    "gesture": "Manda a frase junto",
+    "caption": "A indicação chega. O cliente quer outra coisa.\n\nQuem indicou usou a palavra que tinha. Profissão. Apelido. Caso antigo.\n\nManda a frase junto com este vídeo.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Te indicaram. O cliente queria outra coisa. Os dois saíram educados.",
+        "lesson": "Lição: a cena educada é o gancho.",
+        "screen": "Saíram educados."
+      },
+      {
+        "t": "Espelho",
+        "say": "A palavra que tinha era profissão. Ou apelido. Ou um caso velho.",
+        "lesson": "Lição: três palavras pobres.",
+        "screen": "A palavra que tinha."
+      },
+      {
+        "t": "Tensão",
+        "say": "Você paga essa tradução na primeira reunião.",
+        "lesson": "Lição: a conta é o custo.",
+        "screen": "Você paga."
+      },
+      {
+        "t": "Virada",
+        "say": "A frase não é marketing. É o que o outro diz sem te ligar.",
+        "lesson": "Lição: definição curta.",
+        "screen": "Sem te ligar."
+      },
+      {
+        "t": "Alívio",
+        "say": "Manda as três partes. Pede para repetir. Onde trocar, ainda está frouxo.",
+        "lesson": "Lição: o teste é a saída.",
+        "screen": "Onde trocar."
+      },
+      {
+        "t": "Chave",
+        "say": "Manda o vídeo e a frase. Juntos.",
+        "lesson": "Lição: dois itens. Um gesto.",
+        "screen": "Os dois."
+      }
+    ]
+  },
+  "Você diz que quer legado": {
+    "gesture": "Comenta: EU FAÇO",
+    "caption": "Você diz legado. O dia não faz legado.\n\nAtende, explica de novo, aceita o cliente que não é. Isso não é visão. É falta de arquitetura.\n\nComenta EU FAÇO ou EU DIGO.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Você diz que quer deixar algo de pé. O dia não colabora.",
+        "lesson": "Lição: dizer contra fazer, no primeiro corte.",
+        "screen": "Diz. O dia não faz."
+      },
+      {
+        "t": "Espelho",
+        "say": "Atende. Explica de novo. Adia a página. Chama de ocupado.",
+        "lesson": "Lição: ocupado é o disfarce.",
+        "screen": "Chama de ocupado."
+      },
+      {
+        "t": "Tensão",
+        "say": "O discurso está num endereço. O ofício está em outro.",
+        "lesson": "Lição: dois endereços.",
+        "screen": "Dois endereços."
+      },
+      {
+        "t": "Virada",
+        "say": "Não falta visão. Falta arquitetura. Visão sem etapa vira culpa no domingo.",
+        "lesson": "Lição: domingo é a imagem.",
+        "screen": "Culpa de domingo."
+      },
+      {
+        "t": "Alívio",
+        "say": "Uma frase. Uma etapa. Um limite. Um lugar.",
+        "lesson": "Lição: quatro. Não um discurso.",
+        "screen": "Quatro peças."
+      },
+      {
+        "t": "Chave",
+        "say": "Comenta o que está mais alto. Eu faço. Ou eu digo.",
+        "lesson": "Lição: a escolha devolve o primeiro corte.",
+        "screen": "EU FAÇO ou EU DIGO"
+      }
+    ]
+  },
+  "O ciclo, dito uma vez": {
+    "gesture": "Aplica, se for este ano",
+    "caption": "Se já tem prática e falta forma, a porta tem número.\n\nDoze meses. Vinte e quatro encontros. Três imersões. Três individuais. Trinta e nove mil. Aplicar é conversa, não compra.\n\nSe não for a hora, fica com a frase.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Já tem prática. Falta forma. A porta existe. Sem pressa.",
+        "lesson": "Lição: número só neste. Os outros não vendem.",
+        "screen": "A porta. Sem pressa."
+      },
+      {
+        "t": "Espelho",
+        "say": "Uma mentoria. Não três produtos.",
+        "lesson": "Lição: corta o cardápio.",
+        "screen": "Não são três."
+      },
+      {
+        "t": "Tensão",
+        "say": "Doze meses. Vinte e quatro em grupo. Três imersões. Três individuais. Trinta e nove mil.",
+        "lesson": "Lição: o número é clareza. Fala seco.",
+        "screen": "O número."
+      },
+      {
+        "t": "Virada",
+        "say": "Aplicar não confirma vaga. A conversa vê se cabe.",
+        "lesson": "Lição: tira a compra automática.",
+        "screen": "Não é compra."
+      },
+      {
+        "t": "Alívio",
+        "say": "Não prometo faturamento. Prometo escopo. Você traz o repertório. Eu conduzo o método.",
+        "lesson": "Lição: escopo, não milagre.",
+        "screen": "Escopo."
+      },
+      {
+        "t": "Chave",
+        "say": "Se for o ano, aplica. Se não for, fica com a frase. As duas saídas são adultas.",
+        "lesson": "Lição: duas portas. Uma escolha.",
+        "screen": "Duas saídas."
+      }
+    ]
+  },
+  "Eu penso daqui": {
+    "gesture": "Manda para quem diz o cargo",
+    "caption": "Eu não gravo em estúdio alugado. Eu moro em Vilas.\n\nPalco alugado dura um story. O chão fica.\n\nManda para quem ainda se explica pelo cargo.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Eu moro em Vilas do Atlântico. O vídeo é daqui.",
+        "lesson": "Lição: o lugar no primeiro segundo. Sem turismo.",
+        "screen": "Daqui."
+      },
+      {
+        "t": "Espelho",
+        "say": "O trabalho é o mesmo em qualquer cidade. Experiência sem forma.",
+        "lesson": "Lição: o bairro não é o produto.",
+        "screen": "Sem forma."
+      },
+      {
+        "t": "Tensão",
+        "say": "Estúdio alugado dura um story. O chão fica.",
+        "lesson": "Lição: uma comparação. Para.",
+        "screen": "O estúdio não fica."
+      },
+      {
+        "t": "Virada",
+        "say": "Um nome. Uma casa. O resto é cômodo.",
+        "lesson": "Lição: corta o cardápio de novo.",
+        "screen": "Uma casa."
+      },
+      {
+        "t": "Alívio",
+        "say": "Se reconheceu, não precisa de mais vídeo. Precisa de frase e etapa.",
+        "lesson": "Lição: tira o vício de conteúdo.",
+        "screen": "Não mais vídeo."
+      },
+      {
+        "t": "Chave",
+        "say": "Manda para quem trabalha há anos e ainda diz a profissão.",
+        "lesson": "Lição: envio com um rosto na cabeça.",
+        "screen": "Manda."
+      }
+    ]
+  },
+  "O incêndio, na voz dela": {
+    "gesture": "Manda para quem é a sala",
+    "caption": "O trabalho dela só existe enquanto ela está na sala.\n\nIsso parece dedicação. É incêndio.\n\nManda para a pessoa que é a sala inteira.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "O trabalho só existe com ela na sala.",
+        "lesson": "Lição: uma frase. Rosto. Sem introdução.",
+        "screen": "Só existe na sala."
+      },
+      {
+        "t": "Espelho",
+        "say": "Ela sai. O cliente chama. A equipe espera.",
+        "lesson": "Lição: sai, chama, espera.",
+        "screen": "Sai. Chamam."
+      },
+      {
+        "t": "Tensão",
+        "say": "No domingo isso queima. E ninguém chama de incêndio.",
+        "lesson": "Lição: domingo é a imagem que retém.",
+        "screen": "Domingo."
+      },
+      {
+        "t": "Virada",
+        "say": "Quem mostra isso sem grito de curso é o Yan Klehn.",
+        "lesson": "Lição: o nome depois do fogo.",
+        "screen": "O nome depois."
+      },
+      {
+        "t": "Alívio",
+        "say": "Método. Oferta. Estrutura. Uma mentoria.",
+        "lesson": "Lição: três palavras. Não uma aula.",
+        "screen": "Três palavras."
+      },
+      {
+        "t": "Chave",
+        "say": "Manda para a pessoa que é a sala inteira.",
+        "lesson": "Lição: um envio. Fecha.",
+        "screen": "Manda."
+      }
+    ]
+  },
+  "Você faz isso": {
+    "gesture": "Comenta: EU",
+    "caption": "Sabe fazer. Na hora de dizer, sai a profissão.\n\nMais post não encolhe essa explicação.\n\nSe doeu, comenta: EU.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Sabe fazer. Diz o cargo.",
+        "lesson": "Lição: quatro palavras. O gancho inteiro.",
+        "screen": "Diz o cargo."
+      },
+      {
+        "t": "Espelho",
+        "say": "Anos de prática. A frase só cabe na boca dela.",
+        "lesson": "Lição: a boca é o limite.",
+        "screen": "Só na boca dela."
+      },
+      {
+        "t": "Tensão",
+        "say": "Posta mais. Estuda mais. A explicação não encolhe.",
+        "lesson": "Lição: volume não é clareza.",
+        "screen": "Não encolhe."
+      },
+      {
+        "t": "Virada",
+        "say": "Eu não ensino o ofício dela. Quem trabalha a forma é o Yan, na Akasha.",
+        "lesson": "Lição: apontar, não ensinar.",
+        "screen": "Não ensino o ofício."
+      },
+      {
+        "t": "Alívio",
+        "say": "Uma frase. Uma etapa. Um limite.",
+        "lesson": "Lição: pequeno de propósito.",
+        "screen": "Três. Pequeno."
+      },
+      {
+        "t": "Chave",
+        "say": "Se doeu no começo, comenta: eu.",
+        "lesson": "Lição: a dor do primeiro corte vira comentário.",
+        "screen": "EU"
+      }
+    ]
+  },
+  "Eu não vou te ensinar": {
+    "gesture": "Segue a sequência, não a dica",
+    "caption": "Isso não é aula.\n\nSe só funciona com você presente, é turno. Turno acaba. Método fica.\n\nSegue a sequência. Não mais um perfil de dica.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Não vou te dar três dicas. Isso não é aula.",
+        "lesson": "Lição: nega a aula antes de pedir atenção.",
+        "screen": "Não é aula."
+      },
+      {
+        "t": "Espelho",
+        "say": "Se só funciona com você na sala, você tem um turno.",
+        "lesson": "Lição: turno é a palavra.",
+        "screen": "É turno."
+      },
+      {
+        "t": "Tensão",
+        "say": "Turno acaba.",
+        "lesson": "Lição: duas palavras. Deixa quieto um segundo.",
+        "screen": "Acaba."
+      },
+      {
+        "t": "Virada",
+        "say": "Quem desenha isso sem promessa de dinheiro fácil é o Yan Klehn.",
+        "lesson": "Lição: o nome depois da lei.",
+        "screen": "Sem promessa."
+      },
+      {
+        "t": "Alívio",
+        "say": "Uma etapa. O que entra. O que acontece. O que sai.",
+        "lesson": "Lição: manda ver esse vídeo, não este.",
+        "screen": "Entrada. Saída."
+      },
+      {
+        "t": "Chave",
+        "say": "Segue a sequência. Não segue mais uma dica.",
+        "lesson": "Lição: sequência retém melhor que um vídeo solto.",
+        "screen": "A sequência."
+      }
+    ]
+  },
+  "Manda para essa pessoa": {
+    "gesture": "Manda agora, com o nome",
+    "caption": "Dez anos de ofício. Ainda marca reunião para explicar o básico.\n\nA próxima indicação inventa o trabalho dela.\n\nManda agora. Com o nome.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Pensa numa pessoa. Dez anos. Ainda explica o básico.",
+        "lesson": "Lição: um rosto. O vídeo fica.",
+        "screen": "Dez anos."
+      },
+      {
+        "t": "Espelho",
+        "say": "Ela é boa. Por isso ninguém escreveu.",
+        "lesson": "Lição: o talento virou desculpa.",
+        "screen": "Boa demais."
+      },
+      {
+        "t": "Tensão",
+        "say": "A próxima indicação inventa o que ela faz.",
+        "lesson": "Lição: inventar é o custo.",
+        "screen": "Inventam ela."
+      },
+      {
+        "t": "Virada",
+        "say": "Manda o perfil. Uma casa. Não três cursos.",
+        "lesson": "Lição: uma casa na boca.",
+        "screen": "Uma casa."
+      },
+      {
+        "t": "Alívio",
+        "say": "Não é milagre. É conversa sobre forma.",
+        "lesson": "Lição: tira o milagre.",
+        "screen": "Conversa. Não milagre."
+      },
+      {
+        "t": "Chave",
+        "say": "Manda agora. Com o nome dela. Não deixa para lembrar.",
+        "lesson": "Lição: agora. O TikTok premia o gesto imediato.",
+        "screen": "Agora."
+      }
+    ]
+  },
+  "Não é mais um curso": {
+    "gesture": "Comenta: CURSO",
+    "caption": "Se a pessoa já é boa, mais um curso pode ser fuga.\n\nEla compra formação e volta ao mesmo jeito de explicar.\n\nComenta CURSO se esse for o adiamento.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Já é boa. Compra mais curso. Isso pode ser fuga.",
+        "lesson": "Lição: fuga no primeiro corte. Sem deboche.",
+        "screen": "Pode ser fuga."
+      },
+      {
+        "t": "Espelho",
+        "say": "Volta do curso. Explica o ofício do mesmo jeito.",
+        "lesson": "Lição: voltou igual.",
+        "screen": "Voltou igual."
+      },
+      {
+        "t": "Tensão",
+        "say": "O que não entrou na compra foi estrutura.",
+        "lesson": "Lição: o que faltou, numa linha.",
+        "screen": "Faltou estrutura."
+      },
+      {
+        "t": "Virada",
+        "say": "Curso, se falta competência. Estrutura, se o ofício já existe.",
+        "lesson": "Lição: duas tarefas. Separa.",
+        "screen": "Duas tarefas."
+      },
+      {
+        "t": "Alívio",
+        "say": "Não é ataque a quem estuda. É alívio de quem já estudou demais.",
+        "lesson": "Lição: tira a ofensa.",
+        "screen": "Não é ataque."
+      },
+      {
+        "t": "Chave",
+        "say": "Se for o seu adiamento, comenta: curso.",
+        "lesson": "Lição: a palavra dói e por isso comentam.",
+        "screen": "CURSO"
+      }
+    ]
+  },
+  "Ele grava em Vilas": {
+    "gesture": "Vê a sequência",
+    "caption": "Repara o chão. Não é estúdio. É Vilas.\n\nQuem ensina legado só em cenário alugado pede uma confiança que o chão não deu.\n\nUm vídeo não entrega a casa. A sequência entrega.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Olha o chão deste vídeo. Não é estúdio.",
+        "lesson": "Lição: o chão é o gancho visual. Mostra.",
+        "screen": "Olha o chão."
+      },
+      {
+        "t": "Espelho",
+        "say": "Praia. Calçada. Porta. O bairro.",
+        "lesson": "Lição: três lugares. Sem turismo.",
+        "screen": "O bairro."
+      },
+      {
+        "t": "Tensão",
+        "say": "Estúdio alugado pede uma fé que o chão não deu.",
+        "lesson": "Lição: fé contra chão.",
+        "screen": "O estúdio pede fé."
+      },
+      {
+        "t": "Virada",
+        "say": "Eu moro aqui. O trabalho é método, oferta e estrutura.",
+        "lesson": "Lição: moro aqui, depois o trabalho.",
+        "screen": "Moro aqui."
+      },
+      {
+        "t": "Alívio",
+        "say": "A imagem é simples. A engenharia é que é densa.",
+        "lesson": "Lição: não explique a engenharia inteira. Nomeie.",
+        "screen": "Simples por fora."
+      },
+      {
+        "t": "Chave",
+        "say": "Não para neste vídeo. Vê a sequência.",
+        "lesson": "Lição: o fim empurra o próximo. Retenção de perfil.",
+        "screen": "A sequência."
+      }
+    ]
+  },
+  "O livro na mão dele": {
+    "gesture": "Salva o vídeo dele",
+    "caption": "Livro não é mentoria. Mentoria não é brinde de livro.\n\nQuem mistura as duas camadas se frustra antes da conversa.\n\nSalva o vídeo em que ele separa. Não o resumo de terceiro.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Livro numa mão. Mentoria na outra. Não é a mesma coisa.",
+        "lesson": "Lição: duas mãos. Primeiro quadro.",
+        "screen": "Não é a mesma coisa."
+      },
+      {
+        "t": "Espelho",
+        "say": "Um compra o livro e espera acompanhamento. Outro acha que o livro é brinde.",
+        "lesson": "Lição: os dois erros.",
+        "screen": "Dois enganos."
+      },
+      {
+        "t": "Tensão",
+        "say": "Os dois se frustram. A confiança quebra antes da conversa.",
+        "lesson": "Lição: antes da conversa.",
+        "screen": "Frustra antes."
+      },
+      {
+        "t": "Virada",
+        "say": "Linguagem da origem. Ciclo de doze meses. Camadas.",
+        "lesson": "Lição: duas palavras-camada.",
+        "screen": "Duas camadas."
+      },
+      {
+        "t": "Alívio",
+        "say": "Dá para começar lendo. Construir pede a casa.",
+        "lesson": "Lição: ler primeiro não é a casa.",
+        "screen": "Ler não constrói."
+      },
+      {
+        "t": "Chave",
+        "say": "Salva o vídeo dele. Não o resumo de outra pessoa.",
+        "lesson": "Lição: aponta a fonte.",
+        "screen": "O vídeo dele."
+      }
+    ]
+  },
+  "Três coisas, um caminho": {
+    "gesture": "Comenta 1, 2 ou 3",
+    "caption": "Três projetos para a mesma vida são uma casa rachada.\n\nAchar, aguentar, cobrar. Nenhum fala com o outro.\n\nComenta 1, 2 ou 3.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Três projetos. Uma casa rachada.",
+        "lesson": "Lição: rachada no primeiro quadro.",
+        "screen": "Rachada."
+      },
+      {
+        "t": "Espelho",
+        "say": "Um para se achar. Outro para aguentar. Outro para cobrar.",
+        "lesson": "Lição: três para.",
+        "screen": "Achar. Aguentar. Cobrar."
+      },
+      {
+        "t": "Tensão",
+        "say": "O cliente vê a emenda antes de você.",
+        "lesson": "Lição: o cliente é o espelho do custo.",
+        "screen": "Ele vê antes."
+      },
+      {
+        "t": "Virada",
+        "say": "Essência. Alma. Valor. Uma planta.",
+        "lesson": "Lição: troca projeto por cômodo.",
+        "screen": "Uma planta."
+      },
+      {
+        "t": "Alívio",
+        "say": "Não joga fora o que estudou. Faz o corredor.",
+        "lesson": "Lição: corredor. A saída.",
+        "screen": "O corredor."
+      },
+      {
+        "t": "Chave",
+        "say": "Comenta o número do cômodo vazio. Um. Dois. Ou três.",
+        "lesson": "Lição: número no comentário. Fácil de responder.",
+        "screen": "1, 2 ou 3"
+      }
+    ]
+  },
+  "Se for este ano": {
+    "gesture": "Um gesto. Não os dois.",
+    "caption": "Se o conteúdo não vira forma, existe uma porta. Sem última vaga.\n\nA aplicação é conversa. Se não for a hora, frase e etapa já são trabalho.\n\nUm gesto. Não os dois num impulso.\nakashahub.com.br/al",
+    "beats": [
+      {
+        "t": "Diagnóstico",
+        "say": "Cansou de conteúdo que não vira forma. A porta existe.",
+        "lesson": "Lição: cansaço, depois a porta. Sem liquidação.",
+        "screen": "Sem liquidação."
+      },
+      {
+        "t": "Espelho",
+        "say": "Não é promessa. Não são dois preços. Não é última vaga.",
+        "lesson": "Lição: três nãos. Rápido.",
+        "screen": "Três nãos."
+      },
+      {
+        "t": "Tensão",
+        "say": "Trinta vídeos. Nenhuma segunda-feira.",
+        "lesson": "Lição: o número trinta retém.",
+        "screen": "Trinta vídeos."
+      },
+      {
+        "t": "Virada",
+        "say": "A porta tem nome. A entrada é conversa, não compra.",
+        "lesson": "Lição: conversa. A call.",
+        "screen": "É conversa."
+      },
+      {
+        "t": "Alívio",
+        "say": "Se não for a hora, fica com a frase e a etapa. Isso já é trabalho.",
+        "lesson": "Lição: o não também é adulto.",
+        "screen": "Também é trabalho."
+      },
+      {
+        "t": "Chave",
+        "say": "Ou manda para a pessoa certa. Ou senta. Não os dois agora.",
+        "lesson": "Lição: um gesto. O loop fecha sem pressão.",
+        "screen": "Um gesto."
+      }
+    ]
+  }
+};
 const list = document.getElementById("list");
 const read = document.getElementById("read");
 const stage = document.getElementById("stage");
@@ -1786,7 +2813,7 @@ function briefFor(s){
   const audience = s.who === "yan"
     ? "Um público de profissionais experientes que já entrega valor, mas ainda explica, vende ou opera sem uma estrutura clara."
     : "Um público amplo que reconhece esse padrão social e quer compreender a mensagem sem receber uma promessa ou uma indireta."
-  return {
+  const base = {
     audience,
     voice: "Cadência social: abra falando com o coletivo; use “você” como espelho de um padrão; use “eu” para uma escolha ou experiência do narrador; amplie para a sociedade; e feche com uma pergunta para o público. Não transforme a fala em indireta pessoal.",
     situation: mirror || diagnosis,
@@ -1797,6 +2824,13 @@ function briefFor(s){
     objection: "Responder à objeção sem atacar: a solução não é mais exposição ou mais um curso; é clareza, método, limite e aplicação.",
     integrity: "Deixar claro que é uma leitura geral para um público. O “você” representa um padrão; o “eu” representa a posição de quem fala. Não usar humilhação, promessa de resultado ou urgência artificial."
   };
+  if(s.kind==="tiktok"){
+    base.voice = "TikTok. Sem oi. A primeira frase é o corte. Dezoito a vinte e dois segundos. Rosto perto. Uma tomada. Texto grande no primeiro quadro, porque muita gente assiste no mudo. A última frase tem que poder voltar para a primeira. Um comentário. Um envio. Não peça para seguir no começo.";
+    base.recording = "9:16. Mesmo dia do reel e do story. Outra frase. Outra tomada. Não leia o reel de novo.";
+    base.audience = "Gente que ainda não te segue. O vídeo é testado com desconhecidos. Se não seguram até o fim, ele morre.";
+    base.feeling = "Corte no primeiro segundo. Reconhecimento. Uma saída. Vontade de comentar uma palavra ou mandar para alguém.";
+  }
+  return base;
 }
 function fullText(s){
   const b = briefFor(s);
@@ -1810,12 +2844,16 @@ function fullText(s){
     if(screen) lines.push("NA TELA: "+screen);
     lines.push("");
   });
-  if(layer){
+  if(layer && s.kind!=="tiktok"){
     lines.push("HEADLINE");
     lines.push(layer.headline);
     lines.push("");
     lines.push(s.kind==="story" ? "LEGENDA DO REEL" : "LEGENDA");
     lines.push(layer.caption);
+  }
+  if(s.kind==="tiktok" && s.caption){
+    lines.push("LEGENDA TIKTOK");
+    lines.push(s.caption);
   }
   return lines.join("\n").trim();
 }
@@ -1825,7 +2863,7 @@ function card(s, i){
   el.type = "button";
   el.className = "card "+(s.who==="yan"?"who-yan":"who-outra");
   el.dataset.who = s.who;
-  el.innerHTML = '<div class="num">'+String(i+1).padStart(2,"0")+'</div><div><div class="tag">'+(s.who==="yan"?"Yan Filipe":"Outra pessoa")+' · '+esc(s.day)+' · '+esc(s.format)+'</div><h2>'+esc(s.title)+'</h2><div class="meta"><strong>Sentimento:</strong> '+esc(b.feeling)+'<br><strong>Gravação:</strong> '+esc(s.place)+' · '+esc(s.dur)+' · '+esc(s.gesture)+'</div></div><div class="open meta">Abrir</div>';
+  el.innerHTML = '<div class="num">'+numOf(i)+'</div><div><div class="tag">'+(s.who==="yan"?"Yan Filipe":"Outra pessoa")+' · '+esc(s.day)+' · '+esc(s.format)+'</div><h2>'+esc(s.title)+'</h2><div class="meta"><strong>Sentimento:</strong> '+esc(b.feeling)+'<br><strong>Gravação:</strong> '+esc(s.place)+' · '+esc(s.dur)+' · '+esc(s.gesture)+'</div></div><div class="open meta">Abrir</div>';
   el.onclick = ()=>openScript(s);
   return el;
 }
@@ -1835,8 +2873,18 @@ function storyCard(s, i){
   el.type = "button";
   el.className = "card story";
   el.dataset.who = s.who;
-  el.innerHTML = '<div class="num">'+String(i+1).padStart(2,"0")+'</div><div><div class="tag">'+esc(s.day)+' · Story</div><h2>'+esc(s.title)+'</h2><div class="meta">A aula por baixo do reel. Para quem viu e não entendeu, e para quem quer a engenharia.</div></div><div class="open meta">Abrir</div>';
+  el.innerHTML = '<div class="num">'+numOf(i,"2")+'</div><div><div class="tag">'+esc(s.day)+' · Story</div><h2>'+esc(s.title)+'</h2><div class="meta">A aula por baixo do reel. Para quem viu e não entendeu, e para quem quer a engenharia.</div></div><div class="open meta">Abrir</div>';
   el.onclick = ()=>openScript(story);
+  return el;
+}
+function tiktokCard(s, i){
+  const cut = tiktokScript(s);
+  const el = document.createElement("button");
+  el.type = "button";
+  el.className = "card tiktok";
+  el.dataset.who = s.who;
+  el.innerHTML = '<div class="num">'+numOf(i,"3")+'</div><div><div class="tag">'+esc(s.day)+' · TikTok</div><h2>'+esc(s.title)+'</h2><div class="meta">Outro vídeo. Mesma essência. 20 segundos. Sem oi. Texto no primeiro quadro.</div></div><div class="open meta">Abrir</div>';
+  el.onclick = ()=>openScript(cut);
   return el;
 }
 function render(filter){
@@ -1847,6 +2895,7 @@ function render(filter){
     pair.className = "pair";
     pair.append(card(s,i));
     if(storyScript(s)) pair.append(storyCard(s,i));
+    if(tiktokScript(s)) pair.append(tiktokCard(s,i));
     list.append(pair);
   });
 }
@@ -1854,8 +2903,11 @@ function openScript(s){
   current = s;
   const brief = briefFor(s);
   const layer = layerOf(s);
-  const caption = layer ? '<div class="caption-block"><b>'+(s.kind==="story"?"Legenda do reel · a conversa já está pronta":"Legenda · chamada para a conversa")+'</b><p class="headline-line">'+esc(layer.headline)+'</p>'+layer.caption.split(/\n\n/).map(p=>'<p>'+esc(p)+'</p>').join("")+'</div>' : "";
-  stage.innerHTML = '<section class="producer-brief"><h2>'+(s.kind==="story"?"Story · a aula do reel":"Briefing para quem vai gravar")+'</h2><p class="brief-lead">'+(s.kind==="story"?"Isto explica o reel. Não substitui. A legenda embaixo é a do post. A casa já está pronta. O convite é a conversa.":"Leia antes de apertar “Rodar”. O briefing orienta a intenção. A linha lilás e o “na tela” não entram na fala.")+'</p><div class="brief-grid">'+
+  const captionText = s.kind==="tiktok" ? (s.caption || "") : (layer ? layer.caption : "");
+  const caption = captionText ? '<div class="caption-block"><b>'+(s.kind==="tiktok"?"Legenda do TikTok · curta, para a conversa":s.kind==="story"?"Legenda do reel · a conversa já está pronta":"Legenda · chamada para a conversa")+'</b>'+(layer&&s.kind!=="tiktok"?'<p class="headline-line">'+esc(layer.headline)+'</p>':"")+captionText.split(/\n\n/).map(p=>'<p>'+esc(p)+'</p>').join("")+'</div>' : "";
+  const head = s.kind==="story" ? "Story · a aula do reel" : s.kind==="tiktok" ? "TikTok · outro vídeo, mesma essência" : "Briefing para quem vai gravar";
+  const lead = s.kind==="tiktok" ? "Mesma essência. Outra frase. Sem oi. Primeiro quadro com texto. Dezoito a vinte e dois segundos. A casa já está pronta. O convite é a conversa." : s.kind==="story" ? "Isto explica o reel. Não substitui. A legenda embaixo é a do post. A casa já está pronta. O convite é a conversa." : "Leia antes de apertar “Rodar”. O briefing orienta a intenção. A linha lilás e o “na tela” não entram na fala.";
+  stage.innerHTML = '<section class="producer-brief"><h2>'+head+'</h2><p class="brief-lead">'+lead+'</p><div class="brief-grid">'+
     '<div class="brief-item"><b>Voz da narrativa</b><span>'+esc(brief.voice)+'</span></div>'+
     '<div class="brief-item"><b>Situação</b><span>'+esc(brief.situation)+'</span></div>'+
     '<div class="brief-item"><b>Público</b><span>'+esc(brief.audience)+'</span></div>'+
@@ -1865,7 +2917,7 @@ function openScript(s){
     '<div class="brief-item"><b>Sugestão de gravação</b><span>'+esc(brief.recording)+'</span></div>'+
     '<div class="brief-item"><b>Objeção a responder</b><span>'+esc(brief.objection)+'</span></div>'+
     '</div>'+caption+'<p class="brief-note"><strong>Integridade da mensagem:</strong> '+esc(brief.integrity)+'</p></section>'+
-    '<div class="script-start"><i>'+(s.kind==="story"?"Teleprompter · story":"Teleprompter · fala revisada")+'</i></div>'+
+    '<div class="script-start"><i>'+(s.kind==="story"?"Teleprompter · story":s.kind==="tiktok"?"Teleprompter · TikTok":"Teleprompter · fala revisada")+'</i></div>'+
     s.beats.map(beat=>{
       const screen = screenOf(s, beat);
       return '<article class="beat"><i>'+esc(beat.t)+'</i><em class="lesson">'+esc(lessonOf(s,beat))+'</em><p>'+esc(beat.say)+'</p>'+(screen?'<small class="screen">'+esc(screen)+'</small>':'')+'</article>';
