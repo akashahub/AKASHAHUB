@@ -521,8 +521,11 @@
   .collar-gallery-close { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%; color: var(--paper); background: transparent; font-size: 26px; line-height: 1; cursor: pointer; }
   .collar-gallery-close:hover { color: var(--gold-light); border-color: var(--gold); }
   .collar-gallery-stage { position: relative; min-width: 0; min-height: 0; display: grid; place-items: center; padding: 22px 92px; overflow: hidden; }
-  .collar-gallery-stage img { display: block; width: 100%; height: 100%; min-width: 0; min-height: 0; object-fit: contain; object-position: center center; opacity: 0; transform: scale(.985); transition: opacity .55s ease, transform .55s ease; }
-  .collar-gallery-stage img.is-visible { opacity: 1; transform: scale(1); }
+  .collar-gallery-stage img { display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; min-width: 0; min-height: 0; object-fit: contain; object-position: center center; justify-self: center; align-self: center; opacity: 0; transform: none !important; transition: opacity .55s ease; }
+  .collar-gallery-stage img.is-visible { opacity: 1; transform: none !important; }
+  @media (min-width: 861px) {
+    .collar-gallery-stage img, .collar-gallery-stage img.is-visible { transform: none !important; object-position: center center; }
+  }
   .collar-gallery-arrow { position: absolute; top: 50%; z-index: 2; display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgba(201,168,76,.35); border-radius: 50%; color: var(--gold-light); background: rgba(7,6,8,.72); font-size: 28px; cursor: pointer; transform: translateY(-50%); transition: background .25s ease, border-color .25s ease; }
   .collar-gallery-arrow:hover { background: rgba(201,168,76,.18); border-color: var(--gold); }
   .collar-gallery-arrow.prev { left: 18px; }
@@ -1081,7 +1084,7 @@
     window.openCollarGallery = function(trigger){
       lastTrigger = trigger || view; savedScrollY = window.scrollY;
       modal.classList.add('is-open'); modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
-      showGallery(viewIndex); startGalleryTimer(); document.getElementById('collarGalleryClose').focus();
+      showGallery(viewIndex); startGalleryTimer(); document.getElementById('collarGalleryClose').focus({preventScroll:true});
     };
     window.closeCollarGallery = function(){
       stopGalleryTimer(); modal.classList.remove('is-open'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
