@@ -76,6 +76,7 @@ input,label{color:var(--text)}
 </style>
 </head>
 <body>
+<a href="/baixar-paladins.html" style="display:block;background:#8b6914;color:#fff;text-align:center;padding:16px 18px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:15px">Baixar os livros Paladins — curto e denso</a>
 <header class="top">
   <div class="brand">☥<div>BARRA MEMBERS<small>SUA JORNADA DE CONHECIMENTO</small></div></div>
   <div class="mid">Todos os cursos + livros + áudios em um só lugar</div>
@@ -182,7 +183,6 @@ const FAIXAS = {
     cursos: [
       cursoBunny("alinhamento", "Código de Alinhamento", ALINHAMENTO_AULAS),
       curso("7-dias", "Desafio 7 Dias de Magnetismo", 7, 14),
-      curso("casais", "Ritual para Casais", 3, 8),
       curso("tantra", "Tantra Diferente de Sexo", 5, 10),
       curso("fascinacao", "O Poder da Fascinação", 2, 6)
     ],
@@ -322,16 +322,34 @@ function listaCursos() {
   const area = AREA[route.nivel];
   const extras = (cms.cursos || []).filter(c => c.faixa === area);
   const vistos = [];
+  const ja = new Set();
   f.cursos.forEach(item => {
     const custom = extras.find(c => c.id === area + ":" + item.id);
-    if (custom && custom.status === "oculto" && !adminOn) return;
-    const semVideo = custom && (custom.modules || []).every(m => (m.aulas || []).every(a => !(a.video && a.video.videoId)));
-    const pronto = (item.modules || []).some(m => (m.aulas || []).some(a => a.video && a.video.videoId));
-    vistos.push(semVideo && pronto ? moldarCurso(item) : moldarCurso(custom || item));
+    if (custom && custom.status === "apagado") return;
+    if (custom && (custom.status === "oculto" || custom.status === "rascunho") && !adminOn) return;
+    const base = moldarCurso(item);
+    let curso = custom ? moldarCurso(custom) : base;
+    if (custom) {
+      const semVideo = (curso.modules || []).every(m => (m.aulas || []).every(a => !(a.video && a.video.videoId)));
+      const pronto = (base.modules || []).some(m => (m.aulas || []).some(a => a.video && a.video.videoId));
+      if (semVideo && pronto) {
+        const status = curso.status;
+        const titulo = curso.titulo;
+        const capa = curso.capa;
+        curso = base;
+        curso.status = status || base.status;
+        curso.titulo = titulo || base.titulo;
+        curso.capa = capa || base.capa;
+      }
+    }
+    if (!adminOn && (curso.status === "oculto" || curso.status === "rascunho" || curso.status === "apagado")) return;
+    vistos.push(curso);
+    ja.add(item.id);
   });
   extras.forEach(c => {
-    const curto = c.id.split(":").slice(1).join(":");
-    if (f.cursos.some(item => item.id === curto)) return;
+    const curto = String(c.id || "").split(":").slice(1).join(":");
+    if (!curto || ja.has(curto) || f.cursos.some(item => item.id === curto)) return;
+    if (c.status === "apagado") return;
     if (!adminOn && (c.status === "oculto" || c.status === "rascunho")) return;
     vistos.push(moldarCurso(c));
   });
@@ -682,7 +700,7 @@ async function apagarCurso(curto) {
   const area = AREA[route.nivel];
   const id = area + ":" + curto;
   const catalogo = (faixa().cursos || []).some(c => c.id === curto);
-  const ok = confirm(catalogo ? "Ocultar este curso? Os alunos deixam de ver. Você ainda encontra para reabrir." : "Apagar este curso inteiro? Módulos, aulas e capa saem juntos.");
+  const ok = confirm(catalogo ? "Apagar este curso da área? Ele sai da lista e não volta quando você recarrega. Quem tem a faixa também deixa de ver." : "Apagar este curso inteiro? Módulos, aulas e capa saem juntos.");
   if (!ok) return;
   cms.cursos = cms.cursos || [];
   if (catalogo) {
@@ -693,7 +711,7 @@ async function apagarCurso(curto) {
       cms.cursos.push(copiarCursoBase(base, area));
       index = cms.cursos.length - 1;
     }
-    cms.cursos[index].status = "oculto";
+    cms.cursos[index].status = "apagado";
   } else {
     cms.cursos = cms.cursos.filter(c => c.id !== id);
   }
@@ -779,10 +797,13 @@ function arquivoAudio(nome) {
 }
 function aplicarCms(data) {
   if (!data) return;
-  if (Array.isArray(data.cursos) && data.cursos.length) cms.cursos = data.cursos;
+  if (Array.isArray(data.cursos) && data.cursos.length) {
+    cms.cursos = data.cursos.map(c => (c && c.id === "anubis:casais") ? Object.assign({}, c, { status: "apagado" }) : c);
+  }
   if (Array.isArray(data.livros)) cms.livros = data.livros;
   if (Array.isArray(data.audios)) cms.audios = data.audios;
 }
+function momentoCms(data) { return Number(data && data.updatedAt) || 0; }
 function quadro(aula) {
   const v = Object.assign({ provider: "", videoId: "", libraryId: "" }, (aula && aula.video) || {});
   const salvo = String(catalogVideos[videoKey()] || "");
@@ -820,14 +841,39 @@ function aplicarFormulario(preview) {
   if (preview) { draw(); return; }
   saveLessonVideo();
 }
+function cursosDaGestao(num) {
+  const f = FAIXAS[num];
+  const area = AREA[num];
+  const itens = f.cursos.map(c => ({ id: c.id, titulo: c.titulo, status: "publicado" }));
+  (cms.cursos || []).forEach(c => {
+    if (c.faixa !== area || !c.id) return;
+    const curto = String(c.id).split(":").slice(1).join(":");
+    if (!curto) return;
+    const i = itens.findIndex(item => item.id === curto);
+    if (c.status === "apagado") {
+      if (i >= 0) itens.splice(i, 1);
+      return;
+    }
+    if (i >= 0) {
+      itens[i].titulo = c.titulo || itens[i].titulo;
+      itens[i].status = c.status || itens[i].status;
+    } else if (c.titulo) itens.push({ id: curto, titulo: c.titulo, status: c.status || "rascunho" });
+  });
+  return itens;
+}
 function checks() {
   return Object.keys(FAIXAS).map(num => {
     const f = FAIXAS[num];
     const area = AREA[num];
-    const cursos = f.cursos.map(c => `<label><input type="checkbox" data-kind="curso" value="${area}:${c.id}"> ${esc(c.titulo)}</label>`).join("");
-    const livros = f.livros.concat((cms.livros || []).filter(l => l.faixa === area && l.titulo && !f.livros.includes(l.titulo)).map(l => l.titulo)).map(nome => `<label><input type="checkbox" data-kind="livro" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
-    const audios = f.audios.concat((cms.audios || []).filter(a => a.faixa === area && a.titulo && !f.audios.includes(a.titulo)).map(a => a.titulo)).map(nome => `<label><input type="checkbox" data-kind="audio" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
-    return `<div class="book" style="margin-top:12px"><strong>${esc(f.nome)}</strong><label><input type="checkbox" data-kind="area" value="${area}"> Faixa inteira</label>${cursos}${livros}${audios}</div>`;
+    const cursos = cursosDaGestao(num).map(c => {
+      const aviso = c.status === "rascunho" ? " · rascunho, o aluno ainda não vê" : c.status === "oculto" ? " · oculto" : "";
+      return `<label><input type="checkbox" data-kind="curso" value="${area}:${c.id}"> ${esc(c.titulo)}${aviso}</label>`;
+    }).join("");
+    const livrosOcultos = new Set((cms.livros || []).filter(l => l.faixa === area && (l.status === "apagado" || l.status === "oculto")).map(l => l.titulo));
+    const livros = f.livros.concat((cms.livros || []).filter(l => l.faixa === area && l.titulo && l.status !== "apagado" && l.status !== "oculto" && !f.livros.includes(l.titulo)).map(l => l.titulo)).filter(nome => !livrosOcultos.has(nome)).map(nome => `<label><input type="checkbox" data-kind="livro" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
+    const audiosOcultos = new Set((cms.audios || []).filter(a => a.faixa === area && (a.status === "apagado" || a.status === "oculto")).map(a => a.titulo));
+    const audios = f.audios.concat((cms.audios || []).filter(a => a.faixa === area && a.titulo && a.status !== "apagado" && a.status !== "oculto" && !f.audios.includes(a.titulo)).map(a => a.titulo)).filter(nome => !audiosOcultos.has(nome)).map(nome => `<label><input type="checkbox" data-kind="audio" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
+    return `<div class="book" style="margin-top:12px"><strong>${esc(f.nome)}</strong><label><input type="checkbox" data-kind="area" value="${area}"> Faixa inteira. Abre o que estiver publicado nesta faixa, inclusive curso novo.</label>${cursos}${livros}${audios}</div>`;
   }).join("");
 }
 
@@ -836,7 +882,7 @@ function gestao() {
   document.getElementById("app").innerHTML = `
     <p class="kicker">Pix e acesso manual</p>
     <h1>Gestão de acesso</h1>
-    <p class="sub">Quem pagou fora do Stripe entra aqui. O e-mail liberado precisa ser o mesmo do login. A faixa inteira abre tudo dela. Um curso abre só aquele curso.</p>
+    <p class="sub">Quem tem a faixa inteira abre tudo o que estiver publicado nela, inclusive curso, ebook e áudio que você criou aqui. Não precisa marcar um por um. Rascunho não aparece para o aluno até você clicar em Publicar.</p>
     <label>E-mail</label>
     <input id="grantMail" type="email" placeholder="pessoa@email.com" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px">
     <div class="row"><button id="findMail" class="ghost">Buscar</button></div>
@@ -1060,13 +1106,14 @@ async function addAdmin() { return; }
 async function listarAdmins() { return; }
 
 async function saveCms() {
-  const payload = { cursos: cms.cursos || [], livros: cms.livros || [], audios: cms.audios || [], by: mail() };
+  const payload = { cursos: cms.cursos || [], livros: cms.livros || [], audios: cms.audios || [], by: mail(), updatedAt: Date.now() };
   let publico = false;
   let mentor = false;
-  try { await setDoc(doc(db, "membrosGestao", "conteudo"), payload); publico = true; } catch (e) {}
-  try { await setDoc(doc(db, "afMentorNotes", "membersConteudo"), payload); mentor = true; } catch (e) {}
-  if (!publico && !mentor) throw new Error("nao");
-  return publico;
+  let erro = "";
+  try { await setDoc(doc(db, "membrosGestao", "conteudo"), payload); publico = true; } catch (e) { erro = e.code || "publico"; }
+  try { await setDoc(doc(db, "afMentorNotes", "membersConteudo"), payload); mentor = true; } catch (e) { if (!erro) erro = e.code || "mentor"; }
+  if (!publico && !mentor) throw new Error(erro || "nao");
+  return { publico, mentor, erro };
 }
 
 function seedCms() {
@@ -1137,7 +1184,7 @@ function conteudo() {
     </div>
     <div class="row"><button id="novoCurso">Novo curso nesta faixa</button><button id="trazer" class="ghost">Trazer os cursos atuais</button></div>
     <p class="note" id="cmsNote"></p>
-    <div class="courses" style="margin-top:16px">${cursos.map((c, i) => `<button class="course" data-curso="${i}">${c.capa ? `<img alt="" src="${esc(c.capa)}" style="width:100%;height:90px;object-fit:cover;border-radius:12px;margin-bottom:8px">` : ""}<strong>${esc(c.titulo || "Sem nome")}</strong><p class="sub">${esc(c.faixa || "")} · ${esc(c.status || "rascunho")} · ${(c.modules || []).length} módulos</p></button>`).join("") || "<p class='sub'>Nenhum curso salvo ainda.</p>"}</div>
+    <div class="courses" style="margin-top:16px">${cursos.map((c, i) => c.status === "apagado" ? "" : `<button class="course" data-curso="${i}">${c.capa ? `<img alt="" src="${esc(c.capa)}" style="width:100%;height:90px;object-fit:cover;border-radius:12px;margin-bottom:8px">` : ""}<strong>${esc(c.titulo || "Sem nome")}</strong><p class="sub">${esc(c.faixa || "")} · ${esc(c.status || "rascunho")} · ${(c.modules || []).length} módulos</p></button>`).join("") || "<p class='sub'>Nenhum curso salvo ainda.</p>"}</div>
     <h1 style="font-size:28px;margin-top:28px">Livros</h1>
     <div class="row"><button id="novoLivro">Novo livro</button></div>
     <div style="margin-top:12px">${(cms.livros || []).map((l, i) => `<div class="audio"><strong>${esc(l.titulo || "Sem nome")}</strong><span><button data-livro="${i}">Editar</button></span></div>`).join("") || "<p class='sub'>Nenhum livro extra ainda. Os que já estão na faixa continuam no ar.</p>"}</div>
@@ -1147,8 +1194,10 @@ function conteudo() {
   document.getElementById("novoCurso").onclick = () => novoCursoNaFaixa(AREA[route.nivel] || "anubis");
   document.getElementById("trazer").onclick = async () => {
     if (cms.cursos.length && !confirm("Isso recria a lista a partir dos cursos que já estão na área.")) return;
+    const mortos = (cms.cursos || []).filter(c => c.status === "apagado");
     seedCms();
-    await gravarCms("Cursos atuais copiados para a gestão.");
+    mortos.forEach(c => { if (!(cms.cursos || []).some(item => item.id === c.id)) cms.cursos.push(c); });
+    await gravarCms("Cursos atuais copiados para a gestão. O que você apagou continua apagado.");
   };
   document.querySelectorAll("[data-curso]").forEach(btn => { btn.onclick = () => { cmsAt = { mode: "curso", index: Number(btn.dataset.curso), mod: 0, aula: 0 }; draw(); }; });
   document.getElementById("novoLivro").onclick = () => {
@@ -1510,10 +1559,12 @@ function garantirTechub() {
 async function gravarCms(texto) {
   const note = document.getElementById("cmsNote");
   try {
-    const publico = await saveCms();
-    if (note) note.textContent = publico ? (texto || "Salvo.") : (texto || "Salvo.") + " Por enquanto só a sua conta vê esta edição.";
+    const salvo = await saveCms();
+    if (!note) return;
+    if (salvo.publico) note.textContent = texto || "Salvo. Quem tem a faixa vê ao atualizar a página.";
+    else note.textContent = (texto || "Salvo na sua conta.") + " A cópia dos alunos não gravou (" + (salvo.erro || "firebase") + "). O curso novo não chega para quem você liberou até isso gravar.";
   } catch (e) {
-    if (note) note.textContent = "Não gravou. Entre com o Gmail administrador.";
+    if (note) note.textContent = "Não gravou. Entre com o Gmail administrador. " + (e.message || "");
   }
 }
 async function gravarVideoAula(course, aula) {
@@ -1669,20 +1720,22 @@ onAuthStateChanged(auth, async next => {
         if (videos.exists()) Object.assign(catalogVideos, videos.data());
       } catch (e) {}
     }
+    let publico = null;
+    let mentor = null;
     try {
       const tree = await getDoc(doc(db, "membrosGestao", "conteudo"));
-      if (tree.exists()) aplicarCms(tree.data());
+      if (tree.exists()) publico = tree.data();
     } catch (e) {}
     if (adminOn) {
       try {
         const copia = await getDoc(doc(db, "afMentorNotes", "membersConteudo"));
-        if (copia.exists()) {
-          const data = copia.data();
-          if (!(cms.cursos || []).length) aplicarCms(data);
-          if (!(cms.livros || []).length && Array.isArray(data.livros)) cms.livros = data.livros;
-          if (!(cms.audios || []).length && Array.isArray(data.audios)) cms.audios = data.audios;
-        }
+        if (copia.exists()) mentor = copia.data();
       } catch (e) {}
+    }
+    const escolhido = momentoCms(mentor) > momentoCms(publico) ? mentor : publico;
+    if (escolhido) aplicarCms(escolhido);
+    if (adminOn && escolhido && escolhido === mentor && momentoCms(mentor) > momentoCms(publico)) {
+      try { await saveCms(); } catch (e) {}
     }
     await loadStripeGrants();
   }
