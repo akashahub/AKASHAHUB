@@ -40,6 +40,8 @@ h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:42px;margin:
 .tile b{display:block;font-family:"Cormorant Garamond",serif;letter-spacing:.08em;margin-bottom:6px;font-size:22px}
 .courses{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .course{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff;cursor:pointer;color:inherit;text-align:left}
+.acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.acts button{font:inherit;cursor:pointer;border-radius:999px;padding:6px 10px;border:1px solid var(--line);background:#fff;color:var(--text);font-size:12px;font-weight:600}
 .play{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold);margin-bottom:10px}
 .player{display:grid;grid-template-columns:220px 1fr;gap:16px}
 .mods button{width:100%;text-align:left;background:transparent;color:var(--muted);border:0;border-radius:10px;padding:10px;cursor:pointer}
@@ -302,6 +304,7 @@ function moldarCurso(raw) {
     id: curto,
     capa: raw.capa || "",
     titulo: raw.titulo,
+    status: raw.status || "publicado",
     modules: (raw.modules || []).map(m => ({
       nome: m.titulo || m.nome || "Módulo",
       aulas: (m.aulas || []).map(a => ({
@@ -429,16 +432,24 @@ function cursos() {
   document.getElementById("app").innerHTML = `
     <p class="crumb"><button data-back="area">${esc(f.nome)}</button> · Cursos</p>
     <h1>Cursos</h1>
-    <p class="sub">${adminOn ? "Quem tem esta faixa vê o curso publicado. O card de criar fica aqui, sem GitHub." : "Os cursos desta faixa. Toque para abrir módulos e aulas."}</p>
-    <div class="courses">${(adminOn ? `<button class="course" id="criarCursoCard"><div class="play">+</div><strong>Criar novo curso</strong><p class="sub">Nasce nesta faixa, no mesmo padrão: módulo, aula, link do Bunny.</p></button>` : "") + listaCursos().map(item => {
+    <p class="sub">${adminOn ? "No card: abrir, editar, trocar a capa ou apagar. Só a sua conta vê esses botões." : "Os cursos desta faixa. Toque para abrir módulos e aulas."}</p>
+    <div class="courses">${(adminOn ? `<button class="course" id="criarCursoCard"><div class="play">+</div><strong>Criar novo curso</strong><p class="sub">Nasce nesta faixa. Na hora você cola a capa. Depois, o card continua com editar e apagar.</p></button>` : "") + listaCursos().map(item => {
       const aulasN = item.modules.reduce((n, m) => n + m.aulas.length, 0);
       const open = ownsCurso(route.nivel, item.id);
       const capa = item.capa ? `<img alt="" src="${esc(item.capa)}" style="width:100%;height:120px;object-fit:cover;border-radius:12px;margin-bottom:8px">` : "";
-      return `<button class="course" data-curso="${item.id}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong><p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p><span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : reais(PRECO_ITEM.curso)}</span></button>`;
+      const atos = adminOn ? `<div class="acts"><button type="button" data-edit-curso="${esc(item.id)}">Editar</button><button type="button" data-del-curso="${esc(item.id)}">Apagar</button></div>` : "";
+      const marca = adminOn && item.status === "oculto" ? `<p class="sub">Oculto para os alunos</p>` : "";
+      return `<article class="course" data-curso="${esc(item.id)}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong><p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p>${marca}<span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : reais(PRECO_ITEM.curso)}</span>${atos}</article>`;
     }).join("")}</div>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
   const criarCursoCard = document.getElementById("criarCursoCard");
   if (criarCursoCard) criarCursoCard.onclick = () => novoCursoNaFaixa(AREA[route.nivel]);
+  document.querySelectorAll("[data-edit-curso]").forEach(btn => {
+    btn.onclick = (e) => { e.stopPropagation(); editarCurso(btn.dataset.editCurso); };
+  });
+  document.querySelectorAll("[data-del-curso]").forEach(btn => {
+    btn.onclick = (e) => { e.stopPropagation(); apagarCurso(btn.dataset.delCurso); };
+  });
   document.querySelectorAll("[data-curso]").forEach(btn => {
     btn.onclick = () => go({ view: "player", curso: btn.dataset.curso, mod: 0, aula: 0 });
   });
@@ -479,7 +490,7 @@ function player() {
           <button class="ghost" id="prev">← Anterior</button>
           <button id="next">Próxima aula →</button>
         </div>
-        ${adminOn && route.curso !== "fundamentos" ? `<div class="row"><button class="ghost" id="irLote">Colar os links do Bunny na ordem</button></div>` : ""}
+        ${adminOn && route.curso !== "fundamentos" ? `<div class="row"><button class="ghost" id="editarCurso">Editar curso e capa</button><button class="ghost" id="apagarCursoBtn">Apagar curso</button><button class="ghost" id="irLote">Colar os links do Bunny na ordem</button></div>` : ""}
         ${adminOn ? `<label style="display:block;margin-top:16px">Vídeo desta aula</label><select id="videoProvider" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><option value="youtube">YouTube</option><option value="bunny">Bunny</option></select><input id="videoUrl" placeholder="Cole o link do Bunny ou do YouTube" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><input id="libraryId" placeholder="Library ID, só se o link não trouxer" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:12px"><div class="row"><button class="buy" id="saveVideo">Salvar vídeo</button><button class="ghost" id="previewVideo">Pré-visualizar</button></div><p class="note" id="videoNote"></p>` : ""}
       </div>
     </div>`;
@@ -498,12 +509,16 @@ function player() {
     let index = (cms.cursos || []).findIndex(c => c.id === id);
     if (index < 0) {
       cms.cursos = cms.cursos || [];
-      cms.cursos.push({ id, faixa: AREA[route.nivel], titulo: item.titulo, descricao: "", capa: "", status: "publicado", ordem: cms.cursos.length, modules: (item.modules || []).map((m, mi) => ({ id: "m" + mi, titulo: m.nome, ordem: mi, aulas: (m.aulas || []).map((a, ai) => ({ id: "a" + ai, titulo: a.titulo, descricao: a.descricao || "", ordem: ai, status: a.status || "publicado", access: a.access || "exclusivo", video: a.video || { provider: "bunny", videoId: "", libraryId: BUNNY_LIB } })) })) });
+      cms.cursos.push({ id, faixa: AREA[route.nivel], titulo: item.titulo, descricao: "", capa: item.capa || "", status: "publicado", ordem: cms.cursos.length, modules: (item.modules || []).map((m, mi) => ({ id: "m" + mi, titulo: m.nome, ordem: mi, aulas: (m.aulas || []).map((a, ai) => ({ id: "a" + ai, titulo: a.titulo, descricao: a.descricao || "", ordem: ai, status: a.status || "publicado", access: a.access || "exclusivo", video: a.video || { provider: "bunny", videoId: "", libraryId: BUNNY_LIB } })) })) });
       index = cms.cursos.length - 1;
     }
     cmsAt = { mode: "curso", index, mod: 0, aula: 0 };
     go({ view: "conteudo" });
   };
+  const editarEste = document.getElementById("editarCurso");
+  if (editarEste) editarEste.onclick = () => editarCurso(route.curso);
+  const apagarEste = document.getElementById("apagarCursoBtn");
+  if (apagarEste) apagarEste.onclick = () => apagarCurso(route.curso);
   const saveVideo = document.getElementById("saveVideo");
   if (saveVideo) saveVideo.onclick = saveLessonVideo;
   const preview = document.getElementById("previewVideo");
@@ -532,13 +547,25 @@ function livros() {
   document.getElementById("app").innerHTML = `
     <p class="crumb"><button data-back="area">${esc(f.nome)}</button> · Livros</p>
     <h1>Livros</h1>
-    <p class="sub">E-books desta faixa. Quem tem o direito abre o arquivo.</p>
+    <p class="sub">${adminOn ? "E-books desta faixa. No card: abrir, editar, colocar a capa ou apagar. Só a sua conta vê esses botões." : "E-books desta faixa. Quem tem o direito abre o arquivo."}</p>
     ${adminOn ? `<div class="row"><button id="criarLivroCard">Criar ebook nesta faixa</button></div>` : ""}
-    <div class="books">${livrosVisiveis().map(nome => `<article class="book"><div class="cover">E-BOOK</div><strong>${esc(nome)}</strong><div class="row"><button data-livro="${esc(nome)}">Abrir livro</button></div></article>`).join("") || "<p class='sub'>Nenhum livro neste nível ainda.</p>"}</div>
+    <div class="books">${livrosVisiveis().map(nome => {
+      const ficha = fichaLivro(nome);
+      const capa = ficha && ficha.capa ? `<img alt="" src="${esc(ficha.capa)}" style="width:100%;height:140px;object-fit:cover;border-radius:12px;margin-bottom:10px">` : `<div class="cover">E-BOOK</div>`;
+      const oculto = ficha && (ficha.status === "oculto" || ficha.status === "rascunho");
+      const atos = adminOn ? `<div class="acts"><button type="button" data-edit-livro="${esc(nome)}">Editar</button><button type="button" data-del-livro="${esc(nome)}">Apagar</button></div>` : "";
+      return `<article class="book">${capa}<strong>${esc(nome)}</strong>${oculto ? `<p class="sub">Oculto para os alunos</p>` : ""}<div class="row"><button data-livro="${esc(nome)}">Abrir livro</button></div>${atos}</article>`;
+    }).join("") || "<p class='sub'>Nenhum livro neste nível ainda.</p>"}</div>
     <p class="note" id="livroNote"></p>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
   const criarLivroCard = document.getElementById("criarLivroCard");
   if (criarLivroCard) criarLivroCard.onclick = () => novoLivroNaFaixa(AREA[route.nivel]);
+  document.querySelectorAll("[data-edit-livro]").forEach(btn => {
+    btn.onclick = () => editarLivro(btn.dataset.editLivro);
+  });
+  document.querySelectorAll("[data-del-livro]").forEach(btn => {
+    btn.onclick = () => apagarLivro(btn.dataset.delLivro);
+  });
   document.querySelectorAll("[data-livro]").forEach(btn => {
     btn.onclick = () => {
       if (!adminOn && !ownsLivro(route.nivel, btn.dataset.livro)) { comprar("livro", btn.dataset.livro); return; }
@@ -592,13 +619,145 @@ function lerMidia(text) {
 }
 function livrosVisiveis() {
   const area = AREA[route.nivel];
-  const nomes = faixa().livros.slice();
+  const nomes = [];
+  faixa().livros.forEach(nome => {
+    const extra = (cms.livros || []).find(item => item.faixa === area && item.titulo === nome);
+    if (extra && (extra.status === "oculto" || extra.status === "rascunho") && !adminOn) return;
+    nomes.push(nome);
+  });
   (cms.livros || []).forEach(item => {
     if (item.faixa !== area || !item.titulo) return;
     if (!adminOn && (item.status === "oculto" || item.status === "rascunho")) return;
     if (!nomes.includes(item.titulo)) nomes.push(item.titulo);
   });
   return nomes;
+}
+function fichaLivro(nome) {
+  const area = AREA[route.nivel];
+  return (cms.livros || []).find(item => item.titulo === nome && item.faixa === area) || null;
+}
+function copiarCursoBase(base, area) {
+  return {
+    id: area + ":" + base.id,
+    faixa: area,
+    titulo: base.titulo,
+    descricao: "",
+    capa: base.capa || "",
+    status: "publicado",
+    ordem: (cms.cursos || []).length,
+    modules: (base.modules || []).map((m, mi) => ({
+      id: "m" + mi,
+      titulo: m.nome || m.titulo || "Módulo",
+      ordem: mi,
+      aulas: (m.aulas || []).map((a, ai) => ({
+        id: "a" + mi + "_" + ai,
+        titulo: a.titulo,
+        descricao: a.descricao || "",
+        ordem: ai,
+        status: a.status || "publicado",
+        access: a.access || "exclusivo",
+        video: a.video && a.video.videoId
+          ? { provider: a.video.provider || "bunny", videoId: a.video.videoId, libraryId: a.video.libraryId || BUNNY_LIB }
+          : { provider: "youtube", videoId: a.ytId && a.ytId !== "COLOQUE_AQUI" ? a.ytId : "", libraryId: "" }
+      }))
+    }))
+  };
+}
+function editarCurso(curto) {
+  if (!adminOn || !curto) return;
+  const area = AREA[route.nivel];
+  cms.cursos = cms.cursos || [];
+  let index = cms.cursos.findIndex(c => c.id === area + ":" + curto);
+  if (index < 0) {
+    const base = (faixa().cursos || []).find(c => c.id === curto);
+    if (!base) return;
+    cms.cursos.push(copiarCursoBase(base, area));
+    index = cms.cursos.length - 1;
+  }
+  cmsAt = { mode: "curso", index, mod: 0, aula: 0 };
+  go({ view: "conteudo" });
+}
+async function apagarCurso(curto) {
+  if (!adminOn || !curto) return;
+  const area = AREA[route.nivel];
+  const id = area + ":" + curto;
+  const catalogo = (faixa().cursos || []).some(c => c.id === curto);
+  const ok = confirm(catalogo ? "Ocultar este curso? Os alunos deixam de ver. Você ainda encontra para reabrir." : "Apagar este curso inteiro? Módulos, aulas e capa saem juntos.");
+  if (!ok) return;
+  cms.cursos = cms.cursos || [];
+  if (catalogo) {
+    let index = cms.cursos.findIndex(c => c.id === id);
+    if (index < 0) {
+      const base = (faixa().cursos || []).find(c => c.id === curto);
+      if (!base) return;
+      cms.cursos.push(copiarCursoBase(base, area));
+      index = cms.cursos.length - 1;
+    }
+    cms.cursos[index].status = "oculto";
+  } else {
+    cms.cursos = cms.cursos.filter(c => c.id !== id);
+  }
+  cmsAt = { mode: "lista", index: 0, mod: 0, aula: 0 };
+  try {
+    await saveCms();
+    go({ view: "cursos" });
+  } catch (e) {
+    alert("Não apagou. Entre com a conta do mentor.");
+  }
+}
+function editarLivro(nome) {
+  if (!adminOn || !nome) return;
+  const area = AREA[route.nivel];
+  cms.livros = cms.livros || [];
+  let index = cms.livros.findIndex(item => item.titulo === nome && item.faixa === area);
+  if (index < 0) {
+    cms.livros.push({ titulo: nome, faixa: area, url: LIVROS_ARQ[nome] || "", capa: "", status: "publicado" });
+    index = cms.livros.length - 1;
+  }
+  cmsAt = { mode: "livro", index, mod: 0, aula: 0 };
+  go({ view: "conteudo" });
+}
+async function apagarLivro(nome) {
+  if (!adminOn || !nome) return;
+  const area = AREA[route.nivel];
+  const catalogo = (faixa().livros || []).includes(nome);
+  const ok = confirm(catalogo ? "Ocultar este ebook? Os alunos deixam de ver." : "Apagar este ebook?");
+  if (!ok) return;
+  cms.livros = cms.livros || [];
+  const index = cms.livros.findIndex(item => item.titulo === nome && item.faixa === area);
+  if (catalogo) {
+    if (index < 0) cms.livros.push({ titulo: nome, faixa: area, url: LIVROS_ARQ[nome] || "", capa: "", status: "oculto" });
+    else cms.livros[index].status = "oculto";
+  } else if (index >= 0) cms.livros.splice(index, 1);
+  cmsAt = { mode: "lista", index: 0, mod: 0, aula: 0 };
+  try {
+    await saveCms();
+    go({ view: "livros" });
+  } catch (e) {
+    alert("Não apagou. Entre com a conta do mentor.");
+  }
+}
+function capaDeArquivo(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const max = 480;
+      let w = img.width;
+      let h = img.height;
+      if (w > max) { h = Math.round(h * max / w); w = max; }
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      const data = canvas.toDataURL("image/jpeg", 0.62);
+      if (data.length > 90000) reject(new Error("grande"));
+      else resolve(data);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("imagem")); };
+    img.src = url;
+  });
 }
 function audiosVisiveis() {
   const area = AREA[route.nivel];
@@ -1020,6 +1179,10 @@ function livroEditor() {
     ${campo("iTitulo", "Nome", item.titulo, "Nome do livro")}
     ${faixaSelect("iFaixa")}
     ${campo("iUrl", "Arquivo, link do PDF", item.url, "https://")}
+    ${campo("iCapa", "Capa, link da imagem", item.capa, "https://")}
+    ${item.capa ? `<img alt="" src="${esc(item.capa)}" style="width:180px;height:100px;object-fit:cover;border-radius:12px;margin-top:12px">` : ""}
+    <label style="display:block;margin-top:12px">Ou escolha a imagem neste aparelho</label>
+    <input id="iCapaFile" type="file" accept="image/*" style="margin-top:8px">
     <label style="display:block;margin-top:12px">Status</label>
     <select id="iStatus" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="rascunho">Rascunho</option><option value="publicado">Publicado</option><option value="oculto">Oculto</option></select>
     <div class="row"><button id="salvarItem">Salvar livro</button><button id="apagarItem" class="ghost">Excluir</button></div>
@@ -1027,10 +1190,22 @@ function livroEditor() {
   document.getElementById("iFaixa").value = item.faixa || "anubis";
   document.getElementById("iStatus").value = item.status || "publicado";
   document.getElementById("voltarCms").onclick = () => { cmsAt.mode = "lista"; draw(); };
+  document.getElementById("iCapaFile").onchange = async () => {
+    const file = document.getElementById("iCapaFile").files[0];
+    const note = document.getElementById("cmsNote");
+    if (!file) return;
+    try {
+      document.getElementById("iCapa").value = await capaDeArquivo(file);
+      if (note) note.textContent = "Capa pronta. Salve o ebook.";
+    } catch (e) {
+      if (note) note.textContent = "Essa imagem ficou grande. Cole um link menor.";
+    }
+  };
   document.getElementById("salvarItem").onclick = async () => {
     item.titulo = document.getElementById("iTitulo").value.trim() || "Sem nome";
     item.faixa = document.getElementById("iFaixa").value;
     item.url = document.getElementById("iUrl").value.trim();
+    item.capa = document.getElementById("iCapa").value.trim();
     item.status = document.getElementById("iStatus").value;
     await gravarCms("Livro salvo.");
   };
@@ -1077,15 +1252,18 @@ function cursoEditor() {
   document.getElementById("app").innerHTML = `
     <p class="crumb"><button id="voltarCms">Gestão de conteúdo</button> · Curso</p>
     <h1>Editar curso</h1>
+    <p class="sub">Corrige o nome, cola a capa, apaga o curso inteiro ou mexe nos módulos. Os alunos só veem quando está publicado.</p>
     ${campo("cTitulo", "Nome", c.titulo, "Curso de Alinhamento")}
     ${campo("cDesc", "Descrição", c.descricao, "Para quem é este curso")}
-    ${campo("cCapa", "Capa, endereço da imagem", c.capa, "https://")}
-    ${c.capa ? `<img alt="" src="${esc(c.capa)}" style="width:180px;height:100px;object-fit:cover;border-radius:12px;margin-top:12px">` : ""}
+    ${campo("cCapa", "Capa, link da imagem", c.capa, "https://")}
+    ${c.capa ? `<img id="cCapaPreview" alt="" src="${esc(c.capa)}" style="width:180px;height:100px;object-fit:cover;border-radius:12px;margin-top:12px">` : `<img id="cCapaPreview" alt="" style="display:none;width:180px;height:100px;object-fit:cover;border-radius:12px;margin-top:12px">`}
+    <label style="display:block;margin-top:12px">Ou escolha a imagem neste aparelho</label>
+    <input id="cCapaFile" type="file" accept="image/*" style="margin-top:8px">
     <label style="display:block;margin-top:12px">Faixa</label>
     <select id="cFaixa" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="anubis">Anúbis</option><option value="horus">Hórus</option><option value="isis">Ísis</option><option value="amon">Rá</option></select>
     <label style="display:block;margin-top:12px">Status</label>
     <select id="cStatus" style="width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);border-radius:12px;padding:12px"><option value="rascunho">Rascunho</option><option value="publicado">Publicado</option><option value="oculto">Oculto</option></select>
-    <div class="row"><button id="salvarCurso">Salvar curso</button><button id="publicarCurso" class="ghost">Publicar para os alunos</button><button id="subirCurso" class="ghost">Subir</button><button id="descerCurso" class="ghost">Descer</button><button id="novoMod" class="ghost">Novo módulo</button></div>
+    <div class="row"><button id="salvarCurso">Salvar curso</button><button id="publicarCurso" class="ghost">Publicar para os alunos</button><button id="apagarCurso" class="ghost">Apagar curso</button><button id="subirCurso" class="ghost">Subir</button><button id="descerCurso" class="ghost">Descer</button><button id="novoMod" class="ghost">Novo módulo</button></div>
     <label style="display:block;margin-top:18px">Links do Bunny, um por linha, na ordem das aulas</label>
     <textarea id="loteBunny" class="lote" placeholder="Cola aqui. Um link por linha.&#10;https://player.mediadelivery.net/play/769429/..."></textarea>
     <div class="row"><button id="aplicarLote">Colocar os vídeos na ordem</button></div>
@@ -1095,6 +1273,20 @@ function cursoEditor() {
   document.getElementById("cFaixa").value = c.faixa || "anubis";
   document.getElementById("cStatus").value = c.status || "rascunho";
   document.getElementById("voltarCms").onclick = () => { cmsAt.mode = "lista"; draw(); };
+  document.getElementById("cCapaFile").onchange = async () => {
+    const file = document.getElementById("cCapaFile").files[0];
+    const note = document.getElementById("cmsNote");
+    if (!file) return;
+    try {
+      const data = await capaDeArquivo(file);
+      document.getElementById("cCapa").value = data;
+      const preview = document.getElementById("cCapaPreview");
+      if (preview) { preview.src = data; preview.style.display = "block"; }
+      if (note) note.textContent = "Capa pronta. Salve o curso.";
+    } catch (e) {
+      if (note) note.textContent = "Essa imagem ficou grande. Cole um link menor.";
+    }
+  };
   document.getElementById("salvarCurso").onclick = async () => {
     c.titulo = document.getElementById("cTitulo").value.trim() || "Sem nome";
     c.descricao = document.getElementById("cDesc").value.trim();
@@ -1115,6 +1307,12 @@ function cursoEditor() {
     const curto = c.id.split(":").slice(1).join(":") || "curso";
     c.id = c.faixa + ":" + curto;
     await gravarCms("Publicado. Quem tem esta faixa vê ao atualizar.");
+  };
+  document.getElementById("apagarCurso").onclick = () => {
+    const curto = String(c.id || "").split(":").slice(1).join(":");
+    const nivel = { anubis: 1, horus: 2, isis: 3, amon: 4 }[c.faixa] || route.nivel;
+    route.nivel = nivel;
+    apagarCurso(curto);
   };
   document.getElementById("aplicarLote").onclick = async () => {
     const n = aplicarLoteNoCurso(c, document.getElementById("loteBunny").value);
