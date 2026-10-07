@@ -80,16 +80,16 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clam
 <main class="wrap">
   <p class="kicker">Engenharia do espelho e do alívio</p>
   <h1>Fala simples. Estrutura densa.</h1>
-  <p class="lead">Quem assiste ouve uma frase e se reconhece. Por baixo, a ordem é sempre a mesma: diagnóstico, espelho, tensão, virada, alívio, chave. O incêndio é o problema de fora. O você é o problema de dentro. Não entrega a saída no segundo três. Não machuca e vai embora. Um gesto só no fim.</p>
+  <p class="lead">Quem assiste reconhece um padrão que atravessa muitas pessoas. Por baixo, a ordem é sempre a mesma: diagnóstico, espelho, tensão, virada, alívio, chave. A fala é uma leitura social: “você” e “eu” entram como vozes representativas, nunca como acusação ou indireta para uma pessoa específica. Não entrega a saída no segundo três. Não machuca e vai embora. Um gesto só no fim.</p>
   <div class="engine">
-    <div><b>0–3s</b><span>Diagnóstico. A pessoa, não o produto.</span></div>
-    <div><b>3–8s</b><span>Espelho. Evidência que ela já viveu.</span></div>
+    <div><b>0–3s</b><span>Diagnóstico. O padrão coletivo, não uma pessoa.</span></div>
+    <div><b>3–8s</b><span>Espelho. Evidência que muita gente já viveu.</span></div>
     <div><b>8–15s</b><span>Tensão. O custo de continuar assim.</span></div>
     <div><b>15–25s</b><span>Virada. A leitura anterior quebra.</span></div>
     <div><b>25–35s</b><span>Alívio. Uma saída, não três aulas.</span></div>
-    <div><b>Chave</b><span>Uma frase. Um gesto. Para.</span></div>
+    <div><b>Chave</b><span>Uma frase. Um gesto. Abre para o público.</span></div>
   </div>
-  <p class="note">No ar, o nome é Yan Klehn. Quem grava os quinze primeiros é Yan Filipe. Os nove últimos são para quem faz a propaganda: ela não finge resultado, não promete faturamento, não diz que fez a mentoria. Os novos briefings mostram situação, público, sentimento e objetivo de cada vídeo. A persuasão deve parecer humana: autoridade por clareza, experiência e limites — nunca por pressão, urgência artificial ou promessa.</p>
+  <p class="note">No ar, o nome é Yan Klehn. Quem grava os quinze primeiros é Yan Filipe. Os nove últimos são para quem faz a propaganda: ela não finge resultado, não promete faturamento, não diz que fez a mentoria. Cada roteiro deve ser entregue como leitura social: fala-se com várias pessoas ao mesmo tempo, usando “você” ou “eu” apenas como ponto de entrada representativo. O conteúdo não é indireta, diagnóstico privado nem recado para uma pessoa. A persuasão deve parecer humana: autoridade por clareza, experiência e limites — nunca por pressão, urgência artificial ou promessa.</p>
   <div class="list" id="list"></div>
 </main>
 <section class="read" id="read" aria-hidden="true">
@@ -343,22 +343,23 @@ function briefFor(s){
   const turn = beat(s,"Virada");
   const relief = beat(s,"Alívio");
   const audience = s.who === "yan"
-    ? "Profissionais experientes que já entregam valor, mas ainda explicam, vendem ou operam sem uma estrutura clara."
-    : "Quem se reconhece na situação apresentada e precisa compreender a mensagem sem receber uma promessa ou uma indireta."
+    ? "Um público de profissionais experientes que já entrega valor, mas ainda explica, vende ou opera sem uma estrutura clara."
+    : "Um público amplo que reconhece esse padrão social e quer compreender a mensagem sem receber uma promessa ou uma indireta."
   return {
     audience,
+    voice: "Leitura social: fale para várias pessoas. Use “você” ou “eu” como voz representativa, sem apontar para um indivíduo, sem indireta e sem tom de cobrança.",
     situation: mirror || diagnosis,
     feeling: "Reconhecimento nos primeiros segundos; depois, clareza, alívio e confiança para olhar a própria situação sem culpa.",
     objective: turn || relief || diagnosis,
     hook: diagnosis || s.title,
     recording: s.place + " Ritmo: " + (s.format.toLowerCase().includes("direto") ? "direto e calmo, com pausas" : "natural, com pausas curtas") + ".",
     objection: "Responder à objeção sem atacar: a solução não é mais exposição ou mais um curso; é clareza, método, limite e aplicação.",
-    integrity: "Deixar claro que é uma leitura geral, não uma indireta pessoal. Não prometer resultado, não criar urgência artificial e não fingir experiência de quem grava."
+    integrity: "Deixar claro que é uma leitura geral para um público, não uma indireta pessoal. Não prometer resultado, não criar urgência artificial e não fingir experiência de quem grava."
   };
 }
 function fullText(s){
   const b = briefFor(s);
-  const lines = [s.title, s.who==="yan" ? "Grava: Yan Filipe" : "Grava: outra pessoa, propaganda", s.place, s.dur+" · "+s.format+" · "+s.day, "Gesto: "+s.gesture, "", "BRIEFING DE GRAVAÇÃO", "Situação: "+b.situation, "Sentimento: "+b.feeling, "Objetivo: "+b.objective, "Público: "+b.audience, "", "TELEPROMPTER"];
+  const lines = [s.title, s.who==="yan" ? "Grava: Yan Filipe" : "Grava: outra pessoa, propaganda", s.place, s.dur+" · "+s.format+" · "+s.day, "Gesto: "+s.gesture, "", "BRIEFING DE GRAVAÇÃO", "Voz da narrativa: "+b.voice, "Situação: "+b.situation, "Sentimento: "+b.feeling, "Objetivo: "+b.objective, "Público: "+b.audience, "", "TELEPROMPTER"];
   s.beats.forEach(b=>{ lines.push(b.t.toUpperCase()); lines.push(b.say); lines.push(""); });
   return lines.join("\n").trim();
 }
@@ -380,6 +381,7 @@ function openScript(s){
   current = s;
   const b = briefFor(s);
   stage.innerHTML = '<section class="producer-brief"><h2>Briefing para quem vai gravar</h2><p class="brief-lead">Leia antes de apertar “Rodar”. O briefing orienta a intenção; ele não entra na fala.</p><div class="brief-grid">'+
+    '<div class="brief-item"><b>Voz da narrativa</b><span>'+b.voice+'</span></div>'+
     '<div class="brief-item"><b>Situação</b><span>'+b.situation+'</span></div>'+
     '<div class="brief-item"><b>Público</b><span>'+b.audience+'</span></div>'+
     '<div class="brief-item"><b>Sentimento</b><span>'+b.feeling+'</span></div>'+
