@@ -1,717 +1,485 @@
-/* TikTok denso + operação. A linha lilás (lesson) e o "na tela" (screen) não são falados. */
-const DENSO = [
-  {
-    kind:"denso", who:"yan", day:"Denso 01", format:"TikTok denso", dur:"110s",
-    title:"O inverno que ninguém lembra",
-    place:"Rosto perto, fundo neutro. Sem sorriso no hook. Você volta no quadro no gancho e no CTA.",
-    gesture:"Comenta: CÓDIGO",
-    eixo:"Códigos de Origem · corpo, mente, campo",
-    caption:"Em 1944–45, o oeste da Holanda passou fome. Décadas depois, o corpo de quem estava na barriga ainda carregava marca.\n\nFato e leitura não são a mesma coisa.\n\nComenta CÓDIGO.",
-    beats:[
-      {t:"Hook", say:"Em 1945, milhares de bebês nasceram carregando um inverno de que nenhum deles se lembra.",
-        lesson:"Back-end: tarja vermelha “O inverno que ninguém lembra”. Olhar direto. Não explica ainda.",
-        screen:"O inverno que ninguém lembra"},
-      {t:"Objeto", say:"Holanda. Inverno de 1944 para 1945. O oeste do país fica sem comida. A ração oficial média fica em torno de seiscentas e setenta calorias por dia. Em abril, chega perto de quinhentas.",
-        lesson:"Fonte: Heijmans e colegas, PNAS, 2008, descrevem a média de 667 kcal. Outras fontes do mesmo evento citam cerca de 500 kcal em abril de 1945. Não arredondar para “cem”.",
-        screen:"B-roll: mapa da Holanda, cartão de racionamento, fila"},
-      {t:"História", say:"Chamaram de Hongerwinter. Inverno da fome. A estimativa mais citada fica em torno de vinte mil mortos. E, no meio disso, mulheres grávidas continuaram gerando.",
-        lesson:"Pausa antes de “gerando”. Vinte mil é a faixa citada, não um número de certidão. Se quiser mais preciso na edição: entre dezoito e vinte e dois mil.",
-        screen:"Hongerwinter · ~20 mil"},
-      {t:"Virada", say:"A guerra acaba. A comida volta. Aqueles bebês crescem. Décadas depois, pesquisadores passam a seguir essa geração.",
-        lesson:"Nome de estudo, se couber na tarja: Dutch Hunger Winter Families. Não precisa falar o inglês.",
-        screen:"Décadas depois"},
-      {t:"Tensão", say:"São dois achados, não um. Quem passou a fome no começo da gestação apareceu, adulto, com mais obesidade e mais doença do coração. E, em 2008, um outro trabalho comparou irmãos. Quem foi concebido durante a fome tinha, sessenta anos depois, um pouco menos de metilação num trecho do gene IGF2. A diferença é de cerca de cinco por cento. É associação. Não é prova de que a marca causou a doença.",
-        lesson:"Fontes: coorte da fome holandesa (Roseboom e outros) para saúde adulta; Heijmans et al., PNAS 2008, para IGF2, exposição periconcepcional, irmãos do mesmo sexo. Não dizer “a epigenética provou o campo”. Transmissão para neto é debatida: não entra.",
-        screen:"2008 · irmãos · IGF2"},
-      {t:"Gancho", say:"A parte que mais me interessa não é o exame.",
-        lesson:"Aproxima o quadro. Convite mudo: manda para quem diz que “é só psicológico”.",
-        screen:"Não é o exame"},
-      {t:"Decodificação", say:"O corpo guardou um ambiente que a mente não viveu. Eu não leio isso como destino. Eu leio como corpo, mente e campo. Tem padrão seu que não nasceu de uma escolha. Nasceu de um inverno que você nem sabe nomear.",
-        lesson:"Aqui começa a leitura do método. Falar “eu leio”. Não falar “a ciência provou”.",
-        screen:"Corpo. Mente. Campo."},
-      {t:"Pergunta", say:"Quantos dos seus “eu sempre fui assim” são um inverno que você não viveu?",
-        lesson:"Pausa. Deixa a pergunta no ar.",
-        screen:"Eu sempre fui assim?"},
-      {t:"CTA", say:"Se você quer olhar o padrão, e não só o sintoma, comenta CÓDIGO.",
-        lesson:"Uma palavra. Sem preço. Sem nome de mentoria.",
-        screen:"Comenta CÓDIGO"}
-    ]
-  },
-  {
-    kind:"denso", who:"yan", day:"Denso 02", format:"TikTok denso", dur:"100s",
-    title:"O mesmo debate, dois vencedores",
-    place:"Rosto perto. Você some no meio e volta na correção da lenda.",
-    gesture:"Comenta: PRESENÇA",
-    eixo:"Tecnologia da Alma · presença",
-    caption:"26 de setembro de 1960. O primeiro debate na televisão. A lenda do rádio é mais fraca do que repetem. A presença, não.\n\nComenta PRESENÇA.",
-    beats:[
-      {t:"Hook", say:"Em 1960, o mesmo debate teve duas leituras. Dependia de onde você estava.",
-        lesson:"Não abrir com “Nixon perdeu no rádio”. Essa frase é a lenda, e a gente corrige ela no meio.",
-        screen:"Dois vencedores"},
-      {t:"Objeto", say:"Vinte e seis de setembro. Chicago. O primeiro debate presidencial transmitido pela televisão nos Estados Unidos. De um lado, Kennedy. Do outro, Nixon.",
-        lesson:"Estúdio da CBS em Chicago. Não precisa do nome da emissora se apertar o tempo.",
-        screen:"26 set 1960 · Chicago"},
-      {t:"História", say:"Nixon tinha saído do hospital. Infecção no joelho. Chegou pálido. Recusou maquiagem. Kennedy tinha tomado sol. Na tela, um parecia vivo. O outro, doente.",
-        lesson:"Fato de bastidor, documentado nas crônicas do debate. B-roll: foto do debate, preto e branco, os dois no púlpito.",
-        screen:"B-roll: o debate, 1960"},
-      {t:"Virada", say:"Quem viu pela televisão saiu achando que Kennedy tinha ganhado. A lenda completa diz outra coisa. Que quem ouviu pelo rádio deu a vitória ao Nixon.",
-        lesson:"Tom de quem vai corrigir, não de quem confirma a lenda.",
-        screen:"Televisão · rádio"},
-      {t:"Tensão", say:"Essa segunda parte é mais fraca do que repetem. O levantamento que sustenta a história do rádio é pequeno, e historiadores discutem ele até hoje. O que ficou firme é o outro lado. Na tela, a presença mudou a leitura do mesmo conteúdo.",
-        lesson:"Não citar Sindlinger como prova. Dizer que o dado é fraco. A autoridade do Akasha aqui é recusar a lenda bonita.",
-        screen:"A lenda é mais fraca"},
-      {t:"Gancho", say:"E é isso que quase ninguém leva para a própria vida.",
-        lesson:"Quadro perto.",
-        screen:"Quase ninguém"},
-      {t:"Decodificação", say:"As palavras eram as mesmas. O campo em volta delas, não. Presença não é carisma de palco. É o que o corpo faz antes da primeira frase. Eu treino isso como tecnologia. Não como dom.",
-        lesson:"Leitura: Tecnologia da Alma. Não vender o curso.",
-        screen:"Antes da primeira frase"},
-      {t:"Pergunta", say:"Se tirassem a sua imagem e deixassem só a sua voz, a sua frase ainda se sustentava?",
-        lesson:"Pergunta prática. Não é ataque.",
-        screen:"Só a voz."},
-      {t:"CTA", say:"Se você quer treinar presença sem teatro, comenta PRESENÇA.",
-        lesson:"Uma palavra.",
-        screen:"Comenta PRESENÇA"}
-    ]
-  },
-  {
-    kind:"denso", who:"yan", day:"Denso 03", format:"TikTok denso", dur:"100s",
-    title:"O nome sobreviveu por causa dela",
-    place:"Rosto perto. Tom seco. Sem trilha emotiva de “gênio incompreendido”.",
-    gesture:"Comenta: LEGADO",
-    eixo:"Arquitetura de Legado",
-    caption:"Van Gogh morreu em 1890. A estrutura que segurou o nome foi construída por Johanna van Gogh-Bonger.\n\nTalento sem casa desaparece.\n\nComenta LEGADO.",
-    beats:[
-      {t:"Hook", say:"O pintor morreu pobre. O nome não. E não foi o talento que segurou o nome.",
-        lesson:"Não falar “gênio”. A história é de estrutura.",
-        screen:"Não foi o talento"},
-      {t:"Objeto", say:"Vincent van Gogh morre em vinte e nove de julho de 1890. A venda de quadro documentada que todo mundo cita, em vida, é uma. A Vinha Vermelha. Quatrocentos francos. Para Anna Boch.",
-        lesson:"Há debate se houve outras vendas pequenas. Por isso: “a venda documentada que todo mundo cita”, não “a única da história”.",
-        screen:"29 jul 1890 · 400 francos"},
-      {t:"História", say:"O irmão, Theo, morre seis meses depois. O que sobra — quadros, desenhos, cartas — vai para a viúva. Johanna van Gogh-Bonger.",
-        lesson:"Theo morre em 25 de janeiro de 1891. B-roll: retrato dela, se a imagem for de domínio público. Se não, capa das cartas.",
-        screen:"Johanna van Gogh-Bonger"},
-      {t:"Virada", say:"Ela não leiloa tudo de uma vez. Organiza. Traduz carta. Empresta com critério. Segura a coleção até o nome existir sem o pintor na sala.",
-        lesson:"Esse é o gesto de arquitetura. Devagar na frase “não leiloa tudo”.",
-        screen:"Não leiloa tudo"},
-      {t:"Tensão", say:"Sem essa casa, o talento vira estoque de família. Com essa casa, vira patrimônio que atravessa século.",
-        lesson:"Não inventar valor de mercado atual. Não precisa.",
-        screen:"Estoque ou patrimônio"},
-      {t:"Gancho", say:"A parte incômoda é que isso não é sobre pintura.",
-        lesson:"Quadro perto.",
-        screen:"Não é sobre pintura"},
-      {t:"Decodificação", say:"Obra sem estrutura desaparece com a pessoa. Eu chamo isso de arquitetura de legado. Não é posteridade. É entrada, guarda e saída. Alguém que não seja você precisa conseguir carregar aquilo.",
-        lesson:"Leitura do método. Uma frase de operação, sem abrir a mentoria.",
-        screen:"Entrada. Guarda. Saída."},
-      {t:"Pergunta", say:"Se você saísse da sala amanhã, o que você construiu ainda teria nome?",
-        lesson:"Pergunta. Sem pressão de compra.",
-        screen:"Ainda teria nome?"},
-      {t:"CTA", say:"Se você quer ver a sua obra como casa, e não como talento solto, comenta LEGADO.",
-        lesson:"Uma palavra.",
-        screen:"Comenta LEGADO"}
-    ]
-  },
-  {
-    kind:"denso", who:"yan", day:"Denso 04", format:"TikTok denso", dur:"105s",
-    title:"Sexta-feira treze não nasceu ali",
-    place:"Rosto perto. Sem estética de terror. Isto é história de poder.",
-    gesture:"Comenta: CARÁTER",
-    eixo:"Paladins · caráter e poder",
-    caption:"13 de outubro de 1307. Filipe IV prende os Templários. A superstição da sexta-feira 13 foi colada nessa data muito depois.\n\nPoder reescreve a história. Caráter é outra coisa.\n\nComenta CARÁTER.",
-    beats:[
-      {t:"Hook", say:"Sexta-feira treze não nasceu de um azar. Nasceu de uma operação. E depois a operação foi mal contada.",
-        lesson:"O hook é verdadeiro na primeira metade e já avisa a correção na segunda. Não afirmar que a superstição medieval começou nesse dia.",
-        screen:"Não foi azar"},
-      {t:"Objeto", say:"Treze de outubro de 1307. Uma sexta-feira. Filipe IV, rei da França, manda prender os Templários ao mesmo tempo. De madrugada.",
-        lesson:"Ordem executada com Guillaume de Nogaret. B-roll: mapa de Paris, selo real, não filme de cavaleiro.",
-        screen:"13 out 1307"},
-      {t:"História", say:"A Ordem era credora da coroa. Tinha terra. Tinha caixa. O rei devia. A prisão resolve o caixa e a narrativa. Vem tortura. Vem confissão. Em 1312 a Ordem é dissolvida. Em 1314, Jacques de Molay é queimado em Paris.",
-        lesson:"Datas firmes: bula e Concílio de Vienne, 1312; execução de Molay, 18 de março de 1314. Não detalhar tortura.",
-        screen:"1312 · 1314"},
-      {t:"Virada", say:"Séculos depois, alguém cola essa sexta-feira no medo popular do número treze. A cola pega. A operação some. Fica o azar.",
-        lesson:"A ligação Templários–sexta-feira 13 é popularização moderna, não registro medieval. Dizer “séculos depois”.",
-        screen:"A cola pega"},
-      {t:"Tensão", say:"É assim que poder sem caráter trabalha. Não só toma. Reescreve o calendário, até a violência virar superstição.",
-        lesson:"Aqui é leitura, já anunciada pelo gancho histórico. Tom seco.",
-        screen:"Reescreve o calendário"},
-      {t:"Gancho", say:"E o detalhe que muda a história é este.",
-        lesson:"Pausa.",
-        screen:"O detalhe"},
-      {t:"Decodificação", say:"Poder não cria caráter. Amplifica o que já estava lá. Num rei, vira prisão em massa. Numa pessoa comum, vira atalho quando ninguém está olhando. Paladino, no jeito que eu uso a palavra, é o oposto do atalho.",
-        lesson:"Não abrir Franz Bardon neste corte. Um conceito só.",
-        screen:"Poder amplifica"},
-      {t:"Pergunta", say:"Quando ninguém registra, você ainda faz o que faria em público?",
-        lesson:"A pergunta é o teste de caráter. Sem moralismo.",
-        screen:"Quando ninguém registra"},
-      {t:"CTA", say:"Se você quer estudar caráter como prática, e não como discurso, comenta CARÁTER.",
-        lesson:"Uma palavra.",
-        screen:"Comenta CARÁTER"}
-    ]
-  },
-  {
-    kind:"denso", who:"yan", day:"Denso 05", format:"TikTok denso", dur:"95s",
-    title:"O número da loteria que não existe",
-    place:"Rosto perto. Você desmente o número antes de contar o estudo.",
-    gesture:"Comenta: VETOR",
-    eixo:"Alinhamento Financeiro",
-    caption:"“Setenta por cento dos ganhadores quebram.” Esse número circula sem estudo.\n\nO estudo que existe é menor, e diz outra coisa.\n\nComenta VETOR.",
-    beats:[
-      {t:"Hook", say:"Setenta por cento dos ganhadores de loteria quebram. Esse número não tem estudo embaixo.",
-        lesson:"Desmentir primeiro. A autoridade começa na recusa. Não repetir 70% como fato em nenhum quadro.",
-        screen:"Esse número não existe"},
-      {t:"Objeto", say:"Ele circula há anos, atribuído a uma fundação de educação financeira. A fundação não publicou essa pesquisa. O dado é lenda com cara de planilha.",
-        lesson:"NEFE é a instituição citada na lenda. Não alongar o nome se a fala apertar: “uma fundação americana”.",
-        screen:"Lenda com cara de planilha"},
-      {t:"História", say:"O estudo que existe é outro. 1978. Brickman, Coates e Janoff-Bulman. Vinte e dois ganhadores de loteria, comparados com gente que não ganhou.",
-        lesson:"Journal of Personality and Social Psychology, 1978. Amostra pequena: falar o vinte e dois.",
-        screen:"1978 · 22 ganhadores"},
-      {t:"Virada", say:"Os ganhadores não ficaram mais felizes do que o grupo de controle. E passaram a sentir menos prazer nas coisas comuns. O prêmio chegou. O cotidiano, não.",
-        lesson:"Não dizer que “quebraram”. O achado é adaptação e prazer cotidiano, não falência.",
-        screen:"O prêmio chegou. O cotidiano, não."},
-      {t:"Tensão", say:"Vinte e dois casos não explicam um país. Explicam um mecanismo. Dinheiro novo entra numa relação antiga com a falta. A falta não se aposenta porque o saldo mudou.",
-        lesson:"Limite do n pequeno, falado. Isso protege o vídeo.",
-        screen:"Vinte e dois não são um país"},
-      {t:"Gancho", say:"É por isso que eu não começo alinhamento pelo extrato.",
-        lesson:"Primeira pessoa. Sem oferecer sessão.",
-        screen:"Não começa pelo extrato"},
-      {t:"Decodificação", say:"Extrato mostra o rastro. Não mostra o vetor. Corpo, decisão e campo em volta do dinheiro continuam operando a mesma peça. Mudar o saldo sem mudar a peça é trocar o cenário e deixar o personagem.",
-        lesson:"Leitura de Alinhamento Financeiro. Não listar os sete vetores aqui. Um princípio.",
-        screen:"O saldo não é a peça"},
-      {t:"Pergunta", say:"Se o seu saldo dobrasse amanhã, qual decisão sua continuaria exatamente igual?",
-        lesson:"Pergunta de diagnóstico. A pessoa se vê.",
-        screen:"O que não mudaria?"},
-      {t:"CTA", say:"Se você quer olhar a peça, e não só o saldo, comenta VETOR.",
-        lesson:"Uma palavra.",
-        screen:"Comenta VETOR"}
-    ]
-  },
-  {
-    kind:"denso", who:"yan", day:"Denso 06", format:"TikTok denso", dur:"90s",
-    title:"A web foi um memorando",
-    place:"Rosto perto. Sem tomada de código na tela. A história é o papel.",
-    gesture:"Comenta: SISTEMA",
-    eixo:"Tech Hub · Império Digital",
-    caption:"Março de 1989. Tim Berners-Lee entrega um memorando no CERN. O chefe escreve na capa: vago, mas empolgante.\n\nSistema nasce de uma frase, não de um aplicativo.\n\nComenta SISTEMA.",
-    beats:[
-      {t:"Hook", say:"A web não nasceu num aplicativo. Nasceu numa margem de papel, com quatro palavras de um chefe.",
-        lesson:"As quatro palavras entram já no objeto, para o hook não entregar tudo.",
-        screen:"Quatro palavras"},
-      {t:"Objeto", say:"Março de 1989. CERN, na Suíça. Tim Berners-Lee entrega um memorando. O título é proposta de gestão da informação. O chefe, Mike Sendall, escreve na capa: vago, mas empolgante.",
-        lesson:"“Information Management: A Proposal”. “Vague but exciting”. Falar em português.",
-        screen:"Março 1989 · CERN"},
-      {t:"História", say:"O problema dele não era ficar famoso. Era achar um documento, escrito por outra pessoa, em outro prédio, sem pedir favor. Cientista perdia tempo caçando papel.",
-        lesson:"B-roll: corredor de laboratório, papel, não stock de hacker com capuz.",
-        screen:"Achar o documento"},
-      {t:"Virada", say:"A proposta podia ter morrido na gaveta. Não morreu porque virou sistema. Endereço, ligação, página. Uma coisa que outro conseguia usar sem o autor do lado.",
-        lesson:"Não fazer aula de HTML.",
-        screen:"Sem o autor do lado"},
-      {t:"Tensão", say:"A maior parte de quem “está no digital” faz o contrário. Publica peça. Não constrói a casa onde a peça mora. Aí o alcance sobe e o patrimônio continua zero.",
-        lesson:"Ligação com Império Digital / legado. Sem atacar profissão.",
-        screen:"Peça não é casa"},
-      {t:"Gancho", say:"Vago, mas empolgante, não é elogio. É prazo.",
-        lesson:"Frase de corte. Pode voltar como texto final.",
-        screen:"É prazo"},
-      {t:"Decodificação", say:"Ideia sem sistema é humor interno. Sistema é o que outra pessoa opera na segunda-feira. Eu leio código assim. Não como dom de programador. Como arquitetura.",
-        lesson:"Tech Hub em linguagem de doze anos, sem lista de linguagens.",
-        screen:"Outra pessoa. Segunda-feira."},
-      {t:"Pergunta", say:"O que você sabe fazer hoje ainda precisa de você na sala para existir?",
-        lesson:"Pergunta.",
-        screen:"Precisa de você na sala?"},
-      {t:"CTA", say:"Se você quer ver o digital como sistema, e não como poste, comenta SISTEMA.",
-        lesson:"Uma palavra.",
-        screen:"Comenta SISTEMA"}
-    ]
-  }
-];
-
-const OPS = [
-  {
-    kind:"ops", who:"yan", day:"Op 01", format:"Operação", dur:"55s",
-    title:"Três portas antes do dinheiro",
-    place:"Rosto perto. Um dedo por item. Sem gráfico.",
-    gesture:"Comenta: PORTA",
-    eixo:"Códigos de Origem",
-    caption:"Antes de decidir dinheiro, três portas. Corpo. Mente. Campo.\n\nSe uma estiver torta, o sim sai cedo.\n\nComenta PORTA.",
-    beats:[
-      {t:"Corte", say:"Antes de dizer sim para dinheiro, eu passo por três portas. Se uma estiver torta, o sim é cedo.",
-        lesson:"Não é os sete vetores. É o tripé do livro. Não abrir os vetores.",
-        screen:"Três portas"},
-      {t:"1", say:"Corpo. Dormiu. Comeu. Está decidindo no cansaço ou na pressa. Decisão financeira em corpo cansado é outra pessoa falando.",
-        lesson:"Gesto 1 na tela.",
-        screen:"1 · Corpo"},
-      {t:"2", say:"Mente. Qual frase está mandando. “Eu mereço.” “Eu sempre perco.” “Todo mundo tem.” A frase não é detalhe. É o operador.",
-        lesson:"Uma frase, não terapia.",
-        screen:"2 · Mente"},
-      {t:"3", say:"Campo. Com quem você está decidindo. O ambiente empurra gasto, prova e comparação. Se o campo estiver gritando, sai da sala e decide de novo.",
-        lesson:"Campo aqui é ambiente e relação, não entidade.",
-        screen:"3 · Campo"},
-      {t:"Chave", say:"Três portas. Uma torta, o sim espera. Comenta PORTA se você for fazer isso na próxima decisão.",
-        lesson:"CTA de uma palavra.",
-        screen:"Comenta PORTA"}
-    ]
-  },
-  {
-    kind:"ops", who:"yan", day:"Op 02", format:"Operação", dur:"50s",
-    title:"A frase que outra pessoa repete",
-    place:"Rosto perto. Você fala a estrutura devagar, uma vez.",
-    gesture:"Comenta a sua frase em três linhas",
-    eixo:"Arquitetura de Legado · identidade",
-    caption:"Quem você ajuda. Qual problema. Por qual caminho.\n\nSe a outra pessoa não consegue repetir, a frase ainda é sua.",
-    beats:[
-      {t:"Corte", say:"Se alguém te apresenta e inventa você, a frase ainda não existe. Ela tem três linhas. Só três.",
-        lesson:"Operação já usada na vitrine. Aqui é a versão lista, para quem não viu o reel.",
-        screen:"Três linhas"},
-      {t:"1", say:"Quem você ajuda. Gente concreta. Não “pessoas que querem evoluir”.",
-        lesson:"Cortar abstrato.",
-        screen:"1 · Quem"},
-      {t:"2", say:"Qual problema acaba, ou diminui, quando entram com você. Um problema. Não o catálogo.",
-        lesson:"Um problema.",
-        screen:"2 · Problema"},
-      {t:"3", say:"Por qual caminho. O nome do processo, não o seu diploma.",
-        lesson:"Caminho, não cargo.",
-        screen:"3 · Caminho"},
-      {t:"Chave", say:"Manda as três linhas para uma pessoa hoje. Se ela travar ao repetir, a frase ainda está grande.",
-        lesson:"O teste é a repetição por outro. Sem link.",
-        screen:"Manda as três linhas"}
-    ]
-  },
-  {
-    kind:"ops", who:"yan", day:"Op 03", format:"Operação", dur:"50s",
-    title:"Uma etapa. Não o ano inteiro.",
-    place:"Rosto perto. Pode ter papel na mão. Não mostra nome de cliente.",
-    gesture:"Comenta: ETAPA",
-    eixo:"Arquitetura de Legado · operação",
-    caption:"Uma etapa que hoje só existe na sua cabeça.\n\nEntrada. O que acontece. Saída.\n\nComenta ETAPA.",
-    beats:[
-      {t:"Corte", say:"Não escreve o negócio inteiro. Escreve a etapa que, se você sai, a segunda-feira para.",
-        lesson:"Uma. A que se repete.",
-        screen:"A que a segunda para"},
-      {t:"1", say:"Entrada. O que chega. De quem. Em que forma. Se não tem entrada, não é etapa. É favor.",
-        lesson:"Entrada visível.",
-        screen:"1 · Entrada"},
-      {t:"2", say:"O que acontece no meio. Três verbos. Não um discurso.",
-        lesson:"Três verbos.",
-        screen:"2 · Três verbos"},
-      {t:"3", say:"Saída. O que a outra pessoa recebe, e como sabe que acabou.",
-        lesson:"Critério de acabou.",
-        screen:"3 · Saída"},
-      {t:"Chave", say:"Uma etapa hoje. O resto espera. Comenta ETAPA quando escrever a entrada e a saída.",
-        lesson:"Não pedir o processo todo.",
-        screen:"Comenta ETAPA"}
-    ]
-  },
-  {
-    kind:"ops", who:"yan", day:"Op 04", format:"Operação", dur:"50s",
-    title:"Antes da primeira frase",
-    place:"Rosto perto. Você faz cada gesto uma vez, devagar, sem aula de palco.",
-    gesture:"Comenta: ANTES",
-    eixo:"Tecnologia da Alma",
-    caption:"Pé. Ar. Olho. Primeira frase.\n\nPresença é o que acontece antes de você falar.\n\nComenta ANTES.",
-    beats:[
-      {t:"Corte", say:"Presença não começa na frase. Começa no que o corpo faz nos três segundos anteriores.",
-        lesson:"Quatro gestos. Não é curso de oratória.",
-        screen:"Três segundos antes"},
-      {t:"1", say:"Pé. Os dois no chão. Se um está fugindo, a voz foge junto.",
-        lesson:"Demonstra. Não explica anatomia.",
-        screen:"1 · Pé"},
-      {t:"2", say:"Ar. Uma saída mais longa do que a entrada. Sem teatro.",
-        lesson:"Uma respiração, visível.",
-        screen:"2 · Ar"},
-      {t:"3", say:"Olho. Escolhe um ponto. Não varre a sala procurando licença.",
-        lesson:"Um ponto.",
-        screen:"3 · Olho"},
-      {t:"4", say:"Aí a primeira frase. Curta. Sem oi, sem pedido de desculpa, sem “então”.",
-        lesson:"A frase é consequência.",
-        screen:"4 · A frase"},
-      {t:"Chave", say:"Pé, ar, olho, frase. Faz uma vez hoje, antes de uma conversa que importa. Comenta ANTES.",
-        lesson:"Uma palavra.",
-        screen:"Comenta ANTES"}
-    ]
-  },
-  {
-    kind:"ops", who:"yan", day:"Op 05", format:"Operação", dur:"45s",
-    title:"A pergunta de quando ninguém vê",
-    place:"Rosto perto. Sem cruz, sem símbolo, sem trilha solene.",
-    gesture:"Comenta: OLHO",
-    eixo:"Paladins",
-    caption:"Antes de fechar qualquer coisa: eu faria isso se ninguém fosse saber?\n\nNão é moralismo. É teste de caráter.\n\nComenta OLHO.",
-    beats:[
-      {t:"Corte", say:"Antes de eu fechar qualquer coisa, tem uma pergunta. Uma. Não é sobre ética de slide.",
-        lesson:"Caráter como operação, não como sermão.",
-        screen:"Uma pergunta"},
-      {t:"1", say:"Eu venderia isto se ninguém fosse saber que fui eu?",
-        lesson:"Pausa depois da pergunta.",
-        screen:"Se ninguém fosse saber"},
-      {t:"2", say:"Se a resposta demora, o fechamento está cedo. Não é objeção do cliente. É objeção sua, e ela está certa.",
-        lesson:"Não ensinar script de venda.",
-        screen:"Está cedo"},
-      {t:"3", say:"Caráter, do jeito que eu uso, não é discurso. É a decisão que permanece quando o aplauso sai da sala.",
-        lesson:"Definição curta. Sem Franz Bardon neste corte.",
-        screen:"Quando o aplauso sai"},
-      {t:"Chave", say:"Usa a pergunta uma vez esta semana, numa coisa pequena. Comenta OLHO.",
-        lesson:"Uma palavra.",
-        screen:"Comenta OLHO"}
-    ]
-  }
-];
-
-function slot(base, extra){
-  return {
-    kind: extra.kind,
-    who: "yan",
-    eixo: extra.eixo || base.eixo,
-    title: extra.title || base.title,
-    place: extra.place,
-    dur: extra.dur,
-    format: extra.format,
-    day: extra.day || "",
-    gesture: extra.gesture,
-    caption: extra.caption,
-    beats: extra.beats
-  };
-}
-function slotCard(s, num, klass, when){
-  const el = document.createElement("button");
-  el.type = "button";
-  el.className = "card " + klass;
-  el.dataset.who = "yan";
-  el.innerHTML = '<div class="num">'+num+'</div><div><div class="tag">'+esc(when)+'</div><h2>'+esc(s.title)+'</h2><div class="meta"><strong>'+esc(s.eixo||"")+'</strong><br>'+esc(s.place)+'<br>'+esc(s.dur)+' · '+esc(s.gesture)+'</div></div><div class="open meta">Abrir</div>';
-  el.onclick = ()=>openScript(s);
-  return el;
-}
-
-const DAY = [
-  {
-    ig: {
-      title: "O inverno que ninguém lembra",
-      place: "Rosto perto. Sem sorriso. Texto no primeiro quadro.",
-      dur: "35s", format: "Instagram", gesture: "Comenta: CÓDIGO",
-      caption: "1945. Bebês nasceram carregando um inverno que não lembram.\n\nA marca existe. O destino, não.\n\nComenta CÓDIGO.",
+/* 01.4 documental e 01.5 prático. Não substituem o reel, o íntimo nem o TikTok curto.
+   A linha lilás (lesson), o "na tela" (screen) e a imagem (roll) não são falados. */
+const CASA = "Em casa. Sentado, rosto perto, fundo quieto, luz da janela de lado. Sem estúdio. Se variar, a varanda, ainda em casa.";
+const EXTRA = {
+  "A palavra que sobra é a profissão": {
+    doc: {
+      title: "O nome sobreviveu fora do cargo",
+      dur: "95s",
+      gesture: "Comenta: CASA",
+      caption: "Van Gogh morre em 1890. O cargo não segurou o nome. Quem organizou a casa foi Johanna.\n\nComenta CASA.",
       beats: [
-        {t:"Corte", say:"Em 1945, milhares de bebês nasceram carregando um inverno de que nenhum deles se lembra.", screen:"O inverno que ninguém lembra"},
-        {t:"Fato", say:"Holanda. A comida foi cortada. A ração média ficou em torno de seiscentas e setenta calorias. Em abril, perto de quinhentas.", screen:"1944–45 · Holanda"},
-        {t:"Marca", say:"Em 2008, um estudo comparou irmãos. Quem foi concebido na fome tinha, sessenta anos depois, uma marca pequena num gene. Cerca de cinco por cento. É associação. Não é destino.", screen:"2008 · ~5%"},
-        {t:"Leitura", say:"Eu não leio isso como sentença. Eu leio como corpo, mente e campo. Tem padrão seu que não nasceu de uma escolha.", screen:"Corpo. Mente. Campo."},
-        {t:"CTA", say:"Se você quer olhar o padrão, e não só o sintoma, comenta CÓDIGO.", screen:"Comenta CÓDIGO"}
+        {t:"Gancho", say:"O nome de Van Gogh não ficou de pé por causa do cargo. Ficou porque alguém organizou a casa.", lesson:"Não abrir com a frase de três partes. Esse vídeo é outra história.", screen:"Não foi o cargo"},
+        {t:"Fato", say:"Vinte e nove de julho de 1890. Vincent morre. O irmão, Theo, morre no janeiro seguinte. Quem fica com os quadros e com as cartas é Johanna van Gogh-Bonger.", lesson:"Theo morre em 25 de janeiro de 1891. Não romantizar.", screen:"1890", roll:"Tela cheia: retrato de Vincent, depois uma carta manuscrita. Wikimedia Commons: Vincent van Gogh self-portrait e Letter by Vincent van Gogh. Sem filme biográfico."},
+        {t:"O que ela fez", say:"Ela não inventou o pintor. Ela publicou as cartas, emprestou os quadros, fez a exposição. Tirou o trabalho de dentro de uma família e pôs num lugar que outro conseguia ver.", lesson:"A edição mais citada das cartas é de 1914. As exposições começam antes. Não dizer que ela foi a única pessoa do mundo.", screen:"Cartas. Exposição.", roll:"Tela cheia: capa de catálogo ou sala de museu antiga. Wikimedia: Johanna van Gogh-Bonger. Se não achar foto boa, fica na carta. Não usar cena de filme."},
+        {t:"Virada", say:"O cargo dele, enquanto vivo, não convencia quase ninguém. O que viajou foi a estrutura em volta do trabalho.", lesson:"Pausa. Rosto de volta aqui.", screen:"O cargo não viajou"},
+        {t:"Leitura", say:"Eu leio isso assim. Experiência sem casa fica história de família. A casa é o que outra pessoa encontra quando você não está na sala.", lesson:"Leitura. Não é a ciência provando legado.", screen:"Quando você não está"},
+        {t:"Pergunta", say:"O que você faz hoje ainda só existe se você estiver explicando?", screen:"Só se você explicar?"},
+        {t:"CTA", say:"Se você quer olhar a casa do nome, e não o cargo, comenta CASA.", screen:"Comenta CASA"}
       ]
     },
-    story: {
-      place: "Rosto perto. Uma pausa por bloco. Sem pressa de vender.",
-      dur: "50s", gesture: "Comenta: CÓDIGO",
-      caption: "O fato é a fome. A leitura é o método. Os dois não são a mesma frase.\n\nComenta CÓDIGO.",
+    prac: {
+      title: "Apaga o cargo",
+      dur: "45s",
+      gesture: "Comenta: SOBROU",
+      caption: "Grava vinte segundos dizendo o que você faz. Apaga todo cargo. O que sobrou é o material.\n\nComenta SOBROU.",
       beats: [
-        {t:"O que é", say:"Esse corte se chama o inverno que ninguém lembra. De manhã é a vitrine. Aqui é a engenharia.", screen:"A engenharia"},
-        {t:"Fato", say:"Hongerwinter. Oeste da Holanda, 1944 para 1945. A estimativa mais citada fica em torno de vinte mil mortos. Não é um número de certidão.", screen:"~20 mil"},
-        {t:"O estudo", say:"Em 2008, pesquisadores compararam irmãos. Quem foi concebido durante a fome tinha um pouco menos de metilação num trecho do gene IGF2. Cerca de cinco por cento. Isso não prova que a marca causou a doença.", screen:"Irmãos · IGF2"},
-        {t:"A leitura", say:"A leitura começa agora, e ela é minha. O corpo pode guardar um ambiente que a mente não viveu. Isso não é a ciência provando o campo.", screen:"Eu leio assim"},
-        {t:"Convite", say:"Se você quer olhar o padrão, comenta CÓDIGO. A conversa é sobre o padrão. Não sobre o exame.", screen:"Comenta CÓDIGO"}
-      ]
-    },
-    tik: {
-      place: "Rosto perto. Sem oi. Uma tomada.",
-      dur: "20s", gesture: "Comenta: CÓDIGO",
-      caption: "O corpo guardou o que a mente não viveu.\n\nComenta CÓDIGO.",
-      beats: [
-        {t:"Corte", say:"Em 1945, bebês nasceram carregando um inverno que não lembram.", screen:"Um inverno que não lembram"},
-        {t:"Fato", say:"Holanda. Fome. Décadas depois, uma marca no DNA. Pequena. Real.", screen:"Marca pequena. Real."},
-        {t:"CTA", say:"O corpo guardou o que a mente não viveu. Comenta CÓDIGO.", screen:"Comenta CÓDIGO"}
-      ]
-    },
-    op: {
-      title: "Nomeia o inverno",
-      place: "Rosto perto. Sem trilha. Um dedo por item.",
-      dur: "45s", gesture: "Comenta: INVERNO",
-      eixo: "Códigos de Origem",
-      caption: "Um “eu sempre fui assim”.\n\nSe você não acha o ano, o padrão pode ser mais velho do que você.\n\nComenta INVERNO.",
-      beats: [
-        {t:"Corte", say:"Pega um “eu sempre fui assim”. Um só.", screen:"Um só"},
-        {t:"1", say:"Escreve quando isso começou. Se você não acha o ano, o padrão pode ser mais velho do que você.", screen:"1 · O ano"},
-        {t:"2", say:"Não interpreta. Nomeia. Corpo, mente ou campo. Um dos três está repetindo.", screen:"2 · Um dos três"},
-        {t:"3", say:"Se for campo, olha a casa, não a culpa. Quem estava em volta quando isso virou normal.", screen:"3 · A casa"},
-        {t:"Chave", say:"Um nome. Um inverno. Comenta INVERNO quando escrever.", screen:"Comenta INVERNO"}
+        {t:"Corte", say:"Não escreve a frase bonita. Primeiro apaga o cargo.", screen:"Apaga o cargo"},
+        {t:"1", say:"Grava vinte segundos, aqui em casa, dizendo o que você faz. Sem ensaio.", screen:"1 · Vinte segundos"},
+        {t:"2", say:"Assiste. Corta toda palavra que for profissão, diploma ou anos de estrada.", screen:"2 · Corta"},
+        {t:"3", say:"O que sobrou, mesmo torto, é o material. Se não sobrou nada, o vídeo de hoje era só o cargo.", screen:"3 · O que sobrou"},
+        {t:"Chave", say:"Faz uma vez. Comenta SOBROU com a primeira palavra que restou.", screen:"Comenta SOBROU"}
       ]
     }
   },
-  {
-    ig: {
+  "Alguém te apresenta e inventa você": {
+    doc: {
       title: "O mesmo debate, dois vencedores",
-      place: "Rosto perto. Sem sorriso no corte.",
-      dur: "35s", format: "Instagram", gesture: "Comenta: PRESENÇA",
-      caption: "26 de setembro de 1960. O mesmo debate. Duas leituras.\n\nA lenda do rádio é mais fraca do que repetem.\n\nComenta PRESENÇA.",
+      dur: "90s",
+      gesture: "Comenta: MEIO",
+      caption: "26 de setembro de 1960. O mesmo debate. A tela mudou a leitura. A lenda do rádio é mais fraca do que repetem.\n\nComenta MEIO.",
       beats: [
-        {t:"Corte", say:"Em 1960, o mesmo debate teve duas leituras. Dependia de onde você estava.", screen:"Dois vencedores"},
-        {t:"Fato", say:"Vinte e seis de setembro. Chicago. Kennedy e Nixon. Nixon tinha saído do hospital. Chegou pálido. Recusou maquiagem. Kennedy tinha tomado sol.", screen:"26 set 1960"},
-        {t:"Correção", say:"A lenda de que o rádio deu a vitória ao Nixon é mais fraca do que repetem. O dado é pequeno. O que ficou firme é a tela. A presença mudou a leitura do mesmo conteúdo.", screen:"A lenda é mais fraca"},
-        {t:"Leitura", say:"Presença não é dom. É o que o corpo faz antes da primeira frase. Eu treino isso. Não herdo.", screen:"Antes da frase"},
-        {t:"CTA", say:"Se você quer treinar presença sem teatro, comenta PRESENÇA.", screen:"Comenta PRESENÇA"}
+        {t:"Gancho", say:"Em 1960, o mesmo debate teve dois vencedores. Dependia de quem fazia a ponte.", lesson:"Não começar pela lenda do rádio.", screen:"Dois vencedores"},
+        {t:"Fato", say:"Vinte e seis de setembro. Chicago. Kennedy e Nixon. Nixon tinha saído do hospital. Chegou pálido. Recusou maquiagem. Kennedy tinha tomado sol.", screen:"26 set 1960", roll:"Tela cheia: foto do debate, os dois no púlpito, preto e branco. Wikimedia Commons: Kennedy Nixon debate 1960. É arquivo de imprensa, domínio público nos Estados Unidos."},
+        {t:"A lenda", say:"Quem viu na televisão saiu achando que Kennedy tinha ganhado. A frase pronta diz que o rádio deu a vitória ao Nixon. Essa segunda parte é fraca. O levantamento é pequeno. Historiadores discutem até hoje.", lesson:"Não citar Sindlinger como prova. A autoridade é recusar a lenda.", screen:"A lenda é fraca"},
+        {t:"Virada", say:"O que ficou firme é isto. O conteúdo era o mesmo. O meio que entregou o conteúdo mudou a leitura.", screen:"O meio mudou a leitura"},
+        {t:"Leitura", say:"Quem te apresenta é um meio. Se a pessoa só tem o seu cargo, ela entrega outro candidato. Eu não chamo isso de marketing. Chamo de tradução.", screen:"Quem te apresenta é o meio"},
+        {t:"Pergunta", say:"Se tirassem você da sala, a frase que sobra ainda era a sua?", screen:"A frase ainda era a sua?"},
+        {t:"CTA", say:"Comenta MEIO se você for olhar quem está te traduzindo.", screen:"Comenta MEIO"}
       ]
     },
-    story: {
-      place: "Rosto perto. Tom de quem corrige, não de quem confirma a lenda.",
-      dur: "45s", gesture: "Comenta: PRESENÇA",
-      caption: "Não repete a lenda do rádio. O que sustenta é a tela.\n\nComenta PRESENÇA.",
+    prac: {
+      title: "A frase que ela não achou",
+      dur: "42s",
+      gesture: "Comenta a palavra que faltou",
+      caption: "Pede um áudio de uma frase. Não corrige. Marca a palavra que a pessoa não achou.\n\nNão manda o reel. Ainda não.",
       beats: [
-        {t:"O que é", say:"O reel da manhã fala de dois vencedores. Aqui está o que não cabe no corte.", screen:"O que não cabe"},
-        {t:"Fato", say:"Primeiro debate presidencial na televisão americana. Chicago. Nixon pálido, sem maquiagem. Kennedy com sol na pele. Quem viu na tela saiu achando que Kennedy tinha ganhado.", screen:"Na tela, Kennedy"},
-        {t:"A lenda", say:"A frase pronta é que o rádio deu a vitória ao Nixon. Essa parte é discutida até hoje. O levantamento é fraco. Eu não uso lenda como prova.", screen:"Não usa a lenda"},
-        {t:"A leitura", say:"O conteúdo era o mesmo. O campo em volta, não. Presença é anterior à frase. Isso é tecnologia da alma, não truque de palco.", screen:"Antes da frase"},
-        {t:"Convite", say:"Comenta PRESENÇA se você quiser treinar o que acontece antes de falar.", screen:"Comenta PRESENÇA"}
-      ]
-    },
-    tik: {
-      place: "Rosto perto. Sem oi.",
-      dur: "18s", gesture: "Comenta: PRESENÇA",
-      caption: "Mesmo debate. A tela mudou a leitura.\n\nComenta PRESENÇA.",
-      beats: [
-        {t:"Corte", say:"O mesmo debate. Dois vencedores. Dependia de onde você estava.", screen:"Dois vencedores"},
-        {t:"Correção", say:"A lenda do rádio é fraca. A tela, não.", screen:"A tela, não"},
-        {t:"CTA", say:"Presença muda o mesmo conteúdo. Comenta PRESENÇA.", screen:"Comenta PRESENÇA"}
-      ]
-    },
-    op: {
-      title: "Antes da primeira frase",
-      eixo: "Tecnologia da Alma",
-      place: "Rosto perto. Cada gesto uma vez, devagar.",
-      dur: "50s", gesture: "Comenta: ANTES",
-      caption: "Pé. Ar. Olho. Primeira frase.\n\nComenta ANTES.",
-      beats: [
-        {t:"Corte", say:"Presença não começa na frase. Começa nos três segundos anteriores.", screen:"Três segundos antes"},
-        {t:"1", say:"Pé. Os dois no chão. Se um está fugindo, a voz foge junto.", screen:"1 · Pé"},
-        {t:"2", say:"Ar. Uma saída mais longa do que a entrada. Sem teatro.", screen:"2 · Ar"},
-        {t:"3", say:"Olho. Um ponto. Não varre a sala procurando licença.", screen:"3 · Olho"},
-        {t:"4", say:"Aí a primeira frase. Curta. Sem oi, sem desculpa, sem “então”.", screen:"4 · A frase"},
-        {t:"Chave", say:"Pé, ar, olho, frase. Uma vez hoje, antes de uma conversa que importa. Comenta ANTES.", screen:"Comenta ANTES"}
+        {t:"Corte", say:"Não manda vídeo nenhum hoje. Pede um áudio.", screen:"Um áudio"},
+        {t:"1", say:"Uma pessoa que te apresentaria esta semana. Um áudio de uma frase. Só uma.", screen:"1 · Uma frase"},
+        {t:"2", say:"Você não corrige. Anota a palavra que ela não achou. Cargo não conta.", screen:"2 · A palavra que faltou"},
+        {t:"3", say:"Essa palavra é o buraco. O reel pede para mandar o vídeo. Aqui você ainda não manda. Você olha o buraco.", screen:"3 · Ainda não manda"},
+        {t:"Chave", say:"Comenta essa palavra. A que ela não achou.", screen:"A palavra"}
       ]
     }
   },
-  {
-    ig: {
-      title: "O nome sobreviveu por causa dela",
-      place: "Rosto perto. Tom seco. Sem trilha de gênio.",
-      dur: "35s", format: "Instagram", gesture: "Comenta: LEGADO",
-      caption: "Van Gogh morre em 1890. O nome não morre com ele.\n\nQuem segurou a casa foi Johanna.\n\nComenta LEGADO.",
+  "Quando você sai, o negócio senta": {
+    doc: {
+      title: "O hambúrguer já existia",
+      dur: "85s",
+      gesture: "Comenta: ETAPA",
+      caption: "1954. Ray Kroc visita os irmãos McDonald em San Bernardino. O que viajou não foi a receita. Foi a etapa escrita.\n\nComenta ETAPA.",
       beats: [
-        {t:"Corte", say:"O nome de Van Gogh sobreviveu. Não foi só por causa do quadro.", screen:"Não foi só o quadro"},
-        {t:"Fato", say:"Ele morre em vinte e nove de julho de 1890. Quem organiza as cartas, as exposições e a casa do nome, nos anos seguintes, é Johanna van Gogh-Bonger.", screen:"29 jul 1890"},
-        {t:"Limite", say:"Não foi ela sozinha no mundo. Foi ela segurando o que o talento, sozinho, não organiza. Carta, catálogo, venda, a frase que outro consegue repetir.", screen:"Carta. Catálogo. Venda."},
-        {t:"Leitura", say:"Talento sem estrutura desaparece. Eu chamo isso de legado. Não de inspiração.", screen:"Talento não é casa"},
-        {t:"CTA", say:"Se você quer que o seu nome não dependa de você na sala, comenta LEGADO.", screen:"Comenta LEGADO"}
+        {t:"Gancho", say:"O hambúrguer já existia. O que viajou foi uma etapa escrita.", screen:"Não foi a receita"},
+        {t:"Fato", say:"San Bernardino, na Califórnia. Os irmãos Richard e Maurice McDonald tinham um sistema. Em 1954, Ray Kroc visita. Ele não leva uma ideia nova de comida. Ele vê uma operação que outro conseguia repetir.", lesson:"Não fazer aula de franquia nem vilão de cinema.", screen:"1954 · San Bernardino", roll:"Tela cheia: foto antiga do primeiro restaurante, ou da fachada com os arcos. Wikimedia Commons: McDonald's San Bernardino. Sem cena do filme The Founder."},
+        {t:"Virada", say:"Enquanto a receita morava na cabeça, o negócio sentava quando o dono saía. Quando a etapa estava no papel, a cozinha andava sem o autor do lado.", screen:"Sem o autor do lado"},
+        {t:"Leitura", say:"Eu não estou te vendendo franquia. Eu estou te mostrando a diferença. Presença não é sistema. Sistema é entrada, o que acontece, e saída. Outra pessoa vê.", screen:"Entrada. Acontece. Saída."},
+        {t:"Pergunta", say:"Qual parte do seu dia ainda senta quando você sai da sala?", screen:"O que senta?"},
+        {t:"CTA", say:"Comenta ETAPA se for escrever uma. Uma só.", screen:"Comenta ETAPA"}
       ]
     },
-    story: {
-      place: "Rosto perto. Sem romantizar o sofrimento.",
-      dur: "45s", gesture: "Comenta: LEGADO",
-      caption: "O quadro existia. A casa do nome, não. Johanna construiu a casa.\n\nComenta LEGADO.",
+    prac: {
+      title: "Quem responde amanhã",
+      dur: "40s",
+      gesture: "Comenta o primeiro nome",
+      caption: "Amanhã de manhã, a primeira pergunta. Quem responde se você não estiver?\n\nUm nome. Não o processo inteiro.",
       beats: [
-        {t:"O que é", say:"O corte da manhã diz que o nome sobreviveu por causa dela. Aqui está o limite dessa frase.", screen:"O limite da frase"},
-        {t:"Fato", say:"Vincent morre em 1890. Theo, o irmão, morre no ano seguinte. Johanna, mulher de Theo, fica com a coleção. Ela publica as cartas e empurra a obra para fora da casa.", screen:"Johanna · as cartas"},
-        {t:"O que não é", say:"Isso não apaga o pintor. Também não transforma ela em detalhe. Sem quem organiza, o talento fica história de família.", screen:"Não é detalhe"},
-        {t:"A leitura", say:"Legado, do jeito que eu uso, é o que outra pessoa consegue operar quando você sai. Não é o aplauso do dia.", screen:"Quando você sai"},
-        {t:"Convite", say:"Comenta LEGADO se você quiser olhar a casa, e não só a peça.", screen:"Comenta LEGADO"}
-      ]
-    },
-    tik: {
-      place: "Rosto perto. Sem oi.",
-      dur: "18s", gesture: "Comenta: LEGADO",
-      caption: "O nome não morreu com o pintor.\n\nComenta LEGADO.",
-      beats: [
-        {t:"Corte", say:"Van Gogh morre em 1890. O nome não morre com ele.", screen:"1890"},
-        {t:"Fato", say:"Quem segurou a casa foi Johanna. Não o mito do gênio sozinho.", screen:"Johanna"},
-        {t:"CTA", say:"Talento sem estrutura some. Comenta LEGADO.", screen:"Comenta LEGADO"}
-      ]
-    },
-    op: {
-      title: "O que continua sem você",
-      eixo: "Arquitetura de Legado",
-      place: "Rosto perto. Pode ter papel. Sem nome de cliente.",
-      dur: "45s", gesture: "Comenta: SEGUNDA",
-      caption: "Uma coisa que hoje para se você sai.\n\nEntrada. Três verbos. Saída.\n\nComenta SEGUNDA.",
-      beats: [
-        {t:"Corte", say:"Escolhe uma coisa que, se você sai, a segunda-feira para.", screen:"A segunda para"},
-        {t:"1", say:"Entrada. O que chega, de quem, em que forma. Se não tem entrada, não é etapa. É favor.", screen:"1 · Entrada"},
-        {t:"2", say:"O meio. Três verbos. Não um discurso.", screen:"2 · Três verbos"},
-        {t:"3", say:"Saída. O que a outra pessoa recebe, e como sabe que acabou.", screen:"3 · Saída"},
-        {t:"Chave", say:"Uma etapa. O resto espera. Comenta SEGUNDA quando a saída existir sem você na sala.", screen:"Comenta SEGUNDA"}
+        {t:"Corte", say:"Não desenha a empresa. Escolhe a primeira pergunta de amanhã.", screen:"A primeira de amanhã"},
+        {t:"1", say:"Escreve a pergunta que sempre volta para você. Uma.", screen:"1 · A pergunta"},
+        {t:"2", say:"Do lado, o nome de quem poderia responder. Se o nome não existe, o buraco é esse. Não é falta de talento.", screen:"2 · O nome"},
+        {t:"3", say:"Você não delega hoje. Você só vê que a manhã ainda tem um único endereço.", screen:"3 · Ainda não delega"},
+        {t:"Chave", say:"Comenta o primeiro nome. Ou a palavra NINGUÉM, se for o caso.", screen:"O nome, ou NINGUÉM"}
       ]
     }
   },
-  {
-    ig: {
-      title: "Sexta-feira treze não nasceu ali",
-      place: "Rosto perto. Sem cruz, sem capa, sem trilha solene.",
-      dur: "35s", format: "Instagram", gesture: "Comenta: CARÁTER",
-      caption: "13 de outubro de 1307. A prisão é real. A superstição foi colada depois.\n\nComenta CARÁTER.",
-      beats: [
-        {t:"Corte", say:"Sexta-feira treze não nasceu no dia em que prenderam os Templários. A prisão, sim.", screen:"A prisão, sim"},
-        {t:"Fato", say:"Treze de outubro de 1307. Filipe IV, rei da França, manda prender a Ordem do Templo. Isso está nos documentos. A superstição do dia, não.", screen:"13 out 1307"},
-        {t:"Virada", say:"A ideia de que o azar nasceu ali foi colada séculos depois. Poder reescreve o calendário quando lhe serve.", screen:"Colada depois"},
-        {t:"Leitura", say:"Caráter, do jeito que eu uso, é o que permanece quando a história oficial muda de dono. Não é o símbolo. É a decisão.", screen:"Não é o símbolo"},
-        {t:"CTA", say:"Se você quer olhar poder sem fantasia, comenta CARÁTER.", screen:"Comenta CARÁTER"}
-      ]
-    },
-    story: {
-      place: "Rosto perto. Separar documento de lenda.",
-      dur: "45s", gesture: "Comenta: CARÁTER",
-      caption: "O documento é a prisão. A sexta-feira treze, como azar, é outra camada.\n\nComenta CARÁTER.",
-      beats: [
-        {t:"O que é", say:"O corte diz que sexta-feira treze não nasceu ali. Aqui está a separação.", screen:"Separar"},
-        {t:"Documento", say:"Em treze de outubro de 1307, o rei da França prende os Templários. Data, nome, ordem. Isso fica.", screen:"1307 · Filipe IV"},
-        {t:"Lenda", say:"Dizer que o medo do dia nasceu nessa manhã é uma cola posterior. Eu não uso cola como fonte.", screen:"Cola não é fonte"},
-        {t:"A leitura", say:"Quem tem poder escolhe qual data vira aviso. Caráter é perceber a cola sem precisar de inimigo secreto.", screen:"Ver a cola"},
-        {t:"Convite", say:"Comenta CARÁTER. A conversa é sobre decisão, não sobre ordem secreta.", screen:"Comenta CARÁTER"}
-      ]
-    },
-    tik: {
-      place: "Rosto perto. Sem oi.",
-      dur: "18s", gesture: "Comenta: CARÁTER",
-      caption: "A prisão é fato. O azar do dia é cola.\n\nComenta CARÁTER.",
-      beats: [
-        {t:"Corte", say:"Sexta-feira treze não nasceu com os Templários.", screen:"Não nasceu ali"},
-        {t:"Fato", say:"A prisão, em 1307, é real. O azar do dia foi colado depois.", screen:"1307 · colado depois"},
-        {t:"CTA", say:"Poder reescreve o calendário. Comenta CARÁTER.", screen:"Comenta CARÁTER"}
-      ]
-    },
-    op: {
-      title: "A pergunta de quando ninguém vê",
-      eixo: "Paladins",
-      place: "Rosto perto. Sem símbolo.",
-      dur: "40s", gesture: "Comenta: OLHO",
-      caption: "Eu faria isso se ninguém fosse saber?\n\nComenta OLHO.",
-      beats: [
-        {t:"Corte", say:"Antes de eu fechar qualquer coisa, tem uma pergunta. Não é ética de slide.", screen:"Uma pergunta"},
-        {t:"1", say:"Eu faria isso se ninguém fosse saber que fui eu?", screen:"Se ninguém fosse saber"},
-        {t:"2", say:"Se a resposta demora, está cedo. Não é objeção do outro. É a sua, e ela está certa.", screen:"Está cedo"},
-        {t:"3", say:"Caráter, aqui, é a decisão que fica quando o aplauso sai da sala.", screen:"Quando o aplauso sai"},
-        {t:"Chave", say:"Usa uma vez esta semana, numa coisa pequena. Comenta OLHO.", screen:"Comenta OLHO"}
-      ]
-    }
-  },
-  {
-    ig: {
+  "Você chama de ambição": {
+    doc: {
       title: "O número da loteria que não existe",
-      place: "Rosto perto. Sem nota de dinheiro na mão.",
-      dur: "35s", format: "Instagram", gesture: "Comenta: VETOR",
-      caption: "“Setenta por cento dos ganhadores quebram” não tem estudo.\n\nO que existe é outro achado. Menor. Mais interessante.\n\nComenta VETOR.",
+      dur: "90s",
+      gesture: "Comenta: PEÇA",
+      caption: "“Setenta por cento dos ganhadores quebram” não tem estudo. 1978. Vinte e duas pessoas. A amostra é pequena.\n\nComenta PEÇA.",
       beats: [
-        {t:"Corte", say:"O número que circula sobre ganhador de loteria quebrando não existe. O estudo que existe diz outra coisa.", screen:"O número não existe"},
-        {t:"Fato", say:"Em 1978, Brickman e colegas acompanharam vinte e dois ganhadores. Não ficaram mais felizes do que o grupo de comparação. E o prazer das coisas pequenas caiu.", screen:"1978 · 22 pessoas"},
-        {t:"Limite", say:"Vinte e duas pessoas não provam o país. Também não provam que dinheiro estraga. Provam que o saldo, sozinho, não reorganiza o dia.", screen:"Amostra pequena"},
-        {t:"Leitura", say:"Eu não leio isso como “dinheiro é mau”. Eu leio como peça. Sem vetor, o número sobe e a vida continua no mesmo desenho.", screen:"Sem vetor"},
-        {t:"CTA", say:"Se você quer olhar a peça, e não só o saldo, comenta VETOR.", screen:"Comenta VETOR"}
+        {t:"Gancho", say:"O número que circula sobre ganhador de loteria quebrando não existe. O estudo que existe diz outra coisa.", screen:"O número não existe"},
+        {t:"Fato", say:"1978. Brickman e dois colegas acompanham vinte e dois ganhadores. Comparados com quem não ganhou, eles não ficam mais felizes. E o gosto pelas coisas pequenas cai.", lesson:"Brickman, Coates e Janoff-Bulman, Journal of Personality and Social Psychology, 1978. Não arredondar para “todo ganhador”.", screen:"1978 · 22 pessoas", roll:"Tela cheia: não use foto de cheque gigante de banco, isso é propaganda. Um bilhete genérico, sem marca, ou só a tarja 1978. Se quiser imagem: Pexels, busca lottery ticket, confere se não tem logo. Melhor a tarja do que um anúncio."},
+        {t:"Limite", say:"Vinte e duas pessoas não provam um país. Também não provam que dinheiro estraga. Provam que o saldo, sozinho, não reorganizou o dia daquela amostra.", screen:"Amostra pequena"},
+        {t:"Leitura", say:"Eu não leio isso como “dinheiro é mau”. Eu leio como peça. Sem a peça, a pessoa chama de ambição o que ainda é fuga.", screen:"Sem a peça"},
+        {t:"Pergunta", say:"Se o saldo dobrasse amanhã, qual decisão sua continuaria igual?", screen:"O que não mudaria?"},
+        {t:"CTA", say:"Comenta PEÇA se a pergunta for a estrutura, não o prêmio.", screen:"Comenta PEÇA"}
       ]
     },
-    story: {
-      place: "Rosto perto. Recusar o número falso em voz alta.",
-      dur: "45s", gesture: "Comenta: VETOR",
-      caption: "Recusa o setenta por cento. Fica com 1978 e com o limite da amostra.\n\nComenta VETOR.",
+    prac: {
+      title: "Três portas antes do sim",
+      dur: "48s",
+      gesture: "Comenta: PORTA",
+      caption: "Antes do sim para dinheiro: corpo, mente, campo. Uma torta, espera.\n\nComenta PORTA.",
       beats: [
-        {t:"O que é", say:"Tem uma frase pronta. Setenta por cento dos ganhadores quebram. Eu não uso. Não achei o estudo.", screen:"Não achei o estudo"},
-        {t:"O que existe", say:"1978. Vinte e dois ganhadores. A felicidade não subiu como a história promete. O gosto pelo cotidiano desceu. Amostra pequena. Serve como aviso, não como lei.", screen:"22 · aviso, não lei"},
-        {t:"A leitura", say:"Dinheiro amplifica a estrutura que já estava ali. Sem estrutura, o saldo é barulho.", screen:"Amplifica a estrutura"},
-        {t:"Convite", say:"Comenta VETOR se a pergunta for a peça, não o prêmio.", screen:"Comenta VETOR"}
-      ]
-    },
-    tik: {
-      place: "Rosto perto. Sem oi.",
-      dur: "18s", gesture: "Comenta: VETOR",
-      caption: "O setenta por cento é lenda. O estudo de 1978 é pequeno, e diz outra coisa.\n\nComenta VETOR.",
-      beats: [
-        {t:"Corte", say:"Setenta por cento dos ganhadores quebram. Esse número não tem estudo.", screen:"Não tem estudo"},
-        {t:"Fato", say:"O que existe, em 1978, são vinte e duas pessoas. Não ficaram mais felizes. Amostra pequena.", screen:"1978 · 22"},
-        {t:"CTA", say:"Saldo não reorganiza o dia. Comenta VETOR.", screen:"Comenta VETOR"}
-      ]
-    },
-    op: {
-      title: "Três portas antes do dinheiro",
-      eixo: "Alinhamento Financeiro",
-      place: "Rosto perto. Um dedo por porta. Sem gráfico.",
-      dur: "50s", gesture: "Comenta: PORTA",
-      caption: "Corpo. Mente. Campo. Uma torta, o sim espera.\n\nComenta PORTA.",
-      beats: [
-        {t:"Corte", say:"Antes de dizer sim para dinheiro, eu passo por três portas. Se uma estiver torta, o sim é cedo.", screen:"Três portas"},
-        {t:"1", say:"Corpo. Dormiu. Comeu. Decisão financeira em corpo cansado é outra pessoa falando.", screen:"1 · Corpo"},
-        {t:"2", say:"Mente. Qual frase está mandando. “Eu mereço.” “Eu sempre perco.” A frase é o operador.", screen:"2 · Mente"},
+        {t:"Corte", say:"Antes de dizer sim para dinheiro, três portas. Uma torta, o sim espera.", screen:"Três portas"},
+        {t:"1", say:"Corpo. Dormiu. Comeu. Decisão no cansaço é outra pessoa falando.", screen:"1 · Corpo"},
+        {t:"2", say:"Mente. A frase que está mandando. Eu mereço. Eu sempre perco. A frase é o operador.", screen:"2 · Mente"},
         {t:"3", say:"Campo. Com quem você está decidindo. Se a sala estiver gritando, sai e decide de novo.", screen:"3 · Campo"},
-        {t:"Chave", say:"Uma porta torta, o sim espera. Comenta PORTA na próxima decisão.", screen:"Comenta PORTA"}
+        {t:"Chave", say:"Não é para ganhar mais. É para não assinar cedo. Comenta PORTA.", screen:"Comenta PORTA"}
       ]
     }
   },
-  {
-    ig: {
+  "Quem vende extintor mostra o fogo": {
+    doc: {
+      title: "Primeiro o fogo ficou visível",
+      dur: "90s",
+      gesture: "Comenta: FOGO",
+      caption: "2 de setembro de 1666. Londres. A regra da cidade nova veio depois do fogo visível. Não antes.\n\nComenta FOGO.",
+      beats: [
+        {t:"Gancho", say:"Londres não ganhou uma cidade nova porque alguém vendeu a planta. Primeiro o fogo ficou visível.", screen:"Primeiro o fogo"},
+        {t:"Fato", say:"Dois de setembro de 1666. Uma padaria na Pudding Lane. O fogo dura até o dia seis. A conta mais citada fala em cerca de treze mil casas. E dezenas de igrejas, inclusive a catedral.", lesson:"Cerca de 13.200 casas e 87 igrejas é a faixa dos relatos. Dizer “cerca de”. Thomas Farriner, a padaria.", screen:"2 set 1666", roll:"Tela cheia: gravura do incêndio de Londres, não filme. Wikimedia Commons: Great Fire of London. Tem pintura e mapa da área queimada. Internet Archive também tem gravura antiga."},
+        {t:"Depois", say:"A lei de reconstrução vem no ano seguinte. Rua mais larga. Casa de tijolo. A regra chegou depois que a cidade viu o que estava queimando.", lesson:"Rebuilding of London Act, 1667. Não dizer que o incêndio foi planejado.", screen:"A regra veio depois", roll:"Tela cheia: mapa da área queimada, ou fachada de tijolo do século seguinte. Wikimedia: Great Fire of London map."},
+        {t:"Virada", say:"Sem o fogo visível, a planta parece aula. Com o fogo visível, a planta vira alívio.", screen:"Sem o fogo, parece aula"},
+        {t:"Leitura", say:"Eu não vendo três casas. Eu mostro onde a experiência já virou fumaça. Método é o que vem depois, não o cartaz do primeiro segundo.", screen:"Primeiro a fumaça"},
+        {t:"Pergunta", say:"O que está queimando no seu trabalho que você ainda apresenta como se fosse um curso?", screen:"O que está queimando?"},
+        {t:"CTA", say:"Comenta FOGO. Uma palavra. O incêndio, não o extintor.", screen:"Comenta FOGO"}
+      ]
+    },
+    prac: {
+      title: "Uma frase sem solução",
+      dur: "40s",
+      gesture: "Manda a frase para alguém e não explica",
+      caption: "Uma frase. Só o fogo. Nenhuma palavra de solução.\n\nSe a pessoa perguntar “e o curso?”, o fogo não ficou visível.",
+      beats: [
+        {t:"Corte", say:"Escreve uma frase sobre o seu trabalho. Proibido usar a solução.", screen:"Sem solução"},
+        {t:"1", say:"Sem método. Sem oferta. Sem nome de curso. Só o que está queimando.", screen:"1 · Só o fogo"},
+        {t:"2", say:"Lê para uma pessoa, em casa, agora. Para. Não completa.", screen:"2 · Não completa"},
+        {t:"3", say:"Se ela perguntar “e o curso?”, a frase ainda era extintor. Reescreve até ela ficar em silêncio.", screen:"3 · Até o silêncio"},
+        {t:"Chave", say:"A frase que calou, você guarda. Não publica hoje.", screen:"Não publica hoje"}
+      ]
+    }
+  },
+  "Mais um curso, ou a casa": {
+    doc: {
+      title: "Ele parou de comprar estante",
+      dur: "80s",
+      gesture: "Comenta: ESTANTE",
+      caption: "1731. Benjamin Franklin e o grupo dele param de cada um comprar mais um livro. Fundam uma biblioteca compartilhada.\n\nComenta ESTANTE.",
+      beats: [
+        {t:"Gancho", say:"Em 1731, um grupo para de comprar mais um livro e faz uma casa para os livros que já tinham.", screen:"Para de comprar"},
+        {t:"Fato", say:"Filadélfia. Benjamin Franklin e o círculo chamado Junto. Cada um tinha livro em casa. O que faltava não era mais volume. Era um lugar onde o outro também lesse. Nasce a Library Company.", lesson:"Library Company of Philadelphia, 1731. Não transformar Franklin em guru.", screen:"1731 · Filadélfia", roll:"Tela cheia: fachada antiga da Library Company, ou um retrato de Franklin em domínio público. Wikimedia Commons: Library Company of Philadelphia. Sem documentário de streaming."},
+        {t:"Virada", say:"Mais um livro na estante particular não mudou o ofício. A estrutura compartilhada, sim. Outra pessoa conseguia chegar no que já estava sabido.", screen:"A estante não era a casa"},
+        {t:"Leitura", say:"Curso resolve falta de competência. Se a competência já está aí, o próximo curso é estante. A casa é o que fica quando a formação termina.", screen:"Quando a formação termina"},
+        {t:"Pergunta", say:"O último curso que você comprou te deu algo que você já sabia fazer?", screen:"Você já sabia?"},
+        {t:"CTA", say:"Comenta ESTANTE se for olhar a compra antes de repetir.", screen:"Comenta ESTANTE"}
+      ]
+    },
+    prac: {
+      title: "O que o curso repetiu",
+      dur: "40s",
+      gesture: "Comenta: JÁ",
+      caption: "Abre o último curso. Escreve a linha que você já fazia antes de comprar.\n\nEssa linha não é um curso novo. É inventário.",
+      beats: [
+        {t:"Corte", say:"Abre o último curso que você comprou. Não assiste. Inventaria.", screen:"Não assiste"},
+        {t:"1", say:"Uma linha. O que esse curso repete e você já fazia antes de pagar.", screen:"1 · O que você já fazia"},
+        {t:"2", say:"Se a linha existe, a compra foi estante. Não é vergonha. É dado.", screen:"2 · Foi estante"},
+        {t:"3", say:"Não cancela a vida. Não compra outro. A linha fica no papel até amanhã.", screen:"3 · Até amanhã"},
+        {t:"Chave", say:"Comenta JÁ se a linha apareceu.", screen:"Comenta JÁ"}
+      ]
+    }
+  },
+  "Antes da ferramenta": {
+    doc: {
       title: "A web foi um memorando",
-      place: "Rosto perto. Sem tela de código.",
-      dur: "35s", format: "Instagram", gesture: "Comenta: SISTEMA",
-      caption: "Março de 1989. Um memorando no CERN. Na capa: vago, mas empolgante.\n\nComenta SISTEMA.",
+      dur: "85s",
+      gesture: "Comenta: PAPEL",
+      caption: "Março de 1989. Um memorando no CERN. Na capa, o chefe escreve: vago, mas empolgante.\n\nA ferramenta veio depois da decisão.\n\nComenta PAPEL.",
       beats: [
-        {t:"Corte", say:"A web não nasceu num aplicativo. Nasceu numa margem de papel.", screen:"Uma margem"},
-        {t:"Fato", say:"Março de 1989. CERN. Tim Berners-Lee entrega um memorando. O chefe, Mike Sendall, escreve na capa: vago, mas empolgante.", screen:"Março 1989"},
-        {t:"Virada", say:"O problema não era fama. Era achar um documento, de outra pessoa, em outro prédio, sem pedir favor.", screen:"Achar o documento"},
-        {t:"Leitura", say:"Peça não é casa. Sistema é o que outra pessoa opera na segunda-feira. Eu leio código assim. Como arquitetura.", screen:"Peça não é casa"},
-        {t:"CTA", say:"Se você quer ver o digital como sistema, e não como poste, comenta SISTEMA.", screen:"Comenta SISTEMA"}
+        {t:"Gancho", say:"A web não nasceu num aplicativo. Nasceu numa margem de papel.", screen:"Uma margem"},
+        {t:"Fato", say:"Março de 1989. CERN, na Suíça. Tim Berners-Lee entrega um memorando. O título é uma proposta de gestão da informação. O chefe, Mike Sendall, escreve na capa: vago, mas empolgante.", lesson:"Information Management: A Proposal. Vague but exciting. Falar em português.", screen:"Março 1989", roll:"Tela cheia: a capa do memorando, com a anotação. O CERN publica essa imagem. Busca: CERN Berners-Lee proposal 1989. Wikimedia Commons tem a capa. Não usar tela de código genérico."},
+        {t:"O problema", say:"O problema dele não era ficar famoso. Era achar um documento, de outra pessoa, em outro prédio, sem pedir favor.", screen:"Achar o documento", roll:"Tela cheia: corredor de laboratório antigo, papel, não hacker de capuz. Pexels ou Pixabay: archive corridor, paper files. Confere se não tem marca."},
+        {t:"Virada", say:"A ferramenta entrou depois. Endereço, ligação, página. Antes, a decisão já existia. Sem a decisão, o aplicativo só publicava a confusão mais rápido.", screen:"A decisão já existia"},
+        {t:"Leitura", say:"Eu leio ferramenta assim. Ela guarda uma escolha. Não cria a escolha.", screen:"Ela guarda. Não cria."},
+        {t:"Pergunta", say:"A próxima ferramenta que você quer assinar guardaria qual decisão que já está escrita?", screen:"Qual decisão?"},
+        {t:"CTA", say:"Se a linha estiver vazia, não assina. Comenta PAPEL.", screen:"Comenta PAPEL"}
       ]
     },
-    story: {
-      place: "Rosto perto. Sem aula de programação.",
-      dur: "40s", gesture: "Comenta: SISTEMA",
-      caption: "Quatro palavras na capa. O resto foi sistema.\n\nComenta SISTEMA.",
+    prac: {
+      title: "O nome da ferramenta, embaixo",
+      dur: "38s",
+      gesture: "Comenta: VAZIO se a linha não existir",
+      caption: "O nome da ferramenta fica embaixo. Em cima, a decisão que ela teria que guardar.\n\nLinha vazia, fecha a aba.",
       beats: [
-        {t:"O que é", say:"O corte da manhã para numa margem. Aqui está o que a margem pedia.", screen:"O que a margem pedia"},
-        {t:"Fato", say:"O título do papel é uma proposta de gestão da informação. As quatro palavras do chefe não são elogio. São um prazo disfarçado de educação.", screen:"Vago, mas empolgante"},
-        {t:"A leitura", say:"Quem só publica peça fica refém do alcance. Quem faz o endereço, a ligação e a página constrói a casa.", screen:"Endereço. Ligação. Página."},
-        {t:"Convite", say:"Comenta SISTEMA se a pergunta for o que continua sem você na sala.", screen:"Comenta SISTEMA"}
+        {t:"Corte", say:"Pega um papel. Embaixo, o nome da ferramenta que você quer abrir.", screen:"O nome embaixo"},
+        {t:"1", say:"Em cima, uma linha. A decisão que essa ferramenta teria que guardar. Quem. O quê. Onde para.", screen:"1 · A decisão"},
+        {t:"2", say:"Se a linha não sai, a ferramenta não tem o que guardar. Fecha a aba.", screen:"2 · Fecha a aba"},
+        {t:"3", say:"Se a linha sai, a ferramenta pode esperar. A decisão já é o trabalho de hoje.", screen:"3 · A decisão fica"},
+        {t:"Chave", say:"Comenta a primeira palavra da linha. Ou VAZIO.", screen:"A palavra, ou VAZIO"}
+      ]
+    }
+  },
+  "Uma etapa, não o método inteiro": {
+    doc: {
+      title: "Doze segundos, não o mapa",
+      dur: "80s",
+      gesture: "Comenta: DOZE",
+      caption: "17 de dezembro de 1903. O primeiro voo fica no ar cerca de doze segundos. Não era o mapa da aviação. Era uma etapa.\n\nComenta DOZE.",
+      beats: [
+        {t:"Gancho", say:"O primeiro voo não entregou a aviação. Entregou doze segundos no ar.", screen:"Doze segundos"},
+        {t:"Fato", say:"Dezessete de dezembro de 1903. Kill Devil Hills, na Carolina do Norte. Orville Wright. Cerca de doze segundos. Cerca de trinta e sete metros. No mesmo dia tem voo mais longo. O primeiro não era o mapa.", lesson:"12 segundos e 120 pés é o primeiro. O quarto, com Wilbur, fica perto de 59 segundos. Não misturar.", screen:"17 dez 1903", roll:"Tela cheia: a foto do primeiro voo, o avião e os homens na areia. Wikimedia Commons: First flight Wright brothers. É uma das fotos mais livres que existem. Não usar filme."},
+        {t:"Virada", say:"Eles não sentaram para escrever o futuro do transporte. Sentaram um problema. Controle. Uma etapa. O resto do século veio depois, e não naquela tarde.", screen:"Um problema. Controle."},
+        {t:"Leitura", say:"Método inteiro é um ano. Uma etapa é uma tarde. Quem espera o mapa não escreve os doze segundos.", screen:"A tarde, não o mapa"},
+        {t:"Pergunta", say:"Qual é o problema único que o seu método ainda não escreveu?", screen:"Um problema"},
+        {t:"CTA", say:"Comenta DOZE se for fazer uma etapa, não o ano.", screen:"Comenta DOZE"}
       ]
     },
-    tik: {
-      place: "Rosto perto. Sem oi.",
-      dur: "18s", gesture: "Comenta: SISTEMA",
-      caption: "Quatro palavras na capa de um memorando.\n\nComenta SISTEMA.",
+    prac: {
+      title: "Doze minutos, uma etapa",
+      dur: "40s",
+      gesture: "Comenta: TARDE",
+      caption: "Timer de doze minutos. Um caso do mês passado. Três linhas. Entrou. Eu fiz. Saiu.\n\nPara quando o timer acaba.",
       beats: [
-        {t:"Corte", say:"A web nasceu numa margem. Quatro palavras. Vago, mas empolgante.", screen:"Vago, mas empolgante"},
-        {t:"Fato", say:"Março de 1989. CERN. Não foi um aplicativo. Foi um sistema.", screen:"1989 · CERN"},
-        {t:"CTA", say:"Peça não é casa. Comenta SISTEMA.", screen:"Comenta SISTEMA"}
+        {t:"Corte", say:"Doze minutos. Não doze páginas.", screen:"Doze minutos"},
+        {t:"1", say:"Um caso que você resolveu no mês passado. Só esse.", screen:"1 · Um caso"},
+        {t:"2", say:"Três linhas. O que entrou. O que você fez. O que saiu. Se não tem saída, não é etapa.", screen:"2 · Entrou. Fiz. Saiu."},
+        {t:"3", say:"O timer acaba, você para. Feio e escrito ganha de bonito e na cabeça.", screen:"3 · Para"},
+        {t:"Chave", say:"Comenta TARDE quando as três linhas existirem.", screen:"Comenta TARDE"}
+      ]
+    }
+  },
+  "A empresa que só vive em você": {
+    doc: {
+      title: "A cozinha saiu da cabeça dela",
+      dur: "80s",
+      gesture: "Comenta: RECEITA",
+      caption: "1961. Julia Child publica o livro com duas cozinheiras. A cozinha deixa de precisar dela na sala.\n\nComenta RECEITA.",
+      beats: [
+        {t:"Gancho", say:"A cozinha francesa não precisava de mais uma cozinheira famosa. Precisava de uma receita que outro seguisse.", screen:"Outro seguisse"},
+        {t:"Fato", say:"1961. Julia Child, com Simone Beck e Louisette Bertholle, publica Mastering the Art of French Cooking. O ponto não é o programa de televisão. O ponto é o livro. A etapa fica no papel. A cozinha anda sem ela na sala.", lesson:"Não dizer que ela inventou a cozinha francesa. O livro é de 1961. A TV vem depois.", screen:"1961", roll:"Tela cheia: capa da primeira edição, ou foto dela na cozinha em domínio público. Wikimedia Commons: Julia Child e Mastering the Art of French Cooking. Sem episódio de série, sem Netflix."},
+        {t:"Virada", say:"Enquanto o gesto morava nela, a casa parava quando ela saía. Quando o gesto virou passo, outra pessoa jantava sem a autora do lado.", screen:"Sem a autora do lado"},
+        {t:"Leitura", say:"Empresa que só vive em você não é lealdade. É um risco sem nome. Legado, aqui, é a parte que se repete saindo da cabeça.", screen:"Saindo da cabeça"},
+        {t:"Pergunta", say:"Qual receita do seu negócio ainda não existe se você não estiver na cozinha?", screen:"Qual receita?"},
+        {t:"CTA", say:"Comenta RECEITA. Uma. A que a segunda-feira pede.", screen:"Comenta RECEITA"}
       ]
     },
-    op: {
-      title: "Uma etapa. Não o ano inteiro.",
-      eixo: "Tech Hub · Império Digital",
-      place: "Rosto perto. Papel na mão, se quiser. Sem código na tela.",
-      dur: "45s", gesture: "Comenta: ETAPA",
-      caption: "Entrada. Três verbos. Saída.\n\nComenta ETAPA.",
+    prac: {
+      title: "A decisão que voltou",
+      dur: "42s",
+      gesture: "Comenta: VOLTOU",
+      caption: "Uma decisão que voltou para você esta semana. Quem mais poderia ter tomado. O que faltou para essa pessoa.\n\nNão delega hoje.",
       beats: [
-        {t:"Corte", say:"Não desenha o ecossistema. Desenha a etapa que hoje só existe na sua cabeça.", screen:"Uma etapa"},
-        {t:"1", say:"Entrada. O que chega. Se não tem entrada, não é sistema. É memória sua.", screen:"1 · Entrada"},
-        {t:"2", say:"Três verbos no meio. O que acontece sem discurso.", screen:"2 · Três verbos"},
-        {t:"3", say:"Saída. Outra pessoa recebe, e sabe que acabou, sem te chamar.", screen:"3 · Sem te chamar"},
-        {t:"Chave", say:"Uma etapa hoje. Comenta ETAPA quando a saída não precisar de você.", screen:"Comenta ETAPA"}
+        {t:"Corte", say:"Uma decisão que voltou para você esta semana. Uma.", screen:"Uma decisão"},
+        {t:"1", say:"Escreve o que foi. Sem discurso.", screen:"1 · O que foi"},
+        {t:"2", say:"Do lado, quem mais poderia ter tomado. Se ninguém, escreve ninguém.", screen:"2 · Quem mais"},
+        {t:"3", say:"Uma frase. O que faltou para essa pessoa. Informação, limite, ou coragem sua de soltar.", screen:"3 · O que faltou"},
+        {t:"Chave", say:"Não passa a decisão hoje. Só nomeia. Comenta VOLTOU.", screen:"Comenta VOLTOU"}
+      ]
+    }
+  },
+  "O livro não é a mentoria": {
+    doc: {
+      title: "O livro era a linguagem",
+      dur: "85s",
+      gesture: "Comenta: LER",
+      caption: "1946. A Autobiografia de um Iogue. Yogananda já estava nos Estados Unidos desde 1920. Ler não era praticar.\n\nComenta LER.",
+      beats: [
+        {t:"Gancho", say:"Tem livro que as pessoas tratam como se a leitura fosse a prática. Não é.", screen:"Ler não é praticar"},
+        {t:"Fato", say:"1946. Paramahansa Yogananda publica a Autobiografia de um Iogue. Ele tinha chegado aos Estados Unidos em 1920. O livro viajou mais do que a sala. Muita gente parou na página e achou que a página era o treino.", lesson:"Chegada em 1920, Boston. O livro é 1946. Não inventar citação dele.", screen:"1946", roll:"Tela cheia: capa antiga da autobiografia, edição que esteja em Wikimedia Commons. Busca: Autobiography of a Yogi 1946 cover. Se a capa tiver direito de editora, não usa. Nesse caso, só a tarja 1946 e você no quadro. Não filma o miolo de um livro com copyright de perto para publicar como se fosse seu."},
+        {t:"Virada", say:"A linguagem cabe num livro. O gesto, não. Quem lê e não pratica fica com frase boa e corpo no mesmo lugar.", screen:"Frase boa. Corpo parado."},
+        {t:"Leitura", say:"Eu uso o livro assim. Códigos de Origem é vocabulário. A casa é outra coisa. Uma não substitui a outra. Ler é adulto. Confundir leitura com construção, não.", screen:"Vocabulário não é a casa"},
+        {t:"Pergunta", say:"O que você entendeu no livro e ainda não virou um gesto nesta semana?", screen:"Entendeu. Não fez."},
+        {t:"CTA", say:"Comenta LER se você for separar as duas coisas.", screen:"Comenta LER"}
+      ]
+    },
+    prac: {
+      title: "Duas colunas",
+      dur: "40s",
+      gesture: "Comenta: COLUNA",
+      caption: "O livro na mesa. Duas colunas. Linguagem. Construção. Uma linha em cada.\n\nSe tudo cair em linguagem, você ainda não começou a casa.",
+      beats: [
+        {t:"Corte", say:"Põe o livro na mesa. Abre um papel com duas colunas.", screen:"Duas colunas"},
+        {t:"1", say:"Linguagem. Uma linha que o livro te deu e você consegue dizer.", screen:"1 · Linguagem"},
+        {t:"2", say:"Construção. Uma coisa que teria que sair da página e virar etapa. Se não tiver, a coluna fica vazia. O vazio é o dado.", screen:"2 · Construção"},
+        {t:"3", say:"Não compra a casa por causa do papel. Não despreza o livro. Só para de chamar os dois pelo mesmo nome.", screen:"3 · Dois nomes"},
+        {t:"Chave", say:"Comenta COLUNA e diz qual das duas ficou vazia.", screen:"Qual ficou vazia"}
+      ]
+    }
+  },
+  "Três cômodos, uma casa": {
+    doc: {
+      title: "O inverno que ninguém lembra",
+      dur: "100s",
+      gesture: "Comenta: CORPO",
+      caption: "1944–45. O oeste da Holanda passa fome. Décadas depois, o corpo de quem estava na barriga ainda carregava uma marca pequena.\n\nFato e leitura não são a mesma coisa.\n\nComenta CORPO.",
+      beats: [
+        {t:"Gancho", say:"Em 1945, milhares de bebês nasceram carregando um inverno de que nenhum deles se lembra.", screen:"Um inverno que não lembram"},
+        {t:"Fato", say:"Holanda. Inverno de 1944 para 1945. O oeste do país fica sem comida. A ração, no fim, fica na faixa das quinhentas a setecentas calorias. Chamaram de Hongerwinter.", lesson:"Heijmans e colegas, PNAS 2008, descrevem médias em torno de 667 kcal. Abril de 1945 é citado perto de 500. Não escolher um número só e tratar como certidão.", screen:"1944–45", roll:"Tela cheia: mapa da Holanda e foto de racionamento da época. Wikimedia Commons e Nationaal Archief: Hongerwinter. Busca também Dutch famine 1944. Sem filme de guerra."},
+        {t:"A conta", say:"A estimativa mais citada fala em torno de vinte mil mortos. Não é um número de certidão. E, no meio disso, mulheres grávidas continuaram gerando.", screen:"~20 mil", roll:"Tela cheia: cartão de racionamento, fila, documento. Nationaal Archief. Se a imagem for pesada demais, fica no mapa. Sem corpo, sem criança passando fome em close de stock moderno."},
+        {t:"O estudo", say:"Décadas depois, dois achados, não um. Quem passou a fome no começo da gestação apareceu, adulto, com mais problema de peso e de coração. Em 2008, um trabalho comparou irmãos. Quem foi concebido na fome tinha, sessenta anos depois, um pouco menos de metilação num trecho do gene IGF2. Cerca de cinco por cento. É associação. Não é prova de que a marca causou a doença.", lesson:"Não dizer que a epigenética provou o campo. Não falar de neto.", screen:"2008 · irmãos · ~5%"},
+        {t:"Virada", say:"A guerra acabou. A comida voltou. O corpo de alguns ainda carregava o cômodo de um inverno que a mente não viveu.", screen:"A mente não viveu"},
+        {t:"Leitura", say:"Eu não junto isso em três cursos. Corpo, mente e campo são cômodos da mesma casa. Tem padrão que não nasceu de uma escolha sua. Nasceu de um ambiente.", lesson:"Aqui é leitura. Separar da frase do estudo.", screen:"Três cômodos"},
+        {t:"Pergunta", say:"Qual dos três você trata como se fosse outra vida? Corpo, mente, ou o lugar onde você decide?", screen:"Qual você separou?"},
+        {t:"CTA", say:"Comenta CORPO se o cômodo que você esqueceu foi esse.", screen:"Comenta CORPO"}
+      ]
+    },
+    prac: {
+      title: "Três papéis na parede",
+      dur: "42s",
+      gesture: "Comenta o papel que ficou vazio",
+      caption: "Três papéis. Essência. Alma. Valor. Embaixo de cada um, uma coisa desta semana.\n\nO vazio é o cômodo. Não preenche hoje.",
+      beats: [
+        {t:"Corte", say:"Três papéis na parede, aqui em casa. Essência. Alma. Valor.", screen:"Três papéis"},
+        {t:"1", say:"Embaixo de cada um, uma coisa que aconteceu esta semana. Concreta. Não um plano.", screen:"1 · Esta semana"},
+        {t:"2", say:"O papel que ficar vazio é o cômodo que você está tratando como outra vida.", screen:"2 · O vazio"},
+        {t:"3", say:"Não preenche hoje. Não compra um curso para o papel. Olha o vazio até amanhã.", screen:"3 · Até amanhã"},
+        {t:"Chave", say:"Comenta o nome do papel vazio.", screen:"O nome do vazio"}
+      ]
+    }
+  },
+  "Quem te indica traduz no escuro": {
+    doc: {
+      title: "Durante séculos, no escuro",
+      dur: "85s",
+      gesture: "Comenta: PEDRA",
+      caption: "1799. Uma pedra com o mesmo decreto em três escritas. Até 1822, a tradução era no escuro.\n\nComenta PEDRA.",
+      beats: [
+        {t:"Gancho", say:"Durante séculos, gente traduziu um texto no escuro. Faltava a frase ao lado.", screen:"Faltava a frase ao lado"},
+        {t:"Fato", say:"1799. Perto de Rashid, no Egito. Soldados da campanha de Napoleão acham uma pedra. O mesmo decreto está em três escritas. Hieróglifos, demótico e grego.", lesson:"Pedra de Roseta. Não precisar do nome inglês.", screen:"1799", roll:"Tela cheia: a Pedra de Roseta, o objeto, não um filme de museu com narrador. Wikimedia Commons: Rosetta Stone. O original está no British Museum. A foto do objeto é o que serve."},
+        {t:"O tempo", say:"O grego era a escrita que já se lia. As outras, não. Em 1822, Champollion apresenta a leitura. Vinte e três anos com a pedra na mão, e ainda assim a tradução esperou o texto paralelo.", lesson:"Lettre à M. Dacier, 1822. Não dizer que ele fez sozinho numa tarde.", screen:"1822", roll:"Tela cheia: detalhe das três faixas de texto, se a foto permitir. A mesma busca. Sem reconstituição de Hollywood."},
+        {t:"Virada", say:"Sem a frase ao lado, cada um inventava o sentido. Com a frase ao lado, outro conseguia repetir.", screen:"A frase ao lado"},
+        {t:"Leitura", say:"Quem te indica sem a sua frase está nesse intervalo. Não é má vontade. É tradução no escuro. A frase não é marketing. É o texto paralelo.", screen:"Não é má vontade"},
+        {t:"Pergunta", say:"Qual palavra sua a pessoa que te indica ainda não tem ao lado?", screen:"Qual palavra falta?"},
+        {t:"CTA", say:"Comenta PEDRA se você for escrever essa palavra. Uma.", screen:"Comenta PEDRA"}
+      ]
+    },
+    prac: {
+      title: "A frase que você desejou",
+      dur: "40s",
+      gesture: "Comenta a palavra marcada",
+      caption: "Escreve a frase que você gostaria que tivessem dito. Marca a palavra que a pessoa não sabe.\n\nNão manda ainda.",
+      beats: [
+        {t:"Corte", say:"Não liga para ninguém. Escreve a frase que você gostaria que tivessem dito ao te apresentar.", screen:"A frase que você desejou"},
+        {t:"1", say:"Uma frase. Sem cargo.", screen:"1 · Sem cargo"},
+        {t:"2", say:"Marca a palavra que essa pessoa, hoje, não saberia. Essa é a tradução no escuro.", screen:"2 · A palavra"},
+        {t:"3", say:"Não manda hoje. O reel pede para mandar. Aqui o trabalho é ver a palavra antes.", screen:"3 · Não manda hoje"},
+        {t:"Chave", say:"Comenta a palavra marcada.", screen:"A palavra"}
+      ]
+    }
+  },
+  "Você diz que quer legado": {
+    doc: {
+      title: "Ele leu o próprio obituário",
+      dur: "90s",
+      gesture: "Comenta: NOME",
+      caption: "1888. Um jornal anuncia a morte de Alfred Nobel por engano. Era o irmão. O nome que ia ficar não era o que ele dizia querer.\n\nA frase exata do título é disputada.\n\nComenta NOME.",
+      beats: [
+        {t:"Gancho", say:"Alfred Nobel leu, em vida, o nome que ia ficar. Não era o nome que ele dizia querer.", screen:"O nome que ia ficar"},
+        {t:"Fato", say:"1888. O irmão, Ludvig, morre. Um jornal francês troca as pessoas e anuncia Alfred. O texto trata o nome como quem vende morte. A frase exata do título é disputada. O efeito circula desde então. Ele ainda estava vivo.", lesson:"Não cravar “le marchand de la mort” como se a página estivesse na mesa. Dizer que a frase exata é disputada.", screen:"1888", roll:"Tela cheia: retrato de Alfred Nobel em domínio público, e se achar o jornal, só se for arquivo verificável. Wikimedia Commons: Alfred Nobel. Se não achar o jornal, não inventa a primeira página. Fica no retrato."},
+        {t:"Depois", say:"O testamento de 1895 muda o que o nome carrega. Os prêmios. Isso é estrutura. Não é um discurso de domingo.", lesson:"Testamento de 27 de novembro de 1895.", screen:"1895 · o testamento", roll:"Tela cheia: a primeira página do testamento, se estiver no Nobel Prize site ou na Wikimedia. Busca: Alfred Nobel will. Não usar reconstituição de ator."},
+        {t:"Virada", say:"Ler o nome que ia ficar é um susto. O dia seguinte é que decide se era discurso ou arquitetura.", screen:"O dia seguinte"},
+        {t:"Leitura", say:"Você pode dizer que quer deixar algo de pé. Se o dia que você repete não produz uma frase, uma etapa e um limite, o legado ainda é o obituário que você não leu.", screen:"Discurso não é testamento"},
+        {t:"Pergunta", say:"Se o seu nome parasse hoje, o que já estaria escrito fora da sua boca?", screen:"Fora da sua boca"},
+        {t:"CTA", say:"Comenta NOME se for olhar isso sem teatro.", screen:"Comenta NOME"}
+      ]
+    },
+    prac: {
+      title: "O que ainda existe amanhã",
+      dur: "38s",
+      gesture: "Comenta: AMANHÃ",
+      caption: "Uma linha. Hoje eu fiz. E uma coisa que ainda existe amanhã sem você falar.\n\nSe não tiver, o legado de hoje foi discurso.",
+      beats: [
+        {t:"Corte", say:"Abre a nota do telefone. Duas linhas. Só duas.", screen:"Duas linhas"},
+        {t:"1", say:"Hoje eu fiz. Uma coisa. Sem adjetivo.", screen:"1 · Hoje eu fiz"},
+        {t:"2", say:"Ainda existe amanhã, sem eu falar. Se não existir, escreve não existe.", screen:"2 · Amanhã"},
+        {t:"3", say:"Não transforma em plano de doze meses. O não existe já é o diagnóstico do dia.", screen:"3 · Sem plano"},
+        {t:"Chave", say:"Comenta AMANHÃ se a segunda linha tiver alguma coisa. Ou NÃO, se ficou vazia.", screen:"AMANHÃ ou NÃO"}
+      ]
+    }
+  },
+  "O ciclo, dito uma vez": {
+    doc: {
+      title: "Não eram três produtos",
+      dur: "80s",
+      gesture: "Comenta: LISTA",
+      caption: "20 de julho de 1969. A missão não era três produtos. Era um ciclo. O que outra pessoa segurava na mão era a lista.\n\nComenta LISTA.",
+      beats: [
+        {t:"Gancho", say:"A ida à Lua não foi vendida como três cursos. Era um ciclo. Com lista.", screen:"Um ciclo"},
+        {t:"Fato", say:"Vinte de julho de 1969. Apollo 11. Subir, orbitar, pousar, voltar. Cada pedaço tinha entrada e saída. O que o astronauta segurava não era um discurso. Era a lista. Outra pessoa, em terra, segurava a mesma lista.", lesson:"Não inventar frase de checklist. Não transformar a NASA em metáfora de mentoria por mais de uma linha.", screen:"20 jul 1969", roll:"Tela cheia: a foto da Terra a partir da Lua, ou o módulo, arquivo da NASA. images.nasa.gov, busca Apollo 11. É uso livre, com crédito na legenda se você quiser. Sem filme Apollo 13."},
+        {t:"Virada", say:"Três foguetes separados não teriam voltado. O que voltou foi a sequência. Um ciclo. A lista era a estrutura que outro entendia.", screen:"A lista, não o discurso"},
+        {t:"Leitura", say:"Eu digo o ciclo uma vez, desse tamanho. Não são três produtos. É uma casa. Se não for a hora, a frase e a etapa já são trabalho. A lista não é pressa.", screen:"Não são três produtos"},
+        {t:"Pergunta", say:"O que você chama de ciclo hoje ainda são três compras que não se falam?", screen:"Três compras?"},
+        {t:"CTA", say:"Comenta LISTA se for olhar a sequência, não o cartaz.", screen:"Comenta LISTA"}
+      ]
+    },
+    prac: {
+      title: "Duas linhas, sem porta",
+      dur: "40s",
+      gesture: "Comenta: CEDO",
+      caption: "Linha um: o que você já tem. Frase, ou uma etapa.\n\nLinha dois: o que ainda não tem.\n\nSe as duas forem “não sei”, você não está atrasado. Está cedo.",
+      beats: [
+        {t:"Corte", say:"Não abre página de aplicação. Abre duas linhas.", screen:"Sem porta"},
+        {t:"1", say:"O que você já tem. Uma frase, ou uma etapa. Se não tem, escreve não tenho.", screen:"1 · Já tenho"},
+        {t:"2", say:"O que ainda falta para outra pessoa entender o seu trabalho sem você do lado.", screen:"2 · Ainda falta"},
+        {t:"3", say:"Se as duas linhas forem não sei, você não está atrasado. Está cedo. Cedo não se resolve com pressa.", screen:"3 · Cedo"},
+        {t:"Chave", say:"Comenta CEDO se for esse o caso. Ou TENHO, se a primeira linha existir.", screen:"CEDO ou TENHO"}
+      ]
+    }
+  },
+  "Eu penso daqui": {
+    doc: {
+      title: "O livro só existe porque ele foi",
+      dur: "85s",
+      gesture: "Comenta: CHÃO",
+      caption: "1897. Euclides da Cunha é mandado a Canudos. Os Sertões sai em 1902. O livro não nasceu num palco alugado.\n\nComenta CHÃO.",
+      beats: [
+        {t:"Gancho", say:"Tem livro que não nasceria num estúdio. Nasceu porque o homem foi até o chão.", screen:"Até o chão"},
+        {t:"Fato", say:"1897. Euclides da Cunha vai a Canudos como correspondente. O jornal é O Estado de S. Paulo. Ele não escreve de ouvido. Em 1902 sai Os Sertões. O chão entra no livro. O palco, não.", lesson:"Não resumir a guerra. O fato aqui é a ida e a data do livro. Sem exploração do sofrimento como gancho bonito.", screen:"1897 · 1902", roll:"Tela cheia: retrato de Euclides da Cunha e, se couber, a capa antiga de Os Sertões. Wikimedia Commons: Euclides da Cunha. A capa da primeira edição, se estiver em arquivo público. Sem filme recente de Canudos. Sem imagem de corpo."},
+        {t:"Virada", say:"Autoridade de palco alugado dura um story. Autoridade de quem mostra o próprio chão fica, porque o outro consegue ir até a fonte.", screen:"O outro vai até a fonte"},
+        {t:"Leitura", say:"Eu gravo daqui. Vilas. A praia fica aqui. Não é cenário. É o endereço. O trabalho é o mesmo em qualquer cidade. A voz não precisa mentir o CEP.", screen:"O endereço não é cenário"},
+        {t:"Pergunta", say:"Se tirassem o seu cenário emprestado, a sua frase ainda se sustentava no cômodo onde você está agora?", screen:"Nesse cômodo?"},
+        {t:"CTA", say:"Comenta CHÃO se for gravar do lugar onde você realmente está.", screen:"Comenta CHÃO"}
+      ]
+    },
+    prac: {
+      title: "Uma frase, nesse cômodo",
+      dur: "35s",
+      gesture: "Não comenta. Assiste uma vez.",
+      caption: "Uma frase. O cômodo onde você está. Sem skyline, sem sala alugada.\n\nSe o vídeo pudesse ter sido gravado em qualquer coworking, grava de novo.",
+      beats: [
+        {t:"Corte", say:"Não sai de casa. Uma frase. O cômodo em que você está agora entra no quadro.", screen:"Esse cômodo"},
+        {t:"1", say:"A frase é onde você trabalha. Não é o manifesto. É o chão.", screen:"1 · O chão"},
+        {t:"2", say:"Assiste uma vez. Se esse vídeo poderia ter sido gravado em qualquer coworking, apaga.", screen:"2 · Se for qualquer lugar, apaga"},
+        {t:"3", say:"Grava de novo, com uma coisa do cômodo que só existe aí. A cadeira. A janela. A mesa.", screen:"3 · Uma coisa que só existe aí"},
+        {t:"Chave", say:"Não publica se ainda parecer cenário. Publica quando parecer endereço.", screen:"Endereço, não cenário"}
       ]
     }
   }
-];
-
-window.renderExtra = function(filter){
-  const box = document.getElementById("dia-denso");
-  const list = document.getElementById("denso-list");
-  if(!box || !list) return;
-  const show = filter !== "outra";
-  box.hidden = !show;
-  list.innerHTML = "";
-  if(!show) return;
-  DENSO.forEach((full, i)=>{
-    const pack = DAY[i];
-    if(!pack) return;
-    const n = String(i+1).padStart(2,"0");
-    const pair = document.createElement("div");
-    pair.className = "pair";
-    const ig = slot(full, Object.assign({kind:"ig", format:"Instagram"}, pack.ig));
-    const story = slot(full, Object.assign({kind:"story", format:"Story", title:"Story · "+(pack.ig.title||full.title)}, pack.story));
-    const tik = slot(full, Object.assign({kind:"tiktok", format:"TikTok", title:"TikTok · "+(pack.ig.title||full.title)}, pack.tik));
-    const op = slot(full, Object.assign({kind:"ops", format:"Operação"}, pack.op));
-    pair.append(slotCard(ig, n, "ig", n+" · manhã · Instagram"));
-    pair.append(slotCard(story, n+".2", "story", n+".2 · manhã · Story"));
-    pair.append(slotCard(tik, n+".3", "tiktok", n+".3 · tarde · TikTok"));
-    pair.append(slotCard(full, n+".4", "denso", n+".4 · noite · TikTok denso"));
-    pair.append(slotCard(op, n+".5", "ops", n+".5 · manhã ou noite · operação"));
-    list.append(pair);
-  });
 };
-renderExtra("todos");
+
+function extraCards(parent, i){
+  if(parent.who!=="yan") return [];
+  const pack = EXTRA[parent.title];
+  if(!pack) return [];
+  const n = String(i+1).padStart(2,"0");
+  function piece(kind, src){
+    return {
+      kind: kind,
+      who: "yan",
+      parent: parent.title,
+      day: parent.day,
+      title: src.title,
+      place: CASA,
+      dur: src.dur,
+      format: kind==="denso" ? "TikTok documental" : "TikTok prático",
+      gesture: src.gesture,
+      caption: src.caption,
+      beats: src.beats
+    };
+  }
+  function card(s, num, klass, when){
+    const el = document.createElement("button");
+    el.type = "button";
+    el.className = "card " + klass;
+    el.dataset.who = "yan";
+    el.innerHTML = '<div class="num">'+num+'</div><div><div class="tag">'+esc(when)+'</div><h2>'+esc(s.title)+'</h2><div class="meta">'+esc(s.dur)+' · em casa<br>'+esc(s.gesture)+'</div></div><div class="open meta">Abrir</div>';
+    el.onclick = ()=>openScript(s);
+    return el;
+  }
+  return [
+    card(piece("denso", pack.doc), n+".4", "denso", n+".4 · TikTok documental · outro tema"),
+    card(piece("ops", pack.prac), n+".5", "ops", n+".5 · TikTok prático · outro tema")
+  ];
+}
+window.extraCards = extraCards;
+render("todos");
