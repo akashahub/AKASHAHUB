@@ -503,6 +503,41 @@
   .collar-price { font-family: var(--serif); font-size: 32px; margin: 0 0 8px; }
   .collar-meta, .collar-note { color: var(--muted); margin: 0 0 10px; line-height: 1.6; }
   .collar-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+  .collar-view { cursor: zoom-in; border: 1px solid rgba(201,168,76,.2); background: rgba(16,15,19,.18); }
+  .collar-view:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+  .collar-gallery-modal { position: fixed; inset: 0; z-index: 140; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(5,4,7,.88); backdrop-filter: blur(16px); opacity: 0; transition: opacity .35s ease; }
+  .collar-gallery-modal.is-open { display: flex; opacity: 1; }
+  .collar-gallery-shell { position: relative; width: min(1120px, 100%); height: min(92vh, 860px); display: grid; grid-template-rows: auto 1fr auto; border: 1px solid rgba(201,168,76,.28); background: linear-gradient(145deg, rgba(27,23,30,.98), rgba(9,8,12,.98)); box-shadow: 0 30px 100px rgba(0,0,0,.55); }
+  .collar-gallery-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  .collar-gallery-kicker { color: var(--gold); font-family: var(--mono); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; }
+  .collar-gallery-title { margin: 4px 0 0; color: var(--paper); font-family: var(--serif); font-size: 28px; font-weight: 500; }
+  .collar-gallery-close { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%; color: var(--paper); background: transparent; font-size: 26px; line-height: 1; cursor: pointer; }
+  .collar-gallery-close:hover { color: var(--gold-light); border-color: var(--gold); }
+  .collar-gallery-stage { position: relative; min-height: 0; display: grid; place-items: center; padding: 22px 76px; overflow: hidden; }
+  .collar-gallery-stage img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; opacity: 0; transform: scale(.985); transition: opacity .55s ease, transform .55s ease; }
+  .collar-gallery-stage img.is-visible { opacity: 1; transform: scale(1); }
+  .collar-gallery-arrow { position: absolute; top: 50%; z-index: 2; display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgba(201,168,76,.35); border-radius: 50%; color: var(--gold-light); background: rgba(7,6,8,.72); font-size: 28px; cursor: pointer; transform: translateY(-50%); transition: background .25s ease, border-color .25s ease; }
+  .collar-gallery-arrow:hover { background: rgba(201,168,76,.18); border-color: var(--gold); }
+  .collar-gallery-arrow.prev { left: 18px; }
+  .collar-gallery-arrow.next { right: 18px; }
+  .collar-gallery-foot { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 13px 18px 18px; border-top: 1px solid var(--line); }
+  .collar-gallery-counter { min-width: 58px; color: var(--muted); font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-align: center; }
+  .collar-gallery-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+  .collar-gallery-dot { width: 7px; height: 7px; padding: 0; border: 1px solid var(--gold); border-radius: 50%; background: transparent; cursor: pointer; opacity: .5; }
+  .collar-gallery-dot.is-active { background: var(--gold-light); opacity: 1; transform: scale(1.25); }
+  @media (max-width: 600px) {
+    .collar-gallery-modal { padding: 8px; }
+    .collar-gallery-shell { height: min(94vh, 760px); }
+    .collar-gallery-head { padding: 12px 14px; }
+    .collar-gallery-title { font-size: 24px; }
+    .collar-gallery-stage { padding: 18px 48px; }
+    .collar-gallery-arrow { width: 38px; height: 38px; font-size: 23px; }
+    .collar-gallery-arrow.prev { left: 8px; }
+    .collar-gallery-arrow.next { right: 8px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .collar-gallery-modal, .collar-gallery-stage img { transition: none !important; }
+  }
   @media (max-width: 859px) { .collar-copy { text-align: center; } .collar-cta { justify-content: center; } }
 </style>
 </head>
@@ -584,7 +619,7 @@
 
 <section class="collar" id="colar-horus" aria-label="Colar Hórus">
   <div class="wrap collar-grid">
-    <div class="collar-view" id="collarView" hidden>
+    <div class="collar-view" id="collarView" hidden role="button" tabindex="0" aria-label="Abrir galeria de imagens do Colar Hórus">
       <div class="collar-track" id="collarTrack"></div>
     </div>
     <div class="collar-copy">
@@ -600,6 +635,21 @@
     </div>
   </div>
 </section>
+
+<div class="collar-gallery-modal" id="collarGalleryModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="collarGalleryTitle">
+  <div class="collar-gallery-shell">
+    <div class="collar-gallery-head">
+      <div><div class="collar-gallery-kicker">galeria · peça do ecossistema</div><h2 class="collar-gallery-title" id="collarGalleryTitle">Colar Hórus</h2></div>
+      <button class="collar-gallery-close" id="collarGalleryClose" type="button" aria-label="Fechar galeria">×</button>
+    </div>
+    <div class="collar-gallery-stage" id="collarGalleryStage">
+      <button class="collar-gallery-arrow prev" id="collarGalleryPrev" type="button" aria-label="Imagem anterior">‹</button>
+      <img id="collarGalleryImage" alt="Colar Hórus, Akasha Hub" src="" />
+      <button class="collar-gallery-arrow next" id="collarGalleryNext" type="button" aria-label="Próxima imagem">›</button>
+    </div>
+    <div class="collar-gallery-foot"><span class="collar-gallery-counter" id="collarGalleryCounter">1 / 8</span><div class="collar-gallery-dots" id="collarGalleryDots" aria-label="Selecionar imagem"></div></div>
+  </div>
+</div>
 
 <section class="section" id="akasha">
   <div class="wrap">
@@ -970,34 +1020,76 @@
   }, {passive:true});
 
   (function collar(){
-    const images = [];
+    const images = [
+      '/img/colar-horus/4_upscaled.png',
+      '/img/colar-horus/6_upscaled.png',
+      '/img/colar-horus/closeup_detalhe_upscaled.png',
+      '/img/colar-horus/colar_completo_upscaled.png',
+      '/img/colar-horus/colar_lua_preta_upscaled.png',
+      '/img/colar-horus/estudio_upscaled.png',
+      '/img/colar-horus/medida_upscaled.png',
+      '/img/colar-horus/sem_fundo_upscaled.png'
+    ];
     const view = document.getElementById('collarView');
     const track = document.getElementById('collarTrack');
-    if(!view || !track || images.length < 1) return;
+    const modal = document.getElementById('collarGalleryModal');
+    const modalImage = document.getElementById('collarGalleryImage');
+    const dots = document.getElementById('collarGalleryDots');
+    const counter = document.getElementById('collarGalleryCounter');
+    if(!view || !track || !modal || !modalImage || !images.length) return;
     const frames = images.concat(images[0]);
     frames.forEach(function(src){
       const fig = document.createElement('figure');
       const img = document.createElement('img');
-      img.src = src;
-      img.alt = 'Colar Hórus, Akasha Hub';
-      fig.appendChild(img);
-      track.appendChild(fig);
+      img.src = src; img.alt = 'Colar Hórus, Akasha Hub';
+      fig.appendChild(img); track.appendChild(fig);
     });
     view.hidden = false;
-    if(images.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let i = 0;
-    setInterval(function(){
-      i += 1;
-      track.style.transition = 'transform .7s cubic-bezier(.22,1,.36,1)';
-      track.style.transform = 'translateX(' + (-i * 100) + '%)';
-      if(i === images.length){
-        setTimeout(function(){
-          track.style.transition = 'none';
-          i = 0;
-          track.style.transform = 'translateX(0)';
-        }, 720);
-      }
-    }, 2700);
+    let viewIndex = 0, galleryIndex = 0, galleryTimer = null, savedScrollY = 0, lastTrigger = null;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function setView(index){
+      viewIndex = index % images.length;
+      track.style.transition = reduced ? 'none' : 'transform .7s cubic-bezier(.22,1,.36,1)';
+      track.style.transform = 'translateX(' + (-viewIndex * 100) + '%)';
+    }
+    if(images.length > 1 && !reduced){
+      setInterval(function(){ setView(viewIndex + 1); }, 3000);
+    }
+    images.forEach(function(src, index){
+      const dot = document.createElement('button'); dot.type='button'; dot.className='collar-gallery-dot';
+      dot.setAttribute('aria-label','Ir para a imagem ' + (index + 1));
+      dot.addEventListener('click', function(){ showGallery(index); }); dots.appendChild(dot);
+    });
+    function showGallery(index){
+      galleryIndex = (index + images.length) % images.length;
+      modalImage.classList.remove('is-visible');
+      window.setTimeout(function(){
+        modalImage.src = images[galleryIndex];
+        modalImage.onload = function(){ modalImage.classList.add('is-visible'); };
+      }, reduced ? 0 : 40);
+      counter.textContent = (galleryIndex + 1) + ' / ' + images.length;
+      [...dots.children].forEach(function(dot, i){ dot.classList.toggle('is-active', i === galleryIndex); });
+    }
+    function stopGalleryTimer(){ if(galleryTimer){ clearInterval(galleryTimer); galleryTimer=null; } }
+    function startGalleryTimer(){ stopGalleryTimer(); if(images.length > 1 && !reduced) galleryTimer=setInterval(function(){ showGallery(galleryIndex + 1); },3000); }
+    window.openCollarGallery = function(trigger){
+      lastTrigger = trigger || view; savedScrollY = window.scrollY;
+      modal.classList.add('is-open'); modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
+      showGallery(viewIndex); startGalleryTimer(); document.getElementById('collarGalleryClose').focus();
+    };
+    window.closeCollarGallery = function(){
+      stopGalleryTimer(); modal.classList.remove('is-open'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
+      window.scrollTo(0, savedScrollY); if(lastTrigger) lastTrigger.focus();
+    };
+    view.addEventListener('click', function(){ window.openCollarGallery(view); });
+    view.addEventListener('keydown', function(e){ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); window.openCollarGallery(view); } });
+    document.getElementById('collarGalleryClose').addEventListener('click', window.closeCollarGallery);
+    document.getElementById('collarGalleryPrev').addEventListener('click', function(){ showGallery(galleryIndex - 1); startGalleryTimer(); });
+    document.getElementById('collarGalleryNext').addEventListener('click', function(){ showGallery(galleryIndex + 1); startGalleryTimer(); });
+    modal.addEventListener('click', function(e){ if(e.target === modal) window.closeCollarGallery(); });
+    modal.addEventListener('mouseenter', stopGalleryTimer); modal.addEventListener('mouseleave', startGalleryTimer);
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && modal.classList.contains('is-open')) window.closeCollarGallery(); });
+    showGallery(0);
   })();
 
   document.addEventListener('keydown', function(e){
