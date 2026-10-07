@@ -55,7 +55,8 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clam
 .bar button.gold{background:#c4a15a;color:#1a140c;border-color:#c4a15a;font-weight:600}
 .stage{flex:1;overflow:auto;padding:8vh 8vw 18vh;scroll-behavior:auto}
 .beat{margin:0 0 28px;max-width:18em}
-.beat i{display:block;font-style:normal;letter-spacing:.16em;text-transform:uppercase;font-size:12px;color:#c4a15a;margin-bottom:8px}
+.beat i{display:block;font-style:normal;letter-spacing:.16em;text-transform:uppercase;font-size:12px;color:#c4a15a;margin-bottom:4px}
+.beat .lesson{display:block;font-style:normal;font-size:13px;line-height:1.35;color:#cbb6e6;font-weight:500;margin:0 0 10px;letter-spacing:0;text-transform:none}
 .beat p{margin:0;font-size:var(--size,34px);line-height:1.28;font-weight:500}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#fff;color:#17130f;border-radius:999px;padding:10px 16px;display:none;z-index:30}
 .toast.on{display:block}
@@ -82,13 +83,14 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clam
   <h1>Fala simples. Estrutura densa.</h1>
   <p class="lead">Quem assiste entra por uma leitura social. A cadência é: coletivo para abrir (“vocês”, “muita gente”, “a sociedade”); “você” como espelho de um padrão, não como indireta; “eu” como experiência ou escolha do narrador; e coletivo para fechar, com uma pergunta que abre conversa. Por baixo, a ordem é sempre a mesma: diagnóstico, espelho, tensão, virada, alívio, chave. Não entrega a saída no segundo três. Não machuca e vai embora. Um gesto só no fim.</p>
   <div class="engine">
-    <div><b>0–3s</b><span>Diagnóstico. O padrão coletivo, não uma pessoa.</span></div>
-    <div><b>3–8s</b><span>Espelho. Evidência que muita gente já viveu.</span></div>
-    <div><b>8–15s</b><span>Tensão. O custo de continuar assim.</span></div>
-    <div><b>15–25s</b><span>Virada. A leitura anterior quebra.</span></div>
-    <div><b>25–35s</b><span>Alívio. Uma saída, não três aulas.</span></div>
-    <div><b>Chave</b><span>Uma frase. Um gesto. Abre para o público.</span></div>
+    <div><b>Diagnóstico</b><span>Lição: o problema, não o produto.</span></div>
+    <div><b>Espelho</b><span>Lição: o gesto em que a pessoa se vê.</span></div>
+    <div><b>Tensão</b><span>Lição: o custo de continuar assim.</span></div>
+    <div><b>Virada</b><span>Lição: não é X. É Y. Por isso Z.</span></div>
+    <div><b>Alívio</b><span>Lição: uma saída. Princípio, uso, consequência.</span></div>
+    <div><b>Chave</b><span>Lição: uma frase. Um gesto. Para.</span></div>
   </div>
+  <p class="note">A linha lilás dentro do roteiro não se fala. É a lição daquele pedaço, para você entender antes de entonar. No primeiro vídeo, a palavra depois do ponto não é o seu ofício. É o comentário. Você pede o gesto, pausa, e diz: profissão. As três frases do alívio são quem você ajuda, qual problema, por qual caminho. No Akasha: ajudo quem já tem ofício e o negócio ainda mora na cabeça. O problema é a experiência sem frase. O caminho é uma casa só. Método, oferta e estrutura.</p>
   <p class="note">No ar, o nome é Yan Klehn. Quem grava os quinze primeiros é Yan Filipe. Os nove últimos são para quem faz a propaganda: ela não finge resultado, não promete faturamento, não diz que fez a mentoria. A referência de cadência é: abrir no coletivo; usar o “você” para espelhar um comportamento que muita gente reconhece; usar o “eu” para mostrar uma escolha, experiência ou posição do narrador; trazer o contexto social; e fechar devolvendo a pergunta ao público. O conteúdo não é indireta, diagnóstico privado nem recado para uma pessoa. A persuasão deve parecer humana: autoridade por clareza, experiência e limites — nunca por pressão, humilhação, urgência artificial ou promessa.</p>
   <div class="list" id="list"></div>
 </main>
@@ -328,6 +330,213 @@ const SCRIPTS = [
     ]}
 ];
 
+const BASE = {
+  "Diagnóstico": "Lição: nomeie o problema antes do produto.",
+  "Espelho": "Lição: mostre o gesto em que a pessoa se reconhece.",
+  "Tensão": "Lição: mostre o que isso custa se continuar.",
+  "Virada": "Lição: não é X. É Y. Por isso Z.",
+  "Alívio": "Lição: uma saída. Princípio, uso, consequência.",
+  "Chave": "Lição: uma frase. Um gesto. Para."
+};
+const SPECIFIC = {
+  "A palavra que sobra é a profissão": {
+    "Diagnóstico": "Lição: o problema é explicar pelo cargo, não falta de produto.",
+    "Espelho": "Lição: formação, cargo e anos. A pessoa se vê nesse gesto.",
+    "Tensão": "Lição: o custo é cada conversa começar do zero.",
+    "Virada": "Lição: não é falta de experiência. É a experiência sem frase.",
+    "Alívio": "Lição: três frases. Quem ajuda. Qual problema. Por qual caminho.",
+    "Chave": "Lição: pausa. Profissão é a palavra do comentário, não o ofício."
+  },
+  "Alguém te apresenta e inventa você": {
+    "Diagnóstico": "Lição: o problema é a apresentação que outro faz de você.",
+    "Espelho": "Lição: nome, área e elogio. O diferente não sai.",
+    "Tensão": "Lição: o custo é o cliente chegar esperando outra coisa.",
+    "Virada": "Lição: não é mais exposição. É uma frase que outro repete.",
+    "Alívio": "Lição: três partes e um teste hoje. Se travar, ainda está grande.",
+    "Chave": "Lição: um gesto. Mandar para quem ia te apresentar."
+  },
+  "Quando você sai, o negócio senta": {
+    "Diagnóstico": "Lição: o problema é o negócio sentar quando você sai.",
+    "Espelho": "Lição: cliente, equipe, arquivo e combinado de boca.",
+    "Tensão": "Lição: o custo é chamar dependência de padrão de qualidade.",
+    "Virada": "Lição: não é mais presença. É etapa com entrada e saída.",
+    "Alívio": "Lição: uma etapa, a que se repete e só você sabe.",
+    "Chave": "Lição: um gesto. Escrever entrada e saída hoje."
+  },
+  "Você chama de ambição": {
+    "Diagnóstico": "Lição: o problema é o dinheiro entrar e a pergunta ser a compra.",
+    "Espelho": "Lição: trabalha mais, ganha mais, chama de ambição.",
+    "Tensão": "Lição: o custo é a falta não acabar com a compra.",
+    "Virada": "Lição: não é não saber ganhar. É ter aprendido pela falta.",
+    "Alívio": "Lição: a saída é o dinheiro voltar a ser decisão.",
+    "Chave": "Lição: um gesto. Comentar ambição ou falta."
+  },
+  "Quem vende extintor mostra o fogo": {
+    "Diagnóstico": "Lição: mostre o fogo antes da casa. Não comece pelo produto.",
+    "Espelho": "Lição: o conhecimento cresceu. A forma e o arquivo, não.",
+    "Tensão": "Lição: sem o fogo, método e página parecem aula.",
+    "Virada": "Lição: não são três mentorias. É experiência ainda em fumaça.",
+    "Alívio": "Lição: a saída é nome, etapa e uma frase que outro repete.",
+    "Chave": "Lição: um gesto. Uma palavra: o que está queimando."
+  },
+  "Mais um curso, ou a casa": {
+    "Diagnóstico": "Lição: o problema é a próxima compra ser mais formação.",
+    "Espelho": "Lição: o certificado entra e a explicação não muda.",
+    "Tensão": "Lição: o custo é o curso virar adiamento.",
+    "Virada": "Lição: não é ataque a estudo. É registrar o que já se repete.",
+    "Alívio": "Lição: estrutura é o que fica quando a formação termina.",
+    "Chave": "Lição: um gesto. Comentar curso ou estrutura."
+  },
+  "Antes da ferramenta": {
+    "Diagnóstico": "Lição: o problema é achar que a clareza vem com o login.",
+    "Espelho": "Lição: tem página e ferramenta. Não tem a decisão.",
+    "Tensão": "Lição: o custo é publicar a confusão mais rápido.",
+    "Virada": "Lição: método, oferta, estrutura. A ferramenta entra depois.",
+    "Alívio": "Lição: sem a etapa, nenhuma casa salva.",
+    "Chave": "Lição: um gesto. Escrever a decisão antes de assinar."
+  },
+  "Uma etapa, não o método inteiro": {
+    "Diagnóstico": "Lição: o problema é travar tentando escrever a vida inteira.",
+    "Espelho": "Lição: abre o documento, põe o título, fecha.",
+    "Tensão": "Lição: o método inteiro impede a tarde de hoje.",
+    "Virada": "Lição: etapa é o que entra, o que você faz, o que sai.",
+    "Alívio": "Lição: um caso do último mês. O método nasce da repetição.",
+    "Chave": "Lição: um gesto. Uma etapa, não doze."
+  },
+  "A empresa que só vive em você": {
+    "Diagnóstico": "Lição: o problema é o negócio morar numa pessoa só.",
+    "Espelho": "Lição: cliente, preço, briga e memória voltam para você.",
+    "Tensão": "Lição: o custo é a casa parar no dia em que você para.",
+    "Virada": "Lição: legado é o que continua quando você não está na sala.",
+    "Alívio": "Lição: não sair da empresa. Tirar da cabeça o que se repete.",
+    "Chave": "Lição: um gesto. Mandar para quem segura tudo sozinho."
+  },
+  "O livro não é a mentoria": {
+    "Diagnóstico": "Lição: o problema é confundir o livro com a mentoria.",
+    "Espelho": "Lição: o livro é linguagem e origem, não um produto à parte.",
+    "Tensão": "Lição: o custo é frase boa e negócio ainda na cabeça.",
+    "Virada": "Lição: não é uma quarta mentoria. É o vocabulário da casa.",
+    "Alívio": "Lição: ler é se reconhecer. Construir pede o ciclo.",
+    "Chave": "Lição: um gesto. Salvar se quer o caminho, não o resumo."
+  },
+  "Três cômodos, uma casa": {
+    "Diagnóstico": "Lição: o problema é tratar essência, corpo e dinheiro como três vidas.",
+    "Espelho": "Lição: uma pasta para se apresentar, outra para aguentar, outra para cobrar.",
+    "Tensão": "Lição: o custo é o cliente sentir a emenda.",
+    "Virada": "Lição: três cômodos, uma casa. Essência, alma, valor.",
+    "Alívio": "Lição: o corredor é o que outro usa quando você sai.",
+    "Chave": "Lição: um gesto. Comentar o cômodo vazio."
+  },
+  "Quem te indica traduz no escuro": {
+    "Diagnóstico": "Lição: o problema é o cliente querer uma coisa e você fazer outra.",
+    "Espelho": "Lição: a indicação usou profissão, apelido ou um caso antigo.",
+    "Tensão": "Lição: o custo é você pagar a conta na primeira reunião.",
+    "Virada": "Lição: a frase é o que a outra pessoa diz sem te ligar.",
+    "Alívio": "Lição: mande as três partes e peça para ela repetir.",
+    "Chave": "Lição: um gesto. Mandar o vídeo junto com a frase."
+  },
+  "Você diz que quer legado": {
+    "Diagnóstico": "Lição: o problema é o legado dito e o dia não coincidirem.",
+    "Espelho": "Lição: atende, explica de novo, aceita o cliente que não é.",
+    "Tensão": "Lição: discurso num endereço. Ofício em outro.",
+    "Virada": "Lição: não é falta de visão. É falta de arquitetura.",
+    "Alívio": "Lição: uma frase, uma etapa, um limite, um lugar.",
+    "Chave": "Lição: um gesto. Comentar eu faço ou eu digo."
+  },
+  "O ciclo, dito uma vez": {
+    "Diagnóstico": "Lição: o problema já está nomeado. Aqui a porta pode aparecer.",
+    "Espelho": "Lição: uma mentoria, não três produtos.",
+    "Tensão": "Lição: o número é o custo claro. Tempo, encontros, investimento.",
+    "Virada": "Lição: aplicar não é comprar. A conversa vê se cabe.",
+    "Alívio": "Lição: não é promessa de faturamento. É o que cada um faz.",
+    "Chave": "Lição: um gesto. Aplicar, ou ficar com a frase. Não os dois."
+  },
+  "Eu penso daqui": {
+    "Diagnóstico": "Lição: o chão é a prova. Vilas, não um estúdio alugado.",
+    "Espelho": "Lição: o trabalho é o mesmo. Experiência sem forma.",
+    "Tensão": "Lição: palco alugado dura um story. O chão fica.",
+    "Virada": "Lição: um nome, uma mentoria. O resto é cômodo.",
+    "Alívio": "Lição: se reconheceu, precisa de frase e etapa, não de mais conteúdo.",
+    "Chave": "Lição: um gesto. Mandar para quem ainda se explica pela profissão."
+  },
+  "O incêndio, na voz dela": {
+    "Diagnóstico": "Lição: o problema é o trabalho só existir com a pessoa na sala.",
+    "Espelho": "Lição: saiu, o cliente chama. A equipe espera.",
+    "Tensão": "Lição: o custo é a dedicação que, no domingo, é incêndio.",
+    "Virada": "Lição: a quebra é o nome. Quem mostra isso é o Yan.",
+    "Alívio": "Lição: a saída cabe numa frase. Método, oferta, estrutura. Uma mentoria.",
+    "Chave": "Lição: um gesto. Mandar para quem é a sala inteira."
+  },
+  "Você faz isso": {
+    "Diagnóstico": "Lição: o problema é saber fazer e, na hora de dizer, sair a profissão.",
+    "Espelho": "Lição: anos de prática e uma frase que só cabe na boca dela.",
+    "Tensão": "Lição: o custo é postar mais e a explicação continuar do mesmo tamanho.",
+    "Virada": "Lição: ela não ensina o ofício. Aponta quem trabalha isso.",
+    "Alívio": "Lição: a saída é pequena de propósito. Frase, etapa, limite.",
+    "Chave": "Lição: um gesto. Se doeu no começo, comentar: eu."
+  },
+  "Eu não vou te ensinar": {
+    "Diagnóstico": "Lição: avise que não é aula. Isso segura a atenção.",
+    "Espelho": "Lição: se só funciona com ela presente, é turno, não método.",
+    "Tensão": "Lição: turno acaba. Método fica. O custo está nessa frase.",
+    "Virada": "Lição: o nome entra depois do problema, não antes.",
+    "Alívio": "Lição: aponte um vídeo só. Entrada, ação, saída.",
+    "Chave": "Lição: um gesto. Seguir ele, não mais um perfil de dica."
+  },
+  "Manda para essa pessoa": {
+    "Diagnóstico": "Lição: o problema tem rosto. Dez anos e ainda explica o básico.",
+    "Espelho": "Lição: ela é boa. Por isso ninguém escreveu o que ela faz.",
+    "Tensão": "Lição: o custo é a próxima indicação inventar o trabalho.",
+    "Virada": "Lição: um perfil, uma casa, não três cursos.",
+    "Alívio": "Lição: não é milagre. É uma conversa sobre forma.",
+    "Chave": "Lição: um gesto. Mandar agora, com o nome da pessoa."
+  },
+  "Não é mais um curso": {
+    "Diagnóstico": "Lição: para quem já é boa, mais curso pode ser fuga.",
+    "Espelho": "Lição: compra formação e volta ao mesmo jeito de explicar.",
+    "Tensão": "Lição: o que não comprou foi estrutura.",
+    "Virada": "Lição: curso quando falta competência. Estrutura quando o ofício já existe.",
+    "Alívio": "Lição: não é deboche de estudo. É alívio de quem já estudou demais.",
+    "Chave": "Lição: um gesto. Comentar curso se esse for o adiamento."
+  },
+  "Ele grava em Vilas": {
+    "Diagnóstico": "Lição: o lugar é a prova, não o cenário.",
+    "Espelho": "Lição: praia, calçada, porta de casa. O bairro, não o estúdio.",
+    "Tensão": "Lição: estúdio alugado pede uma confiança que o chão não deu.",
+    "Virada": "Lição: ele mora aqui. O trabalho é método, oferta e estrutura.",
+    "Alívio": "Lição: a imagem é simples. A engenharia é que é densa.",
+    "Chave": "Lição: um gesto. Ver a sequência, não um vídeo solto."
+  },
+  "O livro na mão dele": {
+    "Diagnóstico": "Lição: livro e mentoria são camadas, não a mesma coisa.",
+    "Espelho": "Lição: um compra o livro esperando acompanhamento. Outro acha que o livro é brinde.",
+    "Tensão": "Lição: os dois se frustram. O custo é misturar as camadas.",
+    "Virada": "Lição: linguagem da origem, de um lado. Ciclo de doze meses, do outro.",
+    "Alívio": "Lição: dá para começar pela leitura. A construção pede a casa.",
+    "Chave": "Lição: um gesto. Salvar o vídeo dele, não o resumo de terceiro."
+  },
+  "Três coisas, um caminho": {
+    "Diagnóstico": "Lição: três projetos separados não são três caminhos. É uma casa rachada.",
+    "Espelho": "Lição: um curso para se achar, outro para aguentar, outro para cobrar.",
+    "Tensão": "Lição: o cliente percebe a emenda antes.",
+    "Virada": "Lição: três cômodos. Essência, alma, valor. Uma arquitetura.",
+    "Alívio": "Lição: não jogar fora o que estudou. Fazer o corredor.",
+    "Chave": "Lição: um gesto. Comentar 1, 2 ou 3."
+  },
+  "Se for este ano": {
+    "Diagnóstico": "Lição: a porta só aparece depois do cansaço de conteúdo sem forma.",
+    "Espelho": "Lição: não é grupo de promessa, nem dois preços, nem última vaga.",
+    "Tensão": "Lição: pressa falsa estraga. Falta de porta também.",
+    "Virada": "Lição: a porta tem nome. Aplicar é conversa, não compra automática.",
+    "Alívio": "Lição: se não for a hora, frase e etapa já são trabalho.",
+    "Chave": "Lição: um gesto só. Mandar, ou aplicar. Não os dois num impulso."
+  }
+};
+function lessonOf(s, b){
+  const pack = SPECIFIC[s.title];
+  return (pack && pack[b.t]) || BASE[b.t] || "";
+}
+
 const list = document.getElementById("list");
 const read = document.getElementById("read");
 const stage = document.getElementById("stage");
@@ -379,19 +588,19 @@ function render(filter){
 }
 function openScript(s){
   current = s;
-  const b = briefFor(s);
+  const brief = briefFor(s);
   stage.innerHTML = '<section class="producer-brief"><h2>Briefing para quem vai gravar</h2><p class="brief-lead">Leia antes de apertar “Rodar”. O briefing orienta a intenção; ele não entra na fala.</p><div class="brief-grid">'+
-    '<div class="brief-item"><b>Voz da narrativa</b><span>'+b.voice+'</span></div>'+
-    '<div class="brief-item"><b>Situação</b><span>'+b.situation+'</span></div>'+
-    '<div class="brief-item"><b>Público</b><span>'+b.audience+'</span></div>'+
-    '<div class="brief-item"><b>Sentimento</b><span>'+b.feeling+'</span></div>'+
-    '<div class="brief-item"><b>Objetivo</b><span>'+b.objective+'</span></div>'+
-    '<div class="brief-item"><b>Primeiros segundos</b><span>'+b.hook+'</span></div>'+
-    '<div class="brief-item"><b>Sugestão de gravação</b><span>'+b.recording+'</span></div>'+
-    '<div class="brief-item"><b>Objeção a responder</b><span>'+b.objection+'</span></div>'+
-    '</div><p class="brief-note"><strong>Integridade da mensagem:</strong> '+b.integrity+'</p></section>'+
+    '<div class="brief-item"><b>Voz da narrativa</b><span>'+brief.voice+'</span></div>'+
+    '<div class="brief-item"><b>Situação</b><span>'+brief.situation+'</span></div>'+
+    '<div class="brief-item"><b>Público</b><span>'+brief.audience+'</span></div>'+
+    '<div class="brief-item"><b>Sentimento</b><span>'+brief.feeling+'</span></div>'+
+    '<div class="brief-item"><b>Objetivo</b><span>'+brief.objective+'</span></div>'+
+    '<div class="brief-item"><b>Primeiros segundos</b><span>'+brief.hook+'</span></div>'+
+    '<div class="brief-item"><b>Sugestão de gravação</b><span>'+brief.recording+'</span></div>'+
+    '<div class="brief-item"><b>Objeção a responder</b><span>'+brief.objection+'</span></div>'+
+    '</div><p class="brief-note"><strong>Integridade da mensagem:</strong> '+brief.integrity+'</p></section>'+
     '<div class="script-start"><i>Teleprompter · fala revisada</i></div>'+
-    s.beats.map(b=>'<article class="beat"><i>'+b.t+'</i><p>'+b.say+'</p></article>').join("");
+    s.beats.map(beat=>'<article class="beat"><i>'+beat.t+'</i><em class="lesson">'+lessonOf(s,beat)+'</em><p>'+beat.say+'</p></article>').join("");
   stage.style.setProperty("--size", size+"px");
   stage.scrollTop = 0;
   read.classList.add("on");
