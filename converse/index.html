@@ -59,7 +59,20 @@
     cursor: pointer;
   }
   .pay:disabled { background: #b9b3a8; cursor: default; }
-  .note, .msg { font-family: system-ui, sans-serif; font-size: 14px; line-height: 1.45; }
+  .choice { display: grid; gap: 10px; margin-top: 8px; }
+  .choice button, .choice a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-decoration: none;
+    min-height: 64px;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font: 650 16px/1.25 system-ui, sans-serif;
+  }
+  .go-stripe { background: #161513; color: #f7f4ee; border: 0; cursor: pointer; }
+  .go-zap { background: #fff; color: #161513; border: 1px solid #161513; }
   .msg { margin-top: 18px; padding: 18px; background: #fff; border: 1px solid #161513; border-radius: 12px; }
   .msg strong { display: block; font-family: Georgia, serif; font-size: 32px; font-weight: 500; margin-bottom: 8px; }
   .hide { display: none; }
@@ -69,22 +82,38 @@
 <main>
   <p class="mark"><a href="/">Akasha Hub</a></p>
   <h1 id="title">Escolha o dia.</h1>
-  <p class="lead" id="lead">Sessão de 15 minutos. R$ 45 no cartão ou no Pix. Se o pagamento não entrar, o horário não fica marcado.</p>
+  <p class="lead" id="lead">Sessão de 15 minutos. R$ 45. Você escolhe: pagar aqui e garantir o horário, ou combinar direto no WhatsApp.</p>
   <div id="calendar"></div>
   <div id="hours" class="hide"></div>
+  <div id="paths" class="hide">
+    <h2>Como quer seguir</h2>
+    <div class="choice">
+      <button class="go-stripe" id="pickStripe" type="button">Pagar aqui e garantir o horário</button>
+      <a class="go-zap" id="pickZap" href="#" target="_blank" rel="noopener">Mandar no WhatsApp e pagar o mentor</a>
+    </div>
+    <p class="note">No site, o horário só fica marcado se o pagamento entrar. Cartão, Pix, Google Pay ou Apple Pay. No WhatsApp, você combina o pagamento direto com o mentor e o horário não fica travado sozinho.</p>
+  </div>
   <form id="who" class="hide">
     <label>Seu nome<input id="name" autocomplete="name" required></label>
     <label>WhatsApp<input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="71 99999 9999" required></label>
     <label>E-mail<input id="email" type="email" autocomplete="email" required></label>
-    <p class="note">A sessão é gravada. Ao pagar, você autoriza a gravação.</p>
-    <button class="pay" id="pay" type="submit">Pagar R$ 45</button>
+    <p class="note">A sessão é gravada. Ao pagar, você autoriza a gravação. Se o pagamento não entrar, nada fica marcado.</p>
+    <button class="pay" id="pay" type="submit">Pagar R$ 45 e garantir</button>
   </form>
   <div id="done" class="hide"></div>
 </main>
 <script>
 const API = "https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa";
 const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ";
-const WEEK = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+const ZAP = "5571983448621";
+function brDate(iso) {
+  const [y, m, d] = iso.split("-");
+  return d + "/" + m + "/" + y;
+}
+function zapLink() {
+  const text = "Olá. Quero uma sessão de 15 minutos.\nDia: " + brDate(state.date) + "\nHorário: " + state.time + "\nQuero pagar direto com o mentor.";
+  return "https://wa.me/" + ZAP + "?text=" + encodeURIComponent(text);
+}
 const MONTH = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 const q = new URLSearchParams(location.search);
 const state = { days: [], date: "", time: "" };
@@ -108,6 +137,7 @@ async function call(body) {
 function showDone(title, text) {
   document.getElementById("calendar").classList.add("hide");
   document.getElementById("hours").classList.add("hide");
+  document.getElementById("paths").classList.add("hide");
   document.getElementById("who").classList.add("hide");
   const box = document.getElementById("done");
   box.classList.remove("hide");
@@ -146,6 +176,7 @@ function drawDays() {
         document.getElementById("title").textContent = "Escolha o horário.";
         drawDays();
         drawTimes(day);
+        document.getElementById("paths").classList.add("hide");
         document.getElementById("who").classList.add("hide");
         document.getElementById("hours").scrollIntoView({ behavior: "smooth", block: "start" });
       };
@@ -166,14 +197,21 @@ function drawTimes(day) {
     btn.onclick = () => {
       state.time = time;
       drawTimes(day);
-      document.getElementById("who").classList.remove("hide");
-      document.getElementById("title").textContent = "Seus dados.";
-      document.getElementById("name").focus();
+      document.getElementById("paths").classList.remove("hide");
+      document.getElementById("pickZap").href = zapLink();
+      document.getElementById("who").classList.add("hide");
+      document.getElementById("title").textContent = "Como quer pagar.";
+      document.getElementById("paths").scrollIntoView({ behavior: "smooth", block: "start" });
     };
     grid.appendChild(btn);
   });
   box.appendChild(grid);
 }
+document.getElementById("pickStripe").onclick = () => {
+  document.getElementById("who").classList.remove("hide");
+  document.getElementById("title").textContent = "Seus dados.";
+  document.getElementById("name").focus();
+};
 document.getElementById("who").onsubmit = async (e) => {
   e.preventDefault();
   const pay = document.getElementById("pay");
@@ -198,7 +236,7 @@ document.getElementById("who").onsubmit = async (e) => {
     location.href = payData.url;
   } catch (err) {
     pay.disabled = false;
-    pay.textContent = "Pagar R$ 45";
+    pay.textContent = "Pagar R$ 45 e garantir";
     document.getElementById("lead").textContent = err.message === "unavailable"
       ? "Esse horário acabou de sair. Escolha outro."
       : "O pagamento não abriu. Tente de novo.";
