@@ -43,6 +43,8 @@ Deno.serve(async (req) => {
   if (action === "lookup") return lookup(body);
   if (action === "event") return track(body);
   if (action === "admin") return admin(req, body);
+  if (action === "pack") return packCheckout();
+  if (action === "pack_confirm") return packConfirm(body);
   return json({ error: "unknown_action" }, 400);
 });
 
@@ -430,6 +432,44 @@ async function track(body: Record<string, unknown>) {
   if (!allowed.includes(name)) return json({ ok: true });
   await event(String(body.appointment_id || "") || null, name, {});
   return json({ ok: true });
+}
+
+const PACK_CENTS = 2700;
+
+async function packCheckout() {
+  const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
+  if (!key) return json({ error: "stripe_not_configured" }, 503);
+  const stripe = await stripeClient(key);
+  const metadata = { source: "akasha-pack" };
+  const session = await openCheckout(stripe, {
+    mode: "payment",
+    line_items: [{
+      quantity: 1,
+      price_data: {
+        currency: "brl",
+        unit_amount: PACK_CENTS,
+        product_data: { name: "Pack de áudios Akasha Hub" },
+      },
+    }],
+    success_url: "https://akashahub.com.br/audios/?pago=1&session_id={CHECKOUT_SESSION_ID}",
+    cancel_url: "https://akashahub.com.br/?pack=1",
+    metadata,
+    payment_intent_data: { metadata },
+  });
+  return json({ url: session.url });
+}
+
+async function packConfirm(body: Record<string, unknown>) {
+  const sessionId = String(body.session_id || "");
+  if (!sessionId.startsWith("cs_")) return json({ error: "session" }, 400);
+  const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
+  if (!key) return json({ error: "stripe_not_configured" }, 503);
+  const stripe = await stripeClient(key);
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  if (session.metadata?.source !== "akasha-pack") return json({ error: "source" }, 400);
+  if (session.amount_total !== PACK_CENTS) return json({ error: "amount" }, 400);
+  if (session.payment_status !== "paid") return json({ paid: false });
+  return json({ paid: true });
 }
 
 async function openCheckout(stripe, fields) {
