@@ -622,13 +622,23 @@
         .mentoria-kicker{font-family:'Cinzel',serif;letter-spacing:.28em;font-size:11px;color:#8A5A0F}
         .mentoria-portas h2{font-family:'Cinzel',serif;font-weight:500;color:#1C1712;font-size:clamp(1.35rem,2.4vw,1.9rem);margin:10px 0 8px;letter-spacing:.04em}
         .mentoria-lead{font-family:'Montserrat',sans-serif;font-size:.82rem;color:#5A534A;max-width:38rem;margin:0 auto 20px;line-height:1.55}
-        .mentoria-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:left}
-        .mentoria-door{display:flex;flex-direction:column;gap:8px;min-height:132px;text-decoration:none;color:#1C1712;padding:18px 16px;background:rgba(255,255,255,.82);border:1px solid rgba(184,150,62,.4);transition:border-color .3s ease,box-shadow .3s ease,transform .3s ease}
+        .mentoria-row{display:flex;justify-content:center}
+        .mentoria-door{display:flex;flex-direction:column;gap:8px;min-height:132px;max-width:340px;width:100%;text-decoration:none;color:#1C1712;padding:18px 16px;background:rgba(255,255,255,.82);border:1px solid rgba(184,150,62,.4);transition:border-color .3s ease,box-shadow .3s ease,transform .3s ease}
         .mentoria-door:hover{border-color:#d4af37;box-shadow:0 10px 28px rgba(28,23,18,.06);transform:translateY(-2px)}
         .mentoria-door small{font-family:'Montserrat',sans-serif;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:#8A5A0F}
-        .mentoria-door b{font-family:'Cinzel',serif;font-size:1rem;font-weight:600;letter-spacing:.03em}
+        .mentoria-door b{font-family:'Cinzel',serif;font-size:1.15rem;font-weight:600;letter-spacing:.12em}
         .mentoria-door span{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:#5A534A;line-height:1.35}
-        @media (max-width:800px){.mentoria-row{grid-template-columns:1fr}.mentoria-door{min-height:0}.mentoria-door:hover{transform:none}}
+        .leitura-open{display:block;margin:18px auto 0;max-width:340px;width:100%;min-height:52px;border:1px solid #1C1712;background:#1C1712;color:#F6F3EC;font-family:'Montserrat',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+        #leitura-modal{position:fixed;inset:0;z-index:80;background:rgba(28,23,18,.55);display:flex;align-items:flex-end;justify-content:center;padding:12px}
+        #leitura-sheet{width:min(460px,100%);background:#F6F3EC;color:#1C1712;padding:22px 18px 18px;border:1px solid rgba(184,150,62,.45)}
+        #leitura-sheet h3{font-family:'Cinzel',serif;font-weight:500;font-size:1.45rem;margin:0 0 8px}
+        #leitura-sheet p,#leitura-sheet label{font-family:'Montserrat',sans-serif;font-size:.82rem;line-height:1.5;color:#5A534A}
+        #leitura-sheet label{display:grid;gap:6px;margin-top:10px;text-align:left}
+        #leitura-sheet input{min-height:46px;border:1px solid #1C1712;background:#fff;padding:0 12px;font:inherit;color:#1C1712}
+        #leitura-pay{width:100%;min-height:52px;margin-top:14px;border:0;background:#1C1712;color:#F6F3EC;font-family:'Montserrat',sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+        #leitura-pay:disabled{opacity:.55}
+        @media (min-width:720px){#leitura-modal{align-items:center}}
+        @media (max-width:800px){.mentoria-door:hover{transform:none}}
     </style>
 <script src="/js/ah-ga4.js" defer></script>
 </head>
@@ -714,14 +724,13 @@
     <!-- ======================================== -->
     <section class="mentoria-portas" id="mentorias" aria-label="Portas das mentorias">
         <div class="mentoria-portas-inner">
-            <p class="mentoria-kicker">AS MENTORIAS</p>
-            <h2>Três portas. Um só lugar.</h2>
-            <p class="mentoria-lead">A jornada dos níveis continua abaixo. Estas três entradas ficam aqui, sem se repetir dentro de cada nível.</p>
+            <p class="mentoria-kicker">A MENTORIA</p>
+            <h2>Uma porta. Legado.</h2>
+            <p class="mentoria-lead">A jornada dos níveis continua abaixo. A mentoria agora entra por um acesso só.</p>
             <div class="mentoria-row">
-                <a class="mentoria-door hover-trigger" href="/ta"><small>01</small><b>Tecnologia da Alma</b><span>A prática de mente, corpo e campo.</span></a>
-                <a class="mentoria-door hover-trigger" href="/legado"><small>02</small><b>Arquitetura de Essência</b><span>Quem você é antes de construir a obra.</span></a>
-                <a class="mentoria-door hover-trigger" href="/alinhamentofinanceiro"><small>03</small><b>Alinhamento Financeiro</b><span>Comportamento, caixa e liberdade.</span></a>
+                <a class="mentoria-door hover-trigger" href="/legado"><small>Acesso único</small><b>LEGADO</b><span>A mentoria inteira, num só lugar.</span></a>
             </div>
+            <button type="button" class="leitura-open" id="leituraOpen">Leitura Estratégica Express · R$ 47</button>
         </div>
     </section>
 
@@ -1621,6 +1630,74 @@
             }
         }
         createParticles();
+    </script>
+    <script>
+    (function(){
+      var API = "https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa";
+      var KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ";
+      function openSheet(mode){
+        var old = document.getElementById("leitura-modal");
+        if (old) old.remove();
+        var root = document.createElement("div");
+        root.id = "leitura-modal";
+        var sheet = document.createElement("div");
+        sheet.id = "leitura-sheet";
+        var h = document.createElement("h3");
+        h.textContent = "Leitura Estratégica Express";
+        var p = document.createElement("p");
+        p.textContent = "15 minutos. R$ 47 no cartão ou no Pix. O horário combina depois que o pagamento entra.";
+        sheet.appendChild(h);
+        sheet.appendChild(p);
+        if (mode === "ok") {
+          p.textContent = "Pagamento confirmado. A leitura está reservada. O horário combina em seguida.";
+        } else if (mode === "wait") {
+          p.textContent = "O pagamento ainda não entrou. A leitura não ficou marcada.";
+        } else {
+          var form = document.createElement("form");
+          [["Seu nome","leituraNome","text"],["WhatsApp","leituraZap","tel"],["E-mail","leituraMail","email"]].forEach(function(item){
+            var lab = document.createElement("label");
+            lab.textContent = item[0];
+            var input = document.createElement("input");
+            input.id = item[1];
+            input.type = item[2];
+            input.required = true;
+            lab.appendChild(input);
+            form.appendChild(lab);
+          });
+          var pay = document.createElement("button");
+          pay.id = "leitura-pay";
+          pay.type = "submit";
+          pay.textContent = "Pagar R$ 47 · cartão ou Pix";
+          form.appendChild(pay);
+          form.onsubmit = function(e){
+            e.preventDefault();
+            var name = document.getElementById("leituraNome").value.trim();
+            var phone = document.getElementById("leituraZap").value.trim();
+            var email = document.getElementById("leituraMail").value.trim();
+            if (name.length < 2 || phone.replace(/\D/g,"").length < 10 || email.indexOf("@") < 0) return;
+            pay.disabled = true;
+            pay.textContent = "Abrindo o pagamento…";
+            fetch(API, {method:"POST", headers:{"Content-Type":"application/json", apikey:KEY, Authorization:"Bearer "+KEY}, body: JSON.stringify({action:"leitura", name:name, phone:phone, email:email})})
+              .then(function(r){ return r.json(); })
+              .then(function(data){ if (!data.url) throw new Error("sem"); location.href = data.url; })
+              .catch(function(){ pay.disabled = false; pay.textContent = "Pagar R$ 47 · cartão ou Pix"; p.textContent = "O pagamento não abriu. Tente de novo."; });
+          };
+          sheet.appendChild(form);
+        }
+        root.appendChild(sheet);
+        root.addEventListener("click", function(e){ if (e.target === root) root.remove(); });
+        document.body.appendChild(root);
+      }
+      var btn = document.getElementById("leituraOpen");
+      if (btn) btn.onclick = function(){ openSheet("pay"); };
+      var q = new URLSearchParams(location.search);
+      if (q.get("leitura") === "1" && q.get("session_id")) {
+        fetch(API, {method:"POST", headers:{"Content-Type":"application/json", apikey:KEY, Authorization:"Bearer "+KEY}, body: JSON.stringify({action:"leitura_confirm", session_id:q.get("session_id")})})
+          .then(function(r){ return r.json(); })
+          .then(function(data){ openSheet(data.paid ? "ok" : "wait"); })
+          .catch(function(){ openSheet("wait"); });
+      }
+    })();
     </script>
 </body>
 </html>

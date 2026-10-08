@@ -45,6 +45,8 @@ Deno.serve(async (req) => {
   if (action === "admin") return admin(req, body);
   if (action === "pack") return packCheckout();
   if (action === "pack_confirm") return packConfirm(body);
+  if (action === "leitura") return leituraCheckout(body);
+  if (action === "leitura_confirm") return leituraConfirm(body);
   return json({ error: "unknown_action" }, 400);
 });
 
@@ -468,6 +470,49 @@ async function packConfirm(body: Record<string, unknown>) {
   const session = await stripe.checkout.sessions.retrieve(sessionId);
   if (session.metadata?.source !== "akasha-pack") return json({ error: "source" }, 400);
   if (session.amount_total !== PACK_CENTS) return json({ error: "amount" }, 400);
+  if (session.payment_status !== "paid") return json({ paid: false });
+  return json({ paid: true });
+}
+
+const LEITURA_CENTS = 4700;
+
+async function leituraCheckout(body: Record<string, unknown>) {
+  const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
+  if (!key) return json({ error: "stripe_not_configured" }, 503);
+  const name = String(body.name || "").trim().slice(0, 80);
+  const phone = String(body.phone || "").trim().slice(0, 30);
+  const email = String(body.email || "").trim().slice(0, 120);
+  if (name.length < 2 || phone.replace(/\D/g, "").length < 10 || !email.includes("@")) return json({ error: "details" }, 400);
+  const stripe = await stripeClient(key);
+  const metadata = { source: "akasha-leitura", name, phone, email };
+  const session = await openCheckout(stripe, {
+    mode: "payment",
+    customer_email: email,
+    line_items: [{
+      quantity: 1,
+      price_data: {
+        currency: "brl",
+        unit_amount: LEITURA_CENTS,
+        product_data: { name: "Leitura Estratégica Express · 15 min" },
+      },
+    }],
+    success_url: "https://akashahub.com.br/doutrina/?leitura=1&session_id={CHECKOUT_SESSION_ID}",
+    cancel_url: "https://akashahub.com.br/doutrina/?leitura=0",
+    metadata,
+    payment_intent_data: { metadata },
+  });
+  return json({ url: session.url });
+}
+
+async function leituraConfirm(body: Record<string, unknown>) {
+  const sessionId = String(body.session_id || "");
+  if (!sessionId.startsWith("cs_")) return json({ error: "session" }, 400);
+  const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
+  if (!key) return json({ error: "stripe_not_configured" }, 503);
+  const stripe = await stripeClient(key);
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  if (session.metadata?.source !== "akasha-leitura") return json({ error: "source" }, 400);
+  if (session.amount_total !== LEITURA_CENTS) return json({ error: "amount" }, 400);
   if (session.payment_status !== "paid") return json({ paid: false });
   return json({ paid: true });
 }
