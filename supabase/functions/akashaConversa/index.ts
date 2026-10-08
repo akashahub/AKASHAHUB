@@ -8,6 +8,7 @@ const SERVICES = ["conversar", "alinhamento", "sessao"];
 const CHANNELS = ["whatsapp-audio", "whatsapp-video", "zoom", "meet"];
 const WA_HUB = Deno.env.get("HUB_WHATSAPP") || "5571983448621";
 const WA_MENTOR = Deno.env.get("MENTOR_WHATSAPP") || "5571983448621";
+const ADMIN_EMAIL = Deno.env.get("ADMIN_EMAIL") || "yanfili.simon@gmail.com";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -431,6 +432,7 @@ async function notify(row: Record<string, string>) {
   ].join("\n");
   await event(row.id, "notify_queued", { client: text, internal });
   await sendMail(row.customer_email, "Seu alinhamento foi confirmado", text);
+  await sendMail(ADMIN_EMAIL, "Novo agendamento confirmado · Akasha Hub", internal);
   await sendWhatsapp(row.customer_phone, text);
   await sendWhatsapp(WA_MENTOR, internal);
   if (WA_HUB !== WA_MENTOR) await sendWhatsapp(WA_HUB, internal);
