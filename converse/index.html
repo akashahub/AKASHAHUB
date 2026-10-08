@@ -88,7 +88,7 @@
   <div id="paths" class="hide">
     <h2>Como quer seguir</h2>
     <div class="choice">
-      <button class="go-stripe" id="pickStripe" type="button">Pagar aqui e garantir o horário</button>
+      <button class="go-stripe" id="pickStripe" type="button">Confirmar pagamento pelo Stripe</button>
       <a class="go-zap" id="pickZap" href="#" target="_blank" rel="noopener">Mandar no WhatsApp e pagar o mentor</a>
     </div>
     <p class="note">No site, o horário só fica marcado se o pagamento entrar. Cartão, Pix, Google Pay ou Apple Pay. No WhatsApp, você combina o pagamento direto com o mentor e o horário não fica travado sozinho.</p>
@@ -98,7 +98,7 @@
     <label>WhatsApp<input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="71 99999 9999" required></label>
     <label>E-mail<input id="email" type="email" autocomplete="email" required></label>
     <p class="note">A sessão é gravada. Ao pagar, você autoriza a gravação. Se o pagamento não entrar, nada fica marcado.</p>
-    <button class="pay" id="pay" type="submit">Pagar R$ 45 e garantir</button>
+    <button class="pay" id="pay" type="submit">Confirmar pagamento pelo Stripe</button>
   </form>
   <div id="done" class="hide"></div>
 </main>
@@ -106,6 +106,7 @@
 const API = "https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa";
 const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ";
 const ZAP = "5571983448621";
+const WEEK = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 function brDate(iso) {
   const [y, m, d] = iso.split("-");
   return d + "/" + m + "/" + y;
@@ -236,7 +237,7 @@ document.getElementById("who").onsubmit = async (e) => {
     location.href = payData.url;
   } catch (err) {
     pay.disabled = false;
-    pay.textContent = "Pagar R$ 45 e garantir";
+    pay.textContent = "Confirmar pagamento pelo Stripe";
     document.getElementById("lead").textContent = err.message === "unavailable"
       ? "Esse horário acabou de sair. Escolha outro."
       : "O pagamento não abriu. Tente de novo.";
@@ -252,22 +253,46 @@ async function returning() {
     showDone("Nada ficou marcado.", "O pagamento não entrou. O horário continua livre.");
     return true;
   }
-  document.getElementById("lead").textContent = "Confirmando o pagamento. Não feche esta página.";
-  for (let i = 0; i < 20; i++) {
+  document.getElementById("lead").textContent = "Se o pagamento já entrou, confirme abaixo.";
+  const box = document.getElementById("done");
+  box.classList.remove("hide");
+  document.getElementById("calendar").classList.add("hide");
+  document.getElementById("hours").classList.add("hide");
+  document.getElementById("paths").classList.add("hide");
+  document.getElementById("who").classList.add("hide");
+  const card = el("div", "msg");
+  card.appendChild(el("strong", "", "Pagamento"));
+  const line = el("p", "note", "Aperte o botão para confirmar no Stripe. O horário só fica marcado se o pagamento entrou.");
+  card.appendChild(line);
+  const btn = el("button", "pay", "Confirmar pagamento pelo Stripe");
+  btn.type = "button";
+  btn.onclick = async () => {
+    btn.disabled = true;
+    btn.textContent = "Confirmando…";
     try {
-      const data = await call({ action: "status", id, access_code: code });
+      const data = await call({ action: "confirm", id, access_code: code });
       if (data.status === "confirmed" && data.payment_status === "paid") {
         showDone("Está marcado.", data.date.split("-").reverse().join("/") + " às " + data.start_time + ". Pagamento confirmado.");
-        return true;
+        return;
       }
-      if (data.status === "expired" || data.status === "cancelled") {
-        showDone("Nada ficou marcado.", "O pagamento não entrou a tempo. Escolha o horário de novo.");
+      line.textContent = "O pagamento ainda não entrou. Pode tentar de novo em alguns segundos.";
+    } catch (e) {
+      line.textContent = "Não consegui confirmar agora. Tente de novo.";
+    }
+    btn.disabled = false;
+    btn.textContent = "Confirmar pagamento pelo Stripe";
+  };
+  box.replaceChildren(card, btn);
+  for (let i = 0; i < 8; i++) {
+    try {
+      const data = await call({ action: "confirm", id, access_code: code });
+      if (data.status === "confirmed" && data.payment_status === "paid") {
+        showDone("Está marcado.", data.date.split("-").reverse().join("/") + " às " + data.start_time + ". Pagamento confirmado.");
         return true;
       }
     } catch (e) {}
     await new Promise((r) => setTimeout(r, 3000));
   }
-  showDone("Ainda não entrou.", "Se o Pix ou o cartão não foi pago, o horário não fica marcado.");
   return true;
 }
 returning().then(async (back) => {

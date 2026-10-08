@@ -32,6 +32,7 @@ Deno.serve(async (req) => {
   if (action === "details") return details(body);
   if (action === "checkout") return checkout(body);
   if (action === "release") return release(body);
+  if (action === "confirm") return confirmPayment(body);
   if (action === "status") return status(body);
   if (action === "lookup") return lookup(body);
   if (action === "event") return track(body);
@@ -224,6 +225,38 @@ async function release(body: Record<string, unknown>) {
     });
   }
   return json({ ok: true, status: "cancelled" });
+}
+
+async function confirmPayment(body: Record<string, unknown>) {
+  const id = String(body.id || "");
+  const code = String(body.access_code || "");
+  const current = await one(id);
+  if (!current || current.access_code !== code) return json({ error: "not_found" }, 404);
+  if (current.status === "confirmed" && current.payment_status === "paid") return json(publicView(current));
+  const sessionId = String(current.stripe_checkout_session_id || "");
+  if (!sessionId) return json({ waiting: true, ...publicView(current) });
+  const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
+  if (!key) return json({ error: "stripe_not_configured" }, 503);
+  const stripe = new Stripe(key, { apiVersion: "2024-06-20" });
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  if (session.payment_status !== "paid") return json({ waiting: true, ...publicView(current) });
+  if (session.amount_total !== SESSION_CENTS) return json({ error: "amount" }, 400);
+  await rest("akasha_appointments?id=eq." + id, {
+    method: "PATCH",
+    body: JSON.stringify({
+      status: "confirmed",
+      payment_status: "paid",
+      payment_method: "stripe",
+      stripe_checkout_session_id: session.id,
+      stripe_payment_intent_id: typeof session.payment_intent === "string" ? session.payment_intent : current.stripe_payment_intent_id,
+      expires_at: null,
+      updated_at: new Date().toISOString(),
+    }),
+  });
+  await event(id, "appointment_confirmed", { session: session.id, via: "button" });
+  const fresh = await one(id);
+  if (fresh) await notify(fresh);
+  return json(publicView(fresh || current));
 }
 
 async function status(body: Record<string, unknown>) {
