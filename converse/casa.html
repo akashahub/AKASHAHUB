@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Agenda da casa</title>
+<style>
+  body { margin: 0; background: #f7f4ee; color: #161513; font-family: system-ui, sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; }
+  input, button { font: inherit; min-height: 44px; }
+  input { width: 100%; max-width: 360px; padding: 0 12px; }
+  button { background: #161513; color: #f7f4ee; border: 0; border-radius: 999px; padding: 0 16px; cursor: pointer; }
+  table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 14px; }
+  td, th { border-bottom: 1px solid #ddd; text-align: left; padding: 8px 4px; vertical-align: top; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Agenda da casa</h1>
+  <form id="admin">
+    <input id="token" type="password" placeholder="Chave da agenda" autocomplete="current-password"/>
+    <button type="submit">Abrir</button>
+  </form>
+  <div id="rows"></div>
+</main>
+<script>
+const API = "https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa";
+const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ";
+function esc(s){ return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&", "<": "<", ">": ">", "\"": """, "'": "&#39;" }[c])); }
+async function call(body, admin){
+  const headers = { "Content-Type": "application/json", apikey: KEY, Authorization: "Bearer " + KEY, "x-akasha-admin": admin };
+  const res = await fetch(API, { method: "POST", headers, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "erro");
+  return data;
+}
+document.getElementById("admin").onsubmit = async (e) => {
+  e.preventDefault();
+  const token = document.getElementById("token").value;
+  const box = document.getElementById("rows");
+  try {
+    const data = await call({ action: "admin", op: "list" }, token);
+    const rows = (data.rows || []).filter((r) => r.status === "confirmed" || r.payment_status === "paid");
+    box.innerHTML = "<table><tr><th>Quando</th><th>Quem</th><th>Status</th></tr>" + rows.map((r) => "<tr><td>" + esc(r.date) + " " + esc(r.start_time) + "</td><td>" + esc(r.customer_name) + "<br>" + esc(r.customer_phone) + "<br>" + esc(r.customer_email) + "</td><td>" + esc(r.status) + " · " + esc(r.payment_status) + "</td></tr>").join("") + "</table>";
+    if (!rows.length) box.insertAdjacentHTML("beforeend", "<p>Nenhum horário pago.</p>");
+  } catch (err) {
+    box.textContent = "A agenda não abriu.";
+  }
+};
+</script>
+</body>
+</html>

@@ -31,6 +31,7 @@ Deno.serve(async (req) => {
   if (action === "hold") return hold(body);
   if (action === "details") return details(body);
   if (action === "checkout") return checkout(body);
+  if (action === "release") return release(body);
   if (action === "status") return status(body);
   if (action === "lookup") return lookup(body);
   if (action === "event") return track(body);
@@ -65,7 +66,7 @@ async function slots(from: string) {
   const start = brtNow();
   start.setUTCHours(0, 0, 0, 0);
   const days: string[] = [];
-  for (let i = 0; i < 16 && days.length < 12; i++) {
+  for (let i = 0; i < 100 && days.length < 90; i++) {
     const date = new Date(start.getTime() + i * 86400000);
     if (date.getUTCDay() === 0) continue;
     days.push(dayKey(date));
@@ -191,8 +192,8 @@ async function checkout(body: Record<string, unknown>) {
         product_data: { name: "Sessão individual Akasha Hub · 15 min" },
       },
     }],
-    success_url: "https://akashahub.com.br/converse/?appointment=" + id,
-    cancel_url: "https://akashahub.com.br/converse/?appointment=" + id + "&cancel=1",
+    success_url: "https://akashahub.com.br/converse/?pago=1&appointment=" + id + "&code=" + current.access_code,
+    cancel_url: "https://akashahub.com.br/converse/?pago=0&appointment=" + id + "&code=" + current.access_code,
     metadata,
     payment_intent_data: { metadata },
   });
@@ -208,6 +209,21 @@ async function checkout(body: Record<string, unknown>) {
   });
   await event(id, "checkout_started", { session: session.id });
   return json({ url: session.url });
+}
+
+async function release(body: Record<string, unknown>) {
+  const id = String(body.id || "");
+  const code = String(body.access_code || "");
+  const current = await one(id);
+  if (!current || current.access_code !== code) return json({ error: "not_found" }, 404);
+  if (current.status === "confirmed" || current.payment_status === "paid") return json({ ok: true, status: current.status });
+  if (current.status === "held" || current.status === "pending_payment") {
+    await rest("akasha_appointments?id=eq." + id, {
+      method: "PATCH",
+      body: JSON.stringify({ status: "cancelled", updated_at: new Date().toISOString() }),
+    });
+  }
+  return json({ ok: true, status: "cancelled" });
 }
 
 async function status(body: Record<string, unknown>) {
