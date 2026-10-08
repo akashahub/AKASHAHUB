@@ -1,5 +1,5 @@
 /**
- * Ferramentas operacionais - painel flutuante (segundo plano)
+ * Ferramentas operacionais — painel flutuante (segundo plano)
  * Pode ficar aberto junto com Call + Roteiro
  */
 import { session } from "./auth.js";
@@ -29,7 +29,7 @@ function openFloat(title, body, foot) {
 }
 
 export function closeToolsModal() {
-  document.getElementById("toolPanel")?.classList.remove("open");
+  document.getElementById("toolPanel")?.classList.remove("open", "cfx-on");
   document.body.classList.remove("tool-open");
   // modal clássico (locked etc.)
   document.getElementById("modalBox")?.classList.remove("open");
@@ -82,7 +82,7 @@ async function openTextTool(id, title, ph) {
   openFloat(
     title,
     `<textarea class="notes-area" id="toolText" placeholder="${esc(ph)}">${esc(saved?.text || "")}</textarea>
-     <p class="notes-meta" id="toolMeta">${saved?.updatedAt ? "Salvo · " + new Date(saved.updatedAt).toLocaleString("pt-BR") : "-"}</p>`,
+     <p class="notes-meta" id="toolMeta">${saved?.updatedAt ? "Salvo · " + new Date(saved.updatedAt).toLocaleString("pt-BR") : "—"}</p>`,
     `<button class="btn btn-inline" type="button" id="btnSaveTool">Salvar</button>`
   );
   document.getElementById("btnSaveTool").onclick = async () => {
@@ -132,146 +132,240 @@ async function openCashflow() {
     return it.status === "previsto" ? "previsto" : "pago";
   };
 
+  const brl = (n) => Number(n || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const monthLabel = (ym) => {
+    const [y, m] = ym.split("-").map(Number);
+    return new Date(y, m - 1, 1).toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+  };
+  const shiftMonth = (ym, delta) => {
+    const [y, m] = ym.split("-").map(Number);
+    const d = new Date(y, m - 1 + delta, 1);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+  };
+  const CATS = [
+    ["Moradia", "#5b7cfa"],
+    ["Alimentação", "#f5a524"],
+    ["Transporte", "#3db8a0"],
+    ["Assinaturas", "#a06bff"],
+    ["Receita", "#2f9e5b"],
+    ["Reserva", "#2a6fdb"],
+    ["Outro", "#8b93a7"]
+  ];
+  const catColor = (name) => (CATS.find((c) => c[0] === name) || ["", "#8b93a7"])[1];
+
   openFloat(
-    "Controle financeiro · Cash-Flow",
+    "Cash-Flow",
     `<style>
-      .cfx-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
-      .cfx-bar label{font-size:11px;opacity:.75}
-      .cfx-bar input[type=month]{padding:8px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);color:inherit;font-size:12px}
-      .cfx-kpis{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 12px}
-      .cfx-kpis div{border:1px solid rgba(255,255,255,.08);padding:8px 10px;font-size:11px}
-      .cfx-kpis b{display:block;font-size:13px;margin-top:2px}
-      .cfx-tag{font-size:10px;border:1px solid rgba(255,255,255,.16);padding:1px 6px;margin-left:6px;white-space:nowrap}
-      .cfx-item{flex-wrap:wrap;gap:6px}
-      .cfx-item span{flex:1;min-width:140px}
-      .cfx-item input[type=date]{padding:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);color:inherit;font-size:11px;width:132px}
+      #toolPanel.cfx-on{height:min(88vh,780px);width:min(420px,calc(100vw - 16px))}
+      .cfx{color:#1c2430;font-family:system-ui,sans-serif}
+      .cfx-month{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+      .cfx-month b{font-size:16px;text-transform:capitalize}
+      .cfx-month button{width:36px;height:36px;border-radius:999px;border:1px solid #d9deea;background:#fff;font-size:18px;cursor:pointer}
+      .cfx-hero{background:#1c2430;color:#fff;border-radius:16px;padding:14px 16px;margin-bottom:10px}
+      .cfx-hero small{opacity:.7;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+      .cfx-hero strong{display:block;font-size:28px;margin:4px 0 10px}
+      .cfx-split{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+      .cfx-split div{background:rgba(255,255,255,.08);border-radius:10px;padding:8px 10px;font-size:11px}
+      .cfx-split b{display:block;font-size:14px;margin-top:2px}
+      .cfx-in{color:#8ee0b0}.cfx-out{color:#ffb4b4}
+      .cfx-cats{display:flex;flex-direction:column;gap:6px;margin:0 0 12px}
+      .cfx-cat{display:grid;grid-template-columns:86px 1fr auto;gap:8px;align-items:center;font-size:12px}
+      .cfx-barline{height:8px;background:#e6eaf2;border-radius:99px;overflow:hidden}
+      .cfx-barline i{display:block;height:100%;border-radius:99px}
+      .cfx-day{margin:12px 0 4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#6b7385}
+      .cfx-tx{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #e6eaf2;border-radius:12px;padding:10px;margin-bottom:6px}
+      .cfx-dot{width:10px;height:10px;border-radius:99px;flex:none}
+      .cfx-tx b{display:block;font-size:14px}
+      .cfx-tx small{color:#6b7385}
+      .cfx-amt{margin-left:auto;font-weight:700;white-space:nowrap}
+      .cfx-amt.entrada{color:#1f8a4c}
+      .cfx-amt.saida{color:#d64545}
+      .cfx-amt.prev{opacity:.55}
+      .cfx-mini{display:flex;gap:6px;margin-top:6px}
+      .cfx-mini button{border:0;background:#f1f3f8;border-radius:99px;padding:4px 8px;font-size:11px;cursor:pointer}
+      .cfx-add{position:sticky;bottom:0;display:flex;justify-content:center;padding-top:8px}
+      .cfx-add > button{width:56px;height:56px;border:0;border-radius:999px;background:#1c2430;color:#fff;font-size:28px;cursor:pointer;box-shadow:0 8px 20px rgba(28,36,48,.25)}
+      .cfx-sheet{background:#fff;border:1px solid #e6eaf2;border-radius:16px;padding:12px;margin-bottom:10px}
+      .cfx-types{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+      .cfx-types button{min-height:40px;border-radius:10px;border:1px solid #d9deea;background:#fff;cursor:pointer}
+      .cfx-types button.on{background:#1c2430;color:#fff;border-color:#1c2430}
+      .cfx-sheet input,.cfx-sheet select{width:100%;min-height:42px;margin-bottom:8px;border:1px solid #d9deea;border-radius:10px;padding:0 10px;background:#fff;color:#1c2430}
+      .cfx-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+      .cfx-chips button{border:1px solid #d9deea;background:#fff;border-radius:99px;padding:6px 10px;font-size:12px;cursor:pointer}
+      .cfx-chips button.on{color:#fff;border-color:transparent}
+      .cfx-go{width:100%;min-height:46px;border:0;border-radius:12px;background:#1c2430;color:#fff;font-weight:700;cursor:pointer}
+      .cfx details{font-size:12px;color:#6b7385;margin-bottom:8px}
+      .cfx-empty{text-align:center;color:#6b7385;padding:18px 8px}
     </style>
-    <div class="cfx-bar">
-      <label for="cMonth">Mês</label>
-      <input id="cMonth" type="month" value="${esc(window._cashMonth)}">
-    </div>
-    <div class="cfx-kpis" id="cashKpis"></div>
-    <div class="cash-row">
-      <input id="cDesc" placeholder="Descrição">
-      <input id="cVal" type="number" step="0.01" placeholder="Valor">
-    </div>
-    <div class="cash-row">
-      <select id="cTipo"><option value="saida">Saída</option><option value="entrada">Entrada</option></select>
-      <select id="cCat"><option>Moradia</option><option>Alimentação</option><option>Transporte</option><option>Assinaturas</option><option>Receita</option><option>Reserva</option><option>Outro</option></select>
-    </div>
-    <div class="cash-row">
-      <select id="cAct"><option>manter</option><option>reduzir</option><option>cancelar</option><option>aumentar</option></select>
-      <select id="cEss"><option value="sim">Essencial</option><option value="nao">Não essencial</option></select>
-    </div>
-    <div class="cash-row">
-      <input id="cDate" type="date" value="${today}">
-      <select id="cStatus"><option value="previsto">Previsto</option><option value="pago">Pago</option></select>
-    </div>
-    <div class="cash-row">
-      <select id="cRecur"><option value="unico">Uma vez</option><option value="fixo">Todo mês (fixo)</option></select>
-      <span></span>
-    </div>
-    <button class="tool-btn" type="button" id="btnAddCash">+ Adicionar</button>
-    <div class="cash-list" id="cashList"></div>
-    <p class="notes-meta" id="cashTotal"></p>`,
-    `<button class="btn btn-inline" type="button" id="btnSaveCash">Salvar auditoria</button>`
+    <div class="cfx">
+      <div class="cfx-month">
+        <button type="button" id="cPrev" aria-label="Mês anterior">‹</button>
+        <b id="cLabel"></b>
+        <button type="button" id="cNext" aria-label="Próximo mês">›</button>
+      </div>
+      <input id="cMonth" type="hidden" value="${esc(window._cashMonth)}">
+      <div class="cfx-hero" id="cashKpis"></div>
+      <div class="cfx-cats" id="cashCats"></div>
+      <div id="cashSheet" class="cfx-sheet" hidden>
+        <div class="cfx-types">
+          <button type="button" id="cTipoOut" class="on">Despesa</button>
+          <button type="button" id="cTipoIn">Receita</button>
+        </div>
+        <input id="cVal" type="number" step="0.01" inputmode="decimal" placeholder="0,00">
+        <input id="cDesc" placeholder="Descrição">
+        <div class="cfx-chips" id="cChips"></div>
+        <input id="cDate" type="date" value="${today}">
+        <details>
+          <summary>Auditoria deste lançamento</summary>
+          <select id="cAct"><option>manter</option><option>reduzir</option><option>cancelar</option><option>aumentar</option></select>
+          <select id="cEss"><option value="sim">Essencial</option><option value="nao">Não essencial</option></select>
+          <select id="cStatus"><option value="pago">Pago</option><option value="previsto">Previsto</option></select>
+          <select id="cRecur"><option value="unico">Uma vez</option><option value="fixo">Todo mês</option></select>
+        </details>
+        <button class="cfx-go" type="button" id="btnAddCash">Adicionar</button>
+      </div>
+      <div id="cashList"></div>
+      <div class="cfx-add"><button type="button" id="cPlus" aria-label="Novo lançamento">+</button></div>
+    </div>`,
+    `<button class="btn btn-inline" type="button" id="btnSaveCash">Salvar</button>`
   );
+  document.getElementById("toolPanel")?.classList.add("cfx-on");
+
+  let tipo = "saida";
+  let cat = "Alimentação";
+  const chips = document.getElementById("cChips");
+  const paintChips = () => {
+    chips.innerHTML = CATS.map(([name, color]) =>
+      `<button type="button" data-cat="${esc(name)}" class="${name === cat ? "on" : ""}" style="${name === cat ? "background:" + color : ""}">${esc(name)}</button>`
+    ).join("");
+    chips.querySelectorAll("[data-cat]").forEach((b) => {
+      b.onclick = () => { cat = b.dataset.cat; paintChips(); };
+    });
+  };
+  paintChips();
+  const setTipo = (next) => {
+    tipo = next;
+    document.getElementById("cTipoOut").classList.toggle("on", next === "saida");
+    document.getElementById("cTipoIn").classList.toggle("on", next === "entrada");
+    if (next === "entrada" && cat !== "Receita" && cat !== "Reserva") { cat = "Receita"; paintChips(); }
+  };
+  document.getElementById("cTipoOut").onclick = () => setTipo("saida");
+  document.getElementById("cTipoIn").onclick = () => setTipo("entrada");
+  document.getElementById("cPlus").onclick = () => {
+    const sheet = document.getElementById("cashSheet");
+    sheet.hidden = !sheet.hidden;
+    if (!sheet.hidden) document.getElementById("cVal").focus();
+  };
+
+  const saveNow = async () => {
+    await persistToolData("cashflow", { items: window._cash, month: window._cashMonth });
+  };
 
   const render = () => {
     const el = document.getElementById("cashList");
     const kpis = document.getElementById("cashKpis");
-    const totalEl = document.getElementById("cashTotal");
+    const catsEl = document.getElementById("cashCats");
     if (!el) return;
-    const ym = document.getElementById("cMonth")?.value || window._cashMonth;
+    const ym = document.getElementById("cMonth").value || window._cashMonth;
     window._cashMonth = ym;
+    document.getElementById("cLabel").textContent = monthLabel(ym);
 
     const rows = window._cash
       .map((it, i) => ({ it, i }))
-      .filter((x) => inMonth(x.it, ym));
+      .filter((x) => inMonth(x.it, ym))
+      .sort((a, b) => instanceDate(b.it, ym).localeCompare(instanceDate(a.it, ym)));
 
-    el.innerHTML =
-      rows
-        .map(({ it, i }) => {
-          const st = instStatus(it, ym);
-          const d = instanceDate(it, ym);
-          const sign = it.tipo === "entrada" ? "+" : "−";
-          const fixo = it.recur === "fixo" ? `<span class="cfx-tag">fixo</span>` : "";
-          const tag = `<span class="cfx-tag">${st}</span>`;
-          return `<div class="cash-item cfx-item">
-            <span>${sign} ${esc(it.desc)} · ${esc(it.cat)} · R$ ${Number(it.val).toFixed(2)}${fixo}${tag}</span>
-            <input type="date" data-date="${i}" value="${esc(it.recur === "fixo" ? it.date : d)}">
-            <button type="button" data-pay="${i}">${st === "pago" ? "marcar previsto" : "marcar pago"}</button>
-            <button type="button" data-rm="${i}">remover</button>
-          </div>`;
-        })
-        .join("") || "<p class='empty'>Nenhum item neste mês</p>";
+    let ent = 0, prev = 0, pago = 0;
+    const byCat = {};
+    rows.forEach(({ it }) => {
+      const v = Number(it.val || 0);
+      const st = instStatus(it, ym);
+      if (it.tipo === "entrada") ent += v;
+      else if (st === "pago") pago += v;
+      else prev += v;
+      if (it.tipo !== "entrada") byCat[it.cat] = (byCat[it.cat] || 0) + v;
+    });
+    const maxCat = Math.max(1, ...Object.values(byCat));
+    if (kpis) {
+      kpis.innerHTML = `<small>Saldo do mês</small><strong>${brl(ent - pago)}</strong>
+        <div class="cfx-split">
+          <div>Receitas <b class="cfx-in">${brl(ent)}</b></div>
+          <div>Despesas <b class="cfx-out">${brl(pago)}</b></div>
+        </div>`;
+    }
+    if (catsEl) {
+      const entries = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
+      catsEl.innerHTML = entries.map(([name, v]) => `<div class="cfx-cat"><span>${esc(name)}</span><div class="cfx-barline"><i style="width:${Math.round(v / maxCat * 100)}%;background:${catColor(name)}"></i></div><b>${brl(v)}</b></div>`).join("");
+    }
+
+    const groups = new Map();
+    rows.forEach((row) => {
+      const d = instanceDate(row.it, ym);
+      if (!groups.has(d)) groups.set(d, []);
+      groups.get(d).push(row);
+    });
+    el.innerHTML = rows.length ? [...groups.entries()].map(([d, list]) => {
+      const when = new Date(d + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short" });
+      return `<div class="cfx-day">${esc(when)}</div>` + list.map(({ it, i }) => {
+        const st = instStatus(it, ym);
+        const sign = it.tipo === "entrada" ? "entrada" : "saida";
+        return `<article class="cfx-tx">
+          <i class="cfx-dot" style="background:${catColor(it.cat)}"></i>
+          <div><b>${esc(it.desc || "Lançamento")}</b><small>${esc(it.cat)}${it.recur === "fixo" ? " · todo mês" : ""}${st === "previsto" ? " · previsto" : ""}</small>
+            <div class="cfx-mini"><button type="button" data-pay="${i}">${st === "pago" ? "Marcar previsto" : "Marcar pago"}</button><button type="button" data-rm="${i}">Apagar</button></div>
+          </div>
+          <span class="cfx-amt ${sign}${st === "previsto" ? " prev" : ""}">${it.tipo === "entrada" ? "+" : "−"} ${brl(it.val)}</span>
+        </article>`;
+      }).join("");
+    }).join("") : `<p class="cfx-empty">Nenhum lançamento neste mês. Toque no + para começar.</p>`;
 
     el.querySelectorAll("[data-rm]").forEach((b) => {
-      b.onclick = () => {
+      b.onclick = async () => {
         window._cash.splice(+b.dataset.rm, 1);
         render();
+        await saveNow();
       };
     });
     el.querySelectorAll("[data-pay]").forEach((b) => {
-      b.onclick = () => {
+      b.onclick = async () => {
         const it = window._cash[+b.dataset.pay];
         if (!it) return;
         if (it.recur === "fixo") {
           const set = new Set(it.paidMonths || []);
-          if (set.has(ym)) set.delete(ym);
-          else set.add(ym);
+          if (set.has(ym)) set.delete(ym); else set.add(ym);
           it.paidMonths = [...set];
         } else {
           it.status = it.status === "pago" ? "previsto" : "pago";
         }
         render();
+        await saveNow();
       };
     });
-    el.querySelectorAll("[data-date]").forEach((inp) => {
-      inp.onchange = () => {
-        const it = window._cash[+inp.dataset.date];
-        if (!it || !/^\d{4}-\d{2}-\d{2}$/.test(inp.value)) return;
-        it.date = inp.value;
-        render();
-      };
-    });
-
-    let ent = 0, prev = 0, pago = 0;
-    rows.forEach(({ it }) => {
-      const v = Number(it.val || 0);
-      const st = instStatus(it, ym);
-      if (it.tipo === "entrada") {
-        ent += v;
-      } else if (st === "pago") {
-        pago += v;
-      } else {
-        prev += v;
-      }
-    });
-    if (kpis) {
-      kpis.innerHTML = `
-        <div>Entradas <b>R$ ${ent.toFixed(2)}</b></div>
-        <div>Saídas pagas <b>R$ ${pago.toFixed(2)}</b></div>
-        <div>Saídas previstas <b>R$ ${prev.toFixed(2)}</b></div>
-        <div>Saldo (pago) <b>R$ ${(ent - pago).toFixed(2)}</b></div>`;
-    }
-    if (totalEl) {
-      totalEl.textContent =
-        `Mês ${ym} · projetado R$ ${(ent - pago - prev).toFixed(2)} · ${rows.length} lançamento(s)`;
-    }
+    const note = document.getElementById("toolMeta");
+    if (note) note.textContent = prev ? `Ainda previsto ${brl(prev)}` : "";
   };
 
   render();
-  document.getElementById("cMonth").onchange = render;
-  document.getElementById("btnAddCash").onclick = () => {
+  document.getElementById("cPrev").onclick = () => {
+    document.getElementById("cMonth").value = shiftMonth(window._cashMonth, -1);
+    render();
+  };
+  document.getElementById("cNext").onclick = () => {
+    document.getElementById("cMonth").value = shiftMonth(window._cashMonth, 1);
+    render();
+  };
+  document.getElementById("btnAddCash").onclick = async () => {
     const date = document.getElementById("cDate").value || today;
+    const val = parseFloat(document.getElementById("cVal").value);
+    const desc = document.getElementById("cDesc").value.trim();
+    if (!desc || !val) return;
     const status = document.getElementById("cStatus").value;
     const recur = document.getElementById("cRecur").value;
     window._cash.push({
-      desc: document.getElementById("cDesc").value || "item",
-      val: parseFloat(document.getElementById("cVal").value) || 0,
-      tipo: document.getElementById("cTipo").value,
-      cat: document.getElementById("cCat").value,
+      desc,
+      val,
+      tipo,
+      cat,
       act: document.getElementById("cAct").value,
       ess: document.getElementById("cEss").value,
       date,
@@ -281,16 +375,19 @@ async function openCashflow() {
     });
     document.getElementById("cDesc").value = "";
     document.getElementById("cVal").value = "";
+    document.getElementById("cashSheet").hidden = true;
     render();
+    await saveNow();
+    toast("Lançamento salvo");
   };
   document.getElementById("btnSaveCash").onclick = async () => {
-    await persistToolData("cashflow", { items: window._cash, month: window._cashMonth });
-    toast("Auditoria salva");
+    await saveNow();
+    toast("Cash-flow salvo");
   };
 }
 
 
-/** Oratória - 7 músculos. Não é dom. */
+/** Oratória — 7 músculos. Não é dom. */
 async function openFono() {
   const saved = (await loadToolData("fono")) || { notes: "", reps: 0, done: [] };
   const drills = [
@@ -361,7 +458,7 @@ async function openFono() {
   };
 }
 
-/** Mapa de rede - contatos com telefone e e-mail */
+/** Mapa de rede — contatos com telefone e e-mail */
 async function openNetwork() {
   const saved = (await loadToolData("network")) || { contacts: [] };
   window._net = saved.contacts || [];
@@ -389,7 +486,7 @@ async function openNetwork() {
     document.getElementById("btnSaveEditNet").hidden = true;
   };
   const readForm = () => ({
-    name: document.getElementById("nName").value.trim() || "-",
+    name: document.getElementById("nName").value.trim() || "—",
     phone: document.getElementById("nPhone").value.trim(),
     email: document.getElementById("nEmail").value.trim(),
     val: document.getElementById("nVal").value.trim(),
@@ -401,9 +498,9 @@ async function openNetwork() {
     el.innerHTML = window._net.map((c, i) => `
       <article class="net-card">
         <h4>${esc(c.name)}</h4>
-        <p>${esc(c.val || "-")}</p>
+        <p>${esc(c.val || "—")}</p>
         <p class="net-meta">${esc(c.phone || "sem telefone")} · ${esc(c.email || "sem e-mail")}</p>
-        <p class="net-meta">Próxima: ${esc(c.next || "-")} · ${esc(c.when || "sem data")}</p>
+        <p class="net-meta">Próxima: ${esc(c.next || "—")} · ${esc(c.when || "sem data")}</p>
         <div class="net-actions">
           <button type="button" data-ed="${i}">Editar</button>
           <button type="button" data-rm="${i}">Remover</button>
@@ -457,7 +554,7 @@ export function renderToolsView() {
     { id: "legacy", name: "Declaração de legado", mod: "07" }
   ];
   return `<div class="view active">
-    ${pageHead("tools", "Operação", "Ferramentas", "Abrem em segundo plano - pode usar junto com Call e Roteiro.")}
+    ${pageHead("tools", "Operação", "Ferramentas", "Abrem em segundo plano — pode usar junto com Call e Roteiro.")}
     <div class="mat-grid">${list
       .map(
         (x) => `
