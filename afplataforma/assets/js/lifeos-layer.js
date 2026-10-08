@@ -75,7 +75,7 @@ export function bindLifeOsLayer() {
   });
   document.addEventListener("submit", onSubmit, true);
   document.addEventListener("input", (e) => {
-    if (e.target?.id === "sleepVol") setSleepVol(+e.target.value);
+    if (e.target?.id === "sleepVol" || e.target?.id === "sonoVol") setSleepVol(+e.target.value);
     if (e.target?.id === "rtVol") window.afRtVol(e.target);
   });
   startRtGlobalWatch();
@@ -769,6 +769,7 @@ export function viewSono() {
       `<button class="freq-btn" type="button" data-act="afPlayFreq" data-hz="${f.hz}" data-name="${esc(f.name)}">${String(i + 1).padStart(2, "0")}<small>${f.hz} Hz</small></button>`
   ).join("");
   const nome = sleepName();
+  const vol = Number(localStorage.getItem("af_sleep_vol") || sleepVol);
   setTimeout(startSonoPreview, 40);
   return `<div class="view active sono-gate">${back()}
     <div class="sono-preview">
@@ -788,6 +789,11 @@ export function viewSono() {
     </div>
     <p class="notes-hint" id="sonoFreqLab">Escolhe a frequência e abre o modo sono</p>
     <div class="freq-row">${btns}</div>
+    <div class="sono-vol">
+      <button class="btn btn-inline" type="button" data-act="afSleepDown">Baixar volume</button>
+      <input id="sonoVol" type="range" min="0" max="100" value="${Number.isFinite(vol) ? vol : 35}">
+      <b id="sonoVolLab">${Number.isFinite(vol) ? vol : 35}</b>
+    </div>
     <button class="btn btn-inline sono-open" type="button" data-act="afOpenSleep">Abrir modo sono</button>
   </div>`;
 }
@@ -932,6 +938,10 @@ window.afSleepVol = (el) => {
   setSleepVol(sleepVol + Number(el?.dataset?.d || 0) * 8);
   wakeSleepDock();
 };
+window.afSleepDown = () => {
+  setSleepVol(sleepVol - 20);
+  wakeSleepDock();
+};
 window.afPlayFreq = (el) => {
   const hz = +el.dataset.hz;
   if (!hz) return;
@@ -956,6 +966,10 @@ function setSleepVol(n) {
   const lab = document.getElementById("sleepVolLab");
   if (sl) sl.value = String(sleepVol);
   if (lab) lab.textContent = String(sleepVol);
+  const s2 = document.getElementById("sonoVol");
+  const l2 = document.getElementById("sonoVolLab");
+  if (s2) s2.value = String(sleepVol);
+  if (l2) l2.textContent = String(sleepVol);
 }
 function playFreq(hz) {
   if (oscNode && audioCtx && Math.round(oscNode.frequency.value) === Math.round(hz)) {
