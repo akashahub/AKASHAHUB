@@ -270,7 +270,7 @@
   }
   function pay() {
     say("Como você prefere confirmar?");
-    button("Pagar online", payOnline, true);
+    button("Pagar online · cartão ou Pix", payOnline, true);
     button("Falar com o Akasha Hub no WhatsApp", () => { track("whatsapp_selected"); openWhatsapp(); });
     button("Pagar diretamente com o mentor", () => { track("manual_payment_selected"); openWhatsapp("Quero pagar diretamente com o mentor."); });
     const note = document.createElement("p");

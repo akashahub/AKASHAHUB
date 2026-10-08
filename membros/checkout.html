@@ -15,7 +15,8 @@ p{color:#6d6256;line-height:1.5}
 .price{font-family:"Cormorant Garamond",serif;font-size:32px;color:#8b6914;margin:0}
 label{display:block;margin-top:16px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8b6914}
 input{width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:14px}
-button{margin-top:18px;border:0;background:#8b6914;color:#fff;border-radius:999px;padding:14px 18px;font-weight:600;cursor:pointer}
+button{margin-top:18px;border:0;background:#8b6914;color:#fff;border-radius:999px;padding:14px 18px;font-weight:600;cursor:pointer;width:100%}
+a.zap{display:block;margin-top:12px;text-align:center;border:1px solid rgba(139,105,20,.45);border-radius:999px;padding:12px 18px;text-decoration:none}
 a{color:#8b6914}
 .note{margin-top:14px}
 </style>
@@ -26,10 +27,11 @@ a{color:#8b6914}
   <p>Stripe · real</p>
   <h1 id="title">Pagamento</h1>
   <p class="price" id="price"></p>
-  <p id="lead">Use o mesmo Gmail com que você entra na área. Depois do pagamento, o Stripe libera só este item.</p>
+  <p id="lead">No Stripe, cartão ou Pix. O valor sai da oferta, não desta tela. Se o Pix não aparecer, feche com o mentor no WhatsApp.</p>
   <label>E-mail / Gmail</label>
   <input id="mail" type="email" placeholder="voce@gmail.com" autocomplete="email"/>
-  <button id="pay" type="button">Pagar no Stripe</button>
+  <button id="pay" type="button">Pagar com cartão ou Pix</button>
+  <a class="zap" id="zap" target="_blank" rel="noopener" href="https://wa.me/5571983448621">Fechar no WhatsApp com o mentor</a>
   <p class="note" id="note"></p>
   <p><a href="/membros/">Voltar</a></p>
 </main>
@@ -42,6 +44,10 @@ var oferta = window.akashaOferta(ref);
 if (!oferta) location.replace("/membros/");
 document.getElementById("title").textContent = oferta.nome;
 document.getElementById("price").textContent = oferta.label;
+document.getElementById("zap").onclick = function () {
+  var mail = document.getElementById("mail").value.trim();
+  this.href = "https://wa.me/5571983448621?text=" + encodeURIComponent("Olá. Quero fechar no Pix, direto com o mentor.\n" + oferta.nome + "\n" + oferta.label + (mail ? "\nE-mail: " + mail : ""));
+};
 document.getElementById("pay").onclick = async function () {
   var mail = document.getElementById("mail").value.trim().toLowerCase();
   var note = document.getElementById("note");

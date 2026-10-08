@@ -179,7 +179,7 @@ async function checkout(body: Record<string, unknown>) {
   }
   const stripe = new Stripe(key, { apiVersion: "2024-06-20" });
   const metadata = { source: "akasha-converse", appointment_id: id };
-  const session = await stripe.checkout.sessions.create({
+  const session = await openCheckout(stripe, {
     mode: "payment",
     customer_email: current.customer_email,
     line_items: [{
@@ -194,7 +194,6 @@ async function checkout(body: Record<string, unknown>) {
     cancel_url: "https://akashahub.com.br/converse/?appointment=" + id + "&cancel=1",
     metadata,
     payment_intent_data: { metadata },
-    payment_method_types: ["card"],
   });
   await rest("akasha_appointments?id=eq." + id, {
     method: "PATCH",
@@ -369,6 +368,23 @@ async function track(body: Record<string, unknown>) {
   if (!allowed.includes(name)) return json({ ok: true });
   await event(String(body.appointment_id || "") || null, name, {});
   return json({ ok: true });
+}
+
+async function openCheckout(stripe, fields) {
+  try {
+    return await stripe.checkout.sessions.create({
+      ...fields,
+      payment_method_types: ["card", "pix"],
+      payment_method_options: { pix: { expires_after_seconds: 1800 } },
+    });
+  } catch (err) {
+    const message = String(err && err.message || "");
+    if (!/pix/i.test(message)) throw err;
+    return stripe.checkout.sessions.create({
+      ...fields,
+      payment_method_types: ["card"],
+    });
+  }
 }
 
 function publicView(row: Record<string, unknown>) {

@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
     ? { source: "akasha-members", kind: member.kind, area: member.area, item: member.item, buyer: email }
     : { sku: String(body.sku || ""), source: "akasha-store", name: body.name || "" };
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await openCheckout(stripe, {
     mode: "payment",
     line_items: [{
       quantity: 1,
@@ -98,7 +98,6 @@ Deno.serve(async (req) => {
     customer_email: email || undefined,
     metadata,
     payment_intent_data: { metadata },
-    payment_method_types: ["card"],
     allow_promotion_codes: true,
   });
   return json({ url: session.url, id: session.id });
@@ -117,6 +116,23 @@ function memberProduct(ref) {
   if (!lista || lista.indexOf(item) < 0) return null;
   const nome = kind === "curso" ? (NOMES[item] || item) : item;
   return { name: nome, cents: ITEM_CENTS[kind], kind, area, item };
+}
+
+async function openCheckout(stripe, fields) {
+  try {
+    return await stripe.checkout.sessions.create({
+      ...fields,
+      payment_method_types: ["card", "pix"],
+      payment_method_options: { pix: { expires_after_seconds: 1800 } },
+    });
+  } catch (err) {
+    const message = String(err && err.message || "");
+    if (!/pix/i.test(message)) throw err;
+    return stripe.checkout.sessions.create({
+      ...fields,
+      payment_method_types: ["card"],
+    });
+  }
 }
 
 function safeUrl(url, fallback) {
