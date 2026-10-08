@@ -204,11 +204,36 @@
   .hero-copy { position: relative; z-index: 2; }
   @media (max-width: 899px) { .hero-copy { text-align: center; } }
   .hero-portrait { position: relative; }
+  .hero-portrait img,
+  .legado-visual img {
+    -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, #000 44%, transparent 100%);
+    mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, #000 44%, transparent 100%);
+  }
   .hero-portrait img {
     width: 100%; height: min(58vh, 620px); object-fit: cover; object-position: center 12%;
-    background: transparent; box-shadow: none;
-    -webkit-mask-image: radial-gradient(ellipse 76% 72% at 50% 42%, #000 46%, transparent 100%);
-    mask-image: radial-gradient(ellipse 76% 72% at 50% 42%, #000 46%, transparent 100%);
+    background: transparent; box-shadow: none; display: block;
+  }
+  .hero-portrait .gaze,
+  .legado-visual .gaze {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; pointer-events: none;
+    transition: opacity .75s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .hero-portrait:hover .gaze,
+    .legado-visual:hover .gaze { opacity: 1; }
+  }
+  @media (hover: none) {
+    .hero-portrait .gaze,
+    .legado-visual .gaze { animation: gaze-swap 12s ease-in-out infinite; }
+  }
+  @keyframes gaze-swap {
+    0%, 62% { opacity: 0; }
+    74%, 90% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-portrait .gaze, .legado-visual .gaze { animation: none; }
   }
   @media (min-width: 900px) { .hero-portrait img { height: min(78vh, 740px); } }
   .hero-portrait::after { content: none; }
@@ -427,13 +452,12 @@
   .legado-block { display: grid; gap: 32px; align-items: center; }
   @media (min-width: 860px) { .legado-block { grid-template-columns: .9fr 1.1fr; gap: 56px; } }
   .legado-visual { overflow: visible; background: transparent; box-shadow: none; }
+  .legado-visual a { position: relative; display: block; }
   .legado-visual img {
     width: 100%; height: min(68vh, 640px); object-fit: cover; object-position: center 18%;
-    display: block; transform: scale(1.04); transition: transform 1.2s var(--ease);
-    -webkit-mask-image: radial-gradient(ellipse 78% 74% at 50% 42%, #000 48%, transparent 100%);
-    mask-image: radial-gradient(ellipse 78% 74% at 50% 42%, #000 48%, transparent 100%);
+    display: block; transform: scale(1.04); transition: transform 1.2s var(--ease), opacity .75s ease;
   }
-  .legado-visual:hover img { transform: scale(1.08); }
+  .legado-visual:hover img { transform: scale(1.06); }
 
   .book-row { display: grid; gap: 32px; align-items: center; border: 1px solid var(--line); padding: 28px; background: var(--surface); box-shadow: var(--shadow); }
   @media (min-width: 760px) { .book-row { grid-template-columns: 180px 1fr; gap: 40px; padding: 40px; } }
@@ -577,6 +601,7 @@
     </div>
     <div class="hero-portrait reveal">
       <img alt="Yan Filipe, mentor do Akasha Hub" src="/img/lua-home-salon.jpg?v=yan1"/>
+      <img class="gaze" alt="" aria-hidden="true" src="/img/lua-home-beyond.jpg?v=yan5" fetchpriority="low"/>
     </div>
   </div>
   <div class="explore-hint">
@@ -788,6 +813,7 @@
       <div class="legado-visual reveal">
         <a href="/al/">
           <img alt="Yan Filipe na Arquitetura de Legado" src="/img/lua-legado-spa.jpg?v=yan1"/>
+          <img class="gaze" alt="" aria-hidden="true" src="/img/lua-legado-beyond.jpg?v=yan5" fetchpriority="low"/>
         </a>
       </div>
       <div class="reveal">
