@@ -76,7 +76,6 @@ export function bindLifeOsLayer() {
   document.addEventListener("submit", onSubmit, true);
   document.addEventListener("input", (e) => {
     if (e.target?.id === "sleepVol" || e.target?.id === "sonoVol") setSleepVol(+e.target.value);
-    if (e.target?.id === "rtVol") window.afRtVol(e.target);
   });
   startRtGlobalWatch();
 }
@@ -298,13 +297,7 @@ export function viewRotina() {
     <div class="rt-acts">
       <button class="tool-btn" type="button" data-act="afRtAdd">+ Adicionar à rotina</button>
       <button class="tool-btn" type="button" data-act="afRtSuggest">Usar rotina sugerida</button>
-      <button class="tool-btn" type="button" data-act="afRtNotify">Ativar lembretes</button>
-      <button class="tool-btn" type="button" data-act="afRtTestAlarm">Testar alarme</button>
     </div>
-    <label class="rt-vol">Volume do alarme
-      <input id="rtVol" type="range" min="10" max="100" value="${Number(load("rtAlarmVol", 85))}" data-act="afRtVol">
-      <b id="rtVolLab">${Number(load("rtAlarmVol", 85))}</b>
-    </label>
     <div id="rtForm" hidden></div>
     <div id="rtList">${renderRt(list)}</div>
     <input id="rtFile" type="file" accept="image/*" hidden>
@@ -324,7 +317,7 @@ function renderRt(list) {
         </div>
         <div class="rt-body">
           <h3>${esc(b.name)}</h3>
-          <p>${b.days === "week" ? "Segunda a sexta" : b.days === "all" ? "Todos os dias" : "Dias escolhidos"} · lembrete ${b.remind ? b.remind + " min antes" : "off"}</p>
+          <p>${b.days === "week" ? "Segunda a sexta" : b.days === "all" ? "Todos os dias" : "Dias escolhidos"}</p>
           <div class="rt-row">
             <button type="button" data-act="afRtEdit" data-id="${esc(b.id)}">Editar</button>
             <button type="button" data-act="afRtPic" data-id="${esc(b.id)}">Alterar imagem</button>
@@ -349,11 +342,6 @@ function rtForm(block) {
       <select name="days">
         <option value="all" ${b.days === "all" ? "selected" : ""}>Todos os dias</option>
         <option value="week" ${b.days === "week" ? "selected" : ""}>Segunda a sexta</option>
-      </select>
-    </label>
-    <label>Lembrete
-      <select name="remind">
-        ${[0, 5, 10, 15, 30].map((n) => `<option value="${n}" ${+b.remind === n ? "selected" : ""}>${n ? n + " minutos antes" : "Sem lembrete"}</option>`).join("")}
       </select>
     </label>
     <p class="notes-hint">Banner sugerido</p>
@@ -382,153 +370,12 @@ function rtWatch() {
 }
 function startRtGlobalWatch() {
   if (!window._rt) window._rt = rtLoad();
-  rtTickRemind();
   if (window._rtWatch) return;
   window._rtWatch = setInterval(() => {
     if (!window._rt) window._rt = rtLoad();
     if (document.getElementById("rtList")) rtRedraw();
-    rtTickRemind();
-  }, 8000);
+  }, 20000);
 }
-const _rtFired = new Set();
-const _rtSnooze = [];
-let rtAlarmCtx = null;
-let rtAlarmNodes = [];
-let rtAlarmLoops = 0;
-let rtAlarmLoopT = null;
-let rtAlarmCurrent = null;
-function rtVolLevel() {
-  return Math.max(0.1, Math.min(1, Number(load("rtAlarmVol", 85)) / 100));
-}
-function stopRtAlarm() {
-  rtAlarmLoops = 0;
-  clearTimeout(rtAlarmLoopT);
-  rtAlarmNodes.forEach((n) => { try { n.stop(); } catch (e) {} });
-  rtAlarmNodes = [];
-}
-function playRtAlarmOnce() {
-  const AC = window.AudioContext || window.webkitAudioContext;
-  if (!AC) return;
-  if (!rtAlarmCtx) rtAlarmCtx = new AC();
-  if (rtAlarmCtx.state === "suspended") rtAlarmCtx.resume();
-  const ctx = rtAlarmCtx;
-  const master = ctx.createGain();
-  master.gain.value = rtVolLevel();
-  master.connect(ctx.destination);
-  const now = ctx.currentTime;
-  const hits = [0, 0.18, 0.36, 0.9, 1.08, 1.26, 1.8, 1.98, 2.16, 2.7, 2.88, 3.06];
-  hits.forEach((t, i) => {
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = i % 3 === 0 ? "square" : "triangle";
-    o.frequency.value = i % 2 === 0 ? 880 : 1320;
-    g.gain.setValueAtTime(0.0001, now + t);
-    g.gain.exponentialRampToValueAtTime(0.9, now + t + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + t + 0.16);
-    o.connect(g); g.connect(master);
-    o.start(now + t); o.stop(now + t + 0.18);
-    rtAlarmNodes.push(o);
-  });
-  [0, 3.4].forEach((t) => {
-    const ding = ctx.createOscillator();
-    const g = ctx.createGain();
-    ding.type = "sine";
-    ding.frequency.setValueAtTime(2093, now + t);
-    ding.frequency.exponentialRampToValueAtTime(1318, now + t + 0.35);
-    g.gain.setValueAtTime(0.0001, now + t);
-    g.gain.exponentialRampToValueAtTime(1, now + t + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + t + 0.4);
-    ding.connect(g); g.connect(master);
-    ding.start(now + t); ding.stop(now + t + 0.42);
-    rtAlarmNodes.push(ding);
-  });
-}
-function showRtAlarmPop(info) {
-  rtAlarmCurrent = info;
-  let pop = document.getElementById("rtAlarmPop");
-  if (!pop) {
-    pop = document.createElement("div");
-    pop.id = "rtAlarmPop";
-    pop.className = "rt-alarm-pop";
-    document.body.appendChild(pop);
-  }
-  const why = info.remind ? "Lembrete · " + info.remind + " min antes" : "Horário da rotina";
-  pop.innerHTML = `<div class="rt-alarm-card">
-    <p class="rt-alarm-k">Alarme da rotina</p>
-    <h3>${esc(info.name || "Atividade")}</h3>
-    <p>${esc(why)}</p>
-    <p>Horário ${esc(info.start || "--:--")} — ${esc(info.end || "--:--")}</p>
-    <p class="rt-alarm-loop">Toque ${Math.min(3, (info.n || 1))}/3</p>
-    <div class="rt-row">
-      <button type="button" data-act="afRtSnooze" data-m="1">Daqui 1 min</button>
-      <button type="button" data-act="afRtSnooze" data-m="2">Daqui 2 min</button>
-      <button type="button" data-act="afRtStopAlarm">Parar</button>
-    </div>
-  </div>`;
-  pop.hidden = false;
-}
-function playRtAlarm(info) {
-  const data = typeof info === "string" ? { name: info, start: "", end: "", remind: 0 } : (info || {});
-  stopRtAlarm();
-  rtAlarmLoops = 3;
-  const ring = () => {
-    if (rtAlarmLoops <= 0) return;
-    playRtAlarmOnce();
-    showRtAlarmPop({ ...data, n: 4 - rtAlarmLoops });
-    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
-      try {
-        new Notification(data.name || "Rotina", {
-          body: (data.remind ? data.remind + " min antes · " : "") + (data.start || "") + " — " + (data.end || "")
-        });
-      } catch (e) {}
-    }
-    rtAlarmLoops -= 1;
-    if (rtAlarmLoops > 0) rtAlarmLoopT = setTimeout(ring, 9000);
-  };
-  ring();
-}
-function rtTickRemind() {
-  const now = new Date();
-  const cur = now.getHours() * 60 + now.getMinutes();
-  const list = window._rt || rtLoad();
-  list.filter(rtTodayApplies).forEach((b) => {
-    if (!b.remind && b.remind !== 0) return;
-    if (!b.remind) return;
-    const fire = rtMin(b.start) - Number(b.remind);
-    const key = b.id + "-" + now.toISOString().slice(0, 10) + "-" + fire;
-    if (cur >= fire && cur <= fire + 1 && !_rtFired.has(key)) {
-      _rtFired.add(key);
-      playRtAlarm({ name: b.name, start: b.start, end: b.end, remind: b.remind });
-    }
-  });
-  for (let i = _rtSnooze.length - 1; i >= 0; i--) {
-    const s = _rtSnooze[i];
-    if (cur >= s.fire && cur <= s.fire + 1) {
-      _rtSnooze.splice(i, 1);
-      playRtAlarm(s);
-    }
-  }
-}
-window.afRtTestAlarm = () => playRtAlarm({ name: "Teste do alarme", start: "agora", end: "", remind: 0 });
-window.afRtStopAlarm = () => {
-  stopRtAlarm();
-  const pop = document.getElementById("rtAlarmPop");
-  if (pop) pop.hidden = true;
-};
-window.afRtSnooze = (el) => {
-  const m = Number(el?.dataset.m || 1);
-  const now = new Date();
-  const fire = now.getHours() * 60 + now.getMinutes() + m;
-  _rtSnooze.push({ ...(rtAlarmCurrent || { name: "Rotina" }), fire });
-  window.afRtStopAlarm();
-  toast("Alarme de novo em " + m + " min");
-};
-window.afRtVol = (el) => {
-  const v = Number(el.value || 85);
-  save("rtAlarmVol", v);
-  const lab = document.getElementById("rtVolLab");
-  if (lab) lab.textContent = String(v);
-};
 window.afRtSuggest = () => {
   if (!confirm("Substituir a rotina atual pela sugerida?")) return;
   rtSave(rtSuggested());
@@ -578,12 +425,6 @@ window.afRtPic = (el) => {
   };
   input.click();
 };
-window.afRtNotify = () => {
-  startRtGlobalWatch();
-  playRtAlarm({ name: "Lembretes ligados", start: "", end: "", remind: 0 });
-  if (typeof Notification === "undefined") { toast("Som ligado nesta aba. Feche a AF e o alarme para."); return; }
-  Notification.requestPermission().then((p) => toast(p === "granted" ? "Som + aviso. Vale em qualquer tela da AF, com a aba aberta." : "Som ativo nesta aba."));
-};
 function onRtSubmit(e) {
   e.preventDefault();
   const fd = new FormData(e.target);
@@ -593,8 +434,7 @@ function onRtSubmit(e) {
     start: String(fd.get("start") || "07:00"),
     end: String(fd.get("end") || "08:00"),
     days: String(fd.get("days") || "all"),
-    banner: String(fd.get("banner") || RT_PRESETS.plano),
-    remind: Number(fd.get("remind") || 0)
+    banner: String(fd.get("banner") || RT_PRESETS.plano)
   };
   if (!item.name) return;
   const list = window._rt || [];
@@ -707,7 +547,7 @@ export function viewProdutividade() {
       <div class="lbl">O que é Pomodoro</div>
       <p>É um método de foco em fatias. Você trabalha 25 minutos em uma tarefa só. Depois para 5 minutos. A cada 4 fatias, para 15 a 30 minutos.</p>
       <p>Serve para quem começa dez coisas e não termina nenhuma. No AF, o Pomodoro é o relógio do bloco de execução: uma decisão, um bloco, um registro.</p>
-      <p>Como usar aqui: aperte Play. Celular virado para baixo. Quando o alarme interno terminar, marque a tarefa na Rotina ou no hábito. Reset volta para 25:00.</p>
+      <p>Como usar aqui: aperte Play. Celular virado para baixo. Quando o tempo acabar, marque a tarefa na Rotina ou no hábito. Reset volta para 25:00.</p>
     </div>
     <div class="stat-card" style="max-width:320px;text-align:center">
       <div class="lbl">Pomodoro</div>
