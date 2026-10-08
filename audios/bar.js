@@ -10,11 +10,21 @@
 
   const style = document.createElement("style");
   style.textContent = [
-    "#ah-pack-bar{position:fixed;left:12px;right:12px;bottom:12px;z-index:80;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 14px;background:#161513;color:#f7f4ee;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.28);font:500 14px/1.35 system-ui,sans-serif}",
-    "#ah-pack-bar strong{font-weight:650}",
+    "#ah-pack-bar{position:fixed;left:12px;right:12px;bottom:12px;z-index:80;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:11px 14px;background:linear-gradient(115deg,#2a1644 0%,#4c2d68 58%,#5c3d78 100%);color:#fbf8f2;border:1px solid rgba(198,161,74,.42);border-radius:16px;box-shadow:0 14px 42px rgba(42,22,68,.34);font:500 14px/1.35 system-ui,sans-serif}",
+    "#ah-pack-brand{display:flex;align-items:center;gap:8px;flex:0 0 auto}",
+    "#ah-pack-brand img{display:block;width:30px;height:30px;border-radius:8px;box-shadow:0 0 0 1px rgba(198,161,74,.55)}",
+    "#ah-pack-brand .label{display:none;color:#f0dfad;font:650 10px/1 system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase}",
+    "#ah-pack-bar strong{font-weight:650;color:#fffaf0}",
     "#ah-pack-bar button{font:650 14px/1 system-ui,sans-serif;border:0;border-radius:999px;min-height:44px;padding:0 16px;cursor:pointer}",
-    "#ah-pack-open{background:#e7d7a8;color:#161513;white-space:nowrap}",
+    "#ah-pack-bar>div:nth-child(2){flex:1;min-width:0}",
+    "#ah-pack-open{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#e7d7a8;color:#2a1644;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.15)}",
+    "#ah-pack-open:hover{background:#f1e5bd;transform:translateY(-1px)}",
+    "#ah-pack-open .coffee{display:inline-grid;place-items:center;width:18px;height:18px}",
+    "#ah-pack-open .coffee svg{display:block;width:18px;height:18px}",
     "#ah-pack-x{background:transparent;color:#f7f4ee;min-width:44px;padding:0}",
+    "#ah-pack-x:hover{color:#f0dfad}",
+    "@media(min-width:720px){#ah-pack-brand .label{display:block}}",
+    "@media(max-width:560px){#ah-pack-bar{left:8px;right:8px;bottom:8px;gap:8px;padding:9px 10px;font-size:12px}#ah-pack-brand img{width:27px;height:27px}#ah-pack-open{min-height:40px;padding:0 12px;font-size:12px}#ah-pack-x{min-width:34px}}",
     "#ah-pack-modal{position:fixed;inset:0;z-index:90;background:rgba(22,21,19,.62);display:flex;align-items:flex-end;justify-content:center;padding:12px}",
     "#ah-pack-sheet{width:min(520px,100%);background:#f7f4ee;color:#161513;border-radius:20px;padding:22px 18px 18px;font:16px/1.45 Georgia,serif}",
     "#ah-pack-sheet h2{margin:0 0 10px;font-weight:500;font-size:32px;line-height:1}",
@@ -30,18 +40,21 @@
 
   const bar = document.createElement("div");
   bar.id = "ah-pack-bar";
+  const brand = document.createElement("div");
+  brand.id = "ah-pack-brand";
+  brand.innerHTML = '<img src="/favicon.svg" alt="Akasha Hub"><span class="label">Akasha Hub</span>';
   const text = document.createElement("div");
   text.innerHTML = "<strong>A sociedade te programa o tempo todo, sem você perceber.</strong> Reprograme a sua mente para o que você quer.";
   const openBtn = document.createElement("button");
   openBtn.id = "ah-pack-open";
   openBtn.type = "button";
-  openBtn.textContent = "Ouvir o pack";
+  openBtn.innerHTML = '<span class="coffee" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 9h10v5.5A4.5 4.5 0 0 1 10.5 19h-1A4.5 4.5 0 0 1 5 14.5V9Z" stroke="currentColor" stroke-width="1.8"/><path d="M15 11h1.8a2.7 2.7 0 0 1 0 5.4H15M4 21h14M8 5.5c0-1 1-1.3 1-2.5M11 5.5c0-1 1-1.3 1-2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span>Ouvir o pack</span>';
   const closeBtn = document.createElement("button");
   closeBtn.id = "ah-pack-x";
   closeBtn.type = "button";
   closeBtn.textContent = "×";
   closeBtn.setAttribute("aria-label", "Fechar aviso");
-  bar.append(text, openBtn, closeBtn);
+  bar.append(brand, text, openBtn, closeBtn);
   document.body.appendChild(bar);
   closeBtn.onclick = () => {
     sessionStorage.setItem("akasha-pack-bar", "off");
