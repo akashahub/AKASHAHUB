@@ -42,7 +42,7 @@
   bar.id = "ah-pack-bar";
   const brand = document.createElement("div");
   brand.id = "ah-pack-brand";
-  brand.innerHTML = '<img src="/favicon.svg" alt="Akasha Hub"><span class="label">Akasha Hub</span>';
+  brand.innerHTML = '<img src="/img/pack-mandala.png" alt="Akasha Hub"><span class="label">Akasha Hub</span>';
   const text = document.createElement("div");
   text.innerHTML = "<strong>A sociedade te programa o tempo todo, sem você perceber.</strong> Reprograme a sua mente para o que você quer.";
   const openBtn = document.createElement("button");
