@@ -1,5 +1,3 @@
-import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
-
 const SESSION_CENTS = 4500;
 const CREDIT_CENTS = 4500;
 const HOLD_MINUTES = 15;
@@ -16,6 +14,12 @@ const cors = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+async function stripeClient(key: string) {
+  const mod = await import("https://esm.sh/stripe@16.12.0?target=deno");
+  const Stripe = mod.default;
+  return new Stripe(key, { apiVersion: "2024-06-20" });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -24,10 +28,12 @@ Deno.serve(async (req) => {
   if (signature) return webhook(raw, signature);
   let body: Record<string, unknown> = {};
   try { body = raw ? JSON.parse(raw) : {}; } catch { return json({ error: "invalid_json" }, 400); }
-  await expireHolds();
   const action = String(body.action || "");
+  if (action === "slots") {
+    expireHolds();
+    return json(await slots(String(body.from || "")));
+  }
   if (action === "config") return json(publicConfig());
-  if (action === "slots") return json(await slots(String(body.from || "")));
   if (action === "hold") return hold(body);
   if (action === "details") return details(body);
   if (action === "checkout") return checkout(body);
@@ -73,10 +79,16 @@ async function slots(from: string) {
     days.push(dayKey(date));
   }
   const first = from && /^\d{4}-\d{2}-\d{2}$/.test(from) ? from : days[0];
-  const rows = await rest("akasha_appointments?select=date,start_time,status&date=gte." + first + "&status=in.(held,pending_payment,confirmed)", { method: "GET" });
+  const [rows, blocks] = await Promise.all([
+    rest("akasha_appointments?select=date,start_time,status,expires_at&date=gte." + first + "&status=in.(held,pending_payment,confirmed)", { method: "GET" }),
+    rest("akasha_availability?select=date,start_time,status&date=gte." + first, { method: "GET" }),
+  ]);
   if (rows && rows.error) return { error: rows.error, days: [] };
-  const blocks = await rest("akasha_availability?select=date,start_time,status&date=gte." + first, { method: "GET" });
-  const taken = new Set((Array.isArray(rows) ? rows : []).map((r) => r.date + " " + r.start_time));
+  const now = Date.now();
+  const taken = new Set((Array.isArray(rows) ? rows : []).filter((r) => {
+    if (r.status === "confirmed") return true;
+    return !r.expires_at || new Date(r.expires_at).getTime() > now;
+  }).map((r) => r.date + " " + r.start_time));
   const closed = new Set((Array.isArray(blocks) ? blocks : []).filter((r) => r.status === "closed").map((r) => r.date + " " + r.start_time));
   const extra = (Array.isArray(blocks) ? blocks : []).filter((r) => r.status === "open");
   const today = dayKey(brtNow());
@@ -180,7 +192,7 @@ async function checkout(body: Record<string, unknown>) {
     await rest("akasha_appointments?id=eq." + id, { method: "PATCH", body: JSON.stringify({ status: "expired" }) });
     return json({ error: "expired" }, 409);
   }
-  const stripe = new Stripe(key, { apiVersion: "2024-06-20" });
+  const stripe = await stripeClient(key);
   const metadata = { source: "akasha-converse", appointment_id: id };
   const session = await openCheckout(stripe, {
     mode: "payment",
@@ -237,7 +249,7 @@ async function confirmPayment(body: Record<string, unknown>) {
   if (!sessionId) return json({ waiting: true, ...publicView(current) });
   const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
   if (!key) return json({ error: "stripe_not_configured" }, 503);
-  const stripe = new Stripe(key, { apiVersion: "2024-06-20" });
+  const stripe = await stripeClient(key);
   const session = await stripe.checkout.sessions.retrieve(sessionId);
   if (session.payment_status !== "paid") return json({ waiting: true, ...publicView(current) });
   if (session.amount_total !== SESSION_CENTS) return json({ error: "amount" }, 400);
@@ -283,7 +295,7 @@ async function webhook(raw: string, signature: string) {
   const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
   const secret = Deno.env.get("STRIPE_WEBHOOK_SECRET") || "";
   if (!key || !secret) return json({ error: "webhook_not_configured" }, 503);
-  const stripe = new Stripe(key, { apiVersion: "2024-06-20" });
+  const stripe = await stripeClient(key);
   let eventObj;
   try { eventObj = await stripe.webhooks.constructEventAsync(raw, signature, secret); }
   catch { return json({ error: "bad_signature" }, 400); }
@@ -391,7 +403,7 @@ async function admin(req: Request, body: Record<string, unknown>) {
   if (op === "refund") {
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY") || "";
     if (current.stripe_payment_intent_id && stripeKey) {
-      const stripe = new Stripe(stripeKey, { apiVersion: "2024-06-20" });
+      const stripe = await stripeClient(stripeKey);
       await stripe.refunds.create({ payment_intent: current.stripe_payment_intent_id });
     }
     await rest("akasha_appointments?id=eq." + id, {

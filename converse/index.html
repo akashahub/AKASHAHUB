@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://jsonmxbuzagmwuucruem.supabase.co" crossorigin/>
 <title>Agendar · Akasha Hub</title>
 <style>
   :root { color-scheme: light; }
@@ -82,7 +83,7 @@
 <main>
   <p class="mark"><a href="/">Akasha Hub</a></p>
   <h1 id="title">Escolha o dia.</h1>
-  <p class="lead" id="lead">Sessão de 15 minutos. R$ 45. Você escolhe: pagar aqui e garantir o horário, ou combinar direto no WhatsApp.</p>
+  <p class="lead" id="lead">Abrindo os horários…</p>
   <div id="calendar"></div>
   <div id="hours" class="hide"></div>
   <div id="paths" class="hide">
@@ -174,12 +175,13 @@ function drawDays() {
       btn.onclick = () => {
         state.date = day.date;
         state.time = "";
+        document.querySelectorAll(".day.on").forEach((node) => node.classList.remove("on"));
+        btn.classList.add("on");
         document.getElementById("title").textContent = "Escolha o horário.";
-        drawDays();
         drawTimes(day);
         document.getElementById("paths").classList.add("hide");
         document.getElementById("who").classList.add("hide");
-        document.getElementById("hours").scrollIntoView({ behavior: "smooth", block: "start" });
+        document.getElementById("hours").scrollIntoView({ behavior: "smooth", block: "nearest" });
       };
       grid.appendChild(btn);
     });
@@ -304,6 +306,7 @@ returning().then(async (back) => {
       document.getElementById("lead").textContent = "Não há horário livre agora.";
       return;
     }
+    document.getElementById("lead").textContent = "Sessão de 15 minutos. R$ 45. Escolha o dia.";
     drawDays();
   } catch (e) {
     document.getElementById("lead").textContent = "A agenda não respondeu. Atualize a página.";
