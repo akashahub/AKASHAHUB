@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Meu agendamento · Akasha Hub</title>
+<link rel="stylesheet" href="/converse/widget.css"/>
+<style>
+  body{margin:0;background:#100e13;color:#f6f1e8;font-family:Jost,system-ui,sans-serif}
+  main{max-width:720px;margin:0 auto;padding:28px 16px 64px}
+  h1{font-family:"Playfair Display",Georgia,serif;font-weight:500;font-size:36px;margin:0 0 8px}
+  a{color:#e7d7a8}
+  form,.card{display:grid;gap:10px;margin-top:18px}
+  input,select{background:#0c0b0f;color:#f6f1e8;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:12px;font:inherit}
+  button{background:#c9a227;color:#1a140c;border:0;border-radius:999px;padding:12px 16px;font:inherit;font-weight:600;cursor:pointer}
+  button.ghost{background:transparent;color:#f6f1e8;border:1px solid rgba(201,162,39,.4)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  td,th{border-bottom:1px solid rgba(255,255,255,.08);text-align:left;padding:8px 4px;vertical-align:top}
+  .warn{color:#f0c9a0}
+</style>
+</head>
+<body>
+<main>
+  <p><a href="/">Akasha Hub</a></p>
+  <h1 id="title">Meu agendamento</h1>
+  <p id="lead">A confirmação só aparece depois que o pagamento é reconhecido. Voltar do checkout não marca o horário como pago.</p>
+  <form id="lookup">
+    <input id="email" type="email" placeholder="E-mail usado na reserva" required/>
+    <input id="code" inputmode="numeric" placeholder="Código de 6 dígitos" required/>
+    <button type="submit">Ver sessão</button>
+  </form>
+  <div id="out"></div>
+  <p><a href="/converse/#agenda">Agenda da casa</a></p>
+  <form id="admin" hidden>
+    <input id="token" type="password" placeholder="Chave da agenda" autocomplete="current-password"/>
+    <button type="submit">Abrir agenda</button>
+    <div id="rows"></div>
+  </form>
+</main>
+<script>
+const API = "https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa";
+const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ";
+const params = new URLSearchParams(location.search);
+function saved(){ try { return JSON.parse(sessionStorage.getItem("akashaConversa") || "{}"); } catch(e){ return {}; } }
+async function call(body, admin){
+  const headers = { "Content-Type":"application/json", apikey: KEY, Authorization: "Bearer " + KEY };
+  if (admin) headers["x-akasha-admin"] = admin;
+  const res = await fetch(API, { method:"POST", headers, body: JSON.stringify(body) });
+  const data = await res.json().catch(()=>({}));
+  if (!res.ok) throw new Error(data.error || "erro");
+  return data;
+}
+function esc(s){ return String(s||"").replace(/[&<>"']/g, c => ({"&":"&","<":"<",">":">","\"":""","'":"&#39;"}[c])); }
+function card(data){
+  const names = { held:"Horário separado, pagamento ainda não confirmado", pending_payment:"Aguardando a confirmação do Stripe", confirmed:"Confirmado", expired:"Expirado", cancelled:"Cancelado", refunded:"Reembolsado", completed:"Concluído" };
+  const box = document.getElementById("out");
+  const bits = [
+    "<article class='card'>",
+    "<strong>" + esc(names[data.status] || data.status) + "</strong>",
+    "<span>Sessão de 15 minutos · " + esc(data.date) + " · " + esc(data.start_time) + "</span>",
+    "<span>Pagamento: " + esc(data.payment_status || "—") + (data.payment_method ? " · " + esc(data.payment_method) : "") + "</span>",
+    "<span>Canal: " + esc(data.channel || "a combinar") + "</span>",
+    data.meeting_link ? "<a href='" + esc(data.meeting_link) + "'>Link da sessão</a>" : "",
+    data.recording_url ? "<a href='" + esc(data.recording_url) + "'>Gravação</a>" : "<span>Gravação: " + esc(data.recording_status || "ainda não") + "</span>",
+    "<span>Reembolso incondicional em até 48 horas após o pagamento. Suporte pelo WhatsApp da casa.</span>",
+    "</article>"
+  ];
+  box.innerHTML = bits.filter(Boolean).join("");
+}
+document.getElementById("lookup").onsubmit = async (e) => {
+  e.preventDefault();
+  try { card(await call({ action:"lookup", email: email.value.trim(), code: code.value.trim() })); }
+  catch (err) { out.textContent = "Não encontrei essa sessão com esse e-mail e código."; }
+};
+if (location.hash === "#agenda") {
+  title.textContent = "Agenda";
+  lead.textContent = "Só entra com a chave guardada no servidor. A página não confirma pagamento sozinha.";
+  lookup.hidden = true;
+  admin.hidden = false;
+}
+admin.onsubmit = async (e) => {
+  e.preventDefault();
+  const token = document.getElementById("token").value;
+  try {
+    const data = await call({ action:"admin", op:"list" }, token);
+    const rows = data.rows || [];
+    document.getElementById("rows").innerHTML = "<table><tr><th>Quando</th><th>Quem</th><th>Status</th><th></th></tr>" + rows.map(r => "<tr><td>" + esc(r.date) + " " + esc(r.start_time) + "</td><td>" + esc(r.customer_name) + "<br>" + esc(r.customer_phone) + "<br>" + esc(r.customer_email) + "<br>" + esc(r.objective) + "</td><td>" + esc(r.status) + "<br>" + esc(r.payment_method) + " " + esc(r.payment_status) + "<br>" + esc(r.stripe_checkout_session_id) + "</td><td><button type='button' data-op='confirm_manual' data-id='" + esc(r.id) + "'>Confirmar manual</button> <button type='button' class='ghost' data-op='cancel' data-id='" + esc(r.id) + "'>Cancelar</button> <button type='button' class='ghost' data-op='refund' data-id='" + esc(r.id) + "'>Reembolsar</button></td></tr>").join("") + "</table>";
+    document.getElementById("rows").onclick = async (ev) => {
+      const b = ev.target.closest("button");
+      if (!b) return;
+      await call({ action:"admin", op: b.dataset.op, id: b.dataset.id, payment_method: "whatsapp" }, token);
+      admin.requestSubmit();
+    };
+  } catch (err) {
+    document.getElementById("rows").textContent = err.message === "admin_not_configured" ? "A chave da agenda ainda não foi colocada no Supabase." : "A agenda não abriu.";
+  }
+};
+const back = saved();
+if (params.get("appointment") && back.id === params.get("appointment")) {
+  lead.textContent = params.get("cancel") ? "O pagamento não foi concluído. O horário volta a ficar livre quando a reserva expirar." : "Estamos esperando o Stripe confirmar. Esta página não marca o horário como pago sozinha.";
+  email.value = back.email || "";
+  (async function poll(){
+    for (let i = 0; i < 8; i++) {
+      try {
+        const data = await call({ action:"status", id: back.id, email: back.email, access_code: back.code });
+        card(data);
+        if (data.status === "confirmed" || data.status === "expired" || data.status === "cancelled") return;
+      } catch (e) {}
+      await new Promise(r => setTimeout(r, 3000));
+    }
+  })();
+}
+</script>
+</body>
+</html>
