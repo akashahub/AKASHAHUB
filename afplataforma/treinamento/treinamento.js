@@ -1,172 +1,173 @@
 const STEPS = [
   {
-    id: "quem", n: "01", t: "Quem é você aqui",
-    obj: "Combinar o papel. Sem tempo fixo. A call acaba quando ele está apto.",
-    avancar: "Ele aceitou: primeiro vende sessão. Mentoria vem depois.",
-    sair: "Quer só link de afiliado, sem mapa e sem treino. Não é família.",
+    id: "papel", n: "01", t: "Papel e responsabilidade",
+    obj: "Entender que vender Legado é orientar uma decisão, não pressionar alguém.",
+    avancar: "A pessoa explica seu papel e aceita respeitar o momento e a decisão do potencial cliente.",
+    sair: "Acredita que precisa fechar a qualquer custo ou promete o que não controla.",
     speak: [
-      "Aqui não é um link para você sair vendendo sozinho. É um time.",
-      "No começo você leva gente para a sessão de alinhamento de 350 reais. Isso já é venda.",
-      "Mentoria grande é o passo dois. A gente te solta nela quando você souber o mapa."
+      "Você não está aqui para empurrar uma mentoria. Está aqui para compreender a pessoa e explicar com clareza se a Arquitetura de Legado pode fazer sentido para ela.",
+      "Venda consultiva começa com escuta, contexto e honestidade. Um não também pode ser o resultado correto.",
+      "Você representa uma metodologia integrada e precisa saber o que conhece, o que ainda precisa confirmar e quando chamar o mentor."
     ],
-    qs: ["Por que você quer vender isto?", "Você aguenta seguir um mapa, ou quer improvisar tudo?"],
-    hint: "Fome de resultado é bem-vinda. Desespero como desculpa para pressionar o cliente, não.",
-    plus: "Perfil: determinação, paixão por venda, vontade de ganhar dinheiro. Preferência por quem precisa do resultado. O sistema ensina a fechar por diagnóstico, valor e confiança — não por ‘não saio da call sem a venda’ a qualquer custo."
+    qs: ["Como você explica seu papel em uma frase?", "O que faz quando a pessoa não tem alinhamento com a proposta?"],
+    hint: "Confiança vem de clareza, competência e respeito à decisão — não de pressão.",
+    plus: "A qualidade da venda começa antes da oferta: começa na postura de quem conduz a conversa."
   },
   {
-    id: "oquee", n: "02", t: "O que a AF vende",
-    obj: "Três frases. Se ele não consegue repetir, não avançou.",
-    avancar: "Ele repetiu as três frases com as palavras dele.",
-    sair: "Confunde AF com Flow, livro, constelação clínica ou curso de tráfego.",
+    id: "metodo", n: "02", t: "O que é a Arquitetura de Legado",
+    obj: "Explicar a proposta integrada sem reduzi-la a marketing, finanças ou espiritualidade.",
+    avancar: "Explica a jornada com palavras próprias e sem inventar entregas.",
+    sair: "Apresenta Legado como se fosse apenas a antiga AF Plataforma ou promete resultados garantidos.",
     speak: [
-      "Um: sessão de alinhamento. Uma hora e meia. 350 reais. A pessoa sai com um mapa da vida dela e uma ação de 7 dias.",
-      "Dois: mentoria de Alinhamento Financeiro. Aplicativo, sete etapas, call, alguém conduzindo.",
-      "Três: o acesso à plataforma é a casa onde isso mora. Não é um PDF jogado no WhatsApp."
+      "A Arquitetura de Legado é uma jornada de desenvolvimento e construção que conecta a essência da pessoa à forma como ela se posiciona, organiza seu negócio e constrói algo que possa continuar gerando valor.",
+      "Ela integra quatro frentes: Arquitetura de Essência, Império Digital, Alinhamento Financeiro e Tecnologia da Alma.",
+      "O trabalho combina investigação, estratégia, ferramentas e execução. O percurso concreto depende do contexto e das prioridades de cada pessoa."
     ],
-    qs: ["Me fala as três frases.", "O que a pessoa leva para casa na sessão de 350?"],
-    hint: "Linguagem de 10 anos. Se a frase precisa de dicionário, está errada.",
-    plus: "Transcrição 01: não é funil de um tiro. É compromisso. Sessão já entrega. Mentoria continua."
+    qs: ["Quais são as quatro frentes integradas?", "Por que Legado não é apenas uma mentoria de marketing?"],
+    hint: "Explique a ideia central primeiro. Só entre em detalhes quando entender o que a pessoa precisa saber.",
+    plus: "A oferta principal é Arquitetura de Legado. A AF Plataforma passa a ser tratada como parte do ecossistema, não como produto principal vendido isoladamente."
   },
   {
-    id: "nao", n: "03", t: "O que você nunca vende",
-    obj: "Lista curta. Ele decora.",
-    avancar: "Ele citou pelo menos cinco itens da lista.",
-    sair: "Quer vender ‘qualquer coisa que feche’.",
+    id: "essencia", n: "03", t: "Arquitetura de Essência",
+    obj: "Entender como história, valores, talentos e identidade orientam as decisões.",
+    avancar: "Explica a investigação de essência sem apresentar interpretações como fatos absolutos.",
+    sair: "Faz diagnósticos psicológicos, afirmações espirituais como certezas ou expõe informações privadas.",
     speak: [
-      "Você não promete renda, cura, namoro nem resultado garantido.",
-      "Você não inventa desconto.",
-      "Você não mistura Flow, Magnetismo, sessão antiga de 700, livro, como se fosse a mesma coisa.",
-      "Você não mostra a gestão do mentor para o cliente."
+      "A jornada começa por compreender a pessoa: sua história, os valores que considera importantes, seus talentos, aspirações e a forma como apresenta a própria trajetória.",
+      "Também podem ser investigados padrões familiares e crenças sobre dinheiro, trabalho, sucesso e pertencimento, sempre com respeito e sem impor conclusões.",
+      "As descobertas são organizadas para orientar decisões. Relatos, interpretações e hipóteses precisam permanecer claramente diferenciados."
     ],
-    qs: ["Me fala três coisas que você não pode prometer.", "O que você faz se ela pedir desconto?"],
-    hint: "Resposta certa para desconto: repetir o número. Não negociar teatro.",
-    plus: "Original da Ascensão. Intacta. Treinamento só ensina a obedecer."
+    qs: ["Que tipo de informação ajuda a compreender a identidade de alguém?", "Como você diferencia um relato de uma interpretação?"],
+    hint: "Escuta, consentimento e privacidade são parte do método.",
+    plus: "O Dossiê Estratégico deve transformar conversas relevantes em registros úteis, sem expor dados íntimos além do necessário."
   },
   {
-    id: "caminho", n: "04", t: "O caminho da pessoa",
-    obj: "SDR → sessão 350 → possível mentoria.",
-    avancar: "Ele desenhou o caminho em voz alta, na ordem certa.",
-    sair: "Quer pular a sessão e fechar 13 mil no Instagram.",
+    id: "imperio", n: "04", t: "Império Digital",
+    obj: "Mostrar como a identidade pode orientar uma presença digital coerente.",
+    avancar: "Conecta essência a posicionamento e ativos digitais sem prometer que todos receberão as mesmas entregas.",
+    sair: "Garante viralização, faturamento ou entregáveis que não foram acordados.",
     speak: [
-      "Você conversa com a pessoa. Se fizer sentido, marca a sessão de alinhamento.",
-      "Na sessão ela paga 350, se ainda não pagou. Você segue o mapa. Ela sai com território e um passo.",
-      "Se o diagnóstico pedir continuidade, existe a mentoria. Aí entra o mapa de fechamento. No começo, você chama o mentor."
+      "O Império Digital transforma a clareza sobre a pessoa e sua proposta em decisões de posicionamento, identidade, comunicação e presença digital.",
+      "Conforme o projeto, isso pode envolver conteúdo, produtos, páginas, sites, aplicativos, comunidades ou outras estruturas digitais.",
+      "A prioridade é construir um ecossistema coerente com a pessoa e seus objetivos, e não criar ferramentas só porque a tecnologia permite."
     ],
-    qs: ["O que você vende na primeira call com um desconhecido?", "Quando a mentoria entra?"],
-    hint: "Comissão da sessão (30, 40 ou 50%) ainda não está cravada. Não fale percentual para o cliente. Não invente o seu na call.",
-    plus: "Transcrição 03: não escala funil furado. Iniciante que fecha VIP no escuro fura a arquitetura."
+    qs: ["Como a identidade influencia o posicionamento?", "Por que os ativos digitais precisam responder a uma estratégia?"],
+    hint: "Diferencie possibilidades do método de entregas específicas contratadas.",
+    plus: "A promessa comercial deve corresponder ao escopo acordado. Direitos, acessos, manutenção e responsabilidades precisam estar claros no contrato."
   },
   {
-    id: "falar", n: "05", t: "Como falar",
-    obj: "Uma ideia por vez. Número antes de opinião. Silêncio depois da pergunta.",
-    avancar: "Ele fez uma pergunta e ficou quieto 5 segundos sem completar a frase dela.",
-    sair: "Não aguenta silêncio. Enche de história.",
+    id: "financeiro", n: "05", t: "Alinhamento Financeiro",
+    obj: "Explicar a dimensão financeira como parte integrada da construção de legado.",
+    avancar: "Relaciona comportamento, organização financeira, vendas e indicadores sem garantir renda.",
+    sair: "Promete enriquecimento, retorno financeiro certo ou apresenta uma ferramenta como solução universal.",
     speak: [
-      "Frase curta.",
-      "Me dá o número.",
-      "Isso é o sentimento. Qual foi o último valor que saiu sem decisão?"
+      "O Alinhamento Financeiro ajuda a observar a relação com o dinheiro e a trabalhar aspectos práticos como organização, hábitos, metas, vendas, negociação e indicadores.",
+      "As ferramentas financeiras existentes podem apoiar a jornada. Elas não substituem decisões responsáveis nem garantem um resultado específico.",
+      "A questão não é apenas quanto entra. É como a pessoa toma decisões, organiza recursos e transforma objetivos em ações sustentáveis."
     ],
-    qs: ["Faz uma pergunta de dinheiro e espera.", "O que você faz se ela chorar?"],
-    hint: "Choro: água, tempo, o mesmo ponto. Choro não cancela o número. Original da Ascensão.",
-    plus: "Transcrição 02: closer controla o diagnóstico. Controle = protocolo. Não é gritar."
+    qs: ["Que temas práticos podem ser trabalhados nessa frente?", "O que você jamais deve prometer sobre dinheiro?"],
+    hint: "Não prometa renda, retorno ou resultados garantidos.",
+    plus: "A AF Plataforma continua sendo um conjunto de recursos importante dentro do ecossistema, mesmo que a oferta comercial principal passe a ser Legado."
   },
   {
-    id: "sessao", n: "06", t: "A sessão de 350",
-    obj: "Ele sabe abrir o mapa da Ascensão e seguir os 90 minutos.",
-    avancar: "Ele apontou, no mapa, extração, um furo, ação de 7 dias, porta da mentoria.",
-    sair: "Quer improvisar a sessão ‘no feeling’.",
+    id: "alma", n: "06", t: "Tecnologia da Alma",
+    obj: "Apresentar a frente de consciência e prática sem confundir crenças com fatos científicos.",
+    avancar: "Explica a frente com respeito, sem impor crenças ou exagerar alegações científicas.",
+    sair: "Promete cura ou apresenta conceitos espirituais como comprovação científica.",
     speak: [
-      "Abre o mapa da sessão de alinhamento. É o teu GPS.",
-      "Noventa minutos. Um furo. Um passo de 7 dias. Mentoria só se o diagnóstico pediu.",
-      "No fim você copia o mapa e manda no WhatsApp dela."
+      "Tecnologia da Alma reúne práticas de reflexão e desenvolvimento pessoal que podem ajudar a pessoa a observar sua experiência, suas escolhas e a relação entre corpo, mente e contexto.",
+      "Podem existir exercícios de visualização, escrita, meditação e outras experiências guiadas, conforme a metodologia for estruturada.",
+      "Conceitos espirituais e interpretações subjetivas devem ser apresentados como tais. Não se promete cura nem se transforma metáfora em prova científica."
     ],
-    qs: ["Quantos furos você nomeia?", "O que ela leva no WhatsApp?"],
-    hint: "Resposta: um furo. Mapa + dossiê + ação de 7 dias.",
-    plus: "Abra o mapa da Ascensão nesta call e ande um ciclo com ele, como se ele fosse o cliente."
+    qs: ["Como explicar uma prática de visualização de forma responsável?", "Qual é a diferença entre uma crença e uma afirmação cientificamente comprovada?"],
+    hint: "A linguagem deve ser acolhedora, clara e responsável.",
+    plus: "Esta frente ainda está em desenvolvimento e seus módulos e ferramentas serão definidos progressivamente."
   },
   {
-    id: "tela", n: "07", t: "Tela compartilhada",
-    obj: "Ele sabe o que o cliente pode ver.",
-    avancar: "Ele listou 3 coisas que pode mostrar e 3 que não pode.",
-    sair: "Quer ‘dar um tour na plataforma pra fechar’.",
+    id: "jornada", n: "07", t: "A jornada e as prioridades",
+    obj: "Explicar que as frentes se conectam e podem avançar em paralelo.",
+    avancar: "Explica a lógica da jornada sem tratar o calendário indicativo como promessa rígida.",
+    sair: "Apresenta meses e etapas como cronograma universal garantido.",
     speak: [
-      "Para o cliente: mapa dela, Quitei 3 minutos se for dívida, landing se a porta da mentoria abriu.",
-      "Nunca: gestão, lista de alunos, este treino, teleprompter."
+      "A jornada pode começar pela investigação de essência, avançar para identidade e construção digital e trabalhar finanças em paralelo.",
+      "Depois, conforme as necessidades, podem ganhar força expansão, automação, equipe, comunidade e continuidade.",
+      "O desenho de um ano é uma referência de organização. As prioridades reais são ajustadas ao contexto, ao escopo e ao ritmo de cada cliente."
     ],
-    qs: ["O que você mostra se o furo for dívida?", "O que você nunca mostra?"],
-    hint: "Aba ‘O que mostrar na tela’ deste arquivo. Decore.",
-    plus: "Transcrição 02: objetivo da call não é mostrar coisa. Tela prova. Fala diagnostica."
+    qs: ["Por que algumas frentes podem acontecer em paralelo?", "Como explicar a duração sem transformar a previsão em garantia?"],
+    hint: "Fale em jornada orientativa; confirme o formato e o escopo comercial vigentes.",
+    plus: "A plataforma deve ajudar a conectar etapas, registros, ferramentas e próximas ações, sem obrigar todos a seguirem um roteiro idêntico."
   },
   {
-    id: "obj", n: "08", t: "Quando ela trava",
-    obj: "Quatro travas da sessão. Uma pergunta cada.",
-    avancar: "Ele respondeu as quatro sem inventar desconto.",
-    sair: "A resposta dele para tudo é ‘baixa o preço’.",
+    id: "diagnostico", n: "08", t: "Escuta e qualificação",
+    obj: "Investigar a necessidade antes de apresentar a oferta.",
+    avancar: "Faz perguntas abertas, escuta e resume a necessidade antes de explicar a solução.",
+    sair: "Interrompe, presume o problema ou usa vulnerabilidade para pressionar a compra.",
     speak: [
-      "Está caro: caro comparado com o quê?",
-      "Vou pensar: o que ainda não olhamos?",
-      "Preciso falar com alguém: essa pessoa decide de verdade? Chama agora ou marca os três.",
-      "Não tenho tempo: o método pede poucas horas. Cabe ou a vida não abre agora?"
+      "Antes de apresentar a proposta, entenda o que a pessoa está tentando construir e o que hoje está dificultando esse caminho.",
+      "Pergunte sobre objetivos, contexto, tentativas anteriores, prioridades e capacidade de se comprometer com o processo.",
+      "Depois, resuma o que ouviu e confirme se compreendeu corretamente. Não é preciso compartilhar tudo o que foi dito para demonstrar que escutou."
     ],
-    qs: ["Me encena ‘vou pensar’.", "Me encena ‘está caro’."],
-    hint: "Mapa de fechamento tem o mesmo quadro. Sessão usa a versão curta.",
-    plus: "AF não trata toda objeção como mentira. Investiga. Se for não, encerra."
+    qs: ["O que você quer construir nos próximos meses?", "O que está dificultando isso hoje?", "O que seria uma mudança útil e realista para você?"],
+    hint: "Não transforme a conversa em interrogatório. Pergunte, escute e confirme.",
+    plus: "Qualificação serve para verificar alinhamento entre necessidade, proposta, momento e condições — não para fabricar urgência."
   },
   {
-    id: "avanco", n: "09", t: "Avançar para mentoria",
-    obj: "Ele sabe a diferença entre convite e fechamento.",
-    avancar: "Ele repetiu: SDR convida. Closer treinado fecha. Mentor pode entrar na call.",
-    sair: "Acha que 350 e 13 mil são a mesma conversa.",
+    id: "convite", n: "09", t: "Apresentar a proposta e convidar",
+    obj: "Conectar a necessidade ouvida à proposta adequada e ao próximo passo.",
+    avancar: "Explica por que a proposta pode ser relevante e convida sem pressão.",
+    sair: "Oculta condições, inventa escassez ou força uma decisão imediata.",
     speak: [
-      "Se o diagnóstico pediu continuidade, você usa a frase da porta da mentoria e manda o WhatsApp.",
-      "Você não fecha 13 mil no susto no primeiro mês.",
-      "Quando estiver pronto, o mapa de fechamento é o outro GPS. Nove etapas. Pix se ela decidiu. Não se ela não decidiu."
+      "Pelo que você compartilhou, parece que vale explorar se a Arquitetura de Legado faz sentido para o que deseja construir.",
+      "Posso explicar como funciona a jornada, o que está incluído no formato atual e quais são as condições para você avaliar com calma.",
+      "Se ainda houver dúvidas ou se não for o momento, podemos reconhecer isso e combinar um próximo passo adequado."
     ],
-    qs: ["Quem fecha a mentoria no seu primeiro mês?", "O que é o copo da sessão? E o copo da mentoria?"],
-    hint: "Copo da sessão = 350 (se ainda não pagou). Copo da mentoria = Pix da mentoria, só depois do espelho.",
-    plus: "Transcrição 02 e 04. AF adapta o timing, não o tom pitbull."
+    qs: ["Que parte da proposta se conecta ao que a pessoa descreveu?", "Quais dúvidas precisam ser respondidas antes de decidir?"],
+    hint: "Preço, condições, duração e entregas devem ser confirmados nos materiais comerciais vigentes.",
+    plus: "Não invente preço, desconto, bônus, prazo, garantia ou entrega. Se não souber, confirme com o mentor."
   },
   {
-    id: "familia", n: "10", t: "Família e dinheiro",
-    obj: "Combinar como ele ganha. Sem percentual cravado ainda.",
-    avancar: "Ele entendeu: percentual em aberto. Cliente nunca ouve a comissão.",
-    sair: "Quer discutir comissão na frente do cliente.",
+    id: "objecoes", n: "10", t: "Dúvidas, objeções e limites",
+    obj: "Responder dúvidas com clareza e respeitar a autonomia da pessoa.",
+    avancar: "Investiga a dúvida real, responde com precisão e aceita um não.",
+    sair: "Usa culpa, medo, pressão emocional ou informações falsas para fechar.",
     speak: [
-      "Você ganha sobre a sessão que você realizou. O número exato — 30, 40 ou 50 — a gente crava com o mentor, não na call com o cliente.",
-      "Cliente não precisa saber o teu percentual.",
-      "Família tira dúvida. Afiliado some depois do pix."
+      "Quando a pessoa diz que precisa pensar, pergunte se existe alguma dúvida que ainda possamos esclarecer.",
+      "Quando diz que está caro, procure entender se a questão é orçamento, prioridade, valor percebido ou outro fator.",
+      "Se a resposta for não, agradeça e encerre com respeito. Não transforme toda objeção em algo que precisa ser vencido."
     ],
-    qs: ["O cliente pergunta quanto você ganha. O que você responde?", "Para quem você manda dúvida depois das 22h?"],
-    hint: "Resposta ao cliente: ‘eu trabalho nesta operação. O valor da sessão é 350.’ Ponto.",
-    plus: "Espírito família foi o pedido original. Comissão em aberto foi o pedido original. Não feche um dos dois neste arquivo."
+    qs: ["O que ainda precisa ficar claro para você?", "Faz sentido retomar isso em outro momento ou prefere encerrar por aqui?"],
+    hint: "Objeção é informação para compreender, não autorização para pressionar.",
+    plus: "A confiança na marca vale mais do que uma venda inadequada."
   },
   {
-    id: "amanha", n: "11", t: "Amanhã de manhã",
-    obj: "Uma ação observável, igual a sessão pede para o cliente.",
-    avancar: "Ele tem nome de 3 pessoas para chamar e o link da sessão na cabeça.",
-    sair: "‘Vou ver no fim de semana’.",
+    id: "proximo", n: "11", t: "Próxima ação e passagem ao mentor",
+    obj: "Terminar a conversa com um próximo passo explícito e um registro mínimo.",
+    avancar: "Registra apenas o necessário, confirma a ação combinada e sabe quando envolver o mentor.",
+    sair: "Promete condições sem autorização ou compartilha informações privadas sem consentimento.",
     speak: [
-      "Amanhã você chama três pessoas. Não cem. Três.",
-      "Você marca sessão. Você abre o mapa. Você pede o número.",
-      "Se travar, você me chama. A call de treino acabou. O resto é dúvida e prática."
+      "Vamos resumir: o que você está buscando, o que ficou claro e qual é o próximo passo que faz sentido.",
+      "Se houver alinhamento, podemos organizar uma Leitura Call ou a conversa indicada pelo processo comercial vigente.",
+      "Se a pergunta exigir uma decisão de escopo, preço, contrato ou método que você não está autorizado a tomar, registre a dúvida e encaminhe ao mentor."
     ],
-    qs: ["Quais são as três pessoas?", "Que horas você manda a primeira mensagem?"],
-    hint: "Ação de 7 dias também vale para o vendedor.",
-    plus: "Critério de sucesso da call de treino: ele sair apto a marcar e conduzir a sessão, não ‘inspirado’."
+    qs: ["Qual é o próximo passo combinado?", "O que precisa ser confirmado pelo mentor antes de avançar?"],
+    hint: "Registre informações relevantes com consentimento e acesso restrito.",
+    plus: "O critério de sucesso não é sair com uma venda a qualquer custo. É conduzir uma conversa íntegra e chegar a uma decisão clara."
   }
 ];
 
 const CHECK = [
-  ["frase","Repete o que a AF vende em 3 frases"],
-  ["nunca","Lista o que nunca vende"],
-  ["mapa","Abre o mapa da sessão e aponta extração, um furo, 7 dias"],
-  ["tela","Sabe o que o cliente pode ver"],
-  ["nao","Aceita encerrar sem venda"],
-  ["vip","Não fecha mentoria cara no dia 1"],
-  ["duvida","Sabe para quem mandar dúvida"]
+  ["metodo","Explica a Arquitetura de Legado e suas quatro frentes"],
+  ["essencia","Explica a investigação de essência com responsabilidade"],
+  ["digital","Conecta identidade a posicionamento e ativos digitais"],
+  ["financeiro","Explica a frente financeira sem prometer renda"],
+  ["alma","Distingue práticas subjetivas de afirmações científicas"],
+  ["diagnostico","Escuta, qualifica e confirma a necessidade"],
+  ["proposta","Apresenta escopo e condições vigentes sem inventar"],
+  ["etica","Respeita a decisão, privacidade e limites comerciais"],
+  ["proximo","Registra o próximo passo e sabe quando chamar o mentor"]
 ];
 
-const KEY = "afTreino";
+const KEY = "alTreinoComercial";
 const state = { step: 0, notes: {}, check: {}, nome: "", tpSize: 28 };
 try {
   const s = JSON.parse(localStorage.getItem(KEY)||"null");
