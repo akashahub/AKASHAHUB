@@ -10,70 +10,65 @@
   a { color: inherit; }
   h1 { font-weight: 500; font-size: 40px; line-height: .95; margin: 12px 0; }
   p, li { font: 16px/1.45 system-ui, sans-serif; }
-  article { background: #fff; border: 1px solid #161513; border-radius: 14px; padding: 14px; margin-top: 12px; }
-  audio { width: 100%; margin-top: 8px; }
-  .wait { font: 15px/1.4 system-ui, sans-serif; }
+  #list { margin-top: 8px; }
+  .ah-track { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+  .ah-track button { flex: 1; text-align: left; min-height: 52px; border-radius: 12px; border: 1px solid #161513; background: #fff; padding: 0 12px; cursor: pointer; font: 600 16px/1.2 system-ui, sans-serif; }
+  .ah-track a { font: 600 14px/1 system-ui, sans-serif; }
+  audio { width: 100%; margin: 14px 0; }
+  .keep { display: inline-block; margin-top: 14px; padding: 12px 16px; border-radius: 999px; background: #161513; color: #f7f4ee; text-decoration: none; font: 650 14px/1 system-ui, sans-serif; }
 </style>
 </head>
 <body>
 <main>
   <p><a href="/">Akasha Hub</a></p>
-  <h1 id="title">Pack de áudios</h1>
-  <p id="lead" class="wait">Confirmando o pagamento…</p>
+  <h1>Pack de áudios</h1>
+  <p id="lead">Confirmando o acesso…</p>
   <div id="list"></div>
 </main>
-<script>
-const API = "https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa";
-const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ";
-const PACK = [
-  { title: "O código secreto do universo", file: "/audios/codigo.mp3" },
-  { title: "Cura das feridas invisíveis", file: "/audios/feridas.mp3" },
-  { title: "Mente crística", file: "/audios/mente.mp3" },
-];
+<script type="module">
+import { auth } from "/login/firebase.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { confirm, markOwned, ownsPack, fillPlayer, saveIfLogged } from "/audios/player.js";
+
 const q = new URLSearchParams(location.search);
-function show() {
-  document.getElementById("lead").textContent = "Os três áudios estão abertos neste aparelho. Ouça quando quiser. Para ouvir em outro aparelho, use o mesmo pagamento.";
-  const list = document.getElementById("list");
-  PACK.forEach((item) => {
-    const box = document.createElement("article");
-    const h = document.createElement("strong");
-    h.textContent = item.title;
-    const audio = document.createElement("audio");
-    audio.controls = true;
-    audio.preload = "none";
-    audio.src = item.file;
-    box.append(h, audio);
-    list.appendChild(box);
-  });
+const lead = document.getElementById("lead");
+const list = document.getElementById("list");
+
+function show(note) {
+  lead.textContent = note;
+  fillPlayer(list, { download: true });
+  if (!auth.currentUser) {
+    const a = document.createElement("a");
+    a.className = "keep";
+    a.href = "/login/?next=/audios/";
+    a.textContent = "Entrar para guardar neste acesso";
+    list.appendChild(a);
+  }
 }
-async function confirm(sessionId) {
-  const res = await fetch(API, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", apikey: KEY, Authorization: "Bearer " + KEY },
-    body: JSON.stringify({ action: "pack_confirm", session_id: sessionId }),
-  });
-  const data = await res.json().catch(() => ({}));
-  return data.paid === true;
-}
-(async function () {
-  const saved = localStorage.getItem("akasha-pack");
-  const sessionId = q.get("session_id") || saved || "";
+
+onAuthStateChanged(auth, async () => {
+  if (await ownsPack()) {
+    show("Os áudios estão no seu acesso. Ouça aqui ou baixe.");
+    return;
+  }
+  const sessionId = q.get("session_id") || "";
   if (!sessionId) {
-    document.getElementById("lead").textContent = "Este pack abre depois do pagamento.";
+    lead.textContent = "Este pack abre depois do pagamento.";
     return;
   }
   try {
     const paid = await confirm(sessionId);
     if (!paid) {
-      document.getElementById("lead").textContent = "O pagamento ainda não entrou. O pack continua fechado.";
+      lead.textContent = "O pagamento ainda não entrou. O pack continua fechado.";
       return;
     }
-    localStorage.setItem("akasha-pack", sessionId);
-    show();
+    markOwned(sessionId);
+    await saveIfLogged();
+    show("Pagamento confirmado. Ouça aqui. Entre para o pack ficar neste e-mail em qualquer aparelho.");
   } catch (e) {
-    document.getElementById("lead").textContent = "Não consegui confirmar agora. Atualize a página.";
+    lead.textContent = "Não consegui confirmar agora. Atualize a página.";
   }
-})();
+});
 </script>
 </body>
 </html>

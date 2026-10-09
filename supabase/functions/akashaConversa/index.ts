@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
   if (action === "lookup") return lookup(body);
   if (action === "event") return track(body);
   if (action === "admin") return admin(req, body);
-  if (action === "pack") return packCheckout();
+  if (action === "pack") return packCheckout(body);
   if (action === "pack_confirm") return packConfirm(body);
   if (action === "leitura") return leituraCheckout(body);
   if (action === "leitura_confirm") return leituraConfirm(body);
@@ -438,12 +438,14 @@ async function track(body: Record<string, unknown>) {
 
 const PACK_CENTS = 2700;
 
-async function packCheckout() {
+async function packCheckout(body: Record<string, unknown> = {}) {
   const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
   if (!key) return json({ error: "stripe_not_configured" }, 503);
   const stripe = await stripeClient(key);
-  const metadata = { source: "akasha-pack" };
-  const session = await openCheckout(stripe, {
+  const email = String(body.email || "").trim().toLowerCase().slice(0, 120);
+  const metadata: Record<string, string> = { source: "akasha-pack" };
+  if (email.includes("@")) metadata.email = email;
+  const fields: Record<string, unknown> = {
     mode: "payment",
     line_items: [{
       quantity: 1,
@@ -457,7 +459,9 @@ async function packCheckout() {
     cancel_url: "https://akashahub.com.br/?pack=1",
     metadata,
     payment_intent_data: { metadata },
-  });
+  };
+  if (email.includes("@")) fields.customer_email = email;
+  const session = await openCheckout(stripe, fields);
   return json({ url: session.url });
 }
 
@@ -471,7 +475,8 @@ async function packConfirm(body: Record<string, unknown>) {
   if (session.metadata?.source !== "akasha-pack") return json({ error: "source" }, 400);
   if (session.amount_total !== PACK_CENTS) return json({ error: "amount" }, 400);
   if (session.payment_status !== "paid") return json({ paid: false });
-  return json({ paid: true });
+  const email = String(session.customer_details?.email || session.metadata?.email || "").toLowerCase();
+  return json({ paid: true, email });
 }
 
 const LEITURA_CENTS = 4700;
