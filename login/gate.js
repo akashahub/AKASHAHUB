@@ -14,24 +14,24 @@ let user = null;
 
 const style = document.createElement("style");
 style.textContent = `
-#ah-gate{position:fixed;inset:0;z-index:200;background:rgba(8,6,12,.72);display:flex;align-items:flex-end;justify-content:center;padding:12px}
-#ah-gate-card{width:min(440px,100%);max-height:min(92vh,760px);overflow:auto;background:#140c1c;color:#f7f4ee;border-radius:22px;padding:22px 18px 18px;border:1px solid rgba(212,175,106,.45);box-shadow:0 24px 60px rgba(0,0,0,.45);font:15px/1.4 Jost,system-ui,sans-serif}
+#ah-gate{position:fixed;inset:0;z-index:200;background:rgba(8,6,12,.76);display:flex;align-items:flex-end;justify-content:center;padding:12px;backdrop-filter:blur(8px)}
+#ah-gate-card{position:relative;width:min(440px,100%);max-height:min(92vh,760px);overflow:auto;background:#140c1c;color:#f7f4ee;border-radius:22px;padding:30px 18px 18px;border:1px solid rgba(212,175,106,.45);box-shadow:0 24px 60px rgba(0,0,0,.45);font:15px/1.4 Jost,system-ui,sans-serif}
 #ah-gate-card h2{margin:0 0 8px;font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:28px;line-height:1.05}
 #ah-gate-card .lead{margin:0 0 14px;color:#e7dcc8}
 #ah-gate-card label{display:block;margin-top:10px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#d4af6a}
 #ah-gate-card input{width:100%;margin-top:6px;background:#0e0a14;border:1px solid rgba(244,237,224,.16);border-radius:12px;padding:12px;color:#f7f4ee;font:16px/1.2 inherit}
 #ah-gate-go,#ah-gate-mode,#ah-gate-google{display:block;width:100%;min-height:48px;margin-top:12px;border-radius:999px;cursor:pointer;font:600 15px/1 inherit}
 #ah-gate-go{background:#f0d078;color:#1a1408;border:0}
-#ah-gate-mode,#ah-gate-google{background:transparent;color:#f7f4ee;border:1px solid rgba(244,237,224,.25)}
-#ah-gate-x{background:transparent;color:#f7f4ee;border:0;min-height:44px;cursor:pointer;font:600 14px/1 inherit}
+#ah-gate-mode{background:transparent;color:#f7f4ee;border:1px solid rgba(244,237,224,.25)}#ah-gate-google{background:#fff;color:#20172a;border:1px solid #fff;box-shadow:0 5px 18px rgba(0,0,0,.22);font-weight:700}#ah-gate-google:hover{background:#f5e9cc;border-color:#e8c872}
+#ah-gate-x{position:absolute;right:10px;top:10px;display:grid;place-items:center;width:40px;height:40px;min-height:40px;border-radius:50%;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;font:400 25px/1 Jost,system-ui,sans-serif}#ah-gate-x:hover{background:rgba(255,255,255,.18);border-color:#e8c872}
 #ah-gate-err{min-height:1.2em;color:#f0b2ac;font-size:14px;margin-top:8px}
-#ah-legado{display:flex;align-items:center;justify-content:center;width:100%;min-height:72px;margin-top:16px;padding:14px 18px;border-radius:16px;text-decoration:none;color:#fff;font-family:"Playfair Display",Georgia,serif;font-size:22px;letter-spacing:.02em;text-align:center;
+#ah-legado{display:flex;align-items:center;justify-content:center;width:100%;min-height:66px;margin-top:16px;padding:14px 18px;border-radius:16px;text-decoration:none;color:#fff;font-family:"Cinzel","Playfair Display",Georgia,serif;font-size:20px;font-weight:600;letter-spacing:.025em;text-align:center;transition:transform .2s ease,filter .2s ease,box-shadow .2s ease;
   background:
     linear-gradient(180deg, rgba(255,236,190,.55), rgba(255,236,190,0) 32%),
     linear-gradient(165deg, #4a2a6a 0%, #1a0c28 48%, #2c1844 100%);
   border:1px solid #e8c872;
   box-shadow:inset 0 1px 0 rgba(255,236,180,.8), inset 0 -12px 20px rgba(0,0,0,.28), 0 10px 24px rgba(0,0,0,.35)}
-@media(min-width:720px){#ah-gate{align-items:center}}
+#ah-legado:hover{transform:translateY(-2px);filter:brightness(1.08);box-shadow:inset 0 1px 0 rgba(255,236,180,.8),0 14px 28px rgba(0,0,0,.38)}#ah-gate-x{z-index:2}@media(min-width:720px){#ah-gate{align-items:center}}
 `;
 document.head.appendChild(style);
 
@@ -40,6 +40,7 @@ function card(reason) {
   root.id = "ah-gate";
   root.innerHTML = `
     <div id="ah-gate-card" role="dialog" aria-modal="true" aria-labelledby="ah-gate-title">
+      <button type="button" id="ah-gate-x" aria-label="Fechar janela">×</button>
       <h2 id="ah-gate-title">Entre no Akasha Hub</h2>
       <p class="lead" id="ah-gate-lead"></p>
       <label>E-mail<input id="ah-gate-email" type="email" autocomplete="email" placeholder="seu@email.com"></label>
@@ -48,7 +49,7 @@ function card(reason) {
       <button type="button" id="ah-gate-mode">Não tenho conta. Criar.</button>
       <button type="button" id="ah-gate-google">Continuar com Google</button>
       <p id="ah-gate-err"></p>
-      <button type="button" id="ah-gate-x">Ver o site sem entrar</button>
+      <button type="button" id="ah-gate-dismiss">Ver o site sem entrar</button>
       <a id="ah-legado" href="/legado/">Arquitetura de Legado</a>
     </div>`;
   document.body.appendChild(root);
@@ -99,6 +100,7 @@ function card(reason) {
     catch (e) { if (e.code !== "auth/popup-closed-by-user") fail(e); }
   };
   root.querySelector("#ah-gate-x").onclick = () => close(true);
+  root.querySelector("#ah-gate-dismiss").onclick = () => close(true);
   root.addEventListener("click", (e) => { if (e.target === root) close(true); });
 }
 
