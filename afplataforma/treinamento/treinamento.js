@@ -253,6 +253,7 @@ document.body.addEventListener("click", (e) => {
     el("viewTela").classList.toggle("hidden", t!=="tela");
     el("viewRefs").classList.toggle("hidden", t!=="refs");
     el("viewApto").classList.toggle("hidden", t!=="apto");
+    el("viewFormacao").classList.toggle("hidden", t!=="formacao");
   }
 });
 document.body.addEventListener("change", (e) => {
