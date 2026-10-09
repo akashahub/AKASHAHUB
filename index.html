@@ -1003,7 +1003,7 @@
   }, {passive:true});
 
   (function collar(){
-    const images = [];
+    const images = ['https://akashahub.com.br/img/colar-horus/sem_fundo_upscaled.png'];
     const view = document.getElementById('collarView');
     const track = document.getElementById('collarTrack');
     if(!view || !track || images.length < 1) return;
@@ -1017,6 +1017,11 @@
       track.appendChild(fig);
     });
     view.hidden = false;
+    view.style.touchAction = 'pan-y';
+    let startX = 0, deltaX = 0, dragging = false;
+    view.addEventListener('touchstart', function(e){ if(e.touches.length){ startX=e.touches[0].clientX; deltaX=0; dragging=true; track.style.transition='none'; } }, {passive:true});
+    view.addEventListener('touchmove', function(e){ if(!dragging || !e.touches.length) return; deltaX=e.touches[0].clientX-startX; }, {passive:true});
+    view.addEventListener('touchend', function(){ if(!dragging) return; dragging=false; if(Math.abs(deltaX)>45 && images.length>1){ i=(i+(deltaX<0?1:images.length-1))%images.length; track.style.transition='transform .35s cubic-bezier(.22,1,.36,1)'; track.style.transform='translateX('+(-i*100)+'%)'; } }, {passive:true});
     if(images.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let i = 0;
     setInterval(function(){
