@@ -221,9 +221,48 @@
       .scene-grid,.doors{grid-template-columns:1fr}
       .solucoes{padding:64px 0}
     }
+  
+    /* Microinterações: movimento discreto, sem alterar a estrutura da página */
+    .reading-progress{position:fixed;top:0;left:0;width:0;height:3px;z-index:130;background:linear-gradient(90deg,#5c3d78,#c49a50);box-shadow:0 0 12px rgba(92,61,120,.28);transform-origin:left;pointer-events:none}
+    h1,h2,h3,.eyebrow,.lead,.layer b,.module h3,.scene h3,.faq-btn,.benefit strong,.stat strong{transition:color .28s ease,text-shadow .28s ease,transform .28s ease}
+    h1:hover,h2:hover,h3:hover,.module h3:hover,.scene h3:hover,.faq-btn:hover{color:var(--violet);text-shadow:0 5px 24px rgba(92,61,120,.12)}
+    .hero-copy h1:hover{transform:translateX(3px)}
+    .eyebrow:hover{color:var(--gold);text-shadow:0 0 18px rgba(196,154,80,.18)}
+    .lead,.split p,.practice p,.faq p,.module p,.scene p,.layer span{transition:color .25s ease}
+    .lead:hover,.split p:hover,.practice p:hover,.module p:hover,.scene p:hover,.layer:hover span{color:#49336a}
+    .module,.scene,.layer,.benefit,.stat,.faq-item,.check,.step,.practice-card{transition:transform .32s cubic-bezier(.2,.8,.2,1),box-shadow .32s ease,border-color .32s ease,background-color .32s ease}
+    .module:hover,.scene:hover,.faq-item:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(48,35,20,.09);border-color:rgba(92,61,120,.28)}
+    .layer:hover{transform:translateX(4px);border-color:rgba(92,61,120,.4)}
+    .benefit:hover,.stat:hover{transform:translateY(-3px)}
+    .benefit:hover strong,.stat:hover strong{color:var(--gold)}
+    .step:hover .step-num{background:rgba(196,154,80,.13);transform:scale(1.05)}
+    .step-num{transition:transform .28s ease,background .28s ease}
+    .check:hover{transform:translateX(3px);color:var(--violet)}
+    .reveal{transition-delay:0ms}
+    .reveal.in{animation:al-settle .65s cubic-bezier(.2,.8,.2,1) both}
+    @keyframes al-settle{from{opacity:.65;filter:blur(2px)}to{opacity:1;filter:blur(0)}}
+    #ah-al-call-bar{position:fixed;left:12px;right:12px;bottom:12px;z-index:85;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:11px 14px;background:linear-gradient(115deg,#2a1644 0%,#4c2d68 58%,#5c3d78 100%);color:#fbf8f2;border:1px solid rgba(198,161,74,.42);border-radius:16px;box-shadow:0 14px 42px rgba(42,22,68,.34);font:500 14px/1.35 system-ui,sans-serif;animation:al-bar-in .65s .35s both}
+    #ah-al-call-brand{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+    #ah-al-call-brand img{display:block;width:30px;height:30px;object-fit:cover;border-radius:8px;box-shadow:0 0 0 1px rgba(198,161,74,.55)}
+    #ah-al-call-brand .label{display:none;color:#f0dfad;font:650 10px/1 system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+    #ah-al-call-bar strong{font-weight:650;color:#fffaf0}
+    #ah-al-call-bar .bar-copy{flex:1;min-width:0}
+    #ah-al-call-bar button{font:650 14px/1 system-ui,sans-serif;border:0;border-radius:999px;min-height:44px;padding:0 16px;cursor:pointer;transition:transform .22s ease,background .22s ease}
+    #ah-al-call-open{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#e7d7a8;color:#2a1644;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+    #ah-al-call-open:hover{background:#f1e5bd;transform:translateY(-2px)}
+    #ah-al-call-x{background:transparent;color:#f7f4ee;min-width:40px;padding:0;font-size:22px}
+    #ah-al-call-x:hover{color:#f0dfad}
+    .cv-root{z-index:140}
+    @keyframes al-bar-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    @media(min-width:720px){#ah-al-call-brand .label{display:block}}
+    @media(max-width:560px){#ah-al-call-bar{left:8px;right:8px;bottom:8px;gap:8px;padding:9px 10px;font-size:12px}#ah-al-call-brand img{width:27px;height:27px}#ah-al-call-open{min-height:40px;padding:0 12px;font-size:12px}#ah-al-call-x{min-width:32px;padding:0}.shell{scroll-margin-bottom:90px}}
+    @media(prefers-reduced-motion:reduce){.reveal.in{animation:none}h1,h2,h3,.eyebrow,.lead,.layer b,.module h3,.scene h3,.faq-btn,.benefit strong,.stat strong,.module,.scene,.layer,.benefit,.stat,.faq-item,.check,.step,.practice-card,#ah-al-call-bar{transition:none;animation:none}}
+
   </style>
+  <link rel="stylesheet" href="/converse/widget.css" />
 </head>
 <body>
+  <div class="reading-progress" id="alReadingProgress" aria-hidden="true"></div>
   <div class="topbar">Uma mentoria · Akasha Hub · Yan Klehn</div>
   <nav class="nav">
     <div class="shell nav-inner">
@@ -706,5 +745,49 @@
     render();
   })();
   </script>
+
+  <aside id="ah-al-call-bar" aria-label="Agendar Leitura Call">
+    <div id="ah-al-call-brand"><img src="/img/pack-mandala.png" alt="" /><span class="label">Akasha Hub</span></div>
+    <div class="bar-copy"><strong>Leitura Call.</strong> Um próximo passo mais claro começa com uma conversa.</div>
+    <button id="ah-al-call-open" type="button" aria-label="Agendar Leitura Call">
+      <span aria-hidden="true">◉</span><span>Agendar Leitura Call</span>
+    </button>
+    <button id="ah-al-call-x" type="button" aria-label="Fechar barra">×</button>
+  </aside>
+  <script src="/converse/widget.js"></script>
+  <script>
+  (function(){
+    const bar=document.getElementById('ah-al-call-bar');
+    const open=document.getElementById('ah-al-call-open');
+    const close=document.getElementById('ah-al-call-x');
+    const progress=document.getElementById('alReadingProgress');
+    if(sessionStorage.getItem('akasha-al-call-bar')==='off' && bar) bar.remove();
+    if(close) close.addEventListener('click',function(){
+      sessionStorage.setItem('akasha-al-call-bar','off');
+      if(bar) bar.remove();
+    });
+    if(open) open.addEventListener('click',function(){
+      if(window.akashaConversa && typeof window.akashaConversa.open==='function'){
+        window.akashaConversa.open();
+      } else {
+        window.location.href='/converse/';
+      }
+    });
+    let scheduled=false;
+    function updateProgress(){
+      const max=document.documentElement.scrollHeight-window.innerHeight;
+      if(progress) progress.style.width=(max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):0)+'%';
+      scheduled=false;
+    }
+    window.addEventListener('scroll',function(){
+      if(!scheduled){scheduled=true;window.requestAnimationFrame(updateProgress);}
+    },{passive:true});
+    updateProgress();
+    document.querySelectorAll('.reveal').forEach(function(el,i){
+      el.style.transitionDelay=(Math.min(i%4,3)*55)+'ms';
+    });
+  })();
+  </script>
+
 </body>
 </html>
