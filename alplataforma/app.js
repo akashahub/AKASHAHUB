@@ -32,7 +32,13 @@ function db(){
   return d;
 }
 function uid(){ return Math.random().toString(36).slice(2, 9); }
-function esc(s){ return String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&","<":"<",">":">",'"':"""}[c])); }
+function esc(s){
+  return String(s ?? "")
+    .replace(/&/g, "\u0026amp;")
+    .replace(/</g, "\u0026lt;")
+    .replace(/>/g, "\u0026gt;")
+    .replace(/"/g, "\u0026quot;");
+}
 
 function shell(active){
   const links = PHASES.map(p => `<a class="${p.id===active?"on":""}" href="${p.href}">${p.n} ${esc(p.name)}</a>`).join("");
