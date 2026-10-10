@@ -68,3 +68,22 @@ Branch de trabalho: `plan/arquitetura-legado-central-zoom`
 3. Comparar o roteiro existente de Zoom Secreto com a necessidade de uma biblioteca de aulas reutilizável, evitando duplicar funções.
 4. Auditar os dados e a estrutura do teleprompter antes de acrescentar novos formatos.
 5. Implementar as próximas mudanças em PRs pequenos, com testes documentados.
+
+## Complemento da auditoria — infraestrutura AF
+
+Arquivos adicionais consultados em `main`:
+
+- `afplataforma/index.html`: entrada principal da plataforma; carrega a aplicação em `assets/js/app.js` e estilos/recursos próprios.
+- `afplataforma/assets/js/storage.js`: abstração de armazenamento com prefixo `afplataforma_v1_`; o próprio comentário do código descreve localStorage como fallback/dados não sensíveis/desenvolvimento e recomenda Firestore em produção.
+- `afplataforma/firebase/firestore.js`: camada central de operações Firestore, com referências a acesso, pedidos de acesso, presença/calls e roteiros privados do mentor.
+- `afplataforma/RULES-AF-ACCESS.txt`: instruções relacionadas a regras de acesso; devem ser comparadas com as regras efetivamente publicadas no Firebase antes de qualquer mudança.
+- `afplataforma/CAMADAS.txt`: registra explicitamente que o Life OS não deve ser colado por cima da AF e que ferramentas existentes devem ser melhoradas sem duplicação.
+- `al/teleprompt/denso.js`: contém a biblioteca de roteiros dinâmica, incluindo camadas documentais/práticas e instruções de apresentação. Deve ser preservado e analisado como fonte própria antes de acrescentar novas categorias.
+
+### Implicações para a transição
+
+1. Não basta renomear visualmente “AF” para “AL”: a plataforma tem autenticação, Firestore e um fallback de armazenamento que precisam continuar coerentes.
+2. Não mover nem duplicar dados de acesso, notas ou roteiros privados sem mapear quem pode ler e escrever cada coleção.
+3. A nova navegação AL deve ser uma camada de apresentação progressiva; os identificadores internos e regras existentes devem permanecer até haver plano de migração validado.
+4. Não presumir que o conteúdo de `RULES-AF-ACCESS.txt` é idêntico às regras que estão publicadas no Firebase. Verificação do ambiente remoto ainda não foi realizada.
+5. A página nova de apresentações usa armazenamento local somente para rascunhos de modelos gerais; não deve ser tratada como sistema de gestão compartilhada nem como armazenamento adequado para dossiês de clientes.
