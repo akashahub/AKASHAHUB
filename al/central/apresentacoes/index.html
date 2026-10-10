@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Biblioteca de apresentações · Arquitetura de Legado · Akasha Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--paper:#fbf8f2;--ink:#211a20;--muted:#70656b;--violet:#4b315b;--gold:#9b7330;--line:rgba(33,26,32,.15)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Inter,Arial,sans-serif}
+header{padding:22px max(20px,calc((100vw - 1100px)/2));background:var(--violet);color:var(--paper)}
+header a{color:var(--paper)}.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
+header .eyebrow{color:#dfc38f}h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;line-height:1.05}h1{font-size:clamp(42px,7vw,76px);margin:.2em 0}h2{font-size:36px;margin:.2em 0}h3{font-size:28px;margin:.2em 0}
+main{width:min(1100px,calc(100% - 32px));margin:28px auto 80px}.intro,.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0}
+.notice{border-left:3px solid var(--gold);padding:10px 14px;background:#eee6d8}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:14px}
+.card{margin:0;display:flex;flex-direction:column;gap:12px}.card p{margin:0;color:var(--muted)}.card ol{padding-left:22px;margin:0}.card li{margin:.3em 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}.btn{display:inline-block;border:1px solid var(--violet);border-radius:999px;padding:9px 14px;background:var(--violet);color:white;text-decoration:none;cursor:pointer;font:inherit}.btn.secondary{background:transparent;color:var(--violet)}
+label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:6px 0}input,textarea,select{width:100%;font:inherit;border:1px solid var(--line);border-radius:9px;background:white;padding:10px;color:var(--ink)}textarea{min-height:115px;resize:vertical}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.status{min-height:1.5em;color:var(--violet)}.small{font-size:12px;color:var(--muted)}
+@media print{header{background:white;color:black;padding:10px}header a{color:black}main{width:100%;margin:10px auto}.toolbar,.actions,.small{display:none!important}.card,.intro{break-inside:avoid;border:1px solid #aaa;box-shadow:none}.grid{display:block}.card{margin:10px 0}textarea{min-height:80px}}
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">Akasha Hub · Gestão do mentor</p>
+  <h1>Biblioteca de apresentações</h1>
+  <p>Uma obra central, adaptada com rigor a cada público. Use os roteiros como estrutura de trabalho; valide fatos, números, referências e exemplos antes de apresentar.</p>
+  <p><a href="../index.html">← Voltar à Central do Expert</a></p>
+</header>
+<main>
+<section class="intro">
+  <h2>Apresentação-mãe primeiro</h2>
+  <p>Esta biblioteca organiza oito formatos da Arquitetura de Legado. Cada formato tem uma finalidade diferente, mas deve preservar a mesma definição da obra, as quatro frentes e a jornada integrada.</p>
+  <div class="notice"><strong>Estado desta versão:</strong> biblioteca inicial de roteiros editáveis, com salvamento local neste navegador e exportação em Markdown. Ela ainda não gera arquivos PowerPoint (.pptx), não sincroniza entre dispositivos e não envia dados a um backend.</div>
+  <div class="toolbar">
+    <button class="btn" id="exportAll">Exportar todas as apresentações (.md)</button>
+    <button class="btn secondary" id="printAll">Imprimir / salvar em PDF</button>
+    <button class="btn secondary" id="resetAll">Restaurar roteiros-base</button>
+  </div>
+  <p class="status" id="status" aria-live="polite"></p>
+</section>
+<div class="grid" id="library"></div>
+<p class="small">Privacidade: os rascunhos ficam no armazenamento local deste navegador. Não inclua dados identificáveis de clientes. Exporte e guarde os arquivos em local restrito. Se limpar os dados do navegador, os rascunhos locais podem ser perdidos.</p>
+</main>
+<script>
+const STORAGE_KEY='akashaAlPresentationLibraryV1';
+const BASE=[
+{id:'institucional',title:'01 · Apresentação institucional curta',audience:'Público geral, primeiro contato e introduções rápidas',goal:'Explicar em poucos minutos o que é a Arquitetura de Legado e como as frentes se integram.',slides:[
+'1. A ideia central: experiência e conhecimento precisam ganhar forma para continuar gerando valor.',
+'2. O problema: repertório, identidade, operação e comunicação frequentemente ficam desconectados.',
+'3. A proposta: uma arquitetura integrada, não uma prateleira de mentorias isoladas.',
+'4. As quatro frentes: Arquitetura de Essência, Império Digital, Alinhamento Financeiro e Tecnologia da Alma.',
+'5. A jornada: diagnóstico, estruturação, integração, incubação e consolidação.',
+'6. Próximo passo: conversa para compreender o contexto e avaliar o encaixe.'
+]},
+{id:'pitch',title:'02 · Pitch de vendas',audience:'Potenciais clientes da Arquitetura de Legado',goal:'Conduzir uma conversa consultiva sem prometer resultados nem pressionar a decisão.',slides:[
+'1. Contexto: o que a pessoa está tentando construir ou organizar?',
+'2. Diagnóstico: o que já existe, o que está travado e o que depende demais da própria pessoa?',
+'3. Espelho: resumir o problema usando as palavras e exemplos do interlocutor.',
+'4. Método: explicar as quatro frentes e como se conectam ao caso concreto.',
+'5. Jornada e funcionamento: etapas, encontros, entregas, responsabilidades e limites do escopo.',
+'6. Evidências adequadas: mostrar artefatos reais e autorizados; não inventar depoimentos ou métricas.',
+'7. Investimento e condições: apresentar apenas valores e condições vigentes, confirmados antes da reunião.',
+'8. Decisão: responder dúvidas, verificar encaixe e combinar um próximo passo sem compromisso artificial.'
+]},
+{id:'universidades',title:'03 · Palestra para universidades',audience:'Universidades, centros de pesquisa, estudantes e docentes',goal:'Abrir uma discussão sobre identidade, conhecimento, método, sistemas e legado.',slides:[
+'1. Título e pergunta central: como transformar experiência em método comunicável?',
+'2. Contexto: conhecimento tácito, identidade profissional e transmissão de saber.',
+'3. Arquitetura de Essência: história, valores, capacidades, escolhas e limites.',
+'4. Do repertório ao método: registrar padrões e explicitar processos.',
+'5. Do método ao sistema: comunicação, ativos digitais, operação e continuidade.',
+'6. Demonstração: um artefato real, anonimizado e autorizado, com processo e decisões visíveis.',
+'7. Limites: o que é proposta autoral, hipótese de trabalho e conhecimento sustentado por fontes.',
+'8. Debate: quais conhecimentos se perdem quando dependem exclusivamente de uma pessoa?',
+'9. Encerramento: síntese e exercício para o público.'
+]},
+{id:'academica',title:'04 · Estrutura acadêmica / TCC',audience:'Pesquisa, extensão, banca acadêmica ou desenvolvimento de trabalho acadêmico',goal:'Organizar a proposta como objeto de investigação sem simular validação científica.',slides:[
+'1. Título provisório e delimitação do tema.',
+'2. Problema de pesquisa: formular uma pergunta verificável e delimitada.',
+'3. Justificativa: relevância prática, social ou acadêmica sustentada por fontes.',
+'4. Objetivo geral e objetivos específicos.',
+'5. Referencial teórico: autores e fontes reais, verificadas e citadas.',
+'6. Método autoral A.C.E.S.S.O.: apresentar a definição registrada nos materiais originais e explicitar seu estatuto.',
+'7. Metodologia de investigação: participantes, procedimentos, ética, dados e análise, se aplicável.',
+'8. Resultados ou aplicações: incluir somente observações documentadas; não inventar resultados.',
+'9. Limitações, questões abertas e próximos passos.',
+'10. Referências completas e conferidas.'
+]},
+{id:'parceiros',title:'05 · Apresentação para parceiros',audience:'Parceiros estratégicos e colaboradores',goal:'Explicar complementaridade, responsabilidades e possíveis formas de colaboração.',slides:[
+'1. Visão e problema que a Arquitetura de Legado pretende enfrentar.',
+'2. A arquitetura integrada e as quatro frentes.',
+'3. O público e as necessidades que a iniciativa atende.',
+'4. Onde o parceiro contribui e onde a equipe Akasha é responsável.',
+'5. Modelo operacional: processo, comunicação, decisões e acompanhamento.',
+'6. Possibilidades de colaboração e critérios de compatibilidade.',
+'7. Responsabilidades, propriedade intelectual, dados e confidencialidade.',
+'8. Próximo passo: proposta de colaboração com escopo e responsáveis definidos.'
+]},
+{id:'patrocinadores',title:'06 · Apresentação para patrocinadores',audience:'Marcas, apoiadores e patrocinadores de projetos ou eventos',goal:'Apresentar uma oportunidade concreta de parceria sem inflar alcance ou resultados.',slides:[
+'1. Projeto, propósito e contexto.',
+'2. Público: usar dados medidos e indicar período e método de medição.',
+'3. Problema ou oportunidade a que o projeto responde.',
+'4. Formato, calendário e entregas previstas.',
+'5. Cotas e contrapartidas: descrever entregáveis mensuráveis.',
+'6. Plano de comunicação e pontos de contato.',
+'7. Orçamento, necessidades e uso previsto do apoio.',
+'8. Indicadores de acompanhamento e prestação de contas.',
+'9. Riscos, responsabilidades e próximos passos.'
+]},
+{id:'mae',title:'07 · Apresentação-mãe da Arquitetura de Legado',audience:'Documento central para orientar todas as apresentações',goal:'Ser a fonte narrativa comum para adaptar os demais materiais sem contradições.',slides:[
+'1. Origem da obra: contexto real e motivação do projeto, revisados pelo autor.',
+'2. A tese: experiência, identidade, conhecimento e operação precisam se conectar.',
+'3. Arquitetura de Essência: investigar a pessoa, sua história, valores e capacidades.',
+'4. Império Digital: transformar essência e conhecimento em posicionamento e ativos.',
+'5. Alinhamento Financeiro: decisões, comportamento, dinheiro e operação financeira.',
+'6. Tecnologia da Alma: práticas de autoconhecimento e desenvolvimento humano, com distinção entre experiência e evidência.',
+'7. Integração das quatro frentes e exemplos de como se complementam.',
+'8. Método A.C.E.S.S.O.: reproduzir fielmente a definição validada nos materiais existentes.',
+'9. Jornada de referência de 12 meses: apresentar como estrutura adaptável, não garantia de resultado.',
+'10. Incubação, sistemas, equipe, documentação e continuidade.',
+'11. Plataforma AL: ambiente operacional que preserva as ferramentas AF existentes.',
+'12. Limites, responsabilidades, escopo e próximos passos.'
+]},
+{id:'zoom',title:'08 · Roteiro de aula ao vivo / Zoom',audience:'Aula online, live formativa ou encontro reservado',goal:'Entregar aprendizagem real, organizar a interação e apresentar um convite transparente ao final.',slides:[
+'1. Abertura: objetivo, agenda, regras de participação e transparência sobre eventual convite comercial.',
+'2. Contexto e tese: apresentar uma questão prática, sem alegações absolutas.',
+'3. Diagnóstico individual: perguntas e exemplo recente para cada participante.',
+'4. Demonstração de artefatos reais e autorizados.',
+'5. Aplicação do método: uma pergunta e uma saída concreta por etapa.',
+'6. Exercício guiado com tempo de escrita e revisão.',
+'7. Perguntas sobre o conteúdo.',
+'8. Síntese: aprendizados e uma ação prática para a próxima semana.',
+'9. Convite opcional: explicar a Arquitetura de Legado, funcionamento, investimento vigente e aplicação.',
+'10. Encerramento: próximos passos claros, sem pressão nem escassez fictícia.'
+]}
+];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function load(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');return BASE.map(x=>({...x,notes:typeof saved[x.id]==='string'?saved[x.id]:x.slides.join('\n')}))}catch{return BASE.map(x=>({...x,notes:x.slides.join('\n')}))}}
+let items=load();
+function render(){ $('library').innerHTML=items.map(x=>'<section class="card" id="card-'+x.id+'"><p class="eyebrow">'+esc(x.id.toUpperCase())+'</p><h2>'+esc(x.title)+'</h2><p><strong>Público:</strong> '+esc(x.audience)+'</p><p><strong>Objetivo:</strong> '+esc(x.goal)+'</p><ol>'+x.slides.map(s=>'<li>'+esc(s.replace(/^\d+\.\s*/,''))+'</li>').join('')+'</ol><label for="notes-'+x.id+'">Roteiro editável / notas</label><textarea id="notes-'+x.id+'" data-notes="'+x.id+'">'+esc(x.notes)+'</textarea><div class="actions"><button class="btn" data-export="'+x.id+'">Exportar este roteiro (.md)</button><button class="btn secondary" data-print="'+x.id+'">Imprimir este</button></div></section>').join('');
+document.querySelectorAll('[data-notes]').forEach(el=>el.addEventListener('input',()=>{const x=items.find(a=>a.id===el.dataset.notes);x.notes=el.value;try{localStorage.setItem(STORAGE_KEY,JSON.stringify(Object.fromEntries(items.map(a=>[a.id,a.notes]))));$('status').textContent='Rascunho salvo neste navegador.'}catch{$('status').textContent='Não foi possível salvar localmente. Exporte o roteiro para não perder as alterações.'}}));
+document.querySelectorAll('[data-export]').forEach(b=>b.onclick=()=>downloadOne(items.find(x=>x.id===b.dataset.export)));
+document.querySelectorAll('[data-print]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.card').forEach(c=>c.dataset.hidePrint='true');const target=$('card-'+b.dataset.print);target.dataset.hidePrint='false';document.body.classList.add('print-one');window.print();document.body.classList.remove('print-one');document.querySelectorAll('.card').forEach(c=>delete c.dataset.hidePrint)});
+}
+function markdown(x){return '# '+x.title+'\n\n**Público:** '+x.audience+'\n\n**Objetivo:** '+x.goal+'\n\n## Estrutura-base\n'+x.slides.map(s=>'- '+s).join('\n')+'\n\n## Roteiro editável / notas\n'+x.notes+'\n\n## Validação antes de apresentar\n- Confirmar dados, valores, datas e referências.\n- Usar apenas exemplos e depoimentos reais autorizados.\n- Distinguir método autoral, hipótese e evidência.\n'}
+function downloadOne(x){const blob=new Blob([markdown(x)],{type:'text/markdown;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='akasha-'+x.id+'.md';a.click();URL.revokeObjectURL(a.href)}
+$('exportAll').onclick=()=>{const blob=new Blob([items.map(markdown).join('\n---\n\n')],{type:'text/markdown;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='akasha-biblioteca-apresentacoes.md';a.click();URL.revokeObjectURL(a.href);$('status').textContent='Biblioteca exportada.'};
+$('printAll').onclick=()=>window.print();
+$('resetAll').onclick=()=>{if(!confirm('Restaurar os roteiros-base? Isso substitui os rascunhos salvos neste navegador.'))return;localStorage.removeItem(STORAGE_KEY);items=BASE.map(x=>({...x,notes:x.slides.join('\n')}));render();$('status').textContent='Roteiros-base restaurados.'};
+render();
+</script>
+<style>@media print{body.print-one .card[data-hide-print="true"]{display:none!important}}</style>
+</body>
+</html>
