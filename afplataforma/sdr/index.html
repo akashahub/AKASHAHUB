@@ -45,6 +45,40 @@ body:before{background:radial-gradient(ellipse 60% 35% at 50% 0,rgba(201,162,39,
 .sdr-empty{font-size:12px;color:var(--sdr-muted);padding:12px 4px;line-height:1.7}
 @media(max-width:900px){.sdr-layout{grid-template-columns:1fr}.sdr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.sdr-board{grid-template-columns:1fr}.sdr-col{min-height:0}}
 @media(max-width:480px){body{padding:14px}.sdr-grid{gap:8px}.sdr-stat{padding:12px}.sdr-stat strong{font-size:26px}.sdr-brand{font-size:25px}}
+/* Light workspace: contrast, clarity and less visual fatigue */
+:root{color-scheme:light;--sdr-bg:#f6f7f9;--sdr-panel:#ffffff;--sdr-line:#e4e7ec;--sdr-gold:#a77b12;--sdr-muted:#667085;--sdr-text:#202939;--sdr-ink:#202939;--sdr-soft:#f8fafc}
+body{background:var(--sdr-bg);color:var(--sdr-text);padding:26px}
+body:before{background:radial-gradient(ellipse 65% 30% at 50% 0,rgba(201,162,39,.09),transparent 75%)}
+.sdr-top{border-bottom-color:var(--sdr-line)}
+.sdr-stat,.sdr-panel,.sdr-col{background:var(--sdr-panel);border-color:var(--sdr-line);box-shadow:0 4px 18px rgba(16,24,40,.035)}
+.sdr-btn{background:#fff;color:#344054;border-color:#d0d5dd}
+.sdr-btn:hover{background:#f9fafb;border-color:#b8a06a}
+.sdr-btn.primary{background:#b58a21;color:#fff;border-color:#b58a21}
+.sdr-row input,.sdr-row select,.sdr-form input,.sdr-form select,.sdr-form textarea,.sdr-panel textarea{background:#fff;color:#202939;border-color:#d0d5dd}
+.sdr-lead{background:#fff;border-color:#e4e7ec;box-shadow:0 2px 6px rgba(16,24,40,.035)}
+.sdr-lead p{color:#667085}
+.sdr-script{color:#344054;background:#f8fafc;border-color:#e4e7ec}
+.sdr-objection{border-top-color:#eaecf0}
+.sdr-objection p{color:#667085}
+.sdr-objection summary{color:#946b08}
+.sdr-note,.sdr-sub,.sdr-stat small,.sdr-kicker,.sdr-form label{color:#667085}
+.sdr-col h4{color:#946b08}
+.sdr-modal{background:rgba(16,24,40,.35)}
+.sdr-modal-box{background:#fff;border-color:#e4e7ec;box-shadow:0 24px 64px rgba(16,24,40,.18)}
+.sdr-status{color:#287548}
+#sdrToast{background:#fff!important;color:#202939;border:1px solid #e4e7ec;box-shadow:0 6px 24px rgba(16,24,40,.12)}
+.sdr-retention{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:0 0 20px}
+.sdr-retention-card{border:1px solid #e4e7ec;background:#fff;border-radius:6px;padding:15px}
+.sdr-retention-card strong{display:block;font:400 28px 'Cormorant Garamond',serif;margin:5px 0}
+.sdr-retention-card p{font-size:11px;line-height:1.6;color:#667085;margin:0}
+.sdr-retention-card.alert{border-color:#e7c4a8;background:#fffaf5}
+.sdr-retention-card.good{border-color:#c7dfd0;background:#f7fcf8}
+.sdr-follow-list{display:grid;gap:8px;margin-top:12px}
+.sdr-follow-item{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px;border:1px solid #eaecf0;border-radius:4px}
+.sdr-follow-item p{font-size:11px;color:#667085;line-height:1.5;margin:3px 0}
+.sdr-follow-item strong{font-size:12px}
+@media(max-width:760px){.sdr-retention{grid-template-columns:1fr}.sdr-follow-item{flex-direction:column}}
+
 </style>
 </head>
 <body>
@@ -61,6 +95,12 @@ body:before{background:radial-gradient(ellipse 60% 35% at 50% 0,rgba(201,162,39,
       <div class="sdr-stat"><small>Próximos retornos</small><strong id="statFollow">0</strong></div>
       <div class="sdr-stat"><small>Calls agendadas</small><strong id="statCalls">0</strong></div>
     </div>
+    <section class="sdr-retention" aria-label="Central de relacionamento">
+      <article class="sdr-retention-card alert"><span class="sdr-kicker">Atenção hoje</span><strong id="retentionDue">0</strong><p>Retornos vencidos ou previstos para hoje. Priorize o combinado, não mensagens em massa.</p></article>
+      <article class="sdr-retention-card"><span class="sdr-kicker">Sem próximo passo</span><strong id="retentionNoNext">0</strong><p>Leads ativos sem data de retorno ou ação definida. Combine o próximo passo antes de encerrar a conversa.</p></article>
+      <article class="sdr-retention-card good"><span class="sdr-kicker">Relacionamento recente</span><strong id="retentionRecent">0</strong><p>Leads ativos contatados nos últimos sete dias, com acompanhamento registrado.</p></article>
+    </section>
+    <section class="sdr-panel" style="margin-bottom:18px"><div class="sdr-kicker">Próximas ações</div><h3>Fila de relacionamento</h3><p class="sdr-note" style="margin-top:-6px">Uma fila para não perder o fio da conversa. Respeite o canal combinado e a vontade de cada pessoa.</p><div id="followQueue" class="sdr-follow-list"><p class="sdr-empty">Carregando fila…</p></div></section>
     <div class="sdr-layout">
       <section class="sdr-panel">
         <div class="sdr-kicker">Pipeline consultivo</div><h2>Radar de oportunidades</h2>
@@ -98,6 +138,8 @@ body:before{background:radial-gradient(ellipse 60% 35% at 50% 0,rgba(201,162,39,
   <label>Etapa<select id="leadStage"><option value="radar">Radar / pesquisa</option><option value="contato">Primeiro contato</option><option value="conversa">Conversa iniciada</option><option value="qualificado">Qualificado</option><option value="agendado">Call agendada</option><option value="proposta">Proposta enviada</option><option value="retorno">Retorno combinado</option><option value="ganho">Ganho</option><option value="pausado">Pausado / não avançou</option></select></label>
   <label>Prioridade<select id="leadPriority"><option value="normal">Normal</option><option value="alta">Alta</option><option value="baixa">Baixa</option></select></label>
   <label>Próximo retorno<input id="leadFollow" type="date"></label>
+  <label>Próxima ação combinada<input id="leadNextAction" maxlength="240" placeholder="Ex.: enviar apresentação e retomar na quinta"></label>
+  <label>Último contato realizado<input id="leadLastContact" type="date"></label>
   <label>Contexto real e verificável<textarea id="leadContext" maxlength="2000" placeholder="Por que este contato faz sentido? Fonte pública, indicação consentida ou contexto fornecido pela pessoa."></textarea></label>
   <label>Notas da conversa<textarea id="leadNotes" maxlength="4000" placeholder="Fatos ditos pela pessoa, necessidades, dúvidas e próximo passo combinado."></textarea></label>
   <div class="sdr-actions"><button class="sdr-btn primary" type="submit">Salvar lead</button><button class="sdr-btn" id="cancelLead" type="button">Cancelar</button></div>
@@ -119,15 +161,44 @@ function storageKey(){return "akasha_sdr_v1_"+ownerKey;}
 function load(){try{const raw=localStorage.getItem(storageKey());const data=raw?JSON.parse(raw):{};leads=Array.isArray(data.leads)?data.leads:[];$("scriptText").textContent=data.script||defaultScript;}catch{leads=[];$("scriptText").textContent=defaultScript;}render();}
 function save(){localStorage.setItem(storageKey(),JSON.stringify({leads,script:$("scriptText").textContent,updatedAt:new Date().toISOString()}));$("saveStatus").textContent="Salvo neste navegador · "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});}
 const stages=[["radar","Radar"],["contato","Contato"],["conversa","Conversa"],["qualificado","Qualificado"],["agendado","Agendada"],["retorno","Retorno"],["proposta","Proposta"],["ganho","Ganho"],["pausado","Pausado"]];
-function render(){const q=$("searchLead").value.trim().toLocaleLowerCase("pt-BR");const offer=$("filterOffer").value;const visible=leads.filter(l=>(!q||(l.name+" "+l.contact+" "+l.context+" "+l.notes).toLocaleLowerCase("pt-BR").includes(q))&&(!offer||l.offer===offer));$("statTotal").textContent=leads.filter(l=>l.stage!=="ganho"&&l.stage!=="pausado").length;$("statHot").textContent=leads.filter(l=>l.priority==="alta"&&l.stage!=="ganho"&&l.stage!=="pausado").length;$("statFollow").textContent=leads.filter(l=>l.follow&&l.follow<=new Date().toISOString().slice(0,10)&&l.stage!=="ganho"&&l.stage!=="pausado").length;$("statCalls").textContent=leads.filter(l=>l.stage==="agendado").length;
-$("board").innerHTML=stages.slice(0,6).map(([id,label])=>{const rows=visible.filter(l=>l.stage===id);return '<div class="sdr-col"><h4>'+label+' · '+rows.length+'</h4>'+(rows.length?rows.map(l=>'<article class="sdr-lead"><strong>'+safe(l.name)+'</strong><p>'+safe(l.offer)+' · '+safe(l.priority==='alta'?'Prioridade alta':l.priority==='baixa'?'Prioridade baixa':'Prioridade normal')+'</p><p>'+safe(l.contact||'Sem contato registrado')+'</p><p>'+safe(l.follow?'Retorno: '+l.follow:'Sem retorno combinado')+'</p><p>'+safe(l.context||'Contexto ainda não registrado')+'</p><div class="sdr-card-actions"><button class="sdr-btn" data-edit="'+safe(l.id)+'">Editar</button><button class="sdr-btn" data-next="'+safe(l.id)+'">Avançar</button><button class="sdr-btn" data-delete="'+safe(l.id)+'">Excluir</button></div></article>').join(''):'<p class="sdr-empty">Nenhum lead nesta etapa.</p>')+'</div>';}).join('')+'<div class="sdr-col"><h4>Proposta · '+visible.filter(l=>l.stage==='proposta').length+'</h4>'+visible.filter(l=>l.stage==='proposta').map(l=>'<article class="sdr-lead"><strong>'+safe(l.name)+'</strong><p>'+safe(l.offer)+'</p><p>'+safe(l.follow?'Retorno: '+l.follow:'Sem retorno combinado')+'</p><div class="sdr-card-actions"><button class="sdr-btn" data-edit="'+safe(l.id)+'">Editar</button><button class="sdr-btn" data-next="'+safe(l.id)+'">Avançar</button></div></article>').join('')+'</div><div class="sdr-col"><h4>Fechados / pausados · '+visible.filter(l=>l.stage==='ganho'||l.stage==='pausado').length+'</h4>'+visible.filter(l=>l.stage==='ganho'||l.stage==='pausado').map(l=>'<article class="sdr-lead"><strong>'+safe(l.name)+'</strong><p>'+safe(l.stage==='ganho'?'Ganho':'Pausado / não avançou')+' · '+safe(l.offer)+'</p><div class="sdr-card-actions"><button class="sdr-btn" data-edit="'+safe(l.id)+'">Editar</button></div></article>').join('')+'</div>';
-$("board").querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>editLead(b.dataset.edit)));$("board").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>{const l=leads.find(x=>x.id===b.dataset.delete);if(l&&confirm("Excluir o registro de "+l.name+"?")){leads=leads.filter(x=>x.id!==l.id);save();render();}}));$("board").querySelectorAll("[data-next]").forEach(b=>b.addEventListener("click",()=>{const l=leads.find(x=>x.id===b.dataset.next);if(!l)return;const idx=stages.findIndex(s=>s[0]===l.stage);l.stage=stages[Math.min(idx+1,stages.length-1)][0];save();render();}));}
+function render(){
+const q=$("searchLead").value.trim().toLocaleLowerCase("pt-BR");
+const offer=$("filterOffer").value;
+const active=leads.filter(l=>l.stage!=="ganho"&&l.stage!=="pausado");
+const visible=leads.filter(l=>(!q||(l.name+" "+l.contact+" "+l.context+" "+l.notes+" "+(l.nextAction||"")).toLocaleLowerCase("pt-BR").includes(q))&&(!offer||l.offer===offer));
+const today=new Date().toISOString().slice(0,10);
+const recentCutoff=new Date();recentCutoff.setDate(recentCutoff.getDate()-7);
+const recentCutoffText=recentCutoff.toISOString().slice(0,10);
+const due=active.filter(l=>l.follow&&l.follow<=today);
+const noNext=active.filter(l=>!l.follow||!l.nextAction);
+const recent=active.filter(l=>l.lastContact&&l.lastContact>=recentCutoffText);
+$("statTotal").textContent=active.length;
+$("statHot").textContent=active.filter(l=>l.priority==="alta").length;
+$("statFollow").textContent=due.length;
+$("statCalls").textContent=leads.filter(l=>l.stage==="agendado").length;
+$("retentionDue").textContent=due.length;
+$("retentionNoNext").textContent=noNext.length;
+$("retentionRecent").textContent=recent.length;
+const queue=[...due].sort((a,b)=>(a.follow||"").localeCompare(b.follow||"")).slice(0,8);
+$("followQueue").innerHTML=queue.length?queue.map(l=>'<article class="sdr-follow-item"><div><strong>'+safe(l.name)+'</strong><p>'+safe(l.offer)+' · '+safe(l.follow===today?"Retorno hoje":"Retorno vencido: "+l.follow)+'</p><p>'+safe(l.nextAction||"Definir próxima ação")+'</p></div><button class="sdr-btn" data-queue-edit="'+safe(l.id)+'" type="button">Abrir lead</button></article>').join(""):'<p class="sdr-empty">Nenhum retorno vencido ou previsto para hoje. Revise também os leads sem próximo passo abaixo.</p>';
+const groups=[
+{title:"Entrada",ids:["radar","contato"]},
+{title:"Relacionamento",ids:["conversa","qualificado","retorno"]},
+{title:"Conversão",ids:["agendado","proposta"]},
+{title:"Encerrados",ids:["ganho","pausado"]}
+];
+$("board").innerHTML=groups.map(g=>{const rows=visible.filter(l=>g.ids.includes(l.stage));const cards=rows.map(l=>'<article class="sdr-lead"><strong>'+safe(l.name)+'</strong><p>'+safe(l.offer)+' · '+safe(l.priority==="alta"?"Prioridade alta":l.priority==="baixa"?"Prioridade baixa":"Prioridade normal")+'</p><p>'+safe(l.contact||"Sem contato registrado")+'</p><p>'+safe(l.follow?"Retorno: "+l.follow:"Sem retorno combinado")+'</p><p>'+safe(l.nextAction||"Próxima ação não definida")+'</p><p>'+safe(l.lastContact?"Último contato: "+l.lastContact:"Contato ainda não datado")+'</p><p>'+safe(l.context||"Contexto ainda não registrado")+'</p><div class="sdr-card-actions"><button class="sdr-btn" data-edit="'+safe(l.id)+'" type="button">Editar</button><button class="sdr-btn" data-next="'+safe(l.id)+'" type="button">Avançar</button><button class="sdr-btn" data-delete="'+safe(l.id)+'" type="button">Excluir</button></div></article>').join("");return '<div class="sdr-col"><h4>'+g.title+' · '+rows.length+'</h4>'+(cards||'<p class="sdr-empty">Nenhum lead nesta etapa.</p>')+'</div>';}).join("");
+$("board").querySelectorAll("[data-edit],[data-queue-edit]").forEach(b=>b.addEventListener("click",()=>editLead(b.dataset.edit||b.dataset.queueEdit)));
+$("board").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>{const l=leads.find(x=>x.id===b.dataset.delete);if(l&&confirm("Excluir o registro de "+l.name+"?")){leads=leads.filter(x=>x.id!==l.id);save();render();}}));
+$("board").querySelectorAll("[data-next]").forEach(b=>b.addEventListener("click",()=>{const l=leads.find(x=>x.id===b.dataset.next);if(!l)return;const idx=stages.findIndex(s=>s[0]===l.stage);l.stage=stages[Math.min(idx+1,stages.length-1)][0];l.updatedAt=new Date().toISOString();save();render();}));
+$("followQueue").querySelectorAll("[data-queue-edit]").forEach(b=>b.addEventListener("click",()=>editLead(b.dataset.queueEdit)));
+}
 function openModal(id){$(id).classList.add("open");}
 function closeModal(id){$(id).classList.remove("open");}
-function editLead(id){const l=leads.find(x=>x.id===id);if(!l)return;$("leadId").value=l.id;$("leadName").value=l.name||"";$("leadContact").value=l.contact||"";$("leadOffer").value=l.offer||"Leitura Call";$("leadStage").value=l.stage||"radar";$("leadPriority").value=l.priority||"normal";$("leadFollow").value=l.follow||"";$("leadContext").value=l.context||"";$("leadNotes").value=l.notes||"";$("leadModalTitle").textContent="Editar lead";openModal("leadModal");}
+function editLead(id){const l=leads.find(x=>x.id===id);if(!l)return;$("leadId").value=l.id;$("leadName").value=l.name||"";$("leadContact").value=l.contact||"";$("leadOffer").value=l.offer||"Leitura Call";$("leadStage").value=l.stage||"radar";$("leadPriority").value=l.priority||"normal";$("leadFollow").value=l.follow||"";$("leadNextAction").value=l.nextAction||"";$("leadLastContact").value=l.lastContact||"";$("leadContext").value=l.context||"";$("leadNotes").value=l.notes||"";$("leadModalTitle").textContent="Editar lead";openModal("leadModal");}
 function newLead(){$("leadForm").reset();$("leadId").value="";$("leadModalTitle").textContent="Novo lead";openModal("leadModal");}
 $("newLeadBtn").addEventListener("click",newLead);$("cancelLead").addEventListener("click",()=>closeModal("leadModal"));$("cancelScript").addEventListener("click",()=>closeModal("scriptModal"));$("searchLead").addEventListener("input",render);$("filterOffer").addEventListener("change",render);$("clearSearch").addEventListener("click",()=>{$("searchLead").value="";$("filterOffer").value="";render();});
-$("leadForm").addEventListener("submit",(e)=>{e.preventDefault();const id=$("leadId").value||("lead_"+Date.now()+"_"+Math.random().toString(36).slice(2,8));const row={id,name:$("leadName").value.trim(),contact:$("leadContact").value.trim(),offer:$("leadOffer").value,stage:$("leadStage").value,priority:$("leadPriority").value,follow:$("leadFollow").value,context:$("leadContext").value.trim(),notes:$("leadNotes").value.trim(),updatedAt:new Date().toISOString()};const i=leads.findIndex(l=>l.id===id);if(i>=0)leads[i]=row;else leads.unshift(row);save();render();closeModal("leadModal");toast("Lead salvo.");});
+$("leadForm").addEventListener("submit",(e)=>{e.preventDefault();const id=$("leadId").value||("lead_"+Date.now()+"_"+Math.random().toString(36).slice(2,8));const row={id,name:$("leadName").value.trim(),contact:$("leadContact").value.trim(),offer:$("leadOffer").value,stage:$("leadStage").value,priority:$("leadPriority").value,follow:$("leadFollow").value,nextAction:$("leadNextAction").value.trim(),lastContact:$("leadLastContact").value,context:$("leadContext").value.trim(),notes:$("leadNotes").value.trim(),updatedAt:new Date().toISOString()};const i=leads.findIndex(l=>l.id===id);if(i>=0)leads[i]=row;else leads.unshift(row);save();render();closeModal("leadModal");toast("Lead salvo.");});
 $("copyScript").addEventListener("click",async()=>{try{await navigator.clipboard.writeText($("scriptText").textContent);toast("Abordagem copiada.");}catch{toast("Selecione e copie o texto manualmente.");}});
 $("setScript").addEventListener("click",()=>{$("scriptEditor").value=$("scriptText").textContent;openModal("scriptModal");});$("saveScript").addEventListener("click",()=>{$("scriptText").textContent=$("scriptEditor").value.trim()||defaultScript;save();closeModal("scriptModal");toast("Abordagem salva.");});
 $("exportBtn").addEventListener("click",()=>{const data={version:1,exportedAt:new Date().toISOString(),leads,script:$("scriptText").textContent};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="akasha-sdr-backup.json";a.click();URL.revokeObjectURL(a.href);});
