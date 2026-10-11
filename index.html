@@ -530,6 +530,27 @@
   .collar-meta, .collar-note { color: var(--muted); margin: 0 0 10px; line-height: 1.6; }
   .collar-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
   @media (max-width: 859px) { .collar-copy { text-align: center; } .collar-cta { justify-content: center; } }
+
+  .collar-view { cursor: zoom-in; }
+  .collar-gallery-modal { position: fixed; inset: 0; z-index: 120; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(9,7,12,.82); backdrop-filter: blur(10px); }
+  .collar-gallery-modal.is-open { display: flex; }
+  .collar-gallery-shell { position: relative; display: flex; flex-direction: column; width: min(96vw, 1500px); height: min(94vh, 980px); overflow: hidden; border: 1px solid rgba(201,168,76,.32); border-radius: 22px; background: #0c0a0f; box-shadow: 0 28px 90px rgba(0,0,0,.58); }
+  .collar-gallery-head { display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,.1); }
+  .collar-gallery-kicker { color: var(--gold-light); font: 10px/1 var(--mono); letter-spacing: .15em; text-transform: uppercase; }
+  .collar-gallery-title { margin: 6px 0 0; color: #f7f4ee; font-family: var(--serif); font-size: clamp(24px, 3vw, 38px); font-weight: 500; }
+  .collar-gallery-close { width: 42px; height: 42px; border: 1px solid rgba(201,168,76,.35); border-radius: 50%; color: var(--gold-light); background: transparent; font-size: 28px; line-height: 1; cursor: pointer; }
+  .collar-gallery-stage { position: relative; display: flex; align-items: center; justify-content: center; flex: 1 1 auto; min-height: 0; padding: 18px 76px; }
+  .collar-gallery-stage img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; object-position: center; opacity: 0; transition: opacity .45s ease; }
+  .collar-gallery-stage img.is-visible { opacity: 1; }
+  .collar-gallery-arrow { position: absolute; top: 50%; z-index: 2; display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgba(201,168,76,.4); border-radius: 50%; color: var(--gold-light); background: rgba(7,6,8,.74); font-size: 28px; cursor: pointer; transform: translateY(-50%); }
+  .collar-gallery-arrow.prev { left: 18px; }
+  .collar-gallery-arrow.next { right: 18px; }
+  .collar-gallery-foot { display: flex; align-items: center; justify-content: center; gap: 14px; flex: 0 0 auto; padding: 12px 18px 16px; border-top: 1px solid rgba(255,255,255,.1); }
+  .collar-gallery-counter { min-width: 58px; color: var(--muted); font: 11px var(--mono); letter-spacing: .12em; text-align: center; }
+  .collar-gallery-dots { display: flex; gap: 8px; }
+  .collar-gallery-dot { width: 8px; height: 8px; padding: 0; border: 1px solid var(--gold); border-radius: 50%; background: transparent; cursor: pointer; opacity: .55; }
+  .collar-gallery-dot.is-active { background: var(--gold-light); opacity: 1; transform: scale(1.25); }
+  @media (max-width: 600px) { .collar-gallery-modal { padding: 8px; } .collar-gallery-shell { width: 100%; height: 94dvh; border-radius: 16px; } .collar-gallery-head { padding: 12px 14px; } .collar-gallery-stage { padding: 16px 52px; } .collar-gallery-arrow { width: 38px; height: 38px; font-size: 23px; } .collar-gallery-arrow.prev { left: 8px; } .collar-gallery-arrow.next { right: 8px; } }
 </style>
 </head>
 <body>
@@ -628,6 +649,20 @@
     </div>
   </div>
 </section>
+<div class="collar-gallery-modal" id="collarGalleryModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="collarGalleryTitle">
+  <div class="collar-gallery-shell">
+    <div class="collar-gallery-head">
+      <div><div class="collar-gallery-kicker">galeria · peça do ecossistema</div><h2 class="collar-gallery-title" id="collarGalleryTitle">Colar Hórus</h2></div>
+      <button class="collar-gallery-close" id="collarGalleryClose" type="button" aria-label="Fechar galeria">×</button>
+    </div>
+    <div class="collar-gallery-stage">
+      <button class="collar-gallery-arrow prev" id="collarGalleryPrev" type="button" aria-label="Imagem anterior">‹</button>
+      <img id="collarGalleryImage" alt="Colar Hórus, Akasha Hub" src="" />
+      <button class="collar-gallery-arrow next" id="collarGalleryNext" type="button" aria-label="Próxima imagem">›</button>
+    </div>
+    <div class="collar-gallery-foot"><span class="collar-gallery-counter" id="collarGalleryCounter">1 / 3</span><div class="collar-gallery-dots" id="collarGalleryDots" aria-label="Selecionar imagem"></div></div>
+  </div>
+</div>
 
 <section class="section" id="akasha">
   <div class="wrap">
@@ -1003,41 +1038,21 @@
   }, {passive:true});
 
   (function collar(){
-    const images = ['https://akashahub.com.br/img/colar-horus/sem_fundo_upscaled.png'];
-    const view = document.getElementById('collarView');
-    const track = document.getElementById('collarTrack');
-    if(!view || !track || images.length < 1) return;
-    const frames = images.concat(images[0]);
-    frames.forEach(function(src){
-      const fig = document.createElement('figure');
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = 'Colar Hórus, Akasha Hub';
-      fig.appendChild(img);
-      track.appendChild(fig);
-    });
-    view.hidden = false;
-    view.style.touchAction = 'pan-y';
-    let startX = 0, deltaX = 0, dragging = false;
-    view.addEventListener('touchstart', function(e){ if(e.touches.length){ startX=e.touches[0].clientX; deltaX=0; dragging=true; track.style.transition='none'; } }, {passive:true});
-    view.addEventListener('touchmove', function(e){ if(!dragging || !e.touches.length) return; deltaX=e.touches[0].clientX-startX; }, {passive:true});
-    view.addEventListener('touchend', function(){ if(!dragging) return; dragging=false; if(Math.abs(deltaX)>45 && images.length>1){ i=(i+(deltaX<0?1:images.length-1))%images.length; track.style.transition='transform .35s cubic-bezier(.22,1,.36,1)'; track.style.transform='translateX('+(-i*100)+'%)'; } }, {passive:true});
-    if(images.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let i = 0;
-    setInterval(function(){
-      i += 1;
-      track.style.transition = 'transform .7s cubic-bezier(.22,1,.36,1)';
-      track.style.transform = 'translateX(' + (-i * 100) + '%)';
-      if(i === images.length){
-        setTimeout(function(){
-          track.style.transition = 'none';
-          i = 0;
-          track.style.transform = 'translateX(0)';
-        }, 720);
-      }
-    }, 2700);
+    const images=['/img/colar-horus/closeup_detalhe_upscaled.png','/img/colar-horus/colar_completo_upscaled.png','/img/colar-horus/medida_upscaled.png'];
+    const view=document.getElementById('collarView'),track=document.getElementById('collarTrack'),modal=document.getElementById('collarGalleryModal'),modalImage=document.getElementById('collarGalleryImage'),dots=document.getElementById('collarGalleryDots'),counter=document.getElementById('collarGalleryCounter');
+    if(!view||!track||!modal||!modalImage||!dots||!counter)return;
+    const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches; let viewIndex=0,galleryIndex=0,galleryTimer=null,savedScrollY=0,lastTrigger=null;
+    images.forEach(function(src){const fig=document.createElement('figure'),img=document.createElement('img');img.src=src;img.alt='Colar Hórus, Akasha Hub';fig.appendChild(img);track.appendChild(fig);}); view.hidden=false;
+    function setView(index){viewIndex=(index+images.length)%images.length;track.style.transition=reduced?'none':'transform .7s cubic-bezier(.22,1,.36,1)';track.style.transform='translateX('+(-viewIndex*100)+'%)';}
+    function showGallery(index){galleryIndex=(index+images.length)%images.length;modalImage.classList.remove('is-visible');modalImage.onload=function(){modalImage.classList.add('is-visible');};modalImage.src=images[galleryIndex];counter.textContent=(galleryIndex+1)+' / '+images.length;Array.from(dots.children).forEach(function(dot,i){dot.classList.toggle('is-active',i===galleryIndex);});}
+    function stopGalleryTimer(){if(galleryTimer){clearInterval(galleryTimer);galleryTimer=null;}}
+    function startGalleryTimer(){stopGalleryTimer();if(images.length>1&&!reduced)galleryTimer=setInterval(function(){showGallery(galleryIndex+1);},3000);}
+    images.forEach(function(src,index){const dot=document.createElement('button');dot.type='button';dot.className='collar-gallery-dot';dot.setAttribute('aria-label','Ir para a imagem '+(index+1));dot.onclick=function(){showGallery(index);startGalleryTimer();};dots.appendChild(dot);});
+    function openGallery(trigger){lastTrigger=trigger||view;savedScrollY=window.scrollY;modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';showGallery(viewIndex);startGalleryTimer();document.getElementById('collarGalleryClose').focus({preventScroll:true});}
+    function closeGallery(){stopGalleryTimer();modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';window.scrollTo(0,savedScrollY);if(lastTrigger)lastTrigger.focus({preventScroll:true});}
+    view.onclick=function(){openGallery(view);};view.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openGallery(view);}};document.getElementById('collarGalleryClose').onclick=closeGallery;document.getElementById('collarGalleryPrev').onclick=function(){showGallery(galleryIndex-1);startGalleryTimer();};document.getElementById('collarGalleryNext').onclick=function(){showGallery(galleryIndex+1);startGalleryTimer();};modal.onclick=function(e){if(e.target===modal)closeGallery();};modal.onmouseenter=stopGalleryTimer;modal.onmouseleave=startGalleryTimer;document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('is-open'))closeGallery();});
+    if(images.length>1&&!reduced)setInterval(function(){setView(viewIndex+1);},3000); setView(0);showGallery(0);
   })();
-
   document.addEventListener('keydown', function(e){
     if(e.key==='Escape'){ closeModal(); const d=document.getElementById('mobileNav'); if(d.classList.contains('is-open')) toggleNav(); }
   });
