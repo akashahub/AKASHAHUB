@@ -285,6 +285,12 @@ function renderMentor() {
       <p>Call sem tempo fixo até o checklist ficar verde. SDR vende a sessão. Mentoria cara não é o dia 1. Só o mentor vê.</p>
       <a class="tool-btn" href="${treinoHref()}">Abrir treinamento</a>
     </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Operação comercial</p>
+      <h3>SDR · Akasha Hub</h3>
+      <p>CRM leve, pipeline, radar de oportunidades, abordagem realista, diagnóstico breve, objeções e retornos. Acesso exclusivo ao mentor.</p>
+      <a class="tool-btn" href="sdr/index.html">Abrir cockpit SDR</a>
+    </article>
     ${renderAccessAdminPanel()}
   </div>`;
 }
