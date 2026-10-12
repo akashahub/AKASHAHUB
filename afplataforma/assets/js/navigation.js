@@ -115,7 +115,16 @@ export async function navigate(view) {
     fase2: "Fase 2 · Império",
     fase3: "Fase 3 · AF",
     fase4: "Fase 4 · Expansão",
-    fase5: "Fase 5 · CDC"
+    fase5: "Fase 5 · CDC",
+    "legado-planos": "Planos do Legado",
+    "legado-contrato": "Contrato",
+    "legado-regras": "Regras",
+    "legado-dossie": "Dossiê",
+    "legado-oquee": "O que é a mentoria",
+    "legado-direcao": "Direcionamento",
+    "legado-pitch": "Pitch",
+    "legado-tcc": "TCC",
+    "legado-slides": "Lâminas"
   };
   const top = document.getElementById("topTitle");
   if (top) {

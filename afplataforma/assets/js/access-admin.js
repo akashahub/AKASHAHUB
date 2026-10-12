@@ -150,7 +150,7 @@ export function renderAccessAdminPanel() {
   }).join("");
   return `<section class="af-admin" id="afAdmin">
     <p class="hero-line">Operação administrativa</p>
-    <h3 class="section-h" style="margin-top:8px">Mapa dos planos</h3>
+    <h3 class="section-h" style="margin-top:8px">Mapa dos planos do Alinhamento Financeiro exclusivamente</h3>
     <p class="hero-sub">Padrão de cada chave. No card da pessoa você sobrescreve sem mudar o plano inteiro.</p>
     <div class="af-plan-map">${map}</div>
     <h3 class="section-h">Precificação (memória do mentor)</h3>

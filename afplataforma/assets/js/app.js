@@ -24,7 +24,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=rt13";
+} from "./navigation.js?v=rt14";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
@@ -32,13 +32,24 @@ import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI,
 import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
 import { renderComplementarHome, renderComplementarApp } from "./complementar.js";
-import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js";
+import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js?v=rt14";
 import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
 import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5 } from "./fases.js?v=rt13";
+import {
+  renderLegadoPlanos,
+  renderLegadoContrato,
+  renderLegadoRegras,
+  renderLegadoDossie,
+  renderLegadoOquee,
+  renderLegadoDirecao,
+  renderLegadoPitch,
+  renderLegadoTcc,
+  renderLegadoSlides
+} from "./legado-mentor.js?v=rt14";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -292,6 +303,20 @@ function renderMentor() {
       <p>CRM leve, pipeline, radar de oportunidades, abordagem realista, diagnóstico breve, objeções e retornos. Acesso exclusivo ao mentor.</p>
       <a class="tool-btn" href="sdr/index.html">Abrir cockpit SDR</a>
     </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Arquitetura de Legado · só o mentor</p>
+      <h3>Casa, contrato e apresentações</h3>
+      <p>O mapa antigo dos planos do AF continua abaixo, com o nome exclusivo dele. Estes botões são a casa de R$ 39 mil e R$ 60 mil.</p>
+      <button class="tool-btn" type="button" data-nav="legado-planos">Mapa dos planos do Legado</button>
+      <button class="tool-btn" type="button" data-nav="legado-contrato">Contrato</button>
+      <button class="tool-btn" type="button" data-nav="legado-regras">Regras</button>
+      <button class="tool-btn" type="button" data-nav="legado-dossie">Modelo de dossiê</button>
+      <button class="tool-btn" type="button" data-nav="legado-oquee">O que é a mentoria</button>
+      <button class="tool-btn" type="button" data-nav="legado-direcao">Roteiro de direcionamento</button>
+      <button class="tool-btn" type="button" data-nav="legado-pitch">Pitch</button>
+      <button class="tool-btn" type="button" data-nav="legado-tcc">Apresentação TCC</button>
+      <button class="tool-btn" type="button" data-nav="legado-slides">Lâminas</button>
+    </article>
     ${renderAccessAdminPanel()}
   </div>`;
 }
@@ -423,6 +448,15 @@ registerRenderers({
   fase3: renderFase3,
   fase4: renderFase4,
   fase5: renderFase5,
+  "legado-planos": renderLegadoPlanos,
+  "legado-contrato": renderLegadoContrato,
+  "legado-regras": renderLegadoRegras,
+  "legado-dossie": renderLegadoDossie,
+  "legado-oquee": renderLegadoOquee,
+  "legado-direcao": renderLegadoDirecao,
+  "legado-pitch": renderLegadoPitch,
+  "legado-tcc": renderLegadoTcc,
+  "legado-slides": renderLegadoSlides,
   showLocked,
   openTool,
   pickProduct: pickNewProductImage
