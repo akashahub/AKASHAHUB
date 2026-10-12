@@ -699,6 +699,24 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 
 const ADMIN_UID    = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+const MENTOR_EMAILS = [
+  "yanfili.simon@gmail.com",
+  "plmacramo@gmail.com",
+  "sendatantrica@gmail.com",
+  "opatricksimon@gmail.com"
+];
+
+function mailOf(user) {
+  return String(user && user.email || "").trim().toLowerCase();
+}
+
+function showSessoesBlocked(msg) {
+  const ls = document.getElementById("ls");
+  if (ls) ls.classList.add("hide");
+  const box = document.getElementById("encontrosContainer");
+  if (!box) return;
+  box.innerHTML = `<p style="color:#000;font-size:1.2rem;line-height:1.5;max-width:38rem">${msg}</p><p style="margin-top:18px"><a href="/dashboard/" style="color:#000">Voltar ao início</a></p>`;
+}
 const MENTOR_EMAIL = "yanfili.simon@gmail.com";
 const WPP_NUM      = "5571983448621";
 
@@ -1116,12 +1134,31 @@ function setLang(l) {
 onAuthStateChanged(auth, async user => {
   if (!user) { window.location.href = '/login/'; return; }
 
-  const snap = await getDoc(doc(db, "users", user.uid));
-  const ud   = snap.exists() ? snap.data() : {};
-  const isAdmin = user.uid === ADMIN_UID;
+  const mail = mailOf(user);
+  const isAdmin = user.uid === ADMIN_UID || MENTOR_EMAILS.includes(mail);
+  let allowed = isAdmin;
 
-  if (!isAdmin && !ud.tem_mentoria) {
-    window.location.href = '/sessoes/';
+  if (!allowed) {
+    try {
+      const snap = await getDoc(doc(db, "users", user.uid));
+      const ud = snap.exists() ? snap.data() : {};
+      if (ud.tem_mentoria) allowed = true;
+    } catch (e) { /* a conta segue; a lista do mentor decide */ }
+  }
+
+  if (!allowed) {
+    try {
+      const gate = await getDoc(doc(db, "posts", "sessoesAllow"));
+      const emails = gate.exists() && Array.isArray(gate.data().emails) ? gate.data().emails : [];
+      allowed = emails.map(item => String(item || "").trim().toLowerCase()).includes(mail);
+    } catch (e) {
+      showSessoesBlocked("Não consegui confirmar seu acesso agora. Entra de novo daqui a pouco.");
+      return;
+    }
+  }
+
+  if (!allowed) {
+    showSessoesBlocked("Este e-mail ainda não foi liberado para as sessões. O mentor libera na gestão do mentor, pelo Gmail.");
     return;
   }
 

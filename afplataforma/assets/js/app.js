@@ -33,6 +33,7 @@ import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
 import { renderComplementarHome, renderComplementarApp } from "./complementar.js";
 import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js?v=rt14";
+import { renderSessoesAccess, bindSessoesAccess } from "./sessoes-access.js?v=1";
 import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
@@ -317,6 +318,7 @@ function renderMentor() {
       <button class="tool-btn" type="button" data-nav="legado-tcc">Apresentação TCC</button>
       <button class="tool-btn" type="button" data-nav="legado-slides">Lâminas</button>
     </article>
+    ${renderSessoesAccess()}
     ${renderAccessAdminPanel()}
   </div>`;
 }
@@ -466,7 +468,10 @@ onAfterNavigate((view) => {
   onCallNavigate(view === "call");
   if (view === "call") bindCallControls(navigate);
   if (view === "profile") bindProfileEdit();
-  if (view === "mentor") bindAccessAdmin();
+  if (view === "mentor") {
+    bindAccessAdmin();
+    bindSessoesAccess();
+  }
 });
 
 function bindProfileEdit() {
