@@ -24,7 +24,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=rt10";
+} from "./navigation.js?v=rt11";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
@@ -37,7 +37,7 @@ import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
-import { renderJornada, bindJornada, renderPitch, renderTcc, renderSlides } from "./jornada.js?v=rt10";
+import { renderCasa, renderEssencia, renderImperio, renderAlinhamento, renderExpansao, renderContinuidade, renderAlma, bindJornada, renderPitch, renderTcc, renderSlides } from "./jornada.js?v=rt11";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -106,7 +106,7 @@ function showApp() {
   startPresence();
   const room = (location.hash || "").replace("#", "");
   const rooms = ["criancas", "criancas-pais", "criancas-sala", "empresas"];
-  navigate(rooms.includes(room) ? room : "dashboard");
+  navigate(rooms.includes(room) ? room : "casa");
 }
 
 function showAccessDenied() {
@@ -419,7 +419,14 @@ registerRenderers({
   "criancas-pais": renderCriancasPais,
   "criancas-sala": renderCriancasSala,
   empresas: renderEmpresas,
-  jornada: renderJornada,
+  jornada: renderCasa,
+  casa: renderCasa,
+  essencia: renderEssencia,
+  imperio: renderImperio,
+  alinhamento: renderAlinhamento,
+  expansao: renderExpansao,
+  continuidade: renderContinuidade,
+  alma: renderAlma,
   pitch: renderPitch,
   tcc: renderTcc,
   slides: renderSlides,

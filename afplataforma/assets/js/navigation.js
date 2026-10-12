@@ -9,9 +9,15 @@ import { Store } from "./storage.js";
 import { handleCoverClick } from "./covers.js";
 import { handleMaterialClick } from "./materials.js";
 
-let currentView = "dashboard";
+let currentView = "casa";
+let shell = "al";
 let renderers = {};
 let afterNavigateHook = null;
+
+const AF_IDS = new Set([
+  "dashboard", "modules", "tools", "call", "complementar", "quitei",
+  "criancas", "criancas-pais", "criancas-sala", "empresas"
+]);
 
 export function registerRenderers(map) {
   renderers = map;
@@ -25,27 +31,46 @@ export function getCurrentView() {
   return currentView;
 }
 
+function inAf(view) {
+  return AF_IDS.has(view) || view.startsWith("module:") || view.startsWith("comp:") || view.startsWith("criancas");
+}
+
 export function buildNav() {
   const lang = session.lang || "pt-BR";
-  const items = [
-    { id: "jornada", label: "Jornada", ico: "✧" },
-    { id: "dashboard", label: t(lang, "dash"), ico: "◇" },
-    { id: "modules", label: t(lang, "modules"), ico: "▣" },
-    { id: "tools", label: t(lang, "tools"), ico: "⚙" },
-    { id: "call", label: t(lang, "call"), ico: "◎" },
-    { id: "complementar", label: "Complementar", ico: "✦" },
-    { id: "quitei", label: "Quitei", ico: "⬡" },
-    { id: "criancas", label: "Crianças", ico: "✶" },
-    { id: "empresas", label: "Empresas", ico: "▣" },
-    { id: "profile", label: t(lang, "profile"), ico: "○" }
-  ];
+  const items = shell === "af"
+    ? [
+        { id: "casa", label: "← Legado", ico: "↩" },
+        { id: "dashboard", label: t(lang, "dash"), ico: "◇" },
+        { id: "modules", label: t(lang, "modules"), ico: "▣" },
+        { id: "tools", label: t(lang, "tools"), ico: "⚙" },
+        { id: "call", label: t(lang, "call"), ico: "◎" },
+        { id: "complementar", label: "Complementar", ico: "✦" },
+        { id: "quitei", label: "Quitei", ico: "⬡" },
+        { id: "criancas", label: "Crianças", ico: "✶" },
+        { id: "empresas", label: "Empresas", ico: "▣" },
+        { id: "profile", label: t(lang, "profile"), ico: "○" }
+      ]
+    : [
+        { id: "casa", label: "Início", ico: "◇" },
+        { id: "essencia", label: "Essência", ico: "✶" },
+        { id: "imperio", label: "Império Digital", ico: "▣" },
+        { id: "alinhamento", label: "Alinhamento", ico: "◎" },
+        { id: "expansao", label: "Expansão", ico: "↗" },
+        { id: "continuidade", label: "Continuidade", ico: "⌂" },
+        { id: "alma", label: "Alma", ico: "✦" },
+        { id: "dashboard", label: "AF Plataforma", ico: "⚙" },
+        { id: "profile", label: t(lang, "profile"), ico: "○" }
+      ];
   if (isMentorSession()) {
-    items.splice(1, 0, { id: "mentor", label: t(lang, "mentor"), ico: "★" });
+    const gestao = { id: "mentor", label: t(lang, "mentor"), ico: "★" };
+    if (shell === "af") items.splice(1, 0, gestao);
+    else items.splice(1, 0, gestao);
   }
 
   const nav = document.getElementById("navMain");
   if (!nav) return;
-  nav.innerHTML = items
+  const caption = shell === "af" ? "AF Plataforma" : "Arquitetura de Legado";
+  nav.innerHTML = `<div class="nav-caption">${caption}</div>` + items
     .map(
       (i) =>
         `<a class="nav-item${isActive(i.id) ? " active" : ""}" href="#" data-view="${i.id}"><span class="ico">${i.ico}</span>${esc(i.label)}</a>`
@@ -89,8 +114,10 @@ function setActiveNav(view) {
 
 export async function navigate(view) {
   currentView = view;
+  if (inAf(view)) shell = "af";
+  else if (view !== "profile" && view !== "mentor" && view !== "pitch" && view !== "tcc" && view !== "slides") shell = "al";
   closeSide();
-  setActiveNav(view);
+  buildNav();
 
   const lang = session.lang || "pt-BR";
   const titles = {
@@ -106,7 +133,13 @@ export async function navigate(view) {
     criancas: "Crianças",
     "criancas-pais": "Orientação dos pais",
     "criancas-sala": "Sala da criança",
-    jornada: "Jornada",
+    casa: "Arquitetura de Legado",
+    essencia: "Essência",
+    imperio: "Império Digital",
+    alinhamento: "Alinhamento",
+    expansao: "Expansão",
+    continuidade: "Continuidade",
+    alma: "Alma",
     pitch: "Pitch",
     tcc: "Método",
     slides: "O que a casa entrega",
