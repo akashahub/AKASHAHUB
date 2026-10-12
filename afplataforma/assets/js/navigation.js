@@ -25,30 +25,37 @@ export function getCurrentView() {
   return currentView;
 }
 
+function fase3Aberta(view) {
+  return view === "modules" || view === "tools" || view === "call" || view === "complementar"
+    || view === "quitei" || view === "empresas"
+    || view.startsWith("module:") || view.startsWith("comp:") || view.startsWith("criancas");
+}
+
 export function buildNav() {
   const lang = session.lang || "pt-BR";
   const items = [
-    { id: "dashboard", label: t(lang, "dash"), ico: "◇" },
-    { id: "modules", label: t(lang, "modules"), ico: "▣" },
-    { id: "tools", label: t(lang, "tools"), ico: "⚙" },
-    { id: "call", label: t(lang, "call"), ico: "◎" },
-    { id: "complementar", label: "Complementar", ico: "✦" },
-    { id: "quitei", label: "Quitei", ico: "⬡" },
-    { id: "criancas", label: "Crianças", ico: "✶" },
-    { id: "empresas", label: "Empresas", ico: "▣" },
-    { id: "profile", label: t(lang, "profile"), ico: "○" }
+    { id: "dashboard", label: t(lang, "dash"), ico: "◇" }
   ];
-  if (isMentorSession()) {
-    items.splice(1, 0, { id: "mentor", label: t(lang, "mentor"), ico: "★" });
-  }
+  if (isMentorSession()) items.push({ id: "mentor", label: t(lang, "mentor"), ico: "★" });
+  items.push(
+    { id: "profile", label: t(lang, "profile"), ico: "○" },
+    { sep: true, label: "Arquitetura de Legado" },
+    { id: "fase1", label: "Fase 1 · Essência", ico: "1" },
+    { id: "fase2", label: "Fase 2 · Império", ico: "2" },
+    { id: "fase3", label: "Fase 3 · AF", ico: "3" },
+    { id: "fase4", label: "Fase 4 · Expansão", ico: "4" },
+    { id: "fase5", label: "Fase 5 · CDC", ico: "5" }
+  );
 
   const nav = document.getElementById("navMain");
   if (!nav) return;
   nav.innerHTML = items
-    .map(
-      (i) =>
-        `<a class="nav-item${isActive(i.id) ? " active" : ""}" href="#" data-view="${i.id}"><span class="ico">${i.ico}</span>${esc(i.label)}</a>`
-    )
+    .map((i) => {
+      if (i.sep) {
+        return `<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);padding:14px 12px 8px">${esc(i.label)}</div>`;
+      }
+      return `<a class="nav-item${isActive(i.id) ? " active" : ""}" href="#" data-view="${i.id}"><span class="ico">${i.ico}</span>${esc(i.label)}</a>`;
+    })
     .join("");
 
   nav.querySelectorAll(".nav-item").forEach((el) => {
@@ -61,6 +68,7 @@ export function buildNav() {
 
 function isActive(id) {
   if (currentView === id) return true;
+  if (id === "fase3" && fase3Aberta(currentView)) return true;
   if (currentView.startsWith("module:") && id === "modules") return true;
   if (currentView.startsWith("comp:") && id === "complementar") return true;
   if (currentView.startsWith("criancas") && id === "criancas") return true;
@@ -74,6 +82,7 @@ function setActiveNav(view) {
     n.classList.toggle(
       "active",
       id === view ||
+        (id === "fase3" && fase3Aberta(view)) ||
         (view.startsWith("module:") && id === "modules") ||
         (view.startsWith("comp:") && id === "complementar") ||
         (view.startsWith("criancas") && id === "criancas") ||
@@ -101,7 +110,12 @@ export async function navigate(view) {
     criancas: "Crianças",
     "criancas-pais": "Orientação dos pais",
     "criancas-sala": "Sala da criança",
-    empresas: "Empresas"
+    empresas: "Empresas",
+    fase1: "Fase 1 · Essência",
+    fase2: "Fase 2 · Império",
+    fase3: "Fase 3 · AF",
+    fase4: "Fase 4 · Expansão",
+    fase5: "Fase 5 · CDC"
   };
   const top = document.getElementById("topTitle");
   if (top) {
@@ -133,6 +147,10 @@ export async function navigate(view) {
     root.innerHTML = `<div class="view active"><p class="empty">Carregando…</p></div>`;
     html = await html;
     if (currentView !== view) return;
+  }
+
+  if (typeof html === "string" && fase3Aberta(view)) {
+    html = html.replace('<div class="view active">', '<div class="view active"><div class="back-link" data-nav="fase3">← Fase 3</div>');
   }
 
   root.innerHTML = html;

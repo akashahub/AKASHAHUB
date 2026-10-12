@@ -24,7 +24,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=rt9";
+} from "./navigation.js?v=rt13";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
@@ -38,6 +38,7 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5 } from "./fases.js?v=rt13";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -417,6 +418,11 @@ registerRenderers({
   "criancas-pais": renderCriancasPais,
   "criancas-sala": renderCriancasSala,
   empresas: renderEmpresas,
+  fase1: renderFase1,
+  fase2: renderFase2,
+  fase3: renderFase3,
+  fase4: renderFase4,
+  fase5: renderFase5,
   showLocked,
   openTool,
   pickProduct: pickNewProductImage
