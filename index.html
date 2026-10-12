@@ -1136,27 +1136,32 @@
     document.body.style.overflow = "hidden";
     document.getElementById("sessionChoiceYes").focus();
   }
-  function goToForm(answer) {
-    window.location.href = "/al/?primeira_sessao=" + encodeURIComponent(answer) + "#diag";
+  function destinationForAnswer(answer) {
+    // "Não" significa que a pessoa já fez a primeira sessão e deve seguir para a leitura.
+    return answer === "nao" ? "/leituracall/" : "/al/?primeira_sessao=sim#diag";
+  }
+  function goToDestination(answer) {
+    window.location.href = destinationForAnswer(answer);
   }
   function continueAfterAnswer(answer) {
     closeSessionChoice();
     if (currentUser) {
-      goToForm(answer);
+      goToDestination(answer);
       return;
     }
     sessionStorage.setItem("akasha-session-alignment-after-login", answer);
     if (window.AkashaGate && typeof window.AkashaGate.open === "function") {
       window.AkashaGate.open({ reason: "session-alignment" });
     } else {
-      window.location.href = "/login/?next=" + encodeURIComponent("/al/?primeira_sessao=" + answer + "#diag");
+      window.location.href = "/login/?next=" + encodeURIComponent(destinationForAnswer(answer));
     }
   }
 
   cta?.addEventListener("click", function(event) {
     event.preventDefault();
     if (authReady && currentUser) {
-      goToForm("ja-logado");
+      // Pessoas autenticadas não precisam responder à pergunta novamente.
+      goToDestination("sim");
       return;
     }
     openSessionChoice();
