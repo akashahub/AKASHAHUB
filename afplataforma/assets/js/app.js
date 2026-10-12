@@ -49,7 +49,7 @@ import {
   renderLegadoPitch,
   renderLegadoTcc,
   renderLegadoSlides
-} from "./legado-mentor.js?v=rt14";
+} from "./legado-mentor.js?v=rt15";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");

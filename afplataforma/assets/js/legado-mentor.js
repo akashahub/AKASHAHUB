@@ -43,7 +43,8 @@ export function renderLegadoContrato() {
     "Minuta de trabalho",
     "Contrato da Arquitetura de Legado",
     "Modelo para a pessoa entender o que contrata antes de pagar. Não substitui revisão jurídica antes da assinatura.",
-    `${bloco("1. Quem contrata", "De um lado, o mentor e a operação Akasha Hub. Do outro, a pessoa ou a empresa indicada no instrumento assinado. Os nomes, documentos e o e-mail de acesso entram na versão final.")}
+    `<p><a class="tool-btn" href="interno/contrato-arquitetura-de-legado.pdf" target="_blank" rel="noopener">Baixar o contrato em PDF</a></p>
+    ${bloco("1. Quem contrata", "De um lado, o mentor e a operação Akasha Hub. Do outro, a pessoa ou a empresa indicada no instrumento assinado. Os nomes, documentos e o e-mail de acesso entram na versão final.")}
     ${bloco("2. O que se contrata", "Um ciclo de doze meses da Arquitetura de Legado. Não são três mentorias vendidas lado a lado. É uma jornada: essência, império digital, alinhamento financeiro, expansão e continuidade. A Tecnologia da Alma atravessa o ano. Não é um quarto produto.")}
     ${bloco("3. Formato e investimento", "Mentoria em Grupo: R$ 39.000, três encontros individuais, vinte e quatro encontros, três imersões, comunidade, plataforma e laboratório. Consultoria Premium: R$ 60.000 e seis encontros individuais, somente quando o diagnóstico mostrar que três individuais não bastam. A forma de pagamento fica escrita no instrumento. Sem pagamento confirmado, a vaga não está garantida.")}
     ${bloco("4. O que a jornada cobre", "Leitura de essência e dossiê. Direção de posicionamento, linguagem e primeiros ativos digitais no escopo combinado. Uso das ferramentas de alinhamento já existentes na plataforma. Sessões conforme o formato. Registro do que foi decidido. Um mapa de continuidade no fim do ciclo. O que for construído para o projeto da pessoa pertence a ela, nas contas, licenças e acessos que a entrega listar.")}
