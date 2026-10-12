@@ -195,6 +195,10 @@
     .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
     .chip{appearance:none;border:1px solid rgba(92,61,120,.28);background:#f6f1ea;color:#3c2c4c;border-radius:999px;padding:9px 12px;font-size:13px;line-height:1.35;letter-spacing:0;text-transform:none;font-weight:500;cursor:pointer;text-align:left;font-family:Inter,system-ui,sans-serif}
     .chip:hover{border-color:var(--violet)}
+    .other-answer{margin-top:12px}
+    .other-answer label{display:block;margin-bottom:7px;color:var(--muted);font-size:13px;line-height:1.5}
+    .other-answer textarea{display:block;width:100%;min-height:76px;resize:vertical;border:1px solid rgba(92,61,120,.28);border-radius:12px;background:#fff;color:#30243a;padding:12px 14px;font:14px/1.5 Inter,system-ui,sans-serif}
+    .other-answer textarea:focus{outline:2px solid rgba(92,61,120,.22);border-color:var(--violet)}
     .chip.on{background:#5c3d78;color:#fff;border-color:#5c3d78}
     .apply-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
     .apply .check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:14px;line-height:1.45}
@@ -389,8 +393,16 @@
           <div class="chips" id="structWho"></div>
           <p class="lbl" style="margin-top:16px;font-size:13px;font-weight:600">O caso</p>
           <div class="chips" id="structKind"></div>
+          <div class="other-answer" id="structKindOtherWrap" hidden>
+            <label for="structKindOther">Conte um pouco mais sobre sua atuação</label>
+            <textarea id="structKindOther" rows="2" placeholder="Escreva aqui qual é a sua atuação..."></textarea>
+          </div>
           <p class="lbl" style="margin-top:16px;font-size:13px;font-weight:600">O que melhorar</p>
           <div class="chips" id="structNeeds"></div>
+          <div class="other-answer" id="structNeedsOtherWrap" hidden>
+            <label for="structNeedsOther">O que você precisa melhorar ou desenvolver?</label>
+            <textarea id="structNeedsOther" rows="3" placeholder="Descreva com suas palavras o que você precisa..."></textarea>
+          </div>
           <div class="apply-actions">
             <a class="btn btn-gold" id="structGo" href="#" target="_blank" rel="noopener noreferrer">Quero entender qual solução faria sentido</a>
           </div>
@@ -551,6 +563,10 @@
     const needBox=document.getElementById('structNeeds');
     const go=document.getElementById('structGo');
     const ready=document.getElementById('structReady');
+    const kindOtherWrap=document.getElementById('structKindOtherWrap');
+    const kindOtherInput=document.getElementById('structKindOther');
+    const needsOtherWrap=document.getElementById('structNeedsOtherWrap');
+    const needsOtherInput=document.getElementById('structNeedsOther');
     if(!whoBox||!go) return;
     const kinds={
       pessoa:['Especialista','Terapeuta','Mentor','Criador','Outro'],
@@ -568,9 +584,10 @@
       'criar uma área para clientes ou alunos',
       'transformar meu conhecimento em produto digital',
       'criar um sistema próprio',
-      'ainda não sei'
+      'ainda não sei',
+      'Outro'
     ];
-    const state={who:'',kind:'',needs:[]};
+    const state={who:'',kind:'',kindOther:'',needs:[],needsOther:''};
     function chips(box, items, isOn, onPick){
       box.replaceChildren();
       items.forEach(function(text){
@@ -583,27 +600,38 @@
       });
     }
     function message(){
-      const lista=state.needs.length?state.needs.join(', '):'ainda não sei por onde começar';
-      if(state.who==='empresa') return 'Olá, tenho uma empresa e minha atuação está ligada a '+state.kind+'. Estou buscando uma solução para '+lista+'. Gostaria de entender o que poderia ser desenvolvido para o meu negócio.';
-      return 'Olá, sou um profissional de '+state.kind+' e estou buscando uma solução para '+lista+'. Gostaria de entender o que poderia ser desenvolvido para o meu trabalho.';
+      const kindText=state.kind==='Outro'?(state.kindOther.trim()||'Outro (ainda não especificado)'):state.kind;
+      const selectedNeeds=state.needs.map(function(item){
+        return item==='Outro'?'Outro: '+(state.needsOther.trim()||'ainda não especificado'):item;
+      });
+      const lista=selectedNeeds.length?selectedNeeds.join(', '):'ainda não sei por onde começar';
+      if(state.who==='empresa') return 'Olá, tenho uma empresa e minha atuação está ligada a '+kindText+'. Estou buscando uma solução para '+lista+'. Gostaria de entender o que poderia ser desenvolvido para o meu negócio.';
+      return 'Olá, sou um profissional de '+kindText+' e estou buscando uma solução para '+lista+'. Gostaria de entender o que poderia ser desenvolvido para o meu trabalho.';
     }
     function render(){
       chips(whoBox, ['Sou uma pessoa','Tenho uma empresa'], function(t){ return (t==='Sou uma pessoa'&&state.who==='pessoa')||(t==='Tenho uma empresa'&&state.who==='empresa'); }, function(t){
         state.who=t==='Sou uma pessoa'?'pessoa':'empresa';
         state.kind='';
+        state.kindOther='';
         state.needs=[];
+        state.needsOther='';
         render();
       });
-      chips(kindBox, state.who?kinds[state.who]:[], function(t){ return state.kind===t; }, function(t){ state.kind=t; render(); });
+      chips(kindBox, state.who?kinds[state.who]:[], function(t){ return state.kind===t; }, function(t){ state.kind=t; if(t!=='Outro') state.kindOther=''; render(); });
+      kindOtherWrap.hidden=state.kind!=='Outro';
+      if(kindOtherInput && kindOtherInput.value!==state.kindOther) kindOtherInput.value=state.kindOther;
       chips(needBox, needs, function(t){ return state.needs.indexOf(t)>=0; }, function(t){
-        if(t==='ainda não sei') state.needs=['ainda não sei'];
+        if(t==='ainda não sei') { state.needs=['ainda não sei']; state.needsOther=''; }
         else {
           state.needs=state.needs.filter(function(x){ return x!=='ainda não sei'; });
           const i=state.needs.indexOf(t);
           if(i>=0) state.needs.splice(i,1); else state.needs.push(t);
+          if(t==='Outro' && i>=0) state.needsOther='';
         }
         render();
       });
+      needsOtherWrap.hidden=state.needs.indexOf('Outro')<0;
+      if(needsOtherInput && needsOtherInput.value!==state.needsOther) needsOtherInput.value=state.needsOther;
       const ok=state.who&&state.kind&&state.needs.length;
       if(ok){
         const text=message();
@@ -618,6 +646,18 @@
         go.onclick=function(e){ e.preventDefault(); };
         ready.hidden=true;
       }
+    }
+    kindOtherInput?.addEventListener('input',function(){state.kindOther=this.value;updateLink();});
+    needsOtherInput?.addEventListener('input',function(){state.needsOther=this.value;updateLink();});
+    function updateLink(){
+      const ok=state.who&&state.kind&&state.needs.length;
+      if(!ok) return;
+      const text=message();
+      go.href='https://wa.me/5571983448621?text='+encodeURIComponent(text);
+      go.style.opacity='1';
+      go.onclick=null;
+      ready.hidden=false;
+      ready.textContent=text;
     }
     render();
   })();
