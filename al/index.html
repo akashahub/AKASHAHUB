@@ -632,7 +632,9 @@
       });
       needsOtherWrap.hidden=state.needs.indexOf('Outro')<0;
       if(needsOtherInput && needsOtherInput.value!==state.needsOther) needsOtherInput.value=state.needsOther;
-      const ok=state.who&&state.kind&&state.needs.length;
+      const ok=state.who&&state.kind&&state.needs.length
+        &&(state.kind!=='Outro'||state.kindOther.trim())
+        &&(state.needs.indexOf('Outro')<0||state.needsOther.trim());
       if(ok){
         const text=message();
         go.href='https://wa.me/5571983448621?text='+encodeURIComponent(text);
@@ -650,8 +652,16 @@
     kindOtherInput?.addEventListener('input',function(){state.kindOther=this.value;updateLink();});
     needsOtherInput?.addEventListener('input',function(){state.needsOther=this.value;updateLink();});
     function updateLink(){
-      const ok=state.who&&state.kind&&state.needs.length;
-      if(!ok) return;
+      const ok=state.who&&state.kind&&state.needs.length
+        &&(state.kind!=='Outro'||state.kindOther.trim())
+        &&(state.needs.indexOf('Outro')<0||state.needsOther.trim());
+      if(!ok){
+        go.href='#diag';
+        go.style.opacity='.45';
+        go.onclick=function(e){e.preventDefault();};
+        ready.hidden=true;
+        return;
+      }
       const text=message();
       go.href='https://wa.me/5571983448621?text='+encodeURIComponent(text);
       go.style.opacity='1';
