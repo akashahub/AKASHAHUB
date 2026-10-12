@@ -308,6 +308,7 @@ function renderMentor() {
       <p class="hero-line">Arquitetura de Legado · só o mentor</p>
       <h3>Casa, contrato e apresentações</h3>
       <p>O mapa antigo dos planos do AF continua abaixo, com o nome exclusivo dele. Estes botões são a casa de R$ 39 mil e R$ 60 mil.</p>
+      <a class="tool-btn" href="interno/documento-mestre-arquitetura-de-legado.pdf" target="_blank" rel="noopener">Documento-mestre</a>
       <button class="tool-btn" type="button" data-nav="legado-planos">Mapa dos planos do Legado</button>
       <button class="tool-btn" type="button" data-nav="legado-contrato">Contrato</button>
       <button class="tool-btn" type="button" data-nav="legado-regras">Regras</button>
