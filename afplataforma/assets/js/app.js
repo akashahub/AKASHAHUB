@@ -518,6 +518,8 @@ function init() {
   if (demoWrap) demoWrap.style.display = isDemoEnabled() ? "block" : "none";
 
   document.getElementById("btnLogin")?.addEventListener("click", onLoginEmail);
+  const loginBtn = document.getElementById("btnLogin");
+  if (loginBtn) loginBtn.dataset.ready = "1";
   document.getElementById("btnGoogle")?.addEventListener("click", onLoginGoogle);
   document.getElementById("loginPass")?.addEventListener("keydown", (e) => {
     if (e.key === "Enter") onLoginEmail();
