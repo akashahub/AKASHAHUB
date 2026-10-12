@@ -143,9 +143,9 @@ const PAGES = {
     return `${shell("")}<main>
       <p class="kicker">Uma jornada · seis portas</p>
       <h1>AL Plataforma.</h1>
-      <p class="lead">A Arquitetura de Legado não é três mentorias empilhadas. É uma casa. O método que atravessa a casa já tem nome na central: ACESSO. Os meses abaixo são indicativos. Não substituem o que está na oferta.</p>
+      <p class="lead">A Arquitetura de Legado não é três mentorias empilhadas. É uma casa, para quem já entrou. O método que atravessa a casa já tem nome na central: ACESSO. Os meses abaixo são indicativos.</p>
       ${acessoBar()}
-      <p class="note">Oferta pública: mentoria em grupo, R$ 39 mil, doze meses, vinte e quatro encontros, três imersões, três individuais. Consultoria de R$ 60 mil, com seis individuais, só quando o diagnóstico pedir. Os planos antigos da AF não aparecem aqui como produto.</p>
+      <p class="note">Esta porta não publica preço. Quem já está na mentoria entra pela AF Plataforma, na Jornada. As ferramentas de lá não foram movidas.</p>
       <div class="grid">${PHASES.map(p=>`<a class="card" href="${p.href}"><div class="when">${esc(p.when)} · ${esc(p.acesso)}</div><h3>${esc(p.n)} ${esc(p.name)}</h3><p>${esc(p.line)}</p></a>`).join("")}</div>
       <h2>O que não foi mexido</h2>
       <p class="lead">A AF Plataforma segue em <a href="/afplataforma/">/afplataforma/</a>. Login, ferramentas e acessos continuam lá. Esta porta só organiza a fase em que cada uma entra.</p>
@@ -178,7 +178,7 @@ const PAGES = {
       <p class="kicker">Meses 4–8 · pode começar antes</p>
       <h1>Alinhamento.</h1>
       <p class="lead">Duas camadas. A relação com o dinheiro, e a estrutura que sustenta o negócio. A operação continua na AF. Esta página não copia o caixa e não cria um preço novo.</p>
-      <p class="note">Os valores de 8, 12 ou 16 semanas, e qualquer plano antigo dentro da AF, não são a Arquitetura de Legado. A oferta pública segue a central: R$ 39 mil. R$ 60 mil só no diagnóstico.</p>
+      <p class="note">Os planos antigos da AF ficam lá dentro, para quem já entrou. Esta página não publica preço.</p>
       ${nameField()}
       <h2>Comportamento</h2>
       ${capture("financeiro", [["crenca","Crença"],["cobranca","Cobrar e vender"],["habito","Hábito"],["decisao","Decisão de dinheiro"]])}

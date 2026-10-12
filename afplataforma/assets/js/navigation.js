@@ -28,6 +28,7 @@ export function getCurrentView() {
 export function buildNav() {
   const lang = session.lang || "pt-BR";
   const items = [
+    { id: "jornada", label: "Jornada", ico: "✧" },
     { id: "dashboard", label: t(lang, "dash"), ico: "◇" },
     { id: "modules", label: t(lang, "modules"), ico: "▣" },
     { id: "tools", label: t(lang, "tools"), ico: "⚙" },
@@ -61,6 +62,8 @@ export function buildNav() {
 
 function isActive(id) {
   if (currentView === id) return true;
+  if (currentView === "jornada" && id === "jornada") return true;
+  if ((currentView === "pitch" || currentView === "tcc" || currentView === "slides") && id === "mentor") return true;
   if (currentView.startsWith("module:") && id === "modules") return true;
   if (currentView.startsWith("comp:") && id === "complementar") return true;
   if (currentView.startsWith("criancas") && id === "criancas") return true;
@@ -77,7 +80,9 @@ function setActiveNav(view) {
         (view.startsWith("module:") && id === "modules") ||
         (view.startsWith("comp:") && id === "complementar") ||
         (view.startsWith("criancas") && id === "criancas") ||
-        (view === "empresas" && id === "empresas")
+        (view === "empresas" && id === "empresas") ||
+        (view === "jornada" && id === "jornada") ||
+        ((view === "pitch" || view === "tcc" || view === "slides") && id === "mentor")
     );
   });
 }
@@ -101,6 +106,10 @@ export async function navigate(view) {
     criancas: "Crianças",
     "criancas-pais": "Orientação dos pais",
     "criancas-sala": "Sala da criança",
+    jornada: "Jornada",
+    pitch: "Pitch",
+    tcc: "Método",
+    slides: "O que a casa entrega",
     empresas: "Empresas"
   };
   const top = document.getElementById("topTitle");

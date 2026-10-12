@@ -24,7 +24,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=rt9";
+} from "./navigation.js?v=rt10";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
@@ -37,7 +37,7 @@ import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
-import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
+import { renderJornada, bindJornada, renderPitch, renderTcc, renderSlides } from "./jornada.js?v=rt10";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -286,10 +286,12 @@ function renderMentor() {
       <a class="tool-btn" href="${treinoHref()}">Abrir treinamento</a>
     </article>
     <article class="q-feature livro-entry">
-      <p class="hero-line">Operação comercial</p>
-      <h3>SDR · Akasha Hub</h3>
-      <p>CRM leve, pipeline, radar de oportunidades, abordagem realista, diagnóstico breve, objeções e retornos. Acesso exclusivo ao mentor.</p>
-      <a class="tool-btn" href="sdr/index.html">Abrir cockpit SDR</a>
+      <p class="hero-line">Casa · só o mentor</p>
+      <h3>Pitch, método e lâminas</h3>
+      <p>Três formas de apresentar a jornada para quem já está dentro. Sem preço nesta casa. O mentorado não vê estes botões.</p>
+      <button class="tool-btn" type="button" data-nav="pitch">Pitch</button>
+      <button class="tool-btn" type="button" data-nav="tcc">Método escrito</button>
+      <button class="tool-btn" type="button" data-nav="slides">Lâminas</button>
     </article>
     ${renderAccessAdminPanel()}
   </div>`;
@@ -417,6 +419,10 @@ registerRenderers({
   "criancas-pais": renderCriancasPais,
   "criancas-sala": renderCriancasSala,
   empresas: renderEmpresas,
+  jornada: renderJornada,
+  pitch: renderPitch,
+  tcc: renderTcc,
+  slides: renderSlides,
   showLocked,
   openTool,
   pickProduct: pickNewProductImage
@@ -427,6 +433,7 @@ onAfterNavigate((view) => {
   if (view === "call") bindCallControls(navigate);
   if (view === "profile") bindProfileEdit();
   if (view === "mentor") bindAccessAdmin();
+  if (view === "jornada") bindJornada();
 });
 
 function bindProfileEdit() {
