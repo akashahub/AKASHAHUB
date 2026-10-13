@@ -314,7 +314,8 @@ export function renderLegadoPitch() {
     "Fala curta",
     "Pitch de venda",
     "Estilo de mesa. Uma ideia por bloco. O preço entra uma vez, e só depois do encaixe.",
-    `${bloco("Abertura", "Você não está diante de três cursos. Está diante de um ano para transformar o que você é no que o seu projeto consegue sustentar.")}
+    `<p><a class="tool-btn" href="interno/pitch-al-teleprompt.pdf" target="_blank" rel="noopener">Abrir o teleprompt em PDF</a></p>
+    <p class="notes-hint">O PDF é a fala, linha a linha, para gravar o vídeo. O texto abaixo é só o mapa.</p>
     ${bloco("O problema", "A pessoa sabe fazer. Não tem frase, casa e número no mesmo lugar. O talento fica na conversa e não vira ativo.")}
     ${bloco("A jornada", "Primeiro a escuta. Depois a frase e o primeiro ativo. O dinheiro entra no meio, não no fim. No fechamento, fica o mapa do que continua.")}
     ${bloco("A prova de método", "Não é depoimento inventado. É o que a casa já tem: sessões, plataforma, call e um dossiê que separa história de hipótese.")}
@@ -329,7 +330,8 @@ export function renderLegadoTcc() {
     "Leitura longa",
     "Apresentação no estilo de um TCC",
     "O método por escrito, para estudar antes de uma banca ou de uma call longa.",
-    `${bloco("Problema", "As frentes existiam separadas. A pessoa recebia essência, império ou dinheiro como se fossem produtos. O trabalho real já cruzava os três.")}
+    `<p><a class="tool-btn" href="interno/tcc-al-teleprompt.pdf" target="_blank" rel="noopener">Abrir o teleprompt da defesa em PDF</a></p>
+    <p class="notes-hint">Outro texto. Mais lento. Estilo de banca. Não é o pitch.</p>
     ${bloco("Objeto", "A Arquitetura de Legado organiza esse cruzamento num ciclo de um ano, sem apagar as ferramentas do AF.")}
     ${bloco("Capítulo 1 · Essência", "Identidade, família e visão de mundo. Pergunta conduz. O dossiê guarda. Relato, hipótese e decisão não se misturam.")}
     ${bloco("Capítulo 2 · Império", "Posicionamento, linguagem, oferta e ativos. Império Digital é a essência materializada, com dono e acesso definidos.")}
