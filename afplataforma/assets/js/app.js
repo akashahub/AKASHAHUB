@@ -323,6 +323,8 @@ function renderMentor() {
       <button class="tool-btn" type="button" data-nav="legado-slides">Lâminas</button>
       <button class="tool-btn" type="button" data-nav="audios-pnl">Áudios PNL para gravar</button>
       <button class="tool-btn" type="button" data-nav="conteudos-al">Conteúdos estratégicos para AL YouTube/TikTok</button>
+      <a class="tool-btn" href="interno/apresentacao-curta-al.pdf" target="_blank" rel="noopener">Apresentação curta · AL</a>
+      <a class="tool-btn" href="interno/patrocinadores-b2b.pdf" target="_blank" rel="noopener">Patrocinadores · B2B</a>
     </article>
     ${renderSessoesAccess()}
     ${renderAccessAdminPanel()}
