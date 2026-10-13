@@ -901,9 +901,9 @@
     <button class="reserva-x" type="button" id="reservaFechar">Fechar</button>
     <div id="reservaEscolha">
       <h3 id="reservaTitulo">Como você quer reservar</h3>
-      <p>A leitura é de 15 minutos. R$ 47. Escolhe um caminho.</p>
+      <p>Pelo WhatsApp, a leitura de R$ 47. No automático, você escolhe o dia e o horário e paga no Stripe.</p>
       <button class="reserva-sec" type="button" id="goWpp">Agendar pelo WhatsApp<small>Você manda nome e Instagram. A conversa abre pronta.</small></button>
-      <button class="cta-primary" type="button" id="goAuto">Agendamento automático<small style="display:block;font-weight:400;margin-top:4px">Garantir minha leitura · pagamento seguro</small></button>
+      <button class="cta-primary" type="button" id="goAuto">Agendamento automático<small style="display:block;font-weight:400;margin-top:4px">Garantir minha leitura · escolhe o dia e o horário, paga no Stripe</small></button>
     </div>
     <form id="reservaWpp" hidden>
       <button class="reserva-back" type="button" data-back>← Voltar</button>
@@ -913,19 +913,6 @@
       <label for="wppInsta">Instagram</label>
       <input id="wppInsta" name="instagram" required maxlength="60" placeholder="@seuusuario" autocomplete="off">
       <button class="cta-primary" type="submit">Enviar no WhatsApp</button>
-    </form>
-    <form id="reservaStripe" hidden>
-      <button class="reserva-back" type="button" data-back>← Voltar</button>
-      <h3>Garantir minha leitura</h3>
-      <p>Pagamento seguro no Stripe. Cartão ou Pix. O horário segue depois da confirmação.</p>
-      <label for="stNome">Nome</label>
-      <input id="stNome" name="nome" required maxlength="80" autocomplete="name">
-      <label for="stZap">WhatsApp com DDD</label>
-      <input id="stZap" name="phone" required maxlength="22" inputmode="tel" autocomplete="tel" placeholder="71 90000-0000">
-      <label for="stMail">E-mail</label>
-      <input id="stMail" name="email" type="email" required maxlength="120" autocomplete="email">
-      <button class="cta-primary" type="submit" id="stGo">Agendamento seguro</button>
-      <p class="reserva-note" id="stNote"></p>
     </form>
   </div>
 </div>
@@ -940,12 +927,9 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   const modal = document.getElementById("reservaModal");
   const escolha = document.getElementById("reservaEscolha");
   const wpp = document.getElementById("reservaWpp");
-  const stripe = document.getElementById("reservaStripe");
-  const note = document.getElementById("stNote");
   function show(which) {
     escolha.hidden = which !== "escolha";
     wpp.hidden = which !== "wpp";
-    stripe.hidden = which !== "stripe";
   }
   function openModal(ev) {
     if (ev) ev.preventDefault();
@@ -958,7 +942,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   modal.addEventListener("click", (ev) => { if (ev.target === modal) closeModal(); });
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") closeModal(); });
   document.getElementById("goWpp").onclick = () => show("wpp");
-  document.getElementById("goAuto").onclick = () => { note.textContent = ""; show("stripe"); };
+  document.getElementById("goAuto").onclick = () => { window.location.href = "/converse/"; };
   modal.querySelectorAll("[data-back]").forEach((btn) => btn.addEventListener("click", () => show("escolha")));
   wpp.addEventListener("submit", (ev) => {
     ev.preventDefault();
@@ -967,36 +951,6 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     if (insta && insta[0] !== "@") insta = "@" + insta;
     const text = "Olá! Quero agendar minha Leitura Estratégica Express de 15 minutos ✦\nNome: " + nome + "\nInstagram: " + insta;
     window.location.href = "https://wa.me/5571983448621?text=" + encodeURIComponent(text);
-  });
-  stripe.addEventListener("submit", async (ev) => {
-    ev.preventDefault();
-    const go = document.getElementById("stGo");
-    const phone = document.getElementById("stZap").value.replace(/\D/g, "");
-    if (phone.length < 10) { note.textContent = "Coloca o WhatsApp com DDD."; return; }
-    go.disabled = true;
-    note.textContent = "Abrindo o pagamento seguro…";
-    try {
-      const res = await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ",
-          Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ"
-        },
-        body: JSON.stringify({
-          action: "leitura",
-          name: document.getElementById("stNome").value.trim(),
-          phone: document.getElementById("stZap").value.trim(),
-          email: document.getElementById("stMail").value.trim()
-        })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.url) throw new Error(data.error || "stripe");
-      window.location.href = data.url;
-    } catch (e) {
-      note.textContent = "O pagamento seguro não abriu agora. Você ainda pode agendar pelo WhatsApp.";
-      go.disabled = false;
-    }
   });
 })();
 </script>
