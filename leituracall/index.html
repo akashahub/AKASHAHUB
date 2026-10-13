@@ -255,6 +255,67 @@
     opacity: 0.7;
   }
 
+  .reserva-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(26,22,18,.55);
+  }
+  .reserva-modal.on { display: flex; }
+  .reserva-card {
+    width: min(440px, 100%);
+    background: #fff;
+    color: #000;
+    padding: 28px 24px 22px;
+    border-radius: 8px;
+  }
+  .reserva-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .reserva-card p { font-size: 15px; line-height: 1.45; margin-bottom: 16px; color: #1a1612; }
+  .reserva-card label { display: block; font-size: 13px; font-weight: 500; margin: 12px 0 6px; }
+  .reserva-card input {
+    width: 100%;
+    border: 1px solid rgba(26,22,18,.2);
+    background: #fff;
+    color: #000;
+    border-radius: 6px;
+    padding: 12px 12px;
+    font: 16px/1.3 'DM Sans', sans-serif;
+  }
+  .reserva-card .cta-primary { margin-top: 14px; }
+  .reserva-sec {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    background: #fff;
+    color: #1a1612;
+    border: 1px solid rgba(26,22,18,.25);
+    padding: 14px 16px;
+    font: 500 14px/1.3 'DM Sans', sans-serif;
+    cursor: pointer;
+    text-align: left;
+  }
+  .reserva-sec small { display: block; font-weight: 400; color: #3a332c; margin-top: 4px; }
+  .reserva-back, .reserva-x {
+    background: none;
+    border: 0;
+    color: #1a1612;
+    cursor: pointer;
+    font: 14px 'DM Sans', sans-serif;
+    padding: 0;
+  }
+  .reserva-x { float: right; }
+  .reserva-note { min-height: 1.2em; font-size: 14px; margin-top: 10px; }
+
   /* SECTION */
   section {
     padding: 96px 80px;
@@ -592,6 +653,8 @@
     text-decoration: none;
     letter-spacing: 0.05em;
     transition: all 0.3s;
+    border: 0;
+    cursor: pointer;
   }
 
   .cta-white:hover { background: var(--bg); transform: translateY(-2px); }
@@ -636,7 +699,7 @@
 
 <nav>
   <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;"><img src="data:image/png;base64,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" alt="Akasha Hub" style="width:36px;height:36px;object-fit:contain;" /><span class="nav-logo">Akasha Hub</span></a>
-  <a href="#reservar" class="nav-cta">Reservar minha leitura 𓂀 R$ 47</a>
+  <a href="#reservar" class="nav-cta js-reservar">Reservar minha leitura 𓂀 R$ 47</a>
 </nav>
 
 <!-- HERO SPLIT -->
@@ -664,7 +727,7 @@
         <li>Síntese em uma frase do padrão central que rege tudo</li>
         <li>Indicação do próximo passo real no seu processo</li>
       </ul>
-      <a href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20agendar%20minha%20Leitura%20Estrat%C3%A9gica%20Express%20de%2015%20minutos%20%E2%9C%A6" class="cta-primary">Reservar minha leitura 𓂀 R$ 47</a>
+      <button type="button" class="cta-primary js-reservar">Reservar minha leitura 𓂀 R$ 47</button>
       <p class="trust-line">Pagamento seguro via Pix, cartão ou boleto</p>
     </div>
   </div>
@@ -827,17 +890,115 @@
 <div class="cta-section">
   <h2 class="section-title reveal">Seu padrão está<br>esperando ser <em>nomeado.</em></h2>
   <p class="cta-desc reveal">15 minutos podem revelar o que anos de busca não organizaram. Posicionamento, autoridade e liberdade, em uma sessão.</p>
-  <a href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20agendar%20minha%20Leitura%20Estrat%C3%A9gica%20Express%20de%2015%20minutos%20%E2%9C%A6" class="cta-white reveal">Reservar minha leitura 𓂀 R$ 47</a>
+  <button type="button" class="cta-white reveal js-reservar">Reservar minha leitura 𓂀 R$ 47</button>
   <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:16px;" class="reveal">Vagas limitadas por semana · Agendamento em até 48h</p>
 </div>
 
 <footer>© 2025 Akasha Hub · akashahub.com.br · Todos os direitos reservados</footer>
+
+<div class="reserva-modal" id="reservaModal" role="dialog" aria-modal="true" aria-labelledby="reservaTitulo">
+  <div class="reserva-card">
+    <button class="reserva-x" type="button" id="reservaFechar">Fechar</button>
+    <div id="reservaEscolha">
+      <h3 id="reservaTitulo">Como você quer reservar</h3>
+      <p>A leitura é de 15 minutos. R$ 47. Escolhe um caminho.</p>
+      <button class="reserva-sec" type="button" id="goWpp">Agendar pelo WhatsApp<small>Você manda nome e Instagram. A conversa abre pronta.</small></button>
+      <button class="cta-primary" type="button" id="goAuto">Agendamento automático<small style="display:block;font-weight:400;margin-top:4px">Garantir minha leitura · pagamento seguro</small></button>
+    </div>
+    <form id="reservaWpp" hidden>
+      <button class="reserva-back" type="button" data-back>← Voltar</button>
+      <h3>Agendar pelo WhatsApp</h3>
+      <label for="wppNome">Nome</label>
+      <input id="wppNome" name="nome" required maxlength="80" autocomplete="name">
+      <label for="wppInsta">Instagram</label>
+      <input id="wppInsta" name="instagram" required maxlength="60" placeholder="@seuusuario" autocomplete="off">
+      <button class="cta-primary" type="submit">Enviar no WhatsApp</button>
+    </form>
+    <form id="reservaStripe" hidden>
+      <button class="reserva-back" type="button" data-back>← Voltar</button>
+      <h3>Garantir minha leitura</h3>
+      <p>Pagamento seguro no Stripe. Cartão ou Pix. O horário segue depois da confirmação.</p>
+      <label for="stNome">Nome</label>
+      <input id="stNome" name="nome" required maxlength="80" autocomplete="name">
+      <label for="stZap">WhatsApp com DDD</label>
+      <input id="stZap" name="phone" required maxlength="22" inputmode="tel" autocomplete="tel" placeholder="71 90000-0000">
+      <label for="stMail">E-mail</label>
+      <input id="stMail" name="email" type="email" required maxlength="120" autocomplete="email">
+      <button class="cta-primary" type="submit" id="stGo">Agendamento seguro</button>
+      <p class="reserva-note" id="stNote"></p>
+    </form>
+  </div>
+</div>
 
 <script>
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+(function () {
+  const modal = document.getElementById("reservaModal");
+  const escolha = document.getElementById("reservaEscolha");
+  const wpp = document.getElementById("reservaWpp");
+  const stripe = document.getElementById("reservaStripe");
+  const note = document.getElementById("stNote");
+  function show(which) {
+    escolha.hidden = which !== "escolha";
+    wpp.hidden = which !== "wpp";
+    stripe.hidden = which !== "stripe";
+  }
+  function openModal(ev) {
+    if (ev) ev.preventDefault();
+    show("escolha");
+    modal.classList.add("on");
+  }
+  function closeModal() { modal.classList.remove("on"); }
+  document.querySelectorAll(".js-reservar").forEach((el) => el.addEventListener("click", openModal));
+  document.getElementById("reservaFechar").onclick = closeModal;
+  modal.addEventListener("click", (ev) => { if (ev.target === modal) closeModal(); });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") closeModal(); });
+  document.getElementById("goWpp").onclick = () => show("wpp");
+  document.getElementById("goAuto").onclick = () => { note.textContent = ""; show("stripe"); };
+  modal.querySelectorAll("[data-back]").forEach((btn) => btn.addEventListener("click", () => show("escolha")));
+  wpp.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const nome = document.getElementById("wppNome").value.trim();
+    let insta = document.getElementById("wppInsta").value.trim();
+    if (insta && insta[0] !== "@") insta = "@" + insta;
+    const text = "Olá! Quero agendar minha Leitura Estratégica Express de 15 minutos ✦\nNome: " + nome + "\nInstagram: " + insta;
+    window.location.href = "https://wa.me/5571983448621?text=" + encodeURIComponent(text);
+  });
+  stripe.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const go = document.getElementById("stGo");
+    const phone = document.getElementById("stZap").value.replace(/\D/g, "");
+    if (phone.length < 10) { note.textContent = "Coloca o WhatsApp com DDD."; return; }
+    go.disabled = true;
+    note.textContent = "Abrindo o pagamento seguro…";
+    try {
+      const res = await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ",
+          Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ"
+        },
+        body: JSON.stringify({
+          action: "leitura",
+          name: document.getElementById("stNome").value.trim(),
+          phone: document.getElementById("stZap").value.trim(),
+          email: document.getElementById("stMail").value.trim()
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) throw new Error(data.error || "stripe");
+      window.location.href = data.url;
+    } catch (e) {
+      note.textContent = "O pagamento seguro não abriu agora. Você ainda pode agendar pelo WhatsApp.";
+      go.disabled = false;
+    }
+  });
+})();
 </script>
 </body>
 </html>

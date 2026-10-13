@@ -16,12 +16,12 @@
 <meta property="og:image" content="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png"/>
 <link rel="icon" href="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png"/>
 <link rel="preload" as="image" href="/img/lua-home-beyond.jpg?v=yan10"/>
-<link rel="prefetch" href="/converse/"/>
+<link rel="prefetch" href="/leituracall/"/>
 <link rel="preconnect" href="https://jsonmxbuzagmwuucruem.supabase.co" crossorigin/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Jost:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600;1,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<script>if(localStorage.getItem('ah-theme')==='dark')document.documentElement.classList.add('dark');if(location.pathname==='/'||location.pathname==='/index.html')sessionStorage.setItem('akasha-login-gate','off');</script>
+<script>if(localStorage.getItem('ah-theme')==='dark')document.documentElement.classList.add('dark');</script>
 <style>
   :root {
     --gold: #C9A227;
@@ -485,17 +485,6 @@
   html.dark .foot-grid a:hover { color: var(--gold); }
   .legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
 
-  .session-choice-overlay{position:fixed;inset:0;z-index:250;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,6,12,.78);backdrop-filter:blur(10px)}
-  .session-choice-overlay.is-open{display:flex}
-  .session-choice-card{position:relative;width:min(480px,100%);padding:34px 26px 26px;background:var(--surface);color:var(--ink);border:1px solid var(--gold-33);box-shadow:var(--shadow);text-align:center}
-  .session-choice-card h2{font-family:var(--serif);font-size:clamp(25px,5vw,34px);line-height:1.15;margin:8px 0 12px}
-  .session-choice-card p{color:var(--muted);line-height:1.7;margin:0 auto 22px;max-width:34ch}
-  .session-choice-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .session-choice-actions button{min-height:48px;border:1px solid var(--gold);padding:12px 18px;cursor:pointer;font:600 13px var(--sans);letter-spacing:.12em;text-transform:uppercase}
-  .session-choice-actions .yes{background:var(--gold);color:var(--on-primary)}
-  .session-choice-actions .no{background:transparent;color:var(--ink)}
-  .session-choice-x{position:absolute;right:10px;top:8px;border:0;background:transparent;color:var(--muted);font-size:28px;cursor:pointer}
-  @media(max-width:420px){.session-choice-card{padding:32px 18px 20px}.session-choice-actions{grid-template-columns:1fr}}
   .modal-overlay {
     position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center;
     padding: 24px; background: rgba(11,10,13,.55); backdrop-filter: blur(10px); opacity: 0; transition: opacity .4s ease;
@@ -610,12 +599,16 @@
   <div class="watermark" id="watermark" aria-hidden="true">ĀKĀŚA</div>
   <div class="wrap hero-grid">
     <div class="hero-copy">
+      <button class="freq-btn" id="audioToggle" onclick="toggleAudio()" type="button">
+        <span class="dot"><span></span></span>
+        <span id="audioLabel">Frequência · 999Hz Limpeza</span>
+      </button>
       <p class="eyebrow">akasha hub · arquitetura de legado</p>
       <h1 class="reveal matrix-title">A casa que permanece quando você sai da sala.</h1>
       <p class="lede reveal">Arquitetura de Legado integra essência, consciência, dinheiro e presença digital. Uma direção só. Para quem já tem ofício, negócio ou projeto.</p>
       <div class="hero-ctas reveal">
-        <a class="btn-gold btn-premium gold-glow" href="/al/#diag" id="sessionAlignmentCta">Sessão de Alinhamento</a>
-        <a class="btn-ghost" href="/converse/">Agendar</a>
+        <a class="btn-gold btn-premium gold-glow" href="/al/">Entrar na experiência</a>
+        <a class="btn-ghost" href="/leituracall/#reservar">Agendar</a>
       </div>
     </div>
     <div class="hero-portrait reveal">
@@ -885,19 +878,6 @@
   </div>
 </footer>
 
-<div class="session-choice-overlay" id="sessionChoiceOverlay" aria-hidden="true">
-  <div class="session-choice-card" role="dialog" aria-modal="true" aria-labelledby="sessionChoiceTitle">
-    <button class="session-choice-x" id="sessionChoiceClose" type="button" aria-label="Fechar">×</button>
-    <p class="eyebrow">Sessão de Alinhamento</p>
-    <h2 id="sessionChoiceTitle">É a sua primeira sessão?</h2>
-    <p>Responda para continuarmos. Em seguida, você poderá entrar na sua conta e preencher o formulário.</p>
-    <div class="session-choice-actions">
-      <button class="yes" id="sessionChoiceYes" type="button">Sim</button>
-      <button class="no" id="sessionChoiceNo" type="button">Não</button>
-    </div>
-  </div>
-</div>
-
 <div class="collar-modal" id="collarModal" hidden>
   <div class="collar-modal-card" role="dialog" aria-modal="true" aria-labelledby="collarModalTitle">
     <button class="collar-modal-x" id="collarModalX" type="button" aria-label="Fechar">×</button>
@@ -1115,76 +1095,6 @@
   })();
 </script>
 <script type="module" src="/login/gate.js?v=1"></script>
-<script type="module">
-  import { auth } from "/login/firebase.js";
-  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-  const cta = document.getElementById("sessionAlignmentCta");
-  const overlay = document.getElementById("sessionChoiceOverlay");
-  const closeBtn = document.getElementById("sessionChoiceClose");
-  let currentUser = null;
-  let authReady = false;
-
-  function closeSessionChoice() {
-    overlay.classList.remove("is-open");
-    overlay.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
-  }
-  function openSessionChoice() {
-    overlay.classList.add("is-open");
-    overlay.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-    document.getElementById("sessionChoiceYes").focus();
-  }
-  function destinationForAnswer(answer) {
-    // "Não" significa que a pessoa já fez a primeira sessão e deve seguir para a leitura.
-    return answer === "nao" ? "/leituracall/" : "/al/?primeira_sessao=sim#diag";
-  }
-  function goToDestination(answer) {
-    window.location.href = destinationForAnswer(answer);
-  }
-  function continueAfterAnswer(answer) {
-    closeSessionChoice();
-    if (currentUser) {
-      goToDestination(answer);
-      return;
-    }
-    sessionStorage.setItem("akasha-session-alignment-after-login", answer);
-    if (window.AkashaGate && typeof window.AkashaGate.open === "function") {
-      window.AkashaGate.open({ reason: "session-alignment" });
-    } else {
-      window.location.href = "/login/?next=" + encodeURIComponent(destinationForAnswer(answer));
-    }
-  }
-
-  cta?.addEventListener("click", function(event) {
-    event.preventDefault();
-    if (authReady && currentUser) {
-      // Pessoas autenticadas não precisam responder à pergunta novamente.
-      goToDestination("sim");
-      return;
-    }
-    openSessionChoice();
-  });
-  document.getElementById("sessionChoiceYes")?.addEventListener("click", () => continueAfterAnswer("sim"));
-  document.getElementById("sessionChoiceNo")?.addEventListener("click", () => continueAfterAnswer("nao"));
-  closeBtn?.addEventListener("click", closeSessionChoice);
-  overlay?.addEventListener("click", event => { if (event.target === overlay) closeSessionChoice(); });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && overlay?.classList.contains("is-open")) closeSessionChoice();
-  });
-
-  onAuthStateChanged(auth, user => {
-    currentUser = user;
-    authReady = true;
-    const answer = sessionStorage.getItem("akasha-session-alignment-after-login");
-    if (user && answer) {
-      sessionStorage.removeItem("akasha-session-alignment-after-login");
-      goToForm(answer);
-    }
-  });
-</script>
-
 <script type="module" src="/audios/bar.js?v=4"></script>
 </body>
 </html>
