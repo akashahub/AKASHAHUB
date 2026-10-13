@@ -54,6 +54,7 @@ import {
   renderConteudosAl
 } from "./legado-mentor.js?v=rt25";
 import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
+import { renderVendasCurso } from "./vendas-curso.js?v=1";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -473,6 +474,7 @@ registerRenderers({
   "legado-tcc": renderLegadoTcc,
   "legado-slides": renderLegadoSlides,
   "conteudos-al": renderConteudosAl,
+  "vendas-curso": renderVendasCurso,
   "audios-pnl": renderAudiosPnl,
   showLocked,
   openTool,
