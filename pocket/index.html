@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#0B0B0F"/>
+<title>Pocket · Stella Maris</title>
+<link rel="canonical" href="https://akashahub.com.br/pocket/"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Sora:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0b0b0f;--ink:#f4ede0;--dim:#b7ae9f;--mute:#7d766b;--gold:#d4af6a;--line:rgba(244,237,224,.12)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Sora,system-ui,sans-serif}
+button,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+.wrap{max-width:520px;margin:0 auto;padding:18px 16px 96px}
+h1,h2{font-family:Fraunces,serif;font-weight:560;margin:0}
+h1{font-size:32px;line-height:1.05}h2{font-size:22px;margin-top:8px}
+.k{color:var(--gold);letter-spacing:.14em;text-transform:uppercase;font-size:11px;margin:0 0 8px}
+.q{color:var(--dim);font-size:14px;line-height:1.5}
+.m{color:var(--mute);font-size:12px;line-height:1.45}
+.card{background:#14141b;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.btn{width:100%;border:0;border-radius:999px;padding:13px 16px;background:var(--gold);color:#1a1408;font-weight:600;margin-top:12px}
+.btn2{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.on{outline:2px solid var(--gold)}
+input,textarea{width:100%;background:#0e0e14;border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:6px}
+textarea{min-height:72px}
+.nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(520px,100%);display:grid;grid-template-columns:repeat(4,1fr);background:#0b0b0f;border-top:1px solid var(--line);padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
+.nav button{background:0;border:0;color:var(--mute);padding:8px 0;font-size:11px}
+.nav button.on{color:var(--gold)}
+.when{color:var(--gold);font-size:12px}
+.block button{text-align:left}
+.tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<nav class="nav" id="nav"></nav>
+<script>
+const WA = "5571983448621";
+const KEY = "pocket-stella-v1";
+const DAYS = [
+  { id: "d1", name: "Dia 1 · a arquitetura", items: [
+    ["08:30", "Chegada e café", "Produção", "Cadeira e o projeto que você veio organizar."],
+    ["09:00", "Abertura", "Yan Filipe", "Uma frase do que você quer de pé."],
+    ["09:20", "Business, em sequência", "Yan Filipe", "Comunicação, vendas e empresa. Onde o negócio trava."],
+    ["10:40", "Pausa", "Produção", "Se houver prática, é uma. Não uma grade."],
+    ["11:00", "Método", "Yan Filipe", "Da experiência repetida a uma etapa com entrada e saída."],
+    ["12:10", "Almoço", "Casa", "Condição ainda a definir com o hotel."],
+    ["13:20", "Oferta", "Yan Filipe", "Uma transformação, com limite. Para quem é e para quem não é."],
+    ["14:20", "Tech", "Yan Filipe", "Uma demonstração, no projeto de alguém, com consentimento."],
+    ["15:10", "Pausa", "Produção", ""],
+    ["15:30", "Hotseats", "Yan Filipe", "Dois ou três negócios. Não a sala inteira."],
+    ["16:30", "Fechamento", "Yan Filipe", "Uma prioridade para amanhã."]
+  ]},
+  { id: "d2", name: "Dia 2 · curto", items: [
+    ["09:00", "Retomada", "Yan Filipe", "O que ficou de pé. Confirma ou corrige."],
+    ["09:40", "Plano de 30 dias", "Yan Filipe", "Uma prioridade. Três ações. Uma data."],
+    ["11:00", "Pausa", "Produção", ""],
+    ["11:20", "A mentoria, uma vez", "Yan Filipe", "Doze meses. O que entra. O número, e para."],
+    ["12:10", "Aplicação", "Equipe", "Quem quiser. Os outros levam o plano."]
+  ]}
+];
+const state = load();
+let view = "casa";
+function load() {
+  try { return Object.assign({ day: "d1", block: "", comments: [], wall: "", ess: {}, plan: {}, yan: false }, JSON.parse(localStorage.getItem(KEY) || "{}")); }
+  catch (e) { return { day: "d1", block: "", comments: [], wall: "", ess: {}, plan: {}, yan: false }; }
+}
+function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c])); }
+function toast(t) {
+  const n = document.createElement("div");
+  n.className = "card";
+  n.style.cssText = "position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:5;width:min(480px,calc(100% - 24px))";
+  n.textContent = t;
+  document.body.appendChild(n);
+  setTimeout(() => n.remove(), 2200);
+}
+function casa() {
+  return `<p class="k">Akasha Hub · tamanho pocket</p>
+    <h1>Uma sala. Quarenta pessoas.</h1>
+    <p class="q">Arquitetura de Legado · Pocket Stella Maris. Salvador, local em confirmação. 10 e 11 de dezembro de 2026, datas previstas.</p>
+    <article class="card"><p class="tag">O que isto é</p><p class="q">O Convergência OS 777 é a casa grande: várias salas ao mesmo tempo. Este é o mesmo desenho, cortado. Os universos passam um depois do outro. Não é a mentoria de doze meses. O ingresso, quando existir, não dá vaga nem desconto nela.</p></article>
+    <article class="card"><p class="tag">Ainda não</p><p class="q">O Gran Hotel Stella Maris é a casa que queremos. Não há reserva. Não há ingresso à venda. Não há matinê na praia.</p></article>
+    <article class="card"><p class="tag">Yan Filipe</p><p class="q">Ele conduz a sala. Abre pelo que você já faz. Separa o que você conta, o que é leitura e o que vira decisão. No segundo dia diz a mentoria uma vez e para. Não promete faturamento. Não coloca a consultoria maior no palco.</p></article>
+    <button class="btn" data-go="dia">Ver a ordem do dia</button>
+    <button class="btn btn2" data-go="parceiro">Tenho uma casa deste tamanho</button>`;
+}
+function dia() {
+  const chips = DAYS.map((d) => `<button class="btn ${state.day === d.id ? "" : "btn2"}" data-day="${d.id}" style="width:auto;margin:0">${esc(d.name.split("·")[0])}</button>`).join("");
+  const day = DAYS.find((d) => d.id === state.day) || DAYS[0];
+  const rows = day.items.map((b, i) => {
+    const id = day.id + "-" + i;
+    const on = state.block === id;
+    return `<button class="card block" data-block="${id}" style="${on ? "border-color:#d4af6a" : ""}"><span class="when">${esc(b[0])}</span><h2>${esc(b[1])}</h2><p class="m">${esc(b[2])}${b[3] ? " · " + esc(b[3]) : ""}</p></button>`;
+  }).join("");
+  const cue = state.yan ? `<article class="card"><p class="tag">Só quem conduz</p><p class="q">Comece pelo projeto da pessoa, não pela Akasha. A mentoria entra no dia 2, uma vez. Aplicação não confirma vaga.</p></article>` : "";
+  return `<p class="k">Uma sala · em sequência</p><h1>${esc(day.name)}</h1><div class="row" style="margin-top:12px">${chips}</div>${cue}${rows}<p class="m">Toque no bloco em que a sala está. Fica neste aparelho.</p>`;
+}
+function mesa() {
+  const lines = (state.comments || []).slice(-8).map((c) => `<p class="q"><span class="tag">${esc(c.from)}</span> ${esc(c.text)}</p>`).join("") || `<p class="m">A mesa ainda está vazia.</p>`;
+  const up = state.yan ? `<button class="btn btn2" id="up">Subir o último comentário</button>` : "";
+  return `<p class="k">A mesa desta sala</p><h1>Quem fala é visto.</h1>
+    <p class="q">No OS grande, casa e hotel entram na mesma call. Aqui a sala é uma. O comentário sobe para o Yan, não fica no bolso.</p>
+    <article class="card"><p class="tag">Na mesa agora</p><h2>${esc(state.wall || "Ainda não subiu nada.")}</h2></article>
+    <article class="card">${lines}</article>
+    <input id="who" placeholder="Seu nome" value="">
+    <textarea id="line" placeholder="Uma frase. O que travou, ou o que ficou de pé."></textarea>
+    <button class="btn" id="send">Enviar para a mesa</button>${up}
+    <p class="m">Nesta versão, a mesa fica no seu aparelho. No dia, a mesma frase junta a sala.</p>`;
+}
+function essencia() {
+  const e = state.ess || {};
+  const fields = [["apresenta", "Como você se apresenta"], ["projeto", "O projeto que veio organizar"], ["trava", "Onde o negócio trava"], ["historia", "Um pouco da história"], ["civilizacao", "Se imaginasse uma civilização antiga, qual seria?"]];
+  return `<p class="k">Essência · versão de sala</p><h1>Chegue com um projeto.</h1><p class="q">Não é o dossiê do ano. É o que a sala precisa para te ver.</p><article class="card">${fields.map(([id, lab]) => `<label class="m">${esc(lab)}</label><input id="${id}" value="${esc(e[id] || "")}">`).join("")}<button class="btn" id="save-ess">Guardar neste aparelho</button></article>`;
+}
+function plano() {
+  const p = state.plan || {};
+  return `<p class="k">Dia 2</p><h1>Trinta dias.</h1><p class="q">Uma prioridade. Três ações. Uma data. O que você faz na segunda-feira.</p>
+    <article class="card">
+      <label class="m">Prioridade</label><input id="prio" value="${esc(p.prio || "")}">
+      <label class="m">Ação 1</label><input id="a1" value="${esc(p.a1 || "")}">
+      <label class="m">Ação 2</label><input id="a2" value="${esc(p.a2 || "")}">
+      <label class="m">Ação 3</label><input id="a3" value="${esc(p.a3 || "")}">
+      <label class="m">Data</label><input id="quando" value="${esc(p.quando || "")}">
+      <button class="btn" id="save-plan">Guardar o plano</button>
+    </article>`;
+}
+function parceiro() {
+  return `<p class="k">Para quem tem a casa</p><h1>O OS cabe em vários tamanhos.</h1>
+    <p class="q">O 777 pede salas ao mesmo tempo, praia e uma operação que não dependa de uma pessoa. O pocket pede uma sala para quarenta, dois dias, o segundo mais curto. Hotel, pousada ou produtor começa por este tamanho. O grande vem depois de um piloto feito.</p>
+    <article class="card">
+      <label class="m">Seu nome</label><input id="pn" placeholder="Nome">
+      <label class="m">A casa</label><input id="pc" placeholder="Hotel, pousada, produtora">
+      <label class="m">Cidade</label><input id="pq" placeholder="Cidade">
+      <label class="m">Cadeiras que a sala aguenta</label><input id="ps" placeholder="40">
+      <button class="btn" id="send-p">Mandar para o Yan no WhatsApp</button>
+    </article>
+    <p class="m">Interesse não é reserva. Não confirma o Stella Maris nem o dezembro.</p>`;
+}
+function eu() {
+  return `<p class="k">Você</p><h1>${state.yan ? "Você conduz a sala." : "Você está na sala."}</h1>
+    <button class="btn ${state.yan ? "" : "btn2"}" id="yan">${state.yan ? "Voltar ao lugar de participante" : "Sou o Yan. Abrir a condução."}</button>
+    <button class="btn btn2" data-go="essencia">Minha essência</button>
+    <button class="btn btn2" data-go="plano">Meu plano de 30 dias</button>
+    <article class="card"><p class="m">O grande continua em <a href="/convergenciaos777/" style="color:#d4af6a">/convergenciaos777</a>. Este não o substitui.</p></article>`;
+}
+function draw() {
+  const map = { casa, dia, mesa, eu, essencia, plano, parceiro };
+  document.getElementById("app").innerHTML = (map[view] || casa)();
+  document.getElementById("nav").innerHTML = [["casa", "Casa"], ["dia", "Dia"], ["mesa", "Mesa"], ["eu", "Eu"]].map(([id, name]) => `<button class="${view === id || (id === "eu" && (view === "essencia" || view === "plano" || view === "parceiro")) ? "on" : ""}" data-go="${id}">${name}</button>`).join("");
+}
+document.body.addEventListener("click", (ev) => {
+  const go = ev.target.closest("[data-go]");
+  if (go) { view = go.dataset.go; draw(); return; }
+  const day = ev.target.closest("[data-day]");
+  if (day) { state.day = day.dataset.day; save(); draw(); return; }
+  const block = ev.target.closest("[data-block]");
+  if (block) { state.block = block.dataset.block; save(); toast("Bloco marcado neste aparelho."); draw(); return; }
+  if (ev.target.id === "send") {
+    const text = (document.getElementById("line").value || "").trim();
+    const who = (document.getElementById("who").value || "Sala").trim();
+    if (!text) return;
+    state.comments.push({ from: who, text });
+    save(); draw(); return;
+  }
+  if (ev.target.id === "up") {
+    const last = state.comments[state.comments.length - 1];
+    if (!last) return;
+    state.wall = last.from + ": " + last.text;
+    save(); draw(); return;
+  }
+  if (ev.target.id === "save-ess") {
+    ["apresenta", "projeto", "trava", "historia", "civilizacao"].forEach((id) => { state.ess[id] = document.getElementById(id).value; });
+    save(); toast("Guardado neste aparelho."); return;
+  }
+  if (ev.target.id === "save-plan") {
+    ["prio", "a1", "a2", "a3", "quando"].forEach((id) => { state.plan[id] = document.getElementById(id).value; });
+    save(); toast("Plano guardado neste aparelho."); return;
+  }
+  if (ev.target.id === "yan") { state.yan = !state.yan; save(); draw(); return; }
+  if (ev.target.id === "send-p") {
+    const text = "Olá, Yan. Tenho uma casa no tamanho pocket.\nNome: " + (document.getElementById("pn").value || "") + "\nCasa: " + (document.getElementById("pc").value || "") + "\nCidade: " + (document.getElementById("pq").value || "") + "\nCadeiras: " + (document.getElementById("ps").value || "") + "\nIsto não confirma reserva.";
+    window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(text), "_blank", "noopener");
+  }
+});
+draw();
+</script>
+</body>
+</html>
