@@ -6,41 +6,143 @@
 <title>Instagram 777 - Biblioteca de Posts</title>
 <style>
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fafafa; margin: 0; padding: 20px; color: #262626; }
-  .container { max-width: 1200px; margin: 0 auto; }
+  .container { max-width: 935px; margin: 0 auto; }
   h1 { text-align: center; color: #0095f6; }
   .form { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
   input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #dbdbdb; border-radius: 8px; box-sizing: border-box; }
   button { background: #0095f6; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
   button:hover { background: #1877f2; }
-  .posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; }
+  /* Profile simulation */
+  .profile-sim { background: white; border: 1px solid #dbdbdb; border-radius: 12px; padding: 20px; margin-bottom: 30px; }
+  .profile-header { display: flex; align-items: center; gap: 30px; margin-bottom: 20px; }
+  .profile-avatar { width: 86px; height: 86px; border-radius: 50%; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); padding: 3px; }
+  .profile-avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: #efefef; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+  .profile-info h2 { margin: 0 0 8px 0; font-size: 20px; }
+  .profile-stats { display: flex; gap: 20px; font-size: 14px; margin: 8px 0; }
+  .profile-bio { font-size: 14px; white-space: pre-wrap; }
+  .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 20px; }
+  .grid-item { aspect-ratio: 1; background: #efefef; position: relative; overflow: hidden; cursor: pointer; }
+  .grid-item img, .grid-item video { width: 100%; height: 100%; object-fit: cover; }
+  .grid-item .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 32px; color: white; text-shadow: 0 0 5px black; pointer-events: none; }
+  /* Detailed posts */
+  .posts { display: grid; grid-template-columns: 1fr; gap: 20px; }
   .post-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
   .ig-preview { border: 1px solid #dbdbdb; border-radius: 8px; margin: 10px; background: white; }
   .ig-header { display: flex; align-items: center; padding: 12px; }
   .ig-avatar { width: 32px; height: 32px; border-radius: 50%; background: #efefef; margin-right: 10px; }
   .ig-username { font-weight: bold; }
   .ig-media { width: 100%; aspect-ratio: 4/5; background: #000; display: flex; align-items: center; justify-content: center; }
-  .ig-media video, .ig-media img { max-width: 100%; max-height: 100%; }
+  .ig-media video, .ig-media img, .ig-media iframe { max-width: 100%; max-height: 100%; width: 100%; height: 100%; object-fit: contain; }
   .ig-actions { padding: 12px; display: flex; gap: 16px; }
   .ig-caption { padding: 0 12px 12px; font-size: 14px; white-space: pre-wrap; }
   .ig-caption .username { font-weight: bold; }
-  .copy-btn { background: #efefef; color: #262626; margin-top: 10px; }
-  .delete-btn { background: #ed4956; }
+  .copy-btn { background: #efefef; color: #262626; margin: 10px; }
+  .delete-btn { background: #ed4956; margin: 10px; }
+  .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+  .tabs button { background: #efefef; color: #262626; }
+  .tabs button.active { background: #0095f6; color: white; }
+  .hidden { display: none; }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>Instagram 777 - Biblioteca de Posts</h1>
-  <div class="form">
-    <h2>Adicionar novo post</h2>
-    <input type="url" id="videoUrl" placeholder="Link do vídeo (YouTube, MP4, etc.)" required>
-    <textarea id="caption" placeholder="Legenda (copy-paste ready)" rows="4"></textarea>
-    <button onclick="addPost()">Salvar Post</button>
+
+  <div class="tabs">
+    <button id="tabProfile" class="active" onclick="showTab('profile')">Perfil (Grid)</button>
+    <button id="tabManage" onclick="showTab('manage')">Gerenciar Posts</button>
   </div>
-  <div id="posts" class="posts"></div>
+
+  <!-- Profile Simulation -->
+  <div id="viewProfile" class="profile-sim">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <div class="profile-avatar-inner" id="profileAvatar">👤</div>
+      </div>
+      <div class="profile-info">
+        <h2 id="profileUsername">seu_usuario</h2>
+        <div class="profile-stats">
+          <span><strong id="postCount">0</strong> posts</span>
+          <span><strong>0</strong> seguidores</span>
+          <span><strong>0</strong> seguindo</span>
+        </div>
+        <div class="profile-bio" id="profileBio">Sua bio aqui</div>
+      </div>
+    </div>
+    <div style="margin-bottom:15px;">
+      <input type="text" id="editUsername" placeholder="Username do perfil" value="seu_usuario" onchange="updateProfile()">
+      <textarea id="editBio" placeholder="Bio" rows="2" onchange="updateProfile()">Sua bio aqui</textarea>
+    </div>
+    <div class="profile-grid" id="profileGrid"></div>
+  </div>
+
+  <!-- Manage view -->
+  <div id="viewManage" class="hidden">
+    <div class="form">
+      <h2>Adicionar novo post</h2>
+      <input type="url" id="videoUrl" placeholder="Link do vídeo / imagem (YouTube, MP4, imagem, etc.)" required>
+      <textarea id="caption" placeholder="Legenda (copy-paste ready)" rows="4"></textarea>
+      <button onclick="addPost()">Salvar Post</button>
+    </div>
+    <div id="posts" class="posts"></div>
+  </div>
 </div>
 
 <script>
 let posts = JSON.parse(localStorage.getItem('igPosts')) || [];
+let profile = JSON.parse(localStorage.getItem('igProfile')) || { username: 'seu_usuario', bio: 'Sua bio aqui' };
+
+function showTab(tab) {
+  document.getElementById('viewProfile').classList.toggle('hidden', tab !== 'profile');
+  document.getElementById('viewManage').classList.toggle('hidden', tab !== 'manage');
+  document.getElementById('tabProfile').classList.toggle('active', tab === 'profile');
+  document.getElementById('tabManage').classList.toggle('active', tab === 'manage');
+  if (tab === 'profile') renderProfile();
+  else renderPosts();
+}
+
+function updateProfile() {
+  profile.username = document.getElementById('editUsername').value || 'seu_usuario';
+  profile.bio = document.getElementById('editBio').value || '';
+  localStorage.setItem('igProfile', JSON.stringify(profile));
+  renderProfile();
+}
+
+function getMediaThumbnail(url) {
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    const id = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1];
+    return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
+  }
+  if (url.match(/\.(jpg|jpeg|png|webp|gif)$/i)) return url;
+  return null; // for direct video, no auto thumb
+}
+
+function renderProfile() {
+  document.getElementById('profileUsername').textContent = profile.username;
+  document.getElementById('profileBio').textContent = profile.bio;
+  document.getElementById('editUsername').value = profile.username;
+  document.getElementById('editBio').value = profile.bio;
+  document.getElementById('postCount').textContent = posts.length;
+
+  const grid = document.getElementById('profileGrid');
+  grid.innerHTML = '';
+  posts.forEach((post, index) => {
+    const item = document.createElement('div');
+    item.className = 'grid-item';
+    const thumb = getMediaThumbnail(post.url);
+    const isVideo = post.url.match(/\.(mp4|webm)$/i) || post.url.includes('youtube');
+    if (thumb) {
+      item.innerHTML = `<img src="${thumb}" alt="post" onerror="this.style.display='none'">`;
+    } else if (post.url.match(/\.(mp4|webm)$/i)) {
+      item.innerHTML = `<video src="${post.url}" muted></video><div class="play-icon">▶</div>`;
+    } else {
+      item.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:12px;padding:5px;">Sem preview</div>`;
+    }
+    if (isVideo && thumb) item.innerHTML += `<div class="play-icon">▶</div>`;
+    item.onclick = () => { showTab('manage'); setTimeout(() => document.querySelectorAll('.post-card')[index]?.scrollIntoView({behavior:'smooth'}), 100); };
+    grid.appendChild(item);
+  });
+}
 
 function renderPosts() {
   const container = document.getElementById('posts');
@@ -48,25 +150,24 @@ function renderPosts() {
   posts.forEach((post, index) => {
     const card = document.createElement('div');
     card.className = 'post-card';
-    const isVideo = post.url.match(/\.(mp4|webm|ogg)$/i) || post.url.includes('youtube') || post.url.includes('youtu.be');
     let mediaHtml = '';
     if (post.url.includes('youtube.com') || post.url.includes('youtu.be')) {
       const id = post.url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1];
-      mediaHtml = id ? `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>` : '<p>Vídeo YouTube</p>';
+      mediaHtml = id ? `<iframe src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>` : '<p>Vídeo YouTube</p>';
     } else if (post.url.match(/\.(mp4|webm)$/i)) {
-      mediaHtml = `<video controls src="${post.url}" style="width:100%;height:100%;object-fit:contain;"></video>`;
+      mediaHtml = `<video controls src="${post.url}"></video>`;
     } else {
-      mediaHtml = `<img src="${post.url}" alt="preview" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.parentNode.innerHTML='<p>Link não suportado para preview direto</p>'">`;
+      mediaHtml = `<img src="${post.url}" alt="preview" onerror="this.style.display='none'; this.parentNode.innerHTML='<p>Link não suportado para preview direto</p>'">`;
     }
     card.innerHTML = `
       <div class="ig-preview">
         <div class="ig-header">
           <div class="ig-avatar"></div>
-          <div class="ig-username">seu_usuario</div>
+          <div class="ig-username">${profile.username}</div>
         </div>
         <div class="ig-media">${mediaHtml}</div>
         <div class="ig-actions">❤ 💬 📤</div>
-        <div class="ig-caption"><span class="username">seu_usuario</span> ${post.caption || ''}</div>
+        <div class="ig-caption"><span class="username">${profile.username}</span> ${post.caption || ''}</div>
       </div>
       <button class="copy-btn" onclick="copyCaption(${index})">Copiar Legenda</button>
       <button class="delete-btn" onclick="deletePost(${index})">Deletar</button>
@@ -79,26 +180,30 @@ function addPost() {
   const url = document.getElementById('videoUrl').value.trim();
   const caption = document.getElementById('caption').value.trim();
   if (!url) return alert('Coloque o link do vídeo');
-  posts.push({ url, caption, id: Date.now() });
+  posts.unshift({ url, caption, id: Date.now() }); // newest first like IG
   localStorage.setItem('igPosts', JSON.stringify(posts));
   document.getElementById('videoUrl').value = '';
   document.getElementById('caption').value = '';
+  renderProfile();
   renderPosts();
 }
 
 function copyCaption(index) {
-  navigator.clipboard.writeText(posts[index].caption).then(() => alert('Legenda copiada!'));
+  navigator.clipboard.writeText(posts[index].caption || '').then(() => alert('Legenda copiada!'));
 }
 
 function deletePost(index) {
   if (confirm('Deletar este post?')) {
     posts.splice(index, 1);
     localStorage.setItem('igPosts', JSON.stringify(posts));
+    renderProfile();
     renderPosts();
   }
 }
 
-renderPosts();
+// Init
+showTab('profile');
+renderProfile();
 </script>
 </body>
 </html>
