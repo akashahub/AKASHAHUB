@@ -39,7 +39,7 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
-import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo } from "./fases.js?v=rt19";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo } from "./fases.js?v=rt20";
 import {
   renderLegadoPlanos,
   renderLegadoContrato,
@@ -309,6 +309,13 @@ function renderMentor() {
       <a class="tool-btn" href="sdr/index.html">Abrir cockpit SDR</a>
     </article>
     <article class="q-feature livro-entry">
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Império Digital · planejamento 2027</p>
+      <h3>Perfil do Cliente & Calendário Editorial</h3>
+      <p>Documento revisado com temas múltiplos por mês, conteúdos transversais do ecossistema e análise da meta de 90 publicações por dia. A página permite imprimir ou salvar como PDF.</p>
+      <a class="tool-btn" href="interno/plano-editorial-2027.html" target="_blank" rel="noopener">Abrir plano editorial 2027 / Salvar em PDF</a>
+      <a class="tool-btn" href="/al/central/perfil-conteudo/" target="_blank" rel="noopener">Abrir formulário digital de perfil e conteúdo</a>
+    </article>
       <p class="hero-line">Arquitetura de Legado · só o mentor</p>
       <h3>Casa, contrato e apresentações</h3>
       <p>O mapa antigo dos planos do AF continua abaixo, com o nome exclusivo dele. Estes botões são a casa de R$ 39 mil e R$ 60 mil.</p>
