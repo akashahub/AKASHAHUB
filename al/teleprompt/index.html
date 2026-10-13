@@ -50,6 +50,10 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clam
 .card.live h2,.card.live .meta,.card.live .meta strong,.card.live .open{color:#fff6ea}
 .card.live .tag,.card.live .num{color:#f3d7a1}
 .card.live:hover{border-color:#f3d7a1}
+.card.welcome{background:#24160f;border-color:#24160f;color:#fff8ef}
+.card.welcome h2,.card.welcome .meta,.card.welcome .meta strong,.card.welcome .open{color:#fff8ef}
+.card.welcome .tag,.card.welcome .num{color:#e7c98a}
+.card.welcome:hover{border-color:#e7c98a}
 .card:hover{border-color:rgba(92,61,120,.45)}
 .num{font-family:"Cormorant Garamond",serif;font-size:28px;color:var(--violet)}
 .card h2{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:500;margin:0 0 4px;line-height:1.05}
@@ -105,6 +109,7 @@ h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clam
     <button class="ghost" type="button" data-filter="yan">Yan grava</button>
     <button class="ghost" type="button" data-filter="outra">Outra pessoa</button>
     <button class="ghost" type="button" data-filter="lives">Lives</button>
+    <button class="ghost" type="button" data-filter="boasvindas">Boas-vindas /al</button>
   </nav>
 </header>
 <main class="wrap">
@@ -2869,6 +2874,15 @@ function briefFor(s){
     base.objection = "Isso é mais uma mentoria de marketing ou de finanças. A resposta é: são cômodos de uma casa, não três produtos.";
     base.integrity = "Sem preço, sem última vaga, sem promessa de faturamento. A palavra abre uma aula no Zoom, não a mentoria. A Leitura Call é conversa para ver se há alinhamento. Se não houver, a pessoa fica com o que fez na live.";
   }
+  if(s.kind==="al"){
+    base.voice = "Talking head. Como quem recebe uma pessoa em casa. Sem palco. Frase curta. Sorri no oi e no fim. No limite, o rosto fica sério. Não acelera a lista do ano.";
+    base.recording = "Em casa. Câmera na altura dos olhos. Luz da janela de lado. Enquadramento do peito para cima. Sem slide. Sem música por cima da fala. Duas tomadas no máximo. Se errar uma frase, repete o bloco, não o vídeo inteiro.";
+    base.audience = "Quem abriu o /al e ainda não sabe se isso é curso, mentoria ou casa. Precisa confiar em quem fala e imaginar o próprio negócio dentro do ano.";
+    base.feeling = "Acolhido. Depois, clareza. No fim, vontade de se ver no processo, não de comprar na pressa.";
+    base.hook = "Oi. Se você chegou sem saber o que é isso, fica. Eu explico sem pressa.";
+    base.objection = "É mais uma mentoria, ou três produtos com um nome só. A resposta é uma casa, várias soluções, na ordem que o projeto pede.";
+    base.integrity = "Sem preço. Sem vaga. Sem faturamento. Os três exemplos são imagens, não cases. Dizer isso em voz alta. A primeira sessão não confirma entrada e não tem cobrança.";
+  }
   return base;
 }
 function fullText(s){
@@ -2891,7 +2905,7 @@ function fullText(s){
     lines.push(s.kind==="story" ? "LEGENDA DO REEL" : "LEGENDA");
     lines.push(layer.caption);
   }
-  if((s.kind==="tiktok" || s.kind==="denso" || s.kind==="ops" || s.kind==="live") && s.caption){
+  if((s.kind==="tiktok" || s.kind==="denso" || s.kind==="ops" || s.kind==="live" || s.kind==="al") && s.caption){
     lines.push(s.kind==="tiktok" ? "LEGENDA TIKTOK" : "LEGENDA");
     lines.push(s.caption);
   }
@@ -2929,6 +2943,10 @@ function tiktokCard(s, i){
 }
 function render(filter){
   list.innerHTML = "";
+  if(filter==="boasvindas"){
+    if(window.mountWelcome) window.mountWelcome(list);
+    return;
+  }
   if(filter!=="lives"){
     SCRIPTS.forEach((s,i)=>{
       if(filter!=="todos" && s.who!==filter) return;
@@ -2947,11 +2965,11 @@ function openScript(s){
   current = s;
   const brief = briefFor(s);
   const layer = layerOf(s);
-  const own = s.kind==="tiktok" || s.kind==="denso" || s.kind==="ops" || s.kind==="live";
+  const own = s.kind==="tiktok" || s.kind==="denso" || s.kind==="ops" || s.kind==="live" || s.kind==="al";
   const captionText = own ? (s.caption || "") : (layer ? layer.caption : "");
-  const caption = captionText ? '<div class="caption-block"><b>'+(s.kind==="live"?"Legenda da live":s.kind==="tiktok"?"Legenda do TikTok · a linha que já estava":s.kind==="denso"?"Legenda do TikTok documental":s.kind==="ops"?"Legenda do TikTok prático":s.kind==="story"?"Legenda do reel · a conversa já está pronta":"Legenda · chamada para a conversa")+'</b>'+(layer&&!own?'<p class="headline-line">'+esc(layer.headline)+'</p>':"")+captionText.split(/\n\n/).map(p=>'<p>'+esc(p)+'</p>').join("")+'</div>' : "";
-  const head = s.kind==="live" ? "Live · aula do mês · não substitui os vídeos" : s.kind==="story" ? "01.2 · íntimo · explica o 01" : s.kind==="tiktok" ? "01.3 · TikTok · a linha que já estava" : s.kind==="denso" ? "01.4 · TikTok documental · outro tema" : s.kind==="ops" ? "01.5 · TikTok prático · outro tema" : "Briefing para quem vai gravar";
-  const lead = s.kind==="live" ? "Aula gratuita. Começa, desenvolve, dá um exemplo e fecha com um gesto. O bloco Zoom não é lido na live aberta. A Leitura Call é uma frase no fim, não um anúncio." : s.kind==="tiktok" ? "Mesma essência do 01. Outra frase. Sem oi. Este vídeo não muda." : s.kind==="story" ? "Íntimo. Explica o 01 um pouco melhor. Não substitui o reel nem o TikTok." : s.kind==="denso" ? "Outro tema. Não é o reel contado de novo. Você grava em casa. Onde está marcado imagem, a tela fica cheia e você continua falando por cima. A linha lilás e o “na tela” não entram na fala." : s.kind==="ops" ? "Outro tema. Um gesto. Não é a lição de casa do 01 e não é o documentário." : "Leia antes de apertar “Rodar”. O briefing orienta a intenção. A linha lilás e o “na tela” não entram na fala.";
+  const caption = captionText ? '<div class="caption-block"><b>'+(s.kind==="al"?"Texto curto da hero":s.kind==="live"?"Legenda da live":s.kind==="tiktok"?"Legenda do TikTok · a linha que já estava":s.kind==="denso"?"Legenda do TikTok documental":s.kind==="ops"?"Legenda do TikTok prático":s.kind==="story"?"Legenda do reel · a conversa já está pronta":"Legenda · chamada para a conversa")+'</b>'+(layer&&!own?'<p class="headline-line">'+esc(layer.headline)+'</p>':"")+captionText.split(/\n\n/).map(p=>'<p>'+esc(p)+'</p>').join("")+'</div>' : "";
+  const head = s.kind==="al" ? "Boas-vindas · só a hero do /al" : s.kind==="live" ? "Live · aula do mês · não substitui os vídeos" : s.kind==="story" ? "01.2 · íntimo · explica o 01" : s.kind==="tiktok" ? "01.3 · TikTok · a linha que já estava" : s.kind==="denso" ? "01.4 · TikTok documental · outro tema" : s.kind==="ops" ? "01.5 · TikTok prático · outro tema" : "Briefing para quem vai gravar";
+  const lead = s.kind==="al" ? "Talking head para quem ainda está de fora. Explica a casa, o como, e três imagens. As imagens não são clientes. Sem preço. A linha lilás não entra na fala." : s.kind==="live" ? "Aula gratuita. Começa, desenvolve, dá um exemplo e fecha com um gesto. O bloco Zoom não é lido na live aberta. A Leitura Call é uma frase no fim, não um anúncio." : s.kind==="tiktok" ? "Mesma essência do 01. Outra frase. Sem oi. Este vídeo não muda." : s.kind==="story" ? "Íntimo. Explica o 01 um pouco melhor. Não substitui o reel nem o TikTok." : s.kind==="denso" ? "Outro tema. Não é o reel contado de novo. Você grava em casa. Onde está marcado imagem, a tela fica cheia e você continua falando por cima. A linha lilás e o “na tela” não entram na fala." : s.kind==="ops" ? "Outro tema. Um gesto. Não é a lição de casa do 01 e não é o documentário." : "Leia antes de apertar “Rodar”. O briefing orienta a intenção. A linha lilás e o “na tela” não entram na fala.";
   stage.innerHTML = '<section class="producer-brief"><h2>'+head+'</h2><p class="brief-lead">'+lead+'</p><div class="brief-grid">'+
     '<div class="brief-item"><b>Voz da narrativa</b><span>'+esc(brief.voice)+'</span></div>'+
     '<div class="brief-item"><b>Situação</b><span>'+esc(brief.situation)+'</span></div>'+
@@ -2962,7 +2980,7 @@ function openScript(s){
     '<div class="brief-item"><b>Sugestão de gravação</b><span>'+esc(brief.recording)+'</span></div>'+
     '<div class="brief-item"><b>Objeção a responder</b><span>'+esc(brief.objection)+'</span></div>'+
     '</div>'+caption+'<p class="brief-note"><strong>Integridade da mensagem:</strong> '+esc(brief.integrity)+'</p></section>'+
-    '<div class="script-start"><i>'+(s.kind==="live"?"Teleprompter · live":s.kind==="story"?"Teleprompter · 01.2 · íntimo":s.kind==="tiktok"?"Teleprompter · 01.3 · TikTok":s.kind==="denso"?"Teleprompter · 01.4 · documental":s.kind==="ops"?"Teleprompter · 01.5 · prático":"Teleprompter · fala revisada")+'</i></div>'+
+    '<div class="script-start"><i>'+(s.kind==="al"?"Teleprompter · boas-vindas do /al":s.kind==="live"?"Teleprompter · live":s.kind==="story"?"Teleprompter · 01.2 · íntimo":s.kind==="tiktok"?"Teleprompter · 01.3 · TikTok":s.kind==="denso"?"Teleprompter · 01.4 · documental":s.kind==="ops"?"Teleprompter · 01.5 · prático":"Teleprompter · fala revisada")+'</i></div>'+
     s.beats.map(beat=>{
       const screen = screenOf(s, beat);
       return '<article class="beat"><i>'+esc(beat.t)+'</i><em class="lesson">'+esc(lessonOf(s,beat))+'</em><p>'+esc(beat.say)+'</p>'+(screen?'<small class="screen">'+esc(screen)+'</small>':'')+(beat.roll?'<small class="roll">'+esc(beat.roll)+'</small>':'')+'</article>';
@@ -3015,5 +3033,6 @@ render("todos");
 </script>
 <script src="./denso.js"></script>
 <script src="./lives.js"></script>
+<script src="./boasvindas.js"></script>
 </body>
 </html>
