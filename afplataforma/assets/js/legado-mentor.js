@@ -164,7 +164,7 @@ export function renderLegadoDossie() {
     "Resultado da Fase 1",
     "Dossiê de Essência",
     "Isto junta as perguntas de Sessões com o que a fase passou a pedir quando as três mentorias viraram uma. O caderno de 26 encontros continua em /sessoes. Este dossiê não grava no servidor. Fica neste aparelho, na gestão.",
-    `${bloco("Como usar", "Uma parte de cada vez. Relato é a fala da pessoa. Hipótese é a leitura do mentor. Decisão é o que os dois fecham. O que não couber fica em pendência, não vira verdade.")}
+    `${bloco("Como usar", "Uma parte de cada vez. Relato é a fala da pessoa. Hipótese é a leitura do mentor. Decisão é o que os dois fecham. O que não couber fica em pendência, não vira verdade. Quando isso estiver fechado, a última parte lê o dossiê e escreve os ativos. Não abre outro documento.")}
     <p><a class="tool-btn" href="interno/modelo-dossie-essencia.pdf" target="_blank" rel="noopener">Abrir o PDF do modelo</a></p>
     <label class="field">Pessoa<input id="dossieNome" placeholder="Nome de quem está na fase" style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid rgba(201,162,75,.35);border-radius:8px;background:transparent;color:inherit;font:inherit"></label>
     ${partes}
@@ -176,6 +176,20 @@ export function renderLegadoDossie() {
       ${caixa("resultado-leva", "O que a essência entrega ao império")}
       ${caixa("resultado-espera", "O que espera a Fase 2")}
       ${caixa("resultado-proxima", "A próxima decisão, escrita")}
+    </article>
+    <article class="q-feature">
+      <h3>Do dossiê ao ativo</h3>
+      <p>Não inventa matéria nova. Lê o que já está escrito e põe uma linha em cada lugar. Essa ordem encurta a casa digital.</p>
+      <p class="notes-hint">Palavra sai da frase e das narrativas. Valor vira regra da página. História só vira conteúdo com autorização. Símbolo vira bio e visual. Contradição vira limite, não post. Talento vira a oferta. Aspiração vira a lista. Descoberta é a decisão que muda o primeiro passo.</p>
+      ${caixa("ativo-palavras", "Palavras · cinco que a marca usa, e as que não usa")}
+      ${caixa("ativo-valores", "Valores · a regra da página e do tom")}
+      ${caixa("ativo-historias", "Histórias · uma que pode ser conteúdo. Uma que fica só aqui.")}
+      ${caixa("ativo-simbolos", "Símbolos · palavra, tom, objeto")}
+      ${caixa("ativo-contradicoes", "Contradições · o que trava a venda. Vira o limite da oferta.")}
+      ${caixa("ativo-talentos", "Talentos · o que já faz e alguém reconhece. Vira a oferta.")}
+      ${caixa("ativo-aspiracoes", "Aspirações · a lista de ativos, na ordem")}
+      ${caixa("ativo-descoberta", "Descoberta · a decisão que muda o primeiro ativo")}
+      ${caixa("ativo-ordem", "Ordem · frase, bio, uma página, oferta com limite, primeiro conteúdo")}
     </article>
     <div class="row">
       <button class="tool-btn" type="button" id="dossieSalvar">Guardar este dossiê</button>

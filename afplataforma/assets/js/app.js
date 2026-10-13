@@ -51,7 +51,7 @@ import {
   renderLegadoPitch,
   renderLegadoTcc,
   renderLegadoSlides
-} from "./legado-mentor.js?v=rt20";
+} from "./legado-mentor.js?v=rt21";
 import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
 
 function toast(msg, err = false) {
