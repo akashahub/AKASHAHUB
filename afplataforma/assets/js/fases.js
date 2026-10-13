@@ -108,10 +108,13 @@ export function renderFase1() {
     `<h3 class="section-h">Trabalho principal da fase</h3>
     ${lista(FASE1)}
     <h3 class="section-h">Roteiro de sessões</h3>
-    <p class="notes-hint">O roteiro original continua em Sessões. Esta fase não cria outro.</p>
-    <p><a class="tool-btn" href="/sessoes/">Abrir o roteiro em Sessões</a></p>
+    <p class="notes-hint">O roteiro original continua em Sessões. Esta fase não cria outro. A mesa ao lado fecha o que o roteiro antigo ainda não separava: fato, leitura, dinheiro e a matéria do império.</p>
+    <p style="display:flex;flex-wrap:wrap;gap:8px">
+      <a class="tool-btn" href="/sessoes/">Abrir o roteiro em Sessões</a>
+      <button class="tool-btn" type="button" data-nav="fase1-jogo">Mesa da Essência</button>
+    </p>
     <h3 class="section-h">Dossiê de Essência</h3>
-    <p class="notes-hint">${nota}</p>
+    <p class="notes-hint">${nota} O modelo preenchido, com relato, hipótese e decisão, fica só na gestão do mentor.</p>
     ${lista(DOSSIE)}`
   );
 }
@@ -168,4 +171,155 @@ export function renderFase5() {
     "Comunidade, transmissão da metodologia e o que permanece depois do ciclo.",
     `<h3 class="section-h">Trabalho principal da fase</h3>${lista(FASE5)}`
   );
+}
+
+const MESA = [
+  {
+    id: "pe",
+    titulo: "O que já está de pé",
+    texto: "Não invente um produto. Olhe o que a pessoa já faz.",
+    perguntas: [
+      "O que você já faz e alguém já pagou, mesmo sem nome de produto?",
+      "O que você explica toda vez porque ainda não tem uma frase?",
+      "O que não pode sair do trabalho, senão deixa de ser você?"
+    ],
+    fecha: "Uma frase do que já existe."
+  },
+  {
+    id: "historia",
+    titulo: "História, sem sentença",
+    texto: "Fato é o que aconteceu. Leitura é o que a pessoa concluiu. Decisão é o que os dois fecham.",
+    perguntas: [
+      "Conte um fato da sua história que o trabalho precisa carregar. Só o fato.",
+      "O que você concluiu desse fato, e que pode ser só uma leitura sua?",
+      "Qual decisão você toma a partir disso, e qual ainda não toma?"
+    ],
+    fecha: "Fato, leitura e decisão, em três linhas."
+  },
+  {
+    id: "familia",
+    titulo: "Família",
+    texto: "A linhagem entra como matéria. Não entra como desculpa.",
+    perguntas: [
+      "Qual talento da mãe, do pai ou de um avô você honra no trabalho?",
+      "Qual padrão de luta você encerra e não leva para a marca?",
+      "O que a família proibiu você de ser, e o que disso ainda manda na sua voz?"
+    ],
+    fecha: "Honro isto. Encerro isto."
+  },
+  {
+    id: "padrao",
+    titulo: "O padrão que cobra",
+    texto: "O mesmo padrão aparece na cobrança, na liderança e na venda.",
+    perguntas: [
+      "Quando você cobra, qual voz antiga entra?",
+      "Você se vê merecedor de ser pago pelo que já faz? O que sustenta essa resposta?",
+      "O que você criou e nunca mostrou, e o que teme que digam?"
+    ],
+    fecha: "O padrão. A permissão."
+  },
+  {
+    id: "dinheiro",
+    titulo: "Leitura de dinheiro",
+    texto: "Nesta fase é leitura, não plano. O plano mora no Alinhamento Financeiro.",
+    perguntas: [
+      "O que entra por mês, em uma frase, sem planilha?",
+      "O que vaza e você já sabe o nome?",
+      "O que é essencial para o trabalho continuar, e o que é gosto?"
+    ],
+    fecha: "A leitura, em uma frase."
+  },
+  {
+    id: "cie",
+    titulo: "CIE",
+    texto: "A sigla ainda não tem definição nos arquivos desta casa. Não invente o significado. Escreva só o que vocês dois chamam assim. Se ainda não tem nome, deixe em branco.",
+    perguntas: [
+      "Se CIE já nomeia alguma coisa para você, o que é?",
+      "O que no seu trabalho ainda está sem nome e precisa de um?",
+      "O que não entra nesse nome?"
+    ],
+    fecha: "A definição usada aqui, ou: ainda sem nome."
+  },
+  {
+    id: "frase",
+    titulo: "A frase e o limite",
+    texto: "Outra pessoa tem que conseguir repetir. Se só você entende, ainda não é direção.",
+    perguntas: [
+      "Qual frase outra pessoa consegue repetir sobre o seu trabalho?",
+      "Para quem isso é, em uma pessoa real?",
+      "Para quem isso não é?"
+    ],
+    fecha: "Frase. Para quem. Limite."
+  },
+  {
+    id: "imperio",
+    titulo: "O que o império pode carregar",
+    texto: "A essência não vira site nesta mesa. Ela decide a matéria que o império digital vai poder usar.",
+    perguntas: [
+      "Qual matéria da essência vira oferta, sem inventar um produto do zero?",
+      "O que espera a casa digital, o nome e o primeiro ativo?",
+      "Qual é a próxima decisão, já escrita, antes de sair desta fase?"
+    ],
+    fecha: "Leva. Espera. Próxima decisão."
+  }
+];
+
+function campo(id, rotulo) {
+  return `<label class="field">${rotulo}<textarea data-mesa="${id}" rows="3" style="width:100%;min-height:72px;margin-top:6px;padding:10px 12px;border:1px solid rgba(201,162,75,.35);border-radius:8px;background:transparent;color:inherit;font:inherit;line-height:1.45"></textarea></label>`;
+}
+
+export function renderFase1Jogo() {
+  const corpo = MESA.map((estacao, i) => `
+    <article class="q-feature">
+      <p class="hero-line">Estação ${i + 1} de ${MESA.length}</p>
+      <h3>${estacao.titulo}</h3>
+      <p>${estacao.texto}</p>
+      ${estacao.perguntas.map((q, qi) => campo(estacao.id + "-" + qi, q)).join("")}
+      ${campo(estacao.id + "-fecha", "Fecha assim · " + estacao.fecha)}
+    </article>`).join("");
+  return pagina(
+    "1",
+    "Mesa da Essência",
+    "AE",
+    "Oito estações para tirar a essência da pessoa e entregar matéria ao império digital. O roteiro de 26 encontros continua em Sessões. Esta mesa não apaga aquele caderno.",
+    `<p><button class="tool-btn" type="button" data-nav="fase1">← Fase 1</button></p>
+    ${corpo}
+    <div class="row">
+      <button class="tool-btn" type="button" id="mesaSalvar">Guardar neste aparelho</button>
+      <button class="tool-btn" type="button" id="mesaCopiar">Copiar as respostas</button>
+    </div>
+    <p class="notes-hint" id="mesaAviso">As respostas ficam neste navegador. O dossiê, com relato, hipótese e decisão, o mentor preenche na gestão.</p>`
+  );
+}
+
+const MESA_KEY = "afMesaEssenciaV1";
+
+export function bindFase1Jogo() {
+  const root = document.getElementById("content");
+  if (!root || !root.querySelector("[data-mesa]")) return;
+  let salvo = {};
+  try { salvo = JSON.parse(localStorage.getItem(MESA_KEY) || "{}"); } catch (e) { salvo = {}; }
+  root.querySelectorAll("[data-mesa]").forEach((el) => {
+    if (salvo[el.getAttribute("data-mesa")]) el.value = salvo[el.getAttribute("data-mesa")];
+  });
+  const ler = () => {
+    const out = {};
+    root.querySelectorAll("[data-mesa]").forEach((el) => { out[el.getAttribute("data-mesa")] = el.value; });
+    return out;
+  };
+  document.getElementById("mesaSalvar")?.addEventListener("click", () => {
+    localStorage.setItem(MESA_KEY, JSON.stringify(ler()));
+    const aviso = document.getElementById("mesaAviso");
+    if (aviso) aviso.textContent = "Guardado neste aparelho.";
+  });
+  document.getElementById("mesaCopiar")?.addEventListener("click", async () => {
+    const dados = ler();
+    const texto = MESA.map((estacao, i) => {
+      const linhas = estacao.perguntas.map((q, qi) => q + "\n" + (dados[estacao.id + "-" + qi] || "—")).join("\n\n");
+      return (i + 1) + ". " + estacao.titulo + "\n" + linhas + "\n\nFecha: " + (dados[estacao.id + "-fecha"] || "—");
+    }).join("\n\n");
+    try { await navigator.clipboard.writeText("Mesa da Essência\n\n" + texto); } catch (e) {}
+    const aviso = document.getElementById("mesaAviso");
+    if (aviso) aviso.textContent = "Copiado. Cole no dossiê, na gestão do mentor.";
+  });
 }

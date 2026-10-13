@@ -24,7 +24,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=rt14";
+} from "./navigation.js?v=rt18";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
@@ -39,18 +39,19 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
-import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5 } from "./fases.js?v=rt13";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo } from "./fases.js?v=rt18";
 import {
   renderLegadoPlanos,
   renderLegadoContrato,
   renderLegadoRegras,
   renderLegadoDossie,
+  bindLegadoDossie,
   renderLegadoOquee,
   renderLegadoDirecao,
   renderLegadoPitch,
   renderLegadoTcc,
   renderLegadoSlides
-} from "./legado-mentor.js?v=rt15";
+} from "./legado-mentor.js?v=rt18";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -447,6 +448,7 @@ registerRenderers({
   "criancas-sala": renderCriancasSala,
   empresas: renderEmpresas,
   fase1: renderFase1,
+  "fase1-jogo": renderFase1Jogo,
   fase2: renderFase2,
   fase3: renderFase3,
   fase4: renderFase4,
@@ -468,7 +470,8 @@ registerRenderers({
 onAfterNavigate((view) => {
   onCallNavigate(view === "call");
   if (view === "call") bindCallControls(navigate);
-  if (view === "profile") bindProfileEdit();
+  if (view === "fase1-jogo") bindFase1Jogo();
+  if (view === "legado-dossie") bindLegadoDossie();
   if (view === "mentor") {
     bindAccessAdmin();
     bindSessoesAccess();

@@ -82,27 +82,200 @@ export function renderLegadoRegras() {
   );
 }
 
+const DOSSIE_PARTES = [
+  {
+    id: "identidade",
+    titulo: "Identidade",
+    origem: "Sessões 1 e 8. O que a pessoa já faz, sem inventar produto.",
+    guia: "Como se apresenta. Profissão. Três talentos. O que faz melhor. A maior conquista. O que ensinaria. Por que a mentoria agora. O núcleo, em uma frase."
+  },
+  {
+    id: "familia",
+    titulo: "História familiar",
+    origem: "Sessões 2 e 3.",
+    guia: "Talento da mãe. Força do pai. Avô ou avó. Dom que se repete. Padrão de luta. Quem ficou para trás. O que a família proibiu. O que se honra. O que se encerra."
+  },
+  {
+    id: "mundo",
+    titulo: "Visão de mundo",
+    origem: "Sessões 6 e 7. Experiência subjetiva fica como leitura, não como fato.",
+    guia: "Cultura que atrai. Forma, cor e som. Missão que a pessoa nomeia. O que diz que veio trazer. Não escreva isto como prova."
+  },
+  {
+    id: "referencias",
+    titulo: "Referências pessoais",
+    origem: "Sessões 4 e 5.",
+    guia: "Medo de aparecer. O que criou e nunca mostrou. O que teme que digam. O que quer que as pessoas sintam."
+  },
+  {
+    id: "padroes",
+    titulo: "Padrões identificados",
+    origem: "Sessões 2, 4 e 5, lidas juntas.",
+    guia: "A história de por que não deu certo. A permissão de ser pago. O padrão que entra na cobrança, na liderança e na venda."
+  },
+  {
+    id: "marca",
+    titulo: "Direção inicial da marca",
+    origem: "Sessões 9 a 14, só o que já dá para decidir. O resto espera o Império.",
+    guia: "De onde veio. A virada. A promessa. Como a marca fala. Cor, símbolo, energia. Palavras que não entram. Uma frase que outra pessoa repete."
+  },
+  {
+    id: "pessoal",
+    titulo: "Objetivos pessoais",
+    origem: "Fase 1. Não misturar com a meta da empresa.",
+    guia: "O que quer representar. O papel que quer exercer. O que independência significa para esta pessoa."
+  },
+  {
+    id: "empresa",
+    titulo: "Objetivos empresariais",
+    origem: "Fase 1, mais o que as sessões 17 a 22 só apontam. Não desenhe o funil aqui.",
+    guia: "A obra que já existe. Para quem. O que ama fazer. O que precisa delegar. O que a empresa precisa estar de pé em doze meses, em uma frase."
+  },
+  {
+    id: "dinheiro",
+    titulo: "Leitura inicial do dinheiro",
+    origem: "Não está separado nas 26 sessões. Entra agora, porque as três mentorias viraram uma.",
+    guia: "O que entra. O que vaza. O que é essencial. O que é gosto. Uma frase. O plano de caixa fica no Alinhamento Financeiro."
+  },
+  {
+    id: "cie",
+    titulo: "CIE",
+    origem: "A sigla está na fase e não tem definição nos arquivos desta casa.",
+    guia: "Escreva só o que vocês dois chamaram de CIE. Se ainda não tem nome, deixe o relato em branco e a decisão como: ainda sem nome. Não invente a sigla."
+  },
+  {
+    id: "estrategia",
+    titulo: "Direção estratégica inicial",
+    origem: "O que a fase pede e o caderno antigo não fechava.",
+    guia: "O que vem primeiro. O que espera. O que não se promete. A próxima decisão, já escrita."
+  },
+  {
+    id: "sintese",
+    titulo: "Síntese estratégica",
+    origem: "Sessão 8, mais o fechamento da mesa.",
+    guia: "A maior revelação. O que mudou na visão de si. O núcleo. O que o império digital está autorizado a carregar."
+  },
+  {
+    id: "entregas",
+    titulo: "Referências e entregas da fase",
+    origem: "O que a pessoa leva ao sair da Essência.",
+    guia: "A frase. O limite. A leitura de dinheiro. O que honra e o que encerra. O que fica pendente. A entrega que não é site, não é funil e não é preço."
+  }
+];
+
+function caixa(id, rotulo) {
+  return `<label class="field" style="display:block;margin-top:10px">${rotulo}<textarea data-dossie="${id}" rows="3" style="width:100%;min-height:68px;margin-top:6px;padding:10px 12px;border:1px solid rgba(201,162,75,.35);border-radius:8px;background:transparent;color:inherit;font:inherit;line-height:1.45"></textarea></label>`;
+}
+
 export function renderLegadoDossie() {
-  const blocos = [
-    ["Identidade", "Como você se apresenta hoje? Qual sua profissão principal? Quais seus 3 maiores talentos? O que você faz melhor? Qual sua maior conquista? O que ensinaria ao mundo? Por que a mentoria agora? Qual nome carrega sua essência? Qual a missão em uma frase?"],
-    ["História familiar", "Qual o talento da mãe? Qual a força do pai? Qual avô ou avó você admira? Qual dom se repete? Qual padrão de luta se repete? Quem ficou para trás? O que a família proibiu você de ser? O que você honra? O que encerra?"],
-    ["Visão de mundo", "Qual cultura ou civilização te atrai? Qual a forma, a cor e o som que você associa à sua alma? Qual missão além desta vida? O que você veio trazer que ainda não foi feito? Marcar como leitura, não como fato."],
-    ["Referências pessoais", "Qual medo paralisa ao pensar em aparecer? O que você criou e nunca mostrou? O que teme que digam do seu trabalho? O que deseja que as pessoas sintam?"],
-    ["Padrões identificados", "Qual história você conta sobre por que não deu certo? Você se vê merecedor de ser pago? Qual padrão familiar entra na cobrança, na liderança ou na venda?"],
-    ["Direção inicial da marca", "De onde você veio? Qual foi a virada? Qual a promessa da marca? Como a marca fala? Qual cor, símbolo e energia visual? Quais palavras não entram?"],
-    ["Objetivos pessoais", "O que você deseja representar? Qual papel quer exercer? O que significa independência para você?"],
-    ["Objetivos empresariais", "Qual produto de entrada? Qual a casa digital? O que você ama fazer e o que precisa delegar? Qual o próximo formato da obra?"],
-    ["Síntese estratégica", "Qual a maior revelação até aqui? Como a visão de si mudou? Qual o núcleo da essência? O que vem primeiro, e o que espera?"],
-    ["Referências e entregas da fase", "A identidade está coerente? O que ainda ajusta? O que foi decidido? O que fica pendente? Qual entrega desta fase a pessoa leva?"]
-  ];
+  const partes = DOSSIE_PARTES.map((parte, i) => `
+    <article class="q-feature">
+      <p class="hero-line">${String(i + 1).padStart(2, "0")}</p>
+      <h3>${parte.titulo}</h3>
+      <p>${parte.origem}</p>
+      <p class="notes-hint">${parte.guia}</p>
+      ${caixa(parte.id + "-relato", "Relato · o que a pessoa contou")}
+      ${caixa(parte.id + "-hipotese", "Hipótese · o que o mentor leu, sem tratar leitura como fato")}
+      ${caixa(parte.id + "-decisao", "Decisão · o que os dois fecharam")}
+    </article>`).join("");
   return page(
-    "Primeira camada",
-    "Modelo de dossiê de essência",
-    "Junta as dez partes da Fase 1 com as perguntas que já estão em Sessões. Nada disso é gravado sozinho ainda.",
-    `${bloco("Como preencher", "Em cada parte, três linhas: relato, o que a pessoa contou; hipótese, o que o mentor leu; decisão, o que os dois fecharam. Pergunta de Sessões que não couber agora fica em pendência.")}
-    ${blocos.map(([t, p]) => bloco(t, p)).join("")}
-    <p class="notes-hint">As perguntas continuam no roteiro original, em /sessoes. Este modelo não substitui aquele caderno.</p>`
+    "Resultado da Fase 1",
+    "Dossiê de Essência",
+    "Isto junta as perguntas de Sessões com o que a fase passou a pedir quando as três mentorias viraram uma. O caderno de 26 encontros continua em /sessoes. Este dossiê não grava no servidor. Fica neste aparelho, na gestão.",
+    `${bloco("Como usar", "Uma parte de cada vez. Relato é a fala da pessoa. Hipótese é a leitura do mentor. Decisão é o que os dois fecham. O que não couber fica em pendência, não vira verdade.")}
+    <label class="field">Pessoa<input id="dossieNome" placeholder="Nome de quem está na fase" style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid rgba(201,162,75,.35);border-radius:8px;background:transparent;color:inherit;font:inherit"></label>
+    ${partes}
+    <article class="q-feature">
+      <h3>O que o império digital pode carregar</h3>
+      <p>Não é o site. Não é o funil. É a matéria autorizada a sair desta fase.</p>
+      ${caixa("resultado-frase", "A frase que outra pessoa consegue repetir")}
+      ${caixa("resultado-paraquem", "Para quem é. Para quem não é.")}
+      ${caixa("resultado-leva", "O que a essência entrega ao império")}
+      ${caixa("resultado-espera", "O que espera a Fase 2")}
+      ${caixa("resultado-proxima", "A próxima decisão, escrita")}
+    </article>
+    <div class="row">
+      <button class="tool-btn" type="button" id="dossieSalvar">Guardar este dossiê</button>
+      <button class="tool-btn" type="button" id="dossieCopiar">Copiar o dossiê</button>
+    </div>
+    <p class="notes-hint" id="dossieAviso">Escolha o nome e guarde. Cada nome fica separado neste aparelho.</p>
+    <div id="dossieLista"></div>`
   );
+}
+
+const DOSSIE_KEY = "afDossieEssenciaV1";
+
+function lerDossies() {
+  try { return JSON.parse(localStorage.getItem(DOSSIE_KEY) || "{}"); } catch (e) { return {}; }
+}
+
+export function bindLegadoDossie() {
+  const root = document.getElementById("content");
+  if (!root || !root.querySelector("[data-dossie]")) return;
+  const nome = document.getElementById("dossieNome");
+  const aviso = document.getElementById("dossieAviso");
+  const lista = document.getElementById("dossieLista");
+  const campos = () => root.querySelectorAll("[data-dossie]");
+  const pintarLista = () => {
+    const todos = lerDossies();
+    const nomes = Object.keys(todos);
+    if (!lista) return;
+    lista.innerHTML = nomes.length
+      ? `<p class="notes-hint" style="margin-top:14px">Já guardados</p><div class="row">${nomes.map((n) => {
+          const seguro = String(n).replace(/[&<>"]/g, (c) => "&#" + c.charCodeAt(0) + ";");
+          return `<button class="tool-btn" type="button" data-abrir-dossie="${seguro}">${seguro}</button>`;
+        }).join("")}</div>`
+      : "";
+  };
+  const preencher = (dados) => {
+    campos().forEach((el) => { el.value = dados[el.getAttribute("data-dossie")] || ""; });
+  };
+  pintarLista();
+  document.getElementById("dossieSalvar")?.addEventListener("click", () => {
+    const chave = (nome?.value || "").trim();
+    if (!chave) {
+      if (aviso) aviso.textContent = "Escreva o nome da pessoa antes de guardar.";
+      return;
+    }
+    const dados = {};
+    campos().forEach((el) => { dados[el.getAttribute("data-dossie")] = el.value; });
+    const todos = lerDossies();
+    todos[chave] = dados;
+    localStorage.setItem(DOSSIE_KEY, JSON.stringify(todos));
+    if (aviso) aviso.textContent = "Dossiê de " + chave + " guardado neste aparelho.";
+    pintarLista();
+  });
+  document.getElementById("dossieCopiar")?.addEventListener("click", async () => {
+    const dados = {};
+    campos().forEach((el) => { dados[el.getAttribute("data-dossie")] = el.value; });
+    const miolo = DOSSIE_PARTES.map((parte) => [
+      parte.titulo,
+      "Relato: " + (dados[parte.id + "-relato"] || "—"),
+      "Hipótese: " + (dados[parte.id + "-hipotese"] || "—"),
+      "Decisão: " + (dados[parte.id + "-decisao"] || "—")
+    ].join("\n")).join("\n\n");
+    const resultado = [
+      "O que o império pode carregar",
+      "Frase: " + (dados["resultado-frase"] || "—"),
+      "Para quem: " + (dados["resultado-paraquem"] || "—"),
+      "Leva: " + (dados["resultado-leva"] || "—"),
+      "Espera: " + (dados["resultado-espera"] || "—"),
+      "Próxima decisão: " + (dados["resultado-proxima"] || "—")
+    ].join("\n");
+    const texto = "Dossiê de Essência · " + ((nome?.value || "").trim() || "sem nome") + "\n\n" + miolo + "\n\n" + resultado;
+    try { await navigator.clipboard.writeText(texto); } catch (e) {}
+    if (aviso) aviso.textContent = "Dossiê copiado.";
+  });
+  lista?.addEventListener("click", (ev) => {
+    const btn = ev.target.closest("[data-abrir-dossie]");
+    if (!btn) return;
+    const chave = btn.getAttribute("data-abrir-dossie");
+    const dados = lerDossies()[chave];
+    if (!dados) return;
+    if (nome) nome.value = chave;
+    preencher(dados);
+    if (aviso) aviso.textContent = "Aberto: " + chave + ".";
+  });
 }
 
 export function renderLegadoOquee() {

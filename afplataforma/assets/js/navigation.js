@@ -112,6 +112,7 @@ export async function navigate(view) {
     "criancas-sala": "Sala da criança",
     empresas: "Empresas",
     fase1: "Fase 1 · Essência",
+    "fase1-jogo": "Mesa da Essência",
     fase2: "Fase 2 · Império",
     fase3: "Fase 3 · AF",
     fase4: "Fase 4 · Expansão",
