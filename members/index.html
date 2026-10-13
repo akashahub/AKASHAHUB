@@ -16,8 +16,9 @@ button,a{font-family:inherit}a{color:inherit;text-decoration:none}
 #authBtn{background:transparent;color:var(--gold);border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer}
 .mid{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);text-align:center}
 .right{font-family:"Cormorant Garamond",serif;font-size:14px;letter-spacing:.12em;text-align:right;color:var(--gold)}
-.moon{height:280px;overflow:hidden;background:#111}
-.moon img{width:100%;height:100%;object-fit:cover;object-position:center 40%;display:block}
+.moon{position:relative;height:280px;overflow:hidden;background:#111}
+.moon img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block;opacity:0;transition:opacity .7s ease}
+.moon img.on{opacity:1}
 .shell{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 360px)}
 .side{border-right:1px solid var(--line);padding:18px 12px;background:#fff}
 .side button,.side a.nav{display:flex;width:100%;text-align:left;gap:10px;align-items:center;background:transparent;color:var(--muted);border:0;border-radius:12px;padding:11px 12px;cursor:pointer;margin-bottom:4px}
@@ -82,7 +83,23 @@ input,label{color:var(--text)}
   <div class="mid">Todos os cursos + livros + áudios em um só lugar</div>
   <div class="right">DO CONHECIMENTO<br>À TRANSFORMAÇÃO</div>
 </header>
-<div class="moon"><img alt="Lua" src="https://akashahub.com.br/afplataforma/assets/img/lua/hero/lua-hero-07.webp"></div>
+<div class="moon" id="vitrine">
+  <img class="on" alt="Yan Filipe" src="/members/vitrine/yan-1.jpg">
+  <img alt="" src="/members/vitrine/yan-2.jpg">
+  <img alt="" src="/members/vitrine/yan-3.jpg">
+</div>
+<script>
+(function () {
+  var frames = document.querySelectorAll("#vitrine img");
+  var i = 0;
+  if (frames.length < 2) return;
+  setInterval(function () {
+    frames[i].classList.remove("on");
+    i = (i + 1) % frames.length;
+    frames[i].classList.add("on");
+  }, 3000);
+})();
+</script>
 <div class="shell">
   <aside class="side" id="side"></aside>
   <main class="main" id="app"></main>
