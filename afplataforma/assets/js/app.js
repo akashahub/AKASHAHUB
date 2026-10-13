@@ -51,7 +51,7 @@ import {
   renderLegadoPitch,
   renderLegadoTcc,
   renderLegadoSlides
-} from "./legado-mentor.js?v=rt19";
+} from "./legado-mentor.js?v=rt20";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");

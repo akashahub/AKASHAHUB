@@ -165,6 +165,7 @@ export function renderLegadoDossie() {
     "Dossiê de Essência",
     "Isto junta as perguntas de Sessões com o que a fase passou a pedir quando as três mentorias viraram uma. O caderno de 26 encontros continua em /sessoes. Este dossiê não grava no servidor. Fica neste aparelho, na gestão.",
     `${bloco("Como usar", "Uma parte de cada vez. Relato é a fala da pessoa. Hipótese é a leitura do mentor. Decisão é o que os dois fecham. O que não couber fica em pendência, não vira verdade.")}
+    <p><a class="tool-btn" href="interno/modelo-dossie-essencia.pdf" target="_blank" rel="noopener">Abrir o PDF do modelo</a></p>
     <label class="field">Pessoa<input id="dossieNome" placeholder="Nome de quem está na fase" style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid rgba(201,162,75,.35);border-radius:8px;background:transparent;color:inherit;font:inherit"></label>
     ${partes}
     <article class="q-feature">
