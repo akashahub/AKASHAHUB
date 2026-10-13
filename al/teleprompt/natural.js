@@ -72,3 +72,17 @@ function naturalLayerCards(parent,i){
 const previousExtraCards=window.extraCards;
 window.extraCards=function(parent,i){const prior=previousExtraCards?previousExtraCards(parent,i):[];return prior.concat(naturalLayerCards(parent,i));};
 render("todos");
+
+/* Acesso independente ao módulo novo. Os roteiros anteriores permanecem intactos. */
+const clarityNav = document.querySelector("header nav");
+if (clarityNav && !document.querySelector('[data-module="clarity"]')) {
+ const clarityButton = document.createElement("a");
+ clarityButton.href = "./clareza.html";
+ clarityButton.className = "ghost";
+ clarityButton.dataset.module = "clarity";
+ clarityButton.textContent = "Clareza · Arquitetura de Legado";
+ clarityButton.style.textDecoration = "none";
+ clarityButton.style.display = "inline-flex";
+ clarityButton.style.alignItems = "center";
+ clarityNav.appendChild(clarityButton);
+}
