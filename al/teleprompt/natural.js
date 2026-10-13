@@ -86,3 +86,18 @@ if (clarityNav && !document.querySelector('[data-module="clarity"]')) {
  clarityButton.style.alignItems = "center";
  clarityNav.appendChild(clarityButton);
 }
+
+
+/* Acesso independente às lives da camada de clareza. Mantém os módulos existentes. */
+const clarityLivesNav = document.querySelector("header nav");
+if (clarityLivesNav && !document.querySelector('[data-module="clarity-lives"]')) {
+ const clarityLivesButton = document.createElement("a");
+ clarityLivesButton.href = "./lives-clareza.html";
+ clarityLivesButton.className = "ghost";
+ clarityLivesButton.dataset.module = "clarity-lives";
+ clarityLivesButton.textContent = "Lives da Clareza";
+ clarityLivesButton.style.textDecoration = "none";
+ clarityLivesButton.style.display = "inline-flex";
+ clarityLivesButton.style.alignItems = "center";
+ clarityLivesNav.appendChild(clarityLivesButton);
+}
