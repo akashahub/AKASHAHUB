@@ -117,12 +117,28 @@ export function renderFase1() {
 }
 
 export function renderFase2() {
+  const trabalho = FASE2.map((texto, i) => `
+    <div class="mod-row">
+      <div class="mod-num">${i + 1}</div>
+      <div class="mod-body">
+        <h3>${texto}</h3>
+        ${i === 2 ? `
+          <p>Use o laboratório para mapear o perfil do público, validar hipóteses e organizar um calendário de conteúdo conectado ao ecossistema Akasha Hub.</p>
+          <p style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+            <a class="tool-btn" href="/al/central/perfil-conteudo/" target="_blank" rel="noopener">Abrir formulário digital de Perfil do Cliente & Conteúdo</a>
+            <a class="tool-btn" href="/afplataforma/interno/plano-editorial-2027.html" target="_blank" rel="noopener">Abrir calendário editorial 2027</a>
+          </p>
+        ` : ""}
+      </div>
+    </div>`).join("");
   return pagina(
     "2",
     "Império Digital",
     "ID",
     "Posicionamento, linguagem, ativos digitais e a estrutura de negócios do projeto.",
-    `<h3 class="section-h">Trabalho principal da fase</h3>${lista(FASE2)}`
+    `<h3 class="section-h">Trabalho principal da fase</h3>
+    <div class="module-list">${trabalho}</div>
+    <p class="notes-hint">O calendário é uma hipótese estratégica que deve ser validada com dados, capacidade de produção e resposta real do público. O ecossistema inteiro aparece ao longo do ano, mesmo quando cada conteúdo aprofunda um tema específico.</p>`
   );
 }
 
