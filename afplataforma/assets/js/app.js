@@ -24,7 +24,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=rt24";
+} from "./navigation.js?v=rt25";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
