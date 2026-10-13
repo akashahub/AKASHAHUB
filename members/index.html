@@ -58,6 +58,7 @@ h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:42px;margin:
 .book{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff}
 .book .cover{height:140px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold);font-family:"Cormorant Garamond",serif;letter-spacing:.12em;margin-bottom:10px;background:#f7f1e4}
 .book img.capa{width:100%;height:240px;object-fit:cover;object-position:center 20%;border-radius:12px;margin-bottom:10px;display:block;background:#120f0c}
+.course img.capa{width:100%;height:auto;aspect-ratio:2/3;object-fit:cover;object-position:center 16%;border-radius:12px;margin-bottom:8px;display:block;background:#120f0c}
 @media(min-width:801px){
   .books{gap:22px}
   .book img.capa,.book .cover{height:auto;aspect-ratio:2/3;min-height:520px;object-fit:contain;object-position:center}
@@ -175,10 +176,11 @@ const ALINHAMENTO_AULAS = [
   "950989ff-d799-4318-972f-86eb291480de",
   "3f5348fc-8f67-4531-9f98-9869a3a0959d"
 ];
-function cursoBunny(id, titulo, ids) {
+function cursoBunny(id, titulo, ids, capa) {
   return {
     id,
     titulo,
+    capa: capa || "",
     modules: [{
       nome: "Aulas",
       aulas: ids.map((videoId, i) => ({
@@ -203,7 +205,7 @@ const FAIXAS = {
       { nome: "Manifestação Aplicada", aulas: aulas(["Os 4 Princípios da Realidade", "Colapso de Onda na Prática", "Alinhamento Mente-Emoção-Intenção", "Exercício Final"]) }
     ],
     cursos: [
-      cursoBunny("alinhamento", "Código de Alinhamento", ALINHAMENTO_AULAS),
+      cursoBunny("alinhamento", "Código de Alinhamento", ALINHAMENTO_AULAS, "/members/capas/codigo-de-alinhamento.jpg?v=ca1"),
       curso("7-dias", "Desafio 7 Dias de Magnetismo", 7, 14),
       curso("tantra", "Tantra Diferente de Sexo", 5, 10),
       curso("fascinacao", "O Poder da Fascinação", 2, 6)
@@ -413,6 +415,7 @@ function listaCursos() {
         curso.titulo = titulo || base.titulo;
         curso.capa = capa || base.capa;
       }
+      if (!curso.capa) curso.capa = base.capa;
     }
     if (!adminOn && (curso.status === "oculto" || curso.status === "rascunho" || curso.status === "apagado")) return;
     vistos.push(curso);
@@ -526,7 +529,7 @@ function cursos() {
     <div class="courses">${(adminOn ? `<button class="course" id="criarCursoCard"><div class="play">+</div><strong>Criar novo curso</strong><p class="sub">Nasce nesta faixa. Na hora você cola a capa. Depois, o card continua com editar e apagar.</p></button>` : "") + listaCursos().map(item => {
       const aulasN = item.modules.reduce((n, m) => n + m.aulas.length, 0);
       const open = ownsCurso(route.nivel, item.id);
-      const capa = item.capa ? `<img alt="" src="${esc(item.capa)}" style="width:100%;height:120px;object-fit:cover;border-radius:12px;margin-bottom:8px">` : "";
+      const capa = item.capa ? `<img class="capa" alt="Capa de ${esc(item.titulo)}" src="${esc(item.capa)}">` : "";
       const atos = adminOn ? `<div class="acts"><button type="button" data-edit-curso="${esc(item.id)}">Editar</button><button type="button" data-del-curso="${esc(item.id)}">Apagar</button></div>` : "";
       const marca = adminOn && item.status === "oculto" ? `<p class="sub">Oculto para os alunos</p>` : "";
       return `<article class="course" data-curso="${esc(item.id)}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong><p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p>${marca}<span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : reais(PRECO_ITEM.curso)}</span>${atos}</article>`;
