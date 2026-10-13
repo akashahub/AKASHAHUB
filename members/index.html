@@ -260,6 +260,9 @@ const FAIXAS = {
 
 let user = null;
 let rights = { areas: [], cursos: [], livros: [], audios: [] };
+const CAPA_FIXA = {
+  "Código Quântico": "/members/capas/codigo-quantico.jpg?v=cq1"
+};
 const LIVROS_ARQ = {
   "O Código Secreto do Universo": "/members/livros/codigo-secreto-universo.pdf",
   "Código Quântico": "/members/livros/codigo-quantico.pdf",
@@ -586,7 +589,12 @@ function livros() {
     ${adminOn ? `<div class="row"><button id="criarLivroCard">Criar ebook nesta faixa</button></div>` : ""}
     <div class="books">${livrosVisiveis().map(nome => {
       const ficha = fichaLivro(nome);
-      const capa = ficha && ficha.capa ? `<img alt="" src="${esc(ficha.capa)}" style="width:100%;height:140px;object-fit:cover;border-radius:12px;margin-bottom:10px">` : `<div class="cover">E-BOOK</div>`;
+      const fixa = CAPA_FIXA[nome];
+      const capa = fixa
+        ? `<img alt="Capa de ${esc(nome)}" src="${esc(fixa)}" style="width:100%;height:240px;object-fit:cover;object-position:center 20%;border-radius:12px;margin-bottom:10px">`
+        : ficha && ficha.capa
+          ? `<img alt="" src="${esc(ficha.capa)}" style="width:100%;height:140px;object-fit:cover;border-radius:12px;margin-bottom:10px">`
+          : `<div class="cover">E-BOOK</div>`;
       const oculto = ficha && (ficha.status === "oculto" || ficha.status === "rascunho");
       const atos = adminOn ? `<div class="acts"><button type="button" data-edit-livro="${esc(nome)}">Editar</button><button type="button" data-del-livro="${esc(nome)}">Apagar</button></div>` : "";
       return `<article class="book">${capa}<strong>${esc(nome)}</strong>${oculto ? `<p class="sub">Oculto para os alunos</p>` : ""}<div class="row"><button data-livro="${esc(nome)}">Abrir livro</button></div>${atos}</article>`;
