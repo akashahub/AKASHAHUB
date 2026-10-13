@@ -17,16 +17,13 @@ function pagina(numero, titulo, sigla, texto, corpo) {
 }
 
 const FASE1 = [
-  "Conduzir os processos de sessões e a investigação da essência.",
+  "Conduzir o processo de perguntas e conversas.",
   "Investigar identidade, história familiar e visão de mundo.",
-  "Organizar o CIE. A definição da sigla não está nos arquivos desta casa.",
-  "Identificar padrões, referências e elementos da história pessoal.",
+  "Organizar o Dossiê de Essência.",
+  "Identificar capacidades, valores, objetivos e possibilidades.",
   "Definir a direção inicial da marca.",
   "Estabelecer objetivos pessoais e empresariais.",
-  "Fazer uma leitura inicial da situação financeira.",
-  "Organizar o que entra no dossiê de essência.",
-  "Definir a direção estratégica inicial.",
-  "Preparar as entregas de referência desta fase."
+  "Fazer uma leitura inicial da situação financeira."
 ];
 
 const FASE2 = [
@@ -84,16 +81,16 @@ const FASE5 = [
 ];
 
 const DOSSIE = [
-  "Identidade",
-  "História familiar",
-  "Visão de mundo",
-  "Referências pessoais",
+  "História e contexto",
+  "Perguntas e respostas",
+  "Narrativas importantes",
   "Padrões identificados",
-  "Direção inicial da marca",
-  "Objetivos pessoais",
-  "Objetivos empresariais",
-  "Síntese estratégica",
-  "Referências e entregas da fase"
+  "Valores e símbolos",
+  "Talentos e capacidades",
+  "Ideias e possibilidades",
+  "Decisões tomadas",
+  "Pendências",
+  "Aplicações práticas"
 ];
 
 export function renderFase1() {
@@ -104,11 +101,11 @@ export function renderFase1() {
     "1",
     "Arquitetura de Essência",
     "AE",
-    "Identidade, história familiar, visão de mundo e a direção inicial do projeto.",
+    "Identidade, história familiar, visão de mundo e a direção inicial do projeto. Entrega desta fase: Dossiê de Essência e Direção Estratégica.",
     `<h3 class="section-h">Trabalho principal da fase</h3>
     ${lista(FASE1)}
     <h3 class="section-h">Roteiro de sessões</h3>
-    <p class="notes-hint">O roteiro original continua em Sessões. Esta fase não cria outro. A mesa ao lado fecha o que o roteiro antigo ainda não separava: fato, leitura, dinheiro e a matéria do império.</p>
+    <p class="notes-hint">O roteiro original continua em Sessões. A mesa ao lado segue a ordem do ano: conversa, identidade, dossiê, capacidades, marca, objetivos e a leitura de dinheiro.</p>
     <p style="display:flex;flex-wrap:wrap;gap:8px">
       <a class="tool-btn" href="/sessoes/">Abrir o roteiro em Sessões</a>
       <button class="tool-btn" type="button" data-nav="fase1-jogo">Mesa da Essência</button>
@@ -175,90 +172,90 @@ export function renderFase5() {
 
 const MESA = [
   {
-    id: "pe",
-    titulo: "O que já está de pé",
-    texto: "Não invente um produto. Olhe o que a pessoa já faz.",
+    id: "conversas",
+    titulo: "Perguntas e conversas",
+    texto: "A pergunta abre a história. A história não é um formulário.",
     perguntas: [
       "O que você já faz e alguém já pagou, mesmo sem nome de produto?",
-      "O que você explica toda vez porque ainda não tem uma frase?",
-      "O que não pode sair do trabalho, senão deixa de ser você?"
+      "Qual história você conta quando explica o seu trabalho?",
+      "O que ainda não foi perguntado e precisa ser?"
     ],
-    fecha: "Uma frase do que já existe."
+    fecha: "O que a conversa revelou, em uma frase."
   },
   {
-    id: "historia",
-    titulo: "História, sem sentença",
-    texto: "Fato é o que aconteceu. Leitura é o que a pessoa concluiu. Decisão é o que os dois fecham.",
+    id: "identidade",
+    titulo: "Identidade, família e visão de mundo",
+    texto: "Fato é o que aconteceu. Leitura é o que a pessoa concluiu. Não misture os dois.",
     perguntas: [
-      "Conte um fato da sua história que o trabalho precisa carregar. Só o fato.",
-      "O que você concluiu desse fato, e que pode ser só uma leitura sua?",
-      "Qual decisão você toma a partir disso, e qual ainda não toma?"
+      "Como você se apresenta hoje, e o que disso é fato?",
+      "O que você recebeu da família e decide manter? O que decide transformar?",
+      "Qual visão de mundo orienta o que você quer construir? Marque o que é experiência, não prova."
     ],
-    fecha: "Fato, leitura e decisão, em três linhas."
+    fecha: "Quem é. O que honra. O que transforma."
   },
   {
-    id: "familia",
-    titulo: "Família",
-    texto: "A linhagem entra como matéria. Não entra como desculpa.",
+    id: "dossie",
+    titulo: "Organizar o dossiê",
+    texto: "O dossiê guarda a matéria. Relato, hipótese e decisão não ocupam a mesma linha.",
     perguntas: [
-      "Qual talento da mãe, do pai ou de um avô você honra no trabalho?",
-      "Qual padrão de luta você encerra e não leva para a marca?",
-      "O que a família proibiu você de ser, e o que disso ainda manda na sua voz?"
+      "Qual história merece ficar guardada?",
+      "Qual padrão apareceu, e ainda é hipótese?",
+      "O que já virou decisão, e o que continua pendente?"
     ],
-    fecha: "Honro isto. Encerro isto."
+    fecha: "Entra no dossiê. Fica pendente."
   },
   {
-    id: "padrao",
-    titulo: "O padrão que cobra",
-    texto: "O mesmo padrão aparece na cobrança, na liderança e na venda.",
+    id: "capacidades",
+    titulo: "Capacidades, valores e possibilidades",
+    texto: "Talento, valor e ideia ainda não são produto.",
     perguntas: [
-      "Quando você cobra, qual voz antiga entra?",
-      "Você se vê merecedor de ser pago pelo que já faz? O que sustenta essa resposta?",
-      "O que você criou e nunca mostrou, e o que teme que digam?"
+      "O que você sabe fazer e outra pessoa já reconhece?",
+      "Qual valor não pode sair da marca?",
+      "Qual possibilidade apareceu e ainda não é oferta?"
     ],
-    fecha: "O padrão. A permissão."
+    fecha: "Capacidade. Valor. Possibilidade."
+  },
+  {
+    id: "marca",
+    titulo: "Direção inicial da marca",
+    texto: "Outra pessoa tem que conseguir repetir. Se só você entende, ainda não é direção.",
+    perguntas: [
+      "Qual frase outra pessoa consegue repetir sobre o seu trabalho?",
+      "Para quem isso é, em uma pessoa real? Para quem não é?",
+      "Qual símbolo, palavra ou tom já pertence a esta marca?"
+    ],
+    fecha: "Frase. Para quem. Limite."
+  },
+  {
+    id: "objetivos",
+    titulo: "Objetivos pessoais e empresariais",
+    texto: "Os dois objetivos existem. Não são a mesma frase.",
+    perguntas: [
+      "O que você quer para a sua vida neste ano, em uma frase?",
+      "O que a obra precisa estar de pé em doze meses, em uma frase?",
+      "Onde um objetivo está empurrando o outro?"
+    ],
+    fecha: "Pessoal. Empresarial. Onde se cruzam."
   },
   {
     id: "dinheiro",
-    titulo: "Leitura de dinheiro",
+    titulo: "Leitura inicial do dinheiro",
     texto: "Nesta fase é leitura, não plano. O plano mora no Alinhamento Financeiro.",
     perguntas: [
-      "O que entra por mês, em uma frase, sem planilha?",
+      "O que entra, em uma frase, sem planilha?",
       "O que vaza e você já sabe o nome?",
       "O que é essencial para o trabalho continuar, e o que é gosto?"
     ],
     fecha: "A leitura, em uma frase."
   },
   {
-    id: "cie",
-    titulo: "CIE",
-    texto: "A sigla ainda não tem definição nos arquivos desta casa. Não invente o significado. Escreva só o que vocês dois chamam assim. Se ainda não tem nome, deixe em branco.",
+    id: "entrega",
+    titulo: "Dossiê e direção estratégica",
+    texto: "A entrega da fase é esta. Não é site. Não é funil.",
     perguntas: [
-      "Se CIE já nomeia alguma coisa para você, o que é?",
-      "O que no seu trabalho ainda está sem nome e precisa de um?",
-      "O que não entra nesse nome?"
-    ],
-    fecha: "A definição usada aqui, ou: ainda sem nome."
-  },
-  {
-    id: "frase",
-    titulo: "A frase e o limite",
-    texto: "Outra pessoa tem que conseguir repetir. Se só você entende, ainda não é direção.",
-    perguntas: [
-      "Qual frase outra pessoa consegue repetir sobre o seu trabalho?",
-      "Para quem isso é, em uma pessoa real?",
-      "Para quem isso não é?"
-    ],
-    fecha: "Frase. Para quem. Limite."
-  },
-  {
-    id: "imperio",
-    titulo: "O que o império pode carregar",
-    texto: "A essência não vira site nesta mesa. Ela decide a matéria que o império digital vai poder usar.",
-    perguntas: [
-      "Qual matéria da essência vira oferta, sem inventar um produto do zero?",
-      "O que espera a casa digital, o nome e o primeiro ativo?",
-      "Qual é a próxima decisão, já escrita, antes de sair desta fase?"
+      "Qual matéria da essência o império digital está autorizado a carregar?",
+      "O que espera a próxima fase?",
+      "Qual é a próxima decisão, já escrita?"
     ],
     fecha: "Leva. Espera. Próxima decisão."
   }
@@ -281,7 +278,7 @@ export function renderFase1Jogo() {
     "1",
     "Mesa da Essência",
     "AE",
-    "Oito estações para tirar a essência da pessoa e entregar matéria ao império digital. O roteiro de 26 encontros continua em Sessões. Esta mesa não apaga aquele caderno.",
+    "As oito estações seguem o ano do documento-mestre: conversa, identidade, dossiê, capacidades, marca, objetivos, leitura de dinheiro e a entrega. O roteiro de 26 encontros continua em Sessões.",
     `<p><button class="tool-btn" type="button" data-nav="fase1">← Fase 1</button></p>
     ${corpo}
     <div class="row">
@@ -292,7 +289,7 @@ export function renderFase1Jogo() {
   );
 }
 
-const MESA_KEY = "afMesaEssenciaV1";
+const MESA_KEY = "afMesaEssenciaV2";
 
 export function bindFase1Jogo() {
   const root = document.getElementById("content");

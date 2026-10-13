@@ -39,7 +39,7 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
-import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo } from "./fases.js?v=rt18";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo } from "./fases.js?v=rt19";
 import {
   renderLegadoPlanos,
   renderLegadoContrato,
@@ -51,7 +51,7 @@ import {
   renderLegadoPitch,
   renderLegadoTcc,
   renderLegadoSlides
-} from "./legado-mentor.js?v=rt18";
+} from "./legado-mentor.js?v=rt19";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");

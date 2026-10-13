@@ -84,82 +84,64 @@ export function renderLegadoRegras() {
 
 const DOSSIE_PARTES = [
   {
-    id: "identidade",
-    titulo: "Identidade",
-    origem: "Sessões 1 e 8. O que a pessoa já faz, sem inventar produto.",
-    guia: "Como se apresenta. Profissão. Três talentos. O que faz melhor. A maior conquista. O que ensinaria. Por que a mentoria agora. O núcleo, em uma frase."
+    id: "historia",
+    titulo: "História e contexto",
+    origem: "Documento-mestre, item 1 do dossiê. Sessões 1 a 3 alimentam.",
+    guia: "A trajetória que importa para o trabalho. Fatos. Sem fechar a pessoa na primeira frase."
   },
   {
-    id: "familia",
-    titulo: "História familiar",
-    origem: "Sessões 2 e 3.",
-    guia: "Talento da mãe. Força do pai. Avô ou avó. Dom que se repete. Padrão de luta. Quem ficou para trás. O que a família proibiu. O que se honra. O que se encerra."
+    id: "perguntas",
+    titulo: "Perguntas e respostas",
+    origem: "O processo de Sessões. A mesa só organiza. Não substitui o caderno.",
+    guia: "A pergunta que abriu. A resposta que ficou. O que ainda precisa ser perguntado de novo."
   },
   {
-    id: "mundo",
-    titulo: "Visão de mundo",
-    origem: "Sessões 6 e 7. Experiência subjetiva fica como leitura, não como fato.",
-    guia: "Cultura que atrai. Forma, cor e som. Missão que a pessoa nomeia. O que diz que veio trazer. Não escreva isto como prova."
-  },
-  {
-    id: "referencias",
-    titulo: "Referências pessoais",
-    origem: "Sessões 4 e 5.",
-    guia: "Medo de aparecer. O que criou e nunca mostrou. O que teme que digam. O que quer que as pessoas sintam."
+    id: "narrativas",
+    titulo: "Narrativas importantes",
+    origem: "Histórias que merecem ser preservadas, com autorização se forem virar conteúdo.",
+    guia: "A história. Onde ela pode servir. Onde ela não deve ser usada."
   },
   {
     id: "padroes",
     titulo: "Padrões identificados",
-    origem: "Sessões 2, 4 e 5, lidas juntas.",
-    guia: "A história de por que não deu certo. A permissão de ser pago. O padrão que entra na cobrança, na liderança e na venda."
+    origem: "Comportamentos, crenças e repetições que vocês decidem investigar.",
+    guia: "O padrão. Onde aparece na cobrança, na liderança ou na venda. O que ainda é hipótese."
   },
   {
-    id: "marca",
-    titulo: "Direção inicial da marca",
-    origem: "Sessões 9 a 14, só o que já dá para decidir. O resto espera o Império.",
-    guia: "De onde veio. A virada. A promessa. Como a marca fala. Cor, símbolo, energia. Palavras que não entram. Uma frase que outra pessoa repete."
+    id: "valores",
+    titulo: "Valores e símbolos",
+    origem: "O que entra na identidade da marca.",
+    guia: "O valor que não sai. O símbolo, a palavra, o tom. O que não entra."
   },
   {
-    id: "pessoal",
-    titulo: "Objetivos pessoais",
-    origem: "Fase 1. Não misturar com a meta da empresa.",
-    guia: "O que quer representar. O papel que quer exercer. O que independência significa para esta pessoa."
+    id: "talentos",
+    titulo: "Talentos e capacidades",
+    origem: "O que a pessoa sabe, faz ou pode desenvolver. Sem inventar produto.",
+    guia: "O que já faz. O que outra pessoa reconhece. O que ainda é capacidade, não oferta."
   },
   {
-    id: "empresa",
-    titulo: "Objetivos empresariais",
-    origem: "Fase 1, mais o que as sessões 17 a 22 só apontam. Não desenhe o funil aqui.",
-    guia: "A obra que já existe. Para quem. O que ama fazer. O que precisa delegar. O que a empresa precisa estar de pé em doze meses, em uma frase."
+    id: "ideias",
+    titulo: "Ideias e possibilidades",
+    origem: "Produtos, conteúdos, projetos e oportunidades. Ainda não são o império.",
+    guia: "A possibilidade. Para quem. O que espera a próxima fase."
   },
   {
-    id: "dinheiro",
-    titulo: "Leitura inicial do dinheiro",
-    origem: "Não está separado nas 26 sessões. Entra agora, porque as três mentorias viraram uma.",
-    guia: "O que entra. O que vaza. O que é essencial. O que é gosto. Uma frase. O plano de caixa fica no Alinhamento Financeiro."
+    id: "decisoes",
+    titulo: "Decisões tomadas",
+    origem: "O que foi definido durante o processo. Não é hipótese.",
+    guia: "A decisão. Quem decidiu. O que isso muda agora."
   },
   {
-    id: "cie",
-    titulo: "CIE",
-    origem: "A sigla está na fase e não tem definição nos arquivos desta casa.",
-    guia: "Escreva só o que vocês dois chamaram de CIE. Se ainda não tem nome, deixe o relato em branco e a decisão como: ainda sem nome. Não invente a sigla."
+    id: "pendencias",
+    titulo: "Pendências",
+    origem: "Perguntas que ainda precisam ser exploradas.",
+    guia: "O que ficou aberto. Quando volta. O que não vira verdade enquanto estiver aqui."
   },
   {
-    id: "estrategia",
-    titulo: "Direção estratégica inicial",
-    origem: "O que a fase pede e o caderno antigo não fechava.",
-    guia: "O que vem primeiro. O que espera. O que não se promete. A próxima decisão, já escrita."
-  },
-  {
-    id: "sintese",
-    titulo: "Síntese estratégica",
-    origem: "Sessão 8, mais o fechamento da mesa.",
-    guia: "A maior revelação. O que mudou na visão de si. O núcleo. O que o império digital está autorizado a carregar."
-  },
-  {
-    id: "entregas",
-    titulo: "Referências e entregas da fase",
-    origem: "O que a pessoa leva ao sair da Essência.",
-    guia: "A frase. O limite. A leitura de dinheiro. O que honra e o que encerra. O que fica pendente. A entrega que não é site, não é funil e não é preço."
+    id: "aplicacoes",
+    titulo: "Aplicações práticas",
+    origem: "O que cada descoberta muda na vida ou no negócio. Inclui a leitura inicial do dinheiro.",
+    guia: "O que muda na vida. O que muda na obra. A leitura de dinheiro em uma frase: o que entra, o que vaza, o que é essencial. O plano fica no Alinhamento."
   }
 ];
 
@@ -186,8 +168,8 @@ export function renderLegadoDossie() {
     <label class="field">Pessoa<input id="dossieNome" placeholder="Nome de quem está na fase" style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid rgba(201,162,75,.35);border-radius:8px;background:transparent;color:inherit;font:inherit"></label>
     ${partes}
     <article class="q-feature">
-      <h3>O que o império digital pode carregar</h3>
-      <p>Não é o site. Não é o funil. É a matéria autorizada a sair desta fase.</p>
+      <h3>Direção estratégica</h3>
+      <p>A entrega da fase, junto com o dossiê. Não é o site. Não é o funil.</p>
       ${caixa("resultado-frase", "A frase que outra pessoa consegue repetir")}
       ${caixa("resultado-paraquem", "Para quem é. Para quem não é.")}
       ${caixa("resultado-leva", "O que a essência entrega ao império")}
@@ -203,7 +185,7 @@ export function renderLegadoDossie() {
   );
 }
 
-const DOSSIE_KEY = "afDossieEssenciaV1";
+const DOSSIE_KEY = "afDossieEssenciaV2";
 
 function lerDossies() {
   try { return JSON.parse(localStorage.getItem(DOSSIE_KEY) || "{}"); } catch (e) { return {}; }
