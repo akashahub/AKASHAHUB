@@ -126,7 +126,8 @@ export async function navigate(view) {
     "legado-pitch": "Pitch",
     "legado-tcc": "TCC",
     "legado-slides": "Lâminas",
-    "audios-pnl": "Áudios PNL"
+    "audios-pnl": "Áudios PNL",
+    "conteudos-al": "Conteúdos AL"
   };
   const top = document.getElementById("topTitle");
   if (top) {

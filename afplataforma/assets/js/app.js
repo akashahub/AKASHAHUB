@@ -24,7 +24,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=rt22";
+} from "./navigation.js?v=rt24";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
@@ -50,8 +50,9 @@ import {
   renderLegadoDirecao,
   renderLegadoPitch,
   renderLegadoTcc,
-  renderLegadoSlides
-} from "./legado-mentor.js?v=rt21";
+  renderLegadoSlides,
+  renderConteudosAl
+} from "./legado-mentor.js?v=rt24";
 import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
 
 function toast(msg, err = false) {
@@ -321,6 +322,7 @@ function renderMentor() {
       <button class="tool-btn" type="button" data-nav="legado-tcc">Apresentação TCC</button>
       <button class="tool-btn" type="button" data-nav="legado-slides">Lâminas</button>
       <button class="tool-btn" type="button" data-nav="audios-pnl">Áudios PNL para gravar</button>
+      <button class="tool-btn" type="button" data-nav="conteudos-al">Conteúdos estratégicos para AL YouTube/TikTok</button>
     </article>
     ${renderSessoesAccess()}
     ${renderAccessAdminPanel()}
@@ -464,6 +466,7 @@ registerRenderers({
   "legado-pitch": renderLegadoPitch,
   "legado-tcc": renderLegadoTcc,
   "legado-slides": renderLegadoSlides,
+  "conteudos-al": renderConteudosAl,
   "audios-pnl": renderAudiosPnl,
   showLocked,
   openTool,

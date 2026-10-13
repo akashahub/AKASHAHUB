@@ -361,3 +361,31 @@ export function renderLegadoSlides() {
     slides.map(([n, t, p]) => bloco("Lâmina " + n + " · " + t, p)).join("")
   );
 }
+
+export function renderConteudosAl() {
+  const ficha = [
+    "O lugar. Um país ou uma região. Um de cada vez.",
+    "A geografia. O que o lugar impõe: clima, distância, cidade, interior.",
+    "O ancestral. O que se repetia. Com fonte, ou marcado para verificar.",
+    "O moderno. O que se repete agora. Com fonte, ou marcado para verificar.",
+    "A ponte. O que mudou entre os dois. Não misturar como se fosse a mesma pessoa.",
+    "O homem, neste recorte. Padrão visível. Não uma essência.",
+    "A mulher, neste recorte. O mesmo critério.",
+    "O que os dois compartilham. Para não virar dois conteúdos inimigos.",
+    "A contradição. Onde o padrão quebra.",
+    "A frase para o /al. Essência, alma ou valor. Sem preço."
+  ];
+  return page(
+    "Ideia · ainda sem tema",
+    "Conteúdos estratégicos · AL",
+    "YouTube e TikTok. A engenharia é uma ficha só. O país ainda não foi escolhido. Padrão não é sentença.",
+    `${bloco("Como usar", "Cada vídeo preenche a mesma ficha. Fato fica com fonte. O resto é leitura. Não se diz que um povo é assim. Diz-se o que apareceu neste recorte.")}
+    <h3 class="section-h">A ficha</h3>
+    ${itens(ficha)}
+    ${bloco("YouTube", "Oito a doze minutos. A ficha inteira, nesta ordem. Ancestral e moderno lado a lado. Homem e mulher no mesmo vídeo, com o que compartilham no meio.")}
+    ${bloco("TikTok", "Quarenta e cinco a setenta segundos. Um eixo só. Ou o ancestral, ou o moderno. Ou o homem, ou a mulher. Os quatro juntos não cabem.")}
+    ${bloco("Ordem para gravar", "Primeiro um lugar que você conhece de perto. Depois um contraste dentro do mesmo país. Só então outro país, e só se houver fonte. Três fichas em branco já bastam para começar.")}
+    ${bloco("O que não entra", "Preço. Promessa. 'A ciência provou'. Clichê de nacionalidade. Lista de países inventada antes da fonte.")}
+    ${bloco("Fecho", "No YouTube, uma frase e o /al. No TikTok, a pessoa comenta o lugar. Sem venda no meio.")}`
+  );
+}
