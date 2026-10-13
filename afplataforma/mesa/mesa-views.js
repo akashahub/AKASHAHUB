@@ -225,10 +225,50 @@ function renderFaixasFull() {
   `;
 }
 
+function renderCursoCloser() {
+  const pecas = [
+    ["01", "12–15 min", "A postura", "Peer, não closer para lead. Os oito atos e o relógio. O que não se faz. A sessão é o dia 1. A mentoria cara não é."],
+    ["02", "18–22 min", "Diagnóstico e o 10", "Dor visível, sem solução. Devolver em uma frase. De 0 a 10. Não avança no 8. O silêncio fica."],
+    ["03", "18–22 min", "Papel, recurso, escopo", "Não anuncia o piso. Skin in the game. A obra tem começo e fim. Objeção vira recorte, não desconto. O que se mostra antes, e só depois do compromisso."],
+    ["04", "12–15 min", "O sim na sala", "A próxima ação acontece na call. Se o grande não fecha, a entrada fica. Sem abrir o ecossistema. Sem ‘me manda um resumo’."]
+  ];
+  const fora = [
+    "Dossiê de cliente. Francesca, Zé, Artur não entram.",
+    "Número interno de proposta. A regra entra. O piso não.",
+    "A tela desta mesa. O closer aprende o ato, não o cockpit."
+  ];
+  const depois = [
+    "Gravar as quatro peças, nesta ordem.",
+    "Um teleprompt curto por peça. Uma frase por bloco.",
+    "A live de 1 hora é o ensaio: um caso, os oito atos, o mentor só corta no ‘não fazer’.",
+    "O checklist verde do treinamento ainda não existe. Esta página também não grava aula."
+  ];
+  return `
+    ${head("Ideia · ainda não é curso", "Fechamento de elite", "Quatro peças. A mesa já é o método. O curso só ensina a conduzir os mesmos atos, sem inventar preço e sem follow-up morno.")}
+    <section class="panel">
+      <p class="kicker">Formato</p>
+      <h2 class="display">Não uma live de uma hora.</h2>
+      <p class="muted">A call real já tem noventa minutos. Uma aula única vira resumo. Quatro peças, de doze a vinte e dois minutos, cobrem o caminho. A live de uma hora fica para o ensaio, depois que as peças existirem.</p>
+    </section>
+    <div class="grid" style="margin-top:16px">
+      ${pecas.map((p) => `<section class="panel"><p class="mono accent">${p[0]} · ${esc(p[1])}</p><h2 class="display">${esc(p[2])}</h2><p class="muted">${esc(p[3])}</p></section>`).join("")}
+    </div>
+    <div class="grid" style="margin-top:16px">
+      <section class="panel"><h2 class="display">Fica de fora</h2><ul class="posture">${fora.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
+      <section class="panel"><h2 class="display">Quando for implementar</h2><ul class="posture">${depois.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
+    </div>
+    <section class="panel" style="margin-top:16px">
+      <p class="kicker">A espinha, já na mesa</p>
+      <p class="muted">Conexão, diagnóstico, o 10, a casa, o papel, o recurso, o escopo, o fechar. O curso não cria um nono ato.</p>
+    </section>
+  `;
+}
+
 const VIEWS = {
   mesa: () => (dealId === "francesca" && typeof renderFrancescaMesa === "function" ? renderFrancescaMesa() : renderMesa()),
   caderno: () => renderCaderno(),
   fechamento: () => renderIgor(),
+  curso: () => renderCursoCloser(),
   af: () => renderAfBrief(),
   convergencia: () => renderConv(),
   faixas: () => renderFaixasFull(),
