@@ -176,7 +176,7 @@ const ALINHAMENTO_AULAS = [
   "950989ff-d799-4318-972f-86eb291480de",
   "3f5348fc-8f67-4531-9f98-9869a3a0959d"
 ];
-function cursoBunny(id, titulo, ids, capa) {
+function cursoBunny(id, titulo, ids, capa, titulos) {
   return {
     id,
     titulo,
@@ -184,7 +184,7 @@ function cursoBunny(id, titulo, ids, capa) {
     modules: [{
       nome: "Aulas",
       aulas: ids.map((videoId, i) => ({
-        titulo: "Aula " + String(i + 1).padStart(2, "0"),
+        titulo: (titulos && titulos[i]) || ("Aula " + String(i + 1).padStart(2, "0")),
         video: { provider: "bunny", videoId, libraryId: BUNNY_LIB }
       }))
     }]
@@ -205,7 +205,18 @@ const FAIXAS = {
       { nome: "Manifestação Aplicada", aulas: aulas(["Os 4 Princípios da Realidade", "Colapso de Onda na Prática", "Alinhamento Mente-Emoção-Intenção", "Exercício Final"]) }
     ],
     cursos: [
-      cursoBunny("alinhamento", "Código de Alinhamento", ALINHAMENTO_AULAS, "/members/capas/codigo-de-alinhamento.jpg?v=ca1"),
+      cursoBunny("alinhamento", "Código de Alinhamento Akáshico", ALINHAMENTO_AULAS, "/members/capas/codigo-de-alinhamento.jpg?v=ca2", [
+        "Boas-vindas 𓂀 O que é o Akasha?",
+        "O Tantra",
+        "Yin Yang e chakras",
+        "Prática do magnetismo",
+        "Fascinação e hipnose não-verbal",
+        "Dicas essenciais",
+        "Pré-sessão (ritual)",
+        "O transe",
+        "Simbologia e arquétipos",
+        "Magnetismo"
+      ]),
       curso("7-dias", "Desafio 7 Dias de Magnetismo", 7, 14),
       curso("tantra", "Tantra Diferente de Sexo", 5, 10),
       curso("fascinacao", "O Poder da Fascinação", 2, 6)
@@ -416,6 +427,20 @@ function listaCursos() {
         curso.capa = capa || base.capa;
       }
       if (!curso.capa) curso.capa = base.capa;
+    }
+    if (item.id === "alinhamento") {
+      curso.titulo = base.titulo;
+      curso.capa = base.capa || curso.capa;
+      const oficiais = (base.modules[0] && base.modules[0].aulas) || [];
+      const atuais = (curso.modules[0] && curso.modules[0].aulas) || [];
+      curso.modules = [{
+        nome: "Aulas",
+        aulas: oficiais.map((aula, i) => {
+          const atual = atuais[i] || {};
+          const video = atual.video && atual.video.videoId ? atual.video : aula.video;
+          return { titulo: aula.titulo, descricao: atual.descricao || "", status: atual.status || "publicado", access: atual.access || "exclusivo", video };
+        })
+      }];
     }
     if (!adminOn && (curso.status === "oculto" || curso.status === "rascunho" || curso.status === "apagado")) return;
     vistos.push(curso);
