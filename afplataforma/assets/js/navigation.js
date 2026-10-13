@@ -37,6 +37,7 @@ export function buildNav() {
     { id: "dashboard", label: t(lang, "dash"), ico: "◇" }
   ];
   if (isMentorSession()) items.push({ id: "mentor", label: t(lang, "mentor"), ico: "★" });
+  if (isMentorSession()) items.push({ id: "vendas-curso", label: "Projeto · Curso de Vendas", ico: "↗" });
   items.push(
     { id: "profile", label: t(lang, "profile"), ico: "○" },
     { sep: true, label: "Arquitetura de Legado" },
@@ -104,6 +105,7 @@ export async function navigate(view) {
     call: t(lang, "call"),
     profile: t(lang, "profile"),
     mentor: t(lang, "mentor"),
+    "vendas-curso": "Projeto · Curso de Vendas",
     ascensao: "Ascensão",
     complementar: "Complementar",
     quitei: "Quitei",
