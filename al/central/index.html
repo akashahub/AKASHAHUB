@@ -40,4 +40,12 @@ function route(){let id=location.hash.slice(1)||'inicio';const m=MODULES.find(x=
 if(!m){$('view').innerHTML=home();cards();$('search').oninput=e=>cards(e.target.value);}else{$('view').innerHTML=`<div class="hero"><div class="eyebrow">CENTRAL DO EXPERT / ${e(m.title)}</div><div class="modulehead"><h2>${e(m.title)}</h2><div class="row moduleactions"><button class="btn secondary" id="print">Imprimir</button><button class="btn secondary" id="download">Baixar texto</button></div></div><div class="toc" id="toc"></div></div>${id==='pocket'?'<div class="row"><a class="btn" href="/pocket/">Abrir o pocket ↗</a><a class="btn secondary" href="https://essence-architect-builder.lovable.app/pocket/index.html">Página de interesse ↗</a><a class="btn secondary" href="https://essence-architect-builder.lovable.app/caderno/index.html">Caderno ↗</a></div>'+calc():''}${id==='funil'?'<div class="row"><a class="btn" href="/al/#aplicar">Testar aplicação ↗</a><a class="btn secondary" href="/al/">Página de vendas ↗</a></div>':''}${id==='script'?'<div class="row"><a class="btn" href="../apresentacao/index.html">Abrir apresentação ↗</a></div>':''}${id==='conteudo'?'<div class="row"><a class="btn" href="../teleprompt/index.html">Abrir teleprompter</a></div>':''}<article class="article" id="article">${m.html}</article>${id==='treino'?tracker():''}`;document.querySelectorAll('#article h3').forEach((h,i)=>{h.id='section-'+i;let a=document.createElement('a');a.href='#'+id;a.textContent=h.textContent;a.onclick=ev=>{ev.preventDefault();h.scrollIntoView({behavior:'smooth'})};$('toc').append(a)});$('print').onclick=()=>window.print();$('download').onclick=()=>saveFile('AKASHA-'+id+'.txt',m.title+'\n\n'+m.text);if(id==='pocket'){['paid','guests','cost'].forEach(x=>$(x).oninput=recalc);recalc()}if(id==='treino')connectTracker();}
 document.title=(m?m.title:'Central do expert')+' · AKASHA';window.scrollTo(0,0)}
 $('menu').onclick=()=>{let o=$('sidebar').classList.toggle('open');$('menu').setAttribute('aria-expanded',String(o))};window.addEventListener('hashchange',route);route();
-</script></body></html>
+<script>
+(function(){
+ const nav=document.querySelector('.sidebar nav');
+ if(!nav || nav.querySelector('[data-profile-content]')) return;
+ const a=document.createElement('a');
+ a.className='navlink';a.href='./perfil-conteudo/';a.textContent='Perfil do Cliente & Conteúdo';a.dataset.profileContent='true';
+ nav.appendChild(a);
+})();
+</script></script></body></html>
