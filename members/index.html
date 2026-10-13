@@ -57,6 +57,11 @@ h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:42px;margin:
 .books{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .book{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff}
 .book .cover{height:140px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold);font-family:"Cormorant Garamond",serif;letter-spacing:.12em;margin-bottom:10px;background:#f7f1e4}
+.book img.capa{width:100%;height:240px;object-fit:cover;object-position:center 20%;border-radius:12px;margin-bottom:10px;display:block;background:#120f0c}
+@media(min-width:801px){
+  .books{gap:22px}
+  .book img.capa,.book .cover{height:auto;aspect-ratio:2/3;min-height:520px;object-fit:contain;object-position:center}
+}
 .audio{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;background:#fff}
 .crumb{color:var(--muted);font-size:13px;margin-bottom:8px}
 .crumb button{background:none;border:0;color:var(--gold);cursor:pointer;padding:0}
@@ -604,9 +609,9 @@ function livros() {
       const ficha = fichaLivro(nome);
       const fixa = CAPA_FIXA[nome];
       const capa = fixa
-        ? `<img alt="Capa de ${esc(nome)}" src="${esc(fixa)}" style="width:100%;height:240px;object-fit:cover;object-position:center 20%;border-radius:12px;margin-bottom:10px">`
+        ? `<img class="capa" alt="Capa de ${esc(nome)}" src="${esc(fixa)}">`
         : ficha && ficha.capa
-          ? `<img alt="" src="${esc(ficha.capa)}" style="width:100%;height:140px;object-fit:cover;border-radius:12px;margin-bottom:10px">`
+          ? `<img class="capa" alt="" src="${esc(ficha.capa)}">`
           : `<div class="cover">E-BOOK</div>`;
       const oculto = ficha && (ficha.status === "oculto" || ficha.status === "rascunho");
       const atos = adminOn ? `<div class="acts"><button type="button" data-edit-livro="${esc(nome)}">Editar</button><button type="button" data-del-livro="${esc(nome)}">Apagar</button></div>` : "";
