@@ -324,6 +324,10 @@ function renderMentor() {
       <button class="tool-btn" type="button" data-nav="audios-pnl">Áudios PNL para gravar</button>
       <button class="tool-btn" type="button" data-nav="conteudos-al">Conteúdos estratégicos para AL YouTube/TikTok</button>
       <a class="tool-btn" href="interno/apresentacao-curta-al.pdf" target="_blank" rel="noopener">Apresentação curta · AL</a>
+      <a class="tool-btn" href="interno/palestra-legado-teleprompt.pdf" target="_blank" rel="noopener">Palestra · teleprompt</a>
+      <a class="tool-btn" href="interno/palestra-legado-decorar.pdf" target="_blank" rel="noopener">Palestra · como decorar</a>
+      <a class="tool-btn" href="interno/palestra-legado-mapa.png" target="_blank" rel="noopener">Palestra · mapa</a>
+      <a class="tool-btn" href="interno/palestra-legado-slides.pdf" target="_blank" rel="noopener">Palestra · lâminas</a>
       <a class="tool-btn" href="interno/patrocinadores-b2b.pdf" target="_blank" rel="noopener">Patrocinadores · B2B</a>
     </article>
     ${renderSessoesAccess()}
