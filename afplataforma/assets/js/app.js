@@ -24,7 +24,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=rt18";
+} from "./navigation.js?v=rt22";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
@@ -52,6 +52,7 @@ import {
   renderLegadoTcc,
   renderLegadoSlides
 } from "./legado-mentor.js?v=rt20";
+import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -319,6 +320,7 @@ function renderMentor() {
       <button class="tool-btn" type="button" data-nav="legado-pitch">Pitch</button>
       <button class="tool-btn" type="button" data-nav="legado-tcc">Apresentação TCC</button>
       <button class="tool-btn" type="button" data-nav="legado-slides">Lâminas</button>
+      <button class="tool-btn" type="button" data-nav="audios-pnl">Áudios PNL para gravar</button>
     </article>
     ${renderSessoesAccess()}
     ${renderAccessAdminPanel()}
@@ -462,6 +464,7 @@ registerRenderers({
   "legado-pitch": renderLegadoPitch,
   "legado-tcc": renderLegadoTcc,
   "legado-slides": renderLegadoSlides,
+  "audios-pnl": renderAudiosPnl,
   showLocked,
   openTool,
   pickProduct: pickNewProductImage
@@ -472,6 +475,7 @@ onAfterNavigate((view) => {
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();
   if (view === "legado-dossie") bindLegadoDossie();
+  if (view === "audios-pnl") bindAudiosPnl();
   if (view === "mentor") {
     bindAccessAdmin();
     bindSessoesAccess();
