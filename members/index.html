@@ -258,7 +258,7 @@ const FAIXAS = {
       { nome: "Mentoria em Grupo", aulas: aulas(["Estratégia e Essência", "Vendas com Consciência", "Marca Pessoal", "Expansão"]) }
     ],
     cursos: [curso("zero", "Do Zero ao Zen e Negócios", 4, 12)],
-    livros: ["Coletânea Alinhamento Financeiro", "A Raiz da Riqueza", "A Criatividade Lucrativa", "O Poder da Prosperidade", "Amor pelo Sucesso Financeiro", "A Voz da Abundância", "A Visão da Fortuna", "A Conexão Divina com a Opulência", "Códigos de Origem", "Toth, Hermes e Enoque"],
+    livros: ["Coletânea Alinhamento Financeiro", "Códigos de Origem", "Toth, Hermes e Enoque"],
     audios: []
   }
 };
@@ -303,8 +303,18 @@ const LIVROS_ARQ = {
   "Amor pelo Sucesso Financeiro": "/members/livros/amor-sucesso-financeiro.pdf",
   "A Voz da Abundância": "/members/livros/voz-da-abundancia.pdf",
   "A Visão da Fortuna": "/members/livros/visao-da-fortuna.pdf",
-  "A Conexão Divina com a Opulência": "/members/livros/conexao-divina.pdf",
-  "Coletânea Alinhamento Financeiro": "/members/livros/raiz-da-riqueza.pdf"
+  "A Conexão Divina com a Opulência": "/members/livros/conexao-divina.pdf"
+};
+const COLETANEAS = {
+  "Coletânea Alinhamento Financeiro": [
+    "A Raiz da Riqueza",
+    "A Criatividade Lucrativa",
+    "O Poder da Prosperidade",
+    "Amor pelo Sucesso Financeiro",
+    "A Voz da Abundância",
+    "A Visão da Fortuna",
+    "A Conexão Divina com a Opulência"
+  ]
 };
 let catalogVideos = {};
 let cms = { cursos: [], livros: [], audios: [] };
@@ -319,6 +329,21 @@ function ownsArea(nivel) { return adminOn || rights.areas.includes(AREA[nivel]);
 function keyCurso(nivel, id) { return AREA[nivel] + ":" + id; }
 function ownsCurso(nivel, id) { return ownsArea(nivel) || rights.cursos.includes(keyCurso(nivel, id)); }
 function ownsLivro(nivel, nome) { return ownsArea(nivel) || rights.livros.includes(AREA[nivel] + ":" + nome); }
+function podeAbrirLivro(nome) {
+  if (ownsLivro(route.nivel, nome)) return true;
+  return Object.keys(COLETANEAS).some(pai => COLETANEAS[pai].includes(nome) && ownsLivro(route.nivel, pai));
+}
+function podeEntrarColecao(nome) {
+  if (ownsLivro(route.nivel, nome)) return true;
+  return (COLETANEAS[nome] || []).some(filho => ownsLivro(route.nivel, filho));
+}
+function capaLivroHtml(nome) {
+  const ficha = fichaLivro(nome);
+  const fixa = CAPA_FIXA[nome];
+  if (fixa) return `<img class="capa" alt="Capa de ${esc(nome)}" src="${esc(fixa)}">`;
+  if (ficha && ficha.capa) return `<img class="capa" alt="" src="${esc(ficha.capa)}">`;
+  return `<div class="cover">E-BOOK</div>`;
+}
 function ownsAudio(nivel, nome) { return ownsArea(nivel) || rights.audios.includes(AREA[nivel] + ":" + nome); }
 function ytId(url) {
   const text = String(url || "").trim();
@@ -607,15 +632,13 @@ function livros() {
     ${adminOn ? `<div class="row"><button id="criarLivroCard">Criar ebook nesta faixa</button></div>` : ""}
     <div class="books">${livrosVisiveis().map(nome => {
       const ficha = fichaLivro(nome);
-      const fixa = CAPA_FIXA[nome];
-      const capa = fixa
-        ? `<img class="capa" alt="Capa de ${esc(nome)}" src="${esc(fixa)}">`
-        : ficha && ficha.capa
-          ? `<img class="capa" alt="" src="${esc(ficha.capa)}">`
-          : `<div class="cover">E-BOOK</div>`;
+      const filhos = COLETANEAS[nome];
+      const capa = filhos ? `<div class="cover">COLETÂNEA</div>` : capaLivroHtml(nome);
       const oculto = ficha && (ficha.status === "oculto" || ficha.status === "rascunho");
       const atos = adminOn ? `<div class="acts"><button type="button" data-edit-livro="${esc(nome)}">Editar</button><button type="button" data-del-livro="${esc(nome)}">Apagar</button></div>` : "";
-      return `<article class="book">${capa}<strong>${esc(nome)}</strong>${oculto ? `<p class="sub">Oculto para os alunos</p>` : ""}<div class="row"><button data-livro="${esc(nome)}">Abrir livro</button></div>${atos}</article>`;
+      const extra = filhos ? `<p class="sub">${filhos.length} livros dentro</p>` : "";
+      const rotulo = filhos ? "Abrir coletânea" : "Abrir livro";
+      return `<article class="book">${capa}<strong>${esc(nome)}</strong>${extra}${oculto ? `<p class="sub">Oculto para os alunos</p>` : ""}<div class="row"><button data-livro="${esc(nome)}">${rotulo}</button></div>${atos}</article>`;
     }).join("") || "<p class='sub'>Nenhum livro neste nível ainda.</p>"}</div>
     <p class="note" id="livroNote"></p>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
@@ -629,9 +652,34 @@ function livros() {
   });
   document.querySelectorAll("[data-livro]").forEach(btn => {
     btn.onclick = () => {
-      if (!adminOn && !ownsLivro(route.nivel, btn.dataset.livro)) { comprar("livro", btn.dataset.livro); return; }
-      const arquivo = arquivoLivro(btn.dataset.livro);
-      if (!arquivo) { document.getElementById("livroNote").textContent = btn.dataset.livro + " · o arquivo ainda não entrou."; return; }
+      const nome = btn.dataset.livro;
+      if (COLETANEAS[nome]) {
+        if (!adminOn && !podeEntrarColecao(nome)) { comprar("livro", nome); return; }
+        coletanea(nome);
+        return;
+      }
+      if (!adminOn && !podeAbrirLivro(nome)) { comprar("livro", nome); return; }
+      const arquivo = arquivoLivro(nome);
+      if (!arquivo) { document.getElementById("livroNote").textContent = nome + " · o arquivo ainda não entrou."; return; }
+      window.open(arquivo, "_blank");
+    };
+  });
+}
+function coletanea(nome) {
+  const filhos = COLETANEAS[nome] || [];
+  document.getElementById("app").innerHTML = `
+    <p class="crumb"><button data-back="livros">Livros</button> · ${esc(nome)}</p>
+    <h1>${esc(nome)}</h1>
+    <p class="sub">Sete livros. Quem tem a coletânea, ou a faixa Rá, abre todos. Quem tem só um, abre esse.</p>
+    <div class="books">${filhos.map(item => `<article class="book">${capaLivroHtml(item)}<strong>${esc(item)}</strong><div class="row"><button data-livro="${esc(item)}">Abrir livro</button></div></article>`).join("")}</div>
+    <p class="note" id="livroNote"></p>`;
+  document.querySelector("[data-back]").onclick = () => livros();
+  document.querySelectorAll("[data-livro]").forEach(btn => {
+    btn.onclick = () => {
+      const item = btn.dataset.livro;
+      if (!adminOn && !podeAbrirLivro(item)) { comprar("livro", item); return; }
+      const arquivo = arquivoLivro(item);
+      if (!arquivo) { document.getElementById("livroNote").textContent = item + " · o arquivo ainda não entrou."; return; }
       window.open(arquivo, "_blank");
     };
   });
@@ -913,7 +961,7 @@ function checks() {
       return `<label><input type="checkbox" data-kind="curso" value="${area}:${c.id}"> ${esc(c.titulo)}${aviso}</label>`;
     }).join("");
     const livrosOcultos = new Set((cms.livros || []).filter(l => l.faixa === area && (l.status === "apagado" || l.status === "oculto")).map(l => l.titulo));
-    const livros = f.livros.concat((cms.livros || []).filter(l => l.faixa === area && l.titulo && l.status !== "apagado" && l.status !== "oculto" && !f.livros.includes(l.titulo)).map(l => l.titulo)).filter(nome => !livrosOcultos.has(nome)).map(nome => `<label><input type="checkbox" data-kind="livro" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
+    const livros = f.livros.concat((cms.livros || []).filter(l => l.faixa === area && l.titulo && l.status !== "apagado" && l.status !== "oculto" && !f.livros.includes(l.titulo)).map(l => l.titulo)).filter(nome => !livrosOcultos.has(nome)).flatMap(nome => [nome].concat(COLETANEAS[nome] || [])).filter((nome, i, lista) => lista.indexOf(nome) === i).map(nome => `<label><input type="checkbox" data-kind="livro" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
     const audiosOcultos = new Set((cms.audios || []).filter(a => a.faixa === area && (a.status === "apagado" || a.status === "oculto")).map(a => a.titulo));
     const audios = f.audios.concat((cms.audios || []).filter(a => a.faixa === area && a.titulo && a.status !== "apagado" && a.status !== "oculto" && !f.audios.includes(a.titulo)).map(a => a.titulo)).filter(nome => !audiosOcultos.has(nome)).map(nome => `<label><input type="checkbox" data-kind="audio" value="${area}:${esc(nome)}"> ${esc(nome)}</label>`).join("");
     return `<div class="book" style="margin-top:12px"><strong>${esc(f.nome)}</strong><label><input type="checkbox" data-kind="area" value="${area}"> Faixa inteira. Abre o que estiver publicado nesta faixa, inclusive curso novo.</label>${cursos}${livros}${audios}</div>`;
