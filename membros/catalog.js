@@ -56,7 +56,7 @@ window.AKASHA_PRECO = {
   area: { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 },
   curso: {
     "anubis:alinhamento":18900,"anubis:7-dias":18000,
-    "horus:techub":6300,"horus:arte-da-analogia":7200,"horus:senda":77700,"horus:despertar":30000,"horus:prosperidade":77700,
+    "horus:techub":6300,"horus:arte-da-analogia":7200,"horus:arte-da-conquista":7200,"horus:senda":77700,"horus:despertar":30000,"horus:prosperidade":77700,
     "isis:paladins":250000,"isis:jornada":60000,"amon:zero":516300
   },
   livro: {
@@ -129,8 +129,9 @@ window.akashaOferta = function (ref) {
     };
     titulo = nomes[item] || item;
   }
-  var capas = {"alinhamento":"/members/capas/codigo-de-alinhamento.jpg?v=ca5","7-dias":"/members/capas/sete-dias-magnetismo.jpg?v=m2","techub":"/members/capas/techub.jpg?v=t3","arte-da-analogia":"/members/capas/arte-da-analogia.jpg","senda":"/members/capas/senda-tantrica.jpg?v=s2","prosperidade":"/members/capas/tantra-prosperidade.jpg","despertar":"/members/capas/despertar-magnetismo.jpg","paladins":"/members/capas/paladins-curso.jpg?v=pc2","jornada":"/members/capas/jornada-transformacao.jpg?v=j1","zero":"/members/capas/zero-ao-zen.jpg?v=z2"};
-  return { ref: kind + ":" + area + ":" + item, nome: titulo, cents: valor, label: window.akashaReais(valor), capa: kind === "curso" ? (capas[item] || "") : "" };
+  var capas = {"alinhamento":"/members/capas/codigo-de-alinhamento.jpg?v=ca5","7-dias":"/members/capas/sete-dias-magnetismo.jpg?v=m2","techub":"/members/capas/techub.jpg?v=t3","arte-da-analogia":"/members/capas/arte-da-conquista.svg","arte-da-conquista":"/members/capas/arte-da-conquista.svg","senda":"/members/capas/senda-tantrica.jpg?v=s2","prosperidade":"/members/capas/tantra-prosperidade.jpg","despertar":"/members/capas/despertar-magnetismo.jpg","paladins":"/members/capas/paladins-curso.jpg?v=pc2","jornada":"/members/capas/jornada-transformacao.jpg?v=j1","zero":"/members/capas/zero-ao-zen.jpg?v=z2"};
+  var capasLivros = {"Código Quântico":"/members/capas/codigo-quantico.jpg?v=cq1","O Código Secreto do Universo":"/members/capas/codigo-secreto.jpg?v=c2","Código Secreto do Universo":"/members/capas/codigo-secreto.jpg?v=c2","Revelações Quânticas":"/members/capas/revelacoes-quanticas.jpg?v=c3","O Fim das Trevas":"/members/capas/fim-das-trevas.jpg?v=ft2","Código de Conduta dos que Despertam":"/members/capas/codigo-de-conduta.jpg?v=c3","Código de Conduta":"/members/capas/codigo-de-conduta.jpg?v=c3","Honrar a Deusa":"/members/capas/honrar-a-deusa.jpg?v=c3","Mini Curso de Energia Sexual":"/members/capas/energia-sexual.jpg?v=c2","O Que é Tantra?":"/members/capas/o-que-e-tantra.jpg?v=c2","Shiva, Shakti e Shava":"/members/capas/shiva-shakti-shava.jpg?v=c2","Tantra Descomplicado":"/members/capas/tantra-descomplicado.jpg?v=c2","Autoestima Blindada":"/members/capas/autoestima-blindada.jpg?v=c3","Como Blindar Sua Mente?":"/members/capas/blindar-mente.jpg?v=c2","Kemet":"/members/capas/kemet.jpg?v=c2","Triplex na Mente":"/members/capas/triplex-mente.jpg?v=c3","Tecnologia da Alma":"/members/capas/tecnologia-da-alma.jpg?v=c4","A Arte da Conquista · Livro de Vendas":"/members/capas/arte-da-conquista.svg","Paladin":"/members/capas/paladin.jpg?v=p2","Do Zero ao Zen Negócios":"/members/capas/zero-ao-zen.jpg?v=z2","Códigos de Origem":"/members/capas/codigos-de-origem.jpg?v=o2","Coletânea Alinhamento Financeiro":"/members/capas/coletanea-alinhamento.jpg?v=c5","Toth, Hermes e Enoque":"/members/capas/toth-hermes-enoque.jpg?v=c6"};
+  return { ref: kind + ":" + area + ":" + item, nome: titulo, cents: valor, label: window.akashaReais(valor), capa: kind === "curso" ? (capas[item] || "") : kind === "livro" ? (capasLivros[item] || "") : "" };
 };
 
 window.AKASHA_LINKS = {};
