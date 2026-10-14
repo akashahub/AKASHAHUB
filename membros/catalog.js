@@ -5,13 +5,13 @@ window.AKASHA_AREAS = [
     tag: "Faixa azul",
     img: "https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0001_dkra3y.jpg",
     courses: [
-      ["alinhamento-akasha", "Código de Alinhamento Akasha"],
-      ["desafio-7-dias", "Desafio 7 Dias de Magnetismo"],
-      ["ritual-casais", "Ritual para Casais: Intimidade"],
-      ["tantra-nao-e-sexo", "Tantra é Diferente de Sexo"],
-      ["poder-fascinacao", "O Poder da Fascinação"]
+      ["alinhamento", "Código de Alinhamento Akasha"],
+      ["7-dias", "Desafio 7 Dias de Magnetismo"],
+      ["casais", "Ritual para Casais: Intimidade"],
+      ["tantra", "Tantra é Diferente de Sexo"],
+      ["fascinacao", "O Poder da Fascinação"]
     ],
-    books: ["O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas"],
+    books: ["O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas", "O Fim das Trevas"],
     audios: ["Pack de frequências"]
   },
   {
@@ -20,11 +20,13 @@ window.AKASHA_AREAS = [
     tag: "Faixa roxa",
     img: "https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0002_udbfpg.jpg",
     courses: [
-      ["senda-tantrica", "A Senda Tântrica"],
-      ["tantra-prosperidade", "Tantra Quântico e Prosperidade"],
-      ["despertar-magnetismo", "Despertar do Magnetismo"]
+      ["techub", "Techub"],
+      ["arte-da-analogia", "A Arte da Analogia"],
+      ["senda", "A Senda Tântrica"],
+      ["prosperidade", "Tantra é Quântico e Prosperidade"],
+      ["despertar", "Despertar do Magnetismo"]
     ],
-    books: ["Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado"],
+    books: ["Código de Conduta dos que Despertam", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado", "Mini Curso de Energia Sexual", "A Arte da Conquista · Livro de Vendas"],
     audios: []
   },
   {
@@ -34,9 +36,9 @@ window.AKASHA_AREAS = [
     img: "https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0003_ueh0c4.jpg",
     courses: [
       ["paladins", "Paladins: A Liderança dos Bons"],
-      ["jornada-transformacao", "Jornada de Transformação"]
+      ["jornada", "Jornada de Transformação"]
     ],
-    books: ["Autoestima Blindada", "Como Blindar Sua Mente?", "Triplex na Mente"],
+    books: ["Paladin", "Tecnologia da Alma", "Autoestima Blindada", "Kemet", "Triplex na Mente", "Como Blindar Sua Mente?"],
     audios: []
   },
   {
@@ -45,9 +47,9 @@ window.AKASHA_AREAS = [
     tag: "Faixa preta",
     img: "https://res.cloudinary.com/dcbarseus/image/upload/v1780452806/IMG-20260415-WA0004_xn5dod.jpg",
     courses: [
-      ["zero-ao-zen", "Do Zero ao Zen e Negócios"]
+      ["zero", "Do Zero ao Zen Negócios"]
     ],
-    books: ["Coletânea Alinhamento Financeiro", "Códigos de Origem"],
+    books: ["Coletânea Alinhamento Financeiro", "Toth, Hermes e Enoque", "Do Zero ao Zen Negócios", "Códigos de Origem"],
     audios: []
   }
 ];
