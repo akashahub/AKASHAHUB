@@ -99,6 +99,8 @@ Deno.serve(async (req) => {
   try { body = await req.json(); } catch { return json({ error: "invalid_json" }, 400); }
   const stripe = new Stripe(key, { apiVersion: "2024-06-20" });
 
+  const identity = await firebaseIdentity(String(body.idToken || ""));
+  if (!identity.email || !identity.uid) return json({ error: "auth_required" }, 401);
   if (body.action === "grants") return json(await grants(stripe, body));
 
   const member = memberProduct(String(body.ref || ""));
@@ -107,10 +109,10 @@ Deno.serve(async (req) => {
 
   const success = safeUrl(body.success_url, "https://akashahub.com.br/store/sucesso/");
   const cancel = safeUrl(body.cancel_url, "https://akashahub.com.br/store/");
-  const email = String(body.email || "").trim().toLowerCase();
+  const email = identity.email;
   const metadata = member
-    ? { source: "akasha-members", kind: member.kind, area: member.area, item: member.item, buyer: email }
-    : { sku: String(body.sku || ""), source: "akasha-store", name: body.name || "" };
+    ? { source: "akasha-members", kind: member.kind, area: member.area, item: member.item, buyer: email, firebaseUid: identity.uid }
+    : { sku: String(body.sku || ""), source: "akasha-store", name: body.name || "", buyer: email, firebaseUid: identity.uid };
 
   const session = await openCheckout(stripe, {
     mode: "payment",
@@ -181,9 +183,14 @@ async function emailFromToken(idToken) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ idToken }),
   });
-  if (!res.ok) return "";
+  if (!res.ok) return { email: "", uid: "" };
   const data = await res.json();
-  return String(data.users?.[0]?.email || "").toLowerCase();
+  const u = data.users?.[0] || {};
+  return { email: String(u.email || "").trim().toLowerCase(), uid: String(u.localId || "") };
+}
+
+async function emailFromToken(idToken: string) {
+  return (await firebaseIdentity(idToken)).email;
 }
 
 function addGrant(out, meta) {
