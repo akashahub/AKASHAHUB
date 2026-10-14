@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Livros e Cursos · Akasha Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+body{margin:0;background:#fff;color:#1c140c;font-family:Jost,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:40px 20px}
+h1{font-family:"Playfair Display",serif;font-size:36px;text-align:center}
+.sub{text-align:center;color:#6a5e52;margin-bottom:40px}
+.section{margin:40px 0}
+h2{font-family:"Playfair Display",serif;border-bottom:1px solid #e8dcc0;padding-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:20px}
+.card{border:1px solid #e8dcc0;border-radius:12px;padding:16px;background:#fff}
+.card h3{margin:0 0 6px;font-size:18px;font-family:"Playfair Display",serif}
+.card .area{font-size:12px;color:#c9a24b;letter-spacing:.1em;text-transform:uppercase}
+.card .price{font-size:20px;color:#1c140c;margin:8px 0}
+.btn{display:inline-block;background:#c9a24b;color:#402d00;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px}
+.btn:hover{background:#e9cd82}
+.nav{text-align:center;margin-bottom:20px}
+.nav a{margin:0 10px;color:#c9a24b;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="nav"><a href="/membros/">← Faixas</a> <a href="/members/">Minha área</a></div>
+  <h1>Livros e Cursos Individuais</h1>
+  <p class="sub">Compre só o que precisa. Pagamento via Stripe (cartão ou Pix). Acesso liberado automaticamente na sua conta.</p>
+
+  <div class="section">
+    <h2>Livros</h2>
+    <div class="grid" id="livros"></div>
+  </div>
+  <div class="section">
+    <h2>Cursos</h2>
+    <div class="grid" id="cursos"></div>
+  </div>
+</div>
+
+<script src="./catalog.js"></script>
+<script>
+function render() {
+  const livros = document.getElementById("livros");
+  const cursos = document.getElementById("cursos");
+  AKASHA_AREAS.forEach(area => {
+    area.books.forEach(titulo => {
+      const oferta = akashaOferta("livro:" + area.id + ":" + titulo);
+      if (!oferta) return;
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `<div class="area">${area.name}</div><h3>${oferta.nome}</h3><div class="price">${oferta.label}</div><a class="btn" href="/membros/checkout.html?ref=${encodeURIComponent(oferta.ref)}">Comprar</a>`;
+      livros.appendChild(card);
+    });
+    area.courses.forEach(([id, titulo]) => {
+      const oferta = akashaOferta("curso:" + area.id + ":" + id);
+      if (!oferta) return;
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `<div class="area">${area.name}</div><h3>${oferta.nome}</h3><div class="price">${oferta.label}</div><a class="btn" href="/membros/checkout.html?ref=${encodeURIComponent(oferta.ref)}">Comprar</a>`;
+      cursos.appendChild(card);
+    });
+  });
+}
+render();
+</script>
+</body>
+</html>
