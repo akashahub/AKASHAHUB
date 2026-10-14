@@ -130,7 +130,7 @@ const AREA = { 1: "anubis", 2: "horus", 3: "isis", 4: "amon" };
 const PRECO_FAIXA = { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 };
 const PRECO_ITEM = { curso: 2700, livro: 1700, audio: 700 };
 const PRECOS_INDIVIDUAIS = { anubis:{curso:{alinhamento:18900,"7-dias":18000},livro:{"O Código Secreto do Universo":2500,"Código Secreto do Universo":2500,"Código Quântico":4700,"Revelações Quânticas":1500,"O Fim das Trevas":1800}},horus:{curso:{techub:6300,"arte-da-analogia":7200,senda:77700,despertar:30000,prosperidade:77700},livro:{"Código de Conduta dos que Despertam":4200,"Código de Conduta":4200,"O Que é Tantra?":2500,"Shiva, Shakti e Shava":2500,"Honrar a Deusa":4200,"Tantra Descomplicado":2500,"Mini Curso de Energia Sexual":2500,"A Arte da Conquista · Livro de Vendas":3000}},isis:{curso:{paladins:250000,jornada:60000},livro:{Paladin:18700,Paladins:18700,"Tecnologia da Alma":8700,"Autoestima Blindada":4300,Kemet:3990,"Triplex na Mente":3990,"Como Blindar Sua Mente?":4300}},amon:{curso:{zero:516300},livro:{"Coletânea Alinhamento Financeiro":9900,"Toth, Hermes e Enoque":1800,"Do Zero ao Zen Negócios":9900,"Códigos de Origem":9000}}};
-function precoProduto(kind,item){return (((PRECOS_INDIVIDUAIS[AREA[route.nivel]]||{})[kind]||{})[item]) ?? PRECO_ITEM[kind] ?? 0;}
+function precoProduto(kind,item){return (((PRECOS_INDIVIDUAIS[AREA[route.nivel]]||{})[kind]||{})[item]) ?? 0;}
 function reais(cents) { return (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); }
 function precoDe(kind) {
   if (kind === "area") return PRECO_FAIXA[AREA[route.nivel]];
@@ -652,7 +652,7 @@ function cursos() {
       const capa = item.capa ? `<img class="capa" alt="Capa de ${esc(item.titulo)}" src="${esc(item.capa)}">` : "";
       const atos = adminOn ? `<div class="acts"><button type="button" data-edit-curso="${esc(item.id)}">Editar</button><button type="button" data-del-curso="${esc(item.id)}">Apagar</button></div>` : "";
       const marca = adminOn && item.status === "oculto" ? `<p class="sub">Oculto para os alunos</p>` : "";
-      return `<article class="course" data-curso="${esc(item.id)}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong>${item.descricao ? `<p class="sub">${esc(item.descricao)}</p>` : ""}<p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p>${marca}<span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : "ACESSO INDIVIDUAL"}</span>${!open ? `<div class="price-tag">${reais(precoProduto("curso",item.id))}</div><button class="product-buy" type="button" data-buy-course="${esc(item.id)}">Comprar curso</button>` : ""}${atos}</article>`;
+      return `<article class="course" data-curso="${esc(item.id)}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong>${item.descricao ? `<p class="sub">${esc(item.descricao)}</p>` : ""}<p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p>${marca}<span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : "ACESSO INDIVIDUAL"}</span>${!open && precoProduto("curso",item.id) > 0 ? `<div class="price-tag">${reais(precoProduto("curso",item.id))}</div><button class="product-buy" type="button" data-buy-course="${esc(item.id)}">Comprar curso</button>` : (!open ? `<div class="price-tag">Preço em definição</div>` : "")}${atos}</article>`;
     }).join("")}</div>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
   const criarCursoCard = document.getElementById("criarCursoCard");
@@ -772,7 +772,7 @@ function livros() {
       const atos = adminOn ? `<div class="acts"><button type="button" data-edit-livro="${esc(nome)}">Editar</button><button type="button" data-del-livro="${esc(nome)}">Apagar</button></div>` : "";
       const extra = filhos ? `<p class="sub">${filhos.length} livros dentro</p>` : "";
       const rotulo = filhos ? "Abrir coletânea" : "Abrir livro";
-      const preco = precoProduto("livro",nome); return `<article class="book">${capa}<strong>${esc(nome)}</strong>${extra}${oculto ? `<p class="sub">Oculto para os alunos</p>` : ""}<div class="price-tag">${reais(preco)}</div><div class="row"><button data-livro="${esc(nome)}">${rotulo}</button></div>${!ownsLivro(route.nivel,nome) ? `<button class="product-buy" type="button" data-buy-book="${esc(nome)}">Comprar este livro</button>` : ""}${atos}</article>`;
+      const preco = precoProduto("livro",nome); return `<article class="book">${capa}<strong>${esc(nome)}</strong>${extra}${oculto ? `<p class="sub">Oculto para os alunos</p>` : ""}<div class="price-tag">${reais(preco)}</div><div class="row"><button data-livro="${esc(nome)}">${rotulo}</button></div>${!ownsLivro(route.nivel,nome) && preco > 0 ? `<button class="product-buy" type="button" data-buy-book="${esc(nome)}">Comprar este livro</button>` : ""}${atos}</article>`;
     }).join("") || "<p class='sub'>Nenhum livro neste nível ainda.</p>"}</div>
     <p class="note" id="livroNote"></p>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
