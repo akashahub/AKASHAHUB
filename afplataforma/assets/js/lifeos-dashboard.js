@@ -6,7 +6,7 @@ import { session } from "./auth.js";
 import { esc, unlockedCount, nextModule } from "./navigation.js";
 
 export function renderLifeOsDashboard() {
-  const nome = String(session.name || "bem-vindo").trim().split(/\s+/)[0];
+  const nome = String(session.name || "").trim().split(/\s+/)[0];
   const abertos = unlockedCount();
   const proximo = nextModule();
   const fases = [
