@@ -144,6 +144,7 @@ export function renderFase2() {
 
 export function renderFase3() {
   const recursos = [
+    ["af-dashboard", "Dashboard AF atual"],
     ["modules", "Módulos"],
     ["tools", "Ferramentas"],
     ["call", "Call"],
