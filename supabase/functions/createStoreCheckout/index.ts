@@ -220,3 +220,80 @@ function json(data, status = 200) {
     headers: { ...cors, "Content-Type": "application/json" },
   });
 }
+function memberProductLegacyDisabled(_ref: string) { return null; }
+
+async function openCheckout(stripe, fields) {
+  try {
+    return await stripe.checkout.sessions.create({
+      ...fields,
+      payment_method_types: ["card", "pix"],
+      payment_method_options: { pix: { expires_after_seconds: 1800 } },
+    });
+  } catch (err) {
+    const message = String(err && err.message || "");
+    if (!/pix/i.test(message)) throw err;
+    return stripe.checkout.sessions.create({
+      ...fields,
+      payment_method_types: ["card"],
+    });
+  }
+}
+
+function safeUrl(url, fallback) {
+  try {
+    const parsed = new URL(String(url || ""));
+    if (parsed.hostname === "akashahub.com.br") return parsed.toString();
+  } catch { /* ignore */ }
+  return fallback;
+}
+
+async function emailFromToken(idToken) {
+  const apiKey = "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4";
+  const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + apiKey, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ idToken }),
+  });
+  if (!res.ok) return "";
+  const data = await res.json();
+  return String(data.users?.[0]?.email || "").toLowerCase();
+}
+
+function addGrant(out, meta) {
+  if (!meta || !meta.kind || !meta.area) return;
+  if (meta.kind === "area" && !out.areas.includes(meta.area)) out.areas.push(meta.area);
+  const key = meta.area + ":" + (meta.item || "");
+  if (meta.kind === "curso" && meta.item && !out.cursos.includes(key)) out.cursos.push(key);
+  if (meta.kind === "livro" && meta.item && !out.livros.includes(key)) out.livros.push(key);
+  if (meta.kind === "audio" && meta.item && !out.audios.includes(key)) out.audios.push(key);
+}
+
+async function grants(stripe, body) {
+  const email = await emailFromToken(String(body.idToken || ""));
+  if (!email) return { error: "login", areas: [], cursos: [], livros: [], audios: [] };
+  const out = { areas: [], cursos: [], livros: [], audios: [] };
+  const sessions = Array.isArray(body.sessions) ? body.sessions.slice(0, 20) : [];
+  for (const id of sessions) {
+    if (!String(id).startsWith("cs_")) continue;
+    try {
+      const session = await stripe.checkout.sessions.retrieve(String(id));
+      const buyer = String(session.metadata?.buyer || session.customer_email || "").toLowerCase();
+      if (session.payment_status === "paid" && buyer === email) addGrant(out, session.metadata);
+    } catch { /* sessão inválida */ }
+  }
+  try {
+    const found = await stripe.paymentIntents.search({
+      query: "status:'succeeded' AND metadata['buyer']:'" + email.replace(/'/g, "") + "'",
+      limit: 100,
+    });
+    for (const pi of found.data || []) addGrant(out, pi.metadata);
+  } catch { /* busca pode atrasar; a sessão acima cobre a volta do pagamento */ }
+  return out;
+}
+
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { ...cors, "Content-Type": "application/json" },
+  });
+}
