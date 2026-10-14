@@ -54,6 +54,7 @@ import {
   renderConteudosAl
 } from "./legado-mentor.js?v=rt25";
 import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
+import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audios-pnl.js?v=1";
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 
 function toast(msg, err = false) {
@@ -329,7 +330,8 @@ function renderMentor() {
       <button class="tool-btn" type="button" data-nav="legado-pitch">Pitch</button>
       <button class="tool-btn" type="button" data-nav="legado-tcc">Apresentação TCC</button>
       <button class="tool-btn" type="button" data-nav="legado-slides">Lâminas</button>
-      <button class="tool-btn" type="button" data-nav="audios-pnl">Áudios PNL para gravar</button>
+      <button class="tool-btn" type="button" data-nav="producao-audios-pnl">PRODUÇÃO ÁUDIOS PNL</button>
+      <button class="tool-btn" type="button" data-nav="audios-pnl">Biblioteca antiga de áudios</button>
       <button class="tool-btn" type="button" data-nav="conteudos-al">Conteúdos estratégicos para AL YouTube/TikTok</button>
       <a class="tool-btn" href="interno/apresentacao-curta-al.pdf" target="_blank" rel="noopener">Apresentação curta · AL</a>
       <a class="tool-btn" href="interno/palestra-legado-teleprompt.pdf" target="_blank" rel="noopener">Palestra · teleprompt</a>
@@ -489,6 +491,7 @@ registerRenderers({
   "conteudos-al": renderConteudosAl,
   "vendas-curso": renderVendasCurso,
   "audios-pnl": renderAudiosPnl,
+  "producao-audios-pnl": renderProducaoAudiosPnl,
   showLocked,
   openTool,
   pickProduct: pickNewProductImage
@@ -500,6 +503,7 @@ onAfterNavigate((view) => {
   if (view === "fase1-jogo") bindFase1Jogo();
   if (view === "legado-dossie") bindLegadoDossie();
   if (view === "audios-pnl") bindAudiosPnl();
+  if (view === "producao-audios-pnl") bindProducaoAudiosPnl();
   if (view === "mentor") {
     bindAccessAdmin();
     bindSessoesAccess();
