@@ -18,9 +18,11 @@ const CATALOG = {
 const AREA_CENTS = { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 };
 const COURSE_PRICES: Record<string, number> = {
   "anubis:alinhamento": 18900, "anubis:7-dias": 18000,
+  "anubis:alinhamento-akasha": 18900, "anubis:desafio-7-dias": 18000,
   "horus:techub": 6300, "horus:arte-da-analogia": 7200, "horus:arte-da-conquista": 7200,
   "horus:senda": 77700, "horus:despertar": 30000, "horus:prosperidade": 77700,
-  "isis:paladins": 250000, "isis:jornada": 60000, "amon:zero": 516300,
+  "horus:senda-tantrica": 77700, "horus:tantra-prosperidade": 77700, "horus:despertar-magnetismo": 30000,
+  "isis:paladins": 250000, "isis:jornada": 60000, "isis:jornada-transformacao": 60000, "amon:zero": 516300, "amon:zero-ao-zen": 516300,
 };
 const BOOK_PRICES: Record<string, number> = {
   "anubis:Código Secreto do Universo": 2500, "anubis:O Código Secreto do Universo": 2500,
@@ -37,22 +39,22 @@ const BOOK_PRICES: Record<string, number> = {
 };
 const ITENS: Record<string, Record<string, string[]>> = {
   anubis: {
-    curso: ["alinhamento", "7-dias", "casais", "tantra", "fascinacao"],
+    curso: ["alinhamento", "7-dias", "casais", "tantra", "fascinacao", "alinhamento-akasha", "desafio-7-dias"],
     livro: ["Código Secreto do Universo", "O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas", "O Fim das Trevas"],
     audio: ["Mente Crística", "Pai Nosso", "Avê Maria", "Cura das Feridas Invisíveis", "O Código Secreto do Universo"],
   },
   horus: {
-    curso: ["techub", "arte-da-analogia", "arte-da-conquista", "senda", "prosperidade", "despertar"],
+    curso: ["techub", "arte-da-analogia", "arte-da-conquista", "senda", "prosperidade", "despertar", "senda-tantrica", "tantra-prosperidade", "despertar-magnetismo"],
     livro: ["Código de Conduta dos que Despertam", "Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado", "Mini Curso de Energia Sexual", "A Arte da Conquista · Livro de Vendas"],
     audio: [],
   },
   isis: {
-    curso: ["paladins", "jornada"],
+    curso: ["paladins", "jornada", "jornada-transformacao"],
     livro: ["Paladin", "Paladins", "Tecnologia da Alma", "Autoestima Blindada", "Kemet", "Triplex na Mente", "Como Blindar Sua Mente?"],
     audio: [],
   },
   amon: {
-    curso: ["zero"],
+    curso: ["zero", "zero-ao-zen"],
     livro: ["Coletânea Alinhamento Financeiro", "Toth, Hermes e Enoque", "Do Zero ao Zen Negócios", "Códigos de Origem"],
     audio: [],
   },
@@ -62,7 +64,8 @@ const NOMES: Record<string, string> = {
   casais: "Ritual para Casais", tantra: "Tantra Diferente de Sexo", fascinacao: "O Poder da Fascinação",
   techub: "Techub", "arte-da-analogia": "A Arte da Analogia", "arte-da-conquista": "A Arte da Analogia",
   senda: "Senda Tântrica", prosperidade: "Tantra é Quântico e Prosperidade", despertar: "Despertar do Magnetismo",
-  paladins: "Paladins: A Liderança dos Bons", jornada: "Jornada de Transformação", zero: "Do Zero ao Zen Negócios",
+  "senda-tantrica": "A Senda Tântrica", "tantra-prosperidade": "Tantra é Quântico e Prosperidade", "despertar-magnetismo": "Despertar do Magnetismo",
+  paladins: "Paladins: A Liderança dos Bons", jornada: "Jornada de Transformação", "jornada-transformacao": "Jornada de Transformação", zero: "Do Zero ao Zen Negócios", "zero-ao-zen": "Do Zero ao Zen Negócios",
 };
 const FAIXA: Record<string, string> = { anubis: "Anúbis", horus: "Hórus", isis: "Ísis", amon: "Rá" };
 
@@ -75,7 +78,22 @@ const cors = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-  const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
+  let key = Deno.env.get("STRIPE_SECRET_KEY") || "";
+  if (!key) {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+    if (supabaseUrl && serviceKey) {
+      const secretRes = await fetch(supabaseUrl + "/rest/v1/app_secrets?name=eq.STRIPE_SECRET_KEY&select=value", {
+        headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, Accept: "application/json" },
+      });
+      if (secretRes.ok) {
+        const rows = await secretRes.json();
+        key = String(rows?.[0]?.value || "");
+      } else {
+        console.error("[createStoreCheckout] app_secrets read failed:", secretRes.status);
+      }
+    }
+  }
   if (!key) return json({ error: "stripe_not_configured" }, 503);
   let body = {};
   try { body = await req.json(); } catch { return json({ error: "invalid_json" }, 400); }
