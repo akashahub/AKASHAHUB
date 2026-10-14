@@ -128,7 +128,7 @@ Deno.serve(async (req) => {
     cancel_url: cancel,
     customer_email: email || undefined,
     metadata,
-    payment_intent_data: { metadata },
+    payment_intent_data: { metadata, receipt_email: email || undefined },
     allow_promotion_codes: true,
   });
   return json({ url: session.url, id: session.id });
