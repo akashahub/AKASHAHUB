@@ -195,7 +195,12 @@ async function grantIndividualProduct(email: string, meta: Record<string, string
   const fields = { areas: arr(areas), cursos: arr(cursos), livros: arr(livros), audios: arr(audios), email: { stringValue: email }, updatedAt: { timestampValue: new Date().toISOString() } };
   const mask = ["areas", "cursos", "livros", "audios", "email", "updatedAt"].map((p) => "updateMask.fieldPaths=" + encodeURIComponent(p)).join("&");
   const write = await fetch(docUrl + "?" + mask, { method: "PATCH", headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" }, body: JSON.stringify({ fields }) });
-  if (!write.ok) throw new Error("firestore_grant_write_" + write.status);
+  if (write.status === 404) {
+    const create = await fetch("https://firestore.googleapis.com/v1/projects/hub-akasha/databases/(default)/documents/membrosAcessos?documentId=" + encodeURIComponent(email), {
+      method: "POST", headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" }, body: JSON.stringify({ fields }),
+    });
+    if (!create.ok) throw new Error("firestore_grant_create_" + create.status);
+  } else if (!write.ok) throw new Error("firestore_grant_write_" + write.status);
 }
 async function recordIndividualPurchase(session: any, meta: Record<string, string>) {
   const url = Deno.env.get("SUPABASE_URL") || "", serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
