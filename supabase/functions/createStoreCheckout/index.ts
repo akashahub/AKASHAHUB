@@ -176,7 +176,8 @@ function safeUrl(url, fallback) {
   return fallback;
 }
 
-async function emailFromToken(idToken) {
+async function firebaseIdentity(idToken: string) {
+  if (!idToken) return { email: "", uid: "" };
   const apiKey = "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4";
   const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + apiKey, {
     method: "POST",
