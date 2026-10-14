@@ -185,7 +185,7 @@
     .al-welcome-copy p{max-width:570px;margin-bottom:18px;color:#51465b}
     .al-welcome-note{display:block;margin-top:12px;font-size:11px;letter-spacing:.04em;color:#655873}
     .al-welcome-poster{position:relative;width:100%;aspect-ratio:9/13;overflow:hidden;border:1px solid rgba(92,61,120,.25);border-radius:18px;padding:0;background:#1b1522;cursor:pointer;box-shadow:0 16px 35px rgba(35,22,45,.22)}
-    .al-welcome-poster img{width:100%;height:100%;object-fit:cover;filter:brightness(.76)}
+    .al-welcome-poster img{width:100%;height:100%;object-fit:cover;filter:brightness(.76)}.al-welcome-poster.is-playing{cursor:default}.al-welcome-poster>iframe{display:block;width:100%;height:100%;min-height:300px;border:0;aspect-ratio:9/13}.al-welcome-inline-controls{position:absolute;left:6px;right:6px;bottom:7px;display:flex;justify-content:center;gap:5px;z-index:3}.al-welcome-inline-controls button{padding:8px 9px;border:1px solid rgba(255,255,255,.55);border-radius:99px;background:rgba(20,14,27,.92);color:#fff;font-size:9px;cursor:pointer}
     .al-welcome-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:62px;height:62px;border-radius:50%;display:grid;place-items:center;padding-left:4px;color:#fff;background:linear-gradient(135deg,#b99554,#6a477f);box-shadow:0 0 0 10px rgba(255,255,255,.15);font-size:22px}
     .al-welcome-poster-label{position:absolute;left:12px;right:12px;bottom:14px;color:white;font-size:9px;letter-spacing:.18em;text-align:center}
     .al-video-modal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,10,20,.82);backdrop-filter:blur(12px)}
@@ -696,32 +696,67 @@
     const miniBtn=document.getElementById('alWelcomeMinimize');
     const restoreBtn=document.getElementById('alWelcomeRestore');
     const fullBtn=document.getElementById('alWelcomeFullscreen');
-    if(!modal||!stage||!mini) return;
+    if(!modal||!stage||!mini||!poster) return;
     const videoId='LU2JOvL6Bew';
-    function createPlayer(){
-      if(!stage.querySelector('iframe')){
-        const frame=document.createElement('iframe');
-        frame.src='https://www.youtube-nocookie.com/embed/'+videoId+'?autoplay=1&rel=0&playsinline=1';
-        frame.title='Vídeo de boas-vindas à Arquitetura de Legado';
-        frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
-        frame.allowFullscreen=true;
-        frame.referrerPolicy='strict-origin-when-cross-origin';
-        stage.appendChild(frame);
-      }
+    let player=null, inlineControls=null;
+    function makePlayer(){
+      if(player)return player;
+      player=document.createElement('iframe');
+      player.src='https://www.youtube-nocookie.com/embed/'+videoId+'?autoplay=1&rel=0&playsinline=1';
+      player.title='Vídeo de boas-vindas à Arquitetura de Legado';
+      player.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
+      player.allowFullscreen=true;
+      player.referrerPolicy='strict-origin-when-cross-origin';
+      return player;
     }
-    function showModal(){createPlayer();modal.classList.add('open');mini.classList.remove('open');document.body.style.overflow='hidden';closeBtn.focus();}
-    function hideModal(){modal.classList.remove('open');document.body.style.overflow='';}
-    function minimize(){if(stage.querySelector('iframe')){mini.appendChild(stage.querySelector('iframe'));}hideModal();mini.classList.add('open');}
-    function restore(){if(mini.querySelector('iframe'))stage.appendChild(mini.querySelector('iframe'));mini.classList.remove('open');modal.classList.add('open');document.body.style.overflow='hidden';}
-    function closeAll(){stage.replaceChildren();mini.replaceChildren();const b=document.createElement('button');b.type='button';b.id='alWelcomeRestore';b.setAttribute('aria-label','Reabrir vídeo');b.textContent='↗';b.addEventListener('click',restore);mini.appendChild(b);mini.classList.remove('open');hideModal();}
-    function fullscreen(){const frame=stage.querySelector('iframe')||mini.querySelector('iframe');if(frame&&frame.requestFullscreen)frame.requestFullscreen().catch(()=>{});}
-    [poster,openBtn].forEach(b=>b&&b.addEventListener('click',showModal));
+    function startInline(){
+      if(!player){
+        poster.innerHTML='';
+        poster.classList.add('is-playing');
+        poster.appendChild(makePlayer());
+        inlineControls=document.createElement('div');
+        inlineControls.className='al-welcome-inline-controls';
+        inlineControls.innerHTML='<button type="button" data-al-action="fullscreen">⛶ Tela cheia</button><button type="button" data-al-action="background">▣ Segundo plano</button>';
+        poster.appendChild(inlineControls);
+      }else if(!poster.contains(player)){
+        poster.innerHTML='';
+        poster.appendChild(player);
+        poster.appendChild(inlineControls);
+      }
+      modal.classList.remove('open');
+      mini.classList.remove('open');
+      document.body.style.overflow='';
+    }
+    function showModal(){
+      if(!player)startInline();
+      stage.appendChild(player);
+      modal.classList.add('open');
+      mini.classList.remove('open');
+      document.body.style.overflow='hidden';
+    }
+    function minimize(){
+      if(!player)return;
+      mini.appendChild(player);
+      modal.classList.remove('open');
+      mini.classList.add('open');
+      document.body.style.overflow='';
+    }
+    function restore(){if(player)startInline();}
+    function closeAll(){if(player)startInline();else{modal.classList.remove('open');mini.classList.remove('open');document.body.style.overflow='';}}
+    function fullscreen(){if(!player)startInline();showModal();}
+    poster.addEventListener('click',e=>{
+      const action=e.target.closest('[data-al-action]');
+      if(action){e.stopPropagation();if(action.dataset.alAction==='fullscreen')showModal();else minimize();return;}
+      if(!player)startInline();
+    });
+    openBtn.addEventListener('click',()=>{poster.scrollIntoView({behavior:'smooth',block:'center'});startInline();});
     closeBtn.addEventListener('click',closeAll);
     miniBtn.addEventListener('click',minimize);
     restoreBtn.addEventListener('click',restore);
     fullBtn.addEventListener('click',fullscreen);
+    mini.addEventListener('click',e=>{if(e.target===mini)restore();});
     modal.addEventListener('click',e=>{if(e.target===modal)closeAll();});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeAll();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(modal.classList.contains('open')||mini.classList.contains('open')))closeAll();});
   })();
   </script>
 
