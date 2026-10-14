@@ -54,30 +54,39 @@ window.AKASHA_AREAS = [
 
 window.AKASHA_PRECO = {
   area: { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 },
-  curso: 2700,
-  livro: 1700,
+  curso: {
+    "anubis:alinhamento":18900,"anubis:7-dias":18000,
+    "horus:techub":6300,"horus:arte-da-analogia":7200,"horus:arte-da-conquista":7200,"horus:senda":77700,"horus:despertar":30000,"horus:prosperidade":77700,
+    "isis:paladins":250000,"isis:jornada":60000,"amon:zero":516300
+  },
+  livro: {
+    "anubis:Código Secreto do Universo":2500,"anubis:O Código Secreto do Universo":2500,"anubis:Código Quântico":4700,"anubis:Revelações Quânticas":1500,"anubis:O Fim das Trevas":1800,
+    "horus:Código de Conduta dos que Despertam":4200,"horus:Código de Conduta":4200,"horus:O Que é Tantra?":2500,"horus:Shiva, Shakti e Shava":2500,"horus:Honrar a Deusa":4200,"horus:Tantra Descomplicado":2500,"horus:Mini Curso de Energia Sexual":2500,"horus:A Arte da Conquista · Livro de Vendas":3000,
+    "isis:Paladin":18700,"isis:Paladins":18700,"isis:Tecnologia da Alma":8700,"isis:Autoestima Blindada":4300,"isis:Kemet":3990,"isis:Triplex na Mente":3990,"isis:Como Blindar Sua Mente?":4300,
+    "amon:Coletânea Alinhamento Financeiro":9900,"amon:Toth, Hermes e Enoque":1800,"amon:Do Zero ao Zen Negócios":9900,"amon:Códigos de Origem":9000
+  },
   audio: 700
 };
 
 window.AKASHA_ITENS = {
   anubis: {
     cursos: ["alinhamento", "7-dias", "casais", "tantra", "fascinacao"],
-    livros: ["O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas"],
+    livros: ["Código Secreto do Universo", "O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas", "O Fim das Trevas"],
     audios: ["Mente Crística", "Pai Nosso", "Avê Maria", "Cura das Feridas Invisíveis", "O Código Secreto do Universo"]
   },
   horus: {
-    cursos: ["senda", "prosperidade", "despertar"],
-    livros: ["Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado"],
+    cursos: ["techub", "arte-da-analogia", "senda", "prosperidade", "despertar"],
+    livros: ["Código de Conduta dos que Despertam", "Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado", "Mini Curso de Energia Sexual", "A Arte da Conquista · Livro de Vendas"],
     audios: []
   },
   isis: {
     cursos: ["paladins", "jornada"],
-    livros: ["Autoestima Blindada", "Como Blindar Sua Mente?", "Triplex na Mente"],
+    livros: ["Paladin", "Paladins", "Tecnologia da Alma", "Autoestima Blindada", "Kemet", "Triplex na Mente", "Como Blindar Sua Mente?"],
     audios: []
   },
   amon: {
     cursos: ["zero"],
-    livros: ["Coletânea Alinhamento Financeiro", "Códigos de Origem"],
+    livros: ["Coletânea Alinhamento Financeiro", "Toth, Hermes e Enoque", "Do Zero ao Zen Negócios", "Códigos de Origem"],
     audios: []
   }
 };
@@ -99,7 +108,7 @@ window.akashaOferta = function (ref) {
   }
   var lista = kind === "curso" ? window.AKASHA_ITENS[area].cursos : kind === "livro" ? window.AKASHA_ITENS[area].livros : kind === "audio" ? window.AKASHA_ITENS[area].audios : null;
   if (!lista || lista.indexOf(item) < 0) return null;
-  var valor = window.AKASHA_PRECO[kind];
+  var valor = kind === "curso" ? (window.AKASHA_PRECO.curso[area + ":" + item] || 0) : kind === "livro" ? (window.AKASHA_PRECO.livro[area + ":" + item] || 0) : window.AKASHA_PRECO.audio;
   var titulo = item;
   if (kind === "curso") {
     for (var i = 0; i < faixa.courses.length; i++) {
@@ -112,7 +121,8 @@ window.akashaOferta = function (ref) {
       tantra: "Tantra Diferente de Sexo",
       fascinacao: "O Poder da Fascinação",
       senda: "A Senda Tântrica",
-      prosperidade: "Tantra Quântico e Prosperidade",
+      prosperidade: "Tantra é Quântico e Prosperidade",
+      "arte-da-conquista": "A Arte da Analogia",
       despertar: "Despertar do Magnetismo",
       paladins: "Paladins: A Liderança dos Bons",
       jornada: "Jornada de Transformação",
@@ -120,26 +130,12 @@ window.akashaOferta = function (ref) {
     };
     titulo = nomes[item] || item;
   }
-  return { ref: kind + ":" + area + ":" + item, nome: titulo, cents: valor, label: window.akashaReais(valor) };
+  var capas = {"alinhamento":"/members/capas/codigo-de-alinhamento.jpg?v=ca5","7-dias":"/members/capas/sete-dias-magnetismo.jpg?v=m2","techub":"/members/capas/techub.jpg?v=t3","arte-da-analogia":"/members/capas/arte-da-conquista.svg","arte-da-conquista":"/members/capas/arte-da-conquista.svg","senda":"/members/capas/senda-tantrica.jpg?v=s2","prosperidade":"/members/capas/tantra-prosperidade.jpg","despertar":"/members/capas/despertar-magnetismo.jpg","paladins":"/members/capas/paladins-curso.jpg?v=pc2","jornada":"/members/capas/jornada-transformacao.jpg?v=j1","zero":"/members/capas/zero-ao-zen.jpg?v=z2"};
+  var capasLivros = {"Código Quântico":"/members/capas/codigo-quantico.jpg?v=cq1","O Código Secreto do Universo":"/members/capas/codigo-secreto.jpg?v=c2","Código Secreto do Universo":"/members/capas/codigo-secreto.jpg?v=c2","Revelações Quânticas":"/members/capas/revelacoes-quanticas.jpg?v=c3","O Fim das Trevas":"/members/capas/fim-das-trevas.jpg?v=ft2","Código de Conduta dos que Despertam":"/members/capas/codigo-de-conduta.jpg?v=c3","Código de Conduta":"/members/capas/codigo-de-conduta.jpg?v=c3","Honrar a Deusa":"/members/capas/honrar-a-deusa.jpg?v=c3","Mini Curso de Energia Sexual":"/members/capas/energia-sexual.jpg?v=c2","O Que é Tantra?":"/members/capas/o-que-e-tantra.jpg?v=c2","Shiva, Shakti e Shava":"/members/capas/shiva-shakti-shava.jpg?v=c2","Tantra Descomplicado":"/members/capas/tantra-descomplicado.jpg?v=c2","Autoestima Blindada":"/members/capas/autoestima-blindada.jpg?v=c3","Como Blindar Sua Mente?":"/members/capas/blindar-mente.jpg?v=c2","Kemet":"/members/capas/kemet.jpg?v=c2","Triplex na Mente":"/members/capas/triplex-mente.jpg?v=c3","Tecnologia da Alma":"/members/capas/tecnologia-da-alma.jpg?v=c4","A Arte da Conquista · Livro de Vendas":"/members/capas/arte-da-conquista.svg","Paladin":"/members/capas/paladin.jpg?v=p2","Do Zero ao Zen Negócios":"/members/capas/zero-ao-zen.jpg?v=z2","Códigos de Origem":"/members/capas/codigos-de-origem.jpg?v=o2","Coletânea Alinhamento Financeiro":"/members/capas/coletanea-alinhamento.jpg?v=c5","Toth, Hermes e Enoque":"/members/capas/toth-hermes-enoque.jpg?v=c6"};
+  return { ref: kind + ":" + area + ":" + item, nome: titulo, cents: valor, label: window.akashaReais(valor), capa: kind === "curso" ? (capas[item] || "") : kind === "livro" ? (capasLivros[item] || "") : "" };
 };
 
-window.AKASHA_LINKS = {
-  "area:anubis": "https://buy.stripe.com/bJe7sLetDb0L8Fqbu7djO0f",
-  "area:horus": "https://buy.stripe.com/14A4gz71becX08U8hVdjO0g",
-  "area:isis": "https://buy.stripe.com/8x2bJ11GR7OzaNy1TxdjO0h",
-  "area:amon": "https://buy.stripe.com/bJe9AT71bgl53l655JdjO0i",
-  "curso:anubis:alinhamento": "https://buy.stripe.com/14AdR9bhrgl51cYfKndjO04",
-  "curso:anubis:7-dias": "https://buy.stripe.com/28E28r4T3ecXdZK7dRdjO05",
-  "curso:anubis:casais": "https://buy.stripe.com/00w9AT0CNecXdZK55JdjO06",
-  "curso:anubis:tantra": "https://buy.stripe.com/5kQaEXbhr5Gr6xi7dRdjO07",
-  "curso:anubis:fascinacao": "https://buy.stripe.com/bJecN55X76Kv1cY9lZdjO08",
-  "curso:horus:senda": "https://buy.stripe.com/cNi28r0CN5Gr6xi41FdjO09",
-  "curso:horus:prosperidade": "https://buy.stripe.com/28E14nfxH7Oz8Fq7dRdjO0a",
-  "curso:horus:despertar": "https://buy.stripe.com/00w8wPdpz9WHdZK55JdjO0b",
-  "curso:isis:paladins": "https://buy.stripe.com/3cI28radn0m75te7dRdjO0c",
-  "curso:isis:jornada": "https://buy.stripe.com/9B66oH3OZ9WH08U1TxdjO0d",
-  "curso:amon:zero": "https://buy.stripe.com/3cI8wP1GRc4PaNy55JdjO0e"
-};
+window.AKASHA_LINKS = {};
 
 window.AKASHA_YAN = "yanfili.simon@gmail.com";
 

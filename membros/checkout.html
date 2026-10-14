@@ -6,16 +6,16 @@
 <title>Pagamento · Akasha</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
 <style>
-body{margin:0;background:#fbf8f3;color:#1c140c;font-family:"Josefin Sans",sans-serif;font-weight:300}
-main{max-width:520px;margin:0 auto;padding:48px 20px}
+body{margin:0;background:radial-gradient(ellipse at 15% 0%,#42215c 0,transparent 40%),radial-gradient(ellipse at 95% 20%,#4a1634 0,transparent 35%),#090711;color:#fff8ea;font-family:"Josefin Sans",sans-serif;font-weight:300}
+main{max-width:560px;margin:0 auto;padding:30px 20px 48px;border:1px solid rgba(233,189,88,.3);border-radius:22px;background:linear-gradient(145deg,#20152d,#100d19);box-shadow:0 18px 45px #0005}
 .moon{height:160px;overflow:hidden;background:#111}
 .moon img{width:100%;height:100%;object-fit:cover;object-position:center 40%}
 h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:40px;margin:8px 0}
-p{color:#6d6256;line-height:1.5}
-.price{font-family:"Cormorant Garamond",serif;font-size:32px;color:#8b6914;margin:0}
-label{display:block;margin-top:16px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8b6914}
-input{width:100%;margin-top:8px;background:#fff;border:1px solid rgba(139,105,20,.35);color:#1c140c;border-radius:12px;padding:14px}
-button{margin-top:18px;border:0;background:#8b6914;color:#fff;border-radius:999px;padding:14px 18px;font-weight:600;cursor:pointer;width:100%}
+p{color:#c1b5d2;line-height:1.5}
+.price{font-family:"Cormorant Garamond",serif;font-size:38px;color:#ffdc8a;margin:0}.cover{width:100%;max-height:360px;object-fit:contain;background:linear-gradient(145deg,#211433,#08070c 70%,#4c1837);border:1px solid rgba(233,189,88,.38);border-radius:16px;margin:12px 0 18px;box-shadow:0 12px 36px #0007}
+label{display:block;margin-top:16px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#e9bd58}
+input{width:100%;margin-top:8px;background:#171122;border:1px solid rgba(233,189,88,.35);color:#fff8ea;border-radius:12px;padding:14px}
+button{margin-top:18px;border:0;background:linear-gradient(100deg,#e8b84e,#ffe09a 52%,#a66dff);color:#160e20;border-radius:999px;padding:15px 18px;font-weight:700;box-shadow:0 6px 24px #d6a44230;cursor:pointer;width:100%}
 a.zap{display:block;margin-top:12px;text-align:center;border:1px solid rgba(139,105,20,.45);border-radius:999px;padding:12px 18px;text-decoration:none}
 a{color:#8b6914}
 .note{margin-top:14px}
@@ -26,7 +26,7 @@ a{color:#8b6914}
 <main>
   <p>Stripe · real</p>
   <h1 id="title">Pagamento</h1>
-  <p class="price" id="price"></p>
+  <img class="cover" id="cover" alt="Capa do produto" hidden><p class="price" id="price"></p>
   <p id="lead">No Stripe, cartão ou Pix. O valor sai da oferta, não desta tela. Se o Pix não aparecer, feche com o mentor no WhatsApp.</p>
   <label>E-mail / Gmail</label>
   <input id="mail" type="email" placeholder="voce@gmail.com" autocomplete="email"/>
@@ -44,6 +44,7 @@ var oferta = window.akashaOferta(ref);
 if (!oferta) location.replace("/membros/");
 document.getElementById("title").textContent = oferta.nome;
 document.getElementById("price").textContent = oferta.label;
+if (oferta.capa) { document.getElementById("cover").src = oferta.capa; document.getElementById("cover").hidden = false; }
 document.getElementById("zap").onclick = function () {
   var mail = document.getElementById("mail").value.trim();
   this.href = "https://wa.me/5571983448621?text=" + encodeURIComponent("Olá. Quero fechar no Pix, direto com o mentor.\n" + oferta.nome + "\n" + oferta.label + (mail ? "\nE-mail: " + mail : ""));

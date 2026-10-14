@@ -2,9 +2,9 @@ import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 
 const CATALOG = {
   "teste-stripe": { name: "Teste Stripe", cents: 500 },
-  "energia-sexual": { name: "Mini curso Energia Sexual", cents: 9700 },
-  "zero-ao-zen": { name: "Zero ao Zen — primeira edição", cents: 4700 },
-  "codigos-de-origem": { name: "Códigos de Origem", cents: 9700 },
+  "energia-sexual": { name: "Mini curso Energia Sexual", cents: 2500 },
+  "zero-ao-zen": { name: "Do Zero ao Zen Negócios · Livro", cents: 9900 },
+  "codigos-de-origem": { name: "Códigos de Origem", cents: 9000 },
   "camiseta-akasha": { name: "Camiseta Akasha", cents: 1000 },
   "banheira-go-arctic": { name: "Banheira de Imersão em Gelo Go Arctic", cents: 1000 },
   "cafeteira-hyllis": { name: "Cafeteira Portátil Hyllis", cents: 1000 },
@@ -15,45 +15,56 @@ const CATALOG = {
   "incensario-nirvana": { name: "Incensário de Vidro Nirvana", cents: 1000 },
   "japamala-sagrado": { name: "Japamala Sagrado", cents: 1000 },
 };
-
 const AREA_CENTS = { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 };
-const ITEM_CENTS = { curso: 2700, livro: 1700, audio: 700 };
-const ITENS = {
+const COURSE_PRICES: Record<string, number> = {
+  "anubis:alinhamento": 18900, "anubis:7-dias": 18000,
+  "horus:techub": 6300, "horus:arte-da-analogia": 7200, "horus:arte-da-conquista": 7200,
+  "horus:senda": 77700, "horus:despertar": 30000, "horus:prosperidade": 77700,
+  "isis:paladins": 250000, "isis:jornada": 60000, "amon:zero": 516300,
+};
+const BOOK_PRICES: Record<string, number> = {
+  "anubis:Código Secreto do Universo": 2500, "anubis:O Código Secreto do Universo": 2500,
+  "anubis:Código Quântico": 4700, "anubis:Revelações Quânticas": 1500, "anubis:O Fim das Trevas": 1800,
+  "horus:Código de Conduta dos que Despertam": 4200, "horus:Código de Conduta": 4200,
+  "horus:O Que é Tantra?": 2500, "horus:Shiva, Shakti e Shava": 2500, "horus:Honrar a Deusa": 4200,
+  "horus:Tantra Descomplicado": 2500, "horus:Mini Curso de Energia Sexual": 2500,
+  "horus:A Arte da Conquista · Livro de Vendas": 3000,
+  "isis:Paladin": 18700, "isis:Paladins": 18700, "isis:Tecnologia da Alma": 8700,
+  "isis:Autoestima Blindada": 4300, "isis:Kemet": 3990, "isis:Triplex na Mente": 3990,
+  "isis:Como Blindar Sua Mente?": 4300,
+  "amon:Coletânea Alinhamento Financeiro": 9900, "amon:Toth, Hermes e Enoque": 1800,
+  "amon:Do Zero ao Zen Negócios": 9900, "amon:Códigos de Origem": 9000,
+};
+const ITENS: Record<string, Record<string, string[]>> = {
   anubis: {
     curso: ["alinhamento", "7-dias", "casais", "tantra", "fascinacao"],
-    livro: ["O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas"],
+    livro: ["Código Secreto do Universo", "O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas", "O Fim das Trevas"],
     audio: ["Mente Crística", "Pai Nosso", "Avê Maria", "Cura das Feridas Invisíveis", "O Código Secreto do Universo"],
   },
   horus: {
-    curso: ["senda", "prosperidade", "despertar"],
-    livro: ["Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado"],
+    curso: ["techub", "arte-da-analogia", "arte-da-conquista", "senda", "prosperidade", "despertar"],
+    livro: ["Código de Conduta dos que Despertam", "Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado", "Mini Curso de Energia Sexual", "A Arte da Conquista · Livro de Vendas"],
     audio: [],
   },
   isis: {
     curso: ["paladins", "jornada"],
-    livro: ["Autoestima Blindada", "Como Blindar Sua Mente?", "Triplex na Mente"],
+    livro: ["Paladin", "Paladins", "Tecnologia da Alma", "Autoestima Blindada", "Kemet", "Triplex na Mente", "Como Blindar Sua Mente?"],
     audio: [],
   },
   amon: {
     curso: ["zero"],
-    livro: ["Coletânea Alinhamento Financeiro", "Códigos de Origem"],
+    livro: ["Coletânea Alinhamento Financeiro", "Toth, Hermes e Enoque", "Do Zero ao Zen Negócios", "Códigos de Origem"],
     audio: [],
   },
 };
-const NOMES = {
-  alinhamento: "Código de Alinhamento",
-  "7-dias": "Desafio 7 Dias de Magnetismo",
-  casais: "Ritual para Casais",
-  tantra: "Tantra Diferente de Sexo",
-  fascinacao: "O Poder da Fascinação",
-  senda: "A Senda Tântrica",
-  prosperidade: "Tantra Quântico e Prosperidade",
-  despertar: "Despertar do Magnetismo",
-  paladins: "Paladins: A Liderança dos Bons",
-  jornada: "Jornada de Transformação",
-  zero: "Do Zero ao Zen e Negócios",
+const NOMES: Record<string, string> = {
+  alinhamento: "Código de Alinhamento Akasha", "7-dias": "Desafio 7 Dias de Magnetismo",
+  casais: "Ritual para Casais", tantra: "Tantra Diferente de Sexo", fascinacao: "O Poder da Fascinação",
+  techub: "Techub", "arte-da-analogia": "A Arte da Analogia", "arte-da-conquista": "A Arte da Analogia",
+  senda: "Senda Tântrica", prosperidade: "Tantra é Quântico e Prosperidade", despertar: "Despertar do Magnetismo",
+  paladins: "Paladins: A Liderança dos Bons", jornada: "Jornada de Transformação", zero: "Do Zero ao Zen Negócios",
 };
-const FAIXA = { anubis: "Anúbis", horus: "Hórus", isis: "Ísis", amon: "Rá" };
+const FAIXA: Record<string, string> = { anubis: "Anúbis", horus: "Hórus", isis: "Ísis", amon: "Rá" };
 
 const cors = {
   "Access-Control-Allow-Origin": "https://akashahub.com.br",
@@ -103,19 +114,21 @@ Deno.serve(async (req) => {
   return json({ url: session.url, id: session.id });
 });
 
-function memberProduct(ref) {
+function memberProduct(ref: string) {
   const parts = ref.split(":");
   const kind = parts[0];
   const area = parts[1];
   const item = parts.slice(2).join(":");
-  if (!ITENS[area]) return null;
   if (kind === "area") {
-    return { name: "Faixa " + (FAIXA[area] || area), cents: AREA_CENTS[area], kind, area, item: "" };
+    if (!AREA_CENTS[area]) return null;
+    return { name: "Faixa " + FAIXA[area], cents: AREA_CENTS[area], kind, area, item: "" };
   }
-  const lista = ITENS[area][kind];
-  if (!lista || lista.indexOf(item) < 0) return null;
-  const nome = kind === "curso" ? (NOMES[item] || item) : item;
-  return { name: nome, cents: ITEM_CENTS[kind], kind, area, item };
+  if (!ITENS[area] || !["curso", "livro", "audio"].includes(kind)) return null;
+  if (!(ITENS[area][kind] || []).includes(item)) return null;
+  const key = area + ":" + item;
+  const cents = kind === "curso" ? COURSE_PRICES[key] : kind === "livro" ? BOOK_PRICES[key] : 700;
+  if (!Number.isInteger(cents) || cents <= 0) return null;
+  return { name: NOMES[item] || item, cents, kind, area, item };
 }
 
 async function openCheckout(stripe, fields) {
