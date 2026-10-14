@@ -15,12 +15,11 @@ const CATALOG = {
   "incensario-nirvana": { name: "Incensário de Vidro Nirvana", cents: 1000 },
   "japamala-sagrado": { name: "Japamala Sagrado", cents: 1000 },
 };
-
 const AREA_CENTS = { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 };
 const COURSE_PRICES: Record<string, number> = {
   "anubis:alinhamento": 18900, "anubis:7-dias": 18000,
-  "horus:techub": 6300, "horus:arte-da-analogia": 7200, "horus:arte-da-conquista": 7200, "horus:senda": 77700,
-  "horus:despertar": 30000, "horus:prosperidade": 77700,
+  "horus:techub": 6300, "horus:arte-da-analogia": 7200, "horus:arte-da-conquista": 7200,
+  "horus:senda": 77700, "horus:despertar": 30000, "horus:prosperidade": 77700,
   "isis:paladins": 250000, "isis:jornada": 60000, "amon:zero": 516300,
 };
 const BOOK_PRICES: Record<string, number> = {
@@ -61,25 +60,11 @@ const ITENS: Record<string, Record<string, string[]>> = {
 const NOMES: Record<string, string> = {
   alinhamento: "Código de Alinhamento Akasha", "7-dias": "Desafio 7 Dias de Magnetismo",
   casais: "Ritual para Casais", tantra: "Tantra Diferente de Sexo", fascinacao: "O Poder da Fascinação",
-  techub: "Techub", "arte-da-analogia": "A Arte da Analogia", "arte-da-conquista": "A Arte da Analogia", senda: "Senda Tântrica",
-  prosperidade: "Tantra é Quântico e Prosperidade", despertar: "Despertar do Magnetismo",
-  paladins: "Paladins: A Liderança dos Bons", jornada: "Jornada de Transformação",
-  zero: "Do Zero ao Zen Negócios",
+  techub: "Techub", "arte-da-analogia": "A Arte da Analogia", "arte-da-conquista": "A Arte da Analogia",
+  senda: "Senda Tântrica", prosperidade: "Tantra é Quântico e Prosperidade", despertar: "Despertar do Magnetismo",
+  paladins: "Paladins: A Liderança dos Bons", jornada: "Jornada de Transformação", zero: "Do Zero ao Zen Negócios",
 };
 const FAIXA: Record<string, string> = { anubis: "Anúbis", horus: "Hórus", isis: "Ísis", amon: "Rá" };
-function memberProduct(ref: string) {
-  const parts = ref.split(":");
-  const kind = parts[0];
-  const area = parts[1];
-  const item = parts.slice(2).join(":");
-  if (!ITENS[area] || !["curso", "livro", "audio"].includes(kind)) return null;
-  if (!(ITENS[area][kind] || []).includes(item)) return null;
-  const key = area + ":" + item;
-  const cents = kind === "curso" ? COURSE_PRICES[key] : kind === "livro" ? BOOK_PRICES[key] : 700;
-  if (!Number.isInteger(cents) || cents <= 0) return null;
-  return { name: NOMES[item] || item, cents, kind, area, item };
-}
-
 
 const cors = {
   "Access-Control-Allow-Origin": "https://akashahub.com.br",
@@ -98,8 +83,7 @@ Deno.serve(async (req) => {
 
   if (body.action === "grants") return json(await grants(stripe, body));
 
-  const ref = String(body.ref || "");
-  const member = ref.startsWith("area:") ? (() => { const area = ref.split(":")[1]; return AREA_CENTS[area] ? { name: "Faixa " + FAIXA[area], cents: AREA_CENTS[area], kind: "area", area, item: "" } : null; })() : memberProduct(ref);
+  const member = memberProduct(String(body.ref || ""));
   const product = member || CATALOG[String(body.sku || "")];
   if (!product) return json({ error: member === null && body.ref ? "unknown_ref" : "unknown_sku" }, 400);
 
@@ -130,97 +114,22 @@ Deno.serve(async (req) => {
   return json({ url: session.url, id: session.id });
 });
 
-function memberProduct(ref) {
+function memberProduct(ref: string) {
   const parts = ref.split(":");
   const kind = parts[0];
   const area = parts[1];
   const item = parts.slice(2).join(":");
-  if (!ITENS[area]) return null;
   if (kind === "area") {
-    return { name: "Faixa " + (FAIXA[area] || area), cents: AREA_CENTS[area], kind, area, item: "" };
+    if (!AREA_CENTS[area]) return null;
+    return { name: "Faixa " + FAIXA[area], cents: AREA_CENTS[area], kind, area, item: "" };
   }
-  const lista = ITENS[area][kind];
-  if (!lista || lista.indexOf(item) < 0) return null;
-  const nome = kind === "curso" ? (NOMES[item] || item) : item;
-  return { name: nome, cents: ITEM_CENTS[kind], kind, area, item };
+  if (!ITENS[area] || !["curso", "livro", "audio"].includes(kind)) return null;
+  if (!(ITENS[area][kind] || []).includes(item)) return null;
+  const key = area + ":" + item;
+  const cents = kind === "curso" ? COURSE_PRICES[key] : kind === "livro" ? BOOK_PRICES[key] : 700;
+  if (!Number.isInteger(cents) || cents <= 0) return null;
+  return { name: NOMES[item] || item, cents, kind, area, item };
 }
-
-async function openCheckout(stripe, fields) {
-  try {
-    return await stripe.checkout.sessions.create({
-      ...fields,
-      payment_method_types: ["card", "pix"],
-      payment_method_options: { pix: { expires_after_seconds: 1800 } },
-    });
-  } catch (err) {
-    const message = String(err && err.message || "");
-    if (!/pix/i.test(message)) throw err;
-    return stripe.checkout.sessions.create({
-      ...fields,
-      payment_method_types: ["card"],
-    });
-  }
-}
-
-function safeUrl(url, fallback) {
-  try {
-    const parsed = new URL(String(url || ""));
-    if (parsed.hostname === "akashahub.com.br") return parsed.toString();
-  } catch { /* ignore */ }
-  return fallback;
-}
-
-async function emailFromToken(idToken) {
-  const apiKey = "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4";
-  const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + apiKey, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idToken }),
-  });
-  if (!res.ok) return "";
-  const data = await res.json();
-  return String(data.users?.[0]?.email || "").toLowerCase();
-}
-
-function addGrant(out, meta) {
-  if (!meta || !meta.kind || !meta.area) return;
-  if (meta.kind === "area" && !out.areas.includes(meta.area)) out.areas.push(meta.area);
-  const key = meta.area + ":" + (meta.item || "");
-  if (meta.kind === "curso" && meta.item && !out.cursos.includes(key)) out.cursos.push(key);
-  if (meta.kind === "livro" && meta.item && !out.livros.includes(key)) out.livros.push(key);
-  if (meta.kind === "audio" && meta.item && !out.audios.includes(key)) out.audios.push(key);
-}
-
-async function grants(stripe, body) {
-  const email = await emailFromToken(String(body.idToken || ""));
-  if (!email) return { error: "login", areas: [], cursos: [], livros: [], audios: [] };
-  const out = { areas: [], cursos: [], livros: [], audios: [] };
-  const sessions = Array.isArray(body.sessions) ? body.sessions.slice(0, 20) : [];
-  for (const id of sessions) {
-    if (!String(id).startsWith("cs_")) continue;
-    try {
-      const session = await stripe.checkout.sessions.retrieve(String(id));
-      const buyer = String(session.metadata?.buyer || session.customer_email || "").toLowerCase();
-      if (session.payment_status === "paid" && buyer === email) addGrant(out, session.metadata);
-    } catch { /* sessão inválida */ }
-  }
-  try {
-    const found = await stripe.paymentIntents.search({
-      query: "status:'succeeded' AND metadata['buyer']:'" + email.replace(/'/g, "") + "'",
-      limit: 100,
-    });
-    for (const pi of found.data || []) addGrant(out, pi.metadata);
-  } catch { /* busca pode atrasar; a sessão acima cobre a volta do pagamento */ }
-  return out;
-}
-
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { ...cors, "Content-Type": "application/json" },
-  });
-}
-function memberProductLegacyDisabled(_ref: string) { return null; }
 
 async function openCheckout(stripe, fields) {
   try {
