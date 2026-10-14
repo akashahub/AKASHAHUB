@@ -338,6 +338,12 @@ function renderMentor() {
       <a class="tool-btn" href="interno/palestra-legado-slides.pdf" target="_blank" rel="noopener">Palestra · lâminas</a>
       <a class="tool-btn" href="interno/patrocinadores-b2b.pdf" target="_blank" rel="noopener">Patrocinadores · B2B</a>
     </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Boas-vindas · uso interno</p>
+      <h3>Roteiro do vídeo de boas-vindas</h3>
+      <p>Storytelling completo sobre a trajetória do mentor, os mais de 2 mil atendimentos, o livro Códigos de Origem e a evolução até o Arquitetura de Legado. Acesso exclusivo ao mentor.</p>
+      <a class="tool-btn" href="${mentorHref("interno/roteiro-boas-vindas.html")}">Abrir roteiro de boas-vindas</a>
+    </article>
     ${renderSessoesAccess()}
     ${renderAccessAdminPanel()}
   </div>`;
