@@ -111,6 +111,7 @@ window.akashaOferta = function (ref) {
   var lista = kind === "curso" ? window.AKASHA_ITENS[area].cursos : kind === "livro" ? window.AKASHA_ITENS[area].livros : kind === "audio" ? window.AKASHA_ITENS[area].audios : null;
   if (!lista || lista.indexOf(item) < 0) return null;
   var valor = kind === "curso" ? (window.AKASHA_PRECO.curso[area + ":" + item] || 0) : kind === "livro" ? (window.AKASHA_PRECO.livro[area + ":" + item] || 0) : window.AKASHA_PRECO.audio;
+  if (!Number.isInteger(valor) || valor <= 0) return null;
   var titulo = item;
   if (kind === "curso") {
     for (var i = 0; i < faixa.courses.length; i++) {
