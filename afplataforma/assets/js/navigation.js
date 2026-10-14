@@ -26,7 +26,7 @@ export function getCurrentView() {
 }
 
 function fase3Aberta(view) {
-  return view === "modules" || view === "tools" || view === "call" || view === "complementar"
+  return view === "af-dashboard" || view === "modules" || view === "tools" || view === "call" || view === "complementar"
     || view === "quitei" || view === "empresas"
     || view.startsWith("module:") || view.startsWith("comp:") || view.startsWith("criancas");
 }
@@ -34,7 +34,7 @@ function fase3Aberta(view) {
 export function buildNav() {
   const lang = session.lang || "pt-BR";
   const items = [
-    { id: "dashboard", label: t(lang, "dash"), ico: "◇" }
+    { id: "dashboard", label: "LifeOS", ico: "◇" }
   ];
   if (isMentorSession()) items.push({ id: "mentor", label: t(lang, "mentor"), ico: "★" });
   if (isMentorSession()) items.push({ id: "vendas-curso", label: "Projeto · Curso de Vendas", ico: "↗" });
@@ -99,7 +99,8 @@ export async function navigate(view) {
 
   const lang = session.lang || "pt-BR";
   const titles = {
-    dashboard: t(lang, "dash"),
+    dashboard: "LifeOS · Central de Comando",
+    "af-dashboard": "Dashboard AF · Alinhamento Financeiro",
     modules: t(lang, "modules"),
     tools: t(lang, "tools"),
     call: t(lang, "call"),
