@@ -56,6 +56,7 @@ import {
 import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
 import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audios-pnl.js?v=1";
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
+import { renderLifeOsDashboard } from "./lifeos-dashboard.js?v=1";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -450,7 +451,8 @@ function renderEmpresas() {
 }
 
 registerRenderers({
-  dashboard: renderDashboard,
+  dashboard: renderLifeOsDashboard,
+  "af-dashboard": renderDashboard,
   modules: renderModules,
   moduleDetail: renderModuleDetail,
   tools: renderToolsView,
