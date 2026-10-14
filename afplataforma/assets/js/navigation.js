@@ -129,6 +129,7 @@ export async function navigate(view) {
     "legado-tcc": "TCC",
     "legado-slides": "Lâminas",
     "audios-pnl": "Áudios PNL",
+    "producao-audios-pnl": "PRODUÇÃO ÁUDIOS PNL",
     "conteudos-al": "Conteúdos AL"
   };
   const top = document.getElementById("topTitle");
