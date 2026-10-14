@@ -19,7 +19,7 @@ const CATALOG = {
 const AREA_CENTS = { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 };
 const COURSE_PRICES: Record<string, number> = {
   "anubis:alinhamento": 18900, "anubis:7-dias": 18000,
-  "horus:techub": 6300, "horus:arte-da-analogia": 7200, "horus:senda": 77700,
+  "horus:techub": 6300, "horus:arte-da-analogia": 7200, "horus:arte-da-conquista": 7200, "horus:senda": 77700,
   "horus:despertar": 30000, "horus:prosperidade": 77700,
   "isis:paladins": 250000, "isis:jornada": 60000, "amon:zero": 516300,
 };
@@ -43,7 +43,7 @@ const ITENS: Record<string, Record<string, string[]>> = {
     audio: ["Mente Crística", "Pai Nosso", "Avê Maria", "Cura das Feridas Invisíveis", "O Código Secreto do Universo"],
   },
   horus: {
-    curso: ["techub", "arte-da-analogia", "senda", "prosperidade", "despertar"],
+    curso: ["techub", "arte-da-analogia", "arte-da-conquista", "senda", "prosperidade", "despertar"],
     livro: ["Código de Conduta dos que Despertam", "Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado", "Mini Curso de Energia Sexual", "A Arte da Conquista · Livro de Vendas"],
     audio: [],
   },
@@ -61,7 +61,7 @@ const ITENS: Record<string, Record<string, string[]>> = {
 const NOMES: Record<string, string> = {
   alinhamento: "Código de Alinhamento Akasha", "7-dias": "Desafio 7 Dias de Magnetismo",
   casais: "Ritual para Casais", tantra: "Tantra Diferente de Sexo", fascinacao: "O Poder da Fascinação",
-  techub: "Techub", "arte-da-analogia": "A Arte da Analogia", senda: "Senda Tântrica",
+  techub: "Techub", "arte-da-analogia": "A Arte da Analogia", "arte-da-conquista": "A Arte da Analogia", senda: "Senda Tântrica",
   prosperidade: "Tantra é Quântico e Prosperidade", despertar: "Despertar do Magnetismo",
   paladins: "Paladins: A Liderança dos Bons", jornada: "Jornada de Transformação",
   zero: "Do Zero ao Zen Negócios",
