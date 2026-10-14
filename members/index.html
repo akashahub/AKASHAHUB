@@ -652,7 +652,7 @@ function cursos() {
       const capa = item.capa ? `<img class="capa" alt="Capa de ${esc(item.titulo)}" src="${esc(item.capa)}">` : "";
       const atos = adminOn ? `<div class="acts"><button type="button" data-edit-curso="${esc(item.id)}">Editar</button><button type="button" data-del-curso="${esc(item.id)}">Apagar</button></div>` : "";
       const marca = adminOn && item.status === "oculto" ? `<p class="sub">Oculto para os alunos</p>` : "";
-      return `<article class="course" data-curso="${esc(item.id)}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong>${item.descricao ? `<p class="sub">${esc(item.descricao)}</p>` : ""}<p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p>${marca}<span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : reais(PRECO_ITEM.curso)}</span>${atos}</article>`;
+      return `<article class="course" data-curso="${esc(item.id)}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong>${item.descricao ? `<p class="sub">${esc(item.descricao)}</p>` : ""}<p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p>${marca}<span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : "ACESSO INDIVIDUAL"}</span>${!open ? `<div class="price-tag">${reais(precoProduto("curso",item.id))}</div><button class="product-buy" type="button" data-buy-course="${esc(item.id)}">Comprar curso</button>` : ""}${atos}</article>`;
     }).join("")}</div>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
   const criarCursoCard = document.getElementById("criarCursoCard");
@@ -663,6 +663,7 @@ function cursos() {
   document.querySelectorAll("[data-del-curso]").forEach(btn => {
     btn.onclick = (e) => { e.stopPropagation(); apagarCurso(btn.dataset.delCurso); };
   });
+  document.querySelectorAll("[data-buy-course]").forEach(btn => { btn.onclick = (e) => { e.stopPropagation(); comprar("curso", btn.dataset.buyCourse); }; });
   document.querySelectorAll("[data-curso]").forEach(btn => {
     btn.onclick = () => go({ view: "player", curso: btn.dataset.curso, mod: 0, aula: 0 });
   });
@@ -771,7 +772,7 @@ function livros() {
       const atos = adminOn ? `<div class="acts"><button type="button" data-edit-livro="${esc(nome)}">Editar</button><button type="button" data-del-livro="${esc(nome)}">Apagar</button></div>` : "";
       const extra = filhos ? `<p class="sub">${filhos.length} livros dentro</p>` : "";
       const rotulo = filhos ? "Abrir coletânea" : "Abrir livro";
-      return `<article class="book">${capa}<strong>${esc(nome)}</strong>${extra}${oculto ? `<p class="sub">Oculto para os alunos</p>` : ""}<div class="row"><button data-livro="${esc(nome)}">${rotulo}</button></div>${atos}</article>`;
+      const preco = precoProduto("livro",nome); return `<article class="book">${capa}<strong>${esc(nome)}</strong>${extra}${oculto ? `<p class="sub">Oculto para os alunos</p>` : ""}<div class="price-tag">${reais(preco)}</div><div class="row"><button data-livro="${esc(nome)}">${rotulo}</button></div>${!ownsLivro(route.nivel,nome) ? `<button class="product-buy" type="button" data-buy-book="${esc(nome)}">Comprar este livro</button>` : ""}${atos}</article>`;
     }).join("") || "<p class='sub'>Nenhum livro neste nível ainda.</p>"}</div>
     <p class="note" id="livroNote"></p>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
@@ -783,6 +784,7 @@ function livros() {
   document.querySelectorAll("[data-del-livro]").forEach(btn => {
     btn.onclick = () => apagarLivro(btn.dataset.delLivro);
   });
+  document.querySelectorAll("[data-buy-book]").forEach(btn => { btn.onclick = () => comprar("livro", btn.dataset.buyBook); });
   document.querySelectorAll("[data-livro]").forEach(btn => {
     btn.onclick = () => {
       const nome = btn.dataset.livro;
