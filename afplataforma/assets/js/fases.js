@@ -298,11 +298,12 @@ export function renderFase1Jogo() {
     "As oito estações seguem o ano do documento-mestre: conversa, identidade, dossiê, capacidades, marca, objetivos, leitura de dinheiro e a entrega. O roteiro de 26 encontros continua em Sessões.",
     `<p><button class="tool-btn" type="button" data-nav="fase1">← Fase 1</button></p>
     ${corpo}
-    <div class="row">
+    <div class="row" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
       <button class="tool-btn" type="button" id="mesaSalvar">Guardar neste aparelho</button>
       <button class="tool-btn" type="button" id="mesaCopiar">Copiar as respostas</button>
+      <button class="tool-btn" type="button" id="mesaWhatsApp">Enviar para WhatsApp do mentor</button>
     </div>
-    <p class="notes-hint" id="mesaAviso">As respostas ficam neste navegador. O dossiê, com relato, hipótese e decisão, o mentor preenche na gestão.</p>`
+    <p class="notes-hint" id="mesaAviso">As respostas ficam somente neste aparelho. O mentor não tem acesso automático a elas. Copie ou envie pelo WhatsApp quando quiser compartilhar.</p>`
   );
 }
 
@@ -321,19 +322,26 @@ export function bindFase1Jogo() {
     root.querySelectorAll("[data-mesa]").forEach((el) => { out[el.getAttribute("data-mesa")] = el.value; });
     return out;
   };
+  const gerarTexto = () => {
+    const dados = ler();
+    return MESA.map((estacao, i) => {
+      const linhas = estacao.perguntas.map((q, qi) => q + "\n" + (dados[estacao.id + "-" + qi] || "—")).join("\n\n");
+      return (i + 1) + ". " + estacao.titulo + "\n" + linhas + "\n\nFecha: " + (dados[estacao.id + "-fecha"] || "—");
+    }).join("\n\n");
+  };
   document.getElementById("mesaSalvar")?.addEventListener("click", () => {
     localStorage.setItem(MESA_KEY, JSON.stringify(ler()));
     const aviso = document.getElementById("mesaAviso");
     if (aviso) aviso.textContent = "Guardado neste aparelho.";
   });
   document.getElementById("mesaCopiar")?.addEventListener("click", async () => {
-    const dados = ler();
-    const texto = MESA.map((estacao, i) => {
-      const linhas = estacao.perguntas.map((q, qi) => q + "\n" + (dados[estacao.id + "-" + qi] || "—")).join("\n\n");
-      return (i + 1) + ". " + estacao.titulo + "\n" + linhas + "\n\nFecha: " + (dados[estacao.id + "-fecha"] || "—");
-    }).join("\n\n");
-    try { await navigator.clipboard.writeText("Mesa da Essência\n\n" + texto); } catch (e) {}
+    const texto = "Mesa da Essência\n\n" + gerarTexto();
+    try { await navigator.clipboard.writeText(texto); } catch (e) {}
     const aviso = document.getElementById("mesaAviso");
-    if (aviso) aviso.textContent = "Copiado. Cole no dossiê, na gestão do mentor.";
+    if (aviso) aviso.textContent = "Copiado. Cole no dossiê ou envie para o mentor.";
+  });
+  document.getElementById("mesaWhatsApp")?.addEventListener("click", () => {
+    const texto = encodeURIComponent("Mesa da Essência\n\n" + gerarTexto());
+    window.open(`https://wa.me/?text=${texto}`, "_blank");
   });
 }
