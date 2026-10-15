@@ -222,6 +222,9 @@
       .al-video-mini{width:112px;right:10px;bottom:10px}
     }
 
+    .welcome-video-frame{display:block;width:100%;height:100%;min-height:680px;border:0;background:#100d14}
+    @media(max-width:680px){.welcome-video-frame{min-height:560px}}
+    
     .apply{padding:10px 0 130px;scroll-margin-top:90px}
     .apply-wrap{max-width:920px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:28px;padding:52px 44px 36px;box-shadow:var(--shadow)}
     .apply-wrap h2{font-size:clamp(40px,4.4vw,60px);color:var(--ink)}
@@ -320,23 +323,6 @@
     </section>
 
 
-    <section class="al-welcome shell" id="alWelcomeVideo" aria-labelledby="alWelcomeTitle">
-      <div class="al-welcome-card">
-        <div class="al-welcome-copy">
-          <span class="eyebrow">Uma mensagem para você</span>
-          <h2 id="alWelcomeTitle">Boas-vindas à sua próxima etapa.</h2>
-          <p>Antes de começar, assista a esta mensagem de boas-vindas à Arquitetura de Legado.</p>
-          <button class="btn btn-gold" type="button" id="alWelcomeOpen"><span aria-hidden="true">▶</span> Assistir ao vídeo de boas-vindas</button>
-          <span class="al-welcome-note">Vídeo vertical · Assista aqui mesmo, sem sair da página.</span>
-        </div>
-        <button class="al-welcome-poster" type="button" id="alWelcomePoster" aria-label="Reproduzir vídeo de boas-vindas">
-          <img src="https://img.youtube.com/vi/LU2JOvL6Bew/hqdefault.jpg" alt="Capa do vídeo de boas-vindas da Arquitetura de Legado" loading="lazy">
-          <span class="al-welcome-play" aria-hidden="true">▶</span>
-          <span class="al-welcome-poster-label">VÍDEO DE BOAS-VINDAS</span>
-        </button>
-      </div>
-    </section>
-
     <section class="stats">
       <div class="shell stats-grid">
         <div class="stat"><strong>12</strong><span>meses</span></div>
@@ -348,9 +334,8 @@
 
     <section class="split" id="integra">
       <div class="shell split-grid">
-        <div class="photo-card photo-tall">
-          <img src="assets/lua-biblioteca.jpg?v=al2" alt="Yan na biblioteca, origem e legado" />
-          <div class="photo-overlay"><p>Origem com nome.</p><small>Códigos de Origem</small></div>
+        <div class="photo-card photo-tall" aria-label="Vídeo de boas-vindas à Arquitetura de Legado">
+          <iframe class="welcome-video-frame" src="https://www.youtube-nocookie.com/embed/LU2JOvL6Bew?rel=0&playsinline=1" title="Vídeo de boas-vindas à Arquitetura de Legado" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
         <div>
           <span class="eyebrow">Como isso se organiza</span>
@@ -652,25 +637,6 @@
     </section>
 
 
-  <div class="al-video-modal" id="alWelcomeModal" role="dialog" aria-modal="true" aria-labelledby="alVideoModalTitle">
-    <div class="al-video-dialog">
-      <button class="al-video-close" type="button" id="alWelcomeClose" aria-label="Fechar vídeo">×</button>
-      <div class="al-video-stage" id="alVideoStage"></div>
-      <div class="al-video-side">
-        <span class="eyebrow">AKASHA HUB</span>
-        <h3 id="alVideoModalTitle">Boas-vindas à Arquitetura de Legado</h3>
-        <p>Assista à mensagem aqui mesmo. Você pode minimizar o vídeo ou expandi-lo para tela cheia.</p>
-        <div class="al-video-actions">
-          <button class="al-video-action" type="button" id="alWelcomeMinimize">Assistir em segundo plano</button>
-          <button class="al-video-action" type="button" id="alWelcomeFullscreen">Tela cheia</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="al-video-mini" id="alVideoMini" aria-label="Vídeo de boas-vindas em segundo plano">
-    <button type="button" id="alWelcomeRestore" aria-label="Reabrir vídeo">↗</button>
-  </div>
-
   <footer>
     <div class="shell footer-grid">
       <div><div class="brand">Akasha <em>Hub</em></div><p>Arquitetura de Legado · Yan Klehn</p></div>
@@ -684,81 +650,6 @@
     </div>
   </footer>
   <div class="sticky-cta"><span>Sessão de Arquitetura</span><a class="btn btn-gold" href="#aplicar">Aplicar</a></div>
-
-  <script>
-  (function(){
-    const modal=document.getElementById('alWelcomeModal');
-    const stage=document.getElementById('alVideoStage');
-    const mini=document.getElementById('alVideoMini');
-    const poster=document.getElementById('alWelcomePoster');
-    const openBtn=document.getElementById('alWelcomeOpen');
-    const closeBtn=document.getElementById('alWelcomeClose');
-    const miniBtn=document.getElementById('alWelcomeMinimize');
-    const restoreBtn=document.getElementById('alWelcomeRestore');
-    const fullBtn=document.getElementById('alWelcomeFullscreen');
-    if(!modal||!stage||!mini||!poster) return;
-    const videoId='LU2JOvL6Bew';
-    let player=null, inlineControls=null;
-    function makePlayer(){
-      if(player)return player;
-      player=document.createElement('iframe');
-      player.src='https://www.youtube-nocookie.com/embed/'+videoId+'?autoplay=1&rel=0&playsinline=1';
-      player.title='Vídeo de boas-vindas à Arquitetura de Legado';
-      player.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
-      player.allowFullscreen=true;
-      player.referrerPolicy='strict-origin-when-cross-origin';
-      return player;
-    }
-    function startInline(){
-      if(!player){
-        poster.innerHTML='';
-        poster.classList.add('is-playing');
-        poster.appendChild(makePlayer());
-        inlineControls=document.createElement('div');
-        inlineControls.className='al-welcome-inline-controls';
-        inlineControls.innerHTML='<button type="button" data-al-action="fullscreen">⛶ Tela cheia</button><button type="button" data-al-action="background">▣ Segundo plano</button>';
-        poster.appendChild(inlineControls);
-      }else if(!poster.contains(player)){
-        poster.innerHTML='';
-        poster.appendChild(player);
-        poster.appendChild(inlineControls);
-      }
-      modal.classList.remove('open');
-      mini.classList.remove('open');
-      document.body.style.overflow='';
-    }
-    function showModal(){
-      if(!player)startInline();
-      stage.appendChild(player);
-      modal.classList.add('open');
-      mini.classList.remove('open');
-      document.body.style.overflow='hidden';
-    }
-    function minimize(){
-      if(!player)return;
-      mini.appendChild(player);
-      modal.classList.remove('open');
-      mini.classList.add('open');
-      document.body.style.overflow='';
-    }
-    function restore(){if(player)startInline();}
-    function closeAll(){if(player)startInline();else{modal.classList.remove('open');mini.classList.remove('open');document.body.style.overflow='';}}
-    function fullscreen(){if(!player)startInline();showModal();}
-    poster.addEventListener('click',e=>{
-      const action=e.target.closest('[data-al-action]');
-      if(action){e.stopPropagation();if(action.dataset.alAction==='fullscreen')showModal();else minimize();return;}
-      if(!player)startInline();
-    });
-    openBtn.addEventListener('click',()=>{poster.scrollIntoView({behavior:'smooth',block:'center'});startInline();});
-    closeBtn.addEventListener('click',closeAll);
-    miniBtn.addEventListener('click',minimize);
-    restoreBtn.addEventListener('click',restore);
-    fullBtn.addEventListener('click',fullscreen);
-    mini.addEventListener('click',e=>{if(e.target===mini)restore();});
-    modal.addEventListener('click',e=>{if(e.target===modal)closeAll();});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(modal.classList.contains('open')||mini.classList.contains('open')))closeAll();});
-  })();
-  </script>
 
   <script>
     (function(){
