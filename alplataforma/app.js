@@ -149,7 +149,7 @@ const PAGES = {
       <div class="grid">${PHASES.map(p=>`<a class="card" href="${p.href}"><div class="when">${esc(p.when)} · ${esc(p.acesso)}</div><h3>${esc(p.n)} ${esc(p.name)}</h3><p>${esc(p.line)}</p></a>`).join("")}</div>
       <h2>O que não foi mexido</h2>
       <p class="lead">A AF Plataforma segue em <a href="/afplataforma/">/afplataforma/</a>. Login, ferramentas e acessos continuam lá. Esta porta só organiza a fase em que cada uma entra.</p>
-      <div class="row"><button class="btn" id="exp" type="button">Baixar o dossiê</button><a class="ghost" href="/al/central/">Voltar à central</a></div>
+      <div class="row"><button class="btn" id="exp" type="button">Baixar o dossiê</button><a class="ghost" href="/al/central/">Voltar à central</a><a class="btn" href="/alplataforma/central-operacional/">Abrir Central Operacional</a></div>
     </main>`;
   },
   essencia(){
