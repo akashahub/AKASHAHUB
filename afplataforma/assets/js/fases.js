@@ -109,6 +109,7 @@ export function renderFase1() {
     <p style="display:flex;flex-wrap:wrap;gap:8px">
       <a class="tool-btn" href="/sessoes/">Abrir o roteiro em Sessões</a>
       <button class="tool-btn" type="button" data-nav="fase1-jogo">Mesa da Essência</button>
+      <button class="tool-btn" type="button" data-nav="fase1-marca">Formulário de Marca / Identidade</button>
     </p>
     <h3 class="section-h">Dossiê de Essência</h3>
     <p class="notes-hint">${nota} O modelo preenchido, com relato, hipótese e decisão, fica só na gestão do mentor.</p>
@@ -138,6 +139,18 @@ export function renderFase2() {
     "Posicionamento, linguagem, ativos digitais e a estrutura de negócios do projeto.",
     `<h3 class="section-h">Trabalho principal da fase</h3>
     <div class="module-list">${trabalho}</div>
+    <h3 class="section-h">Checklist visual de ativos digitais</h3>
+    <div id="ativosChecklist" style="margin:12px 0 20px">
+      ${[
+        "Identidade visual definida",
+        "Site ou landing principal",
+        "Presença nas redes sociais",
+        "Oferta estruturada",
+        "Aplicativo ou sistema (se aplicável)",
+        "Calendário editorial",
+        "Primeiro ativo digital entregue"
+      ].map((item, i) => `<label style="display:flex;align-items:center;gap:10px;margin:8px 0;cursor:pointer"><input type="checkbox" data-ativo="${i}" style="accent-color:#D4AF37"> ${item}</label>`).join("")}
+    </div>
     <p class="notes-hint">O calendário é uma hipótese estratégica que deve ser validada com dados, capacidade de produção e resposta real do público. O ecossistema inteiro aparece ao longo do ano, mesmo quando cada conteúdo aprofunda um tema específico.</p>`
   );
 }
@@ -173,7 +186,14 @@ export function renderFase4() {
     "Expansão e Estruturação Operacional",
     "",
     "A operação fica mais organizada e menos dependente do fundador em cada passo.",
-    `<h3 class="section-h">Trabalho principal da fase</h3>${lista(FASE4)}`
+    `<h3 class="section-h">Trabalho principal da fase</h3>${lista(FASE4)}
+    <h3 class="section-h">Ferramentas de expansão</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+      <button class="tool-btn" type="button" data-nav="fase4-sdr">SDR OS</button>
+      <button class="tool-btn" type="button" data-nav="fase4-treinamento">Treinamento de Vendedores</button>
+      <button class="tool-btn" type="button" data-nav="fase4-closers">Closers OS</button>
+    </div>
+    <p class="notes-hint" style="margin-top:12px">Essas ferramentas ajudam a estruturar prospecção, treinamento do time e fechamento em call. Os dados ficam no aparelho até serem copiados ou enviados.</p>`
   );
 }
 
@@ -344,4 +364,89 @@ export function bindFase1Jogo() {
     const texto = encodeURIComponent("Mesa da Essência\n\n" + gerarTexto());
     window.open(`https://wa.me/?text=${texto}`, "_blank");
   });
+}
+
+// === Formulário de Marca / Identidade ===
+const MARCA_CAMPOS = [
+  { id: "origem", label: "Origem da marca / projeto" },
+  { id: "historia", label: "História que a marca conta" },
+  { id: "tom", label: "Tom de voz e linguagem" },
+  { id: "simbolos", label: "Símbolos, palavras ou elementos visuais que já pertencem" },
+  { id: "paraquem", label: "Para quem é (pessoa real)" },
+  { id: "paraquemnao", label: "Para quem não é" },
+  { id: "frase", label: "Frase que outra pessoa consegue repetir" }
+];
+
+export function renderFase1Marca() {
+  const campos = MARCA_CAMPOS.map(c => campo("marca-" + c.id, c.label)).join("");
+  return pagina(
+    "1",
+    "Formulário de Marca / Identidade",
+    "AE",
+    "Estrutura específica para captar a identidade da marca ou do projeto, complementar ao dossiê pessoal.",
+    `<p><button class="tool-btn" type="button" data-nav="fase1">← Fase 1</button></p>
+    ${campos}
+    <div class="row" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+      <button class="tool-btn" type="button" id="marcaSalvar">Guardar neste aparelho</button>
+      <button class="tool-btn" type="button" id="marcaCopiar">Copiar as respostas</button>
+      <button class="tool-btn" type="button" id="marcaWhatsApp">Enviar para WhatsApp do mentor</button>
+    </div>
+    <p class="notes-hint" id="marcaAviso">As respostas ficam somente neste aparelho. O mentor não tem acesso automático a elas. Copie ou envie pelo WhatsApp quando quiser compartilhar.</p>`
+  );
+}
+
+const MARCA_KEY = "afMarcaIdentidadeV1";
+
+export function bindFase1Marca() {
+  const root = document.getElementById("content");
+  if (!root || !root.querySelector("[data-mesa^=\"marca-\"]")) return;
+  let salvo = {};
+  try { salvo = JSON.parse(localStorage.getItem(MARCA_KEY) || "{}"); } catch (e) { salvo = {}; }
+  root.querySelectorAll("[data-mesa^=\"marca-\"]").forEach((el) => {
+    const id = el.getAttribute("data-mesa");
+    if (salvo[id]) el.value = salvo[id];
+  });
+  const ler = () => {
+    const out = {};
+    root.querySelectorAll("[data-mesa^=\"marca-\"]").forEach((el) => { out[el.getAttribute("data-mesa")] = el.value; });
+    return out;
+  };
+  const gerarTexto = () => {
+    const dados = ler();
+    return MARCA_CAMPOS.map(c => c.label + "\n" + (dados["marca-" + c.id] || "—")).join("\n\n");
+  };
+  document.getElementById("marcaSalvar")?.addEventListener("click", () => {
+    localStorage.setItem(MARCA_KEY, JSON.stringify(ler()));
+    const aviso = document.getElementById("marcaAviso");
+    if (aviso) aviso.textContent = "Guardado neste aparelho.";
+  });
+  document.getElementById("marcaCopiar")?.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText("Formulário de Marca / Identidade\n\n" + gerarTexto()); } catch (e) {}
+    const aviso = document.getElementById("marcaAviso");
+    if (aviso) aviso.textContent = "Copiado.";
+  });
+  document.getElementById("marcaWhatsApp")?.addEventListener("click", () => {
+    const texto = encodeURIComponent("Formulário de Marca / Identidade\n\n" + gerarTexto());
+    window.open(`https://wa.me/?text=${texto}`, "_blank");
+  });
+}
+
+// Placeholders simples para Fase 4 (podem ser expandidos depois)
+export function renderFase4Sdr() {
+  return pagina("4", "SDR OS", "", "Estrutura de prospecção, scripts e pipeline.",
+    `<p><button class="tool-btn" type="button" data-nav="fase4">← Fase 4</button></p>
+     <p>Esta área está sendo estruturada. Em breve scripts adaptados, pipeline e chatbot.</p>
+     <p class="notes-hint">Dados ficam no aparelho. Use Copiar ou WhatsApp para compartilhar com o mentor.</p>`);
+}
+export function renderFase4Treinamento() {
+  return pagina("4", "Treinamento de Vendedores", "", "Módulos, scripts e materiais para o time.",
+    `<p><button class="tool-btn" type="button" data-nav="fase4">← Fase 4</button></p>
+     <p>Estrutura de treinamento em construção.</p>
+     <p class="notes-hint">Dados ficam no aparelho. Use Copiar ou WhatsApp para compartilhar com o mentor.</p>`);
+}
+export function renderFase4Closers() {
+  return pagina("4", "Closers OS", "", "Teleprompter, quebra de objeções e mesa de negociação.",
+    `<p><button class="tool-btn" type="button" data-nav="fase4">← Fase 4</button></p>
+     <p>Ferramentas de fechamento em call em construção.</p>
+     <p class="notes-hint">Dados ficam no aparelho. Use Copiar ou WhatsApp para compartilhar com o mentor.</p>`);
 }
