@@ -144,5 +144,125 @@ ul { padding-left: 20px; }
 
 <p style="text-align:center; color:#888; margin-top:40px;">Mapa vivo · Pode ser expandido com novos roteiros a qualquer momento.</p>
 </div>
+
+<style>
+/* Central de gravação rápida */
+.gravacao {background:#17131f;color:#fff;border-radius:18px;padding:22px;margin:22px 0;box-shadow:0 8px 28px #20143a18}
+.gravacao h2,.gravacao h3{color:#f4d98a;margin-top:0}
+.gravacao p{color:#d8d1e5}
+.gravacao-bar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.gravacao input,.gravacao select{min-width:0;flex:1;padding:12px;border:1px solid #514760;border-radius:10px;background:#26202f;color:#fff}
+.script-card{background:#fff;border:1px solid #e8e1f1;border-radius:14px;padding:16px;margin:12px 0;color:#211a2b}
+.script-card h3{margin:0 0 6px;color:#4a2170}
+.script-meta{font-size:.85rem;color:#6f657b;margin-bottom:10px}
+.script-text{white-space:pre-wrap;background:#faf8ff;border-radius:10px;padding:14px;font-size:1rem;line-height:1.8}
+.script-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.copy-btn{border:0;border-radius:10px;background:#9b7dff;color:#171020;font-weight:750;padding:11px 14px;cursor:pointer}
+.copy-btn.primary{background:#f0d58b}
+.copy-btn:active{transform:scale(.98)}
+#scripts-status{font-size:.9rem;color:#d8d1e5}
+@media(max-width:600px){.gravacao{padding:15px}.script-card{padding:12px}.script-text{font-size:1.05rem}}
+</style>
+<section class="gravacao" id="central-gravacao">
+  <h2>🎬 Central de gravação · Edits</h2>
+  <p>Escolha um roteiro, copie somente a fala e cole no teleprompter do Instagram Edits. As falas originais são preservadas; não incluem instruções, legenda ou notas de direção.</p>
+  <div class="gravacao-bar">
+    <input id="script-search" type="search" placeholder="Buscar tema, produto ou frase…">
+    <select id="script-lote"><option value="">Todos os roteiros</option></select>
+  </div>
+  <div id="scripts-status">Carregando a biblioteca de roteiros…</div>
+  <div id="scripts-list"></div>
+</section>
+<script>
+(function(){
+ const list=document.getElementById('scripts-list'), status=document.getElementById('scripts-status');
+ const search=document.getElementById('script-search'), lote=document.getElementById('script-lote');
+ const all=[];
+ function field(block,key){
+   const re=new RegExp('(?:^|\\n)\\s*'+key+'\\s*=\\s*("""[\\s\\S]*?"""|"(?:\\\\.|[^"\\\\])*"|\\'(?:\\\\.|[^\\'\\\\])*\\'|[^,\\n]+)','m');
+   const m=block.match(re); if(!m)return '';
+   let v=m[1].trim();
+   if(v.startsWith('"""')) return v.slice(3,-3).trim();
+   if(v.startsWith('"')||v.startsWith("'")) return v.slice(1,-1);
+   return v.replace(/,$/,'').trim();
+ }
+ function blocks(src,marker){
+   const start=src.indexOf(marker); if(start<0)return [];
+   const tail=src.slice(start+marker.length), out=[]; let pos=0;
+   while((pos=tail.indexOf('dict(',pos))>=0){
+     let i=pos+5, depth=1, quote=null, triple=false, esc=false;
+     for(;i<tail.length&&depth;i++){
+       const c=tail[i],n=tail.slice(i,i+3);
+       if(quote){
+         if(triple&&n===quote.repeat(3)){i+=2;quote=null;triple=false;continue}
+         if(!triple&&c===quote&&!esc){quote=null;continue}
+         if(c==='\\'&&!esc)esc=true;else esc=false;
+         continue;
+       }
+       if(n==='"""'||n==="'''"){quote=c;triple=true;i+=2;continue}
+       if(c==='"'||c==="'"){quote=c;continue}
+       if(c==='(')depth++; else if(c===')')depth--;
+     }
+     if(depth===0){out.push(tail.slice(pos+5,i-1));pos=i}else break;
+   }
+   return out;
+ }
+ function parse(src,marker,kind){
+   return blocks(src,marker).map(b=>({
+     id:field(b,'n')||field(b,'id')||'',
+     lote:field(b,'lote')||field(b,'produto')||kind,
+     produto:field(b,'produto')||'Akasha Hub',
+     tema:field(b,'q')||field(b,'quadrante')||field(b,'headline')||'Roteiro',
+     dur:field(b,'dur')||'',
+     cena:field(b,'cena')||field(b,'visual')||'',
+     tele:field(b,'tele')||'',
+     legenda:field(b,'leg')||field(b,'legenda')||'',
+     tipo:kind
+   })).filter(x=>x.tele);
+ }
+ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+ async function copyText(text,btn){
+   try{await navigator.clipboard.writeText(text)}catch(e){
+     const t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();
+   }
+   const old=btn.textContent;btn.textContent='✓ Copiado!';setTimeout(()=>btn.textContent=old,1400);
+ }
+ function render(){
+   const q=search.value.toLowerCase().trim(), cat=lote.value;
+   const filtered=all.filter(x=>(!cat||x.lote===cat)&&(!q||[x.id,x.lote,x.produto,x.tema,x.tele].join(' ').toLowerCase().includes(q)));
+   status.textContent=filtered.length+' roteiro(s) · toque em “Copiar fala” e cole no Edits.';
+   list.innerHTML=filtered.map((x,i)=>'<article class="script-card"><h3>'+esc(x.id)+' · '+esc(x.tema)+'</h3><div class="script-meta">'+esc(x.produto)+' · '+esc(x.lote)+(x.dur?' · '+esc(x.dur):'')+(x.cena?' · Cena: '+esc(x.cena):'')+'</div><div class="script-text">'+esc(x.tele)+'</div><div class="script-actions"><button class="copy-btn primary" data-copy="'+i+'">⧉ Copiar fala para Edits</button>'+(x.legenda?'<button class="copy-btn" data-leg="'+i+'">Copiar legenda</button>':'')+'</div></article>').join('');
+   list.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copyText(filtered[+b.dataset.copy].tele,b)));
+   list.querySelectorAll('[data-leg]').forEach(b=>b.addEventListener('click',()=>copyText(filtered[+b.dataset.leg].legenda,b)));
+ }
+ async function load(){
+   try{
+     const urls=[
+       ['https://raw.githubusercontent.com/akashahub/AKASHAHUB/main/afplataforma/interno/build_teleprompt_pdf.py','SCRIPTS = [','HOJE'],
+       ['https://raw.githubusercontent.com/akashahub/AKASHAHUB/main/afplataforma/interno/build_roteiros_ecossistema.py','VITRINE = [','VITRINE']
+     ];
+     for(const [url,marker,kind] of urls){
+       const res=await fetch(url,{cache:'no-store'});if(!res.ok)continue;
+       const src=await res.text();all.push(...parse(src,marker,kind));
+     }
+   }catch(e){}
+   // Also make every script already present on this page copyable, without changing its wording.
+   document.querySelectorAll('.roteiro').forEach((card,i)=>{
+     const label=card.querySelector('h3')?.textContent||('Roteiro '+(i+1));
+     const p=[...card.querySelectorAll('p')].find(p=>/Fala:|Narração:/i.test(p.textContent));
+     if(!p)return;
+     const txt=p.textContent.replace(/^.*?(Fala:|Narração:)\s*/i,'').replace(/^["“]|["”]$/g,'').trim();
+     const b=document.createElement('button');b.className='copy-btn';b.textContent='⧉ Copiar fala';
+     b.addEventListener('click',()=>copyText(txt,b));card.appendChild(b);
+   });
+   const cats=[...new Set(all.map(x=>x.lote))].sort();
+   cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;lote.appendChild(o)});
+   if(all.length===0)status.textContent='Os roteiros desta página já podem ser copiados. A biblioteca completa não carregou neste momento.';
+   render();
+ }
+ search.addEventListener('input',render);lote.addEventListener('change',render);load();
+})();
+</script>
+
 </body>
 </html>
