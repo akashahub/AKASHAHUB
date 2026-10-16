@@ -101,3 +101,18 @@ if (clarityLivesNav && !document.querySelector('[data-module="clarity-lives"]'))
  clarityLivesButton.style.alignItems = "center";
  clarityLivesNav.appendChild(clarityLivesButton);
 }
+
+
+/* Biblioteca especial: recomeço profissional e transição para o digital. */
+const restartNav = document.querySelector("header nav");
+if (restartNav && !document.querySelector('[data-module="restart-transition"]')) {
+ const restartButton = document.createElement("a");
+ restartButton.href = "./clareza-recomeco-transicao.html";
+ restartButton.className = "ghost";
+ restartButton.dataset.module = "restart-transition";
+ restartButton.textContent = "Recomeço · Transição Digital";
+ restartButton.style.textDecoration = "none";
+ restartButton.style.display = "inline-flex";
+ restartButton.style.alignItems = "center";
+ restartNav.appendChild(restartButton);
+}
