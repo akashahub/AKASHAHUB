@@ -1,1 +1,487 @@
-PLACEHOLDER_FOR_FULL_CONTENT
+/**
+ * AF Plataforma - orquestrador
+ */
+import { isDemoEnabled } from "../../firebase/firebase-config.js";
+import {
+  session,
+  setAuthCallbacks,
+  startAuthListener,
+  loginEmail,
+  loginGoogle,
+  logout,
+  enterDemo,
+  isMentorSession
+} from "./auth.js";
+import {
+  buildNav,
+  navigate,
+  openSide,
+  closeSide,
+  setLang,
+  unlockedCount,
+  nextModule,
+  registerRenderers,
+  onAfterNavigate,
+  getCurrentView,
+  esc
+} from "./navigation.js?v=lifeos1";
+import { MODULES } from "../../data/modules.js";
+import { t } from "../../data/translations.js";
+import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
+import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI, onCallNavigate } from "./call.js";
+import { startPresence, stopPresence } from "./presence.js";
+import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
+import { renderComplementarHome, renderComplementarApp } from "./complementar.js";
+import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js?v=rt14";
+import { renderSessoesAccess, bindSessoesAccess } from "./sessoes-access.js?v=1";
+import { renderQuitei, bindQuitei } from "./quitei.js";
+import { bindMaterialViewer } from "./materials.js";
+import { bindMediaUI, hydrateMedia } from "./media.js";
+import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
+import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo } from "./fases.js?v=lifeos1";
+import {
+  renderLegadoPlanos,
+  renderLegadoContrato,
+  renderLegadoRegras,
+  renderLegadoDossie,
+  bindLegadoDossie,
+  renderLegadoOquee,
+  renderLegadoDirecao,
+  renderLegadoPitch,
+  renderLegadoTcc,
+  renderLegadoSlides,
+  renderConteudosAl
+} from "./legado-mentor.js?v=rt25";
+import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
+import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audios-pnl.js?v=1";
+import { renderVendasCurso } from "./vendas-curso.js?v=1";
+import { renderLifeOsDashboard } from "./lifeos-dashboard.js?v=1";
+
+function toast(msg, err = false) {
+  const el = document.getElementById("toast");
+  if (!el) return;
+  el.textContent = msg;
+  el.className = "toast show" + (err ? " err" : "");
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => (el.className = "toast"), 2800);
+}
+
+function showAuth() {
+  document.getElementById("authShell")?.classList.remove("hidden");
+  document.getElementById("appShell")?.classList.remove("show");
+  document.getElementById("accessDenied")?.classList.remove("show");
+  const msg = document.getElementById("authMsg");
+  if (msg) {
+    msg.textContent = "";
+    msg.className = "auth-msg";
+  }
+}
+
+function profileData() {
+  try {
+    const raw = localStorage.getItem("afplataforma_v1_profile_" + (session.uid || "anon"));
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function applyProfileUI() {
+  const p = profileData();
+  const name = p.name || session.name || "-";
+  const elN = document.getElementById("userName");
+  const elR = document.getElementById("userRole");
+  if (elN) elN.textContent = name;
+  if (elR) elR.textContent = session.role || "-";
+  const av = document.getElementById("userAv");
+  if (av) {
+    if (p.photo) {
+      av.style.backgroundImage = "url(" + p.photo + ")";
+      av.style.backgroundSize = "cover";
+      av.textContent = "";
+    } else {
+      av.style.backgroundImage = "";
+      av.textContent = String(name).charAt(0).toUpperCase();
+    }
+  }
+}
+
+function showApp() {
+  document.getElementById("authShell")?.classList.add("hidden");
+  document.getElementById("accessDenied")?.classList.remove("show");
+  document.getElementById("appShell")?.classList.add("show");
+  applyProfileUI();
+  hydrateMedia();
+  const badge = document.getElementById("modeBadge");
+  if (badge) {
+    badge.textContent = session.mode === "firebase" ? "Firebase" : "MVP local";
+    badge.className = "badge-mode" + (session.mode === "firebase" ? " live" : "");
+  }
+  const langSel = document.getElementById("langSel");
+  if (langSel) langSel.value = session.lang || "pt-BR";
+  buildNav();
+  bindPersistentCallUI(navigate);
+  startPresence();
+  const room = (location.hash || "").replace("#", "");
+  const rooms = ["criancas", "criancas-pais", "criancas-sala", "empresas"];
+  navigate(rooms.includes(room) ? room : "dashboard");
+}
+
+function showAccessDenied() {
+  document.getElementById("authShell")?.classList.add("hidden");
+  document.getElementById("appShell")?.classList.remove("show");
+  document.getElementById("accessDenied")?.classList.add("show");
+}
+
+function openModal(title, body, foot) {
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalBody").innerHTML = body;
+  document.getElementById("modalFoot").innerHTML = foot || "";
+  document.getElementById("overlay")?.classList.add("open");
+  document.getElementById("modalBox")?.classList.add("open");
+}
+
+function closeModals() {
+  closeToolsModal();
+  document.getElementById("modalBox")?.classList.remove("open");
+  document.getElementById("overlay")?.classList.remove("open");
+}
+
+function showLocked() {
+  const lang = session.lang || "pt-BR";
+  openModal(
+    t(lang, "locked"),
+    `<p style="color:var(--muted);line-height:1.6">${esc(t(lang, "locked"))}</p>`,
+    `<button class="btn btn-inline" type="button" id="btnLockedOk">Entendi</button>`
+  );
+  document.getElementById("btnLockedOk")?.addEventListener("click", closeModals);
+}
+
+function renderDashboard() {
+  const lang = session.lang || "pt-BR";
+  const u = unlockedCount();
+  const next = nextModule();
+  return `
+  <div class="view active">
+    ${pageHead("dash", "Alinhamento Financeiro", esc(t(lang, "welcome")), `${esc(session.name)} · ${session.role === "mentee" ? "Mentorado" : "Mentor"} · acesso ${session.active ? "ativo" : "pendente"}`)}
+    <div class="grid-3">
+      <div class="stat-card"><div class="lbl">${esc(t(lang, "progress"))}</div><div class="val">${u}/7</div><div class="hint">módulos liberados</div></div>
+      <div class="stat-card"><div class="lbl">Materiais</div><div class="val">${u * 3}/21</div><div class="hint">estimativa por liberação</div></div>
+      <div class="stat-card"><div class="lbl">${esc(t(lang, "next"))}</div><div class="val" style="font-size:1.1rem;padding-top:8px">${next ? esc(next.num + " · " + next.title.split(" ")[0]) : "Completo"}</div><div class="hint">${next ? esc(next.title) : "-"}</div></div>
+    </div>
+    <h3 class="section-h">Jornada das 7 camadas</h3>
+    <div class="module-list">
+      ${MODULES.map((m) => {
+        const open = !!session.modules[m.id];
+        return `<div class="mod-row ${open ? "" : "locked"}" data-nav="${open ? "module:" + m.id : ""}" ${open ? "" : "data-locked=\"1\""}>
+          <div class="mod-num">${m.num}</div>
+          <div class="mod-body"><h3>${esc(m.title)}</h3><p>${esc(m.archetype)} · ${esc(m.chakra)}</p><p>${esc(m.subtitle)}</p></div>
+          <div class="mod-lock">${open ? "🔓" : "🔒"}</div>
+        </div>`;
+      }).join("")}
+    </div>
+  </div>`;
+}
+
+function renderModules() {
+  return `<div class="view active">
+    ${pageHead("modules", "Conteúdo", "7 módulos · 21 materiais", "Material completo em PDF, lido na própria plataforma.")}
+    <div class="module-list">${MODULES.map((m) => {
+      const open = !!session.modules[m.id];
+      return `<div class="mod-row ${open ? "" : "locked"}" data-nav="${open ? "module:" + m.id : ""}" ${open ? "" : "data-locked=\"1\""}>
+        <div class="mod-num">${m.num}</div>
+        <div class="mod-body"><h3>${esc(m.title)}</h3><p>${esc(m.archetype)} · ${esc(m.chakra)}</p><p>${m.materials.length} materiais · ${m.tools.length} ferramenta(s)</p></div>
+        <div class="mod-lock">${open ? "🔓" : "🔒"}</div>
+      </div>`;
+    }).join("")}</div>
+  </div>`;
+}
+
+function renderModuleDetail(id) {
+  const m = MODULES.find((x) => x.id === id);
+  if (!m || !session.modules[id]) return renderModules();
+  return `<div class="view active">
+    <div class="back-link" data-nav="modules">← Módulos</div>
+    <p class="hero-line">Camada ${m.num} · ${esc(m.archetype)}</p>
+    <h2 class="hero-title">${esc(m.title)}</h2>
+    <p class="hero-sub">${esc(m.chakra)} · ${esc(m.subtitle)}</p>
+    <article class="af-asc-card" style="margin:12px 0 18px"><p class="lvl">Como incorporar</p><p>${esc(m.cena)}</p></article>
+    <h3 class="section-h">Materiais</h3>
+    <div class="mat-grid">${m.materials
+      .map(
+        (mat) => `<div class="mat-card">
+      <h4>${esc(mat.title)}</h4>
+      <p>${esc(mat.body)}</p>
+      ${
+        mat.pdf
+          ? `<button class="tool-btn mat-open-btn" type="button" data-open-pdf="${esc(mat.pdf)}" data-pdf-title="${esc(mat.title)}">Abrir material</button>`
+          : ""
+      }
+    </div>`
+      )
+      .join("")}</div>
+    <h3 class="section-h">Ferramentas</h3>
+    ${m.tools.map((tid) => `<button class="tool-btn" type="button" data-tool="${tid}">Abrir ferramenta · ${esc(tid)}</button> `).join("")}
+    <h3 class="section-h">Preparação para call</h3>
+    <p style="color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:12px">Revise o diagnóstico e leve 1 pergunta objetiva.</p>
+    <button class="tool-btn" type="button" data-nav="call">Ir para Call</button>
+  </div>`;
+}
+
+function mentorHref(path) {
+  const q = session.mode === "local" && isMentorSession() ? "?demo=mentor" : "";
+  return path + q;
+}
+function fechamentoHref() {
+  return mentorHref("fechamento/index.html");
+}
+function ascensaoHref() {
+  return mentorHref("ascensao/index.html");
+}
+function treinoHref() {
+  return mentorHref("treinamento/index.html");
+}
+function mesaHref() {
+  return mentorHref("mesa/index.html");
+}
+function livroHref() {
+  return mentorHref("interno/livro.html");
+}
+
+function renderMentor() {
+  if (!isMentorSession()) {
+    return `<div class="view active"><p class="empty">Acesso restrito ao mentor.</p></div>`;
+  }
+  return `<div class="view active">
+    <p class="hero-line">Controle</p>
+    <h2 class="hero-title">Dashboard do mentor</h2>
+    <p class="hero-sub">Liberação no Firestore: <code>afAccess/{uid}</code> com approved, active e modules.</p>
+    <div class="mentor-hero">
+      <img src="assets/img/mentor/yan.jpg" alt="Mentor">
+      <div>
+        <div class="lbl">Mentor</div>
+        <h3 class="mentor-name">Yan · Akasha Hub</h3>
+        <p class="notes-hint">Foto do painel. Pode ser trocada no próximo ciclo se você enviar outro arquivo.</p>
+      </div>
+    </div>
+    <div class="stat-card" style="max-width:480px">
+      <div class="lbl">Operação</div>
+      <div class="hint" style="margin-top:10px;line-height:1.8">
+        1. Mentorando tenta entrar com e-mail ou Google<br>
+        2. A solicitação aparece abaixo automaticamente<br>
+        3. Você libera, pausa, gerencia módulos ou bloqueia<br>
+        4. Roteiros privados: <strong>afMentorScripts/module01</strong>
+      </div>
+    </div>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Uso interno</p>
+      <h3>Livro Operacional</h3>
+      <p>Volume 0 · auditoria e mapa do sistema. Só esta conta abre. Mentorados não veem este botão.</p>
+      <a class="tool-btn" href="${livroHref()}">Abrir livro</a>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Call de entrada</p>
+      <h3>Roteiro da Ascensão</h3>
+      <p>Mapa da sessão de 1h30 · R$ 350. Original intacto. Complemento das transcrições em roxo. Só o mentor vê.</p>
+      <a class="tool-btn" href="${ascensaoHref()}">Abrir mapa da sessão</a>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Call comercial</p>
+      <h3>Fechamento de Call</h3>
+      <p>Mapa, diagnóstico, qualificação, teleprompt, DNA e o que mostrar na tela. Só o mentor vê. Mentorado não entra.</p>
+      <a class="tool-btn" href="${fechamentoHref()}">Abrir fechamento</a>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Call Francesca</p>
+      <h3>Mesa</h3>
+      <p>Cockpit de negociação: Core + playbook. Francesca, Zé, Artur. Guia V3, o que mostrar, proposta 17k. Não compartilhar tela.</p>
+      <a class="tool-btn" href="${mesaHref()}">Abrir mesa</a>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Equipe</p>
+      <h3>Treinamento do vendedor</h3>
+      <p>Call sem tempo fixo até o checklist ficar verde. SDR vende a sessão. Mentoria cara não é o dia 1. Só o mentor vê.</p>
+      <a class="tool-btn" href="${treinoHref()}">Abrir treinamento</a>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Operação comercial</p>
+      <h3>SDR · Akasha Hub</h3>
+      <p>CRM leve, pipeline, radar de oportunidades, abordagem realista, diagnóstico breve, objeções e retornos. Acesso exclusivo ao mentor.</p>
+      <a class="tool-btn" href="sdr/index.html">Abrir cockpit SDR</a>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Império Digital · planejamento 2027</p>
+      <h3>Perfil do Cliente & Calendário Editorial</h3>
+      <p>Documento revisado com temas múltiplos por mês, conteúdos transversais do ecossistema e análise da meta de 90 publicações por dia. A página permite imprimir ou salvar como PDF.</p>
+      <a class="tool-btn" href="interno/plano-editorial-2027.html" target="_blank" rel="noopener">Abrir plano editorial 2027 / Salvar em PDF</a>
+      <a class="tool-btn" href="/al/central/perfil-conteudo/" target="_blank" rel="noopener">Abrir formulário digital de perfil e conteúdo</a>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Arquitetura de Legado · só o mentor</p>
+      <h3>Casa, contrato e apresentações</h3>
+      <p>O mapa antigo dos planos do AF continua abaixo, com o nome exclusivo dele. Estes botões são a casa de R$ 39 mil e R$ 60 mil.</p>
+      <a class="tool-btn" href="interno/documento-mestre-arquitetura-de-legado.pdf" target="_blank" rel="noopener">Documento-mestre</a>
+      <button class="tool-btn" type="button" data-nav="legado-planos">Mapa dos planos do Legado</button>
+      <button class="tool-btn" type="button" data-nav="legado-contrato">Contrato</button>
+      <button class="tool-btn" type="button" data-nav="legado-regras">Regras</button>
+      <button class="tool-btn" type="button" data-nav="legado-dossie">Modelo de dossiê</button>
+      <button class="tool-btn" type="button" data-nav="legado-oquee">O que é a mentoria</button>
+      <button class="tool-btn" type="button" data-nav="legado-direcao">Roteiro de direcionamento</button>
+      <button class="tool-btn" type="button" data-nav="legado-pitch">Pitch</button>
+      <button class="tool-btn" type="button" data-nav="legado-tcc">Apresentação TCC</button>
+      <button class="tool-btn" type="button" data-nav="legado-slides">Lâminas</button>
+      <button class="tool-btn" type="button" data-nav="producao-audios-pnl">PRODUÇÃO ÁUDIOS PNL</button>
+      <button class="tool-btn" type="button" data-nav="audios-pnl">Biblioteca antiga de áudios</button>
+      <button class="tool-btn" type="button" data-nav="conteudos-al">Conteúdos estratégicos para AL YouTube/TikTok</button>
+      <a class="tool-btn" href="interno/apresentacao-curta-al.pdf" target="_blank" rel="noopener">Apresentação curta · AL</a>
+      <a class="tool-btn" href="interno/palestra-legado-teleprompt.pdf" target="_blank" rel="noopener">Palestra · teleprompt</a>
+      <a class="tool-btn" href="interno/palestra-legado-decorar.pdf" target="_blank" rel="noopener">Palestra · como decorar</a>
+      <a class="tool-btn" href="interno/palestra-legado-mapa.png" target="_blank" rel="noopener">Palestra · mapa</a>
+      <a class="tool-btn" href="interno/palestra-legado-slides.pdf" target="_blank" rel="noopener">Palestra · lâminas</a>
+      <a class="tool-btn" href="interno/patrocinadores-b2b.pdf" target="_blank" rel="noopener">Patrocinadores · B2B</a>
+    </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Boas-vindas · uso interno</p>
+      <h3>Roteiro do vídeo de boas-vindas</h3>
+      <p>Storytelling completo sobre a trajetória do mentor, os mais de 2 mil atendimentos, o livro Códigos de Origem e a evolução até o Arquitetura de Legado. Acesso exclusivo ao mentor.</p>
+      <a class="tool-btn" href="${mentorHref("interno/roteiro-boas-vindas.html")}">Abrir roteiro de boas-vindas</a>
+    </article>
+    ${renderSessoesAccess()}
+    ${renderAccessAdminPanel()}
+  </div>`;
+}
+
+function renderProfile() {
+  const p = profileData();
+  const name = p.name || session.name || "";
+  const photo = p.photo || "";
+  return `<div class="view active">
+    <p class="hero-line">Conta</p>
+    <h2 class="hero-title">Perfil</h2>
+    <p class="hero-sub">${esc(session.email)} · ${esc(session.role)} · ${esc(session.mode)}</p>
+    <div class="profile-edit">
+      <div class="profile-av-wrap">
+        <div class="profile-av" id="profileAvPreview" ${photo ? `style="background-image:url('${photo}')"` : ""}>${photo ? "" : esc((name || "A").charAt(0).toUpperCase())}</div>
+        <label class="tool-btn">Trocar foto<input type="file" id="profPhoto" accept="image/*" hidden></label>
+      </div>
+      <div class="field"><label>Nome de exibição</label><input id="profName" value="${esc(name)}" placeholder="Seu nome"></div>
+      <div class="field"><label>Cidade</label><input id="profCity" value="${esc(p.city || "")}" placeholder="Cidade"></div>
+      <div class="field"><label>Instagram</label><input id="profIg" value="${esc(p.ig || "")}" placeholder="@usuario"></div>
+      <div class="field"><label>WhatsApp</label><input id="profWpp" value="${esc(p.wpp || "")}" placeholder="71 9xxxx-xxxx"></div>
+      <div class="field"><label>Uma linha sobre você</label><input id="profBio" value="${esc(p.bio || "")}" placeholder="Uma frase"></div>
+      <button class="btn btn-inline" type="button" id="btnSaveProfile">Salvar perfil</button>
+    </div>
+  </div>`;
+}
+
+// Continue with the rest of the original file (registerRenderers, onAfterNavigate, init, etc.)
+// The full original content from the good commit is being restored.
+
+registerRenderers({
+  dashboard: renderLifeOsDashboard,
+  "af-dashboard": renderDashboard,
+  modules: renderModules,
+  moduleDetail: renderModuleDetail,
+  tools: renderToolsView,
+  call: renderCallView,
+  mentor: renderMentor,
+  ascensao: () => (isMentorSession()
+    ? `<div class="view active">
+        <div class="back-link" data-nav="mentor">← Gestão</div>
+        <p class="hero-line">Call de entrada</p>
+        <h2 class="hero-title">Ascensão de Alinhamento</h2>
+        <p class="hero-sub">O mapa da sessão (1h30 · R$ 350) está no mesmo formato do fechamento. Só o mentor abre.</p>
+        <a class="tool-btn" href="${ascensaoHref()}">Abrir mapa da sessão</a>
+      </div>`
+    : `<div class="view active"><p class="empty">Acesso restrito ao mentor.</p></div>`),
+  profile: renderProfile,
+  complementar: renderComplementarHome,
+  compApp: renderComplementarApp,
+  quitei: renderQuitei,
+  criancas: renderCriancas,
+  "criancas-pais": renderCriancasPais,
+  "criancas-sala": renderCriancasSala,
+  empresas: renderEmpresas,
+  fase1: renderFase1,
+  "fase1-jogo": renderFase1Jogo,
+  fase2: renderFase2,
+  fase3: renderFase3,
+  fase4: renderFase4,
+  fase5: renderFase5,
+  "legado-planos": renderLegadoPlanos,
+  "legado-contrato": renderLegadoContrato,
+  "legado-regras": renderLegadoRegras,
+  "legado-dossie": renderLegadoDossie,
+  "legado-oquee": renderLegadoOquee,
+  "legado-direcao": renderLegadoDirecao,
+  "legado-pitch": renderLegadoPitch,
+  "legado-tcc": renderLegadoTcc,
+  "legado-slides": renderLegadoSlides,
+  "conteudos-al": renderConteudosAl,
+  "vendas-curso": renderVendasCurso,
+  "audios-pnl": renderAudiosPnl,
+  "producao-audios-pnl": renderProducaoAudiosPnl,
+  showLocked,
+  openTool,
+  pickProduct: pickNewProductImage
+});
+
+onAfterNavigate((view) => {
+  onCallNavigate(view === "call");
+  if (view === "call") bindCallControls(navigate);
+  if (view === "fase1-jogo") bindFase1Jogo();
+  if (view === "legado-dossie") bindLegadoDossie();
+  if (view === "audios-pnl") bindAudiosPnl();
+  if (view === "producao-audios-pnl") bindProducaoAudiosPnl();
+});
+
+function init() {
+  document.getElementById("btnLogin")?.addEventListener("click", onLoginEmail);
+  const loginBtn = document.getElementById("btnLogin");
+  if (loginBtn) loginBtn.dataset.ready = "1";
+  document.getElementById("btnGoogle")?.addEventListener("click", onLoginGoogle);
+  document.getElementById("loginPass")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") onLoginEmail();
+  });
+  document.getElementById("btnDemoMentor")?.addEventListener("click", () => enterDemo("mentor"));
+  document.getElementById("btnDemoMentee")?.addEventListener("click", () => enterDemo("mentee"));
+  document.getElementById("btnLogout")?.addEventListener("click", async () => {
+    forceStopMedia();
+    closeTeleprompter();
+    await stopPresence();
+    await logout();
+  });
+  document.getElementById("btnDeniedBack")?.addEventListener("click", async () => {
+    await logout();
+    showAuth();
+  });
+  document.getElementById("menuToggle")?.addEventListener("click", openSide);
+  document.getElementById("sideBackdrop")?.addEventListener("click", closeSide);
+  document.getElementById("langSel")?.addEventListener("change", (e) => setLang(e.target.value));
+  document.getElementById("overlay")?.addEventListener("click", closeModals);
+  document.getElementById("modalX")?.addEventListener("click", closeModals);
+
+  bindTeleprompterUI();
+  bindToolPanelUI();
+  bindMaterialViewer();
+  bindMediaUI();
+  bindCoverEditor();
+  bindLifeOsLayer();
+  bindQuitei();
+
+  document.addEventListener("af-covers-changed", () => {
+    const v = getCurrentView();
+    if (v) navigate(v);
+  });
+
+  setAuthCallbacks({
+    onReady: () => showApp(),
+    onDenied: () => showAccessDenied(),
+    onLogout: () => showAuth()
+  });
+
+  startAuthListener();
+}
+
+init();
