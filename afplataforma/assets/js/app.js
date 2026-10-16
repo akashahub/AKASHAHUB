@@ -375,8 +375,70 @@ function renderProfile() {
   </div>`;
 }
 
-// Continue with the rest of the original file (registerRenderers, onAfterNavigate, init, etc.)
-// The full original content from the good commit is being restored.
+function renderCriancas() {
+  return `<div class="view active">
+    <p class="hero-line">Dentro do acesso</p>
+    <h2 class="hero-title">Crianças</h2>
+    <p class="hero-sub">Duas salas. A fala do adulto não entra na sala da criança.</p>
+    <div class="grid-3">
+      <div class="stat-card" data-nav="criancas-pais" style="cursor:pointer">
+        <div class="lbl">Adulto</div>
+        <div class="val" style="font-size:1.35rem">Pais</div>
+        <div class="hint">Orientação para acompanhar o filho. A criança não lê isto sozinha.</div>
+      </div>
+      <div class="stat-card" data-nav="criancas-sala" style="cursor:pointer">
+        <div class="lbl">Criança</div>
+        <div class="val" style="font-size:1.35rem">Sala</div>
+        <div class="hint">Dinheiro, guardar, gastar, escolher, esperar.</div>
+      </div>
+    </div>
+    <p class="notes-hint">Aulas e faixa etária: conteúdo ainda não publicado.</p>
+  </div>`;
+}
+
+function renderCriancasPais() {
+  return `<div class="view active">
+    <div class="back-link" data-nav="criancas">← Crianças</div>
+    <p class="hero-line">Orientação dos pais</p>
+    <h2 class="hero-title">Você acompanha. Não faz no lugar.</h2>
+    <p class="hero-sub">Esta sala é para quem vai sentar junto. Não leve patrimônio, caixa, protocolo ou investimento para a conversa com a criança.</p>
+    <div class="module-list">
+      <div class="mod-row"><div class="mod-num">1</div><div class="mod-body"><h3>Antes de abrir a sala dela</h3><p>Você entra primeiro. A criança entra na outra sala, com você por perto.</p></div></div>
+      <div class="mod-row"><div class="mod-num">2</div><div class="mod-body"><h3>Como falar</h3><p>Dinheiro. Guardar. Gastar. Escolher. Esperar.</p></div></div>
+      <div class="mod-row"><div class="mod-num">3</div><div class="mod-body"><h3>O que ainda falta</h3><p>Roteiro de orientação e faixa etária. Conteúdo ainda não publicado.</p></div></div>
+    </div>
+  </div>`;
+}
+
+function renderCriancasSala() {
+  return `<div class="view active">
+    <div class="back-link" data-nav="criancas">← Crianças</div>
+    <h2 class="hero-title">Aqui é com você.</h2>
+    <p class="hero-sub">A gente fala de dinheiro com poucas palavras. Um adulto fica junto.</p>
+    <div class="module-list">
+      <div class="mod-row"><div class="mod-num">1</div><div class="mod-body"><h3>Olhar o dinheiro.</h3></div></div>
+      <div class="mod-row"><div class="mod-num">2</div><div class="mod-body"><h3>Escolher.</h3></div></div>
+      <div class="mod-row"><div class="mod-num">3</div><div class="mod-body"><h3>Guardar um pouco.</h3></div></div>
+      <div class="mod-row"><div class="mod-num">4</div><div class="mod-body"><h3>Esperar.</h3></div></div>
+    </div>
+    <p class="notes-hint">A história de cada passo ainda não foi escrita.</p>
+  </div>`;
+}
+
+function renderEmpresas() {
+  return `<div class="view active">
+    <p class="hero-line">Dentro do acesso</p>
+    <h2 class="hero-title">Empresas</h2>
+    <p class="hero-sub">Camada para a empresa desenvolver o colaborador. Não é a mentoria individual.</p>
+    <div class="module-list">
+      ${["Educação financeira", "Comunicação", "Atendimento", "Vendas", "Cultura", "Outros treinamentos"]
+        .map((name, i) => `<div class="mod-row"><div class="mod-num">${i + 1}</div><div class="mod-body"><h3>${name}</h3><p>Espaço reservado. Material ainda não publicado.</p></div></div>`)
+        .join("")}
+    </div>
+    <p class="notes-hint">Login de gestor e progresso por empresa ainda não existem. Quem entra aqui já passou pelo acesso da plataforma.</p>
+  </div>`;
+}
+
 
 registerRenderers({
   dashboard: renderLifeOsDashboard,
@@ -436,7 +498,49 @@ onAfterNavigate((view) => {
   if (view === "producao-audios-pnl") bindProducaoAudiosPnl();
 });
 
+async function onLoginEmail() {
+  const email = document.getElementById("loginEmail").value;
+  const pass = document.getElementById("loginPass").value;
+  const msg = document.getElementById("authMsg");
+  if (!email || !pass) {
+    msg.className = "auth-msg err";
+    msg.textContent = "Preencha e-mail e senha.";
+    return;
+  }
+  msg.className = "auth-msg";
+  msg.textContent = "Conectando…";
+  document.getElementById("btnLogin").disabled = true;
+  try {
+    await loginEmail(email, pass);
+  } catch (e) {
+    msg.className = "auth-msg err";
+    msg.textContent = e.code || e.message || "Falha no login";
+  } finally {
+    document.getElementById("btnLogin").disabled = false;
+  }
+}
+
+async function onLoginGoogle() {
+  const msg = document.getElementById("authMsg");
+  msg.className = "auth-msg";
+  msg.textContent = "Abrindo Google…";
+  document.getElementById("btnGoogle").disabled = true;
+  try {
+    await loginGoogle();
+  } catch (e) {
+    msg.className = "auth-msg err";
+    if (e.code === "auth/popup-closed-by-user") msg.textContent = "Popup fechado.";
+    else if (e.code === "auth/unauthorized-domain") msg.textContent = "Domínio não autorizado no Firebase Auth.";
+    else msg.textContent = e.code || e.message || "Falha Google";
+  } finally {
+    document.getElementById("btnGoogle").disabled = false;
+  }
+}
+
 function init() {
+  const demoWrap = document.getElementById("demoButtons");
+  if (demoWrap) demoWrap.style.display = isDemoEnabled() ? "block" : "none";
+
   document.getElementById("btnLogin")?.addEventListener("click", onLoginEmail);
   const loginBtn = document.getElementById("btnLogin");
   if (loginBtn) loginBtn.dataset.ready = "1";
