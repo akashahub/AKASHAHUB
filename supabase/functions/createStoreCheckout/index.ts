@@ -140,22 +140,10 @@ function memberProduct(ref: string) {
 }
 
 async function openCheckout(stripe, fields) {
-  try {
-    return await stripe.checkout.sessions.create({
-      ...fields,
-      payment_method_types: ["card", "pix"],
-      payment_method_options: { pix: { expires_after_seconds: 1800 } },
-    });
-  } catch (err) {
-    const message = String(err && err.message || "");
-    if (!/pix/i.test(message)) throw err;
-    return stripe.checkout.sessions.create({
-      ...fields,
-      payment_method_types: ["card"],
-    });
-  }
+  // Stripe escolhe dinamicamente os métodos habilitados para a conta e a transação.
+  // Para habilitar/desabilitar Pix, cartão e Link, use a configuração de métodos no Dashboard.
+  return stripe.checkout.sessions.create(fields);
 }
-
 function safeUrl(url, fallback) {
   try {
     const parsed = new URL(String(url || ""));
