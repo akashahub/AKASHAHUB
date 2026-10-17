@@ -1,19 +1,9 @@
 import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 
 const CATALOG = {
-  "teste-stripe": { name: "Teste Stripe", cents: 500 },
   "energia-sexual": { name: "Mini curso Energia Sexual", cents: 2500 },
   "zero-ao-zen": { name: "Do Zero ao Zen Negócios · Livro", cents: 9900 },
   "codigos-de-origem": { name: "Códigos de Origem", cents: 9000 },
-  "camiseta-akasha": { name: "Camiseta Akasha", cents: 1000 },
-  "banheira-go-arctic": { name: "Banheira de Imersão em Gelo Go Arctic", cents: 1000 },
-  "cafeteira-hyllis": { name: "Cafeteira Portátil Hyllis", cents: 1000 },
-  "escultura-anubis": { name: "Escultura Decorativa Anubis", cents: 1000 },
-  "kit-cristais-chakras": { name: "Kit 7 Cristais Brutos dos Chakras", cents: 1000 },
-  "oleos-essenciais": { name: "Coleção Óleos Essenciais Vitalize Aromas", cents: 1000 },
-  "kit-ritual-limpeza": { name: "Kit Ritual de Limpeza", cents: 1000 },
-  "incensario-nirvana": { name: "Incensário de Vidro Nirvana", cents: 1000 },
-  "japamala-sagrado": { name: "Japamala Sagrado", cents: 1000 },
 };
 const AREA_CENTS = { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 };
 const COURSE_PRICES: Record<string, number> = {
