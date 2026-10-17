@@ -132,6 +132,10 @@ async function loadSecrets() {
   const rows = await res.json();
   const map: Record<string, string> = {};
   for (const row of rows) map[row.name] = row.value;
+  for (const name of ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "FIREBASE_SERVICE_ACCOUNT", "RESEND_API_KEY", "MAIL_FROM"]) {
+    const value = Deno.env.get(name) || "";
+    if (value) map[name] = value;
+  }
   return map;
 }
 
@@ -242,7 +246,7 @@ async function deliverStoreDigitalProduct(session: any, meta: Record<string, str
   const product = STORE_DIGITAL_DELIVERY[sku];
   const email = String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase();
   if (!product) throw new Error("store_delivery_unknown_sku");
-  if (!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) throw new Error("store_delivery_email_invalid");
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("store_delivery_email_invalid");
   if (!sec.RESEND_API_KEY || !sec.MAIL_FROM) throw new Error("store_email_not_configured");
   if (await storeDeliveryAlreadySent(String(session.id))) return;
 
