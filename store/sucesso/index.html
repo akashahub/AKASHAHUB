@@ -27,13 +27,15 @@
       <a href="/members/sucesso/">Pós-venda da sala</a>
     </p>
   </div>
-  <script src="/store/catalog.js?v=1"></script>
+  <script src="/store/catalog.js?v=4"></script>
   <script>
     const sku = new URLSearchParams(location.search).get("sku") || "";
     const p = window.AKASHA_STORE && AKASHA_STORE.byId(sku);
     if (p) {
-      document.getElementById("msg").textContent = p.name + " - R$ " + p.priceBRL + ".";
-      document.getElementById("wa").href = AKASHA_STORE.waUrl(p, "Já paguei no Stripe. Segue para alinhar a entrega.");
+      document.getElementById("msg").textContent = p.quoteOnly
+        ? p.name + " é um produto sob encomenda. Confirme o valor e a entrega pelo WhatsApp."
+        : p.name + " - R$ " + p.priceBRL + ". O link do produto digital também é enviado por e-mail.";
+      document.getElementById("wa").href = AKASHA_STORE.waUrl(p, "Pedido feito na Akasha Store. Segue para confirmar os próximos passos.");
     }
   </script>
 </body>
