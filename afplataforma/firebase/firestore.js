@@ -91,6 +91,53 @@ function pickUserEmail(u) {
   return u.email || u.mail || u.eMail || "";
 }
 
+export async function getUserProfile(uid) {
+  if (!uid) return null;
+  const snap = await getDoc(doc(db, "users", uid));
+  if (!snap.exists()) return null;
+  const user = snap.data() || {};
+  const profile = user.akashaProfile;
+  if (!profile || typeof profile !== "object") return null;
+  return {
+    name: String(profile.name || user.displayName || user.name || ""),
+    city: String(profile.city || ""),
+    ig: String(profile.ig || ""),
+    wpp: String(profile.wpp || ""),
+    bio: String(profile.bio || ""),
+    photo: String(user.photo || "")
+  };
+}
+
+export async function saveUserProfile(uid, profile = {}) {
+  if (!uid) throw new Error("uid obrigatório");
+  const clean = {
+    name: String(profile.name || "").trim().slice(0, 100),
+    city: String(profile.city || "").trim().slice(0, 100),
+    ig: String(profile.ig || "").trim().slice(0, 100),
+    wpp: String(profile.wpp || "").trim().slice(0, 40),
+    bio: String(profile.bio || "").trim().slice(0, 240),
+    photo: String(profile.photo || "")
+  };
+  try {
+    await setDoc(doc(db, "users", uid), {
+      name: clean.name,
+      displayName: clean.name,
+      photo: clean.photo,
+      akashaProfile: {
+        name: clean.name,
+        city: clean.city,
+        ig: clean.ig,
+        wpp: clean.wpp,
+        bio: clean.bio
+      },
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    return clean;
+  } catch (e) {
+    mapAfError(e);
+  }
+}
+
 export async function getAfAccess(uid) {
   if (!uid) return null;
   try {
