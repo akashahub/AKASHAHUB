@@ -10,6 +10,7 @@ export function renderLifeOsDashboard() {
   const nome = String(session.name || "").trim().split(/\s+/)[0];
   const abertos = unlockedCount();
   const proximo = nextModule();
+  const primeiroLiberado = MODULES.find((m) => session.modules[m.id]) || null;
   const totalModulos = MODULES.length || 7;
   const acessoPercentual = Math.round((abertos / totalModulos) * 100);
   const fases = [
@@ -56,12 +57,14 @@ export function renderLifeOsDashboard() {
     <section class="lifeos-start" aria-label="Comece sua jornada">
       <div>
         <p class="eyebrow">Seu ponto de partida</p>
-        <h3>Uma decisão clara. Um próximo passo de cada vez.</h3>
-        <p>Consulte os módulos disponíveis, prepare-se para os encontros e use as ferramentas para colocar as decisões em prática. O que ainda não estiver liberado pode ser alinhado com seu mentor.</p>
+        <h3>${primeiroLiberado ? "Comece pelo módulo " + esc(primeiroLiberado.num) + " · " + esc(primeiroLiberado.title) : "Defina seu ponto de partida"}</h3>
+        <p>${primeiroLiberado
+          ? "Este módulo está liberado para sua conta. Abra o conteúdo e avance no seu ritmo. O painel mostra acessos, não presume conclusão."
+          : "Sua conta ainda não tem módulos liberados. Abra um encontro com seu mentor para combinar o ponto de partida e confirmar as próximas liberações."}</p>
         <div class="lifeos-actions">
-          <button class="tool-btn primary" type="button" data-nav="modules">Ver meus módulos</button>
-          <button class="tool-btn" type="button" data-nav="call">Abrir encontro</button>
-          <button class="tool-btn" type="button" data-nav="profile">Meu perfil</button>
+          <button class="tool-btn primary" type="button" data-nav="${primeiroLiberado ? "module:" + primeiroLiberado.id : "call"}">${primeiroLiberado ? "Começar módulo " + esc(primeiroLiberado.num) : "Alinhar ponto de partida"}</button>
+          <button class="tool-btn" type="button" data-nav="modules">Ver todos os módulos</button>
+          <button class="tool-btn" type="button" data-nav="call">${primeiroLiberado ? "Preparar encontro" : "Abrir encontro com mentor"}</button>
         </div>
       </div>
       <div class="lifeos-access">
@@ -72,7 +75,7 @@ export function renderLifeOsDashboard() {
     </section>
     <div class="grid-3">
       <div class="stat-card"><div class="lbl">Módulos liberados</div><div class="val">${abertos}/${totalModulos}</div><div class="hint">Acesso atual da sua conta</div></div>
-      <div class="stat-card"><div class="lbl">Próximo módulo na trilha</div><div class="val" style="font-size:1.1rem;padding-top:8px">${proximo ? esc(proximo.num + " · " + proximo.title.split(" ")[0]) : "Trilha liberada"}</div><div class="hint">${proximo ? "Se precisar deste conteúdo, alinhe a liberação com seu mentor." : "Todos os módulos estão liberados para sua conta."}</div></div>
+      <div class="stat-card"><div class="lbl">Próxima liberação na trilha</div><div class="val" style="font-size:.98rem;line-height:1.4;padding-top:8px">${proximo ? esc(proximo.num + " · " + proximo.title) : "Trilha liberada"}</div><div class="hint">${proximo ? "Se precisar deste conteúdo, alinhe a liberação com seu mentor." : "Todos os módulos estão liberados para sua conta."}</div></div>
       <div class="stat-card"><div class="lbl">Seu processo</div><div class="val" style="font-size:1.1rem;padding-top:8px">Mentoria + execução</div><div class="hint">Decisões, ferramentas, prática e revisão</div></div>
     </div>
     <h3 class="section-h">As três dimensões do LifeOS</h3>
