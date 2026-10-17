@@ -55,3 +55,11 @@ Cancel URL: `https://akashahub.com.br/store/`
 - Confirme que o checkout público rejeita e-mail inválido e não oferece pagamento para itens sob encomenda.
 
 **Status do código:** preço vitrine/servidor alinhado; checkout da loja aceita comprador por e-mail, e a entrega digital exige configuração de e-mail. Isso não significa que as Edge Functions estejam publicadas no Supabase ou que a conta já tenha mudado para live.
+
+## Verificação de produção — 17 de outubro de 2026
+
+- `createStoreCheckout` está publicado no Supabase (versão 7) e agora usa os métodos de pagamento dinâmicos habilitados no Stripe.
+- `stripeWebhook` está publicado (versão 11). O endpoint de webhook live está ativo e o segredo de assinatura foi salvo na tabela privada `app_secrets`.
+- As quatro assinaturas mensais live estão criadas e vinculadas às referências `STRIPE_PRICE_*`: Anúbis US$ 34/mês, Hórus US$ 65/mês, Ísis US$ 517/mês e Amon-Rá US$ 1.032/mês. Os preços avulsos em BRL não foram alterados.
+- **Bloqueio restante para produção:** o valor de `STRIPE_SECRET_KEY` na tabela privada ainda tem prefixo de chave de teste. Configure a chave live correta em Supabase → Project Settings → Edge Functions → Secrets. Configure também `STRIPE_WEBHOOK_SECRET` ali com o segredo do endpoint live, para substituir qualquer valor antigo de ambiente; não coloque esses segredos no GitHub nem em conversas.
+- Antes de considerar o ciclo completo validado, faça um checkout real de baixo valor, confirme o evento no webhook, a atualização do nível de acesso e a entrega por e-mail; depois reembolse a transação de validação.
