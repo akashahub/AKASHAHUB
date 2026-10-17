@@ -45,7 +45,8 @@ export function buildNav() {
     { id: "fase2", label: "Fase 2 · Império", ico: "2" },
     { id: "fase3", label: "Fase 3 · AF", ico: "3" },
     { id: "fase4", label: "Fase 4 · Expansão", ico: "4" },
-    { id: "fase5", label: "Fase 5 · CDC", ico: "5" }
+    { id: "fase5", label: "Fase 5 · CDC", ico: "5" },
+    { id: "arquitetura-legado", label: "Jornada · Arquitetura de Legado", ico: "✦" }
   );
 
   const nav = document.getElementById("navMain");
@@ -120,6 +121,7 @@ export async function navigate(view) {
     fase3: "Fase 3 · AF",
     fase4: "Fase 4 · Expansão",
     fase5: "Fase 5 · CDC",
+    "arquitetura-legado": "Arquitetura de Legado · Jornada",
     "legado-planos": "Planos do Legado",
     "legado-contrato": "Contrato",
     "legado-regras": "Regras",
