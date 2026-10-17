@@ -62,7 +62,9 @@ window.AKASHA_STORE.startStripe = async function (opts) {
   var data = {};
   try { data = await res.json(); } catch (e) {}
   if (res.status === 503) {
-    throw new Error("Stripe ainda sem chave no servidor. Use o WhatsApp agora ou cole o Payment Link no catálogo.");
+    if (data.error === "store_delivery_not_configured") throw new Error("A entrega por e-mail ainda não está configurada. Fale com a equipe pelo WhatsApp.");
+    if (data.error === "stripe_not_configured") throw new Error("O checkout Stripe ainda não está configurado. Fale com a equipe pelo WhatsApp.");
+    throw new Error("O checkout está temporariamente indisponível. Fale com a equipe pelo WhatsApp.");
   }
   if (!res.ok || !data.url) {
     throw new Error(data.error || "Não foi possível abrir o Stripe.");
