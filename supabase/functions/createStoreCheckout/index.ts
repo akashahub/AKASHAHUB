@@ -1,9 +1,9 @@
 import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 
 const CATALOG = {
-  "energia-sexual": { name: "Mini curso Energia Sexual", cents: 2500 },
-  "zero-ao-zen": { name: "Do Zero ao Zen Negócios · Livro", cents: 9900 },
-  "codigos-de-origem": { name: "Códigos de Origem", cents: 9000 },
+  "energia-sexual": { name: "Mini curso Energia Sexual", cents: 9700 },
+  "zero-ao-zen": { name: "Zero ao Zen - primeira edição", cents: 4700 },
+  "codigos-de-origem": { name: "Códigos de Origem", cents: 9700 },
 };
 const AREA_CENTS = { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 };
 const COURSE_PRICES: Record<string, number> = {
@@ -68,41 +68,39 @@ const cors = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-  let key = Deno.env.get("STRIPE_SECRET_KEY") || "";
-  if (!key) {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-    if (supabaseUrl && serviceKey) {
-      const secretRes = await fetch(supabaseUrl + "/rest/v1/app_secrets?name=eq.STRIPE_SECRET_KEY&select=value", {
-        headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, Accept: "application/json" },
-      });
-      if (secretRes.ok) {
-        const rows = await secretRes.json();
-        key = String(rows?.[0]?.value || "");
-      } else {
-        console.error("[createStoreCheckout] app_secrets read failed:", secretRes.status);
-      }
-    }
-  }
+  const key = await readAppSecret("STRIPE_SECRET_KEY");
   if (!key) return json({ error: "stripe_not_configured" }, 503);
   let body = {};
   try { body = await req.json(); } catch { return json({ error: "invalid_json" }, 400); }
   const stripe = new Stripe(key, { apiVersion: "2024-06-20" });
 
   const identity = await firebaseIdentity(String(body.idToken || ""));
-  if (!identity.email || !identity.uid) return json({ error: "auth_required" }, 401);
-  if (body.action === "grants") return json(await grants(stripe, body));
+  if (body.action === "grants") {
+    if (!identity.email || !identity.uid) return json({ error: "auth_required" }, 401);
+    return json(await grants(stripe, body));
+  }
 
   const member = memberProduct(String(body.ref || ""));
   const product = member || CATALOG[String(body.sku || "")];
   if (!product) return json({ error: member === null && body.ref ? "unknown_ref" : "unknown_sku" }, 400);
+  if (member && (!identity.email || !identity.uid)) return json({ error: "auth_required" }, 401);
 
   const success = safeUrl(body.success_url, "https://akashahub.com.br/store/sucesso/");
   const cancel = safeUrl(body.cancel_url, "https://akashahub.com.br/store/");
-  const email = identity.email;
+  const submittedEmail = String(body.email || "").trim().toLowerCase().slice(0, 254);
+  const email = member ? identity.email : (identity.email || submittedEmail);
+  if (!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+    return json({ error: "valid_email_required" }, 400);
+  }
+  if (!member) {
+    const mailKey = await readAppSecret("RESEND_API_KEY");
+    const mailFrom = await readAppSecret("MAIL_FROM");
+    if (!mailKey || !mailFrom) return json({ error: "store_delivery_not_configured" }, 503);
+  }
+  const displayName = String(body.name || "").trim().slice(0, 120);
   const metadata = member
     ? { source: "akasha-members", kind: member.kind, area: member.area, item: member.item, buyer: email, firebaseUid: identity.uid }
-    : { sku: String(body.sku || ""), source: "akasha-store", name: body.name || "", buyer: email, firebaseUid: identity.uid };
+    : { sku: String(body.sku || ""), source: "akasha-store", kind: "store", area: "akasha-store", item: String(body.sku || ""), name: displayName, buyer: email, firebaseUid: identity.uid || "" };
 
   const session = await openCheckout(stripe, {
     mode: "payment",
@@ -164,6 +162,24 @@ function safeUrl(url, fallback) {
     if (parsed.hostname === "akashahub.com.br") return parsed.toString();
   } catch { /* ignore */ }
   return fallback;
+}
+
+async function readAppSecret(name: string) {
+  const direct = Deno.env.get(name) || "";
+  if (direct) return direct;
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+  if (!supabaseUrl || !serviceKey) return "";
+  try {
+    const res = await fetch(supabaseUrl + "/rest/v1/app_secrets?name=eq." + encodeURIComponent(name) + "&select=value", {
+      headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, Accept: "application/json" },
+    });
+    if (!res.ok) return "";
+    const rows = await res.json();
+    return String(rows?.[0]?.value || "");
+  } catch {
+    return "";
+  }
 }
 
 async function firebaseIdentity(idToken: string) {
