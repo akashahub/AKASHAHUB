@@ -57,7 +57,7 @@ import {
 import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
 import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audios-pnl.js?v=1";
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
-import { renderLifeOsDashboard } from "./lifeos-dashboard.js?v=2";
+import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=3";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=3";
 
 function toast(msg, err = false) {
@@ -505,6 +505,11 @@ registerRenderers({
 
 onAfterNavigate((view) => {
   onCallNavigate(view === "call");
+  if (view === "dashboard") bindLifeOsDashboard();
+  if (view === "mentor") {
+    bindAccessAdmin();
+    bindSessoesAccess();
+  }
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();
   if (view === "fase2") bindFase2Checklist();
