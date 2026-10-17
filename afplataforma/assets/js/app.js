@@ -41,7 +41,10 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
-import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, bindFase2Checklist } from "./fases.js?v=lifeos2";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers } from "./fases.js?v=lifeos2";
+import { bindPhaseChecklist, hydratePhaseChecklists } from "./phase-checklists.js";
+import { renderMindMaps, bindMindMaps, hydrateMindMaps } from "./mindmaps.js?v=maps1";
+import { enhanceArchitectureView } from "./architecture-enhancements.js";
 import {
   renderLegadoPlanos,
   renderLegadoContrato,
@@ -656,6 +659,7 @@ function renderEmpresas() {
 registerRenderers({
   dashboard: renderLifeOsDashboard,
   "arquitetura-legado": renderArquiteturaLegado,
+  "mapas-mentais": renderMindMaps,
   "af-dashboard": renderDashboard,
   modules: renderModules,
   moduleDetail: renderModuleDetail,
@@ -681,9 +685,13 @@ registerRenderers({
   empresas: renderEmpresas,
   fase1: renderFase1,
   "fase1-jogo": renderFase1Jogo,
+  "fase1-marca": renderFase1Marca,
   fase2: renderFase2,
   fase3: renderFase3,
   fase4: renderFase4,
+  "fase4-sdr": renderFase4Sdr,
+  "fase4-treinamento": renderFase4Treinamento,
+  "fase4-closers": renderFase4Closers,
   fase5: renderFase5,
   "legado-planos": renderLegadoPlanos,
   "legado-contrato": renderLegadoContrato,
@@ -713,9 +721,20 @@ onAfterNavigate((view) => {
   }
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();
-  if (view === "fase2") bindFase2Checklist();
+  if (["fase1", "fase2", "fase3", "fase4", "fase5"].includes(view)) {
+    bindPhaseChecklist();
+    hydratePhaseChecklists(() => { if (getCurrentView() === view) navigate(view); });
+  }
+  if (view === "fase1-marca") bindFase1Marca();
   if (view === "legado-dossie") bindLegadoDossie();
-  if (view === "arquitetura-legado") bindArquiteturaLegado();
+  if (view === "arquitetura-legado") {
+    bindArquiteturaLegado();
+    enhanceArchitectureView();
+  }
+  if (view === "mapas-mentais") {
+    bindMindMaps();
+    hydrateMindMaps(() => { if (getCurrentView() === view) navigate(view); });
+  }
   if (view === "audios-pnl") bindAudiosPnl();
   if (view === "producao-audios-pnl") bindProducaoAudiosPnl();
 });

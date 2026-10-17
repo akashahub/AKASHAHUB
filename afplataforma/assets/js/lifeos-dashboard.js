@@ -178,8 +178,8 @@ export function renderLifeOsDashboard() {
     ["fase1", "01", "Essência", "Identidade, história, capacidades e direção."],
     ["fase2", "02", "Império Digital", "Posicionamento, marca, ativos e estrutura comercial."],
     ["fase3", "03", "Alinhamento Financeiro", "Caixa, indicadores, preço, metas e decisões."],
-    ["fase4", "04", "Expansão", "Processos, responsabilidades e operação."],
-    ["fase5", "05", "Comunidade e Continuidade", "Metodologia, comunidade e legado."]
+    ["fase4", "04", "Processos de Execução e Expansão", "Processos, responsabilidades, qualidade e crescimento sustentável."],
+    ["fase5", "05", "COMUNIDADE, MOVIMENTO, DOUTRINA", "Conhecimento, formação, comunidade, movimento e continuidade."]
   ];
   return `<div class="view active lifeos-home">
     <style>
@@ -274,6 +274,6 @@ export function renderLifeOsDashboard() {
     <div class="lifeos-phases">${fases.map(([id, num, titulo, descricao]) => `<div class="lifeos-phase" data-nav="${id}"><div class="num">FASE ${num}</div><h4>${titulo}</h4><p>${descricao}</p></div>`).join("")}</div>
     <div class="lifeos-note">O painel mostra os acessos e o progresso de módulos que a plataforma já conhece. Não presume que uma etapa da mentoria foi concluída nem inventa atividades, marcos ou resultados. O registro detalhado de decisões e acompanhamento pode evoluir sem mexer no conteúdo original das fases.</div>
     <h3 class="section-h">Acesso rápido</h3>
-    <div class="lifeos-actions" style="margin:0 0 28px"><button class="tool-btn" type="button" data-nav="call">Call / encontro</button><button class="tool-btn" type="button" data-nav="complementar">Ferramentas complementares</button><button class="tool-btn" type="button" data-nav="quitei">Quitei</button><button class="tool-btn" type="button" data-nav="fase3">Fase 3 · AF</button></div>
+    <div class="lifeos-actions" style="margin:0 0 28px"><button class="tool-btn" type="button" data-nav="call">Call / encontro</button><button class="tool-btn" type="button" data-nav="complementar">Ferramentas complementares</button><button class="tool-btn" type="button" data-nav="quitei">Quitei</button><button class="tool-btn" type="button" data-nav="fase3">Fase 3 · Alinhamento Financeiro</button></div>
   </div>`;
 }

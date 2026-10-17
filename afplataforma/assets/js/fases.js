@@ -1,6 +1,7 @@
 /** Áreas das cinco fases. Não cria login, não grava dossiê, não copia o roteiro. */
 import { session, isMentorSession } from "./auth.js";
-import { Store } from "./storage.js";
+import { renderPhaseBriefing } from "./phase-guidance.js";
+import { renderPhaseChecklist, bindPhaseChecklist } from "./phase-checklists.js";
 
 function lista(itens) {
   return `<div class="module-list">${itens.map((texto, i) =>
@@ -103,7 +104,8 @@ export function renderFase1() {
     "Arquitetura de Essência",
     "AE",
     "Identidade, história familiar, visão de mundo e a direção inicial do projeto. Entrega desta fase: Dossiê de Essência e Direção Estratégica.",
-    `<h3 class="section-h">Trabalho principal da fase</h3>
+    `${renderPhaseBriefing("fase1")}
+    <h3 class="section-h">Trabalho principal da fase</h3>
     ${lista(FASE1)}
     <h3 class="section-h">Roteiro de sessões</h3>
     <p class="notes-hint">O roteiro original continua em Sessões. A mesa ao lado segue a ordem do ano: conversa, identidade, dossiê, capacidades, marca, objetivos e a leitura de dinheiro.</p>
@@ -114,27 +116,12 @@ export function renderFase1() {
     </p>
     <h3 class="section-h">Dossiê de Essência</h3>
     <p class="notes-hint">${nota} O modelo preenchido, com relato, hipótese e decisão, fica só na gestão do mentor.</p>
-    ${lista(DOSSIE)}`
+    ${lista(DOSSIE)}
+    ${renderPhaseChecklist("fase1")}`
   );
 }
 
-const ATIVOS_DIGITAIS = [
-  "Identidade visual definida",
-  "Site ou landing principal",
-  "Presença nas redes sociais",
-  "Oferta estruturada",
-  "Aplicativo ou sistema (se aplicável)",
-  "Calendário editorial",
-  "Primeiro ativo digital entregue"
-];
-
-function ativosChecklistKey() {
-  return "fase2_ativos_" + (session.uid || "anon");
-}
-
 export function renderFase2() {
-  const ativosMarcados = Store.get(ativosChecklistKey(), {});
-  const totalMarcados = ATIVOS_DIGITAIS.filter((_, i) => !!ativosMarcados[String(i)]).length;
   const trabalho = FASE2.map((texto, i) => `
     <div class="mod-row">
       <div class="mod-num">${i + 1}</div>
@@ -154,33 +141,16 @@ export function renderFase2() {
     "Império Digital",
     "ID",
     "Posicionamento, linguagem, ativos digitais e a estrutura de negócios do projeto.",
-    `<h3 class="section-h">Trabalho principal da fase</h3>
+    `${renderPhaseBriefing("fase2")}
+    <h3 class="section-h">Trabalho principal da fase</h3>
     <div class="module-list">${trabalho}</div>
-    <h3 class="section-h">Checklist visual de ativos digitais</h3>
-    <div id="ativosChecklist" style="margin:12px 0 20px">
-      ${ATIVOS_DIGITAIS.map((item, i) => `<label style="display:flex;align-items:center;gap:10px;margin:8px 0;cursor:pointer"><input type="checkbox" data-ativo="${i}" ${ativosMarcados[String(i)] ? "checked" : ""} style="accent-color:#D4AF37"> ${item}</label>`).join("")}
-    </div>
-    <p class="notes-hint" id="ativosChecklistStatus" role="status">${totalMarcados}/${ATIVOS_DIGITAIS.length} itens marcados. Salvo neste navegador para esta conta; ainda não sincroniza entre dispositivos.</p>
+    ${renderPhaseChecklist("fase2")}
     <p class="notes-hint">O calendário é uma hipótese estratégica que deve ser validada com dados, capacidade de produção e resposta real do público. O ecossistema inteiro aparece ao longo do ano, mesmo quando cada conteúdo aprofunda um tema específico.</p>`
   );
 }
 
-
 export function bindFase2Checklist() {
-  const root = document.getElementById("content");
-  if (!root || root.dataset.fase2ChecklistBound === "1") return;
-  root.dataset.fase2ChecklistBound = "1";
-  root.addEventListener("change", (event) => {
-    const input = event.target.closest("#ativosChecklist input[data-ativo]");
-    if (!input) return;
-    const key = ativosChecklistKey();
-    const state = Store.get(key, {});
-    state[String(input.dataset.ativo)] = input.checked;
-    Store.set(key, state);
-    const checked = ATIVOS_DIGITAIS.filter((_, i) => !!state[String(i)]).length;
-    const status = root.querySelector("#ativosChecklistStatus");
-    if (status) status.textContent = `${checked}/${ATIVOS_DIGITAIS.length} itens marcados. Salvo neste navegador para esta conta; ainda não sincroniza entre dispositivos.`;
-  });
+  bindPhaseChecklist();
 }
 export function renderFase3() {
   const recursos = [
@@ -198,39 +168,45 @@ export function renderFase3() {
     "Alinhamento Financeiro",
     "AF",
     "Consolidação comercial e financeira. As ferramentas de sempre continuam aqui, sem cópia.",
-    `<h3 class="section-h">Trabalho principal da fase</h3>
+    `${renderPhaseBriefing("fase3")}
+    <h3 class="section-h">Trabalho principal da fase</h3>
     ${lista(FASE3)}
     <h3 class="section-h">Ferramentas e recursos do AF</h3>
     <div style="display:flex;flex-wrap:wrap;gap:8px">
       ${recursos.map(([id, nome]) => `<button class="tool-btn" type="button" data-nav="${id}">${nome}</button>`).join("")}
-    </div>`
+    </div>
+    ${renderPhaseChecklist("fase3")}`
   );
 }
 
 export function renderFase4() {
   return pagina(
     "4",
-    "Expansão e Estruturação Operacional",
+    "Processos de Execução e Expansão",
     "",
     "A operação fica mais organizada e menos dependente do fundador em cada passo.",
-    `<h3 class="section-h">Trabalho principal da fase</h3>${lista(FASE4)}
+    `${renderPhaseBriefing("fase4")}
+    <h3 class="section-h">Trabalho principal da fase</h3>${lista(FASE4)}
     <h3 class="section-h">Ferramentas de expansão</h3>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
       <button class="tool-btn" type="button" data-nav="fase4-sdr">SDR OS</button>
       <button class="tool-btn" type="button" data-nav="fase4-treinamento">Treinamento de Vendedores</button>
       <button class="tool-btn" type="button" data-nav="fase4-closers">Closers OS</button>
     </div>
-    <p class="notes-hint" style="margin-top:12px">Essas ferramentas ajudam a estruturar prospecção, treinamento do time e fechamento em call. Os dados ficam no aparelho até serem copiados ou enviados.</p>`
+    <p class="notes-hint" style="margin-top:12px">Essas ferramentas ajudam a estruturar prospecção, treinamento do time e fechamento em call. Os dados ficam no aparelho até serem copiados ou enviados.</p>
+    ${renderPhaseChecklist("fase4")}`
   );
 }
 
 export function renderFase5() {
   return pagina(
     "5",
-    "Comunidade, Doutrina e Continuidade",
-    "CDC",
+    "COMUNIDADE, MOVIMENTO, DOUTRINA",
+    "Legado",
     "Comunidade, transmissão da metodologia e o que permanece depois do ciclo.",
-    `<h3 class="section-h">Trabalho principal da fase</h3>${lista(FASE5)}`
+    `${renderPhaseBriefing("fase5")}
+    <h3 class="section-h">Trabalho principal da fase</h3>${lista(FASE5)}
+    ${renderPhaseChecklist("fase5")}`
   );
 }
 

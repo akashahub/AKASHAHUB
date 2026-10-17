@@ -7,10 +7,10 @@ import { getAllUsersForAf } from "../../firebase/firestore.js";
 
 const PHASES = [
   {id:1,title:"Arquitetura de Essência",desc:"História, identidade, valores, capacidades e direção.",deliverable:"Dossiê de Essência e direção inicial",topics:["História e contexto","Valores e capacidades","Visão de futuro","Direção estratégica"]},
-  {id:2,title:"Arquitetura de Marca e Negócio",desc:"Posicionamento, oferta, identidade e arquitetura comercial.",deliverable:"Mapa de marca, oferta e negócio",topics:["Posicionamento e narrativa","Público e proposta de valor","Oferta e modelo de negócio","Ativos digitais prioritários"]},
-  {id:3,title:"Construção e Consolidação",desc:"Ativos, processos, operação e sustentação econômica.",deliverable:"Plano de construção e operação",topics:["Plano de ativos","Processos e operação","Indicadores e finanças","Validação e consolidação"]},
-  {id:4,title:"Expansão e Escala",desc:"Aquisição, distribuição, relacionamento e crescimento sustentável.",deliverable:"Plano de expansão priorizado",topics:["Aquisição e relacionamento","Conteúdo e distribuição","Canais e parcerias","Experimentos de crescimento"]},
-  {id:5,title:"Governança e Legado",desc:"Autonomia, documentação, continuidade e transmissão.",deliverable:"Mapa de continuidade do legado",topics:["Documentação e governança","Responsabilidades e autonomia","Comunidade e transmissão","Plano de continuidade"]}
+  {id:2,title:"Império Digital",desc:"Posicionamento, oferta, identidade, ativos e arquitetura comercial.",deliverable:"Mapa de marca, oferta e negócio",topics:["Posicionamento e narrativa","Público e proposta de valor","Oferta e modelo de negócio","Ativos digitais prioritários"]},
+  {id:3,title:"Alinhamento Financeiro",desc:"Dinheiro, caixa, preço, margem, metas e prioridades de decisão.",deliverable:"Leitura financeira, prioridades e indicadores",topics:["Fluxo de caixa","Preço e margem","Indicadores e metas","Sustentabilidade econômica"]},
+  {id:4,title:"Processos de Execução e Expansão",desc:"Processos, responsabilidades, qualidade, operação e crescimento sustentável.",deliverable:"Plano de construção, operação e expansão",topics:["Processos e operação","Responsabilidades e padrões","Aquisição e relacionamento","Expansão sustentável"]},
+  {id:5,title:"COMUNIDADE, MOVIMENTO, DOUTRINA",desc:"Conhecimento, cultura, formação, comunidade e continuidade.",deliverable:"Mapa de continuidade do legado",topics:["Princípios e documentação","Formação e transmissão","Comunidade e movimento","Plano de continuidade"]}
 ];
 const MEETINGS = [
 ["Essência: ponto de partida","Mapear contexto, expectativas e o resultado que precisa mudar.",1],

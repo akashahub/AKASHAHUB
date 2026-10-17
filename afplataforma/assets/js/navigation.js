@@ -43,10 +43,11 @@ export function buildNav() {
     { sep: true, label: "Arquitetura de Legado" },
     { id: "fase1", label: "Fase 1 · Essência", ico: "1" },
     { id: "fase2", label: "Fase 2 · Império", ico: "2" },
-    { id: "fase3", label: "Fase 3 · AF", ico: "3" },
-    { id: "fase4", label: "Fase 4 · Expansão", ico: "4" },
-    { id: "fase5", label: "Fase 5 · CDC", ico: "5" },
-    { id: "arquitetura-legado", label: "Jornada · Arquitetura de Legado", ico: "✦" }
+    { id: "fase3", label: "Fase 3 · Alinhamento Financeiro", ico: "3" },
+    { id: "fase4", label: "Fase 4 · Execução e Expansão", ico: "4" },
+    { id: "fase5", label: "Fase 5 · Legado", ico: "5" },
+    { id: "arquitetura-legado", label: "Jornada · Arquitetura de Legado", ico: "✦" },
+    { id: "mapas-mentais", label: "Mapas mentais", ico: "◎" }
   );
 
   const nav = document.getElementById("navMain");
@@ -118,10 +119,11 @@ export async function navigate(view) {
     fase1: "Fase 1 · Essência",
     "fase1-jogo": "Mesa da Essência",
     fase2: "Fase 2 · Império",
-    fase3: "Fase 3 · AF",
-    fase4: "Fase 4 · Expansão",
-    fase5: "Fase 5 · CDC",
+    fase3: "Fase 3 · Alinhamento Financeiro",
+    fase4: "Fase 4 · Processos de Execução e Expansão",
+    fase5: "Fase 5 · Comunidade, Movimento, Doutrina",
     "arquitetura-legado": "Arquitetura de Legado · Jornada",
+    "mapas-mentais": "Mapas mentais · Akasha",
     "legado-planos": "Planos do Legado",
     "legado-contrato": "Contrato",
     "legado-regras": "Regras",
