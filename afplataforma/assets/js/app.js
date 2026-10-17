@@ -39,12 +39,12 @@ import { renderSessoesAccess, bindSessoesAccess } from "./sessoes-access.js?v=1"
 import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
-import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
+import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js?v=rt40";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
-import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers } from "./fases.js?v=lifeos2";
-import { bindPhaseChecklist, hydratePhaseChecklists } from "./phase-checklists.js";
-import { renderMindMaps, bindMindMaps, hydrateMindMaps } from "./mindmaps.js?v=maps1";
-import { enhanceArchitectureView } from "./architecture-enhancements.js";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers } from "./fases.js?v=rt40";
+import { bindPhaseChecklist, hydratePhaseChecklists } from "./phase-checklists.js?v=rt40";
+import { renderMindMaps, bindMindMaps, hydrateMindMaps } from "./mindmaps.js?v=rt40";
+import { enhanceArchitectureView } from "./architecture-enhancements.js?v=rt40";
 import {
   renderLegadoPlanos,
   renderLegadoContrato,
@@ -62,7 +62,7 @@ import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
 import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audios-pnl.js?v=1";
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=3";
-import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=3";
+import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt40";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
