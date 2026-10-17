@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
   const cancel = safeUrl(body.cancel_url, "https://akashahub.com.br/store/");
   const submittedEmail = String(body.email || "").trim().toLowerCase().slice(0, 254);
   const email = member ? identity.email : (identity.email || submittedEmail);
-  if (!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return json({ error: "valid_email_required" }, 400);
   }
   if (!member) {
