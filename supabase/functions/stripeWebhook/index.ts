@@ -202,13 +202,74 @@ async function grantIndividualProduct(email: string, meta: Record<string, string
     if (!create.ok) throw new Error("firestore_grant_create_" + create.status);
   } else if (!write.ok) throw new Error("firestore_grant_write_" + write.status);
 }
-async function recordIndividualPurchase(session: any, meta: Record<string, string>) {
+async function recordIndividualPurchase(session: any, meta: Record<string, string>, emailStatus = "receipt_via_stripe") {
   const url = Deno.env.get("SUPABASE_URL") || "", serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
   if (!url || !serviceKey) throw new Error("supabase_env_missing");
   const paymentId = typeof session.payment_intent === "string" ? session.payment_intent : session.id;
-  const body = { session_id: String(session.id), payment_id: paymentId, firebase_uid: String(meta.firebaseUid || ""), buyer_email: String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase(), product_kind: String(meta.kind || ""), product_area: String(meta.area || ""), product_item: String(meta.item || ""), amount_cents: Number(session.amount_total || 0), currency: String(session.currency || "brl"), payment_status: "paid", granted_at: new Date().toISOString(), email_status: "receipt_via_stripe" };
+  const body = { session_id: String(session.id), payment_id: paymentId, firebase_uid: String(meta.firebaseUid || ""), buyer_email: String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase(), product_kind: String(meta.kind || ""), product_area: String(meta.area || ""), product_item: String(meta.item || ""), amount_cents: Number(session.amount_total || 0), currency: String(session.currency || "brl"), payment_status: "paid", granted_at: new Date().toISOString(), email_status: emailStatus };
   const res = await fetch(url + "/rest/v1/store_purchase_events?on_conflict=session_id", { method: "POST", headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(body) });
   if (!res.ok) throw new Error("purchase_record_" + res.status);
+}
+
+const STORE_DIGITAL_DELIVERY: Record<string, { name: string; url: string }> = {
+  "energia-sexual": {
+    name: "Mini curso Energia Sexual",
+    url: "https://akashahub.com.br/members/livros/energia-sexual.pdf",
+  },
+  "zero-ao-zen": {
+    name: "Zero ao Zen - primeira edição",
+    url: "https://akashahub.com.br/members/livros/zero-ao-zen.pdf",
+  },
+  "codigos-de-origem": {
+    name: "Códigos de Origem",
+    url: "https://akashahub.com.br/members/livros/codigos-de-origem.pdf",
+  },
+};
+
+async function storeDeliveryAlreadySent(sessionId: string) {
+  const url = Deno.env.get("SUPABASE_URL") || "", serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+  if (!url || !serviceKey) throw new Error("supabase_env_missing");
+  const res = await fetch(url + "/rest/v1/store_purchase_events?session_id=eq." + encodeURIComponent(sessionId) + "&select=email_status&limit=1", {
+    headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error("purchase_status_" + res.status);
+  const rows = await res.json();
+  return Array.isArray(rows) && rows[0]?.email_status === "sent";
+}
+
+async function deliverStoreDigitalProduct(session: any, meta: Record<string, string>, sec: Record<string, string>) {
+  const sku = String(meta.sku || "");
+  const product = STORE_DIGITAL_DELIVERY[sku];
+  const email = String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase();
+  if (!product) throw new Error("store_delivery_unknown_sku");
+  if (!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) throw new Error("store_delivery_email_invalid");
+  if (!sec.RESEND_API_KEY || !sec.MAIL_FROM) throw new Error("store_email_not_configured");
+  if (await storeDeliveryAlreadySent(String(session.id))) return;
+
+  const storeMeta = { ...meta, kind: "store", area: "akasha-store", item: sku, buyer: email };
+  await recordIndividualPurchase(session, storeMeta, "pending_delivery");
+
+  const text = [
+    "Olá!",
+    "",
+    "Seu pagamento na Akasha Store foi confirmado.",
+    "Produto: " + product.name,
+    "Acesse o arquivo digital neste link: " + product.url,
+    "",
+    "Guarde este e-mail para consultar o acesso novamente.",
+    "Se precisar de ajuda, fale com a equipe pelo WhatsApp: https://wa.me/5571983448621",
+  ].join("\\n");
+  const html = "<p>Olá!</p><p>Seu pagamento na <strong>Akasha Store</strong> foi confirmado.</p><p>Produto: <strong>" + product.name + "</strong></p><p><a href=\"" + product.url + "\">Abrir e baixar o produto digital</a></p><p>Guarde este e-mail para consultar o acesso novamente.</p><p>Suporte: <a href=\"https://wa.me/5571983448621\">WhatsApp Akasha</a></p>";
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { Authorization: "Bearer " + sec.RESEND_API_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ from: sec.MAIL_FROM, to: [email], subject: "Seu produto digital · Akasha Store", text, html }),
+  });
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error("store_email_send_" + response.status + (detail ? ":" + detail.slice(0, 160) : ""));
+  }
+  await recordIndividualPurchase(session, storeMeta, "sent");
 }
 
 async function applyEntitlement(uid: string, plan: { id: string; nivel: number } | null, status: string, sub: { id?: string; customer?: string | { id?: string } } | null, sa: string) {
@@ -248,6 +309,8 @@ Deno.serve(async (req) => {
         const email = String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase();
         await grantIndividualProduct(email, meta, sa);
         await recordIndividualPurchase(session, meta);
+      } else if (session.mode === "payment" && session.payment_status === "paid" && session.metadata?.source === "akasha-store") {
+        await deliverStoreDigitalProduct(session, session.metadata || {}, sec);
       } else if (session.mode === "subscription") {
         const uid = session.metadata?.firebaseUid || session.client_reference_id;
         const plan = planFromMeta(session.metadata?.planId);
@@ -264,6 +327,8 @@ Deno.serve(async (req) => {
         const email = String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase();
         await grantIndividualProduct(email, meta, sa);
         await recordIndividualPurchase(session, meta);
+      } else if (session.mode === "payment" && session.payment_status === "paid" && session.metadata?.source === "akasha-store") {
+        await deliverStoreDigitalProduct(session, session.metadata || {}, sec);
       }
     } else if (
       event.type === "customer.subscription.created" ||
