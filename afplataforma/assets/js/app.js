@@ -40,7 +40,7 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
-import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, bindFase2Checklist } from "./fases.js?v=lifeos2";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, bindFase1Worksheet, bindFase2Checklist } from "./fases.js?v=lifeos3";
 import {
   renderLegadoPlanos,
   renderLegadoContrato,
@@ -507,6 +507,7 @@ onAfterNavigate((view) => {
   onCallNavigate(view === "call");
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();
+  if (view === "fase1") bindFase1Worksheet();
   if (view === "fase2") bindFase2Checklist();
   if (view === "legado-dossie") bindLegadoDossie();
   if (view === "arquitetura-legado") bindArquiteturaLegado();
