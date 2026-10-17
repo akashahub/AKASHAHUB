@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
+  sendPasswordResetEmail,
   GoogleAuthProvider,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -179,6 +180,10 @@ export async function loginGoogle() {
   provider.setCustomParameters({ prompt: "select_account" });
   const cred = await signInWithPopup(auth, provider);
   return resolveUserAccess(cred.user);
+}
+
+export async function resetPassword(email) {
+  return sendPasswordResetEmail(auth, String(email || "").trim().toLowerCase());
 }
 
 export async function logout() {
