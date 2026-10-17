@@ -8,6 +8,7 @@ import {
   startAuthListener,
   loginEmail,
   loginGoogle,
+  resetPassword,
   logout,
   enterDemo,
   isMentorSession
@@ -163,19 +164,30 @@ function renderDashboard() {
   const lang = session.lang || "pt-BR";
   const u = unlockedCount();
   const next = nextModule();
+  const primeiroLiberado = MODULES.find((m) => session.modules[m.id]) || null;
+  const materiaisLiberados = MODULES.reduce(
+    (total, m) => total + (session.modules[m.id] ? (m.materials || []).length : 0),
+    0
+  );
+  const totalMateriais = MODULES.reduce((total, m) => total + (m.materials || []).length, 0);
   return `
   <div class="view active">
     ${pageHead("dash", "Alinhamento Financeiro", esc(t(lang, "welcome")), `${esc(session.name)} · ${session.role === "mentee" ? "Mentorado" : "Mentor"} · acesso ${session.active ? "ativo" : "pendente"}`)}
     <div class="grid-3">
-      <div class="stat-card"><div class="lbl">${esc(t(lang, "progress"))}</div><div class="val">${u}/7</div><div class="hint">módulos liberados</div></div>
-      <div class="stat-card"><div class="lbl">Materiais</div><div class="val">${u * 3}/21</div><div class="hint">estimativa por liberação</div></div>
-      <div class="stat-card"><div class="lbl">${esc(t(lang, "next"))}</div><div class="val" style="font-size:1.1rem;padding-top:8px">${next ? esc(next.num + " · " + next.title.split(" ")[0]) : "Completo"}</div><div class="hint">${next ? esc(next.title) : "-"}</div></div>
+      <div class="stat-card"><div class="lbl">Acessos à trilha</div><div class="val">${u}/${MODULES.length}</div><div class="hint">módulos liberados para sua conta</div></div>
+      <div class="stat-card"><div class="lbl">Materiais disponíveis</div><div class="val">${materiaisLiberados}/${totalMateriais}</div><div class="hint">materiais vinculados aos módulos liberados</div></div>
+      <div class="stat-card"><div class="lbl">Próxima liberação</div><div class="val" style="font-size:.96rem;line-height:1.4;padding-top:8px">${next ? esc(next.num + " · " + next.title) : "Trilha liberada"}</div><div class="hint">${next ? "Alinhe a liberação deste conteúdo com seu mentor." : "Todos os módulos estão liberados para sua conta."}</div></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 22px">
+      <button class="tool-btn primary" type="button" data-nav="${primeiroLiberado ? "module:" + primeiroLiberado.id : "call"}">${primeiroLiberado ? "Abrir módulo " + esc(primeiroLiberado.num) : "Alinhar ponto de partida"}</button>
+      <button class="tool-btn" type="button" data-nav="modules">Ver trilha completa</button>
+      <button class="tool-btn" type="button" data-nav="call">Abrir encontro</button>
     </div>
     <h3 class="section-h">Jornada das 7 camadas</h3>
     <div class="module-list">
       ${MODULES.map((m) => {
         const open = !!session.modules[m.id];
-        return `<div class="mod-row ${open ? "" : "locked"}" data-nav="${open ? "module:" + m.id : ""}" ${open ? "" : "data-locked=\"1\""}>
+        return `<div class="mod-row ${open ? "" : "locked"}" data-nav="${open ? "module:" + m.id : ""}" ${open ? "" : "data-locked=\\"1\\""}>
           <div class="mod-num">${m.num}</div>
           <div class="mod-body"><h3>${esc(m.title)}</h3><p>${esc(m.archetype)} · ${esc(m.chakra)}</p><p>${esc(m.subtitle)}</p></div>
           <div class="mod-lock">${open ? "🔓" : "🔒"}</div>
@@ -501,6 +513,25 @@ onAfterNavigate((view) => {
   if (view === "producao-audios-pnl") bindProducaoAudiosPnl();
 });
 
+function friendlyAuthError(error, fallback = "Não foi possível entrar. Tente novamente.") {
+  switch (error?.code) {
+    case "auth/invalid-credential":
+    case "auth/user-not-found":
+    case "auth/wrong-password":
+      return "E-mail ou senha não conferem.";
+    case "auth/user-disabled":
+      return "Esta conta está desativada. Fale com seu mentor.";
+    case "auth/too-many-requests":
+      return "Muitas tentativas. Aguarde um pouco e tente novamente.";
+    case "auth/network-request-failed":
+      return "Sem conexão. Verifique sua internet e tente de novo.";
+    case "auth/unauthorized-domain":
+      return "Este domínio ainda não está autorizado no sistema de acesso.";
+    default:
+      return fallback;
+  }
+}
+
 async function onLoginEmail() {
   const email = document.getElementById("loginEmail").value;
   const pass = document.getElementById("loginPass").value;
@@ -517,7 +548,7 @@ async function onLoginEmail() {
     await loginEmail(email, pass);
   } catch (e) {
     msg.className = "auth-msg err";
-    msg.textContent = e.code || e.message || "Falha no login";
+    msg.textContent = friendlyAuthError(e, "Não foi possível entrar. Confira os dados e tente novamente.");
   } finally {
     document.getElementById("btnLogin").disabled = false;
   }
@@ -534,9 +565,51 @@ async function onLoginGoogle() {
     msg.className = "auth-msg err";
     if (e.code === "auth/popup-closed-by-user") msg.textContent = "Popup fechado.";
     else if (e.code === "auth/unauthorized-domain") msg.textContent = "Domínio não autorizado no Firebase Auth.";
-    else msg.textContent = e.code || e.message || "Falha Google";
+    else msg.textContent = friendlyAuthError(e, "Não foi possível entrar com Google. Tente novamente.");
   } finally {
     document.getElementById("btnGoogle").disabled = false;
+  }
+}
+
+async function onResetPassword() {
+  const emailField = document.getElementById("loginEmail");
+  const email = String(emailField?.value || "").trim();
+  const msg = document.getElementById("authMsg");
+  const btn = document.getElementById("btnResetPassword");
+
+  if (!email) {
+    msg.className = "auth-msg err";
+    msg.textContent = "Digite seu e-mail no campo acima para receber o link.";
+    emailField?.focus();
+    return;
+  }
+
+  msg.className = "auth-msg";
+  msg.textContent = "Solicitando instruções...";
+  if (btn) btn.disabled = true;
+  let state = "ok";
+  try {
+    await resetPassword(email);
+  } catch (e) {
+    if (e?.code === "auth/invalid-email") state = "invalid";
+    else if (e?.code === "auth/user-not-found") state = "ok";
+    else {
+      state = "error";
+      console.warn("[AF auth] password reset request:", e?.code || e?.message || e);
+    }
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+
+  if (state === "invalid") {
+    msg.className = "auth-msg err";
+    msg.textContent = "Confira o formato do e-mail e tente novamente.";
+  } else if (state === "ok") {
+    msg.className = "auth-msg ok";
+    msg.textContent = "Se esse e-mail estiver cadastrado, você receberá um link. Confira também a caixa de spam.";
+  } else {
+    msg.className = "auth-msg err";
+    msg.textContent = "Não foi possível solicitar agora. Verifique sua conexão e tente novamente.";
   }
 }
 
@@ -548,6 +621,7 @@ function init() {
   const loginBtn = document.getElementById("btnLogin");
   if (loginBtn) loginBtn.dataset.ready = "1";
   document.getElementById("btnGoogle")?.addEventListener("click", onLoginGoogle);
+  document.getElementById("btnResetPassword")?.addEventListener("click", onResetPassword);
   document.getElementById("loginPass")?.addEventListener("keydown", (e) => {
     if (e.key === "Enter") onLoginEmail();
   });
