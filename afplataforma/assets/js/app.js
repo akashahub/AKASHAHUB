@@ -57,6 +57,7 @@ import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
 import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audios-pnl.js?v=1";
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard } from "./lifeos-dashboard.js?v=1";
+import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=1";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -442,6 +443,7 @@ function renderEmpresas() {
 
 registerRenderers({
   dashboard: renderLifeOsDashboard,
+  "arquitetura-legado": renderArquiteturaLegado,
   "af-dashboard": renderDashboard,
   modules: renderModules,
   moduleDetail: renderModuleDetail,
@@ -494,6 +496,7 @@ onAfterNavigate((view) => {
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();
   if (view === "legado-dossie") bindLegadoDossie();
+  if (view === "arquitetura-legado") bindArquiteturaLegado();
   if (view === "audios-pnl") bindAudiosPnl();
   if (view === "producao-audios-pnl") bindProducaoAudiosPnl();
 });
