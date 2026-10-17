@@ -27,6 +27,7 @@ import {
   esc
 } from "./navigation.js?v=legado1";
 import { MODULES } from "../../data/modules.js";
+import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
 import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI, onCallNavigate } from "./call.js?v=ux1";
@@ -80,17 +81,33 @@ function showAuth() {
   }
 }
 
+function profileStorageKey() {
+  return "afplataforma_v1_profile_" + (session.uid || "anon");
+}
+
 function profileData() {
   try {
-    const raw = localStorage.getItem("afplataforma_v1_profile_" + (session.uid || "anon"));
+    const raw = localStorage.getItem(profileStorageKey());
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
   }
 }
 
-function applyProfileUI() {
-  const p = profileData();
+function cacheProfileLocally(profile) {
+  try {
+    localStorage.setItem(profileStorageKey(), JSON.stringify(profile));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+let profilePhotoDraft = null;
+
+
+function applyProfileUI(profileOverride = null) {
+  const p = profileOverride || profileData();
   const name = p.name || session.name || "-";
   const elN = document.getElementById("userName");
   const elR = document.getElementById("userRole");
@@ -109,11 +126,193 @@ function applyProfileUI() {
   }
 }
 
+function populateProfileForm(root, profile) {
+  const fields = {
+    profName: profile.name || "",
+    profCity: profile.city || "",
+    profIg: profile.ig || "",
+    profWpp: profile.wpp || "",
+    profBio: profile.bio || ""
+  };
+  Object.entries(fields).forEach(([id, value]) => {
+    const field = root.querySelector("#" + id);
+    if (field) field.value = value;
+  });
+  const preview = root.querySelector("#profileAvPreview");
+  if (preview) {
+    if (profile.photo) {
+      preview.style.backgroundImage = "url(" + profile.photo + ")";
+      preview.style.backgroundSize = "cover";
+      preview.textContent = "";
+    } else {
+      preview.style.backgroundImage = "";
+      preview.textContent = String(profile.name || session.name || "A").charAt(0).toUpperCase();
+    }
+  }
+}
+
+function compressProfilePhoto(file) {
+  return new Promise((resolve, reject) => {
+    if (!file || !String(file.type || "").startsWith("image/")) {
+      reject(new Error("Escolha um arquivo de imagem."));
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      reject(new Error("A imagem precisa ter menos de 10 MB."));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Não consegui ler essa imagem."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Esse arquivo não parece ser uma imagem válida."));
+      img.onload = () => {
+        const maxSide = 380;
+        const width = img.naturalWidth || img.width;
+        const height = img.naturalHeight || img.height;
+        const scale = Math.min(1, maxSide / Math.max(width, height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(width * scale));
+        canvas.height = Math.max(1, Math.round(height * scale));
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Não consegui preparar a imagem."));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        let data = canvas.toDataURL("image/webp", 0.7);
+        if (!data.startsWith("data:image/webp")) data = canvas.toDataURL("image/jpeg", 0.66);
+        if (data.length > 190000) {
+          canvas.width = Math.max(1, Math.round(canvas.width * 0.8));
+          canvas.height = Math.max(1, Math.round(canvas.height * 0.8));
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          data = canvas.toDataURL("image/jpeg", 0.55);
+        }
+        if (data.length > 190000) {
+          reject(new Error("A imagem continuou muito grande após a compressão. Escolha outra foto."));
+          return;
+        }
+        resolve(data);
+      };
+      img.src = String(reader.result || "");
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function refreshProfileCacheFromCloud() {
+  if (session.mode !== "firebase" || !session.uid) return;
+  try {
+    const profile = await getUserProfile(session.uid);
+    if (profile) {
+      cacheProfileLocally(profile);
+      applyProfileUI(profile);
+    }
+  } catch (error) {
+    console.warn("[AF perfil] Não consegui carregar o perfil da nuvem:", error?.code || error?.message || error);
+  }
+}
+
+function bindProfileForm() {
+  const root = document.getElementById("content");
+  const button = root?.querySelector("#btnSaveProfile");
+  if (!root || !button || button.dataset.bound === "1") return;
+  button.dataset.bound = "1";
+  const status = root.querySelector("#profileStatus");
+  const photoInput = root.querySelector("#profPhoto");
+  profilePhotoDraft = null;
+
+  photoInput?.addEventListener("change", async () => {
+    const file = photoInput.files?.[0];
+    if (!file) return;
+    photoInput.disabled = true;
+    if (status) status.textContent = "Preparando a foto...";
+    try {
+      profilePhotoDraft = await compressProfilePhoto(file);
+      const preview = root.querySelector("#profileAvPreview");
+      if (preview) {
+        preview.style.backgroundImage = "url(" + profilePhotoDraft + ")";
+        preview.style.backgroundSize = "cover";
+        preview.textContent = "";
+      }
+      if (status) status.textContent = "Foto preparada. Salve o perfil para aplicar.";
+    } catch (error) {
+      if (status) status.textContent = error?.message || "Não consegui preparar a foto.";
+      photoInput.value = "";
+    } finally {
+      photoInput.disabled = false;
+    }
+  });
+
+  button.addEventListener("click", async () => {
+    const profile = {
+      name: String(root.querySelector("#profName")?.value || "").trim().slice(0, 100),
+      city: String(root.querySelector("#profCity")?.value || "").trim().slice(0, 100),
+      ig: String(root.querySelector("#profIg")?.value || "").trim().slice(0, 100),
+      wpp: String(root.querySelector("#profWpp")?.value || "").trim().slice(0, 40),
+      bio: String(root.querySelector("#profBio")?.value || "").trim().slice(0, 240),
+      photo: profilePhotoDraft !== null ? profilePhotoDraft : (profileData().photo || "")
+    };
+    if (!profile.name) {
+      if (status) status.textContent = "Digite seu nome de exibição antes de salvar.";
+      root.querySelector("#profName")?.focus();
+      return;
+    }
+
+    const locallySaved = cacheProfileLocally(profile);
+    button.disabled = true;
+    button.textContent = "Salvando...";
+    if (status) status.textContent = "Salvando seu perfil...";
+    try {
+      if (session.mode === "firebase" && session.uid) {
+        await saveUserProfile(session.uid, profile);
+        if (status) status.textContent = "Perfil salvo e sincronizado na sua conta.";
+      } else if (locallySaved) {
+        if (status) status.textContent = "Perfil salvo neste navegador. Entre com sua conta para sincronizar entre dispositivos.";
+      } else {
+        if (status) status.textContent = "Não consegui salvar o perfil neste navegador.";
+      }
+      applyProfileUI(profile);
+    } catch (error) {
+      console.warn("[AF perfil] A sincronização falhou:", error?.code || error?.message || error);
+      if (status) status.textContent = locallySaved
+        ? "Rascunho salvo neste navegador, mas a sincronização falhou. Tente novamente."
+        : "Não consegui salvar o perfil. Verifique sua conexão e tente novamente.";
+      applyProfileUI(profile);
+    } finally {
+      button.disabled = false;
+      button.textContent = "Salvar perfil";
+    }
+  });
+
+  if (session.mode === "firebase" && session.uid) {
+    const controls = Array.from(root.querySelectorAll("#profileEdit input, #btnSaveProfile"));
+    controls.forEach((control) => { control.disabled = true; });
+    if (status) status.textContent = "Carregando perfil da sua conta...";
+    getUserProfile(session.uid).then((remote) => {
+      if (!root.contains(button) || !remote) return;
+      profilePhotoDraft = null;
+      cacheProfileLocally(remote);
+      populateProfileForm(root, remote);
+      applyProfileUI(remote);
+      if (status) status.textContent = "Perfil carregado da sua conta.";
+    }).catch((error) => {
+      console.warn("[AF perfil] Não consegui carregar o perfil:", error?.code || error?.message || error);
+      if (root.contains(button) && status) status.textContent = "Não consegui carregar o perfil da nuvem. Você ainda pode editar e tentar salvar.";
+    }).finally(() => {
+      if (root.contains(button)) controls.forEach((control) => { control.disabled = false; });
+    });
+  } else if (status) {
+    status.textContent = "Modo local: seu perfil fica salvo somente neste navegador.";
+  }
+}
+
 function showApp() {
   document.getElementById("authShell")?.classList.add("hidden");
   document.getElementById("accessDenied")?.classList.remove("show");
   document.getElementById("appShell")?.classList.add("show");
   applyProfileUI();
+  refreshProfileCacheFromCloud();
   hydrateMedia();
   const badge = document.getElementById("modeBadge");
   if (badge) {
@@ -373,7 +572,7 @@ function renderProfile() {
     <p class="hero-line">Conta</p>
     <h2 class="hero-title">Perfil</h2>
     <p class="hero-sub">${esc(session.email)} · ${esc(session.role)} · ${esc(session.mode)}</p>
-    <div class="profile-edit">
+    <div class="profile-edit" id="profileEdit">
       <div class="profile-av-wrap">
         <div class="profile-av" id="profileAvPreview" ${photo ? `style="background-image:url('${photo}')"` : ""}>${photo ? "" : esc((name || "A").charAt(0).toUpperCase())}</div>
         <label class="tool-btn">Trocar foto<input type="file" id="profPhoto" accept="image/*" hidden></label>
@@ -384,6 +583,7 @@ function renderProfile() {
       <div class="field"><label>WhatsApp</label><input id="profWpp" value="${esc(p.wpp || "")}" placeholder="71 9xxxx-xxxx"></div>
       <div class="field"><label>Uma linha sobre você</label><input id="profBio" value="${esc(p.bio || "")}" placeholder="Uma frase"></div>
       <button class="btn btn-inline" type="button" id="btnSaveProfile">Salvar perfil</button>
+      <p class="notes-hint" id="profileStatus" role="status" aria-live="polite">Seu perfil fica vinculado a esta conta.</p>
     </div>
   </div>`;
 }
@@ -506,6 +706,7 @@ registerRenderers({
 onAfterNavigate((view) => {
   onCallNavigate(view === "call");
   if (view === "dashboard") bindLifeOsDashboard();
+  if (view === "profile") bindProfileForm();
   if (view === "mentor") {
     bindAccessAdmin();
     bindSessoesAccess();
