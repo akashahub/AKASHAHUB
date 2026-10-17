@@ -262,7 +262,7 @@ async function deliverStoreDigitalProduct(session: any, meta: Record<string, str
     "",
     "Guarde este e-mail para consultar o acesso novamente.",
     "Se precisar de ajuda, fale com a equipe pelo WhatsApp: https://wa.me/5571983448621",
-  ].join("\\n");
+  ].join("\n");
   const html = "<p>Olá!</p><p>Seu pagamento na <strong>Akasha Store</strong> foi confirmado.</p><p>Produto: <strong>" + product.name + "</strong></p><p><a href=\"" + product.url + "\">Abrir e baixar o produto digital</a></p><p>Guarde este e-mail para consultar o acesso novamente.</p><p>Suporte: <a href=\"https://wa.me/5571983448621\">WhatsApp Akasha</a></p>";
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
