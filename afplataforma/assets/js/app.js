@@ -187,7 +187,7 @@ function renderDashboard() {
     <div class="module-list">
       ${MODULES.map((m) => {
         const open = !!session.modules[m.id];
-        return `<div class="mod-row ${open ? "" : "locked"}" data-nav="${open ? "module:" + m.id : ""}" ${open ? "" : "data-locked=\\"1\\""}>
+        return `<div class="mod-row ${open ? "" : "locked"}" data-nav="${open ? "module:" + m.id : ""}" ${open ? "" : "data-locked=\"1\""}>
           <div class="mod-num">${m.num}</div>
           <div class="mod-body"><h3>${esc(m.title)}</h3><p>${esc(m.archetype)} · ${esc(m.chakra)}</p><p>${esc(m.subtitle)}</p></div>
           <div class="mod-lock">${open ? "🔓" : "🔒"}</div>
