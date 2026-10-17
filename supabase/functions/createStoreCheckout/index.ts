@@ -1,7 +1,6 @@
 import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 
 const CATALOG = {
-  "teste-stripe": { name: "Teste Stripe", cents: 500 },
   "energia-sexual": { name: "Mini curso Energia Sexual", cents: 2500 },
   "zero-ao-zen": { name: "Do Zero ao Zen Negócios · Livro", cents: 9900 },
   "codigos-de-origem": { name: "Códigos de Origem", cents: 9000 },
