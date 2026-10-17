@@ -336,7 +336,7 @@ export function renderCallView() {
     return `<option value="${esc(id)}" ${id === room ? "selected" : ""}>${esc(label)}</option>`;
   }).join("");
   return `<div class="view active">
-    ${pageHead("call", "Sala ao vivo", "Call da mentoria", "Servidor LiveKit. Salvador com Japão, 6 pessoas, em movimento. Sair da página não encerra. O vídeo flutua.")}
+    ${pageHead("call", "Sala ao vivo", "Call da mentoria", "Encontro ao vivo com seu mentor ou turma. Escolha uma sala liberada e entre. Você pode navegar pela plataforma sem encerrar a chamada; use Sair para finalizar o encontro.")}
     <div class="call-shell">
       <aside class="call-roster">
         <p class="call-kicker">${esc(roomName(room))}</p>
@@ -361,7 +361,7 @@ export function renderCallView() {
             : `<button class="ctrl tool" type="button" id="btnNotes">Notas</button>`}
           <button class="ctrl leave" type="button" id="btnLeaveCall">Sair</button>
         </div>
-        <p class="call-hint" id="callHint">${inCall ? "Call ativa. Você pode navegar — o vídeo fica flutuando." : "Escolha a sala e entre. Camera e microfone ligam aqui."}</p>
+        <p class="call-hint" id="callHint">${inCall ? "Call ativa. Você pode navegar — o vídeo fica flutuando." : "Escolha uma sala liberada e entre. Se solicitado, permita o acesso ao microfone e à câmera no navegador."}</p>
       </section>
     </div>
   </div>`;
