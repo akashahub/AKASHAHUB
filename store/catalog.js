@@ -4,7 +4,6 @@ window.AKASHA_STORE = {
   successUrl: "https://akashahub.com.br/store/sucesso/",
   cancelUrl: "https://akashahub.com.br/store/",
   products: [
-    { id: "teste-stripe", name: "Teste Stripe", desc: "Cobrança de teste. R$ 5 só para validar o checkout.", priceBRL: 5, type: "digital", group: "teste", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png", paymentLink: "", stripePriceId: "" },
     { id: "energia-sexual", name: "Mini curso Energia Sexual", desc: "PDF. Entrega após o pagamento.", priceBRL: 97, type: "digital", group: "digital", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png", paymentLink: "", stripePriceId: "" },
     { id: "zero-ao-zen", name: "Zero ao Zen - primeira edição", desc: "Livro PDF. Entrega após o pagamento.", priceBRL: 47, type: "digital", group: "digital", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png", paymentLink: "", stripePriceId: "" },
     { id: "codigos-de-origem", name: "Códigos de Origem", desc: "Livro digital. Entrega após o pagamento.", priceBRL: 97, type: "digital", group: "digital", image: "https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png", paymentLink: "", stripePriceId: "" },
