@@ -107,7 +107,7 @@ function updateWeeklyPlanCount(root) {
   const plan = collectWeeklyPlan(root);
   const filled = plan.tasks.filter((task) => task.text.trim()).length;
   const done = plan.tasks.filter((task) => task.text.trim() && task.done).length;
-  count.textContent = done + "/" + Math.max(1, filled) + " concluídas";
+  count.textContent = done + "/" + filled + " concluídas";
 }
 
 export function bindLifeOsDashboard() {
