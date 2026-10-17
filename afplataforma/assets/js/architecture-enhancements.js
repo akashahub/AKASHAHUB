@@ -109,6 +109,10 @@ function enhanceExecutive(root) {
     delete extra.dataset.dirty;
     const note = extra.querySelector("[data-extra-exec-note]"); if (note) note.textContent = "Marco 04 salvo neste usuário e neste navegador.";
   });
+  const sessionGuide = document.createElement("details");
+  sessionGuide.className = "alx-guide alx-session-guide";
+  sessionGuide.innerHTML = `<summary>Como preparar e fechar cada sessão individual</summary><div class="alx-guide-grid"><p><b>Antes:</b> abra o marco correspondente e registre contexto, evidências e a decisão que precisa de apoio.</p><p><b>Durante:</b> separe hipótese a testar, decisão realmente tomada e dúvida ainda pendente; não registre hipótese como fato.</p><p><b>Depois:</b> transforme decisões em próximos passos pequenos, cada um com responsável e prazo, no campo de preparação do marco.</p><p><b>Continuidade:</b> volte ao mesmo marco para atualizar o que foi feito e leve evidências à sessão seguinte; as respostas continuam editáveis e privadas na jornada.</p></div>`;
+  grid.parentNode.insertBefore(sessionGuide, grid.nextSibling);
   hydrateExtraMarco(extra);
 }
 
