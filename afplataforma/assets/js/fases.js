@@ -94,10 +94,35 @@ const DOSSIE = [
   "Aplicações práticas"
 ];
 
+function fase1RascunhoKey() {
+  return "fase1_rascunho_" + (session.uid || session.email || session.role || "anon");
+}
+
+const FASE1_REFLEXAO = [
+  { key: "trabalho", label: "Como você explica seu trabalho hoje?", placeholder: "Ajudo [quem] a conseguir [qual resultado]..." },
+  { key: "funciona", label: "O que já funciona e merece ser aproveitado?", placeholder: "Habilidades, clientes, produtos, canais ou entregas..." },
+  { key: "resultado90", label: "Qual resultado quer construir nos próximos 90 dias?", placeholder: "Escreva um resultado concreto que queira ver acontecer..." },
+  { key: "obstaculo", label: "Qual é o principal obstáculo agora?", placeholder: "A dúvida, decisão ou dificuldade que mais precisa de clareza..." }
+];
+
 export function renderFase1() {
   const nota = isMentorSession()
     ? "Modelo de trabalho do mentor. O material do mentorando ainda não é uma entrega separada. O contrato continua na gestão."
-    : "Estrutura do dossiê. O preenchimento com o mentor vem depois. Nada aqui é gravado ainda.";
+    : "O dossiê completo será construído com o mentor. Use o rascunho abaixo para preparar sua primeira conversa.";
+  const rascunho = Store.get(fase1RascunhoKey(), {});
+  const preenchidos = FASE1_REFLEXAO.filter((f) => String(rascunho[f.key] || "").trim()).length;
+  const worksheet = isMentorSession() ? "" : `
+    <h3 class="section-h">Seu ponto de partida</h3>
+    <p class="notes-hint">Não precisa ter tudo resolvido. Registre o que sabe hoje e ajuste junto com seu mentor.</p>
+    <div id="fase1Worksheet" class="mat-card" style="margin:12px 0 18px">
+      ${FASE1_REFLEXAO.map((f) => `
+        <div class="field" style="margin:14px 0">
+          <label for="fase1_${f.key}">${f.label}</label>
+          <textarea class="notes-area" id="fase1_${f.key}" rows="3" data-fase1-field="${f.key}" placeholder="${f.placeholder}">${esc(rascunho[f.key] || "")}</textarea>
+        </div>`).join("")}
+      <p class="notes-hint" id="fase1WorksheetStatus" role="status">${preenchidos ? "Rascunho recuperado deste navegador. " : ""}${preenchidos}/${FASE1_REFLEXAO.length} respostas preenchidas. Salvamento local apenas: não é enviado ao mentor nem sincronizado entre dispositivos.</p>
+    </div>`;
+
   return pagina(
     "1",
     "Arquitetura de Essência",
@@ -112,10 +137,27 @@ export function renderFase1() {
       <button class="tool-btn" type="button" data-nav="fase1-jogo">Mesa da Essência</button>
       <button class="tool-btn" type="button" data-nav="fase1-marca">Formulário de Marca / Identidade</button>
     </p>
+    ${worksheet}
     <h3 class="section-h">Dossiê de Essência</h3>
     <p class="notes-hint">${nota} O modelo preenchido, com relato, hipótese e decisão, fica só na gestão do mentor.</p>
     ${lista(DOSSIE)}`
   );
+}
+
+export function bindFase1Worksheet() {
+  const root = document.getElementById("content");
+  if (!root || root.dataset.fase1WorksheetBound === "1") return;
+  root.dataset.fase1WorksheetBound = "1";
+  root.addEventListener("input", (event) => {
+    const field = event.target.closest("#fase1Worksheet [data-fase1-field]");
+    if (!field) return;
+    const state = Store.get(fase1RascunhoKey(), {});
+    state[field.dataset.fase1Field] = field.value;
+    Store.set(fase1RascunhoKey(), state);
+    const filled = FASE1_REFLEXAO.filter((f) => String(state[f.key] || "").trim()).length;
+    const status = root.querySelector("#fase1WorksheetStatus");
+    if (status) status.textContent = `${filled}/${FASE1_REFLEXAO.length} respostas preenchidas. Salvo neste navegador; não é enviado ao mentor nem sincronizado entre dispositivos.`;
+  });
 }
 
 const ATIVOS_DIGITAIS = [
