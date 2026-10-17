@@ -41,9 +41,9 @@
   <section class="hero">
     <p class="tag">Loja oficial</p>
     <h1>Comprar ficou simples.</h1>
-    <p class="sub">Todo produto agora tem Stripe e WhatsApp. Os itens de encomenda estão com preço de teste de R$ 10 só para você validar o checkout.</p>
+    <p class="sub">Os produtos digitais com preço definido podem ser comprados pelo checkout. Os itens físicos sob encomenda têm valor e disponibilidade confirmados pelo WhatsApp.</p>
   </section>
-  <div class="marquee">TESTE STRIPE R$ 5 · ENCOMENDAS TAMBÉM NO STRIPE</div>
+  <div class="marquee">PRODUTOS DIGITAIS · ENCOMENDAS SOB CONSULTA</div>
   <section id="colecao">
     <p class="tag">Checkout</p>
     <h2>Comprar agora</h2>
@@ -51,7 +51,7 @@
   </section>
   <section id="encomendas">
     <p class="tag">Sob encomenda</p>
-    <h2>Também no Stripe</h2>
+    <h2>Produtos sob encomenda</h2>
     <div class="grid" id="encomendaGrid"></div>
   </section>
   <footer>
@@ -59,10 +59,17 @@
     <a href="/members/sucesso/">Pós-venda da sala</a>
   </footer>
   <a class="whatsapp-float" href="https://wa.me/5571983448621?text=Ol%C3%A1%20Valentina,%20preciso%20de%20suporte%20na%20Akasha%20Store." target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
-  <script src="/store/catalog.js?v=3"></script>
+  <script src="/store/catalog.js?v=4"></script>
   <script>
     function card(p) {
-      return '<article class="card"><img src="'+p.image+'" alt=""><div class="pad"><h3>'+p.name+'</h3><p style="color:#9a9286;font-size:.9rem;margin-top:6px">'+p.desc+'</p><p class="price">R$ '+p.priceBRL.toFixed(2).replace(".",",")+'</p><a class="btn gold" href="'+AKASHA_STORE.checkoutPage(p.id)+'">Comprar no Stripe</a><a class="btn wa" href="'+AKASHA_STORE.waUrl(p)+'" target="_blank" rel="noopener">Comprar no WhatsApp</a></div></article>';
+      var priceMarkup = p.quoteOnly
+        ? '<p class="price">Preço sob consulta</p>'
+        : '<p class="price">R$ '+p.priceBRL.toFixed(2).replace(".",",")+'</p>';
+      var stripeMarkup = p.quoteOnly
+        ? ''
+        : '<a class="btn gold" href="'+AKASHA_STORE.checkoutPage(p.id)+'">Comprar no Stripe</a>';
+      var whatsAppLabel = p.quoteOnly ? 'Consultar valor no WhatsApp' : 'Comprar no WhatsApp';
+      return '<article class="card"><img src="'+p.image+'" alt=""><div class="pad"><h3>'+p.name+'</h3><p style="color:#9a9286;font-size:.9rem;margin-top:6px">'+p.desc+'</p>'+priceMarkup+stripeMarkup+'<a class="btn wa" href="'+AKASHA_STORE.waUrl(p)+'" target="_blank" rel="noopener">'+whatsAppLabel+'</a></div></article>';
     }
     var all = AKASHA_STORE.products;
     document.getElementById("stripeGrid").innerHTML = all.filter(function (p) { return p.group !== "encomenda"; }).map(card).join("");
