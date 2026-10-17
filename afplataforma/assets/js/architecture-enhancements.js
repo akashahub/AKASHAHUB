@@ -3,7 +3,7 @@ import { Store } from "./storage.js";
 import { esc } from "./navigation.js";
 import { EXECUTIVE_GUIDANCE, ASSET_GUIDANCE, PHASE_GUIDANCE } from "./phase-guidance.js";
 import { db } from "../../firebase/firebase-config.js";
-import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 function guideDetails(guide) {
   return `<details class="alx-guide"><summary>Como preencher este marco</summary><div class="alx-guide-grid"><p><b>Pergunta:</b> ${esc(guide.question)}</p><p><b>O que se espera:</b> ${esc(guide.expected)}</p><p><b>Exemplo:</b> ${esc(guide.example)}</p><p><b>Estrutura:</b> ${esc(guide.structure)}</p><p><b>Evite:</b> ${esc(guide.avoid)}</p><p><b>Está bom quando:</b> ${esc(guide.criterion)}</p></div></details>`;
@@ -41,6 +41,39 @@ function loadExtraMarco() {
   return Store.get("executive_extension_v1_" + (session.uid || "anon"), { status: "not_started", context: "", evidence: "", next: "" }) || { status: "not_started", context: "", evidence: "", next: "" };
 }
 
+let extraMarcoHydratedUid = null;
+let extraMarcoHydration = null;
+
+async function hydrateExtraMarco(card) {
+  const uid = session.uid;
+  if (session.mode !== "firebase" || !uid || extraMarcoHydratedUid === uid || extraMarcoHydration) return;
+  extraMarcoHydration = (async () => {
+    try {
+      const snap = await getDoc(doc(db, "mentorias", uid, "arquitetura_legado", "jornada"));
+      if (session.uid !== uid || session.mode !== "firebase") return;
+      const remote = snap.exists() ? snap.data()?.executiveExtension : null;
+      const local = loadExtraMarco();
+      if (remote && card?.dataset.dirty !== "1" && Number(remote.updatedAtMs || 0) > Number(local.updatedAtMs || 0)) {
+        Store.set("executive_extension_v1_" + uid, remote);
+        if (card?.isConnected) {
+          for (const field of ["context", "evidence", "next", "status"]) {
+            const control = card.querySelector(`[data-extra-exec="${field}"]`);
+            if (control) control.value = remote[field] || (field === "status" ? "not_started" : "");
+          }
+          const note = card.querySelector("[data-extra-exec-note]");
+          if (note) note.textContent = "Marco 04 recuperado da sua conta.";
+        }
+      }
+      extraMarcoHydratedUid = uid;
+    } catch (error) {
+      console.warn("[Arquitetura de Legado] Marco 04 não recuperado:", error?.code || error?.message || error);
+    } finally {
+      extraMarcoHydration = null;
+    }
+  })();
+  return extraMarcoHydration;
+}
+
 function saveExtraMarco(value) {
   const payload = { ...value, updatedAtMs: Date.now() };
   Store.set("executive_extension_v1_" + (session.uid || "anon"), payload);
@@ -66,11 +99,17 @@ function enhanceExecutive(root) {
   extra.dataset.afExtraExecutive = "1";
   extra.innerHTML = `<div class="alx-kicker">MARCO EXECUTIVO 04 · EXTENSÃO OPERACIONAL</div><h3>Revisão, avaliação e próximos passos</h3><p>Checkpoint adicional para registrar o que foi executado, a evidência, o aprendizado e o próximo movimento. Não substitui os três marcos já existentes.</p>${guideDetails(EXECUTIVE_GUIDANCE[3])}<label>O que foi executado e qual evidência existe<textarea data-extra-exec="context" placeholder="Ex.: link publicado, teste realizado, reunião registrada">${esc(value.context || "")}</textarea></label><label>O que aprendemos ou precisamos ajustar<textarea data-extra-exec="evidence" placeholder="Separe fato observado de interpretação">${esc(value.evidence || "")}</textarea></label><label>Próximo passo, responsável e prazo<textarea data-extra-exec="next" placeholder="Ação pequena, dono e data">${esc(value.next || "")}</textarea></label><label>Estado<select data-extra-exec="status"><option value="not_started" ${value.status === "not_started" ? "selected" : ""}>Ainda não iniciado</option><option value="in_progress" ${value.status === "in_progress" ? "selected" : ""}>Em andamento</option><option value="done" ${value.status === "done" ? "selected" : ""}>Registrado</option></select></label><button type="button" class="tool-btn" data-extra-exec-save>Salvar marco 04</button><p class="notes-hint" data-extra-exec-note role="status">Este registro fica separado dos três marcos históricos existentes.</p>`;
   grid.appendChild(extra);
+  extra.querySelectorAll("[data-extra-exec]").forEach((control) => {
+    control.addEventListener("input", () => { extra.dataset.dirty = "1"; });
+    control.addEventListener("change", () => { extra.dataset.dirty = "1"; });
+  });
   extra.querySelector("[data-extra-exec-save]")?.addEventListener("click", () => {
     const next = { status: extra.querySelector('[data-extra-exec="status"]')?.value || "not_started", context: extra.querySelector('[data-extra-exec="context"]')?.value.trim().slice(0, 3000) || "", evidence: extra.querySelector('[data-extra-exec="evidence"]')?.value.trim().slice(0, 3000) || "", next: extra.querySelector('[data-extra-exec="next"]')?.value.trim().slice(0, 3000) || "" };
     saveExtraMarco(next);
+    delete extra.dataset.dirty;
     const note = extra.querySelector("[data-extra-exec-note]"); if (note) note.textContent = "Marco 04 salvo neste usuário e neste navegador.";
   });
+  hydrateExtraMarco(extra);
 }
 
 function enhanceAssets(root) {
