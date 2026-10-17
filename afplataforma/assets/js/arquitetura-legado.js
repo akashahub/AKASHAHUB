@@ -1,6 +1,6 @@
 import { session } from "./auth.js";
 import { Store } from "./storage.js";
-import { esc, navigate } from "./navigation.js";
+import { esc, navigate } from "./navigation.js?v=lifeos1";
 
 const PHASES = [
   {id:1,title:"Arquitetura de Essência",desc:"História, identidade, valores, capacidades e direção.",deliverable:"Dossiê de Essência e direção inicial",topics:["História e contexto","Valores e capacidades","Visão de futuro","Direção estratégica"]},
