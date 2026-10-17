@@ -145,7 +145,8 @@ export function pageHead(id, line, title, sub) {
     : "";
   return `<div class="page-head">
     <div class="page-head-img" data-cover="${escAttr(id)}">
-      <img src="${escAttr(src)}" alt="" decoding="async" fetchpriority="high">
+      <!-- Decorativa: a seção já tem título e subtítulo em texto imediatamente abaixo. -->
+      <img src="${escAttr(src)}" alt="" width="1600" height="900" loading="eager" decoding="async" fetchpriority="high">
       ${edit}
     </div>
     <p class="hero-line">${line}</p>

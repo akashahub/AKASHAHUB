@@ -51,13 +51,30 @@ let tab="dashboard";
 let phaseFilter=0;
 let hydratedUid = null;
 let hydrateInFlight = null;
+const pendingExecNotes = new Map();
 function save(){
   state._updatedAtMs = Date.now();
-  Store.set(key(),state);
-  if (!session.uid || session.mode !== "firebase") return;
-  const payload = { data: state, updatedAtMs: state._updatedAtMs, updatedAt: serverTimestamp(), uid: session.uid, name: session.name || "", email: session.email || "" };
-  setDoc(doc(db,"mentorias",session.uid,"arquitetura_legado","jornada"),payload,{merge:true})
+  const uid = session.uid;
+  const storageKey = key();
+  const snapshot = { ...state, execNotes: { ...(state.execNotes || {}) } };
+  Store.set(storageKey,snapshot);
+  if (!uid || session.mode !== "firebase") {
+    for(const [id,value] of pendingExecNotes)if(snapshot.execNotes[id]===value)pendingExecNotes.delete(id);
+    return;
+  }
+  const payload = { data: snapshot, updatedAtMs: snapshot._updatedAtMs, updatedAt: serverTimestamp(), uid, name: session.name || "", email: session.email || "" };
+  setDoc(doc(db,"mentorias",uid,"arquitetura_legado","jornada"),payload,{merge:true})
+    .then(()=>{if(session.uid===uid)for(const [id,value] of pendingExecNotes)if(snapshot.execNotes[id]===value)pendingExecNotes.delete(id);})
     .catch(e=>console.warn("[Arquitetura de Legado] sincronização Firestore indisponível:",e?.code||e?.message||e));
+}
+export function saveExecutiveNoteDraft(id,value,expectedUid=session.uid||"anon"){
+  const noteId=String(id);
+  if(!["1","2","3"].includes(noteId)||(session.uid||"anon")!==expectedUid)return false;
+  const text=String(value??"").slice(0,3000);
+  state.execNotes={...(state.execNotes||{}),[noteId]:text};
+  pendingExecNotes.set(noteId,text);
+  save();
+  return true;
 }
 async function hydrateCloud(){
   const uid = session.uid;
@@ -68,8 +85,9 @@ async function hydrateCloud(){
     if (snap.exists()) {
       const remote = snap.data() || {};
       if (remote.data && Number(remote.updatedAtMs || 0) > Number(state._updatedAtMs || 0)) {
-        state = { ...fresh(), ...remote.data };
+        state = { ...fresh(), ...remote.data, execNotes: { ...(remote.data.execNotes || {}), ...Object.fromEntries(pendingExecNotes) } };
         Store.set(key(),state);
+        if(pendingExecNotes.size)save();
       }
     }
     hydratedUid = uid;
@@ -81,7 +99,7 @@ async function hydrateCloud(){
   }
 }
 function pct(){const a=Object.values(state.meetings).filter(Boolean).length;return Math.round(a/24*70+Math.min(state.assets.filter(x=>x.status==="Entregue").length,3)/3*15+(state.project.goal?15:0));}
-function statusClass(v){return v==="Entregue"?"done":v==="Em produção"||v==="Em validação"?"current":"";}
+function statusClass(v){return v==="Entregue"||v==="Concluído"||v==="Validado"?"done":v==="Em produção"||v==="Em validação"?"current":"";}
 function head(k,t,s){return '<div class="alx-head"><div class="alx-kicker">'+k+'</div><h2 class="hero-title">'+t+'</h2><p class="hero-sub">'+s+'</p></div>';}
 function card(title,body,extra=""){return '<article class="alx-card '+extra+'"><h3>'+title+'</h3>'+body+'</article>';}
 function phaseCards(){return PHASES.map(p=>{const list=MEETINGS.map((m,i)=>({m,i})).filter(x=>x.m[2]===p.id);const done=list.filter(x=>state.meetings[x.i+1]).length;return '<button type="button" class="alx-phase" data-al-tab="jornada"><span class="alx-num">0'+p.id+'</span><b>'+p.title+'</b><p>'+p.desc+'</p><span class="alx-bar"><i style="width:'+(done/list.length*100)+'%"></i></span><small>'+done+'/'+list.length+' encontros marcados</small></button>'}).join("");}
