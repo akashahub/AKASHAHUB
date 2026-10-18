@@ -144,6 +144,14 @@ export function renderFase2() {
     `${renderPhaseBriefing("fase2")}
     <h3 class="section-h">Trabalho principal da fase</h3>
     <div class="module-list">${trabalho}</div>
+    <section class="id-ai-entry">
+      <div class="id-ai-entry-copy">
+        <p class="id-ai-eyebrow">Laboratório criativo · Novo recurso</p>
+        <h3>Anúncios feitos com IA</h3>
+        <p>Explore formatos de anúncios, referências visuais e aplicações para diferentes negócios. Conecte posicionamento, oferta e criativos na estratégia do Império Digital.</p>
+      </div>
+      <a class="tool-btn" href="/afplataforma/imperio/anuncios-ia.html" target="_blank" rel="noopener">Abrir laboratório de anúncios ↗</a>
+    </section>
     ${renderPhaseChecklist("fase2")}
     <p class="notes-hint">O calendário é uma hipótese estratégica que deve ser validada com dados, capacidade de produção e resposta real do público. O ecossistema inteiro aparece ao longo do ano, mesmo quando cada conteúdo aprofunda um tema específico.</p>`
   );
