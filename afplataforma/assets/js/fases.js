@@ -159,6 +159,28 @@ export function renderFase2() {
 
 export function bindFase2Checklist() {
   bindPhaseChecklist();
+  const root = document.querySelector(".view.active");
+  if (!root || root.dataset.idRevealBound === "1") return;
+  root.dataset.idRevealBound = "1";
+  const items = root.querySelectorAll(".module-list .mod-row, .id-ai-entry, .section-h, .notes-hint");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    items.forEach((item) => item.classList.add("id-scroll-visible"));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("id-scroll-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: "0px 0px -24px 0px" });
+  items.forEach((item, index) => {
+    item.classList.add("id-scroll-reveal");
+    item.style.setProperty("--id-reveal-delay", Math.min(index % 6, 5) * 55 + "ms");
+    observer.observe(item);
+  });
 }
 export function renderFase3() {
   const recursos = [
