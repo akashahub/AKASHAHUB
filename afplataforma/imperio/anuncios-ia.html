@@ -11,8 +11,15 @@ a{color:inherit}.wrap{width:min(1120px,calc(100% - 36px));margin:auto}.top{paddi
 .reveal{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s ease}.reveal.in{opacity:1;transform:none}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.card,.art img{transition:none}}
 @media(max-width:850px){.card{flex-basis:190px;height:348px}.industries{grid-template-columns:repeat(2,minmax(0,1fr))}.steps{grid-template-columns:1fr}.scroll-hint{display:none}}@media(max-width:520px){.grid{gap:12px;margin-right:-18px;padding-right:18px}.card{flex-basis:72vw;max-width:250px;height:382px}.section-head{display:block}.top{align-items:flex-start}.lead{font-size:16px}}
 </style>
+<style>
+#nano-field{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.86;mix-blend-mode:screen}
+body>header,body>main,body>footer{position:relative;z-index:1}
+@media(max-width:520px){#nano-field{opacity:.68}}
+@media(prefers-reduced-motion:reduce){#nano-field{opacity:.38}}
+</style>
 </head>
 <body>
+<canvas id="nano-field" aria-hidden="true"></canvas>
 <header class="top wrap"><div class="brand">Akasha · Império Digital</div><a class="back" href="/afplataforma/">← Voltar à plataforma</a></header>
 <main class="wrap">
 <section class="hero reveal"><div class="eyebrow">Fase 2 · Laboratório criativo</div><h1>Ideias que viram <span>anúncios.</span></h1><p class="lead">Explore formatos de publicidade produzidos com inteligência artificial e descubra como transformar a identidade, a oferta e o público do negócio em criativos para campanhas digitais.</p><p class="note">A galeria organiza formatos e referências. Cada peça final depende do briefing, dos materiais aprovados e da produção específica para o negócio.</p></section>
@@ -35,6 +42,32 @@ a{color:inherit}.wrap{width:min(1120px,calc(100% - 36px));margin:auto}.top{paddi
 <section class="cta reveal"><div class="eyebrow">Próxima etapa</div><h2>Seu negócio não precisa de mais conteúdo aleatório. Precisa de uma mensagem clara.</h2><p style="color:var(--muted);max-width:650px">Use esta galeria como referência para conectar posicionamento, oferta e comunicação dentro do seu plano de Império Digital.</p><a class="btn" href="/afplataforma/">Voltar ao processo executivo</a></section>
 </main><footer class="foot wrap">AKASHA HUB · IMPÉRIO DIGITAL · Laboratório de referências criativas</footer>
 <script>
-(function(){const nodes=[...document.querySelectorAll('.reveal')];if(!('IntersectionObserver'in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches){nodes.forEach(n=>n.classList.add('in'));return}const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -35px 0px'});nodes.forEach(n=>io.observe(n))})();
+(function(){const nodes=[...document.querySelectorAll('.reveal')];if(!('IntersectionObserver'in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches){nodes.forEach(n=>n.classList.add('in'));return}const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12,rootMargin:'0px 0px -35px 0px'});nodes.forEach(n=>io.observe(n));setTimeout(function(){nodes.forEach(function(n){n.classList.add('in')})},900)})();
+</script>
+<script>
+(function(){
+  const canvas=document.getElementById('nano-field');
+  const gl=canvas&&canvas.getContext('webgl',{alpha:true,antialias:false,powerPreference:'low-power'});
+  if(!gl)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const vertex='attribute vec2 a_position;void main(){gl_Position=vec4(a_position,0.0,1.0);}';
+  const fragment='precision mediump float;uniform vec2 u_resolution;uniform vec2 u_mouse;uniform float u_time;uniform float u_scroll;\n'
+  +'float hash(float n){return fract(sin(n*127.1)*43758.5453);}\n'
+  +'vec2 node(float i){float t=u_time;float aspect=u_resolution.x/u_resolution.y;float a=hash(i*2.13)*6.28318+t*(0.035+hash(i)*0.045);float r=0.16+hash(i*4.71)*1.02;vec2 p=vec2(cos(a)*r*aspect,sin(a)*r*0.66);p+=vec2(sin(t*1.7+i*2.0),cos(t*1.2+i*1.4))*0.028;vec2 m=(u_mouse*2.0-1.0)*vec2(aspect,1.0);float f=exp(-length(p-m)*2.7);p+=(p-m)*f*0.16;p+=vec2(sin(u_scroll*6.283+i)*0.018,cos(u_scroll*4.2+i)*0.018);return p;}\n'
+  +'float segment(vec2 p,vec2 a,vec2 b){vec2 pa=p-a,ba=b-a;float h=clamp(dot(pa,ba)/dot(ba,ba),0.0,1.0);return length(pa-ba*h);}\n'
+  +'void main(){float aspect=u_resolution.x/u_resolution.y;vec2 p=(gl_FragCoord.xy/u_resolution)*2.0-1.0;p.x*=aspect;float t=u_time;vec3 col=vec3(0.012,0.008,0.026);float stars=0.0;for(float s=0.0;s<82.0;s++){vec2 sp=vec2((hash(s*3.17)*2.0-1.0)*aspect,hash(s*7.91)*2.0-1.0);sp.y=mod(sp.y+t*(0.004+hash(s)*0.01)+u_scroll*0.22+1.0,2.0)-1.0;float sd=length(p-sp);stars+=exp(-sd*sd*52000.0)*(0.35+0.65*hash(s*8.2));}col+=vec3(0.32,0.42,0.68)*stars*0.28;float gridX=abs(fract((p.x+u_scroll*0.16)*3.2)-0.5);float gridY=abs(fract((p.y-u_scroll*0.24)*4.0)-0.5);float grid=(1.0-smoothstep(0.0,0.018,gridX))+(1.0-smoothstep(0.0,0.018,gridY));col+=vec3(0.08,0.035,0.16)*grid*0.18;vec2 m=(u_mouse*2.0-1.0)*vec2(aspect,1.0);float halo=exp(-length(p-m)*2.0);col+=vec3(0.06,0.12,0.24)*halo*0.33;float sweep=exp(-abs(fract(u_scroll+t*0.035)-((p.y+1.0)*0.5))*75.0);col+=vec3(0.12,0.05,0.2)*sweep*0.24;vec2 prev=node(0.0);for(float i=0.0;i<31.0;i++){vec2 q=node(i);float d=length(p-q);float point=exp(-d*d*2800.0);vec3 tone=mix(vec3(0.17,0.62,0.95),vec3(0.78,0.34,0.96),hash(i*9.1));tone=mix(tone,vec3(0.92,0.63,0.18),step(0.82,hash(i*3.3)));col+=tone*point*(0.55+0.35*sin(t*2.0+i));float ld=segment(p,prev,q);float connection=(1.0-smoothstep(0.0,0.008,ld))*(1.0-smoothstep(0.10,0.27,length(prev-q)));col+=tone*connection*0.12;prev=q;}float ring=abs(length(p-m)-0.18-0.035*sin(t*2.0));col+=vec3(0.18,0.07,0.35)*(1.0-smoothstep(0.0,0.008,ring))*halo*0.5;col*=1.0-0.24*smoothstep(0.4,1.4,length(p));gl_FragColor=vec4(col,1.0);}';
+  function compile(type,source){const shader=gl.createShader(type);gl.shaderSource(shader,source);gl.compileShader(shader);return gl.getShaderParameter(shader,gl.COMPILE_STATUS)?shader:null;}
+  const vs=compile(gl.VERTEX_SHADER,vertex),fs=compile(gl.FRAGMENT_SHADER,fragment);if(!vs||!fs)return;
+  const program=gl.createProgram();gl.attachShader(program,vs);gl.attachShader(program,fs);gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))return;
+  gl.useProgram(program);const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  const position=gl.getAttribLocation(program,'a_position');gl.enableVertexAttribArray(position);gl.vertexAttribPointer(position,2,gl.FLOAT,false,0,0);
+  const resolution=gl.getUniformLocation(program,'u_resolution'),mouse=gl.getUniformLocation(program,'u_mouse'),time=gl.getUniformLocation(program,'u_time'),scroll=gl.getUniformLocation(program,'u_scroll');
+  let px=window.innerWidth*.74,py=window.innerHeight*.28,tx=px,ty=py,scrollValue=0;
+  function resize(){const dpr=Math.min(window.devicePixelRatio||1,1.6);canvas.width=Math.floor(innerWidth*dpr);canvas.height=Math.floor(innerHeight*dpr);gl.viewport(0,0,canvas.width,canvas.height);gl.uniform2f(resolution,canvas.width,canvas.height);}
+  function move(e){tx=e.clientX;ty=e.clientY;}function updateScroll(){const max=Math.max(document.documentElement.scrollHeight-innerHeight,1);scrollValue=scrollY/max;}
+  window.addEventListener('pointermove',move,{passive:true});window.addEventListener('scroll',updateScroll,{passive:true});window.addEventListener('resize',resize);resize();updateScroll();
+  function render(ms){const seconds=reduced?0:ms*.001;px+=(tx-px)*.045;py+=(ty-py)*.045;gl.uniform1f(time,seconds);gl.uniform2f(mouse,px/innerWidth,1-py/innerHeight);gl.uniform1f(scroll,scrollValue);gl.drawArrays(gl.TRIANGLES,0,3);if(!reduced)requestAnimationFrame(render);}
+  requestAnimationFrame(render);
+})();
 </script>
 </body></html>
