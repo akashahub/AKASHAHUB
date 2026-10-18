@@ -239,8 +239,7 @@ const FLOW_SESSIONS: Record<string, { name: string; cents: number }> = {
 const FLOW_TIMES: Record<string, string> = { manha: "Manhã", tarde: "Tarde", noite: "Noite", flex: "Flexível" };
 const FLOW_PLACES: Record<string, string> = {
   ssa: "Domicílio · Salvador",
-  fln: "Domicílio · Florianópolis",
-  stay: "Hotel ou Airbnb",
+  estudio: "No espaço tântrico terapêutico",
   later: "A definir no briefing",
 };
 const FLOW_MAILS = ["yanfili.simon@gmail.com", "akashaguardia@gmail.com"];
