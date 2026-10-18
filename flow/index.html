@@ -241,7 +241,7 @@ html.flow-open #flow-gate{display:none}
     </div>
   </div>
 </div>
-<div class="grain" aria-hidden="true"></div>
+<p id="pagoBanner" hidden style="position:fixed;left:16px;right:16px;top:16px;z-index:70;background:#141210;color:#f3eee6;border:1px solid rgba(243,238,230,.2);border-radius:12px;padding:14px 16px;max-width:520px;margin:0 auto">Pagamento recebido. A sessão fica confirmada quando o Stripe reconhece o valor. A confirmação segue para o seu e-mail e para o mentor.</p>
 <header class="nav">
   <a class="brand" href="#topo">FLOW</a>
   <nav>
@@ -785,12 +785,61 @@ document.getElementById('terms').onchange = () => update();
 document.getElementById('flow-form').onsubmit = e => e.preventDefault();
 document.getElementById('waFull').onclick = () => abrirWhatsapp('total');
 document.getElementById('waHalf').onclick = () => abrirWhatsapp('metade');
-document.getElementById('payFull').onclick = () => {
-  document.getElementById('payNote').textContent = 'Cartão e Pix ainda não cobram aqui. Falta ligar a chave do Stripe. Use o WhatsApp para reservar este mesmo horário.';
-};
-document.getElementById('payHalf').onclick = () => {
-  document.getElementById('payNote').textContent = 'Os 50% no cartão ou Pix ainda não cobram aqui. Falta ligar a chave do Stripe. Use o WhatsApp para reservar a metade.';
-};
+async function pagarStripe(modo){
+  const note = document.getElementById('payNote');
+  if (state.name.trim().length < 2 || !state.email.includes('@') || state.phone.replace(/\D/g,'').length < 10) {
+    note.textContent = 'Antes de seguir, preencha nome, e-mail e telefone.';
+    return;
+  }
+  note.textContent = 'Abrindo o pagamento seguro...';
+  try {
+    const res = await fetch('https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'flow_checkout',
+        session: state.experience,
+        mode: modo,
+        date: state.date,
+        time: state.time,
+        modality: state.modality,
+        name: state.name.trim(),
+        email: state.email.trim(),
+        phone: state.phone.trim(),
+        notes: state.notes,
+        terms: true
+      })
+    });
+    const data = await res.json();
+    if (data.url) { location.href = data.url; return; }
+    note.textContent = 'O pagamento não abriu agora. Dá para reservar o mesmo horário pelo WhatsApp.';
+  } catch {
+    note.textContent = 'O pagamento não abriu agora. Dá para reservar o mesmo horário pelo WhatsApp.';
+  }
+}
+document.getElementById('payFull').onclick = () => pagarStripe('total');
+document.getElementById('payHalf').onclick = () => pagarStripe('metade');
+const pagoBanner = document.getElementById('pagoBanner');
+const pagoQuery = new URLSearchParams(location.search);
+if (pagoQuery.get('pago') === '0' && pagoBanner) {
+  pagoBanner.hidden = false;
+  pagoBanner.textContent = 'Pagamento não concluído. O horário não foi reservado.';
+}
+if (pagoQuery.get('pago') === '1' && pagoBanner) {
+  pagoBanner.hidden = false;
+  const booking = pagoQuery.get('booking');
+  if (booking) {
+    fetch('https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'flow_confirm', id: booking })
+    }).then((r) => r.json()).then((data) => {
+      if (data && (data.ok || data.duplicate || data.status === 'confirmed')) {
+        pagoBanner.textContent = 'Pagamento confirmado. O aviso segue para o seu e-mail, para o mentor e para o WhatsApp, quando esses envios estão ligados.';
+      }
+    }).catch(() => {});
+  }
+}
 
 function applyAvailability(){
   const label = FLOW_OPEN ? 'Solicitar uma experiência' : 'Entrar na lista de espera';

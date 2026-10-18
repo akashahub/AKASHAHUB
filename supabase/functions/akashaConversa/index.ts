@@ -37,6 +37,8 @@ Deno.serve(async (req) => {
   if (action === "hold") return hold(body);
   if (action === "details") return details(body);
   if (action === "checkout") return checkout(body);
+  if (action === "flow_checkout") return flowCheckout(body);
+  if (action === "flow_confirm") return flowConfirm(body);
   if (action === "release") return release(body);
   if (action === "confirm") return confirmPayment(body);
   if (action === "status") return status(body);
@@ -228,6 +230,176 @@ async function checkout(body: Record<string, unknown>) {
   return json({ url: session.url });
 }
 
+const FLOW_SESSIONS: Record<string, { name: string; cents: number }> = {
+  contemplacao: { name: "Contemplação", cents: 80000 },
+  flow: { name: "Flow", cents: 143000 },
+  magnetismo: { name: "Magnetismo Soberano", cents: 311300 },
+  pack: { name: "Pack Elite Flow", cents: 440000 },
+};
+const FLOW_TIMES: Record<string, string> = { manha: "Manhã", tarde: "Tarde", noite: "Noite", flex: "Flexível" };
+const FLOW_PLACES: Record<string, string> = {
+  ssa: "Domicílio · Salvador",
+  fln: "Domicílio · Florianópolis",
+  stay: "Hotel ou Airbnb",
+  later: "A definir no briefing",
+};
+const FLOW_MAILS = ["yanfili.simon@gmail.com", "akashaguardia@gmail.com"];
+
+async function flowCheckout(body: Record<string, unknown>) {
+  const offer = FLOW_SESSIONS[String(body.session || "")];
+  const time = String(body.time || "");
+  const place = String(body.modality || "later");
+  const mode = body.mode === "metade" ? "metade" : body.mode === "total" ? "total" : "";
+  const date = String(body.date || "");
+  const name = clip(body.name, 80);
+  const email = cleanEmail(body.email);
+  const phone = digits(body.phone);
+  if (!offer || !mode || !FLOW_TIMES[time] || !FLOW_PLACES[place]) return json({ error: "pedido" }, 400);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return json({ error: "data" }, 400);
+  if (body.terms !== true) return json({ error: "termos" }, 400);
+  if (name.length < 2 || !email.includes("@") || phone.length < 10 || phone.length > 13) return json({ error: "contato" }, 400);
+  const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
+  if (!key) return json({ error: "stripe_not_configured" }, 503);
+  const charge = mode === "metade" ? Math.round(offer.cents / 2) : offer.cents;
+  const created = await rest("flow_bookings", {
+    method: "POST",
+    body: JSON.stringify({
+      customer_name: name,
+      customer_email: email,
+      customer_phone: phone,
+      session_id: String(body.session),
+      session_name: offer.name,
+      modality: FLOW_PLACES[place],
+      note: clip(body.notes, 500),
+      date,
+      start_time: time,
+      amount_cents: offer.cents,
+      charge_cents: charge,
+      pay_mode: mode,
+      status: "pending_payment",
+      payment_status: "unpaid",
+    }),
+  });
+  const item = Array.isArray(created) ? created[0] : created;
+  if (!item || item.error || !item.id) return json({ error: "agenda" }, 500);
+  const stripe = await stripeClient(key);
+  const metadata = {
+    source: "flow-agenda",
+    booking_id: item.id,
+    charge_cents: String(charge),
+    total_cents: String(offer.cents),
+  };
+  const label = mode === "metade"
+    ? offer.name + " · 50% para reservar. O restante depois da sessão."
+    : offer.name + " · sessão FLOW";
+  let session;
+  try {
+    session = await openCheckout(stripe, {
+      mode: "payment",
+      customer_email: email,
+      line_items: [{
+        quantity: 1,
+        price_data: { currency: "brl", unit_amount: charge, product_data: { name: label } },
+      }],
+      success_url: "https://akashahub.com.br/flow/?pago=1&booking=" + item.id,
+      cancel_url: "https://akashahub.com.br/flow/?pago=0&booking=" + item.id,
+      metadata,
+      payment_intent_data: { metadata, receipt_email: email },
+    });
+  } catch {
+    await rest("flow_bookings?id=eq." + item.id, {
+      method: "PATCH",
+      body: JSON.stringify({ status: "cancelled", updated_at: new Date().toISOString() }),
+    });
+    return json({ error: "stripe" }, 502);
+  }
+  await rest("flow_bookings?id=eq." + item.id, {
+    method: "PATCH",
+    body: JSON.stringify({
+      stripe_checkout_session_id: session.id,
+      updated_at: new Date().toISOString(),
+    }),
+  });
+  return json({ url: session.url, id: item.id });
+}
+
+async function flowConfirm(body: Record<string, unknown>) {
+  const id = String(body.id || "");
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "pedido" }, 400);
+  const rows = await rest("flow_bookings?select=*&id=eq." + id + "&limit=1", { method: "GET" });
+  const current = Array.isArray(rows) ? rows[0] : null;
+  if (!current) return json({ error: "pedido" }, 404);
+  if (current.status === "confirmed") return json({ ok: true, status: "confirmed" });
+  const sessionId = String(current.stripe_checkout_session_id || "");
+  if (!sessionId) return json({ waiting: true });
+  const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
+  if (!key) return json({ error: "stripe_not_configured" }, 503);
+  const stripe = await stripeClient(key);
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  if (session.payment_status !== "paid") return json({ waiting: true });
+  return confirmFlowSession(session);
+}
+
+async function confirmFlowSession(session: { id: string; metadata?: Record<string, string>; amount_total: number | null; payment_status: string; payment_intent?: string | { id: string } }) {
+  const id = String(session.metadata?.booking_id || "");
+  const expected = Number(session.metadata?.charge_cents || 0);
+  if (!/^[0-9a-f-]{36}$/i.test(id) || !expected) return json({ error: "pedido" }, 400);
+  if (session.amount_total !== expected) return json({ error: "valor" }, 400);
+  const rows = await rest("flow_bookings?select=*&id=eq." + id + "&limit=1", { method: "GET" });
+  const current = Array.isArray(rows) ? rows[0] : null;
+  if (!current) return json({ error: "pedido" }, 404);
+  if (current.status === "confirmed" && current.stripe_checkout_session_id === session.id) return json({ duplicate: true });
+  const intent = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id || "";
+  await rest("flow_bookings?id=eq." + id, {
+    method: "PATCH",
+    body: JSON.stringify({
+      status: "confirmed",
+      payment_status: "paid",
+      stripe_checkout_session_id: session.id,
+      stripe_payment_intent_id: intent,
+      updated_at: new Date().toISOString(),
+    }),
+  });
+  const freshRows = await rest("flow_bookings?select=*&id=eq." + id + "&limit=1", { method: "GET" });
+  const fresh = Array.isArray(freshRows) ? freshRows[0] : current;
+  await flowNotify(fresh);
+  return json({ ok: true, status: "confirmed" });
+}
+
+async function flowNotify(row: Record<string, string>) {
+  const when = FLOW_TIMES[row.start_time] || row.start_time;
+  const paid = Number(row.charge_cents || 0);
+  const total = Number(row.amount_cents || 0);
+  const money = (n: number) => (n / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const restPay = row.pay_mode === "metade" ? "Falta " + money(total - paid) + " depois da sessão, com o mentor." : "Sessão quitada.";
+  const client = [
+    "Olá, " + (row.customer_name || "") + ".",
+    "Seu horário FLOW foi confirmado.",
+    "Sessão: " + row.session_name,
+    "Data: " + row.date,
+    "Horário: " + when,
+    "Lugar: " + (row.modality || "a combinar"),
+    "Pago agora: " + money(paid),
+    restPay,
+    "O mentor confirma os detalhes por este WhatsApp: https://wa.me/5571983448621",
+  ].join("\n");
+  const internal = [
+    "NOVO AGENDAMENTO FLOW",
+    row.customer_name,
+    row.customer_email,
+    row.customer_phone,
+    row.session_name + " · " + row.date + " · " + when,
+    row.modality || "",
+    "Pago: " + money(paid) + " de " + money(total) + " (" + row.pay_mode + ")",
+    row.note || "",
+    row.stripe_checkout_session_id || "",
+  ].join("\n");
+  await sendMail(row.customer_email, "Seu horário FLOW foi confirmado", client);
+  for (const mail of FLOW_MAILS) await sendMail(mail, "Novo agendamento FLOW", internal);
+  await sendWhatsapp(row.customer_phone, client);
+  await sendWhatsapp(WA_MENTOR, internal);
+}
+
 async function release(body: Record<string, unknown>) {
   const id = String(body.id || "");
   const code = String(body.access_code || "");
@@ -305,6 +477,10 @@ async function webhook(raw: string, signature: string) {
   catch { return json({ error: "bad_signature" }, 400); }
   if (eventObj.type === "checkout.session.completed" || eventObj.type === "checkout.session.async_payment_succeeded") {
     const session = eventObj.data.object;
+    if (session.metadata?.source === "flow-agenda") {
+      if (session.payment_status !== "paid") return json({ waiting: true });
+      return confirmFlowSession(session);
+    }
     if (session.metadata?.source !== "akasha-converse") return json({ ignored: true });
     if (session.payment_status !== "paid" && session.payment_status !== "no_payment_required") return json({ waiting: true });
     const id = String(session.metadata.appointment_id || "");
