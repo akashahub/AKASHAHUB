@@ -215,6 +215,8 @@ html.flow-open body::after{content:none}
 #wpp-ask .sheet{width:min(440px,100%);max-height:min(86vh,640px);overflow:auto;background:#141210;color:#f3eee6;border:1px solid rgba(243,238,230,.16);border-radius:18px;padding:20px}
 #wpp-ask h2{font-family:var(--display);font-weight:500;font-size:1.8rem;margin:8px 0 0}
 #wpp-ask fieldset{border:0;margin:16px 0 0;padding:0}
+#wpp-outra{display:none !important}
+#wpp-outra.is-on{display:grid !important}
 #wpp-ask legend{font-size:.95rem;margin-bottom:8px}
 #wpp-ask label.opt{display:flex;gap:8px;align-items:center;margin:6px 0;font-size:.95rem}
 #wpp-ask .row{display:flex;gap:8px;margin-top:16px}
@@ -888,15 +890,17 @@ update();
 const wppOpen = document.getElementById('wpp-open');
 const wppAsk = document.getElementById('wpp-ask');
 const wppOutra = document.getElementById('wpp-outra');
-wppOpen.onclick = () => { wppAsk.hidden = false; };
-document.getElementById('wpp-close').onclick = () => { wppAsk.hidden = true; };
-wppAsk.addEventListener('click', (e) => { if (e.target === wppAsk) wppAsk.hidden = true; });
-wppAsk.addEventListener('change', () => {
+function syncOutra(){
   const quem = wppAsk.querySelector('input[name="quem"]:checked');
-  const duo = quem && quem.value !== 'Só para mim';
+  const duo = !!(quem && quem.value === 'Para mim e mais alguém');
+  wppOutra.classList.toggle('is-on', duo);
   wppOutra.hidden = !duo;
   wppOutra.querySelectorAll('input').forEach((n) => { n.required = duo; if (!duo) n.checked = false; });
-});
+}
+wppOpen.onclick = () => { syncOutra(); wppAsk.hidden = false; };
+document.getElementById('wpp-close').onclick = () => { wppAsk.hidden = true; };
+wppAsk.addEventListener('click', (e) => { if (e.target === wppAsk) wppAsk.hidden = true; });
+wppAsk.addEventListener('change', syncOutra);
 document.getElementById('wpp-form').onsubmit = (e) => {
   e.preventDefault();
   const val = (name) => (wppAsk.querySelector('input[name="'+name+'"]:checked') || {}).value || '';
