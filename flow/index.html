@@ -116,12 +116,22 @@ p{text-wrap:pretty}
 .pgrid{display:grid;gap:12px;margin-top:32px}
 @media(min-width:768px){.pgrid{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:1180px){.pgrid{grid-template-columns:repeat(4,1fr);align-items:stretch}}
-.pcard{border:1px solid var(--line);background:var(--ink2);border-radius:14px;padding:22px;display:flex;flex-direction:column;min-width:0;gap:4px}
-.pcard.feat{border-color:rgba(243,238,230,.35);background:var(--ink3)}
+.pcard{position:relative;overflow:hidden;border:1px solid var(--line);background:#141210;border-radius:14px;padding:22px;display:flex;flex-direction:column;min-width:0;gap:4px;color:#f7f2ea}
+.pcard .bg{position:absolute;inset:-8px;background-size:cover;background-position:center;filter:blur(2px);transform:scale(1.04)}
+.pcard .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,9,.45) 0%,rgba(11,10,9,.72) 55%,rgba(11,10,9,.84) 100%)}
+.pcard > :not(.bg):not(.shade){position:relative;z-index:1}
+.pcard h3,.pcard p,.pcard li,.pcard .kicker,.pcard .display{text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 14px rgba(0,0,0,.75)}
+.pcard .dim,.pcard .note,.pcard li{color:#f4efe6}
+.pcard.feat{border-color:rgba(243,238,230,.35)}
 @media(max-width:767px){.pcard.feat{order:-1}}
-.pcard ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:8px;font-size:14px;color:var(--ivory-dim)}
-.pcard li{border-top:1px solid var(--line);padding-top:8px}
-.pcard .btn{margin-top:auto;width:100%}
+.pcard ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:8px;font-size:14px;color:#f4efe6}
+.pcard li{border-top:1px solid rgba(243,238,230,.2);padding-top:8px}
+.pcard .acts{display:grid;gap:8px;margin-top:18px}
+.pcard .btn{width:100%}
+#depois{margin:18px var(--pad) 0;padding:18px;border:1px solid rgba(243,238,230,.2);border-radius:14px;background:#141210;color:#f7f2ea}
+#depois[hidden]{display:none}
+#depois .row{display:grid;gap:8px;margin-top:12px}
+@media(min-width:768px){#depois .row{grid-template-columns:1fr 1fr 1fr auto;align-items:end}}
 .qual{display:grid;gap:40px;padding:72px var(--pad)}
 @media(min-width:768px){.qual{grid-template-columns:1fr 1fr}}
 .qual li{border-top:1px solid var(--line);padding-top:14px;font-size:14px;color:var(--ivory-dim);line-height:1.55}
@@ -289,6 +299,27 @@ html.flow-open #flow-gate{display:none}
   </div>
 </section>
 
+<div id="depois" hidden>
+  <p class="kicker">Pagamento recebido</p>
+  <h2 style="font-size:1.8rem;margin:8px 0 0">Agora escolha o dia e o horário.</h2>
+  <p class="dim" style="margin:10px 0 0;max-width:36rem;line-height:1.6">A agenda fica bloqueada para você nesse dia. Se precisar remarcar, a gente alinha depois.</p>
+  <form id="depois-form" class="row">
+    <label class="field"><span class="lbl lbl-v">Nome</span><input class="inp" id="depois-nome" required></label>
+    <label class="field"><span class="lbl lbl-g">WhatsApp</span><input class="inp" id="depois-zap" required placeholder="DDD e número"></label>
+    <label class="field"><span class="lbl lbl-v">Dia</span><input class="inp" id="depois-dia" type="date" required></label>
+    <label class="field"><span class="lbl lbl-g">Horário</span>
+      <select class="inp" id="depois-hora" required>
+        <option value="manha">Manhã</option>
+        <option value="tarde">Tarde</option>
+        <option value="noite">Noite</option>
+        <option value="flex">Flexível</option>
+      </select>
+    </label>
+    <button class="btn btn-ivory" type="submit">Guardar meu dia</button>
+  </form>
+  <p id="depois-note" class="dim" style="margin:10px 0 0"></p>
+</div>
+
 <section class="manifest reveal">
   <p class="k">Isto não é um spa</p>
   <div class="t">
@@ -405,6 +436,8 @@ html.flow-open #flow-gate{display:none}
   <p class="dim" style="margin-top:16px;max-width:40rem;font-size:.95rem">Entrada premium, experiência principal, jornada superior. O preço cobre preparação, deslocamento quando couber, tempo real e exclusividade. Não é uma tabela de massagem.</p>
   <div class="pgrid">
     <article class="pcard">
+      <div class="bg" style="background-image:url('/flow/cards/contemplacao.jpg?v=1')"></div>
+      <div class="shade"></div>
       <p class="kicker">Entrada premium</p>
       <h3 style="font-size:2rem;margin:12px 0 0">Contemplação</h3>
       <p class="dim" style="margin:4px 0 0">90 min</p>
@@ -418,9 +451,15 @@ html.flow-open #flow-gate{display:none}
         <li>Aftercare breve</li>
       </ul>
       <p class="note">A Terapia de Alinhamento completa não entra nesta sessão.</p>
-      <a class="btn btn-ghost" href="#agendar" data-cta data-keep="Solicitar Contemplação">Solicitar Contemplação</a>
+      <div class="acts">
+        <button class="btn btn-ivory" type="button" data-pay="contemplacao" data-mode="total">Avançar e pagar</button>
+        <button class="btn btn-ghost" type="button" data-pay="contemplacao" data-mode="metade">Avançar pagando 50%</button>
+        <a class="btn" style="background:#25d366;color:#06210f" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20Yan.%20Quero%20avan%C3%A7ar%20com%20a%20sess%C3%A3o%20Contempla%C3%A7%C3%A3o.%20Prefiro%20combinar%20o%20pagamento%20e%20o%20dia%20com%20voc%C3%AA.">Avançar com o mentor no WhatsApp</a>
+      </div>
     </article>
     <article class="pcard feat">
+      <div class="bg" style="background-image:url('/flow/cards/flow.jpg?v=1')"></div>
+      <div class="shade"></div>
       <p class="kicker">A experiência</p>
       <h3 style="font-size:2rem;margin:12px 0 0">Flow</h3>
       <p class="dim" style="margin:4px 0 0">2h30</p>
@@ -434,9 +473,15 @@ html.flow-open #flow-gate{display:none}
         <li>Terapia de Alinhamento</li>
         <li>Aftercare e orientação de integração</li>
       </ul>
-      <a class="btn btn-ivory" href="#agendar" data-cta data-keep="Solicitar Flow">Solicitar Flow</a>
+      <div class="acts">
+        <button class="btn btn-ivory" type="button" data-pay="flow" data-mode="total">Avançar e pagar</button>
+        <button class="btn btn-ghost" type="button" data-pay="flow" data-mode="metade">Avançar pagando 50%</button>
+        <a class="btn" style="background:#25d366;color:#06210f" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20Yan.%20Quero%20avan%C3%A7ar%20com%20a%20sess%C3%A3o%20Flow.%20Prefiro%20combinar%20o%20pagamento%20e%20o%20dia%20com%20voc%C3%AA.">Avançar com o mentor no WhatsApp</a>
+      </div>
     </article>
     <article class="pcard">
+      <div class="bg" style="background-image:url('/flow/cards/magnetismo.jpg?v=1')"></div>
+      <div class="shade"></div>
       <p class="kicker">Superior</p>
       <h3 style="font-size:2rem;margin:12px 0 0">Magnetismo Soberano</h3>
       <p class="dim" style="margin:4px 0 0">4h</p>
@@ -451,9 +496,15 @@ html.flow-open #flow-gate{display:none}
         <li>Follow-up em 48h</li>
       </ul>
       <p class="note">Até 4 sessões de Magnetismo Soberano por mês.</p>
-      <a class="btn btn-ghost" href="#agendar" data-cta data-keep="Solicitar Magnetismo Soberano">Solicitar Magnetismo Soberano</a>
+      <div class="acts">
+        <button class="btn btn-ivory" type="button" data-pay="magnetismo" data-mode="total">Avançar e pagar</button>
+        <button class="btn btn-ghost" type="button" data-pay="magnetismo" data-mode="metade">Avançar pagando 50%</button>
+        <a class="btn" style="background:#25d366;color:#06210f" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20Yan.%20Quero%20avan%C3%A7ar%20com%20a%20sess%C3%A3o%20Magnetismo%20Soberano.%20Prefiro%20combinar%20o%20pagamento%20e%20o%20dia%20com%20voc%C3%AA.">Avançar com o mentor no WhatsApp</a>
+      </div>
     </article>
     <article class="pcard">
+      <div class="bg" style="background-image:url('/flow/cards/pack.jpg?v=1')"></div>
+      <div class="shade"></div>
       <p class="kicker">Ciclo de 21 dias</p>
       <h3 style="font-size:2rem;margin:12px 0 0">Pack Elite Flow</h3>
       <p class="dim" style="margin:4px 0 0">3 × Flow</p>
@@ -466,10 +517,15 @@ html.flow-open #flow-gate{display:none}
         <li>Ajustes entre sessões</li>
         <li>Follow-up após a terceira</li>
       </ul>
-      <a class="btn btn-ghost" href="#agendar" data-cta data-keep="Solicitar Pack Elite Flow">Solicitar Pack Elite Flow</a>
+      <div class="acts">
+        <button class="btn btn-ivory" type="button" data-pay="pack" data-mode="total">Avançar e pagar</button>
+        <button class="btn btn-ghost" type="button" data-pay="pack" data-mode="metade">Avançar pagando 50%</button>
+        <a class="btn" style="background:#25d366;color:#06210f" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20Yan.%20Quero%20avan%C3%A7ar%20com%20o%20Pack%20Elite%20Flow.%20Prefiro%20combinar%20o%20pagamento%20e%20o%20dia%20com%20voc%C3%AA.">Avançar com o mentor no WhatsApp</a>
+      </div>
     </article>
   </div>
-  <a class="btn btn-ivory" href="#agendar" style="margin-top:28px">Feche pelo site com agendamento automático e garanta seu atendimento</a>
+  <p id="cardNote" class="dim" style="margin-top:18px;max-width:42rem;line-height:1.6"></p>
+  <p class="dim" style="margin-top:8px;max-width:42rem;line-height:1.6">Pagamento seguro pelo Stripe, com cartão ou Pix. Você paga primeiro. Depois escolhe o dia e o horário. Se precisar remarcar, a gente alinha. Quem prefere não pagar pela internet avança com o mentor no WhatsApp.</p>
 </section>
 
 <section class="qual reveal">
@@ -868,6 +924,23 @@ async function pagarStripe(modo){
 }
 document.getElementById('payFull').onclick = () => pagarStripe('total');
 document.getElementById('payHalf').onclick = () => pagarStripe('metade');
+async function pagarCard(session, mode){
+  const note = document.getElementById('cardNote');
+  if (note) note.textContent = 'Abrindo o pagamento seguro...';
+  try {
+    const res = await fetch('https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'flow_checkout', direct: true, session, mode, terms: true })
+    });
+    const data = await res.json();
+    if (data.url) { location.href = data.url; return; }
+  } catch {}
+  if (note) note.textContent = 'O pagamento não abriu agora. Dá para avançar com o mentor no botão verde.';
+}
+document.querySelectorAll('[data-pay]').forEach((btn) => {
+  btn.onclick = () => pagarCard(btn.getAttribute('data-pay'), btn.getAttribute('data-mode'));
+});
 const pagoBanner = document.getElementById('pagoBanner');
 const pagoQuery = new URLSearchParams(location.search);
 if (pagoQuery.get('pago') === '0' && pagoBanner) {
@@ -877,6 +950,8 @@ if (pagoQuery.get('pago') === '0' && pagoBanner) {
 if (pagoQuery.get('pago') === '1' && pagoBanner) {
   pagoBanner.hidden = false;
   const booking = pagoQuery.get('booking');
+  const depois = document.getElementById('depois');
+  if (depois) depois.hidden = false;
   if (booking) {
     fetch('https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa', {
       method: 'POST',
@@ -884,9 +959,33 @@ if (pagoQuery.get('pago') === '1' && pagoBanner) {
       body: JSON.stringify({ action: 'flow_confirm', id: booking })
     }).then((r) => r.json()).then((data) => {
       if (data && (data.ok || data.duplicate || data.status === 'confirmed')) {
-        pagoBanner.textContent = 'Pagamento confirmado. O aviso segue para o seu e-mail, para o mentor e para o WhatsApp, quando esses envios estão ligados.';
+        pagoBanner.textContent = 'Pagamento confirmado. Agora escolha o dia. A agenda fica para você.';
       }
     }).catch(() => {});
+    const form = document.getElementById('depois-form');
+    if (form) form.onsubmit = async (e) => {
+      e.preventDefault();
+      const note = document.getElementById('depois-note');
+      note.textContent = 'Guardando o dia...';
+      try {
+        const res = await fetch('https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'flow_schedule',
+            id: booking,
+            name: document.getElementById('depois-nome').value,
+            phone: document.getElementById('depois-zap').value,
+            date: document.getElementById('depois-dia').value,
+            time: document.getElementById('depois-hora').value
+          })
+        });
+        const data = await res.json();
+        note.textContent = data.ok ? 'Dia guardado. O mentor recebe o aviso.' : 'Ainda não deu para guardar. Fale com o mentor no WhatsApp.';
+      } catch {
+        note.textContent = 'Ainda não deu para guardar. Fale com o mentor no WhatsApp.';
+      }
+    };
   }
 }
 
