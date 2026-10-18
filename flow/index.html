@@ -246,6 +246,16 @@ html:not(.flow-open) body::after{content:"";position:fixed;inset:0;z-index:75;po
 html.flow-open body::after{content:none}
 #wpp-open{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;height:52px;padding:0 18px;border:0;border-radius:999px;background:#25d366;color:#06210f;font-weight:500;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.4)}
 @media(max-width:767px){#wpp-open{bottom:calc(88px + env(safe-area-inset-bottom))}}
+#job-open{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;height:34px;padding:0 12px;border:0;border-radius:999px;background:linear-gradient(180deg,#f0e2b8,#c6a15b);color:#1a1408;font-size:11px;letter-spacing:.06em;font-weight:600;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.35)}
+@media(max-width:767px){#job-open{bottom:calc(88px + env(safe-area-inset-bottom))}}
+#job-ask{position:fixed;inset:0;z-index:90;background:rgba(11,10,9,.72);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+#job-ask[hidden]{display:none}
+#job-ask .sheet{width:min(440px,100%);max-height:min(90vh,760px);overflow:auto;background:#141210;color:#f3eee6;border:1px solid rgba(198,161,91,.45);border-radius:18px;padding:20px}
+#job-ask h2{font-family:var(--display);font-weight:500;font-size:1.8rem;margin:8px 0 0}
+#job-ask fieldset{border:0;margin:16px 0 0;padding:0}
+#job-ask legend{font-size:.95rem;margin-bottom:8px;color:#c6a15b}
+#job-ask label.opt{display:flex;gap:8px;align-items:center;margin:8px 0;font-size:.95rem}
+#job-ask textarea{width:100%;min-height:140px;margin-top:8px;background:#0b0a09;border:1px solid rgba(243,238,230,.2);border-radius:10px;padding:12px;color:#f3eee6;line-height:1.45}
 #wpp-ask{position:fixed;inset:0;z-index:90;background:rgba(11,10,9,.72);display:flex;align-items:flex-end;justify-content:center;padding:16px}
 #wpp-ask[hidden]{display:none}
 #wpp-ask .sheet{position:relative;width:min(440px,100%);max-height:min(90vh,760px);overflow:auto;color:#f7f2ea;border:1px solid rgba(243,238,230,.16);border-radius:18px;padding:20px;background:linear-gradient(180deg,rgba(11,10,9,.58),rgba(11,10,9,.7)),url("/flow/img/modal.jpg?v=1") center 16%/cover no-repeat}
@@ -680,7 +690,28 @@ html.flow-open #flow-gate{display:none}
   </div>
 </footer>
 <div class="dock is-hero" id="dock"><a href="#agendar" data-cta>Solicitar experiência</a></div>
+<button id="job-open" type="button">Trabalhe conosco</button>
 <button id="wpp-open" type="button">Conversar no WhatsApp</button>
+<div id="job-ask" hidden>
+  <form class="sheet" id="job-form">
+    <p class="kicker">Parceria</p>
+    <h2>Trabalhe conosco</h2>
+    <fieldset>
+      <legend>Quem é você?</legend>
+      <label class="opt"><input type="radio" name="papel" value="terapeuta" required> Sou terapeuta</label>
+      <label class="opt"><input type="radio" name="papel" value="social"> Sou social media</label>
+      <label class="opt"><input type="radio" name="papel" value="patrocinio"> Sou patrocinador</label>
+      <label class="opt"><input type="radio" name="papel" value="espaco"> Sou de um espaço terapêutico</label>
+    </fieldset>
+    <label style="display:block;margin-top:16px">Sua proposta
+      <textarea id="job-text" required placeholder="Escolha uma opção. O texto entra pronto. Você só troca o que for seu."></textarea>
+    </label>
+    <div style="display:grid;gap:8px;margin-top:14px">
+      <button class="btn btn-ivory" type="submit">Enviar no WhatsApp</button>
+      <button class="btn btn-ghost" id="job-close" type="button">Fechar</button>
+    </div>
+  </form>
+</div>
 <div id="wpp-ask" hidden>
   <form class="sheet" id="wpp-form">
     <p class="kicker">Antes do WhatsApp</p>
@@ -1026,6 +1057,33 @@ function applyAvailability(){
 }
 applyAvailability();
 update();
+const jobOpen = document.getElementById('job-open');
+const jobAsk = document.getElementById('job-ask');
+const jobText = document.getElementById('job-text');
+const jobSug = {
+  terapeuta: 'Olá, Yan. Sou terapeuta em Salvador. Trabalho com massagem e presença. Tenho prática com atendimento individual, em sala reservada, para maiores de 21 anos. Quero colaborar no Flow como apoio ou indicação, no mesmo tom da casa: uma pessoa, sem fila e sem exposição. Meu nome é __. Meu WhatsApp é __.',
+  social: 'Olá, Yan. Cuido de redes. Posso gravar e publicar o Flow em talking head, sem mostrar a sala, com o link akashahub.com.br/flow na bio. Um vídeo por vez, frase curta, sem preço na fala e sem promessa. Meu nome é __. Meu perfil é __. Meu WhatsApp é __.',
+  patrocinio: 'Olá, Yan. Represento __. Quero patrocinar o Flow ou a Arquitetura de Legado. Posso oferecer espaço, produto ou divulgação. Em troca, peço uma menção clara, sem misturar com a sessão. Meu nome é __. Meu WhatsApp é __.',
+  espaco: 'Olá, Yan. Tenho um espaço terapêutico em Salvador ou Lauro de Freitas. A sala é privativa, com maca, banho e entrada discreta. Cabe uma sessão de Flow, uma pessoa por vez, sem fila. O bairro é __. Quero receber o atendimento aqui. Meu nome é __. Meu WhatsApp é __.'
+};
+let jobLast = '';
+jobOpen.onclick = () => { jobAsk.hidden = false; };
+document.getElementById('job-close').onclick = () => { jobAsk.hidden = true; };
+jobAsk.addEventListener('click', (e) => { if (e.target === jobAsk) jobAsk.hidden = true; });
+jobAsk.addEventListener('change', () => {
+  const papel = (jobAsk.querySelector('input[name="papel"]:checked') || {}).value;
+  if (!papel || !jobSug[papel]) return;
+  if (!jobText.value || jobText.value === jobLast) jobText.value = jobSug[papel];
+  jobLast = jobSug[papel];
+});
+document.getElementById('job-form').onsubmit = (e) => {
+  e.preventDefault();
+  const papel = (jobAsk.querySelector('input[name="papel"]:checked') || {}).value || '';
+  const nome = { terapeuta: 'Sou terapeuta', social: 'Sou social media', patrocinio: 'Sou patrocinador', espaco: 'Sou de um espaço terapêutico' }[papel] || 'Proposta';
+  const msg = nome + '\n\n' + jobText.value.trim();
+  window.open('https://wa.me/5571983448621?text=' + encodeURIComponent(msg), '_blank', 'noopener,noreferrer');
+  jobAsk.hidden = true;
+};
 const wppOpen = document.getElementById('wpp-open');
 const wppAsk = document.getElementById('wpp-ask');
 const wppOutra = document.getElementById('wpp-outra');
