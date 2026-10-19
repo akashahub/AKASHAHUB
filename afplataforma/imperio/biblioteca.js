@@ -82,11 +82,11 @@
     const video = it.cat === "video" ? '<p class="note">Três jeitos de trabalhar, sem misturar: edição tradicional, recurso assistido por IA e produção audiovisual completa. O mentor confirma o que cabe neste caso. A página não afirma que os três estão disponíveis para qualquer material.</p>' : "";
     main.innerHTML =
       '<header class="top"><a class="brand" href="../index.html">Império Digital</a><a class="back" href="../index.html">Biblioteca</a></header>' +
-      '<div class="wrap page"><article><p class="eyebrow">' + esc(it.catNome) + '</p><h1>' + esc(it.nome) + '</h1><p class="lead">' + esc(it.problema) + '</p>' + video +
+      '<div class="wrap page"><article data-forma="esfera" data-alfa="0.7"><p class="eyebrow">' + esc(it.catNome) + '</p><h1>' + esc(it.nome) + '</h1><p class="lead">' + esc(it.problema) + '</p>' + video +
       '<div class="mark" style="margin-top:18px;border-radius:16px">' + marca(it) + '</div>' +
       '<section class="block" style="margin-top:16px"><h2>O que isso resolve</h2><ul>' + it.dores.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join("") + '</ul></section>' +
       '<section class="block"><h2>O que pode entrar</h2><ul>' + it.faz.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join("") + '</ul></section>' +
-      '</article><aside><section class="block"><h2>Exemplos</h2><ul>' + it.exemplos.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join("") + '</ul></section>' +
+      '</article><aside data-forma="anel" data-alfa="0.55"><section class="block"><h2>Exemplos</h2><ul>' + it.exemplos.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join("") + '</ul></section>' +
       '<section class="block"><h2>Com o que conversa</h2><p>' + esc(it.integracoes) + '</p></section>' +
       '<section class="block"><h2>O que precisa existir antes</h2><p>' + esc(it.depende) + '</p></section>' +
       (it.nota ? '<p class="note">' + esc(it.nota) + '</p>' : '') +
@@ -214,6 +214,20 @@
     };
   }
 
+  function ligarEfeitos() {
+    if (document.getElementById("akasha-fundo")) return;
+    const c = document.createElement("canvas");
+    c.id = "akasha-fundo";
+    c.setAttribute("aria-hidden", "true");
+    const cur = document.createElement("div");
+    cur.className = "akasha-cursor";
+    cur.setAttribute("aria-hidden", "true");
+    document.body.prepend(cur);
+    document.body.prepend(c);
+    import("/efeitos/camada.js");
+  }
+
   if (document.body.getAttribute("data-solucao")) renderPage();
   else renderCatalog();
+  ligarEfeitos();
 })();
