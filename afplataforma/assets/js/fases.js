@@ -144,16 +144,42 @@ export function renderFase2() {
     `${renderPhaseBriefing("fase2")}
     <h3 class="section-h">Trabalho principal da fase</h3>
     <div class="module-list">${trabalho}</div>
-    <section class="id-ai-entry">
+    <section class="id-lib">
+    <div class="id-ai-entry">
       <div class="id-ai-entry-copy">
-        <p class="id-ai-eyebrow">Portfólio digital · Novo recurso</p>
-        <h3>Sites, apps e plataformas</h3>
-        <p>Explore modelos de ativos digitais para mentorias, empresas, advocacia, clínicas, pedidos, varejo, restaurantes, profissionais digitais e outros negócios.</p>
+        <p class="id-ai-eyebrow">Biblioteca de soluções</p>
+        <h3>Sites, apps e o que a casa digital precisa</h3>
+        <p>O portfólio e o laboratório de anúncios continuam. Em volta, uma página para cada solução. O resumo se copia. Quem envia ao mentor é a pessoa.</p>
       </div>
       <p style="display:flex;flex-wrap:wrap;gap:8px;margin:0">
+        <a class="tool-btn" href="/afplataforma/imperio/index.html">Abrir a biblioteca</a>
         <a class="tool-btn" href="/afplataforma/imperio/portfolio-plataformas.html" target="_blank" rel="noopener">Abrir portfólio de plataformas ↗</a>
         <a class="tool-btn" href="/afplataforma/imperio/anuncios-ia.html" target="_blank" rel="noopener">Ver anúncios com IA ↗</a>
       </p>
+    </div>
+    <div class="id-lib-grid">
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=sites"><strong>Sites e experiência visual</strong><span>5 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=web"><strong>Sites funcionais e aplicações web</strong><span>5 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=agenda"><strong>Agendamento e gestão de horários</strong><span>5 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=comercio"><strong>Comércio digital e pagamentos</strong><span>5 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=ads"><strong>Publicidade e criativos com IA</strong><span>5 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=vendas"><strong>Vendas e CRM</strong><span>5 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=atendimento"><strong>Atendimento e relacionamento</strong><span>5 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=automacao"><strong>Automação e integrações</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=gestao"><strong>Gestão e inteligência empresarial</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=seguranca"><strong>Segurança digital e infraestrutura</strong><span>5 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=educacao"><strong>Educação e treinamento</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=comunidade"><strong>Comunidades e assinaturas</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=rh"><strong>RH, recrutamento e seleção</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=restaurante"><strong>Restaurantes, bares e gastronomia</strong><span>6 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=criadores"><strong>Criadores, streamers e entretenimento</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=eventos"><strong>Eventos e experiências</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=imoveis"><strong>Imobiliário e gestão de propriedades</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=logistica"><strong>Logística, distribuição e operações</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=saude"><strong>Saúde, clínicas e serviços profissionais</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=saas"><strong>SaaS, plataformas multiempresa e produtos próprios</strong><span>4 páginas</span></a>
+<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=video"><strong>Edição profissional de vídeos e pós-produção</strong><span>13 páginas</span></a>
+    </div>
     </section>
     ${renderPhaseChecklist("fase2")}
     <p class="notes-hint">O calendário é uma hipótese estratégica que deve ser validada com dados, capacidade de produção e resposta real do público. O ecossistema inteiro aparece ao longo do ano, mesmo quando cada conteúdo aprofunda um tema específico.</p>`
@@ -165,7 +191,7 @@ export function bindFase2Checklist() {
   const root = document.querySelector(".view.active");
   if (!root || root.dataset.idRevealBound === "1") return;
   root.dataset.idRevealBound = "1";
-  const items = root.querySelectorAll(".module-list .mod-row, .id-ai-entry, .section-h, .notes-hint");
+  const items = root.querySelectorAll(".module-list .mod-row, .id-ai-entry, .id-lib, .section-h, .notes-hint");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduceMotion || !("IntersectionObserver" in window)) {
     items.forEach((item) => item.classList.add("id-scroll-visible"));
