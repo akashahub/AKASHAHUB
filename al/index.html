@@ -269,6 +269,10 @@
 
 
     .scene{cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}
+    .scene-custom{border:1px dashed #8a6b9e;background:linear-gradient(145deg,#fff,#f1eaf6)}
+    .scene-custom .eyebrow{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#74518c;margin-bottom:12px}
+    .scene-custom h3{color:#4d3262}
+    .custom-hint{display:inline-block;margin-top:12px;color:#6d4b83;font-size:12px;font-weight:700}
     .scene:hover,.scene:focus-visible{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.08);outline:2px solid rgba(92,61,120,.45);outline-offset:3px}
     .modal-overlay{position:fixed;inset:0;background:rgba(15,10,20,.78);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
     .modal-overlay.open{display:flex}
@@ -377,6 +381,7 @@
           <article class="scene" data-modal="academia" role="button" tabindex="0" aria-haspopup="dialog"><h3>Academia</h3><p>A aula acaba e o aluno vai embora. Horário, conteúdo e o treino da equipe continuam na cabeça de quem está na unidade.</p></article>
           <article class="scene" data-modal="escola" role="button" tabindex="0" aria-haspopup="dialog"><h3>Escola</h3><p>O conteúdo está nos professores. A comunicação está no grupo. Aula, equipe e recado pedem um lugar só.</p></article>
           <article class="scene" data-modal="empresa" role="button" tabindex="0" aria-haspopup="dialog"><h3>Empresa</h3><p>Quem vende para outra empresa recomeça a proposta no PDF. O cliente não entra sozinho e não vê o que já foi entregue. Falta a porta, a proposta e o depois do sim.</p></article>
+          <article class="scene scene-custom" data-custom-solution role="button" tabindex="0" aria-haspopup="dialog"><span class="eyebrow">Seu negócio é diferente?</span><h3>Peça uma solução para minha empresa ↗</h3><p>Escreva o nicho da sua empresa e conte brevemente o que você faz. Vamos conversar sobre uma solução digital sob medida.</p><span class="custom-hint">Clique para descrever seu negócio</span></article>
         </div>
           <p class="need-ready" id="structReady" hidden></p>
         </div>
@@ -490,6 +495,21 @@
   </script>
 
 
+  <div class="modal-overlay" id="customSolutionModal" role="dialog" aria-modal="true" aria-labelledby="customSolutionTitle">
+    <div class="modal-box">
+      <button class="modal-close" id="customSolutionClose" type="button" aria-label="Fechar">&times;</button>
+      <span class="eyebrow">Solução digital sob medida</span>
+      <h3 id="customSolutionTitle">Conte sobre sua empresa</h3>
+      <p>Escreva o nicho da empresa e o que você gostaria de resolver. Sua mensagem vai direto para o nosso WhatsApp, e combinamos a conversa por lá.</p>
+      <form id="customSolutionForm" class="digital-form">
+        <div class="digital-field"><label for="customName">Seu nome</label><input id="customName" name="name" autocomplete="name" placeholder="Como podemos chamar você?" required></div>
+        <div class="digital-field"><label for="customNiche">Qual é o nicho da sua empresa?</label><input id="customNiche" name="niche" placeholder="Ex.: pet shop, restaurante, imobiliária, loja..." required></div>
+        <div class="digital-field"><label for="customNeed">O que sua empresa faz e que solução procura?</label><textarea id="customNeed" name="need" placeholder="Conte brevemente o que sua empresa oferece e o que gostaria de melhorar ou criar." required></textarea></div>
+        <button class="digital-submit" type="submit">Enviar solicitação pelo WhatsApp ↗</button>
+        <div class="digital-privacy">Sem escolher data ou horário agora. Combinamos a call pelo WhatsApp.</div>
+      </form>
+    </div>
+  </div>
   <div class="modal-overlay" id="solucaoModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-box">
       <button class="modal-close" id="modalClose" type="button" aria-label="Fechar">&times;</button>
@@ -511,6 +531,28 @@
         empresa:{title:"Empresa OS",desc:"A proposta não recomeça no PDF. O cliente entra, vê o que foi entregue e o que vem depois.",image:"/al/portfolios/empresa1.jpg",ppt:"/al/portfolios/Portfolio_Empresa.pptx"}
       };
       const modal=document.getElementById("solucaoModal"), closeBtn=document.getElementById("modalClose");
+      const customModal=document.getElementById("customSolutionModal"), customClose=document.getElementById("customSolutionClose");
+      const customCard=document.querySelector("[data-custom-solution]");
+      const closeCustom=()=>{customModal.classList.remove("open");document.body.style.overflow="";};
+      function openCustom(){customModal.classList.add("open");document.body.style.overflow="hidden";document.getElementById("customName").focus();}
+      customCard.addEventListener("click",openCustom);
+      customCard.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openCustom();}});
+      customClose.addEventListener("click",closeCustom);
+      customModal.addEventListener("click",e=>{if(e.target===customModal)closeCustom();});
+      document.getElementById("customSolutionForm").addEventListener("submit",e=>{
+        e.preventDefault();
+        const val=id=>document.getElementById(id).value.trim();
+        const msg=[
+          "Olá, Yan! Quero conversar sobre uma solução digital sob medida para minha empresa.",
+          "",
+          "*Nome:* "+val("customName"),
+          "*Nicho da empresa:* "+val("customNiche"),
+          "*Sobre a empresa e solução que procuro:* "+val("customNeed"),
+          "",
+          "Gostaria de combinar uma conversa/call pelo WhatsApp."
+        ].join("\\n");
+        window.open("https://wa.me/5571983448621?text="+encodeURIComponent(msg),"_blank","noopener");
+      });
       const close=()=>{modal.classList.remove("open");document.body.style.overflow="";};
       function openCard(el){
         const item=data[el.dataset.modal]; if(!item)return;
@@ -527,7 +569,10 @@
       });
       closeBtn.addEventListener("click",close);
       modal.addEventListener("click",e=>{if(e.target===modal)close();});
-      document.addEventListener("keydown",e=>{if(e.key==="Escape"&&modal.classList.contains("open"))close();});
+      document.addEventListener("keydown",e=>{
+        if(e.key==="Escape"&&modal.classList.contains("open"))close();
+        if(e.key==="Escape"&&customModal.classList.contains("open"))closeCustom();
+      });
     })();
   </script>
 </body>
