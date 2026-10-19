@@ -259,11 +259,12 @@
 .digital-submit{width:100%;border:0;border-radius:10px;padding:1rem 1.1rem;background:linear-gradient(110deg,#b68c43,#e0bd73,#a77d35);color:#1e1a12;font-weight:800;font-size:.95rem;cursor:pointer;box-shadow:0 8px 22px rgba(147,105,36,.2);transition:transform .2s,box-shadow .2s}
 .digital-submit:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(147,105,36,.28)}
 .digital-privacy{font-size:.72rem;color:#8a8174;text-align:center;line-height:1.5}
-.digital-float{position:fixed;right:20px;bottom:20px;z-index:999;display:flex;align-items:center;gap:.65rem;background:#201c16;color:#fff9ed;text-decoration:none;border:1px solid rgba(221,185,111,.65);border-radius:999px;padding:.8rem 1.15rem;box-shadow:0 10px 35px rgba(0,0,0,.22);font-size:.84rem;font-weight:700;transition:transform .2s,box-shadow .2s;animation:digitalPulse 3s ease-in-out infinite}
+.digital-float{position:fixed;left:20px;bottom:20px;z-index:999;display:flex;align-items:center;gap:.65rem;background:#201c16;color:#fff9ed;text-decoration:none;border:1px solid rgba(221,185,111,.65);border-radius:999px;padding:.8rem 1.15rem;box-shadow:0 10px 35px rgba(0,0,0,.22);font-size:.84rem;font-weight:700;transition:opacity .25s,transform .25s,box-shadow .2s;animation:digitalPulse 3s ease-in-out infinite;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(12px)}
+.digital-float.is-visible{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
 .digital-float:hover{transform:translateY(-3px);box-shadow:0 15px 40px rgba(0,0,0,.28)}
 .digital-float .spark{color:#e2bd72;font-size:1.2rem}
 @keyframes digitalPulse{0%,100%{box-shadow:0 10px 35px rgba(0,0,0,.2),0 0 0 0 rgba(195,153,75,.2)}50%{box-shadow:0 10px 35px rgba(0,0,0,.2),0 0 0 7px rgba(195,153,75,0)}}
-@media(max-width:800px){.digital-wrap{grid-template-columns:1fr;gap:2rem}.digital-offer h2{font-size:clamp(2.25rem,10vw,3.3rem)}.digital-form-card{padding:1.2rem}.digital-float{right:12px;bottom:12px;padding:.78rem 1rem;font-size:.78rem}.digital-two{grid-template-columns:1fr 1fr}}
+@media(max-width:800px){.digital-wrap{grid-template-columns:1fr;gap:2rem}.digital-offer h2{font-size:clamp(2.25rem,10vw,3.3rem)}.digital-form-card{padding:1.2rem}.digital-float{left:12px;bottom:12px;padding:.78rem 1rem;font-size:.78rem}.digital-two{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){.digital-float{animation:none}.digital-submit,.digital-float{transition:none}}
 
 </style>
@@ -279,7 +280,7 @@
         <a href="#ciclo">O ciclo</a>
         <a href="#faq">FAQ</a>
       </div>
-      <a class="btn btn-dark" href="#aplicar">Sessão de Arquitetura</a>
+      <a class="btn btn-dark" href="#solucao-gratuita">Ideia digital gratuita ↗</a>
       <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
@@ -890,6 +891,15 @@
   </script>
 
   <a class="digital-float" href="#solucao-gratuita" aria-label="Agendar conversa gratuita para receber uma ideia de solução digital"><span class="spark">✦</span><span>Receba uma ideia gratuita</span></a>
+  <script>
+  (function(){
+    const floating=document.querySelector('.digital-float');
+    if(!floating)return;
+    const updateFloating=()=>floating.classList.toggle('is-visible',window.scrollY>280);
+    window.addEventListener('scroll',updateFloating,{passive:true});
+    updateFloating();
+  })();
+  </script>
   <script>
   (function(){
     const form=document.getElementById('digitalSolutionForm');
