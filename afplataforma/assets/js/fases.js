@@ -157,29 +157,174 @@ export function renderFase2() {
         <a class="tool-btn" href="/afplataforma/imperio/anuncios-ia.html" target="_blank" rel="noopener">Ver anúncios com IA ↗</a>
       </p>
     </div>
-    <div class="id-lib-grid">
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=sites"><strong>Sites e experiência visual</strong><span>5 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=web"><strong>Sites funcionais e aplicações web</strong><span>5 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=agenda"><strong>Agendamento e gestão de horários</strong><span>5 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=comercio"><strong>Comércio digital e pagamentos</strong><span>5 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=ads"><strong>Publicidade e criativos com IA</strong><span>5 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=vendas"><strong>Vendas e CRM</strong><span>5 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=atendimento"><strong>Atendimento e relacionamento</strong><span>5 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=automacao"><strong>Automação e integrações</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=gestao"><strong>Gestão e inteligência empresarial</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=seguranca"><strong>Segurança digital e infraestrutura</strong><span>5 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=educacao"><strong>Educação e treinamento</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=comunidade"><strong>Comunidades e assinaturas</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=rh"><strong>RH, recrutamento e seleção</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=restaurante"><strong>Restaurantes, bares e gastronomia</strong><span>6 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=criadores"><strong>Criadores, streamers e entretenimento</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=eventos"><strong>Eventos e experiências</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=imoveis"><strong>Imobiliário e gestão de propriedades</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=logistica"><strong>Logística, distribuição e operações</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=saude"><strong>Saúde, clínicas e serviços profissionais</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=saas"><strong>SaaS, plataformas multiempresa e produtos próprios</strong><span>4 páginas</span></a>
-<a class="id-lib-card" href="/afplataforma/imperio/index.html?cat=video"><strong>Edição profissional de vídeos e pós-produção</strong><span>13 páginas</span></a>
-    </div>
+    <div class="id-lib-pages">
+<h3 class="section-h">Sites e experiência visual</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/site-institucional.html">Site institucional</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/landing-page.html">Landing page</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/redesign-de-site.html">Redesign de site</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/pagina-de-captura.html">Página de captura</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/portfolio-visual.html">Portfólio visual</a>
+</p>
+<h3 class="section-h">Sites funcionais e aplicações web</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/area-de-membros.html">Área de membros</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/painel-do-cliente.html">Painel do cliente</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/aplicacao-web.html">Aplicação web sob medida</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/portal-com-login.html">Portal com login</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/ferramenta-interativa.html">Ferramenta interativa</a>
+</p>
+<h3 class="section-h">Agendamento e gestão de horários</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/agenda-online.html">Agenda online</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/lembretes-de-horario.html">Lembretes de horário</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/pagamento-na-reserva.html">Pagamento na reserva</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/agenda-de-equipe.html">Agenda de equipe</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/lista-de-espera.html">Lista de espera</a>
+</p>
+<h3 class="section-h">Comércio digital e pagamentos</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/loja.html">Loja</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/checkout.html">Checkout</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/pix-e-cartao.html">Pix e cartão</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/assinatura-recorrente.html">Assinatura recorrente</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/catalogo-de-produtos.html">Catálogo de produtos</a>
+</p>
+<h3 class="section-h">Publicidade e criativos com IA</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/criativos-de-anuncio.html">Criativos para anúncio</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/videos-de-anuncio.html">Vídeos para anúncio</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/campanha-no-crm.html">Campanha ligada ao CRM</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/teste-de-criativos.html">Teste de criativos</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/calendario-de-anuncios.html">Calendário de anúncios</a>
+</p>
+<h3 class="section-h">Vendas e CRM</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/funil-de-vendas.html">Funil de vendas</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/crm-de-contatos.html">CRM de contatos</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/acompanhamento-de-vendedores.html">Acompanhamento de vendedores</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/propostas.html">Propostas</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/pipeline.html">Pipeline</a>
+</p>
+<h3 class="section-h">Atendimento e relacionamento</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/whatsapp-organizado.html">WhatsApp organizado</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/central-de-atendimento.html">Central de atendimento</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/scripts-de-resposta.html">Scripts de resposta</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/pos-venda.html">Pós-venda</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/base-de-perguntas.html">Base de perguntas</a>
+</p>
+<h3 class="section-h">Automação e integrações</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/automacao-de-tarefas.html">Automação de tarefas</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/integracao-de-ferramentas.html">Integração entre ferramentas</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/fluxos-de-notificacao.html">Fluxos de notificação</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/formulario-que-vira-tarefa.html">Formulário que vira tarefa</a>
+</p>
+<h3 class="section-h">Gestão e inteligência empresarial</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/painel-de-indicadores.html">Painel de indicadores</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/relatorio-do-negocio.html">Relatório do negócio</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/metas.html">Metas e acompanhamento</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/leitura-de-numeros.html">Leitura de números</a>
+</p>
+<h3 class="section-h">Segurança digital e infraestrutura</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/revisao-de-acessos.html">Revisão de acessos</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/backup.html">Backup</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/vulnerabilidades.html">Vulnerabilidades</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/monitoramento.html">Monitoramento</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/continuidade.html">Continuidade</a>
+</p>
+<h3 class="section-h">Educação e treinamento</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/area-de-aulas.html">Área de aulas</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/trilhas.html">Trilhas de treinamento</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/certificado.html">Certificado</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/biblioteca-de-materiais.html">Biblioteca de materiais</a>
+</p>
+<h3 class="section-h">Comunidades e assinaturas</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/comunidade-fechada.html">Comunidade fechada</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/assinatura-de-conteudo.html">Assinatura de conteúdo</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/membros-recorrente.html">Área de membros recorrente</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/niveis-de-acesso.html">Níveis de acesso</a>
+</p>
+<h3 class="section-h">RH, recrutamento e seleção</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/pagina-de-vagas.html">Página de vagas</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/triagem.html">Triagem</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/banco-de-talentos.html">Banco de talentos</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/onboarding.html">Onboarding</a>
+</p>
+<h3 class="section-h">Restaurantes, bares e gastronomia</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/cardapio-digital.html">Cardápio digital</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/pedidos.html">Pedidos</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/reservas.html">Reservas</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/delivery.html">Delivery</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/fidelidade.html">Fidelidade</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/painel-da-casa.html">Painel da casa</a>
+</p>
+<h3 class="section-h">Criadores, streamers e entretenimento</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/pagina-do-criador.html">Página do criador</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/lives-e-replay.html">Lives e replay</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/loja-do-criador.html">Loja do criador</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/comunidade-de-fas.html">Comunidade de quem acompanha</a>
+</p>
+<h3 class="section-h">Eventos e experiências</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/pagina-do-evento.html">Página do evento</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/inscricao.html">Inscrição</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/credenciamento.html">Credenciamento</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/grade-do-evento.html">Grade do evento</a>
+</p>
+<h3 class="section-h">Imobiliário e gestão de propriedades</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/vitrine-de-imoveis.html">Vitrine de imóveis</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/ficha-do-imovel.html">Ficha do imóvel</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/agenda-de-visitas.html">Agenda de visitas</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/gestao-de-propriedades.html">Gestão de propriedades</a>
+</p>
+<h3 class="section-h">Logística, distribuição e operações</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/acompanhamento-de-pedido.html">Acompanhamento de pedido</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/rotas.html">Rotas</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/estoque-operacional.html">Estoque operacional</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/painel-de-entregas.html">Painel de entregas</a>
+</p>
+<h3 class="section-h">Saúde, clínicas e serviços profissionais</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/site-de-clinica.html">Site de clínica</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/agenda-de-consulta.html">Agenda de consulta</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/area-do-paciente.html">Área do paciente</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/ficha-de-atendimento.html">Ficha de atendimento</a>
+</p>
+<h3 class="section-h">SaaS, plataformas multiempresa e produtos próprios</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/plataforma-multiempresa.html">Plataforma multiempresa</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/painel-do-assinante.html">Painel do assinante</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/cobranca-do-software.html">Cobrança do software</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/area-do-administrador.html">Área do administrador</a>
+</p>
+<h3 class="section-h">Edição profissional de vídeos e pós-produção</h3>
+<p class="id-lib-btns">
+<a class="tool-btn" href="/afplataforma/imperio/s/edicao-de-videos.html">Edição profissional de vídeos</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/reels-shorts-tiktok.html">Reels, Shorts e TikTok</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/cortes-de-videos-longos.html">Cortes de vídeos longos e podcasts</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/video-institucional.html">Vídeo institucional e comercial</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/video-publicitario.html">Vídeo publicitário</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/legendas-e-titulos.html">Legendas, títulos e gráficos</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/motion-graphics.html">Motion graphics e animação</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/cor-audio-ritmo.html">Cor, áudio e ritmo</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/videos-para-cursos.html">Vídeos para cursos e áreas de membros</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/montagem-com-material-do-cliente.html">Montagem com material do cliente</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/adaptacao-de-formatos.html">Adaptação de formatos</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/pos-producao.html">Pós-produção e acabamento</a>
+<a class="tool-btn" href="/afplataforma/imperio/s/lotes-de-videos.html">Lotes e produção recorrente</a>
+</p>
+</div>
     </section>
     ${renderPhaseChecklist("fase2")}
     <p class="notes-hint">O calendário é uma hipótese estratégica que deve ser validada com dados, capacidade de produção e resposta real do público. O ecossistema inteiro aparece ao longo do ano, mesmo quando cada conteúdo aprofunda um tema específico.</p>`

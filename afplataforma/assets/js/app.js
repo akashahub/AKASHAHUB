@@ -41,7 +41,7 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js?v=rt40";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
-import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers } from "./fases.js?v=rt41";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers } from "./fases.js?v=rt42";
 import { bindPhaseChecklist, hydratePhaseChecklists } from "./phase-checklists.js?v=rt40";
 import { renderMindMaps, bindMindMaps, hydrateMindMaps } from "./mindmaps.js?v=rt40";
 import { enhanceArchitectureView } from "./architecture-enhancements.js?v=rt40";
