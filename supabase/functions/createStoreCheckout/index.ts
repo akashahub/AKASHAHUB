@@ -1,63 +1,59 @@
 import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 
 const CATALOG = {
+  "teste-stripe": { name: "Teste Stripe", cents: 500 },
   "energia-sexual": { name: "Mini curso Energia Sexual", cents: 9700 },
-  "zero-ao-zen": { name: "Zero ao Zen - primeira edição", cents: 4700 },
+  "zero-ao-zen": { name: "Zero ao Zen — primeira edição", cents: 4700 },
   "codigos-de-origem": { name: "Códigos de Origem", cents: 9700 },
+  "camiseta-akasha": { name: "Camiseta Akasha", cents: 1000 },
+  "banheira-go-arctic": { name: "Banheira de Imersão em Gelo Go Arctic", cents: 1000 },
+  "cafeteira-hyllis": { name: "Cafeteira Portátil Hyllis", cents: 1000 },
+  "escultura-anubis": { name: "Escultura Decorativa Anubis", cents: 1000 },
+  "kit-cristais-chakras": { name: "Kit 7 Cristais Brutos dos Chakras", cents: 1000 },
+  "oleos-essenciais": { name: "Coleção Óleos Essenciais Vitalize Aromas", cents: 1000 },
+  "kit-ritual-limpeza": { name: "Kit Ritual de Limpeza", cents: 1000 },
+  "incensario-nirvana": { name: "Incensário de Vidro Nirvana", cents: 1000 },
+  "japamala-sagrado": { name: "Japamala Sagrado", cents: 1000 },
 };
+
 const AREA_CENTS = { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 };
-const COURSE_PRICES: Record<string, number> = {
-  "anubis:alinhamento": 18900, "anubis:7-dias": 18000,
-  "anubis:alinhamento-akasha": 18900, "anubis:desafio-7-dias": 18000,
-  "horus:techub": 6300, "horus:arte-da-analogia": 7200, "horus:arte-da-conquista": 7200,
-  "horus:senda": 77700, "horus:despertar": 30000, "horus:prosperidade": 77700,
-  "horus:senda-tantrica": 77700, "horus:tantra-prosperidade": 77700, "horus:despertar-magnetismo": 30000,
-  "isis:paladins": 250000, "isis:jornada": 60000, "isis:jornada-transformacao": 60000, "amon:zero": 516300, "amon:zero-ao-zen": 516300,
-};
-const BOOK_PRICES: Record<string, number> = {
-  "anubis:Código Secreto do Universo": 2500, "anubis:O Código Secreto do Universo": 2500,
-  "anubis:Código Quântico": 4700, "anubis:Revelações Quânticas": 1500, "anubis:O Fim das Trevas": 1800,
-  "horus:Código de Conduta dos que Despertam": 4200, "horus:Código de Conduta": 4200,
-  "horus:O Que é Tantra?": 2500, "horus:Shiva, Shakti e Shava": 2500, "horus:Honrar a Deusa": 4200,
-  "horus:Tantra Descomplicado": 2500, "horus:Mini Curso de Energia Sexual": 2500,
-  "horus:A Arte da Conquista · Livro de Vendas": 3000,
-  "isis:Paladin": 18700, "isis:Paladins": 18700, "isis:Tecnologia da Alma": 8700,
-  "isis:Autoestima Blindada": 4300, "isis:Kemet": 3990, "isis:Triplex na Mente": 3990,
-  "isis:Como Blindar Sua Mente?": 4300,
-  "amon:Coletânea Alinhamento Financeiro": 9900, "amon:Toth, Hermes e Enoque": 1800,
-  "amon:Do Zero ao Zen Negócios": 9900, "amon:Códigos de Origem": 9000,
-};
-const ITENS: Record<string, Record<string, string[]>> = {
+const ITEM_CENTS = { curso: 2700, livro: 1700, audio: 700 };
+const ITENS = {
   anubis: {
-    curso: ["alinhamento", "7-dias", "casais", "tantra", "fascinacao", "alinhamento-akasha", "desafio-7-dias"],
-    livro: ["Código Secreto do Universo", "O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas", "O Fim das Trevas"],
+    curso: ["alinhamento", "7-dias", "casais", "tantra", "fascinacao"],
+    livro: ["O Código Secreto do Universo", "Código Quântico", "Revelações Quânticas", "O Fim das Trevas"],
     audio: ["Mente Crística", "Pai Nosso", "Avê Maria", "Cura das Feridas Invisíveis", "O Código Secreto do Universo"],
   },
   horus: {
-    curso: ["techub", "arte-da-analogia", "arte-da-conquista", "senda", "prosperidade", "despertar", "senda-tantrica", "tantra-prosperidade", "despertar-magnetismo"],
-    livro: ["Código de Conduta dos que Despertam", "Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado", "Mini Curso de Energia Sexual", "A Arte da Conquista · Livro de Vendas"],
+    curso: ["senda", "prosperidade", "despertar"],
+    livro: ["Código de Conduta", "O Que é Tantra?", "Shiva, Shakti e Shava", "Honrar a Deusa", "Tantra Descomplicado", "Mini Curso de Energia Sexual"],
     audio: [],
   },
   isis: {
-    curso: ["paladins", "jornada", "jornada-transformacao"],
-    livro: ["Paladin", "Paladins", "Tecnologia da Alma", "Autoestima Blindada", "Kemet", "Triplex na Mente", "Como Blindar Sua Mente?"],
+    curso: ["paladins", "jornada"],
+    livro: ["Autoestima Blindada", "Como Blindar Sua Mente?", "Triplex na Mente", "Tecnologia da Alma", "Paladin", "Kemet"],
     audio: [],
   },
   amon: {
-    curso: ["zero", "zero-ao-zen"],
-    livro: ["Coletânea Alinhamento Financeiro", "Toth, Hermes e Enoque", "Do Zero ao Zen Negócios", "Códigos de Origem"],
+    curso: ["zero"],
+    livro: ["Coletânea Alinhamento Financeiro", "Códigos de Origem", "Do Zero ao Zen Negócios", "Toth, Hermes e Enoque"],
     audio: [],
   },
 };
-const NOMES: Record<string, string> = {
-  alinhamento: "Código de Alinhamento Akasha", "7-dias": "Desafio 7 Dias de Magnetismo",
-  casais: "Ritual para Casais", tantra: "Tantra Diferente de Sexo", fascinacao: "O Poder da Fascinação",
-  techub: "Techub", "arte-da-analogia": "A Arte da Analogia", "arte-da-conquista": "A Arte da Analogia",
-  senda: "Senda Tântrica", prosperidade: "Tantra é Quântico e Prosperidade", despertar: "Despertar do Magnetismo",
-  "senda-tantrica": "A Senda Tântrica", "tantra-prosperidade": "Tantra é Quântico e Prosperidade", "despertar-magnetismo": "Despertar do Magnetismo",
-  paladins: "Paladins: A Liderança dos Bons", jornada: "Jornada de Transformação", "jornada-transformacao": "Jornada de Transformação", zero: "Do Zero ao Zen Negócios", "zero-ao-zen": "Do Zero ao Zen Negócios",
+const NOMES = {
+  alinhamento: "Código de Alinhamento",
+  "7-dias": "Desafio 7 Dias de Magnetismo",
+  casais: "Ritual para Casais",
+  tantra: "Tantra Diferente de Sexo",
+  fascinacao: "O Poder da Fascinação",
+  senda: "A Senda Tântrica",
+  prosperidade: "Tantra Quântico e Prosperidade",
+  despertar: "Despertar do Magnetismo",
+  paladins: "Paladins: A Liderança dos Bons",
+  jornada: "Jornada de Transformação",
+  zero: "Do Zero ao Zen e Negócios",
 };
-const FAIXA: Record<string, string> = { anubis: "Anúbis", horus: "Hórus", isis: "Ísis", amon: "Rá" };
+const FAIXA = { anubis: "Anúbis", horus: "Hórus", isis: "Ísis", amon: "Rá" };
 
 const cors = {
   "Access-Control-Allow-Origin": "https://akashahub.com.br",
@@ -68,39 +64,24 @@ const cors = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-  const key = await readAppSecret("STRIPE_SECRET_KEY");
+  const key = Deno.env.get("STRIPE_SECRET_KEY") || "";
   if (!key) return json({ error: "stripe_not_configured" }, 503);
   let body = {};
   try { body = await req.json(); } catch { return json({ error: "invalid_json" }, 400); }
   const stripe = new Stripe(key, { apiVersion: "2024-06-20" });
 
-  const identity = await firebaseIdentity(String(body.idToken || ""));
-  if (body.action === "grants") {
-    if (!identity.email || !identity.uid) return json({ error: "auth_required" }, 401);
-    return json(await grants(stripe, body));
-  }
+  if (body.action === "grants") return json(await grants(stripe, body));
 
   const member = memberProduct(String(body.ref || ""));
   const product = member || CATALOG[String(body.sku || "")];
   if (!product) return json({ error: member === null && body.ref ? "unknown_ref" : "unknown_sku" }, 400);
-  if (member && (!identity.email || !identity.uid)) return json({ error: "auth_required" }, 401);
 
   const success = safeUrl(body.success_url, "https://akashahub.com.br/store/sucesso/");
   const cancel = safeUrl(body.cancel_url, "https://akashahub.com.br/store/");
-  const submittedEmail = String(body.email || "").trim().toLowerCase().slice(0, 254);
-  const email = member ? identity.email : (identity.email || submittedEmail);
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return json({ error: "valid_email_required" }, 400);
-  }
-  if (!member) {
-    const mailKey = await readAppSecret("RESEND_API_KEY");
-    const mailFrom = await readAppSecret("MAIL_FROM");
-    if (!mailKey || !mailFrom) return json({ error: "store_delivery_not_configured" }, 503);
-  }
-  const displayName = String(body.name || "").trim().slice(0, 120);
+  const email = String(body.email || "").trim().toLowerCase();
   const metadata = member
-    ? { source: "akasha-members", kind: member.kind, area: member.area, item: member.item, buyer: email, firebaseUid: identity.uid }
-    : { sku: String(body.sku || ""), source: "akasha-store", kind: "store", area: "akasha-store", item: String(body.sku || ""), name: displayName, buyer: email, firebaseUid: identity.uid || "" };
+    ? { source: "akasha-members", kind: member.kind, area: member.area, item: member.item, buyer: email }
+    : { sku: String(body.sku || ""), source: "akasha-store", name: body.name || "" };
 
   const session = await openCheckout(stripe, {
     mode: "payment",
@@ -116,34 +97,45 @@ Deno.serve(async (req) => {
     cancel_url: cancel,
     customer_email: email || undefined,
     metadata,
-    payment_intent_data: { metadata, receipt_email: email || undefined },
+    payment_intent_data: { metadata },
     allow_promotion_codes: true,
   });
   return json({ url: session.url, id: session.id });
 });
 
-function memberProduct(ref: string) {
+function memberProduct(ref) {
   const parts = ref.split(":");
   const kind = parts[0];
   const area = parts[1];
   const item = parts.slice(2).join(":");
+  if (!ITENS[area]) return null;
   if (kind === "area") {
-    if (!AREA_CENTS[area]) return null;
-    return { name: "Faixa " + FAIXA[area], cents: AREA_CENTS[area], kind, area, item: "" };
+    return { name: "Faixa " + (FAIXA[area] || area), cents: AREA_CENTS[area], kind, area, item: "" };
   }
-  if (!ITENS[area] || !["curso", "livro", "audio"].includes(kind)) return null;
-  if (!(ITENS[area][kind] || []).includes(item)) return null;
-  const key = area + ":" + item;
-  const cents = kind === "curso" ? COURSE_PRICES[key] : kind === "livro" ? BOOK_PRICES[key] : 700;
-  if (!Number.isInteger(cents) || cents <= 0) return null;
-  return { name: NOMES[item] || item, cents, kind, area, item };
+  const lista = ITENS[area][kind];
+  if (!lista || lista.indexOf(item) < 0) return null;
+  const nome = kind === "curso" ? (NOMES[item] || item) : item;
+  const cents = kind === "livro" && item === "Paladin" ? 3900 : ITEM_CENTS[kind];
+  return { name: nome, cents, kind, area, item };
 }
 
 async function openCheckout(stripe, fields) {
-  // Stripe escolhe dinamicamente os métodos habilitados para a conta e a transação.
-  // Para habilitar/desabilitar Pix, cartão e Link, use a configuração de métodos no Dashboard.
-  return stripe.checkout.sessions.create(fields);
+  try {
+    return await stripe.checkout.sessions.create({
+      ...fields,
+      payment_method_types: ["card", "pix"],
+      payment_method_options: { pix: { expires_after_seconds: 1800 } },
+    });
+  } catch (err) {
+    const message = String(err && err.message || "");
+    if (!/pix/i.test(message)) throw err;
+    return stripe.checkout.sessions.create({
+      ...fields,
+      payment_method_types: ["card"],
+    });
+  }
 }
+
 function safeUrl(url, fallback) {
   try {
     const parsed = new URL(String(url || ""));
@@ -152,40 +144,16 @@ function safeUrl(url, fallback) {
   return fallback;
 }
 
-async function readAppSecret(name: string) {
-  const direct = Deno.env.get(name) || "";
-  if (direct) return direct;
-  const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-  if (!supabaseUrl || !serviceKey) return "";
-  try {
-    const res = await fetch(supabaseUrl + "/rest/v1/app_secrets?name=eq." + encodeURIComponent(name) + "&select=value", {
-      headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, Accept: "application/json" },
-    });
-    if (!res.ok) return "";
-    const rows = await res.json();
-    return String(rows?.[0]?.value || "");
-  } catch {
-    return "";
-  }
-}
-
-async function firebaseIdentity(idToken: string) {
-  if (!idToken) return { email: "", uid: "" };
+async function emailFromToken(idToken) {
   const apiKey = "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4";
   const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + apiKey, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ idToken }),
   });
-  if (!res.ok) return { email: "", uid: "" };
+  if (!res.ok) return "";
   const data = await res.json();
-  const u = data.users?.[0] || {};
-  return { email: String(u.email || "").trim().toLowerCase(), uid: String(u.localId || "") };
-}
-
-async function emailFromToken(idToken: string) {
-  return (await firebaseIdentity(idToken)).email;
+  return String(data.users?.[0]?.email || "").toLowerCase();
 }
 
 function addGrant(out, meta) {
