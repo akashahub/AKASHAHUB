@@ -29,7 +29,7 @@ import {
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
-import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js?v=rt46";
+import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js?v=rt47";
 import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI, onCallNavigate } from "./call.js?v=ux1";
 import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";

@@ -27,9 +27,50 @@ const CRUZ = {
   legacy: { fase: "fase5", nome: "Legado", mod: "module07", logo: "legado" }
 };
 
+let origemVista = "";
+
+function marcaDaCasa(view) {
+  if (view === "fase1" || view.startsWith("fase1-")) return { logo: "essencia", nome: "Essência" };
+  if (view === "fase2" || view.startsWith("fase2-")) return { logo: "imperio", nome: "Império" };
+  if (view === "fase4" || view.startsWith("fase4-")) return { logo: "expansao", nome: "Expansão" };
+  if (view === "fase5" || view.startsWith("fase5-")) return { logo: "legado", nome: "Legado" };
+  return { logo: "af", nome: "Alinhamento Financeiro" };
+}
+
+function esconderVolta() {
+  const back = document.getElementById("toolBack");
+  origemVista = "";
+  if (!back) return;
+  back.hidden = true;
+  back.onclick = null;
+  back.innerHTML = "";
+}
+
+function mostrarVolta() {
+  const back = document.getElementById("toolBack");
+  if (!back || !origemVista) return;
+  const casa = marcaDaCasa(origemVista);
+  const destino = origemVista;
+  back.hidden = false;
+  back.innerHTML = `<img src="assets/img/fases/${casa.logo}.svg" alt="">`;
+  back.title = "Voltar para " + casa.nome;
+  back.setAttribute("aria-label", "Voltar para " + casa.nome);
+  back.onclick = () => {
+    esconderVolta();
+    navigate(destino);
+  };
+}
+
+function irCruzando(destino) {
+  if (!origemVista) origemVista = getCurrentView();
+  navigate(destino);
+  mostrarVolta();
+}
+
 function marcarCruzamento(toolId) {
   const btn = document.getElementById("toolJump");
   const cruz = CRUZ[toolId];
+  esconderVolta();
   if (!btn) return;
   if (!cruz) {
     btn.hidden = true;
@@ -44,12 +85,12 @@ function marcarCruzamento(toolId) {
     btn.innerHTML = `<img src="assets/img/fases/af.svg" alt="">`;
     btn.title = "Abrir no módulo do Alinhamento Financeiro";
     btn.setAttribute("aria-label", "Abrir no módulo do Alinhamento Financeiro");
-    btn.onclick = () => navigate("module:" + cruz.mod);
+    btn.onclick = () => irCruzando("module:" + cruz.mod);
   } else {
     btn.innerHTML = `<img src="assets/img/fases/${cruz.logo}.svg" alt="">`;
     btn.title = "Abrir na fase " + cruz.nome;
     btn.setAttribute("aria-label", "Abrir na fase " + cruz.nome);
-    btn.onclick = () => navigate(cruz.fase);
+    btn.onclick = () => irCruzando(cruz.fase);
   }
 }
 
@@ -73,6 +114,7 @@ export function closeToolsModal() {
     jump.hidden = true;
     jump.onclick = null;
   }
+  esconderVolta();
   // modal clássico (locked etc.)
   document.getElementById("modalBox")?.classList.remove("open");
   if (!document.getElementById("tpPanel")?.classList.contains("open")) {
