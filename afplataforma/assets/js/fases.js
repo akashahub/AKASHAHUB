@@ -1,7 +1,7 @@
 /** Áreas das cinco fases. Não cria login, não grava dossiê, não copia o roteiro. */
 import { session, isMentorSession } from "./auth.js";
-import { renderPhaseBriefing } from "./phase-guidance.js?v=rt45";
-import { renderPhaseChecklist, bindPhaseChecklist } from "./phase-checklists.js?v=rt45";
+import { renderPhaseBriefing } from "./phase-guidance.js?v=rt46";
+import { renderPhaseChecklist, bindPhaseChecklist } from "./phase-checklists.js?v=rt46";
 
 function lista(itens) {
   return `<div class="module-list">${itens.map((texto, i) =>
@@ -433,7 +433,7 @@ export function renderFase4() {
 export function renderFase5() {
   return pagina(
     "5",
-    "COMUNIDADE, MOVIMENTO, DOUTRINA",
+    "Legado",
     "Legado",
     "O que fica de pé se você sair da sala, ou se vender o que criou. Comunidade, movimento e doutrina. E a leitura de comprar, vender ou soltar.",
     `${renderPhaseBriefing("fase5")}

@@ -5,7 +5,7 @@
 import { session } from "./auth.js";
 import { Store } from "./storage.js";
 import { getAfTool, saveAfTool } from "../../firebase/firestore.js";
-import { esc } from "./navigation.js";
+import { esc, navigate, getCurrentView } from "./navigation.js?v=rt46";
 import { pageHead, editImg } from "./covers.js";
 
 function toast(msg, err = false) {
@@ -17,13 +17,50 @@ function toast(msg, err = false) {
   window._tt = setTimeout(() => (el.className = "toast"), 2800);
 }
 
+const CRUZ = {
+  ideation: { fase: "fase1", nome: "Essência", mod: "module02", logo: "essencia" },
+  vision: { fase: "fase1", nome: "Essência", mod: "module06", logo: "essencia" },
+  network: { fase: "fase2", nome: "Império", mod: "module04", logo: "imperio" },
+  pitch: { fase: "fase2", nome: "Império", mod: "module05", logo: "imperio" },
+  fono: { fase: "fase2", nome: "Império", mod: "module05", logo: "imperio" },
+  execution: { fase: "fase4", nome: "Expansão", mod: "module03", logo: "expansao" },
+  legacy: { fase: "fase5", nome: "Legado", mod: "module07", logo: "legado" }
+};
+
+function marcarCruzamento(toolId) {
+  const btn = document.getElementById("toolJump");
+  const cruz = CRUZ[toolId];
+  if (!btn) return;
+  if (!cruz) {
+    btn.hidden = true;
+    btn.onclick = null;
+    btn.innerHTML = "";
+    return;
+  }
+  const view = getCurrentView();
+  const naFase = view === cruz.fase || view.startsWith(cruz.fase + "-");
+  btn.hidden = false;
+  if (naFase) {
+    btn.innerHTML = `<img src="assets/img/fases/af.svg" alt="">`;
+    btn.title = "Abrir no módulo do Alinhamento Financeiro";
+    btn.setAttribute("aria-label", "Abrir no módulo do Alinhamento Financeiro");
+    btn.onclick = () => navigate("module:" + cruz.mod);
+  } else {
+    btn.innerHTML = `<img src="assets/img/fases/${cruz.logo}.svg" alt="">`;
+    btn.title = "Abrir na fase " + cruz.nome;
+    btn.setAttribute("aria-label", "Abrir na fase " + cruz.nome);
+    btn.onclick = () => navigate(cruz.fase);
+  }
+}
+
 /** Painel flutuante de ferramenta (não bloqueia a página) */
-function openFloat(title, body, foot) {
+function openFloat(title, body, foot, toolId) {
   const panel = document.getElementById("toolPanel");
   if (!panel) return;
   document.getElementById("toolTitle").textContent = title;
   document.getElementById("toolBody").innerHTML = body;
   document.getElementById("toolFoot").innerHTML = foot || "";
+  marcarCruzamento(toolId);
   panel.classList.add("open");
   document.body.classList.add("tool-open");
 }
@@ -31,6 +68,11 @@ function openFloat(title, body, foot) {
 export function closeToolsModal() {
   document.getElementById("toolPanel")?.classList.remove("open", "cfx-on");
   document.body.classList.remove("tool-open");
+  const jump = document.getElementById("toolJump");
+  if (jump) {
+    jump.hidden = true;
+    jump.onclick = null;
+  }
   // modal clássico (locked etc.)
   document.getElementById("modalBox")?.classList.remove("open");
   if (!document.getElementById("tpPanel")?.classList.contains("open")) {
@@ -74,7 +116,7 @@ export async function openTool(id) {
   if (id === "ideation") return openTextTool(id, "Diário de insights", "Ideias, problemas de cliente, validações…");
   if (id === "execution") return openTextTool(id, "Execução semanal", "Prioridade do dia · bloqueios · revisão…");
   if (id === "fono") return openFono();
-  openFloat("Ferramenta", "<p class='empty'>Em breve.</p>", "");
+  openFloat("Ferramenta", "<p class='empty'>Em breve.</p>", "", id);
 }
 
 async function openTextTool(id, title, ph) {
@@ -83,7 +125,8 @@ async function openTextTool(id, title, ph) {
     title,
     `<textarea class="notes-area" id="toolText" placeholder="${esc(ph)}">${esc(saved?.text || "")}</textarea>
      <p class="notes-meta" id="toolMeta">${saved?.updatedAt ? "Salvo · " + new Date(saved.updatedAt).toLocaleString("pt-BR") : "—"}</p>`,
-    `<button class="btn btn-inline" type="button" id="btnSaveTool">Salvar</button>`
+    `<button class="btn btn-inline" type="button" id="btnSaveTool">Salvar</button>`,
+    id
   );
   document.getElementById("btnSaveTool").onclick = async () => {
     const text = document.getElementById("toolText").value;
@@ -227,7 +270,8 @@ async function openCashflow() {
       <div id="cashList"></div>
       <div class="cfx-add"><button type="button" id="cPlus" aria-label="Novo lançamento">+</button></div>
     </div>`,
-    `<button class="btn btn-inline" type="button" id="btnSaveCash">Salvar</button>`
+    `<button class="btn btn-inline" type="button" id="btnSaveCash">Salvar</button>`,
+    "cashflow"
   );
   document.getElementById("toolPanel")?.classList.add("cfx-on");
 
@@ -416,7 +460,8 @@ async function openFono() {
      <textarea class="notes-area" id="fonoNotes">${esc(saved.notes || "")}</textarea>
      <p class="notes-meta">Sessões: <strong id="fonoReps">${saved.reps || 0}</strong></p>`,
     `<button class="btn btn-inline" type="button" id="btnFonoSave">Salvar</button>
-     <button class="btn btn-ghost" type="button" id="btnFonoDone">Marquei este músculo</button>`
+     <button class="btn btn-ghost" type="button" id="btnFonoDone">Marquei este músculo</button>`,
+    "fono"
   );
 
   let current = "cla";
@@ -478,7 +523,8 @@ async function openNetwork() {
     </div>
     <input type="hidden" id="nEdit" value="">
     <div class="net-list" id="netList"></div>`,
-    `<button class="btn btn-inline" type="button" id="btnSaveNet">Salvar mapa</button>`
+    `<button class="btn btn-inline" type="button" id="btnSaveNet">Salvar mapa</button>`,
+    "network"
   );
   const clearForm = () => {
     ["nName","nPhone","nEmail","nVal","nNext","nWhen"].forEach((id) => { document.getElementById(id).value = ""; });

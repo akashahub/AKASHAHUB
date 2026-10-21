@@ -10,7 +10,7 @@ const PHASES = [
   {id:2,title:"Império Digital",desc:"Posicionamento, oferta, identidade, ativos e arquitetura comercial.",deliverable:"Mapa de marca, oferta e negócio",topics:["Posicionamento e narrativa","Público e proposta de valor","Oferta e modelo de negócio","Ativos digitais prioritários"]},
   {id:3,title:"Alinhamento Financeiro",desc:"Dinheiro, caixa, preço, margem, metas e prioridades de decisão.",deliverable:"Leitura financeira, prioridades e indicadores",topics:["Fluxo de caixa","Preço e margem","Indicadores e metas","Sustentabilidade econômica"]},
   {id:4,title:"Processos de Execução e Expansão",desc:"Processos, responsabilidades, qualidade, operação e crescimento sustentável.",deliverable:"Plano de construção, operação e expansão",topics:["Processos e operação","Responsabilidades e padrões","Aquisição e relacionamento","Expansão sustentável"]},
-  {id:5,title:"COMUNIDADE, MOVIMENTO, DOUTRINA",desc:"Conhecimento, cultura, formação, comunidade e continuidade.",deliverable:"Mapa de continuidade do legado",topics:["Princípios e documentação","Formação e transmissão","Comunidade e movimento","Plano de continuidade"]}
+  {id:5,title:"Legado",desc:"Conhecimento, cultura, formação, comunidade e continuidade.",deliverable:"Mapa de continuidade do legado",topics:["Princípios e documentação","Formação e transmissão","Comunidade e movimento","Plano de continuidade"]}
 ];
 const MEETINGS = [
 ["Essência: ponto de partida","Mapear contexto, expectativas e o resultado que precisa mudar.",1],

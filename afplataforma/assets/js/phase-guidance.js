@@ -118,7 +118,7 @@ export const PHASE_GUIDANCE = {
   fase5: {
     id: "fase5",
     number: "05",
-    title: "COMUNIDADE, MOVIMENTO, DOUTRINA",
+    title: "Legado",
     what: "A consolidação do que foi construído em identidade compartilhada, cultura, conhecimento, comunidade, movimento e continuidade.",
     why: "Existe para que o valor continue circulando, seja documentado e possa formar pessoas sem depender exclusivamente do fundador.",
     problem: "Resolve a perda de conhecimento, a cultura que fica apenas na cabeça de uma pessoa e a confusão entre comunidade, movimento e doutrina.",

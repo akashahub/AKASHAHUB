@@ -25,11 +25,11 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=legado2";
+} from "./navigation.js?v=rt46";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
-import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js";
+import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js?v=rt46";
 import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI, onCallNavigate } from "./call.js?v=ux1";
 import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
@@ -41,10 +41,10 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js?v=rt40";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt5";
-import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase1Dossie, bindFase1Dossie, renderFase2Oferta, bindFase2Oferta, renderFase2Ativos, bindFase2Ativos, renderFase3Preco, bindFase3Preco, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers, renderFase4Depende, bindFase4Depende, renderFase4Divulga, bindFase4Divulga, renderFase5Livro, bindFase5Livro } from "./fases.js?v=rt45";
-import { bindPhaseChecklist, hydratePhaseChecklists } from "./phase-checklists.js?v=rt45";
-import { renderMindMaps, bindMindMaps, hydrateMindMaps } from "./mindmaps.js?v=rt45";
-import { enhanceArchitectureView } from "./architecture-enhancements.js?v=rt45";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase1Dossie, bindFase1Dossie, renderFase2Oferta, bindFase2Oferta, renderFase2Ativos, bindFase2Ativos, renderFase3Preco, bindFase3Preco, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers, renderFase4Depende, bindFase4Depende, renderFase4Divulga, bindFase4Divulga, renderFase5Livro, bindFase5Livro } from "./fases.js?v=rt46";
+import { bindPhaseChecklist, hydratePhaseChecklists } from "./phase-checklists.js?v=rt46";
+import { renderMindMaps, bindMindMaps, hydrateMindMaps } from "./mindmaps.js?v=rt46";
+import { enhanceArchitectureView } from "./architecture-enhancements.js?v=rt46";
 import {
   renderLegadoPlanos,
   renderLegadoContrato,
@@ -61,8 +61,8 @@ import {
 import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt23";
 import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audios-pnl.js?v=1";
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
-import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=3";
-import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt40";
+import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt46";
+import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");

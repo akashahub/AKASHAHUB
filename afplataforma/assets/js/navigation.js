@@ -40,11 +40,11 @@ export function buildNav() {
   items.push(
     { id: "profile", label: t(lang, "profile"), ico: "○" },
     { sep: true, label: "Arquitetura de Legado" },
-    { id: "fase1", label: "Fase 1 · Essência", ico: "1" },
-    { id: "fase2", label: "Fase 2 · Império", ico: "2" },
-    { id: "fase3", label: "Fase 3 · AF", ico: "3" },
-    { id: "fase4", label: "Fase 4 · Expansão", ico: "4" },
-    { id: "fase5", label: "Fase 5 · CDC", ico: "5" }
+    { id: "fase1", label: "Fase 1 · Essência", ico: `<img src="assets/img/fases/essencia.svg" alt="">` },
+    { id: "fase2", label: "Fase 2 · Império", ico: `<img src="assets/img/fases/imperio.svg" alt="">` },
+    { id: "fase3", label: "Fase 3 · AF", ico: `<img src="assets/img/fases/af.svg" alt="">` },
+    { id: "fase4", label: "Fase 4 · Expansão", ico: `<img src="assets/img/fases/expansao.svg" alt="">` },
+    { id: "fase5", label: "Fase 5 · Legado", ico: `<img src="assets/img/fases/legado.svg" alt="">` }
   );
 
   const nav = document.getElementById("navMain");
@@ -130,7 +130,7 @@ export async function navigate(view) {
     fase4: "Fase 4 · Expansão",
     "fase4-divulga": "Divulgação",
     "fase4-depende": "O que depende de mim",
-    fase5: "Fase 5 · CDC",
+    fase5: "Fase 5 · Legado",
     "fase5-livro": "Livro do método",
     "legado-planos": "Planos do Legado",
     "legado-contrato": "Contrato",

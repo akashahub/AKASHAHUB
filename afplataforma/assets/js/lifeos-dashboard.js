@@ -179,7 +179,7 @@ export function renderLifeOsDashboard() {
     ["fase2", "02", "Império Digital", "Posicionamento, marca, ativos e estrutura comercial."],
     ["fase3", "03", "Alinhamento Financeiro", "Caixa, indicadores, preço, metas e decisões."],
     ["fase4", "04", "Processos de Execução e Expansão", "Processos, responsabilidades, qualidade e crescimento sustentável."],
-    ["fase5", "05", "COMUNIDADE, MOVIMENTO, DOUTRINA", "Conhecimento, formação, comunidade, movimento e continuidade."]
+    ["fase5", "05", "Legado", "Conhecimento, formação, comunidade, movimento e continuidade."]
   ];
   return `<div class="view active lifeos-home">
     <style>
