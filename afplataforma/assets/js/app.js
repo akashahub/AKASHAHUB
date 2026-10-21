@@ -40,8 +40,8 @@ import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js?v=rt40";
-import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt4";
-import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers } from "./fases.js?v=rt42";
+import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt5";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers } from "./fases.js?v=rt43";
 import { bindPhaseChecklist, hydratePhaseChecklists } from "./phase-checklists.js?v=rt40";
 import { renderMindMaps, bindMindMaps, hydrateMindMaps } from "./mindmaps.js?v=rt40";
 import { enhanceArchitectureView } from "./architecture-enhancements.js?v=rt40";
@@ -58,7 +58,7 @@ import {
   renderLegadoSlides,
   renderConteudosAl
 } from "./legado-mentor.js?v=rt25";
-import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt22";
+import { renderAudiosPnl, bindAudiosPnl } from "./audios-pnl.js?v=rt23";
 import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audios-pnl.js?v=1";
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=3";
@@ -318,10 +318,7 @@ function showApp() {
   refreshProfileCacheFromCloud();
   hydrateMedia();
   const badge = document.getElementById("modeBadge");
-  if (badge) {
-    badge.textContent = session.mode === "firebase" ? "Firebase" : "MVP local";
-    badge.className = "badge-mode" + (session.mode === "firebase" ? " live" : "");
-  }
+  if (badge) badge.hidden = true;
   const langSel = document.getElementById("langSel");
   if (langSel) langSel.value = session.lang || "pt-BR";
   buildNav();
@@ -608,7 +605,6 @@ function renderCriancas() {
         <div class="hint">Dinheiro, guardar, gastar, escolher, esperar.</div>
       </div>
     </div>
-    <p class="notes-hint">Aulas e faixa etária: conteúdo ainda não publicado.</p>
   </div>`;
 }
 
@@ -621,7 +617,6 @@ function renderCriancasPais() {
     <div class="module-list">
       <div class="mod-row"><div class="mod-num">1</div><div class="mod-body"><h3>Antes de abrir a sala dela</h3><p>Você entra primeiro. A criança entra na outra sala, com você por perto.</p></div></div>
       <div class="mod-row"><div class="mod-num">2</div><div class="mod-body"><h3>Como falar</h3><p>Dinheiro. Guardar. Gastar. Escolher. Esperar.</p></div></div>
-      <div class="mod-row"><div class="mod-num">3</div><div class="mod-body"><h3>O que ainda falta</h3><p>Roteiro de orientação e faixa etária. Conteúdo ainda não publicado.</p></div></div>
     </div>
   </div>`;
 }
@@ -637,7 +632,6 @@ function renderCriancasSala() {
       <div class="mod-row"><div class="mod-num">3</div><div class="mod-body"><h3>Guardar um pouco.</h3></div></div>
       <div class="mod-row"><div class="mod-num">4</div><div class="mod-body"><h3>Esperar.</h3></div></div>
     </div>
-    <p class="notes-hint">A história de cada passo ainda não foi escrita.</p>
   </div>`;
 }
 
@@ -648,10 +642,9 @@ function renderEmpresas() {
     <p class="hero-sub">Camada para a empresa desenvolver o colaborador. Não é a mentoria individual.</p>
     <div class="module-list">
       ${["Educação financeira", "Comunicação", "Atendimento", "Vendas", "Cultura", "Outros treinamentos"]
-        .map((name, i) => `<div class="mod-row"><div class="mod-num">${i + 1}</div><div class="mod-body"><h3>${name}</h3><p>Espaço reservado. Material ainda não publicado.</p></div></div>`)
+        .map((name, i) => `<div class="mod-row"><div class="mod-num">${i + 1}</div><div class="mod-body"><h3>${name}</h3></div></div>`)
         .join("")}
     </div>
-    <p class="notes-hint">Login de gestor e progresso por empresa ainda não existem. Quem entra aqui já passou pelo acesso da plataforma.</p>
   </div>`;
 }
 

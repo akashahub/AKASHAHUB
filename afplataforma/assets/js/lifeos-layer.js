@@ -589,16 +589,15 @@ export function viewCoach() {
   return `<div class="view active">${back()}
     <p class="hero-line">★ IA Life Coach</p>
     <h2 class="hero-title">AF Coach</h2>
-    <p class="hero-sub">Análise inteligente — estrutura pronta. A IA será ligada quando você ativar no Firebase / API.</p>
+    <p class="hero-sub">Hábitos, metas, rotina e caixa continuam nesta conta. A conversa com o coach ainda não está ligada.</p>
     <div class="stat-card" style="max-width:560px">
       <div class="lbl">Status</div>
       <div class="hint" style="margin-top:10px;line-height:1.7">
-        Camada desligada de propósito (custo zero).<br>
-        Quando ligar: o coach lê hábitos, metas, rotina e caixa já salvos nesta conta.<br>
-        Placeholder não envia dado nenhum para fora.
+        Camada desligada.<br>
+        Quando ligar, o coach lê hábitos, metas, rotina e caixa já salvos nesta conta.
       </div>
     </div>
-    <textarea class="notes-area" disabled placeholder="Campo de conversa — ativa na fase de IA."></textarea>
+    <textarea class="notes-area" disabled placeholder="A conversa entra aqui quando estiver ligada."></textarea>
   </div>`;
 }
 

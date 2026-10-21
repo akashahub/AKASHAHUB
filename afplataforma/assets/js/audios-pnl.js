@@ -149,7 +149,7 @@ export function renderAudiosPnl() {
     </section>`).join("");
   return `<div class="view active">
     <div class="back-link" data-nav="mentor">← Gestão</div>
-    <p class="hero-line">Para gravar · ainda não publicado</p>
+    <p class="hero-line">Para gravar</p>
     <h2 class="hero-title">Áudios PNL</h2>
     <p class="hero-sub">Títulos, categorias e a estratégia de cada gravação. Vida da pessoa, dinheiro por módulo, essência do superficial ao fundo, e o ano do Legado. Experiência espiritual fica como leitura, não como prova.</p>
     <article class="q-feature">

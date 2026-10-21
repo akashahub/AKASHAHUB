@@ -97,7 +97,7 @@ const DOSSIE = [
 
 export function renderFase1() {
   const nota = isMentorSession()
-    ? "Modelo de trabalho do mentor. O material do mentorando ainda não é uma entrega separada. O contrato continua na gestão."
+    ? "O dossiê preenchido fica na gestão do mentor. O contrato também."
     : "Estrutura do dossiê. O preenchimento com o mentor vem depois. Nada aqui é gravado ainda.";
   return pagina(
     "1",
