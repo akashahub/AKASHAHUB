@@ -247,7 +247,7 @@ html:not(.flow-open) body::after{content:"";position:fixed;inset:0;z-index:75;po
 
 #wpp-open{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;height:52px;padding:0 18px;border:0;border-radius:999px;background:#25d366;color:#06210f;font-weight:500;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.4)}
 #job-open{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;height:52px;padding:0 18px;border:0;border-radius:999px;background:#c6a15b;color:#0b0a09;font-weight:500;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.4)}
-#gestao-btn{position:fixed;top:16px;right:16px;z-index:90;background:#3b82f6;color:#fff;border:0;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+#gestao-btn{display:none;position:fixed;top:16px;right:16px;z-index:90;background:#3b82f6;color:#fff;border:0;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 #gestao-btn:hover{background:#2563eb}
 #gestao-modal{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);align-items:center;justify-content:center}
 #gestao-modal.active{display:flex}
@@ -657,12 +657,29 @@ const wppAsk = document.getElementById('wpp-ask');
 const jobAsk = document.getElementById('job-ask');
 // ... (the rest of the original script continues here in the full file)
 
-// Gestão de Acesso
+// Gestão de Acesso — só o mentor yanfili.simon@gmail.com
+const MENTOR_EMAIL = "yanfili.simon@gmail.com";
 const gestaoBtn = document.getElementById('gestao-btn');
 const gestaoModal = document.getElementById('gestao-modal');
 const gestaoClose = document.getElementById('gestao-close');
 const gestaoList = document.getElementById('gestao-list');
+
+function isMentor(user) {
+  return user && (user.email || "").toLowerCase() === MENTOR_EMAIL;
+}
+
+// Mostra o botão só se o usuário logado for o mentor
+onAuthStateChanged(auth, (user) => {
+  if (isMentor(user)) gestaoBtn.style.display = "block";
+  else gestaoBtn.style.display = "none";
+});
+
 gestaoBtn.onclick = async () => {
+  const user = auth.currentUser;
+  if (!isMentor(user)) {
+    alert("Acesso restrito ao mentor.");
+    return;
+  }
   gestaoModal.classList.add('active');
   gestaoList.innerHTML = 'Carregando...';
   try {
