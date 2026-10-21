@@ -1,7 +1,7 @@
 import { session } from "./auth.js";
 import { Store } from "./storage.js";
 import { esc } from "./navigation.js";
-import { PHASE_GUIDANCE } from "./phase-guidance.js";
+import { PHASE_GUIDANCE } from "./phase-guidance.js?v=rt45";
 import { db } from "../../firebase/firebase-config.js";
 import { doc, getDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -94,7 +94,9 @@ export function renderPhaseChecklist(phaseId) {
   if (!phase) return "";
   const state = phaseState(phaseId);
   const progress = phaseProgress(phaseId);
-  return `<section class="phase-checklist" data-phase-checklist="${esc(phaseId)}" aria-labelledby="checklist-${esc(phaseId)}">
+  return `<details class="phase-fold">
+    <summary>Checklist da fase</summary>
+    <section class="phase-checklist" data-phase-checklist="${esc(phaseId)}" aria-labelledby="checklist-${esc(phaseId)}">
     <div class="phase-checklist-head">
       <div><p class="hero-line">CHECKLIST DE CONCLUSÃO</p><h3 id="checklist-${esc(phaseId)}">O que precisa estar verdadeiro para avançar</h3><p class="notes-hint">Uma tarefa iniciada não é uma tarefa concluída. Marque “Concluído” somente quando houver a evidência ou o entregável indicado.</p></div>
       <div class="phase-progress" aria-label="${progress.done} de ${progress.total} itens concluídos"><strong data-checklist-progress>${progress.percent}%</strong><span data-checklist-count>${progress.done}/${progress.total}</span></div>
@@ -114,7 +116,8 @@ export function renderPhaseChecklist(phaseId) {
       }).join("")}
     </div>
     <p class="phase-checklist-note" data-checklist-note role="status">${progress.done === progress.total ? "Fase registrada como concluída." : "Registre o arquivo, link, tarefa ou decisão que prova cada item."}</p>
-  </section>`;
+  </section>
+  </details>`;
 }
 
 function refreshProgress(root, phaseId) {

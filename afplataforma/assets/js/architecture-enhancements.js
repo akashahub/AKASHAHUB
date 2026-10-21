@@ -1,7 +1,7 @@
 import { session } from "./auth.js";
 import { Store } from "./storage.js";
 import { esc } from "./navigation.js";
-import { EXECUTIVE_GUIDANCE, ASSET_GUIDANCE, ASSET_TYPE_GUIDANCE, PHASE_GUIDANCE } from "./phase-guidance.js?v=rt40";
+import { EXECUTIVE_GUIDANCE, ASSET_GUIDANCE, ASSET_TYPE_GUIDANCE, PHASE_GUIDANCE } from "./phase-guidance.js?v=rt45";
 import { saveExecutiveNoteDraft } from "./arquitetura-legado.js?v=rt40";
 import { db } from "../../firebase/firebase-config.js";
 import { doc, getDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";

@@ -182,10 +182,12 @@ export const ASSET_TYPE_GUIDANCE = [
 export function renderPhaseBriefing(phaseId) {
   const phase = PHASE_GUIDANCE[phaseId];
   if (!phase) return "";
-  return `<section class="phase-briefing" aria-labelledby="briefing-${phase.id}">
+  return `<details class="phase-fold">
+    <summary>Briefing da fase</summary>
+    <section class="phase-briefing" aria-labelledby="briefing-${phase.id}">
     <div class="phase-briefing-lead"><p class="hero-line">BRIEFING DA FASE ${esc(phase.number)}</p><h3 id="briefing-${phase.id}">Fase ${esc(phase.number)} · ${esc(phase.title)}</h3><p class="phase-briefing-subtitle">Como usar esta etapa</p><p>${esc(phase.sourceNote)}</p><p class="phase-source-classification"><strong>Natureza do conteúdo:</strong> os materiais consultados orientam esta síntese. A lista de pontos de trabalho e os exemplos foram reescritos para a interface e não são apresentados como transcrição exaustiva ou pilares oficiais. As adaptações a seguir são sugestões; confirme a fonte específica quando uma decisão depender dela.</p></div>
     <div class="phase-briefing-grid">
-      <details open><summary>O que é</summary><p>${esc(phase.what)}</p></details>
+      <details><summary>O que é</summary><p>${esc(phase.what)}</p></details>
       <details><summary>Por que existe</summary><p>${esc(phase.why)}</p></details>
       <details><summary>Que problema resolve</summary><p>${esc(phase.problem)}</p></details>
       <details><summary>Pontos de trabalho · síntese da plataforma</summary><p>Organização didática dos materiais disponíveis; não implica que cada item seja uma categoria oficial.</p><ul>${phase.pillars.map((item) => `<li>${esc(item)}</li>`).join("")}</ul></details>
@@ -198,5 +200,6 @@ export function renderPhaseBriefing(phaseId) {
       ${phase.assetTaxonomy ? `<details><summary>O que pode ser um ativo</summary><p>${esc(phase.assetTaxonomy.definition)}</p><p><strong>Exemplos:</strong> ${phase.assetTaxonomy.types.map(esc).join(" · ")}</p><p>${esc(phase.assetTaxonomy.note)}</p></details>` : ""}
       ${phase.financeGlossary ? `<details><summary>Termos financeiros e contextos</summary><ul>${phase.financeGlossary.map((item) => `<li><strong>${esc(item.term)}:</strong> ${esc(item.definition)}</li>`).join("")}</ul><p>Adaptações por modelo — exemplos didáticos, sem substituir registros ou orientação contábil:</p><ul>${phase.financeContexts.map((item) => `<li><strong>${esc(item.label)}:</strong> ${esc(item.text)}</li>`).join("")}</ul></details>` : ""}
     </div>
-  </section>`;
+  </section>
+  </details>`;
 }

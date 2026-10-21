@@ -1,7 +1,7 @@
 /** Áreas das cinco fases. Não cria login, não grava dossiê, não copia o roteiro. */
 import { session, isMentorSession } from "./auth.js";
-import { renderPhaseBriefing } from "./phase-guidance.js?v=rt40";
-import { renderPhaseChecklist, bindPhaseChecklist } from "./phase-checklists.js?v=rt40";
+import { renderPhaseBriefing } from "./phase-guidance.js?v=rt45";
+import { renderPhaseChecklist, bindPhaseChecklist } from "./phase-checklists.js?v=rt45";
 
 function lista(itens) {
   return `<div class="module-list">${itens.map((texto, i) =>
