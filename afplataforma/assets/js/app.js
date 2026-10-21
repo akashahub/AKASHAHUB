@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=legado1";
+} from "./navigation.js?v=legado2";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
@@ -41,7 +41,7 @@ import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js?v=rt40";
 import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt5";
-import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers } from "./fases.js?v=rt43";
+import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase1Dossie, bindFase1Dossie, renderFase2Oferta, bindFase2Oferta, renderFase2Ativos, bindFase2Ativos, renderFase3Preco, bindFase3Preco, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers, renderFase4Depende, bindFase4Depende, renderFase4Divulga, bindFase4Divulga, renderFase5Livro, bindFase5Livro } from "./fases.js?v=rt44";
 import { bindPhaseChecklist, hydratePhaseChecklists } from "./phase-checklists.js?v=rt40";
 import { renderMindMaps, bindMindMaps, hydrateMindMaps } from "./mindmaps.js?v=rt40";
 import { enhanceArchitectureView } from "./architecture-enhancements.js?v=rt40";
@@ -679,13 +679,20 @@ registerRenderers({
   fase1: renderFase1,
   "fase1-jogo": renderFase1Jogo,
   "fase1-marca": renderFase1Marca,
+  "fase1-dossie": renderFase1Dossie,
   fase2: renderFase2,
+  "fase2-oferta": renderFase2Oferta,
+  "fase2-ativos": renderFase2Ativos,
   fase3: renderFase3,
+  "fase3-preco": renderFase3Preco,
   fase4: renderFase4,
   "fase4-sdr": renderFase4Sdr,
   "fase4-treinamento": renderFase4Treinamento,
   "fase4-closers": renderFase4Closers,
+  "fase4-depende": renderFase4Depende,
+  "fase4-divulga": renderFase4Divulga,
   fase5: renderFase5,
+  "fase5-livro": renderFase5Livro,
   "legado-planos": renderLegadoPlanos,
   "legado-contrato": renderLegadoContrato,
   "legado-regras": renderLegadoRegras,
@@ -719,6 +726,13 @@ onAfterNavigate((view) => {
     hydratePhaseChecklists(() => { if (getCurrentView() === view) navigate(view); });
   }
   if (view === "fase1-marca") bindFase1Marca();
+  if (view === "fase1-dossie") bindFase1Dossie();
+  if (view === "fase2-oferta") bindFase2Oferta();
+  if (view === "fase2-ativos") bindFase2Ativos();
+  if (view === "fase3-preco") bindFase3Preco();
+  if (view === "fase4-depende") bindFase4Depende();
+  if (view === "fase4-divulga") bindFase4Divulga();
+  if (view === "fase5-livro") bindFase5Livro();
   if (view === "legado-dossie") bindLegadoDossie();
   if (view === "arquitetura-legado") {
     bindArquiteturaLegado();

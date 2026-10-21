@@ -26,7 +26,7 @@ export function getCurrentView() {
 }
 
 function fase3Aberta(view) {
-  return view === "af-dashboard" || view === "modules" || view === "tools" || view === "call" || view === "complementar"
+  return view === "modules" || view === "tools" || view === "call" || view === "complementar"
     || view === "quitei" || view === "empresas"
     || view.startsWith("module:") || view.startsWith("comp:") || view.startsWith("criancas");
 }
@@ -34,20 +34,17 @@ function fase3Aberta(view) {
 export function buildNav() {
   const lang = session.lang || "pt-BR";
   const items = [
-    { id: "dashboard", label: "LifeOS", ico: "◇" }
+    { id: "dashboard", label: t(lang, "dash"), ico: "◇" }
   ];
   if (isMentorSession()) items.push({ id: "mentor", label: t(lang, "mentor"), ico: "★" });
-  if (isMentorSession()) items.push({ id: "vendas-curso", label: "Projeto · Curso de Vendas", ico: "↗" });
   items.push(
     { id: "profile", label: t(lang, "profile"), ico: "○" },
     { sep: true, label: "Arquitetura de Legado" },
     { id: "fase1", label: "Fase 1 · Essência", ico: "1" },
     { id: "fase2", label: "Fase 2 · Império", ico: "2" },
-    { id: "fase3", label: "Fase 3 · Alinhamento Financeiro", ico: "3" },
-    { id: "fase4", label: "Fase 4 · Execução e Expansão", ico: "4" },
-    { id: "fase5", label: "Fase 5 · Legado", ico: "5" },
-    { id: "arquitetura-legado", label: "Jornada · Arquitetura de Legado", ico: "✦" },
-    { id: "mapas-mentais", label: "Mapas mentais", ico: "◎" }
+    { id: "fase3", label: "Fase 3 · AF", ico: "3" },
+    { id: "fase4", label: "Fase 4 · Expansão", ico: "4" },
+    { id: "fase5", label: "Fase 5 · CDC", ico: "5" }
   );
 
   const nav = document.getElementById("navMain");
@@ -71,6 +68,10 @@ export function buildNav() {
 
 function isActive(id) {
   if (currentView === id) return true;
+  if (id === "fase1" && currentView.startsWith("fase1")) return true;
+  if (id === "fase2" && currentView.startsWith("fase2")) return true;
+  if (id === "fase4" && currentView.startsWith("fase4")) return true;
+  if (id === "fase5" && currentView.startsWith("fase5")) return true;
   if (id === "fase3" && fase3Aberta(currentView)) return true;
   if (currentView.startsWith("module:") && id === "modules") return true;
   if (currentView.startsWith("comp:") && id === "complementar") return true;
@@ -85,6 +86,10 @@ function setActiveNav(view) {
     n.classList.toggle(
       "active",
       id === view ||
+        (id === "fase1" && view.startsWith("fase1")) ||
+        (id === "fase2" && view.startsWith("fase2")) ||
+        (id === "fase4" && view.startsWith("fase4")) ||
+        (id === "fase5" && view.startsWith("fase5")) ||
         (id === "fase3" && fase3Aberta(view)) ||
         (view.startsWith("module:") && id === "modules") ||
         (view.startsWith("comp:") && id === "complementar") ||
@@ -101,14 +106,12 @@ export async function navigate(view) {
 
   const lang = session.lang || "pt-BR";
   const titles = {
-    dashboard: "LifeOS · Central de Comando",
-    "af-dashboard": "Dashboard AF · Alinhamento Financeiro",
+    dashboard: t(lang, "dash"),
     modules: t(lang, "modules"),
     tools: t(lang, "tools"),
     call: t(lang, "call"),
     profile: t(lang, "profile"),
     mentor: t(lang, "mentor"),
-    "vendas-curso": "Projeto · Curso de Vendas",
     ascensao: "Ascensão",
     complementar: "Complementar",
     quitei: "Quitei",
@@ -118,12 +121,17 @@ export async function navigate(view) {
     empresas: "Empresas",
     fase1: "Fase 1 · Essência",
     "fase1-jogo": "Mesa da Essência",
+    "fase1-dossie": "Dossiê vivo",
     fase2: "Fase 2 · Império",
-    fase3: "Fase 3 · Alinhamento Financeiro",
-    fase4: "Fase 4 · Processos de Execução e Expansão",
-    fase5: "Fase 5 · Comunidade, Movimento, Doutrina",
-    "arquitetura-legado": "Arquitetura de Legado · Jornada",
-    "mapas-mentais": "Mapas mentais · Akasha",
+    "fase2-oferta": "Construtor de oferta",
+    "fase2-ativos": "Diagnóstico de ativos",
+    fase3: "Fase 3 · AF",
+    "fase3-preco": "Preço mínimo",
+    fase4: "Fase 4 · Expansão",
+    "fase4-divulga": "Divulgação",
+    "fase4-depende": "O que depende de mim",
+    fase5: "Fase 5 · CDC",
+    "fase5-livro": "Livro do método",
     "legado-planos": "Planos do Legado",
     "legado-contrato": "Contrato",
     "legado-regras": "Regras",
@@ -134,7 +142,6 @@ export async function navigate(view) {
     "legado-tcc": "TCC",
     "legado-slides": "Lâminas",
     "audios-pnl": "Áudios PNL",
-    "producao-audios-pnl": "PRODUÇÃO ÁUDIOS PNL",
     "conteudos-al": "Conteúdos AL"
   };
   const top = document.getElementById("topTitle");

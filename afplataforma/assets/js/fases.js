@@ -66,7 +66,11 @@ const FASE4 = [
   "Definir como a operação é acompanhada.",
   "Estruturar a distribuição de responsabilidades.",
   "Melhorar a previsibilidade operacional.",
-  "Preparar a operação para crescer com mais organização."
+  "Preparar a operação para crescer com mais organização.",
+  "Definir onde o projeto aparece.",
+  "Organizar o que se publica nesta semana.",
+  "Separar divulgação orgânica e tráfego pago.",
+  "Olhar o que foi publicado, não o que foi prometido."
 ];
 
 const FASE5 = [
@@ -79,7 +83,10 @@ const FASE5 = [
   "Organizar a participação contínua no ecossistema.",
   "Planejar a evolução da comunidade.",
   "Estabelecer o acompanhamento da continuidade.",
-  "Ligar a comunidade às outras fases."
+  "Ligar a comunidade às outras fases.",
+  "Escrever o que continua funcionando sem o fundador na sala.",
+  "Ler o negócio como quem compra ou como quem vende.",
+  "Nomear a comunidade, o movimento e a doutrina."
 ];
 
 const DOSSIE = [
@@ -103,7 +110,7 @@ export function renderFase1() {
     "1",
     "Arquitetura de Essência",
     "AE",
-    "Identidade, história familiar, visão de mundo e a direção inicial do projeto. Entrega desta fase: Dossiê de Essência e Direção Estratégica.",
+    "Identidade, história familiar, visão de mundo e a direção inicial do projeto. Constelação e registro entram como leitura, não como prova. Entrega desta fase: Dossiê de Essência e Direção Estratégica.",
     `${renderPhaseBriefing("fase1")}
     <h3 class="section-h">Trabalho principal da fase</h3>
     ${lista(FASE1)}
@@ -117,6 +124,13 @@ export function renderFase1() {
     <h3 class="section-h">Dossiê de Essência</h3>
     <p class="notes-hint">${nota} O modelo preenchido, com relato, hipótese e decisão, fica só na gestão do mentor.</p>
     ${lista(DOSSIE)}
+    <h3 class="section-h">Ferramentas desta fase</h3>
+    <p style="display:flex;flex-wrap:wrap;gap:8px">
+      <button class="tool-btn" type="button" data-nav="fase1-dossie">Dossiê vivo</button>
+      <button class="tool-btn" type="button" data-tool="vision">Visão 1 página</button>
+      <button class="tool-btn" type="button" data-tool="ideation">Ideação / Insights</button>
+    </p>
+    <p class="notes-hint">Visão e ideação continuam também em Ferramentas. Aqui elas servem a essência. O dossiê separa fato, hipótese e decisão.</p>
     ${renderPhaseChecklist("fase1")}`
   );
 }
@@ -140,8 +154,17 @@ export function renderFase2() {
     "2",
     "Império Digital",
     "ID",
-    "Posicionamento, linguagem, ativos digitais e a estrutura de negócios do projeto.",
+    "Posicionamento, linguagem e os ativos digitais do projeto. A biblioteca mostra o que dá para construir. A oferta sai daqui, ainda sem campanha.",
     `${renderPhaseBriefing("fase2")}
+    <h3 class="section-h">Ferramentas desta fase</h3>
+    <p style="display:flex;flex-wrap:wrap;gap:8px">
+      <button class="tool-btn" type="button" data-nav="fase2-oferta">Construtor de oferta</button>
+      <button class="tool-btn" type="button" data-nav="fase2-ativos">Diagnóstico de ativos</button>
+      <button class="tool-btn" type="button" data-tool="pitch">Pitch 60s</button>
+      <button class="tool-btn" type="button" data-tool="fono">Oratória</button>
+      <button class="tool-btn" type="button" data-tool="network">Mapa de rede</button>
+    </p>
+    <p class="notes-hint">Pitch, oratória e rede continuam em Ferramentas. A divulgação em si fica na expansão.</p>
     <h3 class="section-h">Trabalho principal da fase</h3>
     <div class="module-list">${trabalho}</div>
     <section class="id-lib">
@@ -371,14 +394,16 @@ export function renderFase3() {
     "3",
     "Alinhamento Financeiro",
     "AF",
-    "Consolidação comercial e financeira. As ferramentas de sempre continuam aqui, sem cópia.",
+    "O caixa da pessoa, o da empresa e o primeiro olhar com as crianças. As ferramentas de sempre continuam aqui.",
     `${renderPhaseBriefing("fase3")}
     <h3 class="section-h">Trabalho principal da fase</h3>
     ${lista(FASE3)}
     <h3 class="section-h">Ferramentas e recursos do AF</h3>
     <div style="display:flex;flex-wrap:wrap;gap:8px">
       ${recursos.map(([id, nome]) => `<button class="tool-btn" type="button" data-nav="${id}">${nome}</button>`).join("")}
+      <button class="tool-btn" type="button" data-nav="fase3-preco">Preço mínimo</button>
     </div>
+    <p class="notes-hint">O preço mínimo lê a oferta guardada na fase 2, se ela já estiver neste aparelho.</p>
     ${renderPhaseChecklist("fase3")}`
   );
 }
@@ -388,16 +413,19 @@ export function renderFase4() {
     "4",
     "Processos de Execução e Expansão",
     "",
-    "A operação fica mais organizada e menos dependente do fundador em cada passo.",
+    "Aqui o projeto vai a público. Publicar, divulgar e, se fizer sentido, tráfego pago. A operação também deixa de depender de você em cada passo.",
     `${renderPhaseBriefing("fase4")}
     <h3 class="section-h">Trabalho principal da fase</h3>${lista(FASE4)}
     <h3 class="section-h">Ferramentas de expansão</h3>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+      <button class="tool-btn" type="button" data-nav="fase4-divulga">Divulgação</button>
+      <button class="tool-btn" type="button" data-nav="fase4-depende">O que depende de mim</button>
+      <button class="tool-btn" type="button" data-tool="execution">Execução semanal</button>
       <button class="tool-btn" type="button" data-nav="fase4-sdr">SDR OS</button>
       <button class="tool-btn" type="button" data-nav="fase4-treinamento">Treinamento de Vendedores</button>
       <button class="tool-btn" type="button" data-nav="fase4-closers">Closers OS</button>
     </div>
-    <p class="notes-hint" style="margin-top:12px">Essas ferramentas ajudam a estruturar prospecção, treinamento do time e fechamento em call. Os dados ficam no aparelho até serem copiados ou enviados.</p>
+    <p class="notes-hint" style="margin-top:12px">Divulgação é publicar e, quando houver, pagar mídia. SDR, treinamento e closers continuam. A execução semanal também segue em Ferramentas. Nada aqui promete alcance.</p>
     ${renderPhaseChecklist("fase4")}`
   );
 }
@@ -407,9 +435,15 @@ export function renderFase5() {
     "5",
     "COMUNIDADE, MOVIMENTO, DOUTRINA",
     "Legado",
-    "Comunidade, transmissão da metodologia e o que permanece depois do ciclo.",
+    "O que fica de pé se você sair da sala, ou se vender o que criou. Comunidade, movimento e doutrina. E a leitura de comprar, vender ou soltar.",
     `${renderPhaseBriefing("fase5")}
     <h3 class="section-h">Trabalho principal da fase</h3>${lista(FASE5)}
+    <h3 class="section-h">Ferramentas desta fase</h3>
+    <p style="display:flex;flex-wrap:wrap;gap:8px">
+      <button class="tool-btn" type="button" data-tool="legacy">Declaração de legado</button>
+      <button class="tool-btn" type="button" data-nav="fase5-livro">Livro do método</button>
+    </p>
+    <p class="notes-hint">A declaração continua em Ferramentas. O livro junta o que as fases anteriores guardaram neste aparelho.</p>
     ${renderPhaseChecklist("fase5")}`
   );
 }
@@ -657,3 +691,328 @@ export function renderFase4Closers() {
      <p>Ferramentas de fechamento em call em construção.</p>
      <p class="notes-hint">Dados ficam no aparelho. Use Copiar ou WhatsApp para compartilhar com o mentor.</p>`);
 }
+
+function h(s) {
+  return String(s || "").replace(/[&<>"]/g, (c) => ({
+    "&": "\u0026amp;",
+    "<": "\u0026lt;",
+    ">": "\u0026gt;",
+    "\"": "\u0026quot;"
+  }[c]));
+}
+function caixa(id, rotulo, rows) {
+  return `<label class="field">${rotulo}<textarea data-campo="${id}" rows="${rows || 3}" style="width:100%;min-height:72px;margin-top:6px;padding:10px 12px;border:1px solid rgba(201,162,75,.35);border-radius:8px;background:transparent;color:inherit;font:inherit;line-height:1.45"></textarea></label>`;
+}
+function linha(id, rotulo, tipo) {
+  return `<label class="field">${rotulo}<input data-campo="${id}" type="${tipo || "text"}" style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid rgba(201,162,75,.35);border-radius:8px;background:transparent;color:inherit;font:inherit"></label>`;
+}
+function acoes(id) {
+  return `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+    <button class="tool-btn" type="button" id="${id}Salvar">Guardar neste aparelho</button>
+    <button class="tool-btn" type="button" id="${id}Copiar">Copiar</button>
+    <button class="tool-btn" type="button" id="${id}Pdf">Gerar PDF</button>
+  </div><p class="notes-hint" id="${id}Aviso">Fica neste aparelho. O PDF abre para imprimir ou salvar.</p>`;
+}
+function lerCampos(root) {
+  const out = {};
+  root.querySelectorAll("[data-campo]").forEach((el) => {
+    out[el.getAttribute("data-campo")] = el.type === "checkbox" ? (el.checked ? "sim" : "") : el.value;
+  });
+  return out;
+}
+function encher(root, dados) {
+  root.querySelectorAll("[data-campo]").forEach((el) => {
+    const v = dados[el.getAttribute("data-campo")] || "";
+    if (el.type === "checkbox") el.checked = v === "sim";
+    else el.value = v;
+  });
+}
+function abrirPdf(titulo, corpo) {
+  const w = window.open("", "_blank");
+  if (!w) return false;
+  w.document.write("<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"utf-8\"><title>" + h(titulo) + "</title><style>body{font-family:Georgia,serif;max-width:720px;margin:40px auto;padding:0 20px;color:#111;line-height:1.55}h1{font-weight:500}h2{font-size:18px;margin-top:28px}.tag{letter-spacing:.12em;text-transform:uppercase;font-size:11px;color:#6b5420}</style></head><body><p class=\"tag\">Akasha Hub · Arquitetura de Legado</p><h1>" + h(titulo) + "</h1>" + corpo + "<script>window.onload=function(){window.print()}<\/script></body></html>");
+  w.document.close();
+  return true;
+}
+function guardar(id, chave, titulo, texto) {
+  const aviso = document.getElementById(id + "Aviso");
+  document.getElementById(id + "Salvar")?.addEventListener("click", () => {
+    localStorage.setItem(chave, JSON.stringify(lerCampos(document.getElementById("content"))));
+    if (aviso) aviso.textContent = "Guardado neste aparelho.";
+  });
+  document.getElementById(id + "Copiar")?.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(titulo + "\n\n" + texto()); } catch (e) {}
+    if (aviso) aviso.textContent = "Copiado.";
+  });
+  document.getElementById(id + "Pdf")?.addEventListener("click", () => {
+    const ok = abrirPdf(titulo, "<pre style=\"white-space:pre-wrap;font-family:Georgia,serif\">" + h(texto()) + "</pre>");
+    if (aviso) aviso.textContent = ok ? "PDF aberto. Use imprimir ou salvar." : "O navegador bloqueou a janela.";
+  });
+}
+
+const TAGS = ["fato", "hipótese", "decisão"];
+export function renderFase1Dossie() {
+  const corpo = DOSSIE.map((nome, i) => `
+    <article class="q-feature">
+      <h3>${i + 1}. ${h(nome)}</h3>
+      <label class="field">Etiqueta
+        <select data-campo="tag-${i}" style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid rgba(201,162,75,.35);border-radius:8px;background:transparent;color:inherit;font:inherit">
+          ${TAGS.map((t) => `<option value="${t}">${t}</option>`).join("")}
+        </select>
+      </label>
+      ${caixa("texto-" + i, "O que fica escrito")}
+      ${caixa("nota-" + i, "Comentário do mentor", 2)}
+    </article>`).join("");
+  return pagina("1", "Dossiê vivo", "AE", "Dez seções. Cada uma leva uma etiqueta: fato, hipótese ou decisão. O comentário é do mentor. No fim, o PDF é a entrega desta fase.",
+    `<p><button class="tool-btn" type="button" data-nav="fase1">← Fase 1</button></p>${corpo}${acoes("dossie")}`);
+}
+export function bindFase1Dossie() {
+  const root = document.getElementById("content");
+  if (!root || !root.querySelector("[data-campo^=\"tag-\"]")) return;
+  let salvo = {};
+  try { salvo = JSON.parse(localStorage.getItem("afDossieVivoV1") || "{}"); } catch (e) { salvo = {}; }
+  encher(root, salvo);
+  const texto = () => DOSSIE.map((nome, i) => {
+    const d = lerCampos(root);
+    return (i + 1) + ". " + nome + " [" + (d["tag-" + i] || "fato") + "]\n" + (d["texto-" + i] || "—") + "\nComentário: " + (d["nota-" + i] || "—");
+  }).join("\n\n");
+  guardar("dossie", "afDossieVivoV1", "Dossiê de Essência", texto);
+}
+
+export function renderFase2Oferta() {
+  return pagina("2", "Construtor de oferta", "ID", "Uma página. Para quem é, qual problema, formato e entrega. Sem campanha. A divulgação espera a expansão.",
+    `<p><button class="tool-btn" type="button" data-nav="fase2">← Fase 2</button></p>
+    ${caixa("oferta-quem", "Para quem é")}
+    ${caixa("oferta-nao", "Para quem não é")}
+    ${caixa("oferta-problema", "Qual problema resolve")}
+    ${linha("oferta-formato", "Formato")}
+    ${caixa("oferta-entrega", "O que a pessoa recebe")}
+    ${linha("oferta-limite", "Limite. O que não entra.")}
+    ${linha("oferta-horas", "Horas suas para entregar uma vez", "number")}
+    ${acoes("oferta")}`);
+}
+export function bindFase2Oferta() {
+  const root = document.getElementById("content");
+  if (!root || !root.querySelector("[data-campo=\"oferta-quem\"]")) return;
+  let salvo = {};
+  try { salvo = JSON.parse(localStorage.getItem("afOfertaV1") || "{}"); } catch (e) { salvo = {}; }
+  encher(root, salvo);
+  const texto = () => {
+    const d = lerCampos(root);
+    return ["Para quem: " + (d["oferta-quem"] || "—"), "Não é para: " + (d["oferta-nao"] || "—"), "Problema: " + (d["oferta-problema"] || "—"), "Formato: " + (d["oferta-formato"] || "—"), "Entrega: " + (d["oferta-entrega"] || "—"), "Limite: " + (d["oferta-limite"] || "—"), "Horas: " + (d["oferta-horas"] || "—")].join("\n\n");
+  };
+  guardar("oferta", "afOfertaV1", "Oferta", texto);
+}
+
+const ATIVOS = [
+  ["site", "Site", "/afplataforma/imperio/s/site-institucional.html"],
+  ["agenda", "Agenda", "/afplataforma/imperio/s/agenda-online.html"],
+  ["pagamento", "Pagamento", "/afplataforma/imperio/s/checkout.html"],
+  ["crm", "CRM", "/afplataforma/imperio/s/crm-de-contatos.html"],
+  ["membros", "Área de membros", "/afplataforma/imperio/s/area-de-membros.html"],
+  ["aulas", "Aulas gravadas", "/afplataforma/imperio/s/area-de-aulas.html"],
+  ["comunidade", "Comunidade", "/afplataforma/imperio/s/comunidade-fechada.html"],
+  ["conteudo", "Peça de conteúdo", "/afplataforma/imperio/s/criativos-de-anuncio.html"]
+];
+export function renderFase2Ativos() {
+  const linhas = ATIVOS.map(([id, nome]) => `<label class="field" style="display:flex;gap:10px;align-items:center"><input data-campo="ativo-${id}" type="checkbox"> Já tenho ${h(nome)}</label>`).join("");
+  return pagina("2", "Diagnóstico de ativos", "ID", "Marque o que já existe. O que falta aponta três soluções da biblioteca. O orçamento sai no WhatsApp. Não publica anúncio.",
+    `<p><button class="tool-btn" type="button" data-nav="fase2">← Fase 2</button></p>
+    ${linhas}
+    <div id="ativosSugestao" style="margin-top:16px"></div>
+    ${acoes("ativos")}`);
+}
+export function bindFase2Ativos() {
+  const root = document.getElementById("content");
+  if (!root || !root.querySelector("[data-campo=\"ativo-site\"]")) return;
+  let salvo = {};
+  try { salvo = JSON.parse(localStorage.getItem("afAtivosV1") || "{}"); } catch (e) { salvo = {}; }
+  encher(root, salvo);
+  const faltas = () => ATIVOS.filter(([id]) => lerCampos(root)["ativo-" + id] !== "sim");
+  const pintar = () => {
+    const box = document.getElementById("ativosSugestao");
+    if (!box) return;
+    const lista = faltas().slice(0, 3);
+    if (!lista.length) { box.innerHTML = "<p class=\"notes-hint\">Os oito ativos marcados já existem. A fase seguinte publica.</p>"; return; }
+    box.innerHTML = "<h3 class=\"section-h\">Três que faltam</h3><p style=\"display:flex;flex-wrap:wrap;gap:8px\">" + lista.map(([, nome, href]) => `<a class="tool-btn" href="${href}">${h(nome)}</a>`).join("") + "</p><p style=\"margin-top:8px\"><a class=\"tool-btn\" id=\"ativosZap\" href=\"#\">Pedir orçamento</a></p>";
+    const zap = document.getElementById("ativosZap");
+    if (zap) zap.href = "https://wa.me/5571983448621?text=" + encodeURIComponent("Quero orçamento destes ativos:\n" + lista.map(([, nome]) => "- " + nome).join("\n"));
+  };
+  root.querySelectorAll("[data-campo^=\"ativo-\"]").forEach((el) => el.addEventListener("change", pintar));
+  pintar();
+  const texto = () => {
+    const d = lerCampos(root);
+    return ATIVOS.map(([id, nome]) => nome + ": " + (d["ativo-" + id] === "sim" ? "já tenho" : "falta")).join("\n");
+  };
+  guardar("ativos", "afAtivosV1", "Ativos", texto);
+}
+
+export function renderFase3Preco() {
+  return pagina("3", "Preço mínimo", "AF", "Horas, custo direto e margem. Se a oferta da fase 2 estiver neste aparelho, as horas entram sozinhas. Não é o preço da mentoria.",
+    `<p><button class="tool-btn" type="button" data-nav="fase3">← Fase 3</button></p>
+    <p class="notes-hint" id="precoOferta"></p>
+    ${linha("preco-horas", "Horas para entregar uma vez", "number")}
+    ${linha("preco-hora", "Quanto custa a sua hora", "number")}
+    ${linha("preco-custo", "Custo direto desta entrega", "number")}
+    ${linha("preco-margem", "Margem, em %", "number")}
+    <p class="hero-title" id="precoValor" style="margin-top:18px">R$ 0</p>
+    <p class="notes-hint">Preço mínimo = (horas × valor da hora + custo direto) × (1 + margem).</p>
+    ${acoes("preco")}`);
+}
+export function bindFase3Preco() {
+  const root = document.getElementById("content");
+  if (!root || !root.querySelector("[data-campo=\"preco-horas\"]")) return;
+  let oferta = {};
+  try { oferta = JSON.parse(localStorage.getItem("afOfertaV1") || "{}"); } catch (e) { oferta = {}; }
+  let salvo = {};
+  try { salvo = JSON.parse(localStorage.getItem("afPrecoV1") || "{}"); } catch (e) { salvo = {}; }
+  if (!salvo["preco-horas"] && oferta["oferta-horas"]) salvo["preco-horas"] = oferta["oferta-horas"];
+  encher(root, salvo);
+  const aviso = document.getElementById("precoOferta");
+  if (aviso) aviso.textContent = oferta["oferta-quem"] ? "Oferta neste aparelho: " + oferta["oferta-quem"] : "Ainda não há oferta guardada na fase 2 neste aparelho.";
+  const calc = () => {
+    const d = lerCampos(root);
+    const base = (Number(d["preco-horas"]) || 0) * (Number(d["preco-hora"]) || 0) + (Number(d["preco-custo"]) || 0);
+    const margem = Number(d["preco-margem"]) || 0;
+    const total = base * (1 + margem / 100);
+    const el = document.getElementById("precoValor");
+    if (el) el.textContent = total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    return total;
+  };
+  root.querySelectorAll("[data-campo^=\"preco-\"]").forEach((el) => el.addEventListener("input", calc));
+  calc();
+  const texto = () => {
+    const d = lerCampos(root);
+    return "Horas: " + (d["preco-horas"] || "0") + "\nValor da hora: " + (d["preco-hora"] || "0") + "\nCusto direto: " + (d["preco-custo"] || "0") + "\nMargem: " + (d["preco-margem"] || "0") + "%\nPreço mínimo: " + (document.getElementById("precoValor")?.textContent || "");
+  };
+  guardar("preco", "afPrecoV1", "Preço mínimo", texto);
+}
+
+export function renderFase4Depende() {
+  const linhas = Array.from({ length: 6 }, (_, i) => `
+    <article class="q-feature">
+      <h3>Passo ${i + 1}</h3>
+      ${linha("dep-tarefa-" + i, "Tarefa da semana")}
+      <label class="field">Quem faz
+        <select data-campo="dep-quem-${i}" style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid rgba(201,162,75,.35);border-radius:8px;background:transparent;color:inherit;font:inherit">
+          <option value="eu">Eu</option>
+          <option value="outra">Outra pessoa</option>
+        </select>
+      </label>
+      ${linha("dep-prazo-" + i, "Prazo")}
+      ${linha("dep-pronto-" + i, "Critério de pronto")}
+    </article>`).join("");
+  return pagina("4", "O que depende de mim", "", "Seis passos. Marque quem faz cada um. A conta mostra quanto da semana ainda passa por você.",
+    `<p><button class="tool-btn" type="button" data-nav="fase4">← Fase 4</button></p>
+    <p class="hero-title" id="depConta" style="font-size:1.4rem">—</p>
+    ${linhas}${acoes("depende")}`);
+}
+export function bindFase4Depende() {
+  const root = document.getElementById("content");
+  if (!root || !root.querySelector("[data-campo=\"dep-tarefa-0\"]")) return;
+  let salvo = {};
+  try { salvo = JSON.parse(localStorage.getItem("afDependeV1") || "{}"); } catch (e) { salvo = {}; }
+  encher(root, salvo);
+  const conta = () => {
+    const d = lerCampos(root);
+    let cheios = 0;
+    let meus = 0;
+    for (let i = 0; i < 6; i++) {
+      if (!String(d["dep-tarefa-" + i] || "").trim()) continue;
+      cheios += 1;
+      if (d["dep-quem-" + i] !== "outra") meus += 1;
+    }
+    const el = document.getElementById("depConta");
+    if (el) el.textContent = cheios ? (meus + " de " + cheios + " ainda dependem de você") : "Nenhum passo escrito.";
+  };
+  root.querySelectorAll("[data-campo^=\"dep-\"]").forEach((el) => el.addEventListener("input", conta));
+  root.querySelectorAll("[data-campo^=\"dep-\"]").forEach((el) => el.addEventListener("change", conta));
+  conta();
+  const texto = () => {
+    const d = lerCampos(root);
+    const linhas = [];
+    for (let i = 0; i < 6; i++) {
+      if (!String(d["dep-tarefa-" + i] || "").trim()) continue;
+      linhas.push((i + 1) + ". " + d["dep-tarefa-" + i] + " · " + (d["dep-quem-" + i] === "outra" ? "outra pessoa" : "eu") + " · " + (d["dep-prazo-" + i] || "sem prazo") + "\nPronto quando: " + (d["dep-pronto-" + i] || "—"));
+    }
+    return (document.getElementById("depConta")?.textContent || "") + "\n\n" + (linhas.join("\n\n") || "—");
+  };
+  guardar("depende", "afDependeV1", "O que depende de mim", texto);
+}
+
+export function renderFase4Divulga() {
+  const canais = ["Instagram", "YouTube", "TikTok", "WhatsApp", "E-mail", "Tráfego pago"].map((nome) =>
+    `<label class="field" style="display:flex;gap:10px;align-items:center"><input data-campo="div-${nome}" type="checkbox"> ${h(nome)}</label>`).join("");
+  return pagina("4", "Divulgação", "", "Onde aparece, o que se publica nesta semana e se entra tráfego pago. Publicar não é prometer alcance.",
+    `<p><button class="tool-btn" type="button" data-nav="fase4">← Fase 4</button></p>
+    <h3 class="section-h">Onde</h3>${canais}
+    ${caixa("div-semana", "O que se publica nesta semana")}
+    ${linha("div-verba", "Verba de tráfego pago, se houver")}
+    ${caixa("div-proxima", "A próxima peça, em uma frase")}
+    ${linha("div-pronto", "Pronto quando está no ar, não só escrito")}
+    ${acoes("divulga")}`);
+}
+export function bindFase4Divulga() {
+  const root = document.getElementById("content");
+  if (!root || !root.querySelector("[data-campo=\"div-semana\"]")) return;
+  let salvo = {};
+  try { salvo = JSON.parse(localStorage.getItem("afDivulgaV1") || "{}"); } catch (e) { salvo = {}; }
+  encher(root, salvo);
+  const texto = () => {
+    const d = lerCampos(root);
+    const canais = ["Instagram", "YouTube", "TikTok", "WhatsApp", "E-mail", "Tráfego pago"].filter((n) => d["div-" + n] === "sim");
+    return "Onde: " + (canais.join(", ") || "—") + "\n\nEsta semana:\n" + (d["div-semana"] || "—") + "\n\nVerba: " + (d["div-verba"] || "—") + "\n\nPróxima peça: " + (d["div-proxima"] || "—") + "\n\nPronto quando: " + (d["div-pronto"] || "—");
+  };
+  guardar("divulga", "afDivulgaV1", "Divulgação", texto);
+}
+
+export function renderFase5Livro() {
+  return pagina("5", "Livro do método", "Legado", "Junta o que este aparelho já guardou. Embaixo, a leitura de vender ou comprar, e o que a comunidade repete sem você na sala.",
+    `<p><button class="tool-btn" type="button" data-nav="fase5">← Fase 5</button></p>
+    <article class="q-feature"><h3>O que as fases já guardaram</h3><pre id="livroFontes" style="white-space:pre-wrap;font:inherit;line-height:1.5"></pre></article>
+    ${caixa("livro-principios", "Princípios que não saem")}
+    ${caixa("livro-sem-mim", "O que continua se eu sair 30 dias")}
+    ${caixa("livro-comunidade", "Quem entra na comunidade, e o que se repete toda semana")}
+    ${caixa("livro-doutrina", "O que a doutrina não negocia")}
+    <h3 class="section-h">Comprar, vender ou soltar</h3>
+    <p class="notes-hint">Não é avaliação de mercado. É a leitura que um comprador faria com o que você já tem escrito.</p>
+    ${linha("livro-receita", "Receita dos últimos doze meses, se você souber")}
+    ${caixa("livro-comprador", "O que um comprador leva, e o que para quando você sai")}
+    ${linha("livro-preco", "Se fosse vender, qual número você pediria, e por quê")}
+    ${acoes("livro")}`);
+}
+export function bindFase5Livro() {
+  const root = document.getElementById("content");
+  if (!root || !root.querySelector("[data-campo=\"livro-principios\"]")) return;
+  let salvo = {};
+  try { salvo = JSON.parse(localStorage.getItem("afLivroMetodoV1") || "{}"); } catch (e) { salvo = {}; }
+  encher(root, salvo);
+  const lerChave = (chave) => {
+    try { return JSON.parse(localStorage.getItem(chave) || "{}"); } catch (e) { return {}; }
+  };
+  const fontes = () => {
+    const dossie = lerChave("afDossieVivoV1");
+    const oferta = lerChave("afOfertaV1");
+    const preco = lerChave("afPrecoV1");
+    const depende = lerChave("afDependeV1");
+    const divulga = lerChave("afDivulgaV1");
+    const partes = [];
+    if (oferta["oferta-quem"]) partes.push("Oferta\nPara quem: " + oferta["oferta-quem"] + "\nEntrega: " + (oferta["oferta-entrega"] || "—"));
+    if (preco["preco-margem"] || preco["preco-horas"]) partes.push("Preço\nHoras " + (preco["preco-horas"] || "—") + " · margem " + (preco["preco-margem"] || "—") + "%");
+    const passos = [];
+    for (let i = 0; i < 6; i++) if (depende["dep-tarefa-" + i]) passos.push(depende["dep-tarefa-" + i]);
+    if (passos.length) partes.push("Operação\n" + passos.join("\n"));
+    if (divulga["div-semana"]) partes.push("Divulgação\n" + divulga["div-semana"]);
+    const escrito = DOSSIE.map((nome, i) => dossie["texto-" + i] ? nome + ": " + dossie["texto-" + i] : "").filter(Boolean);
+    if (escrito.length) partes.push("Dossiê\n" + escrito.join("\n"));
+    return partes.join("\n\n") || "Ainda não há dossiê, oferta, preço, operação ou divulgação guardados neste aparelho.";
+  };
+  const box = document.getElementById("livroFontes");
+  if (box) box.textContent = fontes();
+  const texto = () => {
+    const d = lerCampos(root);
+    return fontes() + "\n\nPrincípios\n" + (d["livro-principios"] || "—") + "\n\nSem mim\n" + (d["livro-sem-mim"] || "—") + "\n\nComunidade\n" + (d["livro-comunidade"] || "—") + "\n\nDoutrina\n" + (d["livro-doutrina"] || "—") + "\n\nReceita\n" + (d["livro-receita"] || "—") + "\n\nComprador\n" + (d["livro-comprador"] || "—") + "\n\nSe vendesse\n" + (d["livro-preco"] || "—");
+  };
+  guardar("livro", "afLivroMetodoV1", "Livro do método", texto);
+}
+
