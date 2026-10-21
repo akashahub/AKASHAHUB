@@ -9,8 +9,9 @@ import { MENTOR_SCRIPTS } from "../../data/mentor-scripts.js";
 import { MENTOR_SCRIPTS_I18N } from "../../data/mentor-scripts-i18n.js";
 import { CONTENT_SCRIPTS as LEGADO_CONTENT_SCRIPTS } from "../../data/content-scripts-legacy.js";
 import { CONTENT_SCRIPTS as ZERO_CONTENT_SCRIPTS } from "../../data/content-scripts-zero-100.js";
+import { CONTENT_SCRIPTS as MASTER_CONTEXT_SCRIPTS } from "../../data/contexto-mestre-akasha.js";
 
-const EXTRA_CONTENT_SCRIPTS = { ...LEGADO_CONTENT_SCRIPTS, ...ZERO_CONTENT_SCRIPTS };
+const EXTRA_CONTENT_SCRIPTS = { ...LEGADO_CONTENT_SCRIPTS, ...ZERO_CONTENT_SCRIPTS, ...MASTER_CONTEXT_SCRIPTS };
 import { getMentorScript } from "../../firebase/firestore.js";
 import { esc } from "./navigation.js";
 
@@ -37,7 +38,7 @@ export function openTeleprompter(moduleId = "module01") {
 
   const sel = document.getElementById("tpModule");
   if (sel && !sel.options.length) {
-    sel.innerHTML = MODULES.map((m) => `<option value="${m.id}">${m.num} · ${esc(m.title)}</option>`).join("") + `<optgroup label="Biblioteca de conteúdo"><option value="legado_reels">Arquitetura de Legado · 9 Reels</option><option value="legado_carrosseis">Arquitetura de Legado · 12 carrosséis</option><option value="legado_stories">Arquitetura de Legado · 21 Stories</option><option value="legado_audios">Arquitetura de Legado · 3 áudios ElevenLabs</option><option value="zero100_carrosseis">Zero ao 100 Negócios · 9 carrosséis</option><option value="zero100_reels">Zero ao 100 Negócios · 6 Reels</option><option value="zero100_stories">Zero ao 100 Negócios · 3 sequências de Stories</option></optgroup>`;
+    sel.innerHTML = MODULES.map((m) => `<option value="${m.id}">${m.num} · ${esc(m.title)}</option>`).join("") + `<optgroup label="Biblioteca de conteúdo"><option value="legado_reels">Arquitetura de Legado · 9 Reels</option><option value="legado_carrosseis">Arquitetura de Legado · 12 carrosséis</option><option value="legado_stories">Arquitetura de Legado · 21 Stories</option><option value="legado_audios">Arquitetura de Legado · 3 áudios ElevenLabs</option><option value="zero100_carrosseis">Zero ao 100 Negócios · 9 carrosséis</option><option value="zero100_reels">Zero ao 100 Negócios · 6 Reels</option><option value="zero100_stories">Zero ao 100 Negócios · 3 sequências de Stories</option><option value="contexto_mestre_ia">Contexto Mestre · copiar para outras IAs</option></optgroup>`;
   }
   if (sel && moduleId) sel.value = moduleId;
 
