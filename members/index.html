@@ -779,9 +779,7 @@ function livros() {
         return;
       }
       if (!adminOn && !podeAbrirLivro(nome)) { comprar("livro", nome); return; }
-      const arquivo = arquivoLivro(nome);
-      if (!arquivo) { document.getElementById("livroNote").textContent = nome + " · o arquivo ainda não entrou."; return; }
-      window.open(arquivo, "_blank");
+      baixarLivro(nome);
     };
   });
 }
@@ -798,9 +796,7 @@ function coletanea(nome) {
     btn.onclick = () => {
       const item = btn.dataset.livro;
       if (!adminOn && !podeAbrirLivro(item)) { comprar("livro", item); return; }
-      const arquivo = arquivoLivro(item);
-      if (!arquivo) { document.getElementById("livroNote").textContent = item + " · o arquivo ainda não entrou."; return; }
-      window.open(arquivo, "_blank");
+      baixarLivro(item);
     };
   });
 }
@@ -1001,6 +997,36 @@ function audiosVisiveis() {
 function arquivoLivro(nome) {
   const extra = (cms.livros || []).find(item => item.titulo === nome && item.url);
   return (extra && extra.url) || LIVROS_ARQ[nome] || "";
+}
+async function baixarLivro(nome) {
+  const note = document.getElementById("livroNote");
+  const arquivo = arquivoLivro(nome);
+  if (!arquivo) { if (note) note.textContent = nome + " · o arquivo ainda não entrou."; return; }
+  if (arquivo.indexOf("/members/livros/") !== 0) { window.open(arquivo, "_blank"); return; }
+  if (!user) { location.href = "/login/?next=/members/index.html"; return; }
+  if (note) note.textContent = "Abrindo o arquivo…";
+  let sessions = [];
+  try { sessions = JSON.parse(localStorage.getItem("akashaStripeSessions") || "[]"); } catch (e) {}
+  const idToken = await user.getIdToken();
+  const chave = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impzb25teGJ1emFnbXd1dWNydWVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0ODAzMTMsImV4cCI6MjA5NjA1NjMxM30.qqBI_AUm_AnP4D830QNUd3JIbPE6o54yzwej0utJ6rQ";
+  const res = await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/createStoreCheckout", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "apikey": chave, "Authorization": "Bearer " + chave },
+    body: JSON.stringify({ action: "livro", idToken, nome, sessions })
+  });
+  if (!res.ok) {
+    if (note) note.textContent = "Este livro abre depois do pagamento, com o login do mesmo e-mail.";
+    return;
+  }
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = nome.replace(/[^\wÀ-ÿ]+/g, "-") + ".pdf";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  if (note) note.textContent = "Arquivo baixado.";
 }
 function arquivoAudio(nome) {
   const extra = (cms.audios || []).find(item => item.titulo === nome && item.url);
