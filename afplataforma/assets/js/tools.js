@@ -5,7 +5,7 @@
 import { session } from "./auth.js";
 import { Store } from "./storage.js";
 import { getAfTool, saveAfTool } from "../../firebase/firestore.js";
-import { esc, navigate, getCurrentView } from "./navigation.js?v=rt46";
+import { esc, navigate, getCurrentView } from "./navigation.js?v=rt47";
 import { pageHead, editImg } from "./covers.js";
 
 function toast(msg, err = false) {
