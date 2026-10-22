@@ -3,7 +3,7 @@
  * Ferramentas iniciais sem cotação externa, sem ordens e sem recomendação de compra/venda.
  */
 import { session } from "./auth.js";
-import { esc } from "./navigation.js?v=rt46";
+import { esc } from "./navigation.js?v=rt47";
 import { renderCursos, bindCursos } from "./investimentos-cursos.js?v=1";
 
 const STORE_PREFIX = "af_investimentos_lab_v1:";
