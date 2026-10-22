@@ -4,6 +4,7 @@
  */
 import { session } from "./auth.js";
 import { esc } from "./navigation.js?v=rt46";
+import { renderCursos, bindCursos } from "./investimentos-cursos.js?v=1";
 
 const STORE_PREFIX = "af_investimentos_lab_v1:";
 
@@ -89,7 +90,11 @@ export function renderInvestimentos() {
       </article>
     </div>
 
-    <h3 class="section-h">01 · Calculadora de posição e risco</h3>
+    <h3 class="section-h">01 · Cursos, aulas e biblioteca Zero ao Zen</h3>
+    <p class="notes-hint">Área de conteúdos da formação. O mentor cadastra os cursos e as aulas; o aluno abre o vídeo em um player simples, sem exibir o endereço como texto.</p>
+    ${renderCursos()}
+
+    <h3 class="section-h">02 · Calculadora de posição e risco</h3>
     <p class="notes-hint">Preencha todos os valores na mesma moeda. A quantidade é teórica; lote mínimo, taxas, spread, slippage, liquidez, impostos e regras da corretora não estão incluídos.</p>
     <section class="mat-card" id="invCalculator">
       <div class="grid-3">
@@ -106,7 +111,7 @@ export function renderInvestimentos() {
       <p class="notes-hint" id="invCalcStatus" role="status" aria-live="polite">Informe os valores para fazer a estimativa.</p>
     </section>
 
-    <h3 class="section-h">02 · Diário de teses e ativos em observação</h3>
+    <h3 class="section-h">03 · Diário de teses e ativos em observação</h3>
     <p class="notes-hint">Registre uma hipótese e também seu contraponto. A anotação não é uma indicação para comprar ou vender.</p>
     <form class="mat-card" id="invIdeaForm">
       <div class="grid-3">
@@ -129,7 +134,48 @@ export function renderInvestimentos() {
     </form>
     <div class="module-list" id="invThesisList" aria-live="polite"></div>
 
-    <h3 class="section-h">03 · Mapa de ferramentas a construir</h3>
+    <h3 class="section-h">04 · Deal Lens — análise preliminar de compra de empresa</h3>
+    <p class="notes-hint">Um primeiro filtro para estudar uma aquisição. Use valores anuais e trate o múltiplo como hipótese de cenário, não como valuation definitivo ou preço justo.</p>
+    <section class="mat-card" id="dealLens">
+      <div class="grid-3">
+        <div class="field"><label for="dealRevenue">Receita anual</label><input id="dealRevenue" type="number" min="0" step="any" placeholder="Ex.: 2000000"></div>
+        <div class="field"><label for="dealMargin">Margem EBITDA estimada (%)</label><input id="dealMargin" type="number" min="0" max="100" step="any" placeholder="Ex.: 18"></div>
+        <div class="field"><label for="dealAskingEV">Valor pedido pela operação (EV)</label><input id="dealAskingEV" type="number" min="0" step="any" placeholder="Ex.: 1500000"></div>
+        <div class="field"><label for="dealNetDebt">Dívida líquida (dívida − caixa)</label><input id="dealNetDebt" type="number" step="any" placeholder="Ex.: 250000"></div>
+        <div class="field"><label for="dealMultiple">Múltiplo de referência (EV/EBITDA)</label><input id="dealMultiple" type="number" min="0" step="any" placeholder="Ex.: 4"></div>
+      </div>
+      <div class="grid-3">
+        <div class="stat-card"><div class="lbl">EBITDA aproximado</div><div class="val" id="dealEbitda">—</div><div class="hint">Receita × margem informada</div></div>
+        <div class="stat-card"><div class="lbl">Múltiplo implícito pedido</div><div class="val" id="dealImpliedMultiple">—</div><div class="hint">Valor pedido ÷ EBITDA aproximado</div></div>
+        <div class="stat-card"><div class="lbl">EV pelo múltiplo de referência</div><div class="val" id="dealReferenceEV">—</div><div class="hint">EBITDA × múltiplo escolhido</div></div>
+        <div class="stat-card"><div class="lbl">Equity value indicativo</div><div class="val" id="dealEquityValue">—</div><div class="hint">EV pedido − dívida líquida</div></div>
+        <div class="stat-card"><div class="lbl">Diferença para referência</div><div class="val" id="dealDifference">—</div><div class="hint">Pedido − EV pelo múltiplo</div></div>
+      </div>
+      <p class="notes-hint" id="dealStatus" role="status" aria-live="polite">Preencha os dados para comparar o pedido com um cenário de múltiplo.</p>
+    </section>
+
+    <h3 class="section-h">05 · Equity Studio — participação e diluição</h3>
+    <p class="notes-hint">Simule uma rodada de investimento pré-money/pós-money. Não representa contrato, proposta ou recomendação societária.</p>
+    <section class="mat-card" id="equityStudio">
+      <div class="grid-3">
+        <div class="field"><label for="eqPreMoney">Valuation pré-money</label><input id="eqPreMoney" type="number" min="0" step="any" placeholder="Ex.: 3000000"></div>
+        <div class="field"><label for="eqInvestment">Novo investimento</label><input id="eqInvestment" type="number" min="0" step="any" placeholder="Ex.: 500000"></div>
+        <div class="field"><label for="eqFounderPct">Participação inicial do fundador (%)</label><input id="eqFounderPct" type="number" min="0" max="100" step="any" value="100"></div>
+      </div>
+      <div class="grid-3">
+        <div class="stat-card"><div class="lbl">Valuation pós-money</div><div class="val" id="eqPostMoney">—</div></div>
+        <div class="stat-card"><div class="lbl">Participação do novo investidor</div><div class="val" id="eqInvestorPct">—</div></div>
+        <div class="stat-card"><div class="lbl">Participação do fundador após a rodada</div><div class="val" id="eqFounderPostPct">—</div></div>
+      </div>
+      <p class="notes-hint" id="eqStatus" role="status" aria-live="polite">Informe o valuation pré-money, o aporte e a participação inicial.</p>
+    </section>
+
+    <h3 class="section-h">06 · Glossário vivo de negócios e mercados</h3>
+    <p class="notes-hint">Pesquise um termo para entender a linguagem usada por gestores, investidores, analistas e compradores de empresas.</p>
+    <div class="field"><label for="invGlossarySearch">Pesquisar o vocabulário</label><input id="invGlossarySearch" type="search" placeholder="Ex.: EBITDA, drawdown, due diligence..."></div>
+    <div class="module-list" id="invGlossaryResults"></div>
+
+    <h3 class="section-h">07 · Mapa de ferramentas a construir</h3>
     <div class="module-list">
       <article class="mod-row"><div class="mod-num">P1</div><div class="mod-body"><h3>Radar cripto</h3><p>Preço e variação com fonte e horário visíveis; capitalização, volume, oferta circulante, desbloqueios de tokens e dados da rede quando confiáveis.</p></div></article>
       <article class="mod-row"><div class="mod-num">P1</div><div class="mod-body"><h3>Radar de bolsa, ETFs e FIIs</h3><p>Filtros por setor, liquidez, indicadores, proventos e datas de divulgação — com fonte, data-base e limites de cobertura identificados.</p></div></article>
@@ -146,6 +192,8 @@ export function bindInvestimentos() {
   const page = document.getElementById("investimentosView");
   if (!page || page.dataset.bound === "1") return;
   page.dataset.bound = "1";
+
+  bindCursos();
 
   const capital = page.querySelector("#invCapital");
   const riskPct = page.querySelector("#invRiskPct");
@@ -180,6 +228,124 @@ export function bindInvestimentos() {
 
   [capital, riskPct, entry, stop].forEach((field) => field?.addEventListener("input", updateCalculator));
   updateCalculator();
+
+  const dealInputs = ["dealRevenue", "dealMargin", "dealAskingEV", "dealNetDebt", "dealMultiple"]
+    .map((id) => page.querySelector("#" + id));
+  const dealOutputs = {
+    ebitda: page.querySelector("#dealEbitda"),
+    implied: page.querySelector("#dealImpliedMultiple"),
+    reference: page.querySelector("#dealReferenceEV"),
+    equity: page.querySelector("#dealEquityValue"),
+    difference: page.querySelector("#dealDifference"),
+    status: page.querySelector("#dealStatus")
+  };
+  const updateDealLens = () => {
+    const revenue = numberValue(dealInputs[0]?.value);
+    const margin = numberValue(dealInputs[1]?.value);
+    const ask = numberValue(dealInputs[2]?.value);
+    const netDebt = numberValue(dealInputs[3]?.value);
+    const multiple = numberValue(dealInputs[4]?.value);
+    if (!(revenue > 0) || !(margin >= 0 && margin <= 100) || !(ask >= 0) || !(multiple > 0)) {
+      Object.values(dealOutputs).slice(0, 5).forEach((el) => { if (el) el.textContent = "—"; });
+      if (dealOutputs.status) dealOutputs.status.textContent = "Informe receita positiva, margem entre 0 e 100%, valor pedido e múltiplo de referência. Dívida líquida pode ser negativa se houver caixa líquido.";
+      return;
+    }
+    const ebitda = revenue * margin / 100;
+    const implied = ebitda > 0 ? ask / ebitda : null;
+    const referenceEv = ebitda * multiple;
+    const equity = ask - netDebt;
+    const difference = ask - referenceEv;
+    if (dealOutputs.ebitda) dealOutputs.ebitda.textContent = fmt(ebitda);
+    if (dealOutputs.implied) dealOutputs.implied.textContent = implied === null ? "N/A" : fmt(implied) + "×";
+    if (dealOutputs.reference) dealOutputs.reference.textContent = fmt(referenceEv);
+    if (dealOutputs.equity) dealOutputs.equity.textContent = fmt(equity);
+    if (dealOutputs.difference) dealOutputs.difference.textContent = fmt(difference);
+    if (dealOutputs.status) dealOutputs.status.textContent = "Cálculo preliminar. EBITDA informado não foi auditado; múltiplos comparáveis, capital de giro, impostos, passivos, dependência do fundador e contingências podem mudar radicalmente uma avaliação.";
+  };
+  dealInputs.forEach((field) => field?.addEventListener("input", updateDealLens));
+  updateDealLens();
+
+  const eqPre = page.querySelector("#eqPreMoney");
+  const eqInvestment = page.querySelector("#eqInvestment");
+  const eqFounder = page.querySelector("#eqFounderPct");
+  const eqPost = page.querySelector("#eqPostMoney");
+  const eqInvestorPct = page.querySelector("#eqInvestorPct");
+  const eqFounderPostPct = page.querySelector("#eqFounderPostPct");
+  const eqStatus = page.querySelector("#eqStatus");
+  const updateEquityStudio = () => {
+    const pre = numberValue(eqPre?.value);
+    const invest = numberValue(eqInvestment?.value);
+    const founder = numberValue(eqFounder?.value);
+    if (!(pre > 0) || !(invest >= 0) || !(founder >= 0 && founder <= 100)) {
+      if (eqPost) eqPost.textContent = "—";
+      if (eqInvestorPct) eqInvestorPct.textContent = "—";
+      if (eqFounderPostPct) eqFounderPostPct.textContent = "—";
+      if (eqStatus) eqStatus.textContent = "Informe valuation pré-money maior que zero, investimento não negativo e participação inicial entre 0 e 100%.";
+      return;
+    }
+    const post = pre + invest;
+    const investor = invest / post * 100;
+    const founderAfter = founder * pre / post;
+    if (eqPost) eqPost.textContent = fmt(post);
+    if (eqInvestorPct) eqInvestorPct.textContent = fmt(investor) + "%";
+    if (eqFounderPostPct) eqFounderPostPct.textContent = fmt(founderAfter) + "%";
+    if (eqStatus) eqStatus.textContent = "Simulação simplificada, sem opções, classes de ações, preferências, conversíveis, aportes secundários, impostos ou condições contratuais.";
+  };
+  [eqPre, eqInvestment, eqFounder].forEach((field) => field?.addEventListener("input", updateEquityStudio));
+  updateEquityStudio();
+
+  const glossary = [
+    ["Valuation", "Estimativa do valor econômico de um negócio ou ativo, baseada em premissas e métodos que precisam ser explicitados."],
+    ["Enterprise Value (EV)", "Valor da operação, antes do ajuste pela estrutura líquida de dívida e caixa para chegar ao valor do capital próprio."],
+    ["Equity value", "Valor estimado pertencente aos acionistas, considerando os ajustes aplicáveis entre EV, dívida líquida e outros itens."],
+    ["EBITDA", "Resultado antes de juros, impostos, depreciação e amortização; não é caixa livre nem substitui análise de fluxo de caixa."],
+    ["Margem EBITDA", "EBITDA dividido pela receita, normalmente expresso em percentual."],
+    ["Due diligence", "Investigação financeira, tributária, jurídica, trabalhista, operacional, comercial e tecnológica antes de uma transação."],
+    ["M&A", "Mergers and Acquisitions: fusões e aquisições de empresas."],
+    ["LOI", "Letter of Intent: documento que registra a intenção e parâmetros iniciais de uma possível transação; efeitos dependem de suas cláusulas."],
+    ["Term sheet", "Resumo dos principais termos econômicos e societários de uma negociação de investimento."],
+    ["Earn-out", "Parcela de preço condicionada a resultados ou metas futuras definidos no acordo."],
+    ["Cap table", "Quadro que mostra quem detém as participações societárias e como elas se distribuem."],
+    ["Diluição", "Redução percentual da participação de sócios existentes após novas emissões ou operações societárias."],
+    ["Pré-money", "Valuation acordado antes da entrada do novo capital em uma rodada."],
+    ["Pós-money", "Valuation pré-money somado ao investimento primário da rodada, no modelo simples."],
+    ["Fluxo de caixa", "Registro e projeção das entradas e saídas de dinheiro ao longo do tempo."],
+    ["Capital de giro", "Recursos necessários para sustentar o ciclo operacional, considerando recebimentos, pagamentos e estoques."],
+    ["CAC", "Custo de Aquisição de Cliente: custo atribuído a conquistar clientes em um período e contexto definidos."],
+    ["LTV", "Lifetime Value: estimativa do valor econômico gerado por cliente ao longo do relacionamento, dependente das premissas."],
+    ["Churn", "Taxa de cancelamento ou perda de clientes/receita recorrente no período analisado."],
+    ["Runway", "Tempo estimado até acabar o caixa disponível, dadas as premissas de consumo líquido de caixa."],
+    ["Burn rate", "Ritmo de consumo de caixa em um período."],
+    ["ROI", "Retorno sobre o investimento; a utilidade depende de como retorno, custos e horizonte são medidos."],
+    ["ROIC", "Retorno sobre o capital investido na operação, segundo uma metodologia explicitada."],
+    ["Múltiplo EV/EBITDA", "Relação entre valor da operação e EBITDA; comparação exige negócios, períodos e ajustes compatíveis."],
+    ["Drawdown", "Queda de um pico até um fundo posterior de valor ou patrimônio ao longo de uma série."],
+    ["Volatilidade", "Medida de dispersão das variações de preço ou retorno; não descreve sozinha todos os riscos."],
+    ["Liquidez", "Facilidade de comprar ou vender sem provocar grande impacto no preço; inclui dimensões de mercado e caixa."],
+    ["Spread", "Diferença entre preços de compra e venda, ou entre taxas, conforme o contexto."],
+    ["Slippage", "Diferença entre o preço esperado e o preço efetivamente obtido em uma execução."],
+    ["Ordem limitada", "Ordem com limite de preço; pode não ser executada."],
+    ["Ordem a mercado", "Ordem para executar ao melhor preço disponível, sem garantir um preço específico."],
+    ["Market cap", "Preço de mercado multiplicado pela quantidade de unidades ou ações em circulação considerada pela fonte."],
+    ["Stablecoin", "Criptoativo projetado para acompanhar uma referência, como moeda fiduciária; há riscos de emissor, reservas e paridade."],
+    ["Staking", "Participação em mecanismos de prova de participação ou serviços que podem envolver bloqueios, riscos técnicos e de contraparte."],
+    ["Custódia própria", "Controle direto das chaves de acesso aos ativos; transfere ao usuário responsabilidades de segurança e recuperação."],
+    ["Holding", "Sociedade que detém participações em outras empresas e/ou ativos conforme sua estrutura e finalidade."],
+    ["Governança", "Princípios, controles, papéis e processos que orientam decisões e prestação de contas."],
+    ["Exit", "Saída total ou parcial de um investimento, por venda, recompra, oferta pública ou outra transação."],
+    ["Alocação de ativos", "Distribuição de recursos entre classes e posições, de acordo com objetivos, horizonte e risco."]
+  ];
+  const glossaryResults = page.querySelector("#invGlossaryResults");
+  const glossarySearch = page.querySelector("#invGlossarySearch");
+  const paintGlossary = () => {
+    const q = String(glossarySearch?.value || "").trim().toLocaleLowerCase("pt-BR");
+    const list = glossary.filter(([term, definition]) => (term + " " + definition).toLocaleLowerCase("pt-BR").includes(q));
+    if (glossaryResults) glossaryResults.innerHTML = list.length
+      ? list.map(([term, definition]) => '<article class="mod-row"><div class="mod-body"><h3>' + esc(term) + '</h3><p>' + esc(definition) + '</p></div></article>').join("")
+      : '<p class="notes-hint">Nenhum termo encontrado. Experimente outra palavra.</p>';
+  };
+  glossarySearch?.addEventListener("input", paintGlossary);
+  paintGlossary();
 
   const list = page.querySelector("#invThesisList");
   const status = page.querySelector("#invSaveStatus");
