@@ -388,7 +388,8 @@ export function renderFase3() {
     ["complementar", "Complementar"],
     ["quitei", "Quitei"],
     ["criancas", "Crianças"],
-    ["empresas", "Empresas"]
+    ["empresas", "Empresas"],
+    ["investimentos", "Investimentos & Mercados"]
   ];
   return pagina(
     "3",

@@ -362,5 +362,16 @@ service cloud.firestore {
       allow read, write: if isSignedIn() && request.auth.uid == uid;
       allow read: if isAfMentor();
     }
+
+    // Biblioteca da camada Investimentos & Mercados: cursos e vídeos compartilhados.
+    // Leitura para mentor e contas com acesso AF aprovado/ativo; escrita somente do mentor.
+    match /afLearningCourses/{courseId} {
+      allow read: if isSignedIn() && (isAfMentor() || hasAfAccess(request.auth.uid));
+      allow create, update, delete: if isAfMentor();
+      match /videos/{videoId} {
+        allow read: if isSignedIn() && (isAfMentor() || hasAfAccess(request.auth.uid));
+        allow create, update, delete: if isAfMentor();
+      }
+    }
   }
 }

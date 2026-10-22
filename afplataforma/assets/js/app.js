@@ -25,11 +25,11 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=rt46";
+} from "./navigation.js?v=rt47";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
-import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js?v=rt47";
+import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js?v=rt48";
 import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI, onCallNavigate } from "./call.js?v=ux1";
 import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
@@ -63,6 +63,7 @@ import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audio
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt46";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
+import { renderInvestimentos, bindInvestimentos } from "./investimentos.js?v=1";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -684,6 +685,7 @@ registerRenderers({
   "fase2-oferta": renderFase2Oferta,
   "fase2-ativos": renderFase2Ativos,
   fase3: renderFase3,
+  investimentos: renderInvestimentos,
   "fase3-preco": renderFase3Preco,
   fase4: renderFase4,
   "fase4-sdr": renderFase4Sdr,
@@ -730,6 +732,7 @@ onAfterNavigate((view) => {
   if (view === "fase2-oferta") bindFase2Oferta();
   if (view === "fase2-ativos") bindFase2Ativos();
   if (view === "fase3-preco") bindFase3Preco();
+  if (view === "investimentos") bindInvestimentos();
   if (view === "fase4-depende") bindFase4Depende();
   if (view === "fase4-divulga") bindFase4Divulga();
   if (view === "fase5-livro") bindFase5Livro();
