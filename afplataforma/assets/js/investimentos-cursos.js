@@ -7,7 +7,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { db, isMentorIdentity } from "../../firebase/firebase-config.js";
 import { session, isMentorSession } from "./auth.js";
-import { esc } from "./navigation.js?v=rt46";
+import { esc } from "./navigation.js?v=rt47";
 
 const COURSES = "afLearningCourses";
 let playerModal = null;
