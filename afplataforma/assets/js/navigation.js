@@ -28,7 +28,7 @@ export function getCurrentView() {
 function fase3Aberta(view) {
   return view === "modules" || view === "tools" || view === "call" || view === "complementar"
     || view === "quitei" || view === "empresas"
-    || view.startsWith("module:") || view.startsWith("comp:") || view.startsWith("criancas");
+    || view.startsWith("module:") || view.startsWith("comp:") || view.startsWith("criancas") || view === "investimentos";
 }
 
 export function buildNav() {
@@ -127,6 +127,7 @@ export async function navigate(view) {
     "fase2-ativos": "Diagnóstico de ativos",
     fase3: "Fase 3 · AF",
     "fase3-preco": "Preço mínimo",
+    investimentos: "Investimentos & Mercados",
     fase4: "Fase 4 · Expansão",
     "fase4-divulga": "Divulgação",
     "fase4-depende": "O que depende de mim",
