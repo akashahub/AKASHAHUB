@@ -39,3 +39,15 @@ Adicionar ao ecossistema AF um laboratório de análise de mercados e investimen
 - Não exibir preço ou indicador sem fonte e horário; distinguir dado observado, cálculo, hipótese e opinião.
 - Não tratar a primeira versão como fonte de cotação em tempo real: atualmente ela não tem integração de mercado.
 - Manter desenvolvimento em branch próprio e revisar as alterações antes de integrar à versão publicada.
+
+## Biblioteca de cursos e aulas
+
+A tela Investimentos & Mercados inclui uma biblioteca compartilhada em Firestore. O mentor autorizado cadastra cursos e adiciona aulas por link ou ID do YouTube. O catálogo armazena o ID do vídeo, não mostra o link como texto na área do aluno e abre a aula em um modal com botão de fechar, clique fora e tecla Escape. O acesso é regido por Firestore Rules: leitura para mentor e contas AF aprovadas/ativas; gravação e remoção somente pelo mentor. O vídeo e a permissão de incorporação continuam sob controle do proprietário no YouTube.
+
+**Nota de implantação:** o arquivo afplataforma/firestore.rules do repositório adiciona as regras da coleção afLearningCourses e da subcoleção videos. Para que a biblioteca funcione em produção, essas Rules precisam ser publicadas no projeto Firebase correto junto com o código. Criar ou atualizar arquivos no GitHub não publica automaticamente as Rules.
+
+## Ferramentas funcionais acrescentadas
+
+- **Deal Lens:** estima EBITDA a partir de receita e margem informadas, múltiplo pedido, EV pelo múltiplo de referência, equity value indicativo e diferença entre pedido e cenário.
+- **Equity Studio:** simula valuation pré-money/pós-money e participação percentual após um aporte simples.
+- **Glossário vivo:** pesquisa termos de negócios, M&A, mercados, cripto e gestão com definições curtas e limitações indicadas.
