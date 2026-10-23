@@ -1040,6 +1040,7 @@ function aplicarCms(data) {
   }
   if (Array.isArray(data.livros)) cms.livros = data.livros;
   if (Array.isArray(data.audios)) cms.audios = data.audios;
+  if (data.videos && typeof data.videos === "object") Object.assign(catalogVideos, data.videos);
 }
 function momentoCms(data) { return Number(data && data.updatedAt) || 0; }
 function quadro(aula) {
@@ -1373,13 +1374,14 @@ async function addAdmin() { return; }
 async function listarAdmins() { return; }
 
 async function saveCms() {
-  const payload = { cursos: cms.cursos || [], livros: cms.livros || [], audios: cms.audios || [], by: mail(), updatedAt: Date.now() };
+  // A publicação compartilhada é a fonte oficial dos cursos e dos vídeos para todos os alunos.
+  const payload = { cursos: cms.cursos || [], livros: cms.livros || [], audios: cms.audios || [], videos: catalogVideos || {}, by: mail(), updatedAt: Date.now() };
   let publico = false;
   let mentor = false;
   let erro = "";
-  try { await setDoc(doc(db, "membrosGestao", "conteudo"), payload); publico = true; } catch (e) { erro = e.code || "publico"; }
-  try { await setDoc(doc(db, "afMentorNotes", "membersConteudo"), payload); mentor = true; } catch (e) { if (!erro) erro = e.code || "mentor"; }
-  if (!publico && !mentor) throw new Error(erro || "nao");
+  try { await setDoc(doc(db, "membrosGestao", "conteudo"), payload); publico = true; } catch (e) { erro = e.code || e.message || "publico"; }
+  try { await setDoc(doc(db, "afMentorNotes", "membersConteudo"), payload); mentor = true; } catch (e) { if (!erro) erro = e.code || e.message || "mentor"; }
+  if (!publico) throw new Error("A publicação compartilhada falhou (" + (erro || "firebase") + "). O conteúdo continua apenas na gestão; confira as permissões do Firestore.");
   return { publico, mentor, erro };
 }
 
@@ -1882,41 +1884,45 @@ function moverAula(dir) {
 
 async function saveLessonVideo() {
   const note = document.getElementById("videoNote");
+  const button = document.getElementById("saveVideo");
   const raw = (document.getElementById("videoUrl") || {}).value || "";
   const lido = lerMidia(raw);
   const provider = lido.provider || (document.getElementById("videoProvider") || {}).value || "youtube";
   const libraryId = lido.libraryId || limpo((document.getElementById("libraryId") || {}).value || "");
   const videoId = lido.videoId || (provider === "youtube" ? (ytId(raw) || limpo(raw)) : limpo(raw));
-  if (provider === "bunny" && (!libraryId || !videoId)) { note.textContent = "No Bunny, falta Library ID ou Video ID."; return; }
-  if (!videoId) { note.textContent = "Cola o link do YouTube ou o Video ID."; return; }
-  const ref = acharCms();
-  if (ref && ref.aula) ref.aula.video = { provider, videoId, libraryId };
+  if (provider === "bunny" && (!libraryId || !videoId)) { if (note) note.textContent = "No Bunny, falta Library ID ou Video ID."; return; }
+  if (!videoId) { if (note) note.textContent = "Cola o link do YouTube ou o Video ID."; return; }
+
   const token = provider === "bunny" ? "bunny|" + libraryId + "|" + videoId : videoId;
   const key = videoKey();
-  const cursoKey = AREA[route.nivel] + ":" + route.curso;
+  const ref = acharCms();
+  if (ref && ref.aula) ref.aula.video = { provider, videoId, libraryId };
   catalogVideos[key] = token;
-  try { if ((cms.cursos || []).length) await saveCms(); } catch (e) {}
+
+  if (button) { button.disabled = true; button.textContent = "Publicando…"; }
+  if (note) note.textContent = "Salvando e publicando para os alunos autorizados…";
   try {
-    await setDoc(doc(db, "aulas", key.split(":").join("_")), {
-      provider, videoId, libraryId, area: AREA[route.nivel], cursoKey, by: mail()
-    });
-  } catch (e) {}
-  try {
-    await setDoc(doc(db, "membrosGestao", "videos"), { [key]: token }, { merge: true });
-  } catch (e) {}
-  try {
-    const all = await getDocs(collection(db, "membrosAcessos"));
-    for (const item of all.docs) {
-      const data = item.data();
-      const ok = (data.areas || []).includes(AREA[route.nivel]) || (data.cursos || []).includes(cursoKey);
-      if (!ok) continue;
-      const videos = Object.assign({}, data.videos || {});
-      videos[key] = token;
-      await setDoc(item.ref, { videos }, { merge: true });
-    }
-  } catch (e) {}
-  note.textContent = "Vídeo salvo para quem já tem esse direito.";
-  draw();
+    // A publicação partilhada inclui o mapa de vídeos e é a fonte que os alunos podem ler.
+    const salvo = await saveCms();
+    if (!salvo.publico) throw new Error("O Firebase não confirmou a publicação compartilhada.");
+    // Compatibilidade com os registos antigos de vídeo; não substitui a publicação acima.
+    try {
+      await setDoc(doc(db, "aulas", key.split(":").join("_")), {
+        provider, videoId, libraryId, area: AREA[route.nivel], cursoKey: AREA[route.nivel] + ":" + route.curso, by: mail()
+      });
+    } catch (e) { console.warn("[members] registro legado de aula:", e.code || e.message); }
+    try { await setDoc(doc(db, "membrosGestao", "videos"), { [key]: token }, { merge: true }); }
+    catch (e) { console.warn("[members] catálogo legado de vídeos:", e.code || e.message); }
+
+    if (note) note.textContent = "Publicado com sucesso. O vídeo já está na fonte compartilhada; alunos autorizados devem recebê-lo sem refazer a edição.";
+    draw();
+  } catch (e) {
+    console.error("[members] falha ao publicar vídeo:", e);
+    if (note) note.textContent = "Não foi publicado para os alunos. " + (e.message || e.code || "Verifique as permissões do Firebase e tente novamente.");
+  } finally {
+    const currentButton = document.getElementById("saveVideo");
+    if (currentButton) { currentButton.disabled = false; currentButton.textContent = "Salvar vídeo"; }
+  }
 }
 
 function pullRights(data) {
