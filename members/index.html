@@ -111,7 +111,7 @@ input,label{color:var(--text)}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const auth = getAuth(initializeApp({
   apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
@@ -421,6 +421,7 @@ let catalogVideos = {};
 let cms = { cursos: [], livros: [], audios: [] };
 let cmsAt = { mode: "lista", index: 0, mod: 0, aula: 0 };
 let adminOn = false;
+let stopPublicCms = null;
 let route = { view: "portal", nivel: 1, curso: "", mod: 0, aula: 0 };
 
 function esc(s) { return String(s || "").replace(/[&<>]/g, c => ({ "&": "&", "<": "<", ">": ">" }[c])); }
@@ -2004,6 +2005,22 @@ onAuthStateChanged(auth, async next => {
       try { await saveCms(); } catch (e) {}
     }
     await loadStripeGrants();
+    // Os alunos ficam inscritos no conteúdo compartilhado: uma publicação do mentor
+    // atualiza a área sem depender de novo login ou de um refresh manual.
+    if (stopPublicCms) { stopPublicCms(); stopPublicCms = null; }
+    if (!adminOn) {
+      stopPublicCms = onSnapshot(doc(db, "membrosGestao", "conteudo"), snap => {
+        if (!snap.exists()) return;
+        aplicarCms(snap.data());
+        garantirTechub();
+        draw();
+      }, error => {
+        console.warn("[members] conteúdo publicado não atualizou em tempo real:", error.code || error.message);
+      });
+    }
+  } else if (stopPublicCms) {
+    stopPublicCms();
+    stopPublicCms = null;
   }
   garantirTechub();
   draw();
