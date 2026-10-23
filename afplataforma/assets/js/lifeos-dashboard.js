@@ -11,22 +11,20 @@ import { getAfTool, saveAfTool } from "../../firebase/firestore.js";
 const PLAN_TOOL_ID = "lifeos-weekly-plan";
 
 function emptyWeeklyPlan() {
-  return {
-    focus: "",
-    tasks: Array.from({ length: 3 }, () => ({ text: "", due: "", done: false }))
-  };
+  return { focus: "", tasks: [] };
 }
 
 function cleanWeeklyPlan(raw) {
   const plan = raw && typeof raw === "object" ? raw : {};
   const sourceTasks = Array.isArray(plan.tasks) ? plan.tasks : [];
-  const tasks = Array.from({ length: 3 }, (_, i) => {
-    const task = sourceTasks[i] && typeof sourceTasks[i] === "object" ? sourceTasks[i] : {};
-    const due = String(task.due || "");
+  const tasks = sourceTasks.slice(0, 100).map((task) => {
+    const item = task && typeof task === "object" ? task : {};
+    const due = String(item.due || "");
     return {
-      text: String(task.text || "").slice(0, 160),
-      due: /^\d{4}-\d{2}-\d{2}$/.test(due) ? due : "",
-      done: task.done === true
+      id: String(item.id || (Date.now().toString(36) + Math.random().toString(36).slice(2, 8))),
+      text: String(item.text || "").slice(0, 160),
+      due: /^\\d{4}-\\d{2}-\\d{2}$/.test(due) ? due : "",
+      done: item.done === true
     };
   });
   return { focus: String(plan.focus || "").slice(0, 180), tasks };
@@ -40,38 +38,47 @@ function storedWeeklyPlan() {
   }
 }
 
+function taskRow(task, i) {
+  return `<article class="lifeos-plan-task${task.done ? " is-done" : ""}" data-task-row="${esc(task.id)}">
+    <label class="lifeos-plan-done" title="Marcar como concluída">
+      <input data-plan-done="${esc(task.id)}" type="checkbox" ${task.done ? "checked" : ""}>
+    </label>
+    <div class="lifeos-plan-task-main">
+      <label class="sr-only" for="lifeosTask${esc(task.id)}">Descrição da tarefa ${i + 1}</label>
+      <input id="lifeosTask${esc(task.id)}" data-plan-task="${esc(task.id)}" maxlength="160" value="${esc(task.text)}" placeholder="O que precisa ser feito?">
+      <div class="lifeos-plan-task-meta">
+        <label for="lifeosDue${esc(task.id)}">Prazo</label>
+        <input id="lifeosDue${esc(task.id)}" data-plan-due="${esc(task.id)}" type="date" value="${esc(task.due)}">
+      </div>
+    </div>
+    <button class="lifeos-task-remove" type="button" data-task-remove="${esc(task.id)}" aria-label="Remover tarefa">×</button>
+  </article>`;
+}
+
 function renderWeeklyPlan(plan) {
-  return `<section class="lifeos-plan" id="lifeosPlan" aria-label="Meu plano de execução">
+  return `<section class="lifeos-plan" id="lifeosPlan" aria-label="Lista de tarefas">
     <div class="lifeos-plan-head">
       <div>
-        <p class="eyebrow">Aplicação prática</p>
-        <h3>Meu plano de execução</h3>
-        <p>Transforme a conversa da mentoria em até três ações claras para a semana.</p>
+        <p class="eyebrow">Organização e execução</p>
+        <h3>Minhas tarefas</h3>
+        <p>Adicione tarefas, defina prazos e marque o que já concluiu.</p>
       </div>
-      <span class="lifeos-plan-count" id="lifeosPlanCount">0/3 concluídas</span>
+      <span class="lifeos-plan-count" id="lifeosPlanCount">0/0 concluídas</span>
     </div>
     <div class="lifeos-plan-focus">
-      <label for="lifeosPlanFocus">Foco principal da semana</label>
-      <input id="lifeosPlanFocus" maxlength="180" value="${esc(plan.focus)}" placeholder="Qual resultado merece sua atenção agora?">
+      <label for="lifeosPlanFocus">Prioridade principal</label>
+      <input id="lifeosPlanFocus" maxlength="180" value="${esc(plan.focus)}" placeholder="Qual é a prioridade mais importante agora?">
     </div>
-    <div class="lifeos-plan-tasks">
-      ${plan.tasks.map((task, i) => `<article class="lifeos-plan-task">
-        <div class="lifeos-plan-task-title"><span>${String(i + 1).padStart(2, "0")}</span><strong>Ação ${i + 1}</strong></div>
-        <label class="sr-only" for="lifeosTask${i}">Descrição da ação ${i + 1}</label>
-        <input id="lifeosTask${i}" data-plan-task="${i}" maxlength="160" value="${esc(task.text)}" placeholder="Escreva uma ação concreta">
-        <div class="lifeos-plan-task-meta">
-          <label for="lifeosDue${i}">Prazo</label>
-          <input id="lifeosDue${i}" data-plan-due="${i}" type="date" value="${esc(task.due)}">
-          <label class="lifeos-plan-done" for="lifeosDone${i}">
-            <input id="lifeosDone${i}" data-plan-done="${i}" type="checkbox" ${task.done ? "checked" : ""}>
-            Concluída
-          </label>
-        </div>
-      </article>`).join("")}
+    <div class="lifeos-plan-add">
+      <input id="lifeosNewTask" maxlength="160" placeholder="Digite uma tarefa e pressione Enter">
+      <button class="tool-btn primary" type="button" id="lifeosPlanAdd">+ Adicionar</button>
+    </div>
+    <div class="lifeos-plan-tasks" id="lifeosPlanTasks">
+      ${plan.tasks.map((task, i) => taskRow(task, i)).join("") || '<p class="lifeos-plan-empty">Sua lista está vazia. Adicione a primeira tarefa acima.</p>'}
     </div>
     <div class="lifeos-plan-footer">
-      <p id="lifeosPlanStatus" role="status" aria-live="polite">Seu plano fica salvo nesta conta quando a sincronização está disponível.</p>
-      <button class="tool-btn primary" type="button" id="lifeosPlanSave">Salvar plano</button>
+      <p id="lifeosPlanStatus" role="status" aria-live="polite">Suas tarefas ficam salvas nesta conta quando a sincronização está disponível.</p>
+      <button class="tool-btn primary" type="button" id="lifeosPlanSave">Salvar tarefas</button>
     </div>
   </section>`;
 }
@@ -79,26 +86,22 @@ function renderWeeklyPlan(plan) {
 function paintWeeklyPlan(root, plan) {
   const focus = root.querySelector("#lifeosPlanFocus");
   if (focus) focus.value = plan.focus;
-  plan.tasks.forEach((task, i) => {
-    const text = root.querySelector('[data-plan-task="' + i + '"]');
-    const due = root.querySelector('[data-plan-due="' + i + '"]');
-    const done = root.querySelector('[data-plan-done="' + i + '"]');
-    if (text) text.value = task.text;
-    if (due) due.value = task.due;
-    if (done) done.checked = task.done;
-  });
+  const list = root.querySelector("#lifeosPlanTasks");
+  if (list) list.innerHTML = plan.tasks.map((task, i) => taskRow(task, i)).join("") || '<p class="lifeos-plan-empty">Sua lista está vazia. Adicione a primeira tarefa acima.</p>';
   updateWeeklyPlanCount(root);
 }
 
 function collectWeeklyPlan(root) {
-  return cleanWeeklyPlan({
-    focus: root.querySelector("#lifeosPlanFocus")?.value || "",
-    tasks: Array.from({ length: 3 }, (_, i) => ({
-      text: root.querySelector('[data-plan-task="' + i + '"]')?.value || "",
-      due: root.querySelector('[data-plan-due="' + i + '"]')?.value || "",
-      done: root.querySelector('[data-plan-done="' + i + '"]')?.checked === true
-    }))
+  const tasks = [...root.querySelectorAll("[data-plan-task]")].map((field) => {
+    const id = field.dataset.planTask;
+    return {
+      id,
+      text: field.value || "",
+      due: root.querySelector('[data-plan-due="' + id + '"]')?.value || "",
+      done: root.querySelector('[data-plan-done="' + id + '"]')?.checked === true
+    };
   });
+  return cleanWeeklyPlan({ focus: root.querySelector("#lifeosPlanFocus")?.value || "", tasks });
 }
 
 function updateWeeklyPlanCount(root) {
@@ -108,6 +111,10 @@ function updateWeeklyPlanCount(root) {
   const filled = plan.tasks.filter((task) => task.text.trim()).length;
   const done = plan.tasks.filter((task) => task.text.trim() && task.done).length;
   count.textContent = done + "/" + filled + " concluídas";
+  root.querySelectorAll("[data-task-row]").forEach((row) => {
+    const checkbox = row.querySelector("[data-plan-done]");
+    row.classList.toggle("is-done", checkbox?.checked === true);
+  });
 }
 
 export function bindLifeOsDashboard() {
@@ -117,52 +124,86 @@ export function bindLifeOsDashboard() {
   section.dataset.bound = "1";
   const status = section.querySelector("#lifeosPlanStatus");
   const button = section.querySelector("#lifeosPlanSave");
+  const addButton = section.querySelector("#lifeosPlanAdd");
+  const newTask = section.querySelector("#lifeosNewTask");
 
+  const persistLocal = (data) => {
+    try { Store.set("lifeos_weekly_plan_" + (session.uid || "anon"), data); } catch {}
+  };
+  const addTask = () => {
+    const text = String(newTask?.value || "").trim();
+    if (!text) { newTask?.focus(); return; }
+    const plan = collectWeeklyPlan(section);
+    if (plan.tasks.length >= 100) {
+      if (status) status.textContent = "Você chegou ao limite de 100 tarefas nesta lista.";
+      return;
+    }
+    plan.tasks.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), text: text.slice(0, 160), due: "", done: false });
+    paintWeeklyPlan(section, plan);
+    if (newTask) { newTask.value = ""; newTask.focus(); }
+    persistLocal(collectWeeklyPlan(section));
+  };
+  addButton?.addEventListener("click", addTask);
+  newTask?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") { event.preventDefault(); addTask(); }
+  });
+  section.addEventListener("click", (event) => {
+    const remove = event.target.closest("[data-task-remove]");
+    if (!remove) return;
+    remove.closest("[data-task-row]")?.remove();
+    if (!section.querySelector("[data-task-row]")) {
+      section.querySelector("#lifeosPlanTasks").innerHTML = '<p class="lifeos-plan-empty">Sua lista está vazia. Adicione a primeira tarefa acima.</p>';
+    }
+    persistLocal(collectWeeklyPlan(section));
+    updateWeeklyPlanCount(section);
+  });
   section.addEventListener("input", () => updateWeeklyPlanCount(section));
-  section.addEventListener("change", () => updateWeeklyPlanCount(section));
+  section.addEventListener("change", () => {
+    updateWeeklyPlanCount(section);
+    persistLocal(collectWeeklyPlan(section));
+  });
 
   button?.addEventListener("click", async () => {
-    const plan = collectWeeklyPlan(section);
-    const storageKey = "lifeos_weekly_plan_" + (session.uid || "anon");
-    try { Store.set(storageKey, plan); } catch {}
+    const current = collectWeeklyPlan(section);
+    persistLocal(current);
     button.disabled = true;
     button.textContent = "Salvando...";
-    if (status) status.textContent = "Salvando seu plano...";
+    if (status) status.textContent = "Salvando suas tarefas...";
     try {
       if (session.mode === "firebase" && session.uid) {
-        await saveAfTool(session.uid, PLAN_TOOL_ID, plan);
-        if (status) status.textContent = "Plano salvo na sua conta e sincronizado entre dispositivos.";
+        await saveAfTool(session.uid, PLAN_TOOL_ID, current);
+        if (status) status.textContent = "Tarefas salvas na sua conta e sincronizadas entre dispositivos.";
       } else {
-        if (status) status.textContent = "Plano salvo neste navegador. Entre com sua conta para sincronizar entre dispositivos.";
+        if (status) status.textContent = "Tarefas salvas neste navegador. Entre com sua conta para sincronizar entre dispositivos.";
       }
       if (status) status.dataset.state = "saved";
     } catch (error) {
-      console.warn("[LifeOS] Não foi possível sincronizar o plano:", error?.code || error?.message || error);
+      console.warn("[LifeOS] Não foi possível sincronizar as tarefas:", error?.code || error?.message || error);
       if (status) status.textContent = "Rascunho guardado neste navegador, mas a sincronização não concluiu. Tente novamente.";
       if (status) status.dataset.state = "local";
     } finally {
       button.disabled = false;
-      button.textContent = "Salvar plano";
+      button.textContent = "Salvar tarefas";
     }
   });
 
   if (session.mode === "firebase" && session.uid) {
-    if (status) status.textContent = "Carregando seu plano salvo...";
+    if (status) status.textContent = "Carregando suas tarefas...";
     getAfTool(session.uid, PLAN_TOOL_ID).then((remote) => {
       if (!root.contains(section) || !remote) {
-        if (root.contains(section) && status) status.textContent = "Nenhum plano sincronizado ainda. Preencha e salve suas ações.";
+        if (root.contains(section) && status) status.textContent = "Nenhuma tarefa sincronizada ainda. Adicione sua primeira tarefa.";
         return;
       }
-      const plan = cleanWeeklyPlan(remote);
-      paintWeeklyPlan(section, plan);
-      try { Store.set("lifeos_weekly_plan_" + session.uid, plan); } catch {}
-      if (status) status.textContent = "Plano carregado da sua conta.";
+      const loaded = cleanWeeklyPlan(remote);
+      paintWeeklyPlan(section, loaded);
+      persistLocal(loaded);
+      if (status) status.textContent = "Tarefas carregadas da sua conta.";
     }).catch((error) => {
-      console.warn("[LifeOS] Não foi possível carregar o plano:", error?.code || error?.message || error);
-      if (root.contains(section) && status) status.textContent = "Não consegui carregar da nuvem agora. Você ainda pode preencher e salvar um rascunho local.";
+      console.warn("[LifeOS] Não foi possível carregar as tarefas:", error?.code || error?.message || error);
+      if (root.contains(section) && status) status.textContent = "Não consegui carregar da nuvem agora. Você ainda pode salvar um rascunho local.";
     });
   } else if (status) {
-    status.textContent = "Modo local: o plano fica salvo neste navegador, sem sincronização entre dispositivos.";
+    status.textContent = "Modo local: as tarefas ficam salvas neste navegador, sem sincronização entre dispositivos.";
   }
   updateWeeklyPlanCount(section);
 }
@@ -213,6 +254,13 @@ export function renderLifeOsDashboard() {
       .lifeos-home .lifeos-plan-task-meta input[type=date]{max-width:100%}
       .lifeos-home .lifeos-plan-done{display:flex!important;align-items:center;gap:8px;margin-top:2px}
       .lifeos-home .lifeos-plan-done input{accent-color:#76509a}
+      .lifeos-home .lifeos-plan-add{display:flex;gap:8px;margin:14px 0}
+      .lifeos-home .lifeos-plan-add input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff;color:#20212a}
+      .lifeos-home .lifeos-plan-task{display:flex;align-items:flex-start;gap:10px}
+      .lifeos-home .lifeos-plan-task-main{flex:1;min-width:0}
+      .lifeos-home .lifeos-plan-task.is-done [data-plan-task]{text-decoration:line-through;opacity:.65}
+      .lifeos-home .lifeos-task-remove{border:0;background:transparent;font-size:22px;cursor:pointer;color:var(--muted);padding:0 8px}
+      .lifeos-home .lifeos-plan-empty{padding:16px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:13px}
       .lifeos-home .lifeos-plan-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
       .lifeos-home .lifeos-plan-footer p{max-width:620px}
       .lifeos-home .lifeos-plan .tool-btn{cursor:pointer}
