@@ -305,7 +305,7 @@ export function renderLifeOsDashboard() {
         <small>Este indicador mostra permissões de acesso, não conclusão de atividades ou resultados.</small>
       </div>
     </section>
-    ${session.role === "mentee" ? renderWeeklyPlan(storedWeeklyPlan()) : ""}
+    ${renderWeeklyPlan(storedWeeklyPlan())}
     <div class="grid-3">
       <div class="stat-card"><div class="lbl">Módulos liberados</div><div class="val">${abertos}/${totalModulos}</div><div class="hint">Acesso atual da sua conta</div></div>
       <div class="stat-card"><div class="lbl">Próxima liberação na trilha</div><div class="val" style="font-size:.98rem;line-height:1.4;padding-top:8px">${proximo ? esc(proximo.num + " · " + proximo.title) : "Trilha liberada"}</div><div class="hint">${proximo ? "Se precisar deste conteúdo, alinhe a liberação com seu mentor." : "Todos os módulos estão liberados para sua conta."}</div></div>
