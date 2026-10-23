@@ -319,6 +319,7 @@ async function openCashflow() {
 
   let tipo = "saida";
   let cat = "Alimentação";
+  let editingCashIndex = null;
   const chips = document.getElementById("cChips");
   const paintChips = () => {
     chips.innerHTML = CATS.map(([name, color]) =>
@@ -398,13 +399,35 @@ async function openCashflow() {
         return `<article class="cfx-tx">
           <i class="cfx-dot" style="background:${catColor(it.cat)}"></i>
           <div><b>${esc(it.desc || "Lançamento")}</b><small>${esc(it.cat)}${it.recur === "fixo" ? " · todo mês" : ""}${st === "previsto" ? " · previsto" : ""}</small>
-            <div class="cfx-mini"><button type="button" data-pay="${i}">${st === "pago" ? "Marcar previsto" : "Marcar pago"}</button><button type="button" data-rm="${i}">Apagar</button></div>
+            <div class="cfx-mini"><button type="button" data-pay="${i}">${st === "pago" ? "Marcar previsto" : "Marcar pago"}</button><button type="button" data-edcash="${i}">Editar</button><button type="button" data-rm="${i}">Apagar</button></div>
           </div>
           <span class="cfx-amt ${sign}${st === "previsto" ? " prev" : ""}">${it.tipo === "entrada" ? "+" : "−"} ${brl(it.val)}</span>
         </article>`;
       }).join("");
     }).join("") : `<p class="cfx-empty">Nenhum lançamento neste mês. Toque no + para começar.</p>`;
 
+    el.querySelectorAll("[data-edcash]").forEach((b) => {
+      b.onclick = () => {
+        const i = Number(b.dataset.edcash);
+        const it = window._cash[i];
+        if (!it) return;
+        editingCashIndex = i;
+        document.getElementById("cVal").value = String(it.val);
+        document.getElementById("cDesc").value = it.desc || "";
+        document.getElementById("cDate").value = it.date || today;
+        document.getElementById("cAct").value = it.act || "manter";
+        document.getElementById("cEss").value = it.ess || "sim";
+        document.getElementById("cStatus").value = it.status || "pago";
+        document.getElementById("cRecur").value = it.recur || "unico";
+        cat = it.cat || "Outro";
+        setTipo(it.tipo === "entrada" ? "entrada" : "saida");
+        cat = it.cat || (it.tipo === "entrada" ? "Receita" : "Outro");
+        paintChips();
+        document.getElementById("btnAddCash").textContent = "Salvar edição";
+        document.getElementById("cashSheet").hidden = false;
+        document.getElementById("cVal").focus();
+      };
+    });
     el.querySelectorAll("[data-rm]").forEach((b) => {
       b.onclick = async () => {
         window._cash.splice(+b.dataset.rm, 1);
@@ -442,29 +465,35 @@ async function openCashflow() {
   };
   document.getElementById("btnAddCash").onclick = async () => {
     const date = document.getElementById("cDate").value || today;
-    const val = parseFloat(document.getElementById("cVal").value);
+    const val = Number(document.getElementById("cVal").value);
     const desc = document.getElementById("cDesc").value.trim();
-    if (!desc || !val) return;
+    if (!desc || !Number.isFinite(val) || val <= 0) {
+      toast("Informe uma descrição e um valor válido", true);
+      return;
+    }
     const status = document.getElementById("cStatus").value;
     const recur = document.getElementById("cRecur").value;
-    window._cash.push({
-      desc,
-      val,
-      tipo,
-      cat,
+    const previous = editingCashIndex === null ? null : window._cash[editingCashIndex];
+    const updated = {
+      ...(previous || {}),
+      desc, val, tipo, cat,
       act: document.getElementById("cAct").value,
       ess: document.getElementById("cEss").value,
-      date,
-      status,
-      recur,
-      paidMonths: recur === "fixo" && status === "pago" ? [monthKey(date)] : []
-    });
+      date, status, recur,
+      paidMonths: recur === "fixo"
+        ? (previous?.recur === "fixo" ? (previous.paidMonths || []).slice() : (status === "pago" ? [monthKey(date)] : []))
+        : []
+    };
+    if (editingCashIndex === null) window._cash.push(updated);
+    else window._cash[editingCashIndex] = updated;
+    editingCashIndex = null;
     document.getElementById("cDesc").value = "";
     document.getElementById("cVal").value = "";
+    document.getElementById("btnAddCash").textContent = "Adicionar";
     document.getElementById("cashSheet").hidden = true;
     render();
     await saveNow();
-    toast("Lançamento salvo");
+    toast(previous ? "Lançamento atualizado" : "Lançamento salvo");
   };
   document.getElementById("btnSaveCash").onclick = async () => {
     await saveNow();
