@@ -40,7 +40,7 @@ import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
 import { bindMediaUI, hydrateMedia } from "./media.js";
 import { bindCoverEditor, pickNewProductImage, pageHead } from "./covers.js?v=rt40";
-import { bindLifeOsLayer } from "./lifeos-layer.js?v=rt5";
+import { bindLifeOsLayer, viewMetas, viewSono } from "./lifeos-layer.js?v=rt5";
 import { renderFase1, renderFase2, renderFase3, renderFase4, renderFase5, renderFase1Jogo, bindFase1Jogo, renderFase1Marca, bindFase1Marca, renderFase1Dossie, bindFase1Dossie, renderFase2Oferta, bindFase2Oferta, renderFase2Ativos, bindFase2Ativos, renderFase3Preco, bindFase3Preco, renderFase4Sdr, renderFase4Treinamento, renderFase4Closers, renderFase4Depende, bindFase4Depende, renderFase4Divulga, bindFase4Divulga, renderFase5Livro, bindFase5Livro } from "./fases.js?v=rt46";
 import { bindPhaseChecklist, hydratePhaseChecklists } from "./phase-checklists.js?v=rt46";
 import { renderMindMaps, bindMindMaps, hydrateMindMaps } from "./mindmaps.js?v=rt46";
@@ -326,7 +326,18 @@ function showApp() {
   startPresence();
   const room = (location.hash || "").replace("#", "");
   const rooms = ["criancas", "criancas-pais", "criancas-sala", "empresas"];
-  navigate(rooms.includes(room) ? room : "dashboard");
+  const params = new URLSearchParams(location.search);
+  const quickTool = params.get("quicktool");
+  const quickTools = ["cashflow", "ideation", "network", "vision", "pitch", "legacy", "execution", "fono"];
+  if (quickTools.includes(quickTool)) {
+    navigate("dashboard");
+    window.setTimeout(() => openTool(quickTool), 450);
+  } else if (quickTool === "metas" || quickTool === "sono") {
+    navigate(quickTool);
+  } else {
+    navigate(quickTool === "tasks" ? "dashboard" : (rooms.includes(room) ? room : "dashboard"));
+    if (quickTool === "tasks") window.setTimeout(() => document.getElementById("lifeosNewTask")?.focus(), 550);
+  }
 }
 
 function showAccessDenied() {
@@ -654,6 +665,8 @@ registerRenderers({
   "arquitetura-legado": renderArquiteturaLegado,
   "mapas-mentais": renderMindMaps,
   "af-dashboard": renderDashboard,
+  metas: viewMetas,
+  sono: viewSono,
   modules: renderModules,
   moduleDetail: renderModuleDetail,
   tools: renderToolsView,
