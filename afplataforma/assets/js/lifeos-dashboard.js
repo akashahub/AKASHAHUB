@@ -23,7 +23,7 @@ function cleanWeeklyPlan(raw) {
     return {
       id: String(item.id || (Date.now().toString(36) + Math.random().toString(36).slice(2, 8))),
       text: String(item.text || "").slice(0, 160),
-      due: /^\\d{4}-\\d{2}-\\d{2}$/.test(due) ? due : "",
+      due: /^\d{4}-\d{2}-\d{2}$/.test(due) ? due : "",
       done: item.done === true
     };
   });
