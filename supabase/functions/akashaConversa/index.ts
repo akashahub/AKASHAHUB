@@ -232,10 +232,10 @@ async function checkout(body: Record<string, unknown>) {
 }
 
 const FLOW_SESSIONS: Record<string, { name: string; cents: number }> = {
-  contemplacao: { name: "Contemplação", cents: 80000 },
-  flow: { name: "Flow", cents: 143000 },
-  magnetismo: { name: "Magnetismo Soberano", cents: 311300 },
-  pack: { name: "Pack Elite Flow", cents: 440000 },
+  contemplacao: { name: "Contemplation", cents: 45000 },
+  flow: { name: "Flow", cents: 60000 },
+  magnetismo: { name: "Premium", cents: 99000 },
+  pack: { name: "Plano Terapêutico · 3 sessões Flow", cents: 150000 },
 };
 const FLOW_TIMES: Record<string, string> = { manha: "Manhã", tarde: "Tarde", noite: "Noite", flex: "Flexível", depois: "A escolher depois do pagamento" };
 const FLOW_PLACES: Record<string, string> = {
