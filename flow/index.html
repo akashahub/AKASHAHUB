@@ -180,6 +180,12 @@ textarea{height:96px;padding:12px 16px;resize:none}
 select option{background:var(--ink2);color:var(--ivory)}
 .expgrid{display:grid;gap:12px}
 @media(min-width:720px){.expgrid{grid-template-columns:1fr 1fr}}
+.exp-next-step{display:grid;gap:12px;margin-top:14px;padding:18px;border:1px solid rgba(198,161,91,.45);border-radius:14px;background:linear-gradient(145deg,#191612,#11100e);scroll-margin-top:24px}
+.exp-next-step[hidden]{display:none}
+.exp-next-step .step-actions{display:grid;gap:8px}
+@media(min-width:560px){.exp-next-step .step-actions{grid-template-columns:1fr 1fr}}
+.exp-next-step .step-actions .btn{width:100%;min-height:48px;height:auto;padding:12px 16px;white-space:normal}
+.exp-next-step .step-caption{font-size:12px;line-height:1.5;color:var(--ivory-dim);margin:0}
 .explabel{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:250px;overflow:hidden;border:1px solid var(--line);border-radius:16px;cursor:pointer;min-width:0;padding:0}
 @media(min-width:768px){.explabel{min-height:320px}}
 .explabel.on{border-color:#c6a15b;box-shadow:0 0 0 1px #c6a15b}
@@ -843,9 +849,11 @@ function renderExps(){
     </label>`;
   }).join('');
   box.dataset.ready = "1";
+  ensureExperienceStep();
   box.querySelectorAll('.explabel').forEach(el => el.onclick = () => {
     state.experience = el.dataset.id;
     renderExps(); update();
+    showExperienceStep(el.dataset.id);
   });
   setInterval(() => {
     box.querySelectorAll(".slides").forEach(slide => {
@@ -898,6 +906,38 @@ function abrirWhatsapp(modo){
   }
   document.getElementById('payNote').textContent = '';
   window.open('https://wa.me/5571983448621?text=' + encodeURIComponent(buildMsg(modo)), '_blank', 'noopener,noreferrer');
+}
+function ensureExperienceStep(){
+  const box = document.getElementById('exps');
+  if (!box || document.getElementById('exp-next-step')) return;
+  box.insertAdjacentHTML('afterend', `
+    <div class="exp-next-step" id="exp-next-step" hidden aria-live="polite">
+      <p class="kicker" style="margin:0">Próxima etapa</p>
+      <h3 id="exp-next-title" style="font-size:1.65rem;margin:0">Você escolheu uma experiência</h3>
+      <p class="step-caption" id="exp-next-caption">Como prefere continuar?</p>
+      <div class="step-actions">
+        <button class="btn btn-ivory" type="button" id="exp-book-here">Continuar por aqui</button>
+        <button class="btn" type="button" id="exp-book-whatsapp" style="background:#25d366;color:#06210f">Agendar pelo WhatsApp</button>
+      </div>
+    </div>`);
+  document.getElementById('exp-book-here').onclick = () => {
+    const target = document.getElementById('modality');
+    target.scrollIntoView({behavior:'smooth',block:'center'});
+    window.setTimeout(() => target.focus({preventScroll:true}), 350);
+  };
+  document.getElementById('exp-book-whatsapp').onclick = () => {
+    const exp = EXPS.find(e => e.id === state.experience);
+    const msg = 'Olá, Yan! Tenho interesse em agendar a sessão ' + exp.name + ' (' + exp.duration + '). Podemos combinar disponibilidade, local e forma de pagamento? Vim pela página FLOW.';
+    window.open('https://wa.me/5571983448621?text=' + encodeURIComponent(msg), '_blank', 'noopener,noreferrer');
+  };
+}
+function showExperienceStep(id){
+  const exp = EXPS.find(e => e.id === id);
+  const panel = document.getElementById('exp-next-step');
+  if (!exp || !panel) return;
+  document.getElementById('exp-next-title').textContent = 'Você escolheu ' + exp.name;
+  document.getElementById('exp-next-caption').textContent = exp.duration + ' · Como prefere continuar? Você pode preencher os detalhes nesta página ou abrir o WhatsApp com a sessão já indicada.';
+  panel.hidden = false;
 }
 renderExps();
 fillSelect('modality', MODS, 'modality');
@@ -1021,6 +1061,15 @@ function applyAvailability(){
 }
 applyAvailability();
 update();
+document.querySelectorAll('[data-cta]').forEach((cta) => {
+  cta.addEventListener('click', () => {
+    window.setTimeout(() => {
+      showExperienceStep(state.experience);
+      const panel = document.getElementById('exp-next-step');
+      if (panel) panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }, 100);
+  });
+});
 const jobOpen = document.getElementById('job-open');
 const jobAsk = document.getElementById('job-ask');
 const jobText = document.getElementById('job-text');
