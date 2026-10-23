@@ -310,7 +310,6 @@ html.flow-open #flow-gate{display:none}
     <p>Para entrar, confirme sua maioridade e deixe seu WhatsApp. Sem cadastro e sem login.</p>
     <label class="line"><input id="flow18" type="checkbox" required> <span>Confirmo que tenho 21 anos ou mais.</span></label>
     <label>WhatsApp<input id="flowPhone" type="tel" inputmode="tel" placeholder="DDD + número" autocomplete="tel" required></label>
-    <label class="line" style="font-size:.82rem"><input id="flowWppConsent" type="checkbox" required> <span>Autorizo contato pelo WhatsApp sobre o Flow e o agendamento. Posso pedir para parar a qualquer momento.</span></label>
     <p class="err" id="flowErr" role="status" aria-live="polite"></p>
     <button class="btn btn-ivory" id="flowEnter" type="submit" style="width:100%;margin-top:8px">Entrar no Flow</button>
     <p class="note" style="margin-bottom:0">Seu número não abre o WhatsApp automaticamente. Se quiser, você pode usar o botão de contato disponível na página.</p>
@@ -711,11 +710,9 @@ if (sessionStorage.getItem('flow-pass') === 'yes') document.documentElement.clas
 entryForm.addEventListener('submit', event => {
   event.preventDefault();
   const adult = document.getElementById('flow18').checked;
-  const consent = document.getElementById('flowWppConsent').checked;
   const phone = digits(document.getElementById('flowPhone').value);
   if (!adult) { entryError.textContent = 'Confirme que tem 21 anos ou mais para continuar.'; return; }
   if (phone.length < 10 || phone.length > 13) { entryError.textContent = 'Digite um WhatsApp válido com DDD.'; return; }
-  if (!consent) { entryError.textContent = 'Marque a autorização de contato pelo WhatsApp para continuar.'; return; }
   entryError.textContent = '';
   sessionStorage.setItem('flow-pass', 'yes');
   sessionStorage.setItem('flow-phone', phone);
