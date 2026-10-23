@@ -248,8 +248,8 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   .grain{display:none}
 }
 html:not(.flow-open) body{overflow:hidden}
-html:not(.flow-open) body > :not(#flow-gate){filter:blur(24px);pointer-events:none;user-select:none}
-html:not(.flow-open) body::after{content:"";position:fixed;inset:0;z-index:75;pointer-events:auto;background-image:repeating-linear-gradient(0deg,rgba(11,10,9,.42) 0 9px,transparent 9px 18px),repeating-linear-gradient(90deg,rgba(11,10,9,.42) 0 9px,transparent 9px 18px);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+html:not(.flow-open) body > :not(#flow-gate){filter:blur(5px);pointer-events:none;user-select:none}
+html:not(.flow-open) body::after{content:"";position:fixed;inset:0;z-index:75;pointer-events:auto;background:rgba(11,10,9,.16);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
 html.flow-open body::after{content:none}
 #wpp-open{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;height:52px;padding:0 18px;border:0;border-radius:999px;background:#25d366;color:#06210f;font-weight:500;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.4)}
 @media(max-width:767px){#wpp-open{bottom:calc(88px + env(safe-area-inset-bottom))}}
@@ -303,22 +303,17 @@ html.flow-open #flow-gate{display:none}
 </head>
 <body id="topo">
 <div id="flow-gate">
-  <div class="box">
+  <form class="box" id="flow-entry-form">
     <p class="kicker">Experiência privada</p>
     <p class="gate-title">FLOW</p>
-    <p>Todo mundo pode entrar. Antes, o login. O principal é o Google.</p>
-    <label class="line"><input id="flow18" type="checkbox"> <span>Confirmo que sou maior de 18</span></label>
-    <label>Telefone<input id="flowPhone" type="tel" inputmode="tel" placeholder="DDD e número" autocomplete="tel"></label>
-    <p class="err" id="flowErr"></p>
-    <button class="btn btn-ivory" id="flowGoogle" type="button" style="width:100%;margin-top:8px">Continuar com Google</button>
-    <button class="alt" id="flowAlt" type="button">Entrar com e-mail</button>
-    <div id="flowMail" hidden>
-      <label>E-mail<input id="flowEmail" type="email" autocomplete="username"></label>
-      <label>Senha<input id="flowPass" type="password" autocomplete="current-password"></label>
-      <button class="btn btn-ghost" id="flowEnter" type="button" style="width:100%;margin-top:12px">Entrar</button>
-      <button class="btn btn-ghost" id="flowCreate" type="button" style="width:100%;margin-top:8px">Criar conta</button>
-    </div>
-  </div>
+    <p>Para entrar, confirme sua maioridade e deixe seu WhatsApp. Sem cadastro e sem login.</p>
+    <label class="line"><input id="flow18" type="checkbox" required> <span>Confirmo que tenho 21 anos ou mais.</span></label>
+    <label>WhatsApp<input id="flowPhone" type="tel" inputmode="tel" placeholder="DDD + número" autocomplete="tel" required></label>
+    <label class="line" style="font-size:.82rem"><input id="flowWppConsent" type="checkbox" required> <span>Autorizo contato pelo WhatsApp sobre o Flow e o agendamento. Posso pedir para parar a qualquer momento.</span></label>
+    <p class="err" id="flowErr" role="status" aria-live="polite"></p>
+    <button class="btn btn-ivory" id="flowEnter" type="submit" style="width:100%;margin-top:8px">Entrar no Flow</button>
+    <p class="note" style="margin-bottom:0">O WhatsApp abrirá com uma mensagem pronta para você enviar. A página não envia mensagens por conta própria.</p>
+  </form>
 </div>
 <p id="pagoBanner" hidden style="position:fixed;left:16px;right:16px;top:16px;z-index:70;background:#141210;color:#f3eee6;border:1px solid rgba(243,238,230,.2);border-radius:12px;padding:14px 16px;max-width:520px;margin:0 auto">Pagamento recebido. A sessão fica confirmada quando o Stripe reconhece o valor. A confirmação segue para o seu e-mail e para o mentor.</p>
 <header class="nav">
@@ -587,9 +582,9 @@ html.flow-open #flow-gate{display:none}
 
 <section id="agendar" class="book reveal">
   <div>
-    <p class="kicker">Pedido</p>
-    <h2 style="font-size:clamp(2rem,4vw,3rem);margin:12px 0 0">Solicitar uma das experiências do ano</h2>
-    <p class="dim" style="margin-top:24px;max-width:28rem;font-size:.95rem;line-height:1.7">O pedido abre o WhatsApp com a experiência, a modalidade e a preferência de data. A conversa qualifica. Só então existe data. São 26 sessões no ano. Depois disso, não tem mais disponível.</p>
+    <p class="kicker">Agendamento direto</p>
+    <h2 style="font-size:clamp(2rem,4vw,3rem);margin:12px 0 0">Escolha sua experiência. O resto a gente conversa.</h2>
+    <p class="dim" style="margin-top:24px;max-width:28rem;font-size:.95rem;line-height:1.7">Sem formulário de agendamento no site. Selecione uma experiência e vá direto para o WhatsApp com a mensagem pronta. Combinamos por lá disponibilidade, local, data e pagamento.</p>
     <p class="muted" style="margin-top:24px">+55 71 98344-8621</p>
     <div class="links">
       <a href="/flow/apresentacao/">Ver apresentação</a>
@@ -598,55 +593,16 @@ html.flow-open #flow-gate{display:none}
     </div>
   </div>
   <div class="formbox">
-    <form id="flow-form">
-      <fieldset>
-        <legend class="lbl lbl-v" style="margin-bottom:8px">Experiência <span class="hint">selecione a experiência e preencha com carinho</span></legend>
-        <div class="expgrid" id="exps"></div>
-      </fieldset>
-      <label class="field" style="margin-top:20px">
-        <span class="lbl lbl-g">Modalidade</span>
-        <select class="inp" name="modality" id="modality"></select>
-      </label>
-      <div class="row2" style="margin-top:16px">
-        <label class="field">
-          <span class="lbl lbl-v">Preferência de data</span>
-          <input class="inp" type="date" name="date" id="date"/>
-        </label>
-        <label class="field">
-          <span class="lbl lbl-g">Horário</span>
-          <select class="inp" name="time" id="time"></select>
-        </label>
+    <p class="lbl lbl-v" style="margin:0 0 12px">Escolha uma experiência</p>
+    <div class="expgrid" id="exps"></div>
+    <div class="exp-next-step" id="exp-next-step" hidden aria-live="polite">
+      <p class="kicker" style="margin:0">Próxima etapa</p>
+      <h3 id="exp-next-title" style="font-size:1.65rem;margin:0">Você escolheu uma experiência</h3>
+      <p class="step-caption" id="exp-next-caption">A conversa continua no WhatsApp.</p>
+      <div class="step-actions">
+        <button class="btn" type="button" id="exp-book-whatsapp" style="background:#25d366;color:#06210f">Agendar pelo WhatsApp</button>
       </div>
-      <label class="field" style="margin-top:16px">
-        <span class="lbl lbl-v">Nome</span>
-        <input class="inp" required minlength="2" placeholder="Como posso te chamar" name="name" id="name"/>
-      </label>
-      <label class="field" style="margin-top:16px">
-        <span class="lbl lbl-g">E-mail</span>
-        <input class="inp" type="email" required placeholder="Para a confirmação" name="email" id="email"/>
-      </label>
-      <label class="field" style="margin-top:16px">
-        <span class="lbl lbl-v">Telefone</span>
-        <input class="inp" type="tel" required placeholder="DDD e número" name="phone" id="phone"/>
-      </label>
-      <label class="field" style="margin-top:16px">
-        <span class="lbl lbl-g">Observações</span>
-        <textarea class="inp" placeholder="Limites, deslocamento, o que precisa ser dito antes." name="notes" id="notes"></textarea>
-      </label>
-      <label class="line" style="display:flex;gap:10px;align-items:flex-start;margin-top:16px">
-        <input id="terms" type="checkbox">
-        <span>Estou de acordo com os <a href="/flow/termo/" style="text-decoration:underline">termos</a> para agendar.</span>
-      </label>
-      <div id="priceBox" hidden style="margin-top:18px">
-        <div style="display:grid;gap:8px;margin-top:16px">
-          <button class="btn btn-ivory" type="button" id="payFull">Pagar o total no cartão ou Pix</button>
-          <button class="btn btn-ghost" type="button" id="payHalf">Pagar 50% agora e 50% depois</button>
-          <button class="btn btn-ghost" type="button" id="waFull" style="background:#25d366;color:#06210f;border:0">Pagar o total no WhatsApp</button>
-          <button class="btn btn-ghost" type="button" id="waHalf" style="background:#3b1764;color:#f3eee6;border:0">Pagar 50% no WhatsApp</button>
-        </div>
-        <p class="dim" id="payNote" style="font-size:.85rem;margin:12px 0 0"></p>
-      </div>
-    </form>
+    </div>
   </div>
 </section>
 
@@ -735,8 +691,8 @@ html.flow-open #flow-gate{display:none}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, arrayUnion, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const app = initializeApp({
   apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
   authDomain: "hub-akasha.firebaseapp.com",
@@ -747,56 +703,34 @@ const app = initializeApp({
 });
 const auth = getAuth(app);
 const db = getFirestore(app);
-const err = document.getElementById("flowErr");
-function digits(v) { return String(v || "").replace(/\D/g, ""); }
-function ready() {
-  if (!document.getElementById("flow18").checked) { err.textContent = "Confirme que é maior de 18."; return ""; }
-  const phone = digits(document.getElementById("flowPhone").value);
-  if (phone.length < 10 || phone.length > 13) { err.textContent = "O telefone é obrigatório."; return ""; }
-  err.textContent = "";
-  return phone;
-}
-async function guardar(user, phone) {
-  await setDoc(doc(db, "users", user.uid), {
-    email: (user.email || "").toLowerCase(),
-    nome: user.displayName || "",
-    flowPhone: phone,
-    flowAdulto: true,
-    flowSeen: Date.now(),
-    flowVisitas: arrayUnion(Date.now())
-  }, { merge: true });
-  sessionStorage.setItem("flow-pass", user.uid);
-  document.documentElement.classList.add("flow-open");
-}
-onAuthStateChanged(auth, (user) => {
-  if (user && sessionStorage.getItem("flow-pass") === user.uid) document.documentElement.classList.add("flow-open");
+window.flowAuth = auth;
+window.flowDb = db;
+window.flowOnAuthStateChanged = onAuthStateChanged;
+window.flowCollection = collection;
+window.flowGetDocs = getDocs;
+window.flowQuery = query;
+window.flowOrderBy = orderBy;
+
+const entryForm = document.getElementById('flow-entry-form');
+const entryError = document.getElementById('flowErr');
+const digits = value => String(value || '').replace(/\D/g, '');
+if (sessionStorage.getItem('flow-pass') === 'yes') document.documentElement.classList.add('flow-open');
+entryForm.addEventListener('submit', event => {
+  event.preventDefault();
+  const adult = document.getElementById('flow18').checked;
+  const consent = document.getElementById('flowWppConsent').checked;
+  const phone = digits(document.getElementById('flowPhone').value);
+  if (!adult) { entryError.textContent = 'Confirme que tem 21 anos ou mais para continuar.'; return; }
+  if (phone.length < 10 || phone.length > 13) { entryError.textContent = 'Digite um WhatsApp válido com DDD.'; return; }
+  if (!consent) { entryError.textContent = 'Marque a autorização de contato pelo WhatsApp para continuar.'; return; }
+  entryError.textContent = '';
+  sessionStorage.setItem('flow-pass', 'yes');
+  sessionStorage.setItem('flow-phone', phone);
+  document.documentElement.classList.add('flow-open');
+  const formatted = phone.startsWith('55') ? '+' + phone : '+55' + phone;
+  const message = 'Oi, entrei no Flow e tenho interesse em conhecer as experiências e combinar um agendamento. Meu WhatsApp para contato é ' + formatted + '.';
+  window.open('https://wa.me/5571983448621?text=' + encodeURIComponent(message), '_blank', 'noopener,noreferrer');
 });
-document.getElementById("flowAlt").onclick = () => { document.getElementById("flowMail").hidden = false; };
-document.getElementById("flowGoogle").onclick = async () => {
-  const phone = ready();
-  if (!phone) return;
-  try {
-    const r = await signInWithPopup(auth, new GoogleAuthProvider());
-    await guardar(r.user, phone);
-  } catch (e) {
-    err.textContent = e && e.code && String(e.code).indexOf("auth/") === 0 ? "O Google não concluiu. Tenta de novo." : "O telefone não gravou. Tenta de novo.";
-  }
-};
-async function mail(criar) {
-  const phone = ready();
-  if (!phone) return;
-  const email = document.getElementById("flowEmail").value.trim();
-  const pass = document.getElementById("flowPass").value;
-  if (!email.includes("@") || pass.length < 6) { err.textContent = "E-mail e senha, no mínimo 6 caracteres."; return; }
-  try {
-    const r = criar ? await createUserWithEmailAndPassword(auth, email, pass) : await signInWithEmailAndPassword(auth, email, pass);
-    await guardar(r.user, phone);
-  } catch (e) {
-    err.textContent = "Não entrou com esse e-mail.";
-  }
-}
-document.getElementById("flowEnter").onclick = () => mail(false);
-document.getElementById("flowCreate").onclick = () => mail(true);
 </script>
 <script>
 const FLOW_OPEN = true;
@@ -871,10 +805,7 @@ function fillSelect(id, items, key){
   el.value = state[key];
   el.onchange = () => { state[key] = el.value; update(); };
 }
-function update(){
-  const box = document.getElementById('priceBox');
-  box.hidden = !(Boolean(state.date) && document.getElementById('terms').checked);
-}
+function update(){}
 function buildMsg(modo){
   const exp = EXPS.find(e => e.id === state.experience);
   const mod = MODS.find(m => m.id === state.modality);
@@ -908,83 +839,26 @@ function abrirWhatsapp(modo){
   window.open('https://wa.me/5571983448621?text=' + encodeURIComponent(buildMsg(modo)), '_blank', 'noopener,noreferrer');
 }
 function ensureExperienceStep(){
-  const box = document.getElementById('exps');
-  if (!box || document.getElementById('exp-next-step')) return;
-  box.insertAdjacentHTML('afterend', `
-    <div class="exp-next-step" id="exp-next-step" hidden aria-live="polite">
-      <p class="kicker" style="margin:0">Próxima etapa</p>
-      <h3 id="exp-next-title" style="font-size:1.65rem;margin:0">Você escolheu uma experiência</h3>
-      <p class="step-caption" id="exp-next-caption">Como prefere continuar?</p>
-      <div class="step-actions">
-        <button class="btn btn-ivory" type="button" id="exp-book-here">Continuar por aqui</button>
-        <button class="btn" type="button" id="exp-book-whatsapp" style="background:#25d366;color:#06210f">Agendar pelo WhatsApp</button>
-      </div>
-    </div>`);
-  document.getElementById('exp-book-here').onclick = () => {
-    const target = document.getElementById('modality');
-    target.scrollIntoView({behavior:'smooth',block:'center'});
-    window.setTimeout(() => target.focus({preventScroll:true}), 350);
-  };
-  document.getElementById('exp-book-whatsapp').onclick = () => {
-    const exp = EXPS.find(e => e.id === state.experience);
-    const msg = 'Olá, Yan! Tenho interesse em agendar a sessão ' + exp.name + ' (' + exp.duration + '). Podemos combinar disponibilidade, local e forma de pagamento? Vim pela página FLOW.';
-    window.open('https://wa.me/5571983448621?text=' + encodeURIComponent(msg), '_blank', 'noopener,noreferrer');
-  };
+  const button = document.getElementById('exp-book-whatsapp');
+  if (button && !button.dataset.bound) {
+    button.dataset.bound = '1';
+    button.onclick = () => {
+      const exp = EXPS.find(e => e.id === state.experience);
+      const msg = 'Olá, Yan! Tenho interesse em agendar a sessão ' + exp.name + ' (' + exp.duration + '). Podemos combinar disponibilidade, local e forma de pagamento? Vim pela página FLOW.';
+      window.open('https://wa.me/5571983448621?text=' + encodeURIComponent(msg), '_blank', 'noopener,noreferrer');
+    };
+  }
 }
 function showExperienceStep(id){
   const exp = EXPS.find(e => e.id === id);
   const panel = document.getElementById('exp-next-step');
   if (!exp || !panel) return;
   document.getElementById('exp-next-title').textContent = 'Você escolheu ' + exp.name;
-  document.getElementById('exp-next-caption').textContent = exp.duration + ' · Como prefere continuar? Você pode preencher os detalhes nesta página ou abrir o WhatsApp com a sessão já indicada.';
+  document.getElementById('exp-next-caption').textContent = exp.duration + ' · Continue no WhatsApp para combinar disponibilidade, local, data e pagamento.';
   panel.hidden = false;
 }
 renderExps();
-fillSelect('modality', MODS, 'modality');
-fillSelect('time', TIMES, 'time');
-document.getElementById('date').oninput = e => { state.date = e.target.value; update(); };
-document.getElementById('name').oninput = e => { state.name = e.target.value; };
-document.getElementById('email').oninput = e => { state.email = e.target.value.trim(); };
-document.getElementById('phone').oninput = e => { state.phone = e.target.value; };
-document.getElementById('notes').oninput = e => { state.notes = e.target.value; };
-document.getElementById('terms').onchange = () => update();
-document.getElementById('flow-form').onsubmit = e => e.preventDefault();
-document.getElementById('waFull').onclick = () => abrirWhatsapp('total');
-document.getElementById('waHalf').onclick = () => abrirWhatsapp('metade');
-async function pagarStripe(modo){
-  const note = document.getElementById('payNote');
-  if (state.name.trim().length < 2 || !state.email.includes('@') || state.phone.replace(/\D/g,'').length < 10) {
-    note.textContent = 'Antes de seguir, preencha nome, e-mail e telefone.';
-    return;
-  }
-  note.textContent = 'Abrindo o pagamento seguro...';
-  try {
-    const res = await fetch('https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'flow_checkout',
-        session: state.experience,
-        mode: modo,
-        date: state.date,
-        time: state.time,
-        modality: state.modality,
-        name: state.name.trim(),
-        email: state.email.trim(),
-        phone: state.phone.trim(),
-        notes: state.notes,
-        terms: true
-      })
-    });
-    const data = await res.json();
-    if (data.url) { location.href = data.url; return; }
-    note.textContent = 'O pagamento não abriu agora. Dá para reservar o mesmo horário pelo WhatsApp.';
-  } catch {
-    note.textContent = 'O pagamento não abriu agora. Dá para reservar o mesmo horário pelo WhatsApp.';
-  }
-}
-document.getElementById('payFull').onclick = () => pagarStripe('total');
-document.getElementById('payHalf').onclick = () => pagarStripe('metade');
+// Agendamento feito diretamente no WhatsApp; não há formulário de reserva nesta página.
 async function pagarCard(session, mode){
   const note = document.getElementById('cardNote');
   if (note) note.textContent = 'Abrindo o pagamento seguro...';
@@ -1158,13 +1032,13 @@ function isMentor(user) {
 }
 
 // Mostra o botão só se o usuário logado for o mentor
-onAuthStateChanged(auth, (user) => {
+window.flowOnAuthStateChanged(window.flowAuth, (user) => {
   if (isMentor(user)) gestaoBtn.style.display = "block";
   else gestaoBtn.style.display = "none";
 });
 
 gestaoBtn.onclick = async () => {
-  const user = auth.currentUser;
+  const user = window.flowAuth.currentUser;
   if (!isMentor(user)) {
     alert("Acesso restrito ao mentor.");
     return;
@@ -1172,8 +1046,8 @@ gestaoBtn.onclick = async () => {
   gestaoModal.classList.add('active');
   gestaoList.innerHTML = 'Carregando...';
   try {
-    const q = query(collection(db, 'users'), orderBy('flowSeen', 'desc'));
-    const snap = await getDocs(q);
+    const q = window.flowQuery(window.flowCollection(window.flowDb, 'users'), window.flowOrderBy('flowSeen', 'desc'));
+    const snap = await window.flowGetDocs(q);
     if (snap.empty) { gestaoList.innerHTML = '<p>Nenhum acesso registrado ainda.</p>'; return; }
     let html = '<table><thead><tr><th>#</th><th>E-mail</th><th>Nome</th><th>Telefone</th><th>Última visita</th><th>Visitas</th></tr></thead><tbody>';
     let i = 1;
