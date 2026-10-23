@@ -1032,10 +1032,17 @@ function isMentor(user) {
 }
 
 // Mostra o botão só se o usuário logado for o mentor
-window.flowOnAuthStateChanged(window.flowAuth, (user) => {
-  if (isMentor(user)) gestaoBtn.style.display = "block";
-  else gestaoBtn.style.display = "none";
-});
+function setupMentorAccess() {
+  if (!window.flowOnAuthStateChanged || !window.flowAuth) {
+    window.setTimeout(setupMentorAccess, 50);
+    return;
+  }
+  window.flowOnAuthStateChanged(window.flowAuth, (user) => {
+    if (isMentor(user)) gestaoBtn.style.display = "block";
+    else gestaoBtn.style.display = "none";
+  });
+}
+setupMentorAccess();
 
 gestaoBtn.onclick = async () => {
   const user = window.flowAuth.currentUser;
