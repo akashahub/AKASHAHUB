@@ -195,7 +195,11 @@ select option{background:var(--ink2);color:var(--ivory)}
 .explabel .slides img.show{opacity:1}
 .explabel::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;box-shadow:inset 0 0 34px 14px rgba(243,238,230,.42),inset 0 0 90px 20px rgba(243,238,230,.14)}
 .explabel .cap{position:relative;z-index:3;padding:16px 16px 14px;background:linear-gradient(to top,rgba(11,10,9,.88),rgba(11,10,9,.05))}
-.explabel .cap b{display:block;font-family:var(--display);font-weight:500;font-size:1.45rem;letter-spacing:-.02em}
+.explabel .cap b{display:block;font-family:var(--display);font-weight:500;font-size:1.45rem;letter-spacing:-.02em;color:#f4dfaa;text-shadow:0 0 7px rgba(224,184,94,.32),0 0 18px rgba(198,161,91,.18);transition:text-shadow .3s ease,color .3s ease}
+.explabel.on .cap b{color:#ffe7ad;text-shadow:0 0 5px rgba(255,220,140,.8),0 0 14px rgba(226,181,81,.65),0 0 28px rgba(198,161,91,.35)}
+@keyframes goldShimmer{0%,100%{text-shadow:0 0 5px rgba(255,220,140,.5),0 0 14px rgba(226,181,81,.3)}50%{text-shadow:0 0 8px rgba(255,230,170,.9),0 0 20px rgba(226,181,81,.65),0 0 30px rgba(198,161,91,.28)}}
+.explabel.on .cap b{animation:goldShimmer 2.8s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.explabel.on .cap b{animation:none}}
 .explabel .cap span{display:block;margin-top:4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#f3eee6}
 .row2{display:grid;gap:16px}
 @media(min-width:640px){.row2{grid-template-columns:1fr 1fr}}
@@ -779,7 +783,8 @@ function renderExps(){
   }).join('');
   box.dataset.ready = "1";
   ensureExperienceStep();
-  box.querySelectorAll('.explabel').forEach(el => el.onclick = () => {
+  box.querySelectorAll('.explabel').forEach(el => el.onclick = (event) => {
+    if (event.target.closest('.exp-next-step')) return;
     state.experience = el.dataset.id;
     renderExps(); update();
     showExperienceStep(el.dataset.id);
@@ -850,6 +855,12 @@ function showExperienceStep(id){
   if (!exp || !panel) return;
   document.getElementById('exp-next-title').textContent = 'Você escolheu ' + exp.name;
   document.getElementById('exp-next-caption').textContent = exp.duration + ' · Continue no WhatsApp para combinar disponibilidade, local, data e pagamento.';
+  const selectedCard = document.querySelector('.explabel[data-id="' + id + '"]');
+  if (selectedCard && panel.parentElement !== selectedCard) {
+    const caption = selectedCard.querySelector('.cap');
+    if (caption) caption.insertAdjacentElement('afterend', panel);
+    else selectedCard.appendChild(panel);
+  }
   panel.hidden = false;
 }
 renderExps();
