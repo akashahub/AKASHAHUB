@@ -6,6 +6,9 @@ export const PACK = [
   { title: "O código secreto do universo", file: "/audios/codigo.mp3" },
   { title: "Cura das feridas invisíveis", file: "/audios/feridas.mp3" },
   { title: "Mente crística", file: "/audios/mente.mp3" },
+  { title: "Curador e Reparador", file: "https://res.cloudinary.com/dcbarseus/video/upload/v1792969386/PACK_1Curador_e_Reparador_hde1eu.mp3" },
+  { title: "Revigorante e Próspero", file: "https://res.cloudinary.com/dcbarseus/video/upload/v1792969381/PACK_1_Revigorante_e_pr%C3%B3spero_fl1bqk.mp3" },
+  { title: "Reprogramador e Reavivador", file: "https://res.cloudinary.com/dcbarseus/video/upload/v1792969391/PACK_1Reprogramador_e_reavivador_tqea1h.mp3" },
 ];
 
 export function ownedLocal() {
