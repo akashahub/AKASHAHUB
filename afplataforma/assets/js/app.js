@@ -341,6 +341,14 @@ function showApp() {
 }
 
 function showAccessDenied() {
+  // Acesso às ferramentas via atalho: se a gestão do mentor não liberou
+  // a conta para a AF Plataforma, encaminha para Arquitetura de Legado.
+  const params = new URLSearchParams(location.search);
+  const requestedTool = params.get("quicktool");
+  if (requestedTool) {
+    location.replace("/al");
+    return;
+  }
   document.getElementById("authShell")?.classList.add("hidden");
   document.getElementById("appShell")?.classList.remove("show");
   document.getElementById("accessDenied")?.classList.add("show");
