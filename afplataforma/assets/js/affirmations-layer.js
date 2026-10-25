@@ -98,7 +98,7 @@
   const start = () => {
     const root = document.getElementById("content");
     if (!root) return;
-    new MutationObserver(schedule).observe(root, { childList: true, subtree: true });
+    new MutationObserver(schedule).observe(root, { childList: true });
     schedule();
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
