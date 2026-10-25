@@ -44,7 +44,9 @@ export function buildNav() {
     { id: "fase2", label: "Fase 2 · Império", ico: `<img src="assets/img/fases/imperio.svg" alt="">` },
     { id: "fase3", label: "Fase 3 · AF", ico: `<img src="assets/img/fases/af.svg" alt="">` },
     { id: "fase4", label: "Fase 4 · Expansão", ico: `<img src="assets/img/fases/expansao.svg" alt="">` },
-    { id: "fase5", label: "Fase 5 · Legado", ico: `<img src="assets/img/fases/legado.svg" alt="">` }
+    { id: "fase5", label: "Fase 5 · Legado", ico: `<img src="assets/img/fases/legado.svg" alt="">` },
+    { sep: true, label: "Práticas pessoais" },
+    { id: "fortalecimento-mental", label: "Fortalecimento mental", ico: "✧" }
   );
 
   const nav = document.getElementById("navMain");
@@ -61,6 +63,11 @@ export function buildNav() {
   nav.querySelectorAll(".nav-item").forEach((el) => {
     el.addEventListener("click", (e) => {
       e.preventDefault();
+      if (el.dataset.view === "fortalecimento-mental") {
+        closeSide();
+        window.dispatchEvent(new CustomEvent("af:open-mental-library"));
+        return;
+      }
       navigate(el.dataset.view);
     });
   });
