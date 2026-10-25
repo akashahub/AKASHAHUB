@@ -7,7 +7,8 @@ const TOOLS = [
   { id: "metas", icon: "◎", title: "Metas", description: "Objetivos e prazos" },
   { id: "ideation", icon: "✧", title: "Ideias / Ideation", description: "Registre insights" },
   { id: "network", icon: "⌘", title: "Mapa de Rede", description: "Contatos e oportunidades" },
-  { id: "tasks", icon: "☷", title: "Lista de tarefas", description: "Prioridades do dia" }
+  { id: "tasks", icon: "☷", title: "Lista de tarefas", description: "Prioridades do dia" },
+  { id: "audio-pack", icon: "♫", title: "Pack de áudios", description: "Ouça os áudios comprados" }
 ];
 
 const style = document.createElement("style");
@@ -45,7 +46,7 @@ function buildLauncher() {
   layer.id = "ah-tools-layer";
   layer.innerHTML = `<section id="ah-tools-panel" role="dialog" aria-modal="true" aria-labelledby="ah-tools-title">
     <header id="ah-tools-head"><div><h2 id="ah-tools-title">Minhas ferramentas</h2><p>Seu espaço de trabalho, em qualquer página do Akasha Hub.</p></div><button id="ah-tools-close" type="button" aria-label="Fechar">×</button></header>
-    <div id="ah-tools-grid">${TOOLS.map(tool => `<a class="ah-tool-item" href="/afplataforma/?quicktool=${encodeURIComponent(tool.id)}"><span class="ah-tool-icon" aria-hidden="true">${tool.icon}</span><span><strong>${tool.title}</strong><small>${tool.description}</small></span></a>`).join("")}</div>
+    <div id="ah-tools-grid">${TOOLS.map(tool => `<a class="ah-tool-item" href="${tool.id === "audio-pack" ? "/audios/" : "/afplataforma/?quicktool=" + encodeURIComponent(tool.id)}"><span class="ah-tool-icon" aria-hidden="true">${tool.icon}</span><span><strong>${tool.title}</strong><small>${tool.description}</small></span></a>`).join("")}</div>
   </section>`;
   document.body.append(button, layer);
   const close = () => { layer.classList.remove("is-open"); button.focus(); };
