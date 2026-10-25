@@ -442,8 +442,14 @@ export function renderFase5() {
     <p style="display:flex;flex-wrap:wrap;gap:8px">
       <button class="tool-btn" type="button" data-tool="legacy">Declaração de legado</button>
       <button class="tool-btn" type="button" data-nav="fase5-livro">Livro do método</button>
+      <a class="tool-btn" href="/afplataforma/zen-negocios/">Abrir Zen Negócios · laboratório de capital e continuidade ↗</a>
     </p>
-    <p class="notes-hint">A declaração continua em Ferramentas. O livro junta o que as fases anteriores guardaram neste aparelho.</p>
+    <div class="mat-card" style="margin:12px 0">
+      <h4>Zen Negócios · nova camada da Fase 5</h4>
+      <p>Um laboratório complementar para consciência, contexto, estratégia, capital, risco, estrutura e continuidade. Inclui diagnóstico, simulador hipotético, observatório de ativos, mapa de estrutura e plano de continuidade. Não substitui nem remove a comunidade, o movimento, a doutrina ou as ferramentas já existentes.</p>
+      <p><a class="tool-btn" href="/afplataforma/zen-negocios/">Entrar no laboratório ZN</a></p>
+    </div>
+    <p class="notes-hint">A declaração continua em Ferramentas. O livro junta o que as fases anteriores guardaram neste aparelho. O ZN é uma camada adicional do Legado.</p>
     ${renderPhaseChecklist("fase5")}`
   );
 }
