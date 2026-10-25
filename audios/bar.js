@@ -112,19 +112,16 @@ function mount() {
         fillPlayer(player, { download: true });
         return;
       }
-      if (!auth.currentUser) {
-        sessionStorage.setItem("akasha-pack-after-login", "1");
-        if (window.AkashaGate) window.AkashaGate.open({ reason: "pack" });
-        p.textContent = "Entre no acesso. O pagamento abre em seguida e o pack fica no seu e-mail. Se fechar, dá para pagar só neste aparelho.";
-        return;
-      }
       pay.disabled = true;
-      pay.textContent = "Abrindo o pagamento…";
-      try { await payNow(); }
-      catch (e) {
+      pay.textContent = "Abrindo o pagamento seguro…";
+      try {
+        // Permite comprar sem login. Após o pagamento, a página de confirmação
+        // oferece o login para guardar o pack na conta do cliente.
+        await payNow();
+      } catch (e) {
         pay.disabled = false;
         paint();
-        p.textContent = "O pagamento não abriu agora. Tente de novo.";
+        p.textContent = "O pagamento não abriu agora. Tente novamente.";
       }
     };
     window.addEventListener("akasha-pack-pay-here", () => {
@@ -138,7 +135,7 @@ function mount() {
         }
       };
       pay.textContent = "Pagar agora neste aparelho · R$ 27";
-      p.textContent = "O pack abre aqui. Para ouvir em outro aparelho, entre depois com o mesmo e-mail.";
+      p.textContent = "Você pode pagar sem criar conta agora. Depois do pagamento, entre ou crie sua conta para guardar o pack e acessar em outros aparelhos.";
     }, { once: true });
     trial.onclick = () => {
       const pick = PACK[Math.floor(Math.random() * PACK.length)];
