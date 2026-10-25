@@ -74,6 +74,7 @@ function toast(msg, err = false) {
 }
 
 function showAuth() {
+  document.documentElement.classList.remove("quicktool-start");
   document.getElementById("authShell")?.classList.remove("hidden");
   document.getElementById("appShell")?.classList.remove("show");
   document.getElementById("accessDenied")?.classList.remove("show");
@@ -311,6 +312,7 @@ function bindProfileForm() {
 }
 
 function showApp() {
+  document.documentElement.classList.remove("quicktool-start");
   document.getElementById("authShell")?.classList.add("hidden");
   document.getElementById("accessDenied")?.classList.remove("show");
   document.getElementById("appShell")?.classList.add("show");
@@ -331,7 +333,7 @@ function showApp() {
   const quickTools = ["cashflow", "ideation", "network", "vision", "pitch", "legacy", "execution", "fono"];
   if (quickTools.includes(quickTool)) {
     navigate("dashboard");
-    window.setTimeout(() => openTool(quickTool), 450);
+    requestAnimationFrame(() => openTool(quickTool));
   } else if (quickTool === "metas" || quickTool === "sono") {
     navigate(quickTool);
   } else {
