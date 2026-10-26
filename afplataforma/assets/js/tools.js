@@ -149,7 +149,35 @@ async function persistToolData(toolId, data) {
   }
 }
 
+function showToolLoading() {
+  openFloat(
+    "Preparando ferramenta",
+    `<style>
+      .ah-tool-loading{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;color:var(--text,#f4f1ff);padding:20px}
+      .ah-tool-orbit{width:58px;height:58px;position:relative;display:grid;place-items:center}
+      .ah-tool-orbit:before,.ah-tool-orbit:after{content:"";position:absolute;inset:2px;border:1px solid rgba(202,164,80,.35);border-top-color:#d9b765;border-radius:50%;animation:ahToolSpin 1.2s linear infinite}
+      .ah-tool-orbit:after{inset:10px;border-color:rgba(155,111,255,.25);border-bottom-color:#a77bff;animation:ahToolSpin .85s linear infinite reverse}
+      .ah-tool-core{width:9px;height:9px;border-radius:50%;background:#d9b765;box-shadow:0 0 18px rgba(217,183,101,.75);animation:ahToolPulse 1.2s ease-in-out infinite}
+      .ah-tool-loading strong{font-size:14px;letter-spacing:.04em}
+      .ah-tool-loading p{margin:0;color:var(--muted,#a7a2b5);font-size:12px}
+      .ah-tool-dots:after{content:"";display:inline-block;width:18px;text-align:left;animation:ahToolDots 1.4s steps(4,end) infinite}
+      @keyframes ahToolSpin{to{transform:rotate(360deg)}}
+      @keyframes ahToolPulse{50%{transform:scale(.65);opacity:.55}}
+      @keyframes ahToolDots{0%{content:""}25%{content:"."}50%{content:".."}75%,100%{content:"..."}}
+      @media(prefers-reduced-motion:reduce){.ah-tool-orbit:before,.ah-tool-orbit:after,.ah-tool-core,.ah-tool-dots:after{animation:none}}
+    </style>
+    <div class="ah-tool-loading" role="status" aria-live="polite">
+      <div class="ah-tool-orbit" aria-hidden="true"><span class="ah-tool-core"></span></div>
+      <strong>Preparando seu espaço</strong>
+      <p class="ah-tool-dots">Carregando ferramenta</p>
+    </div>`,
+    "",
+    id
+  );
+}
+
 export async function openTool(id) {
+  showToolLoading();
   if (id === "cashflow") return openCashflow();
   if (id === "pitch") return openTextTool(id, "Pitch 60 segundos", "Escreva seu pitch PSI / ADP / POC…");
   if (id === "legacy") return openTextTool(id, "Declaração de Legado", "Quem sou · O que construí · Por quê · Para quem · O que quero que reste…");
