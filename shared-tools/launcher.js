@@ -31,6 +31,7 @@ style.textContent = `
 .ah-tool-item small{display:block;color:#756d79;font-size:12px;margin-top:3px}
 @media(max-width:480px){#ah-tools-launch{right:14px;bottom:14px;width:52px;height:52px}#ah-tools-panel{padding:17px;border-radius:18px}#ah-tools-grid{grid-template-columns:1fr;gap:8px}.ah-tool-item{padding:12px}}
 `;
+style.textContent += "\n#ah-tools-transition{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;padding:24px;text-align:center;background:radial-gradient(ellipse at 50% 42%,rgba(93,49,130,.30),transparent 43%),radial-gradient(ellipse at 50% 100%,rgba(184,143,47,.11),transparent 50%),#09070f;color:#f7f1e5;font-family:Inter,system-ui,sans-serif;opacity:1;transition:opacity .2s ease}\n#ah-tools-transition .aht-orb{width:100px;height:100px;position:relative;display:grid;place-items:center;margin-bottom:26px}\n#ah-tools-transition .aht-ring{position:absolute;inset:2px;border:1px solid rgba(219,184,94,.8);border-right-color:transparent;border-radius:50%;animation:aht-spin 2.4s linear infinite;box-shadow:0 0 25px rgba(211,177,89,.12)}\n#ah-tools-transition .aht-ring:after{content:\"\";position:absolute;inset:10px;border:1px solid rgba(171,119,219,.8);border-left-color:transparent;border-radius:50%;animation:aht-spin 3.2s linear infinite reverse}\n#ah-tools-transition .aht-core{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;font:600 29px/1 Georgia,serif;color:#f4d68b;background:radial-gradient(circle,#4c2b61,#17101f 75%);box-shadow:0 0 30px rgba(183,132,224,.28);animation:aht-glow 2s ease-in-out infinite}\n#ah-tools-transition .aht-brand{font-size:10px;letter-spacing:.34em;color:#d8c69d;margin-bottom:24px}#ah-tools-transition .aht-brand span{color:#c9a1ed}\n#ah-tools-transition h2{font:500 clamp(27px,5vw,38px)/1.15 Georgia,serif;margin:0 0 10px;color:#fff7e8}\n#ah-tools-transition p{font-size:14px;line-height:1.6;color:#b9afc5;margin:0;max-width:330px}\n#ah-tools-transition .aht-progress{width:200px;height:2px;margin:28px 0 14px;background:#302537;overflow:hidden}\n#ah-tools-transition .aht-progress span{display:block;width:42%;height:100%;background:linear-gradient(90deg,#a47ad1,#e2c16b);animation:aht-progress 1.4s ease-in-out infinite}\n#ah-tools-transition small{font-size:9px;letter-spacing:.24em;color:#82768d}\n@keyframes aht-spin{to{transform:rotate(360deg)}}@keyframes aht-glow{50%{transform:scale(1.06)}}@keyframes aht-progress{0%{transform:translateX(-120%)}100%{transform:translateX(360%)}}\n@media(prefers-reduced-motion:reduce){#ah-tools-transition *{animation:none!important}#ah-tools-transition .aht-progress span{width:100%}}\n";
 document.head.appendChild(style);
 
 function buildLauncher() {
@@ -52,6 +53,23 @@ function buildLauncher() {
   const close = () => { layer.classList.remove("is-open"); button.focus(); };
   button.addEventListener("click", () => layer.classList.add("is-open"));
   layer.querySelector("#ah-tools-close").addEventListener("click", close);
+  layer.querySelectorAll(".ah-tool-item").forEach(link => {
+    link.addEventListener("click", event => {
+      const destination = new URL(link.href, window.location.href);
+      if (destination.origin !== window.location.origin || link.href.includes("/audios/")) return;
+      event.preventDefault();
+      if (!document.getElementById("ah-tools-transition")) {
+        const transition = document.createElement("div");
+        transition.id = "ah-tools-transition";
+        transition.setAttribute("role", "status");
+        transition.setAttribute("aria-live", "polite");
+        transition.innerHTML = '<div class="aht-orb" aria-hidden="true"><span class="aht-ring"></span><span class="aht-core">A</span></div><div class="aht-brand">AKASHA <span>HUB</span></div><h2>Preparando seu espaço</h2><p>Estamos abrindo sua ferramenta com segurança.</p><div class="aht-progress" aria-hidden="true"><span></span></div><small>CARREGANDO EXPERIÊNCIA</small>';
+        document.body.appendChild(transition);
+      }
+      window.setTimeout(() => window.location.assign(destination.href), 100);
+    });
+  });
+
   layer.addEventListener("click", event => { if (event.target === layer) close(); });
   document.addEventListener("keydown", event => { if (event.key === "Escape") close(); });
 }
