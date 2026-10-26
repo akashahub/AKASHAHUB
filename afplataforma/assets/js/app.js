@@ -311,8 +311,21 @@ function bindProfileForm() {
   }
 }
 
+function finishQuickToolLoading() {
+  const loader = document.getElementById("quickToolLoader");
+  if (!document.documentElement.classList.contains("quicktool-start")) return;
+  if (!loader) {
+    document.documentElement.classList.remove("quicktool-start");
+    return;
+  }
+  loader.classList.add("is-hiding");
+  window.setTimeout(() => {
+    document.documentElement.classList.remove("quicktool-start");
+    loader.remove();
+  }, 240);
+}
+
 function showApp() {
-  document.documentElement.classList.remove("quicktool-start");
   document.getElementById("authShell")?.classList.add("hidden");
   document.getElementById("accessDenied")?.classList.remove("show");
   document.getElementById("appShell")?.classList.add("show");
@@ -333,12 +346,22 @@ function showApp() {
   const quickTools = ["cashflow", "ideation", "network", "vision", "pitch", "legacy", "execution", "fono"];
   if (quickTools.includes(quickTool)) {
     navigate("dashboard");
-    requestAnimationFrame(() => openTool(quickTool));
+    requestAnimationFrame(async () => {
+      try {
+        await openTool(quickTool);
+      } catch (error) {
+        console.error("Não foi possível abrir a ferramenta solicitada:", error);
+      } finally {
+        finishQuickToolLoading();
+      }
+    });
   } else if (quickTool === "metas" || quickTool === "sono") {
     navigate(quickTool);
+    requestAnimationFrame(() => requestAnimationFrame(finishQuickToolLoading));
   } else {
     navigate(quickTool === "tasks" ? "dashboard" : (rooms.includes(room) ? room : "dashboard"));
     if (quickTool === "tasks") window.setTimeout(() => document.getElementById("lifeosNewTask")?.focus(), 550);
+    if (quickTool) requestAnimationFrame(() => requestAnimationFrame(finishQuickToolLoading));
   }
 }
 
