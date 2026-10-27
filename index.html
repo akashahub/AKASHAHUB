@@ -1043,7 +1043,7 @@
   let paused=reduceMotion.matches;
   let resumeAt=0;
   let last=0;
-  let frame=0;
+  let autoDirection=1;
   const speed=7; // pixels per second: movimento deliberadamente discreto
   function pauseForInteraction(){
     paused=true;
@@ -1055,13 +1055,14 @@
     last=now;
     const max=shelf.scrollWidth-shelf.clientWidth;
     if(!paused && !document.hidden && !reduceMotion.matches && max>1){
-      shelf.scrollLeft+=speed*elapsed;
-      if(shelf.scrollLeft>=max-1) shelf.scrollTo({left:0,behavior:'auto'});
+      shelf.scrollLeft+=speed*elapsed*autoDirection;
+      if(shelf.scrollLeft>=max-1){ shelf.scrollLeft=max; autoDirection=-1; }
+      else if(shelf.scrollLeft<=1){ shelf.scrollLeft=0; autoDirection=1; }
     } else if(paused && resumeAt && now>=resumeAt && !shelf.matches(':hover') && !shelf.contains(document.activeElement) && !document.hidden && !reduceMotion.matches){
       paused=false;
       resumeAt=0;
     }
-    frame=requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
   }
   shelf.addEventListener('pointerenter',()=>{paused=true;resumeAt=0;});
   shelf.addEventListener('pointerleave',()=>{if(!shelf.contains(document.activeElement)){paused=false;resumeAt=0;}});
