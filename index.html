@@ -248,9 +248,15 @@
   .livraria-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 18px; }
   .livraria-head h2 { font-family: var(--serif); font-weight: 700; font-size: clamp(28px, 4vw, 42px); margin: 6px 0 0; }
   .livraria-head p { margin: 8px 0 0; max-width: 46ch; color: var(--muted); }
-  .shelf { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 18px; }
-  .shelf::-webkit-scrollbar { height: 8px; }
+  .shelf { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x proximity; scroll-behavior: smooth; padding: 4px 2px 18px; scrollbar-width: thin; scrollbar-color: var(--gold-33) transparent; }
+  .shelf::-webkit-scrollbar { height: 6px; }
   .shelf::-webkit-scrollbar-thumb { background: var(--gold-33); border-radius: 99px; }
+  .shelf-controls { display: flex; flex-shrink: 0; gap: 8px; align-items: center; }
+  .shelf-arrow { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--gold); font: 32px/1 var(--sans); transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease; }
+  .shelf-arrow:hover, .shelf-arrow:focus-visible { background: var(--gold); color: var(--on-primary); border-color: var(--gold); transform: translateY(-2px); }
+  .shelf-arrow:focus-visible, .shelf:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  @media (max-width: 600px) { .livraria-head { align-items: flex-start; } .shelf-controls { gap: 6px; } .shelf-arrow { width: 38px; height: 38px; } }
+  @media (prefers-reduced-motion: reduce) { .shelf { scroll-behavior: auto; } .shelf-arrow { transition: none; } }
   .book-card { flex: 0 0 210px; scroll-snap-align: start; }
   .book-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; object-position: center; border-radius: 12px; background: #120f0c; display: block; }
   .book-card h3 { font-family: var(--serif); font-weight: 600; font-size: 18px; line-height: 1.15; margin: 12px 0 4px; }
@@ -593,11 +599,13 @@
         <span id="audioLabel">Frequência · 999Hz Limpeza</span>
       </button>
       <p class="eyebrow">akasha hub · arquitetura de legado</p>
-      <h1 class="reveal matrix-title">A casa que permanece quando você sai da sala.</h1>
-      <p class="lede reveal">Arquitetura de Legado integra essência, consciência, dinheiro e presença digital. Uma direção só. Para quem já tem ofício, negócio ou projeto.</p>
+      <h1 class="reveal matrix-title">Construa algo que continue crescendo mesmo quando você não estiver presente.</h1>
+      <p class="lede reveal">Você já tem conhecimento, experiência ou um negócio. O próximo passo é transformar o que você sabe e construiu em uma estrutura capaz de gerar valor, sustentar resultados e ampliar seu alcance.</p>
+      <p class="lede reveal">A Arquitetura de Legado integra essência, estratégia, alinhamento financeiro e ativos digitais em uma direção executiva: transformar potencial em estrutura, estrutura em patrimônio e trabalho em legado.</p>
+      <p class="lede reveal"><strong>Seu próximo nível não depende apenas de fazer mais. Depende de construir melhor.</strong></p>
       <div class="hero-ctas reveal">
-        <a class="btn-gold btn-premium gold-glow" href="/al/">Entrar na experiência</a>
-        <a class="btn-ghost" href="/converse/">Agendar</a>
+        <a class="btn-gold btn-premium gold-glow" href="/al/">Conhecer a Arquitetura de Legado</a>
+        <a class="btn-ghost" href="/converse/">Agendar uma conversa</a>
       </div>
     </div>
     <div class="hero-portrait reveal">
@@ -616,10 +624,14 @@
       <div>
         <p class="eyebrow">o acervo</p>
         <h2>Livros</h2>
-        <p>Os mesmos da área de membros. Arraste para o lado. Cartão ou Pix no Stripe, ou direto no WhatsApp.</p>
+        <p>Explore o acervo no seu ritmo. A vitrine se move suavemente e você pode avançar ou voltar quando quiser.</p>
+      </div>
+      <div class="shelf-controls" role="group" aria-label="Controles da vitrine de livros">
+        <button class="shelf-arrow" type="button" data-shelf-direction="-1" aria-label="Livros anteriores" title="Livros anteriores">‹</button>
+        <button class="shelf-arrow" type="button" data-shelf-direction="1" aria-label="Próximos livros" title="Próximos livros">›</button>
       </div>
     </div>
-    <div class="shelf">
+    <div class="shelf" id="bookShelf" tabindex="0" aria-label="Livros. Use as setas para navegar.">
       <article class="book-card"><img src="/members/capas/provas/codigo-secreto.jpg?v=p1" alt="O Código Secreto do Universo"><h3>O Código Secreto do Universo</h3><p class="preco">R$ 17</p><div class="buy"><a class="stripe" href="/membros/checkout.html?ref=livro%3Aanubis%3AO%20C%C3%B3digo%20Secreto%20do%20Universo">Comprar no Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20O%20C%C3%B3digo%20Secreto%20do%20Universo." target="_blank" rel="noopener">Comprar no WhatsApp</a></div></article>
       <article class="book-card"><img src="/members/capas/codigo-quantico.jpg?v=cq1" alt="Código Quântico"><h3>Código Quântico</h3><p class="preco">R$ 17</p><div class="buy"><a class="stripe" href="/membros/checkout.html?ref=livro%3Aanubis%3AC%C3%B3digo%20Qu%C3%A2ntico">Comprar no Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20C%C3%B3digo%20Qu%C3%A2ntico." target="_blank" rel="noopener">Comprar no WhatsApp</a></div></article>
       <article class="book-card"><img src="/members/capas/provas/revelacoes-quanticas.jpg?v=p1" alt="Revelações Quânticas"><h3>Revelações Quânticas</h3><p class="preco">R$ 17</p><div class="buy"><a class="stripe" href="/membros/checkout.html?ref=livro%3Aanubis%3ARevela%C3%A7%C3%B5es%20Qu%C3%A2nticas">Comprar no Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Revela%C3%A7%C3%B5es%20Qu%C3%A2nticas." target="_blank" rel="noopener">Comprar no WhatsApp</a></div></article>
@@ -1020,6 +1032,53 @@
     }
     setTimeout(tick, 400);
   })();
+</script>
+
+<script>
+(function bookShelfMotion(){
+  const shelf=document.getElementById('bookShelf');
+  if(!shelf) return;
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const buttons=[...document.querySelectorAll('[data-shelf-direction]')];
+  let paused=reduceMotion.matches;
+  let resumeAt=0;
+  let last=0;
+  let frame=0;
+  const speed=7; // pixels per second: movimento deliberadamente discreto
+  function pauseForInteraction(){
+    paused=true;
+    resumeAt=performance.now()+5500;
+  }
+  function animate(now){
+    if(!last) last=now;
+    const elapsed=Math.min((now-last)/1000,0.05);
+    last=now;
+    const max=shelf.scrollWidth-shelf.clientWidth;
+    if(!paused && !document.hidden && !reduceMotion.matches && max>1){
+      shelf.scrollLeft+=speed*elapsed;
+      if(shelf.scrollLeft>=max-1) shelf.scrollTo({left:0,behavior:'auto'});
+    } else if(paused && resumeAt && now>=resumeAt && !shelf.matches(':hover') && !shelf.contains(document.activeElement) && !document.hidden && !reduceMotion.matches){
+      paused=false;
+      resumeAt=0;
+    }
+    frame=requestAnimationFrame(animate);
+  }
+  shelf.addEventListener('pointerenter',()=>{paused=true;resumeAt=0;});
+  shelf.addEventListener('pointerleave',()=>{if(!shelf.contains(document.activeElement)){paused=false;resumeAt=0;}});
+  shelf.addEventListener('focusin',()=>{paused=true;resumeAt=0;});
+  shelf.addEventListener('focusout',e=>{if(!shelf.contains(e.relatedTarget)){paused=false;resumeAt=0;}});
+  shelf.addEventListener('touchstart',()=>{paused=true;resumeAt=0;},{passive:true});
+  shelf.addEventListener('touchend',()=>{resumeAt=performance.now()+5500;},{passive:true});
+  shelf.addEventListener('wheel',pauseForInteraction,{passive:true});
+  buttons.forEach(button=>button.addEventListener('click',()=>{
+    pauseForInteraction();
+    const direction=Number(button.dataset.shelfDirection)||1;
+    shelf.scrollBy({left:direction*Math.max(260,shelf.clientWidth*.78),behavior:reduceMotion.matches?'auto':'smooth'});
+  }));
+  reduceMotion.addEventListener?.('change',event=>{paused=event.matches;resumeAt=0;});
+  document.addEventListener('visibilitychange',()=>{last=performance.now();});
+  frame=requestAnimationFrame(animate);
+})();
 </script>
 <script type="module" src="/efeitos/camada.js?v=1"></script>
 <script type="module" src="/shared-tools/launcher.js?v=1"></script>
