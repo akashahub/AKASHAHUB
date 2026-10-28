@@ -79,7 +79,7 @@ function card(reason) {
         location.href = await checkout(cred.user.email || "");
         return;
       } catch (e) {
-        err.textContent = "A conta entrou. O pagamento não abriu. Toque de novo em Ouvir o pack.";
+        err.textContent = "A conta entrou. O pagamento não abriu. Toque novamente em Ouvir Áudios.";
       }
     }
     close(false);
