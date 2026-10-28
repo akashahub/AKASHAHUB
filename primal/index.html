@@ -29,17 +29,12 @@
     }
     #three-canvas {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 0;
       pointer-events: none;
     }
-    .content-wrapper {
-      position: relative;
-      z-index: 1;
-    }
+    .content-wrapper { position: relative; z-index: 1; }
     h1, h2, h3 {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 500;
@@ -55,12 +50,12 @@
       text-decoration: none;
       font-weight: 500;
       letter-spacing: 0.5px;
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
       border: none;
       cursor: pointer;
       font-size: 1rem;
     }
-    .btn:hover { background: #a58a54; transform: translateY(-2px); }
+    .btn:hover { background: #a58a54; transform: translateY(-3px) scale(1.02); }
 
     .hero {
       position: relative;
@@ -81,17 +76,18 @@
       z-index: 2;
       max-width: 620px;
       padding: 80px 0;
+      animation: fadeUp 1.2s ease-out;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .hero h1 {
       font-size: clamp(2.8rem, 5vw, 4.2rem);
       margin-bottom: 24px;
       color: var(--text);
     }
-    .hero .subtitle {
-      font-size: 1.2rem;
-      margin-bottom: 16px;
-      color: #4a4a42;
-    }
+    .hero .subtitle { font-size: 1.2rem; margin-bottom: 16px; color: #4a4a42; }
     .hero .complement {
       font-size: 0.95rem;
       color: var(--gold);
@@ -124,19 +120,13 @@
       background: var(--ivory);
       border-radius: 16px;
       overflow: hidden;
-      transition: transform 0.3s ease;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
-    .etapa:hover { transform: translateY(-6px); }
-    .etapa img {
-      width: 100%;
-      height: 280px;
-      object-fit: cover;
-    }
+    .etapa:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+    .etapa img { width: 100%; height: 280px; object-fit: cover; transition: transform 0.6s ease; }
+    .etapa:hover img { transform: scale(1.05); }
     .etapa-content { padding: 28px; }
-    .etapa h3 {
-      font-size: 1.6rem;
-      margin-bottom: 12px;
-    }
+    .etapa h3 { font-size: 1.6rem; margin-bottom: 12px; }
 
     .locais {
       display: grid;
@@ -151,12 +141,11 @@
       object-fit: cover;
       border-radius: 12px;
       margin-bottom: 20px;
+      transition: transform 0.5s ease;
     }
+    .local:hover img { transform: scale(1.03); }
 
-    .faq-item {
-      border-bottom: 1px solid var(--sand);
-      padding: 24px 0;
-    }
+    .faq-item { border-bottom: 1px solid var(--sand); padding: 24px 0; }
     .faq-item h3 {
       font-size: 1.3rem;
       cursor: pointer;
@@ -164,18 +153,10 @@
       justify-content: space-between;
       align-items: center;
     }
-    .faq-item p {
-      margin-top: 12px;
-      color: #4a4a42;
-      display: none;
-    }
+    .faq-item p { margin-top: 12px; color: #4a4a42; display: none; }
     .faq-item.active p { display: block; }
 
-    .cta-final {
-      background: var(--ivory);
-      text-align: center;
-      padding: 100px 0;
-    }
+    .cta-final { background: var(--ivory); text-align: center; padding: 100px 0; }
 
     @media (max-width: 768px) {
       .hero { background-position: center; }
@@ -184,7 +165,7 @@
       section { padding: 70px 0; }
     }
     @media (prefers-reduced-motion: reduce) {
-      * { transition: none !important; }
+      * { transition: none !important; animation: none !important; }
       #three-canvas { display: none; }
     }
   </style>
@@ -351,7 +332,6 @@
       });
     });
 
-    // Three.js cinematic background
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const canvas = document.getElementById('three-canvas');
       const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
@@ -359,47 +339,73 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
-      camera.position.z = 8;
+      const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 10);
 
+      // Particles
       const particlesGeometry = new THREE.BufferGeometry();
-      const count = 180;
+      const count = 220;
       const positions = new Float32Array(count * 3);
       const colors = new Float32Array(count * 3);
       for (let i = 0; i < count * 3; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 20;
-        positions[i+1] = (Math.random() - 0.5) * 20;
-        positions[i+2] = (Math.random() - 0.5) * 10;
-        const c = Math.random() > 0.6 ? new THREE.Color(0xB69A62) : new THREE.Color(0xA8B5A0);
+        positions[i] = (Math.random() - 0.5) * 24;
+        positions[i+1] = (Math.random() - 0.5) * 24;
+        positions[i+2] = (Math.random() - 0.5) * 12;
+        const c = Math.random() > 0.5 ? new THREE.Color(0xB69A62) : new THREE.Color(0xA8B5A0);
         colors[i] = c.r; colors[i+1] = c.g; colors[i+2] = c.b;
       }
       particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
       const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.08,
+        size: 0.09,
         vertexColors: true,
         transparent: true,
-        opacity: 0.45,
+        opacity: 0.5,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       });
       const particles = new THREE.Points(particlesGeometry, particlesMaterial);
       scene.add(particles);
 
+      // Floating rings
+      const ringGeo = new THREE.TorusGeometry(2.5, 0.02, 16, 100);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0xB69A62, transparent: true, opacity: 0.25 });
+      const rings = [];
+      for (let i = 0; i < 3; i++) {
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.position.z = -2 - i * 1.5;
+        ring.rotation.x = Math.random() * Math.PI;
+        rings.push(ring);
+        scene.add(ring);
+      }
+
       let scrollY = 0;
-      window.addEventListener('scroll', () => {
-        scrollY = window.scrollY;
+      let mouseX = 0, mouseY = 0;
+      window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+      window.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
       });
 
       function animate() {
         requestAnimationFrame(animate);
-        const progress = Math.min(scrollY / (document.body.scrollHeight - window.innerHeight), 1);
-        camera.position.z = 8 - progress * 3.5;
-        camera.position.x = Math.sin(progress * Math.PI) * 1.2;
-        camera.rotation.y = progress * 0.15;
-        particles.rotation.y = progress * 0.4 + Date.now() * 0.00005;
-        particles.rotation.x = progress * 0.1;
+        const progress = Math.min(scrollY / Math.max(document.body.scrollHeight - window.innerHeight, 1), 1);
+        
+        camera.position.z = 10 - progress * 4.5;
+        camera.position.x = mouseX * 0.8 + Math.sin(progress * Math.PI) * 1.5;
+        camera.position.y = -mouseY * 0.5;
+        camera.lookAt(0, 0, 0);
+        camera.rotation.z = progress * 0.05;
+
+        particles.rotation.y = progress * 0.5 + Date.now() * 0.00004;
+        particles.rotation.x = progress * 0.15 + mouseY * 0.1;
+
+        rings.forEach((ring, i) => {
+          ring.rotation.z += 0.002 + i * 0.001;
+          ring.position.y = Math.sin(Date.now() * 0.0003 + i) * 0.5;
+          ring.scale.setScalar(1 + progress * 0.3);
+        });
+
         renderer.render(scene, camera);
       }
       animate();
