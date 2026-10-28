@@ -56,6 +56,22 @@ window.AKASHA_PRECO = {
   area: { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 },
   curso: 2700,
   livro: 1700,
+  livros: {
+    "O Código Secreto do Universo": 2562,
+    "Código Quântico": 4700,
+    "Revelações Quânticas": 1500,
+    "Código de Conduta": 4707,
+    "O Que é Tantra?": 2673,
+    "Shiva, Shakti e Shava": 2679,
+    "Honrar a Deusa": 4798,
+    "Tantra Descomplicado": 4500,
+    "Paladin": 7200,
+    "Autoestima Blindada": 4300,
+    "Como Blindar Sua Mente?": 4300,
+    "Triplex na Mente": 3990,
+    "Coletânea Alinhamento Financeiro": 7000,
+    "Códigos de Origem": 9700
+  },
   audio: 700
 };
 
@@ -99,7 +115,7 @@ window.akashaOferta = function (ref) {
   }
   var lista = kind === "curso" ? window.AKASHA_ITENS[area].cursos : kind === "livro" ? window.AKASHA_ITENS[area].livros : kind === "audio" ? window.AKASHA_ITENS[area].audios : null;
   if (!lista || lista.indexOf(item) < 0) return null;
-  var valor = kind === "livro" && item === "Paladin" ? 3900 : window.AKASHA_PRECO[kind];
+  var valor = kind === "livro" ? (window.AKASHA_PRECO.livros[item] || window.AKASHA_PRECO.livro) : window.AKASHA_PRECO[kind];
   var titulo = item;
   if (kind === "curso") {
     for (var i = 0; i < faixa.courses.length; i++) {
