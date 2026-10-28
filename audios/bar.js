@@ -42,7 +42,7 @@ function mount() {
   const openBtn = document.createElement("button");
   openBtn.id = "ah-pack-open";
   openBtn.type = "button";
-  openBtn.textContent = "Ouvir o pack";
+  openBtn.textContent = "Ouvir Áudios";
   const closeBtn = document.createElement("button");
   closeBtn.id = "ah-pack-x";
   closeBtn.type = "button";
@@ -75,9 +75,9 @@ function mount() {
     const sheet = document.createElement("div");
     sheet.id = "ah-pack-sheet";
     const h = document.createElement("h2");
-    h.textContent = "Reprograme a sua mente para o que você quer.";
+    h.textContent = "Mude a frequência. Eleve o seu dia.";
     const p = document.createElement("p");
-    p.textContent = "Notícia, rede, conversa, anúncio. Isso entra em você o dia inteiro, sem pedir licença. Este pack é o contrário: áudios para colocar prosperidade, desejo e presença no lugar dessa programação.";
+    p.textContent = "Uma pausa para respirar, renovar o foco e entrar numa sintonia mais leve. Explore áudios com atmosfera quântica e sonora, uma energia acolhedora e aquele impulso gostoso de começar de novo. Coloque os fones, escolha uma faixa e aproveite o momento.";
     const pay = document.createElement("button");
     pay.className = "go";
     pay.id = "ah-pack-pay";
@@ -97,10 +97,10 @@ function mount() {
 
     function paint() {
       if (owned) {
-        pay.textContent = "Ouvir o pack inteiro";
+        pay.textContent = "Ouvir todos os áudios";
         trial.hidden = true;
       } else {
-        pay.textContent = "Me pague um café e ouça o pack inteiro · R$ 27";
+        pay.textContent = "☕ Apoie com um café e desbloqueie os áudios · R$ 27";
         trial.hidden = false;
       }
     }
@@ -134,7 +134,7 @@ function mount() {
           pay.textContent = "Me pague um café e ouça o pack inteiro · R$ 27";
         }
       };
-      pay.textContent = "Pagar agora neste aparelho · R$ 27";
+      pay.textContent = "☕ Desbloquear áudios · R$ 27";
       p.textContent = "Você pode pagar sem criar conta agora. Depois do pagamento, entre ou crie sua conta para guardar o pack e acessar em outros aparelhos.";
     }, { once: true });
     trial.onclick = () => {
