@@ -155,7 +155,7 @@ window.AKASHA_LINKS = {
   "curso:isis:paladins": "https://buy.stripe.com/3cI28radn0m75te7dRdjO0c",
   "curso:isis:jornada": "https://buy.stripe.com/9B66oH3OZ9WH08U1TxdjO0d",
   "curso:amon:zero": "https://buy.stripe.com/3cI8wP1GRc4PaNy55JdjO0e",
-  "livro:isis:Paladin": "https://buy.stripe.com/8x2bJ1bhrgl57Bm1TxdjO0k"
+  "livro:isis:Paladin": ""
 };
 
 window.AKASHA_YAN = "yanfili.simon@gmail.com";
