@@ -20,12 +20,18 @@ export function markOwned(id) {
 }
 
 export async function ownsPack() {
+  // Nunca conceder acesso premium com base apenas no localStorage:
+  // ele pode ser editado pelo visitante. O acesso persistente exige
+  // entitlement conferido na conta; a confirmação Stripe é validada no servidor.
   const user = auth.currentUser;
-  if (user && (isMentor(user.email) || await hasPack(user))) {
-    markOwned(isMentor(user.email) ? "mentor" : localStorage.getItem("akasha-pack") || "conta");
+  if (!user) return false;
+  if (isMentor(user.email)) {
+    markOwned("mentor");
     return true;
   }
-  return ownedLocal();
+  const entitled = await hasPack(user);
+  if (entitled) markOwned("conta");
+  return entitled;
 }
 
 export async function checkout(email) {
@@ -49,34 +55,51 @@ export async function confirm(sessionId) {
   return data.paid === true;
 }
 
-export function fillPlayer(host, { download }) {
+export function fillPlayer(host, { download, demo = false }) {
   host.replaceChildren();
   const audio = document.createElement("audio");
   audio.controls = true;
   audio.preload = "none";
   if (!download) audio.controlsList = "nodownload noplaybackrate";
+  const tracks = demo ? PACK.slice(0, 2) : PACK;
+  const DEMO_SECONDS = 20;
   let limit = 0;
-  if (!download) {
+  let currentFile = "";
+  if (demo) {
     const stop = () => {
       if (!limit || audio.currentTime < limit) return;
       audio.pause();
-      audio.currentTime = Math.max(0, limit - 0.05);
+      try { audio.currentTime = Math.max(0, limit - 0.05); } catch {}
     };
-    audio.onloadedmetadata = () => { limit = (audio.duration || 0) / 3; };
-    audio.ontimeupdate = stop;
-    audio.onseeking = stop;
+    audio.addEventListener("loadedmetadata", () => {
+      limit = DEMO_SECONDS;
+      if (Number.isFinite(audio.duration) && audio.duration < DEMO_SECONDS) limit = audio.duration;
+    });
+    audio.addEventListener("timeupdate", stop);
+    audio.addEventListener("seeking", () => {
+      if (limit && audio.currentTime >= limit) stop();
+    });
+    audio.addEventListener("play", () => {
+      if (limit && audio.currentTime >= limit - 0.1) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    });
   }
   host.appendChild(audio);
-  PACK.forEach((item, i) => {
+  tracks.forEach((item, i) => {
     const row = document.createElement("div");
     row.className = "ah-track";
     const play = document.createElement("button");
     play.type = "button";
     play.textContent = item.title;
     play.onclick = () => {
-      if (audio.src.indexOf(item.file) < 0) {
+      if (currentFile !== item.file) {
+        currentFile = item.file;
         audio.src = item.file;
-        limit = 0;
+        limit = demo ? DEMO_SECONDS : 0;
+      } else if (demo && limit && audio.currentTime >= limit - 0.1) {
+        audio.currentTime = 0;
       }
       audio.play().catch(() => {});
     };
@@ -90,7 +113,9 @@ export function fillPlayer(host, { download }) {
     }
     host.appendChild(row);
     if (i === 0 && !download) {
+      currentFile = item.file;
       audio.src = item.file;
+      if (demo) limit = DEMO_SECONDS;
     }
   });
   return audio;
