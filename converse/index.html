@@ -6,102 +6,57 @@
 <link rel="preconnect" href="https://jsonmxbuzagmwuucruem.supabase.co" crossorigin/>
 <title>Agendar · Akasha Hub</title>
 <style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: #f7f4ee;
-    color: #161513;
-    font-family: Georgia, "Iowan Old Style", serif;
-  }
-  main { max-width: 560px; margin: 0 auto; padding: 28px 18px 120px; }
-  .mark { margin: 0 0 28px; font-family: system-ui, sans-serif; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
-  .mark a { color: inherit; text-decoration: none; }
-  h1 { font-weight: 500; font-size: 42px; line-height: .95; margin: 0 0 12px; }
-  .lead { margin: 0 0 22px; font-family: system-ui, sans-serif; font-size: 16px; line-height: 1.4; }
-  h2 { margin: 26px 0 10px; font-family: system-ui, sans-serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; font-weight: 650; }
-  .days, .times { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .times { grid-template-columns: repeat(2, 1fr); }
-  button, input {
-    font: 600 16px/1 system-ui, sans-serif;
-  }
-  .day, .time {
-    min-height: 64px;
-    border: 1px solid #161513;
-    background: #fff;
-    color: #161513;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  .day small { display: block; font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
-  .day.on, .time.on { background: #161513; color: #f7f4ee; }
-  label { display: grid; gap: 6px; margin-top: 12px; font-family: system-ui, sans-serif; font-size: 13px; }
-  input {
-    min-height: 52px;
-    border: 1px solid #161513;
-    border-radius: 8px;
-    padding: 0 14px;
-    background: #fff;
-    font-weight: 500;
-  }
-  .pay {
-    position: sticky;
-    bottom: 16px;
-    display: block;
-    width: 100%;
-    margin-top: 18px;
-    min-height: 58px;
-    border: 0;
-    border-radius: 999px;
-    background: #161513;
-    color: #f7f4ee;
-    font-size: 16px;
-    letter-spacing: .04em;
-    cursor: pointer;
-  }
-  .pay:disabled { background: #b9b3a8; cursor: default; }
-  .choice { display: grid; gap: 10px; margin-top: 8px; }
-  .choice button, .choice a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    text-decoration: none;
-    min-height: 64px;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font: 650 16px/1.25 system-ui, sans-serif;
-  }
-  .go-stripe { background: #161513; color: #f7f4ee; border: 0; cursor: pointer; }
-  .go-zap { background: #fff; color: #161513; border: 1px solid #161513; }
-  .msg { margin-top: 18px; padding: 18px; background: #fff; border: 1px solid #161513; border-radius: 12px; }
-  .msg strong { display: block; font-family: Georgia, serif; font-size: 32px; font-weight: 500; margin-bottom: 8px; }
-  .hide { display: none; }
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Jost:wght@300;400;500;600&family=Playfair+Display:ital,wght@500;600;700&display=swap');
+  :root{color-scheme:dark;--void:#08070c;--surface:#121019;--surface-2:#1a1622;--ink:#f4efe4;--muted:#b2a8b8;--gold:#c9a227;--gold-bright:#ecd58e;--plum:#7a4bb5;--line:rgba(236,213,142,.18);--sans:'Jost',system-ui,sans-serif;--serif:'Playfair Display',Georgia,serif;--mono:'IBM Plex Mono',monospace}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;min-height:100vh;color:var(--ink);font-family:var(--sans);font-weight:300;background:radial-gradient(circle at 78% 5%,rgba(122,75,181,.2),transparent 33%),radial-gradient(circle at 8% 82%,rgba(201,162,39,.1),transparent 34%),var(--void);overflow-x:hidden}
+  body:before{content:'';position:fixed;inset:0;pointer-events:none;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  a{color:inherit}button,input{font:inherit}button{cursor:pointer}
+  .page-shell{width:min(1220px,calc(100% - 40px));margin:0 auto;padding:24px 0 100px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 0 22px;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}.brand-mark{width:38px;height:38px;border-radius:50%;object-fit:cover;border:1px solid rgba(201,162,39,.45)}
+  .brand-copy{display:grid;gap:4px}.brand-copy strong{font:600 13px/1 var(--serif);letter-spacing:.28em;color:var(--gold)}.brand-copy small,.eyebrow,.section-kicker{font:10px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .back{font:11px var(--mono);letter-spacing:.12em;text-decoration:none;color:var(--muted);transition:color .25s}.back:hover{color:var(--gold-bright)}
+  .layout{display:grid;gap:34px;padding-top:48px;align-items:start}@media(min-width:900px){.layout{grid-template-columns:minmax(300px,.8fr) minmax(520px,1.2fr);gap:72px}}
+  .story{position:relative;padding:38px 0 0}.story:before{content:'✦';position:absolute;top:0;left:0;color:var(--gold);font-size:20px}.eyebrow{display:block;margin-bottom:24px;color:var(--gold)}
+  h1{max-width:520px;margin:0 0 20px;font:500 clamp(46px,7vw,86px)/.92 var(--serif);letter-spacing:-.04em}.lead{max-width:450px;margin:0;color:var(--muted);font-size:17px;line-height:1.55}.lead::first-line{color:var(--ink)}
+  .story-note{max-width:360px;margin:54px 0 0;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font:12px/1.6 var(--mono)}.story-note strong{display:block;margin-bottom:7px;color:var(--gold-bright);font:600 14px/1.2 var(--serif);letter-spacing:.06em}
+  .booking-panel{position:relative;padding:28px;border:1px solid rgba(236,213,142,.2);border-radius:24px;background:linear-gradient(145deg,rgba(26,22,34,.92),rgba(12,10,16,.9));box-shadow:0 30px 90px rgba(0,0,0,.35);overflow:hidden}.booking-panel:after{content:'';position:absolute;width:210px;height:210px;right:-100px;top:-110px;border:1px solid rgba(201,162,39,.25);border-radius:50%;box-shadow:0 0 0 18px rgba(201,162,39,.04),0 0 0 38px rgba(201,162,39,.025);pointer-events:none}
+  .panel-head{display:flex;justify-content:space-between;gap:16px;align-items:start;margin-bottom:26px}.panel-head h2{margin:0;font:500 24px/1.15 var(--serif);color:var(--ink)}.price{margin:0;color:var(--gold-bright);font:500 18px var(--mono);white-space:nowrap}.panel-meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.pill{padding:7px 10px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+  h2{margin:30px 0 13px;font:500 13px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--gold-bright)}.days,.times{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.times{grid-template-columns:repeat(2,1fr)}
+  .day,.time{min-height:67px;border:1px solid rgba(236,213,142,.19);background:rgba(255,255,255,.035);color:var(--ink);border-radius:12px;transition:transform .25s,border-color .25s,background .25s,box-shadow .25s}.day:hover,.time:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 10px 24px rgba(0,0,0,.22)}.day small{display:block;margin-bottom:8px;color:var(--muted);font:10px var(--mono);letter-spacing:.12em;text-transform:uppercase}.day{font-size:18px}.day.on,.time.on{background:var(--gold);border-color:var(--gold);color:#16100a;box-shadow:0 10px 28px rgba(201,162,39,.2)}.day.on small{color:#4c3500}.time{min-height:58px;font-size:16px}
+  label{display:grid;gap:8px;margin-top:14px;color:var(--muted);font:12px var(--mono);letter-spacing:.08em;text-transform:uppercase}input{min-height:52px;border:1px solid rgba(236,213,142,.2);border-radius:10px;padding:0 14px;background:rgba(0,0,0,.22);color:var(--ink);outline:none;text-transform:none;letter-spacing:0}input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.12)}
+  .choice{display:grid;gap:10px;margin-top:10px}.choice button,.choice a{display:flex;align-items:center;justify-content:center;min-height:60px;padding:12px 16px;border-radius:12px;text-align:center;text-decoration:none;font:500 14px/1.3 var(--sans);transition:transform .25s,box-shadow .25s}.choice button:hover,.choice a:hover,.pay:hover{transform:translateY(-2px)}.go-stripe{border:1px solid var(--gold);background:var(--gold);color:#171109}.go-zap{border:1px solid var(--line);background:transparent;color:var(--ink)}
+  .pay{display:block;width:100%;min-height:58px;margin-top:18px;border:0;border-radius:999px;background:linear-gradient(100deg,var(--gold),var(--gold-bright));color:#191209;font:600 14px var(--mono);letter-spacing:.08em;cursor:pointer;transition:transform .25s,box-shadow .25s}.pay:hover{box-shadow:0 14px 28px rgba(201,162,39,.2)}.pay:disabled{background:#655f52;color:#282319;cursor:default;transform:none}.note{color:var(--muted);font-size:12px;line-height:1.55}.msg{margin-top:20px;padding:24px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04)}.msg strong{display:block;margin-bottom:8px;font:500 30px var(--serif);color:var(--gold-bright)}.hide{display:none}
+  @media(max-width:560px){.page-shell{width:min(100% - 28px,1220px);padding-top:16px}.topbar{padding-bottom:18px}.back{font-size:9px}.layout{padding-top:30px;gap:22px}.story{padding-top:30px}.story-note{margin-top:32px}.booking-panel{padding:19px;border-radius:18px}.panel-head{display:block}.price{margin-top:12px}.days{gap:6px}.day{min-height:61px}.day small{font-size:9px;margin-bottom:6px}}
 </style>
 </head>
 <body>
-<main>
-  <p class="mark"><a href="/">Akasha Hub</a></p>
-  <h1 id="title">Escolha o dia.</h1>
-  <p class="lead" id="lead">Abrindo os horários…</p>
-  <div id="calendar"></div>
-  <div id="hours" class="hide"></div>
-  <div id="paths" class="hide">
-    <h2>Como quer seguir</h2>
-    <div class="choice">
-      <button class="go-stripe" id="pickStripe" type="button">Confirmar pagamento pelo Stripe</button>
-      <a class="go-zap" id="pickZap" href="#" target="_blank" rel="noopener">Mandar no WhatsApp e pagar o mentor</a>
-    </div>
-    <p class="note">No site, o horário só fica marcado se o pagamento entrar. Cartão, Pix, Google Pay ou Apple Pay. No WhatsApp, você combina o pagamento direto com o mentor e o horário não fica travado sozinho.</p>
+<main class="page-shell">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Voltar para a Akasha Hub">
+      <img class="brand-mark" src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png" alt="">
+      <span class="brand-copy"><strong>AKASHA HUB</strong><small>CONVERSA PRIVADA</small></span>
+    </a>
+    <a class="back" href="/">Voltar ao hub ↗</a>
+  </header>
+  <div class="layout">
+    <section class="story" aria-labelledby="title">
+      <span class="eyebrow">01 / abrir espaço</span>
+      <h1 id="title">Escolha o dia.</h1>
+      <p class="lead" id="lead">Abrindo os horários…</p>
+      <p class="story-note"><strong>Uma conversa pode mudar a direção.</strong>Você traz o que está acontecendo agora. Em poucos minutos, encontramos o ponto central e o próximo movimento possível.</p>
+    </section>
+    <section class="booking-panel" aria-label="Agendamento">
+      <div class="panel-head"><div><p class="section-kicker">sessão individual</p><h2>Reserve seu momento</h2><div class="panel-meta"><span class="pill">15 minutos</span><span class="pill">online</span><span class="pill">com gravação</span></div></div><p class="price">R$ 45</p></div>
+      <div id="calendar"></div>
+      <div id="hours" class="hide"></div>
+      <div id="paths" class="hide"><h2>Como quer seguir</h2><div class="choice"><button class="go-stripe" id="pickStripe" type="button">Confirmar pagamento pelo Stripe</button><a class="go-zap" id="pickZap" href="#" target="_blank" rel="noopener">Mandar no WhatsApp e pagar o mentor</a></div><p class="note">No site, o horário só fica marcado se o pagamento entrar. Cartão, Pix, Google Pay ou Apple Pay. No WhatsApp, você combina o pagamento direto com o mentor e o horário não fica travado sozinho.</p></div>
+      <form id="who" class="hide"><label>Seu nome<input id="name" autocomplete="name" required></label><label>WhatsApp<input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="71 99999 9999" required></label><label>E-mail<input id="email" type="email" autocomplete="email" required></label><p class="note">A sessão é gravada. Ao pagar, você autoriza a gravação. Se o pagamento não entrar, nada fica marcado.</p><button class="pay" id="pay" type="submit">Confirmar pagamento pelo Stripe</button></form>
+      <div id="done" class="hide"></div>
+    </section>
   </div>
-  <form id="who" class="hide">
-    <label>Seu nome<input id="name" autocomplete="name" required></label>
-    <label>WhatsApp<input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="71 99999 9999" required></label>
-    <label>E-mail<input id="email" type="email" autocomplete="email" required></label>
-    <p class="note">A sessão é gravada. Ao pagar, você autoriza a gravação. Se o pagamento não entrar, nada fica marcado.</p>
-    <button class="pay" id="pay" type="submit">Confirmar pagamento pelo Stripe</button>
-  </form>
-  <div id="done" class="hide"></div>
 </main>
 <script>
 const API = "https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akashaConversa";
