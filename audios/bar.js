@@ -97,7 +97,7 @@ function mount() {
     trial.className = "go";
     trial.id = "ah-pack-try";
     trial.type = "button";
-    trial.textContent = "Não tenho agora. Quero ouvir um pedaço.";
+    trial.textContent = "▶ Ouvir demos grátis · 20 segundos";
     const player = document.createElement("div");
     player.id = "ah-pack-player";
     player.hidden = true;
@@ -111,7 +111,7 @@ function mount() {
         pay.textContent = "Ouvir todos os áudios";
         trial.hidden = true;
       } else {
-        pay.textContent = "☕ Apoie com um café e desbloqueie os áudios · R$ 27";
+        pay.textContent = "☕ Me pague um café e ouça todos os áudios · R$ 27";
         trial.hidden = false;
       }
     }
@@ -149,11 +149,12 @@ function mount() {
       p.textContent = "Você pode pagar sem criar conta agora. Depois do pagamento, entre ou crie sua conta para guardar o pack e acessar em outros aparelhos.";
     }, { once: true });
     trial.onclick = () => {
-      const pick = PACK[Math.floor(Math.random() * PACK.length)];
+      const demos = PACK.slice(0, 2);
+      const pick = demos[Math.floor(Math.random() * demos.length)];
       player.hidden = false;
-      const audio = fillPlayer(player, { download: false });
+      const audio = fillPlayer(player, { download: false, demo: true });
       const note = document.createElement("p");
-      note.textContent = "Um terço de “" + pick.title + "”. Sem download. O resto abre com o café.";
+      note.textContent = "Demonstração de “" + pick.title + "”: até 20 segundos por faixa. São duas demos; todos os áudios completos desbloqueiam após a confirmação do pagamento.";
       player.prepend(note);
       audio.src = pick.file;
       audio.play().catch(() => {});
