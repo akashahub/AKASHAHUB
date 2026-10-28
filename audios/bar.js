@@ -32,6 +32,16 @@ function mount() {
     ".ah-track a{color:#161513;font:600 13px/1 Jost,system-ui,sans-serif}",
     "#ah-pack-player audio{width:100%;margin-top:8px}",
     "@media(min-width:720px){#ah-pack-modal{align-items:center}}",
+    "#ah-pack-bar{background:radial-gradient(120% 160% at 0% 100%,rgba(255,190,92,.18),transparent 50%),radial-gradient(100% 130% at 100% 0%,rgba(147,96,255,.22),transparent 54%),linear-gradient(135deg,#171022,#241538 56%,#151020);border:1px solid rgba(238,204,125,.42);border-radius:20px;font-family:Manrope,system-ui,sans-serif;overflow:hidden}",
+    "#ah-pack-bar strong{color:#ffe7a6;font-weight:800}",
+    "#ah-pack-open{background:linear-gradient(105deg,#ffe6a0,#f7bf67 48%,#ffe8ac);color:#26152d;font-family:Manrope,system-ui,sans-serif;font-weight:800;box-shadow:0 7px 24px rgba(247,191,103,.22)}",
+    "#ah-pack-modal{background:rgba(9,6,16,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}",
+    "#ah-pack-sheet{background:radial-gradient(100% 65% at 100% 0%,rgba(151,106,255,.20),transparent 64%),radial-gradient(90% 70% at 0% 100%,rgba(255,188,91,.15),transparent 58%),linear-gradient(145deg,#21142f,#151020 58%,#20132d);color:#fff9ee;border:1px solid rgba(238,204,125,.42);border-radius:28px;box-shadow:0 30px 100px rgba(0,0,0,.48);font-family:Manrope,system-ui,sans-serif}",
+    "#ah-pack-sheet h2{font-family:Manrope,system-ui,sans-serif;font-weight:800;font-size:clamp(27px,6vw,36px);line-height:1.08;letter-spacing:-.04em;color:#fff1c9}",
+    "#ah-pack-sheet p{font-family:Manrope,system-ui,sans-serif;color:#e5dced;line-height:1.65}",
+    "#ah-pack-pay{background:linear-gradient(105deg,#ffe6a0,#f4bd66);color:#27162e;font-family:Manrope,system-ui,sans-serif;font-weight:800;box-shadow:0 8px 25px rgba(244,189,102,.18)}#ah-pack-try{background:rgba(255,255,255,.055);color:#fff8ed;border:1px solid rgba(255,255,255,.20)}",
+    "#ah-pack-player{border-top:1px solid rgba(238,204,125,.22);padding-top:12px}#ah-pack-player audio{accent-color:#f4bd66}",
+    "@keyframes ah-steam{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(-5px) rotate(7deg);filter:drop-shadow(0 0 12px rgba(255,210,130,.24))}}@keyframes ah-coffee-pulse{0%,100%{box-shadow:0 7px 24px rgba(247,191,103,.18)}50%{box-shadow:0 8px 30px rgba(247,191,103,.38)}}#ah-pack-sheet:before{content:attr(data-coffee);position:absolute;right:20px;top:12px;font-size:38px;opacity:.28;animation:ah-steam 3.5s ease-in-out infinite;pointer-events:none}#ah-pack-open{animation:ah-coffee-pulse 3s ease-in-out infinite}@media(prefers-reduced-motion:reduce){#ah-pack-open,#ah-pack-sheet:before{animation:none!important}}",
   ].join("");
   document.head.appendChild(style);
 
@@ -74,6 +84,7 @@ function mount() {
     root.id = "ah-pack-modal";
     const sheet = document.createElement("div");
     sheet.id = "ah-pack-sheet";
+    sheet.dataset.coffee = "☕";
     const h = document.createElement("h2");
     h.textContent = "Mude a frequência. Eleve o seu dia.";
     const p = document.createElement("p");
