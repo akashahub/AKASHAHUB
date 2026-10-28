@@ -267,14 +267,14 @@
   .livraria-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 18px; }
   .livraria-head h2 { font-family: var(--serif); font-weight: 700; font-size: clamp(28px, 4vw, 42px); margin: 6px 0 0; }
   .livraria-head p { margin: 8px 0 0; max-width: 46ch; color: var(--muted); }
-  .shelf { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x proximity; scroll-behavior: smooth; padding: 4px 2px 18px; scrollbar-width: thin; scrollbar-color: var(--gold-33) transparent; }
+  .shelf { display: flex; gap: 16px; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; scroll-snap-type: x mandatory; scroll-behavior: auto; padding: 4px 58px 18px 2px; scrollbar-width: thin; scrollbar-color: var(--gold-33) transparent; }
   .shelf::-webkit-scrollbar { height: 6px; }
   .shelf::-webkit-scrollbar-thumb { background: var(--gold-33); border-radius: 99px; }
-  .shelf-controls { display: flex; flex-shrink: 0; gap: 8px; align-items: center; }
-  .shelf-arrow { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--gold); font: 32px/1 var(--sans); transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease; }
-  .shelf-arrow:hover, .shelf-arrow:focus-visible { background: var(--gold); color: var(--on-primary); border-color: var(--gold); transform: translateY(-2px); }
+  .shelf-controls { position: absolute; top: 50%; right: max(20px, calc((100% - var(--max)) / 2)); transform: translateY(-50%); z-index: 5; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .shelf-arrow { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--gold); font: 32px/1 var(--sans); box-shadow: 0 6px 22px rgba(0,0,0,.12); transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease; }
+  .shelf-arrow:hover, .shelf-arrow:focus-visible { background: var(--gold); color: var(--on-primary); border-color: var(--gold); transform: scale(1.05); }
   .shelf-arrow:focus-visible, .shelf:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
-  @media (max-width: 600px) { .livraria-head { align-items: flex-start; } .shelf-controls { gap: 6px; } .shelf-arrow { width: 38px; height: 38px; } }
+  @media (max-width: 600px) { .livraria-head { align-items: flex-start; } .shelf-controls { right: 12px; gap: 6px; } .shelf-arrow { width: 38px; height: 38px; } .shelf { padding-right: 52px; } }
   @media (prefers-reduced-motion: reduce) { .shelf { scroll-behavior: auto; } .shelf-arrow { transition: none; } }
   .book-card { flex: 0 0 210px; scroll-snap-align: start; }
   .book-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; object-position: center; border-radius: 12px; background: #120f0c; display: block; }
@@ -1208,50 +1208,19 @@ html.dark .section-v2 .lead { color:#5e5a65; }
 </script>
 
 <script>
-(function bookShelfMotion(){
+(function bookShelfControls(){
   const shelf=document.getElementById('bookShelf');
   if(!shelf) return;
   const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const buttons=[...document.querySelectorAll('[data-shelf-direction]')];
-  let paused=reduceMotion.matches;
-  let resumeAt=0;
-  let last=0;
-  let autoDirection=1;
-  const speed=7; // pixels per second: movimento deliberadamente discreto
-  function pauseForInteraction(){
-    paused=true;
-    resumeAt=performance.now()+5500;
-  }
-  function animate(now){
-    if(!last) last=now;
-    const elapsed=Math.min((now-last)/1000,0.05);
-    last=now;
-    const max=shelf.scrollWidth-shelf.clientWidth;
-    if(!paused && !document.hidden && !reduceMotion.matches && max>1){
-      shelf.scrollLeft+=speed*elapsed*autoDirection;
-      if(shelf.scrollLeft>=max-1){ shelf.scrollLeft=max; autoDirection=-1; }
-      else if(shelf.scrollLeft<=1){ shelf.scrollLeft=0; autoDirection=1; }
-    } else if(paused && resumeAt && now>=resumeAt && !shelf.matches(':hover') && !shelf.contains(document.activeElement) && !document.hidden && !reduceMotion.matches){
-      paused=false;
-      resumeAt=0;
-    }
-    requestAnimationFrame(animate);
-  }
-  shelf.addEventListener('pointerenter',()=>{paused=true;resumeAt=0;});
-  shelf.addEventListener('pointerleave',()=>{if(!shelf.contains(document.activeElement)){paused=false;resumeAt=0;}});
-  shelf.addEventListener('focusin',()=>{paused=true;resumeAt=0;});
-  shelf.addEventListener('focusout',e=>{if(!shelf.contains(e.relatedTarget)){paused=false;resumeAt=0;}});
-  shelf.addEventListener('touchstart',()=>{paused=true;resumeAt=0;},{passive:true});
-  shelf.addEventListener('touchend',()=>{resumeAt=performance.now()+5500;},{passive:true});
-  shelf.addEventListener('wheel',pauseForInteraction,{passive:true});
+  // Keep touch scrolling native: no continuous animation competes with finger dragging.
   buttons.forEach(button=>button.addEventListener('click',()=>{
-    pauseForInteraction();
     const direction=Number(button.dataset.shelfDirection)||1;
-    shelf.scrollBy({left:direction*Math.max(260,shelf.clientWidth*.78),behavior:reduceMotion.matches?'auto':'smooth'});
+    const card=shelf.querySelector('.book-card');
+    const gap=16;
+    const step=card ? card.getBoundingClientRect().width+gap : Math.max(240,shelf.clientWidth*.75);
+    shelf.scrollBy({left:direction*step*2,behavior:reduceMotion.matches?'auto':'smooth'});
   }));
-  reduceMotion.addEventListener?.('change',event=>{paused=event.matches;resumeAt=0;});
-  document.addEventListener('visibilitychange',()=>{last=performance.now();});
-  frame=requestAnimationFrame(animate);
 })();
 </script>
 <script type="module" src="/efeitos/camada.js?v=1"></script>
