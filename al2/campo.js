@@ -6,50 +6,44 @@ if (!canvas || reduce) {
   if (canvas) canvas.hidden = true;
 } else {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.6));
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
   renderer.setClearColor(0x000000, 0);
-
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 80);
-  camera.position.set(0, 0.2, 9);
+  camera.position.set(0, 1.2, 8);
 
-  const gold = 0xc9a227;
-  const plum = 0x5c3d78;
-  const ivory = 0xf4efe6;
-
-  const count = window.innerWidth < 720 ? 700 : 1600;
-  const positions = new Float32Array(count * 3);
-  for (let i = 0; i < count; i++) {
-    const r = 2.2 + Math.random() * 7.5;
-    const a = Math.random() * Math.PI * 2;
-    const y = (Math.random() - 0.5) * 8;
-    positions[i * 3] = Math.cos(a) * r;
-    positions[i * 3 + 1] = y;
-    positions[i * 3 + 2] = Math.sin(a) * r * 0.55;
-  }
-  const dustGeo = new THREE.BufferGeometry();
-  dustGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  const dust = new THREE.Points(
-    dustGeo,
-    new THREE.PointsMaterial({ color: gold, size: 0.028, transparent: true, opacity: 0.72, depthWrite: false })
-  );
-  scene.add(dust);
+  const grid = new THREE.GridHelper(28, 28, 0x9eb0c8, 0xd5deea);
+  grid.position.y = -1.8;
+  scene.add(grid);
 
   const rings = new THREE.Group();
-  const ringMat = new THREE.MeshBasicMaterial({ color: gold, transparent: true, opacity: 0.45, wireframe: true });
-  const plumMat = new THREE.MeshBasicMaterial({ color: plum, transparent: true, opacity: 0.35, wireframe: true });
-  for (let i = 0; i < 5; i++) {
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.15 + i * 0.38, 0.012, 12, 96), i % 2 ? plumMat : ringMat);
-    ring.rotation.x = Math.PI / 2.4 + i * 0.18;
-    ring.rotation.y = i * 0.4;
+  const cyan = new THREE.MeshBasicMaterial({ color: 0x0b6e78, transparent: true, opacity: 0.35, wireframe: true });
+  const violet = new THREE.MeshBasicMaterial({ color: 0x5b3fb5, transparent: true, opacity: 0.28, wireframe: true });
+  for (let i = 0; i < 4; i++) {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.9 + i * 0.42, 0.008, 10, 80), i % 2 ? violet : cyan);
+    ring.rotation.x = Math.PI / 2.2;
     rings.add(ring);
   }
   const core = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(0.72, 1),
-    new THREE.MeshBasicMaterial({ color: ivory, transparent: true, opacity: 0.16, wireframe: true })
+    new THREE.OctahedronGeometry(0.45, 0),
+    new THREE.MeshBasicMaterial({ color: 0x12151c, wireframe: true, transparent: true, opacity: 0.35 })
   );
   rings.add(core);
+  rings.position.set(2.4, 0.6, -1);
   scene.add(rings);
+
+  const count = window.innerWidth < 720 ? 280 : 700;
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 16;
+    positions[i * 3 + 1] = Math.random() * 6 - 1;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+  }
+  const dust = new THREE.Points(
+    new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(positions, 3)),
+    new THREE.PointsMaterial({ color: 0x5b3fb5, size: 0.03, transparent: true, opacity: 0.45, depthWrite: false })
+  );
+  scene.add(dust);
 
   const pointer = { x: 0, y: 0 };
   let scroll = 0;
@@ -70,15 +64,10 @@ if (!canvas || reduce) {
     pointer.y = (e.clientY / window.innerHeight) * 2 - 1;
   }, { passive: true });
   window.addEventListener("scroll", () => {
-    const max = Math.max(document.body.scrollHeight - window.innerHeight, 1);
-    scroll = window.scrollY / max;
+    scroll = window.scrollY / Math.max(document.body.scrollHeight - window.innerHeight, 1);
   }, { passive: true });
   document.addEventListener("visibilitychange", () => { running = document.visibilityState !== "hidden"; });
-  window.addEventListener("al2-pulse", (e) => {
-    pulse = 1;
-    const tone = e.detail && e.detail.tone === "plum" ? plum : gold;
-    ringMat.color.setHex(tone);
-  });
+  window.addEventListener("al2-pulse", () => { pulse = 1; });
 
   const clock = new THREE.Clock();
   function frame() {
@@ -86,16 +75,13 @@ if (!canvas || reduce) {
     if (!running) return;
     const t = clock.getElapsedTime();
     pulse *= 0.94;
-    rings.rotation.y = t * 0.12 + pointer.x * 0.35;
-    rings.rotation.x = 0.4 + pointer.y * 0.18 + scroll * 0.6;
-    const s = 1 + pulse * 0.18 + Math.sin(t * 1.4) * 0.02;
-    rings.scale.setScalar(s);
-    dust.rotation.y = t * 0.03;
-    dust.position.y = Math.sin(t * 0.2) * 0.15 - scroll * 1.4;
-    ringMat.opacity = 0.32 + pulse * 0.45;
-    camera.position.x += (pointer.x * 0.8 - camera.position.x) * 0.04;
-    camera.position.y += (-pointer.y * 0.45 + 0.2 - scroll * 0.8 - camera.position.y) * 0.04;
-    camera.lookAt(0, 0, 0);
+    rings.rotation.y = t * 0.25 + pointer.x * 0.4;
+    rings.rotation.z = pointer.y * 0.15;
+    rings.scale.setScalar(1 + pulse * 0.16 + Math.sin(t * 1.6) * 0.02);
+    dust.rotation.y = t * 0.02;
+    grid.position.z = -scroll * 2;
+    camera.position.x += (pointer.x * 0.6 - camera.position.x) * 0.04;
+    camera.lookAt(0.4, 0.2, 0);
     renderer.render(scene, camera);
   }
   frame();
