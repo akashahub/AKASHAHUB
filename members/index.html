@@ -1035,12 +1035,13 @@ function arquivoAudio(nome) {
 }
 function aplicarCms(data) {
   if (!data) return;
-  if (Array.isArray(data.cursos) && data.cursos.length) {
+  // O documento compartilhado é a fonte oficial; arrays vazios também substituem a cópia local.
+  if (Array.isArray(data.cursos)) {
     cms.cursos = data.cursos.map(c => (c && c.id === "anubis:casais") ? Object.assign({}, c, { status: "apagado" }) : c);
   }
   if (Array.isArray(data.livros)) cms.livros = data.livros;
   if (Array.isArray(data.audios)) cms.audios = data.audios;
-  if (data.videos && typeof data.videos === "object") Object.assign(catalogVideos, data.videos);
+  if (data.videos && typeof data.videos === "object") catalogVideos = Object.assign({}, data.videos);
 }
 function momentoCms(data) { return Number(data && data.updatedAt) || 0; }
 function quadro(aula) {
@@ -1723,7 +1724,7 @@ function aulaEditor() {
   };
 }
 
-function novoCursoNaFaixa(faixa) {
+async function novoCursoNaFaixa(faixa) {
   const area = faixa || AREA[route.nivel] || "anubis";
   cms.cursos = cms.cursos || [];
   const stamp = Date.now();
@@ -1733,7 +1734,8 @@ function novoCursoNaFaixa(faixa) {
     titulo: "Novo curso",
     descricao: "",
     capa: "",
-    status: "rascunho",
+    // O card entra no catálogo compartilhado; o player continua protegido por acesso.
+    status: "publicado",
     ordem: cms.cursos.length,
     modules: [{
       id: "m" + stamp,
@@ -1752,7 +1754,7 @@ function novoCursoNaFaixa(faixa) {
   });
   cmsAt = { mode: "curso", index: cms.cursos.length - 1, mod: 0, aula: 0 };
   go({ view: "conteudo" });
-  gravarCms("Curso criado nesta faixa. Ainda é rascunho: só você vê. Publica quando os links estiverem na ordem.");
+  await gravarCms("Curso criado e publicado no catálogo. Todos os alunos verão título e capa; as aulas continuam bloqueadas para quem não tem acesso.");
 }
 function novoLivroNaFaixa(faixa) {
   const area = faixa || AREA[route.nivel] || "anubis";
