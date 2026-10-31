@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roteiros da mentoria · Arquitetura de Legado · Akasha Hub</title>
+<meta name="description" content="Teleprompter das cinco fases da mentoria Arquitetura de Legado. Tese, teoria, exercício e fechamento, na mesma lógica dos roteiros do Alinhamento Financeiro.">
+<link rel="canonical" href="https://akashahub.com.br/roteiros/al/">
+<meta name="theme-color" content="#070608">
+<link rel="icon" href="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Mono:wght@400;500&family=Syne:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C;--gold-light:#F3D78A;--gold-deep:#8C6A2A;
+  --purple:#6B4FA0;--purple-light:#C4B0E4;
+  --bg:#070608;--bg2:#100F13;--bg3:#17161C;
+  --text:#F4F0E8;--muted:#B7B1A6;--dim:#8A847A;
+  --line:rgba(201,168,76,.16);--read:52px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;background:
+    radial-gradient(900px 520px at 100% -10%,rgba(154,68,88,.18),transparent 55%),
+    radial-gradient(760px 480px at -10% -20%,rgba(201,168,76,.12),transparent 50%),
+    var(--bg);
+  color:var(--text);font-family:Syne,sans-serif;font-size:16px;line-height:1.55;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index:0;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#app{position:relative;z-index:1}
+.wrap{width:min(820px,calc(100% - 32px));margin:0 auto;padding:36px 0 80px}
+.kicker,.pill,.label,.ep-num{
+  font-family:"DM Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;font-size:10px;
+}
+.kicker{color:var(--gold-deep);margin-bottom:12px}
+h1,.serif{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500}
+h1{font-size:clamp(40px,8vw,68px);line-height:.96;color:var(--gold-light)}
+.sub{margin-top:14px;color:var(--dim);font-size:15px;line-height:1.7;max-width:62ch}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.pill{border:1px solid rgba(201,168,76,.35);color:var(--gold-light);border-radius:999px;padding:5px 10px}
+.back{display:inline-block;margin-bottom:16px;color:var(--gold);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-family:"DM Mono",monospace}
+.logic{margin-top:28px;padding:18px 18px 6px;border:1px solid var(--line);border-radius:18px;background:rgba(16,15,19,.7)}
+.logic p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:12px}
+.grid{display:grid;gap:12px;margin-top:22px}
+.card{
+  text-align:left;width:100%;border:1px solid var(--line);border-radius:18px;
+  background:rgba(23,22,28,.72);padding:16px 16px 14px;transition:border-color .2s ease;
+}
+.card:hover,.card.on{border-color:rgba(201,168,76,.5)}
+.card .ep-num{color:var(--gold)}
+.card h2{font-family:"Cormorant Garamond",serif;font-size:28px;font-weight:500;margin:6px 0 4px;color:var(--text)}
+.card p{color:var(--dim);font-size:13px;line-height:1.5}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tag{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:4px 8px;color:var(--dim)}
+.tag.g{color:var(--gold-light);border-color:rgba(201,168,76,.4)}
+.tag.p{color:var(--purple-light);border-color:rgba(107,79,160,.45)}
+.phase{margin-top:8px}
+.phase-head{margin-bottom:18px}
+.phase-head h1{font-size:clamp(36px,6vw,58px)}
+.tese{margin:16px 0;padding:14px 16px;border-left:2px solid var(--gold);background:rgba(201,168,76,.06);border-radius:0 14px 14px 0}
+.tese b{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-family:"DM Mono",monospace}
+.tese p{color:var(--text);font-size:16px;line-height:1.55}
+.blocks{display:grid;gap:10px;margin-top:16px}
+.block{border:1px solid var(--line);border-radius:16px;background:rgba(16,15,19,.65);padding:14px 16px}
+.block .label{color:var(--gold);margin-bottom:8px;display:flex;justify-content:space-between;gap:12px}
+.block .label span{color:var(--dim)}
+.block p{color:var(--muted);font-size:15px;line-height:1.65;margin:0 0 8px}
+.block p:last-child{margin:0}
+.block em{color:var(--gold-light);font-style:italic}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.go,.ghost{
+  min-height:44px;padding:0 16px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+}
+.go{background:var(--gold);color:#1a1408}
+.ghost{border:1px solid var(--line);color:var(--gold-light)}
+.reader{
+  position:fixed;inset:0;z-index:20;background:#050406;display:flex;flex-direction:column;
+}
+.reader-bar{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;
+  border-bottom:1px solid var(--line);background:rgba(7,6,8,.92);
+}
+.reader-bar button{min-height:40px;padding:0 12px;border:1px solid var(--line);border-radius:10px;font-size:12px;color:var(--gold-light)}
+.reader-stage{flex:1;display:flex;flex-direction:column;justify-content:center;padding:8vh 7vw 12vh}
+.reader-kicker{font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.reader-line{
+  font-family:"Cormorant Garamond",Georgia,serif;font-size:var(--read);line-height:1.18;color:var(--text);max-width:18ch;
+}
+.reader-next{margin-top:22px;color:var(--dim);font-size:16px;max-width:46ch}
+.progress{height:3px;background:rgba(244,240,232,.08)}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--purple-light));width:0}
+@media(max-width:700px){
+  .wrap{width:min(100% - 24px,820px)}
+  h1{font-size:40px}
+  .reader-line{font-size:34px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const SERIES = {
+  kicker: "Akasha Hub · Mentoria · Arquitetura de Legado",
+  title: "Roteiros\nda mentoria",
+  subtitle: "Cinco calls. Uma por fase do ano. A mesma lógica dos roteiros do Alinhamento Financeiro: tese, teoria, mapa, objeção, diagnóstico e exercício. Chakra é mapa. Não é prova.",
+  pills: ["5 fases", "call de mentoria", "tese e exercício", "ler no teleprompter"],
+  logic: [
+    "O Alinhamento Financeiro continua sendo a fase três. O que muda é o lugar: ele deixa de ser um produto solto e passa a ser o motor do ano, depois da essência e do império digital.",
+    "Cada roteiro segue o mesmo ofício. Abertura seca. Teoria com nome. Hermética como mapa, não como milagre. Objeção fixa, lida sem improvisar. Diagnóstico na call. Exercício para a semana. Complementar no fim.",
+    "Nada aqui substitui a plataforma. A plataforma continua sendo a casa. Esta página é só a fala da call."
+  ],
+  fases: [
+    {
+      id: "fase1",
+      code: "01",
+      title: "Arquitetura de Essência",
+      map: "Raiz · Muladhara",
+      tool: "Mesa da Essência · Dossiê",
+      time: "90 min",
+      tese: "Quem não separa relato, hipótese e decisão constrói a marca em cima de urgência.",
+      objetivo: "Organizar identidade, história, capacidades, valores e a direção inicial. Entrega: Dossiê de Essência.",
+      blocks: [
+        { label: "Abertura", time: "0–8", lines: [
+          "Isso não é uma sessão para você se descobrir de novo.",
+          "É a primeira engenharia do ano.",
+          "Antes de site, oferta ou preço, existe uma pergunta anterior.",
+          "O que aqui é fato da sua história, e o que é uma ideia que você ainda não testou?",
+          "Sem essa separação, a marca nasce genérica.",
+          "E oferta genérica cansa quem vende e quem compra."
+        ]},
+        { label: "Teoria", time: "8–32", lines: [
+          "Tese desta fase: identidade sem dossiê vira slogan.",
+          "A Mesa da Essência existe para isso.",
+          "Relato é o que aconteceu.",
+          "Hipótese é o que você acha que isso significa.",
+          "Decisão é o que você escolhe construir a partir disso.",
+          "Misturar os três produz posicionamento que outra pessoa não consegue repetir.",
+          "E se outra pessoa não consegue repetir, a casa ainda depende de você explicar.",
+          "Constelação e registro entram como leitura. Não como prova.",
+          "A prova, nesta fase, é um dossiê que outra pessoa consegue ler."
+        ]},
+        { label: "Hermética", time: "mapa", lines: [
+          "Raiz é mapa de fundação. Não é ritual.",
+          "Lei do ritmo: a história já tem maré. O dossiê nomeia a maré.",
+          "Maslow começa aqui. Segurança de identidade antes de estimativa de mercado.",
+          "Sem chão, a fase dois copia o vizinho."
+        ]},
+        { label: "Objeção fixa", time: "ler sem improvisar", lines: [
+          "Eu já sei quem eu sou.",
+          "Saber na cabeça não é o mesmo que ter um documento.",
+          "O que não está escrito volta a ser opinião na próxima reunião.",
+          "A fase não pede uma biografia. Pede critérios.",
+          "O que você não vai construir também entra no dossiê."
+        ]},
+        { label: "Diagnóstico", time: "32–72", lines: [
+          "Abrir a Mesa da Essência agora.",
+          "Três fatos da história. Sem interpretação ainda.",
+          "Um valor que já aparece no jeito de trabalhar.",
+          "Uma capacidade que o cliente já reconhece, mesmo sem nome.",
+          "Uma direção inicial. Pode estar incompleta.",
+          "Pergunta-gatilho: o que, se apagarmos, o negócio deixa de ser o seu?",
+          "Separar em voz alta. Isto é relato. Isto é hipótese. Isto é decisão.",
+          "Encerrar quando o dossiê tiver essas quatro linhas. Não quando estiver bonito."
+        ]},
+        { label: "Fechamento", time: "72–82", lines: [
+          "Exercício da semana: completar o dossiê com pendências, não com adjetivos.",
+          "Formulário de marca só depois das quatro linhas.",
+          "Visão em uma página, ainda rascunho.",
+          "Tarefa: devolver o dossiê com relato, hipótese e decisão em colunas separadas.",
+          "Gancho da fase dois: a essência pede um ativo. Frase, oferta e casa digital."
+        ]},
+        { label: "Complementar", time: "82–90", lines: [
+          "Provérbios 4:7. O princípio é a sabedoria.",
+          "Fundação antes de fachada.",
+          "Civilização: a casa que dura tem alicerce com nome, não só com pintura."
+        ]}
+      ]
+    },
+    {
+      id: "fase2",
+      code: "02",
+      title: "Império Digital",
+      map: "Sacral · Svadhisthana",
+      tool: "Ideação · Oferta · Ativos",
+      time: "90 min",
+      tese: "Ativo digital é o que continua trabalhando quando você sai da sala.",
+      objetivo: "Transformar a essência em frase, marca, oferta, presença e os ativos que o negócio precisa. Entrega: a casa digital com limite.",
+      blocks: [
+        { label: "Abertura", time: "0–8", lines: [
+          "A fase um deu a matéria.",
+          "Esta fase transforma matéria em coisa que outra pessoa consegue usar.",
+          "Império, aqui, não é tamanho. É estrutura.",
+          "Site, sistema, área de membros, automação. O que fizer sentido para esta casa.",
+          "Não o cardápio inteiro da internet."
+        ]},
+        { label: "Teoria", time: "8–32", lines: [
+          "Tese: presença sem oferta é vitrine. Oferta sem limite é conversa eterna.",
+          "A frase da marca tem um teste simples.",
+          "Outra pessoa consegue repetir sem você na sala?",
+          "Se não consegue, ainda é explicação. Não é ativo.",
+          "Posicionamento é escolha de quem você não atende também.",
+          "B2B entra quando a solução serve outra empresa, não só o cliente final.",
+          "Monetização é lista de caminhos. Não é promessa de qual caminho vence.",
+          "O ativo certo é o que tira uma repetição do seu colo."
+        ]},
+        { label: "Hermética", time: "mapa", lines: [
+          "Sacral é mapa de criação. Ideia que ganha forma.",
+          "Lei da vibração: ideia parada não é produto.",
+          "Imaginação aplicada. Um ativo por vez, com nome e dono.",
+          "A fase um libera espaço. Esta fase usa o espaço."
+        ]},
+        { label: "Objeção fixa", time: "ler sem improvisar", lines: [
+          "Meu negócio é diferente. Não cabe em sistema.",
+          "Todo negócio que dura tem repetição.",
+          "O sistema não apaga o ofício. Ele guarda o que se repete.",
+          "O que é único continua com você.",
+          "O que é igual toda semana sai da sua cabeça e entra na casa."
+        ]},
+        { label: "Diagnóstico", time: "32–72", lines: [
+          "Abrir a ideação.",
+          "Uma frase. Máximo duas linhas. Que outra pessoa consiga dizer.",
+          "Uma oferta com começo, meio e fim. E com o que ela não inclui.",
+          "Um ativo digital prioritário. Só um.",
+          "Pergunta-gatilho: o que você explica toda semana e já poderia estar escrito, gravado ou no sistema?",
+          "Nomear o ativo. Não desenhar dez.",
+          "Encerrar quando a frase e o ativo tiverem nome."
+        ]},
+        { label: "Fechamento", time: "72–82", lines: [
+          "Exercício: escrever a frase e testar com três pessoas de fora.",
+          "Listar os ativos que já existem e os que faltam.",
+          "Marcar o que é B2B e o que é para o cliente final.",
+          "Tarefa: uma página ou um fluxo que represente a oferta, mesmo rascunho.",
+          "Gancho da fase três: a casa digital pede número. Caixa, preço e o que sustenta."
+        ]},
+        { label: "Complementar", time: "82–90", lines: [
+          "Eclesiastes 9:10. O que a sua mão encontrar para fazer, faça.",
+          "Criação com prazo. Não criação infinita.",
+          "Civilização: oficina que vira ofício quando o molde pode ser repetido."
+        ]}
+      ]
+    },
+    {
+      id: "fase3",
+      code: "03",
+      title: "Alinhamento Financeiro",
+      map: "Plexo · Manipura",
+      tool: "Cash-flow · Preço · Indicadores",
+      time: "90 min",
+      tese: "Caixa bagunçado não é falta de sorte. É movimento sem gaveta.",
+      objetivo: "Sustentar o projeto com decisão financeira. Caixa, preço, indicadores e o que a oferta aguenta. Esta é a fase que era o AF.",
+      blocks: [
+        { label: "Abertura", time: "0–8", lines: [
+          "A casa digital já tem nome.",
+          "Agora a pergunta é se ela se paga.",
+          "Isso não é recomendação de investimento.",
+          "É engenharia do que entra, do que já tem dono e do que sai sem explicação.",
+          "Sorte é um nome elegante para um movimento que não tem lugar."
+        ]},
+        { label: "Teoria", time: "8–32", lines: [
+          "Tese: sem caixa nomeado, preço vira chute e meta vira desejo.",
+          "Teoria da escassez. Mullainathan e Shafir, 2013.",
+          "Insegurança financeira aperta a atenção. A decisão piora.",
+          "Reserva e uma página semanal devolvem largura de banda.",
+          "Preço não é o número do anúncio.",
+          "Preço é hora, custo direto e o que a entrega aguenta.",
+          "Indicador bom muda uma decisão. Painel ornamental não muda nada.",
+          "A fase dois escolheu a oferta. Esta fase testa se ela se sustenta."
+        ]},
+        { label: "Hermética", time: "mapa", lines: [
+          "Plexo é mapa de motor. Vontade que vira número e ação.",
+          "Lei do ritmo: reserva absorve a maré baixa.",
+          "Causa e efeito: procrastinação financeira cobra juro de oportunidade.",
+          "Chakra é mapa. Dinheiro é território."
+        ]},
+        { label: "Objeção fixa", time: "ler sem improvisar", lines: [
+          "Eu não sou de número. Eu sou de criação.",
+          "Criação sem caixa vira hobby com nota fiscal.",
+          "O número não mata a obra. Ele diz se a obra continua no mês que vem.",
+          "Começar pelo caixa não é ser pequeno.",
+          "É não deixar a emergência decidir no seu lugar."
+        ]},
+        { label: "Diagnóstico", time: "32–72", lines: [
+          "Abrir extrato ou planilha agora.",
+          "Três linhas. O que entrou. O que já está prometido. O que saiu sem nome.",
+          "Pergunta-gatilho: se uma emergência acontecesse amanhã, em que conta, e em quanto tempo?",
+          "Olhar o preço de uma oferta. Hora, custo, o que não está incluso.",
+          "Escolher um indicador. Só um. O que muda a próxima decisão.",
+          "Encerrar no pico. A tensão é o motor. Não acolher o chute."
+        ]},
+        { label: "Fechamento", time: "72–82", lines: [
+          "Exercício: auditoria de caixa em 48 horas.",
+          "Uma reserva com meta. Três a seis meses, se a casa permitir. Semanal.",
+          "Cortar um gasto de baixo valor por semana.",
+          "Revisar o preço mínimo de uma oferta.",
+          "Tarefa: devolver as três linhas e o indicador escolhido.",
+          "Gancho da fase quatro: número pede processo. O que só você faz precisa sair do seu colo."
+        ]},
+        { label: "Complementar", time: "82–90", lines: [
+          "Provérbios 22:3. O prudente vê o perigo e se abriga.",
+          "Casa sobre a rocha, não sobre o humor do mês.",
+          "Civilização: contrato, crédito e limite. Mesopotâmia já sabia que conta sem nome vira disputa."
+        ]}
+      ]
+    },
+    {
+      id: "fase4",
+      code: "04",
+      title: "Expansão",
+      map: "Cardíaco · Anahata",
+      tool: "Processos · Publicação · Tráfego",
+      time: "90 min",
+      tese: "Expansão sem processo é ansiedade com calendário.",
+      objetivo: "Tirar do fundador o que se repete. Documentar, publicar e separar orgânico de pago. Entrega: a operação que outra pessoa consegue tocar.",
+      blocks: [
+        { label: "Abertura", time: "0–8", lines: [
+          "A casa já tem essência, ativo e número.",
+          "Expansão não é postar mais.",
+          "É fazer a operação continuar quando você não está em todas as cadeiras.",
+          "O que depende só de você é o teto.",
+          "O teto não sobe com vontade. Sobe com processo."
+        ]},
+        { label: "Teoria", time: "8–32", lines: [
+          "Tese: o que não está escrito volta para a sua cabeça na próxima semana.",
+          "Processo é a repetição com dono, passo e critério de pronto.",
+          "Publicar é uma rotina. Não um surto.",
+          "Orgânico e pago não são a mesma conversa.",
+          "Orgânico constrói o que a casa diz.",
+          "Pago acelera o que já está claro. Não inventa clareza.",
+          "Olhar o que foi publicado. Não o que foi prometido no planejamento.",
+          "Rede entra aqui também. Reciprocidade com quem move o trabalho, não coleção de cartão."
+        ]},
+        { label: "Hermética", time: "mapa", lines: [
+          "Cardíaco é mapa de troca. O que circula entre pessoas e canais.",
+          "Lei da polaridade: dar e receber são a mesma corrente.",
+          "Consistência vence inspiração. Roma não conquistou com um dia bom.",
+          "A fase três deu o número. Esta fase dá o ritmo."
+        ]},
+        { label: "Objeção fixa", time: "ler sem improvisar", lines: [
+          "Se eu soltar, a qualidade cai.",
+          "Qualidade que só existe com você na sala não é qualidade. É presença.",
+          "O processo guarda o padrão. Você guarda o critério.",
+          "Soltar o repetido não é abandonar a obra.",
+          "É deixar a obra ter mais de uma mão."
+        ]},
+        { label: "Diagnóstico", time: "32–72", lines: [
+          "Listar o que só o fundador faz hoje.",
+          "Marcar o que pode ser padronizado nesta semana. Só um.",
+          "O que se publica nos próximos sete dias. Dia e canal.",
+          "Separar: isto é orgânico. Isto seria pago, se um dia fizer sentido.",
+          "Pergunta-gatilho: se você saísse dez dias, o que para no primeiro dia?",
+          "Encerrar quando um processo tiver dono e um critério de pronto."
+        ]},
+        { label: "Fechamento", time: "72–82", lines: [
+          "Exercício: documentar um fluxo. Entrada, passo, saída.",
+          "Calendário de uma semana de publicação. O que sai, não o que seria bom sair.",
+          "Uma entrega de valor para alguém da rede, sem pedido na mesma mensagem.",
+          "Tarefa: o processo escrito e a lista do que foi publicado, não do que foi planejado.",
+          "Gancho da fase cinco: operação que roda pede continuidade. O que fica quando você sai."
+        ]},
+        { label: "Complementar", time: "82–90", lines: [
+          "Lucas 6:38. A medida com que medis.",
+          "Troca com critério. Não troca por ansiedade.",
+          "Civilização: rota que dura tem protocolo entre cidades, não só um mercador genial."
+        ]}
+      ]
+    },
+    {
+      id: "fase5",
+      code: "05",
+      title: "Legado",
+      map: "Frontal e coroa · Ajna · Sahasrara",
+      tool: "Declaração de legado · Doutrina",
+      time: "90 min",
+      tese: "Legado é o que ainda funciona quando você não está na sala.",
+      objetivo: "Comunidade, doutrina e continuidade. O negócio lido como quem compra ou como quem vende. Entrega: o que permanece.",
+      blocks: [
+        { label: "Abertura", time: "0–8", lines: [
+          "As quatro fases anteriores construíram a casa.",
+          "Esta fase pergunta se a casa continua sem o arquiteto no corredor.",
+          "Legado não é discurso de despedida.",
+          "É governança.",
+          "O que foi feito precisa poder ser transmitido."
+        ]},
+        { label: "Teoria", time: "8–32", lines: [
+          "Tese: obra que só existe na memória do fundador ainda não é legado.",
+          "Comunidade é o lugar onde o método se repete com outras pessoas.",
+          "Doutrina, aqui, é o conjunto de princípios que a casa não negocia.",
+          "Movimento é o nome do que junta essas pessoas em volta do princípio.",
+          "Ler o negócio como quem compra: o que está documentado, o que depende de uma pessoa, o que gera caixa.",
+          "Ler como quem vende: o que o próximo dono precisaria para não recomeçar do zero.",
+          "Propósito não substitui boleto. Sustenta a decisão quando o boleto aperta."
+        ]},
+        { label: "Hermética", time: "mapa", lines: [
+          "Ajna é mapa de visão. Coroa é mapa de governo.",
+          "Lei da correspondência: como se governa por dentro, se governa o patrimônio.",
+          "Artha a serviço de um princípio. Não acúmulo vazio.",
+          "As fases anteriores são o sistema. Esta fase nomeia o sistema."
+        ]},
+        { label: "Objeção fixa", time: "ler sem improvisar", lines: [
+          "Ainda é cedo para falar de legado.",
+          "Legado não espera o auge. Legado é o hábito de escrever o que continua.",
+          "Quem deixa para o fim descreve uma memória.",
+          "Quem escreve agora descreve um método.",
+          "O documento pode estar incompleto. Não pode estar ausente."
+        ]},
+        { label: "Diagnóstico", time: "32–72", lines: [
+          "Declaração de legado. Uma página.",
+          "O que continua funcionando se você sair trinta dias.",
+          "O que ainda para.",
+          "Nomear: comunidade, movimento, doutrina. Mesmo que um dos três ainda seja rascunho.",
+          "Pergunta-gatilho: se alguém assumisse amanhã, qual pasta essa pessoa abriria primeiro?",
+          "Encerrar quando a declaração couber em uma página e a pasta tiver nome."
+        ]},
+        { label: "Fechamento", time: "72–82", lines: [
+          "Exercício: escrever a declaração em sete dias.",
+          "Listar os princípios que a casa não negocia.",
+          "Um mecanismo de continuidade. Grupo, rito, revisão. Um só.",
+          "Tarefa: apresentar a página e a pasta no próximo encontro.",
+          "As cinco fases são um sistema. Cada uma segura a próxima.",
+          "Prova é o que outra pessoa consegue operar."
+        ]},
+        { label: "Complementar", time: "82–90", lines: [
+          "Lucas 12:48. A quem muito foi dado, muito será pedido.",
+          "Habacuque 2:2. Escreve a visão.",
+          "Civilização: o que passa de geração é o que foi inscrito, não o que foi apenas vivido."
+        ]}
+      ]
+    }
+  ]
+};
+
+const state = { fase: -1, reading: false, line: 0, size: 46 };
+
+function esc(v){
+  return String(v ?? "").replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">");
+}
+function linesOf(fase){
+  const out = [];
+  fase.blocks.forEach(b => b.lines.forEach(l => out.push({ label: b.label, text: l })));
+  return out;
+}
+function paint(){
+  const app = document.getElementById("app");
+  if (state.reading) { paintReader(); return; }
+  if (state.fase < 0) { paintHome(); return; }
+  const f = SERIES.fases[state.fase];
+  app.innerHTML = `
+    <div class="wrap phase">
+      <a class="back" href="#visao" data-go="home">← As cinco fases</a>
+      <header class="phase-head">
+        <p class="kicker">Fase ${esc(f.code)} · ${esc(f.map)} · ${esc(f.time)}</p>
+        <h1>${esc(f.title)}</h1>
+        <p class="sub">${esc(f.objetivo)}</p>
+        <div class="meta"><span class="tag g">${esc(f.tool)}</span><span class="tag p">chakra é mapa</span></div>
+      </header>
+      <div class="tese"><b>Tese</b><p>${esc(f.tese)}</p></div>
+      <div class="actions">
+        <button class="go" data-act="read">Ler no teleprompter</button>
+        <a class="ghost" href="/afplataforma/" style="display:inline-flex;align-items:center">Abrir a plataforma</a>
+      </div>
+      <div class="blocks">
+        ${f.blocks.map(b => `
+          <article class="block">
+            <p class="label">${esc(b.label)} <span>${esc(b.time)}</span></p>
+            ${b.lines.map(l => `<p>${esc(l)}</p>`).join("")}
+          </article>`).join("")}
+      </div>
+    </div>`;
+  bind();
+}
+function paintHome(){
+  document.getElementById("app").innerHTML = `
+    <div class="wrap">
+      <a class="back" href="/roteiros/">Biblioteca de roteiros</a>
+      <p class="kicker">${esc(SERIES.kicker)}</p>
+      <h1>${esc(SERIES.title)}</h1>
+      <p class="sub">${esc(SERIES.subtitle)}</p>
+      <div class="pills">${SERIES.pills.map(p => `<span class="pill">${esc(p)}</span>`).join("")}</div>
+      <div class="logic">${SERIES.logic.map(p => `<p>${esc(p)}</p>`).join("")}</div>
+      <div class="grid">
+        ${SERIES.fases.map((f,i) => `
+          <button class="card" data-fase="${i}">
+            <p class="ep-num">Fase ${esc(f.code)} · ${esc(f.map)}</p>
+            <h2>${esc(f.title)}</h2>
+            <p>${esc(f.tese)}</p>
+            <div class="meta"><span class="tag">${esc(f.time)}</span><span class="tag g">${esc(f.tool)}</span></div>
+          </button>`).join("")}
+      </div>
+    </div>`;
+  bind();
+}
+function paintReader(){
+  const f = SERIES.fases[state.fase];
+  const lines = linesOf(f);
+  const i = Math.max(0, Math.min(state.line, lines.length - 1));
+  const cur = lines[i];
+  const next = lines[i+1];
+  document.documentElement.style.setProperty("--read", state.size + "px");
+  document.getElementById("app").innerHTML = `
+    <div class="reader">
+      <div class="reader-bar">
+        <button data-act="exit">Fechar</button>
+        <span class="kicker" style="margin:0">${esc(f.title)} · ${i+1}/${lines.length}</span>
+        <span>
+          <button data-act="smaller">A−</button>
+          <button data-act="bigger">A+</button>
+        </span>
+      </div>
+      <div class="progress"><i style="width:${Math.round((i+1)/lines.length*100)}%"></i></div>
+      <div class="reader-stage" data-act="next">
+        <p class="reader-kicker">${esc(cur.label)}</p>
+        <p class="reader-line">${esc(cur.text)}</p>
+        <p class="reader-next">${next ? esc(next.text) : "Fim desta fase."}</p>
+      </div>
+    </div>`;
+  bind();
+}
+function bind(){
+  document.querySelectorAll("[data-fase]").forEach(el => {
+    el.addEventListener("click", () => { state.fase = Number(el.dataset.fase); location.hash = SERIES.fases[state.fase].id; paint(); });
+  });
+  document.querySelectorAll("[data-go='home']").forEach(el => {
+    el.addEventListener("click", (e) => { e.preventDefault(); state.fase = -1; state.reading = false; location.hash = "visao"; paint(); });
+  });
+  document.querySelectorAll("[data-act='read']").forEach(el => {
+    el.addEventListener("click", () => { state.reading = true; state.line = 0; paint(); });
+  });
+  document.querySelectorAll("[data-act='exit']").forEach(el => {
+    el.addEventListener("click", () => { state.reading = false; paint(); });
+  });
+  document.querySelectorAll("[data-act='next']").forEach(el => {
+    el.addEventListener("click", () => advance(1));
+  });
+  document.querySelectorAll("[data-act='bigger']").forEach(el => {
+    el.addEventListener("click", (e) => { e.stopPropagation(); state.size = Math.min(72, state.size + 4); paint(); });
+  });
+  document.querySelectorAll("[data-act='smaller']").forEach(el => {
+    el.addEventListener("click", (e) => { e.stopPropagation(); state.size = Math.max(28, state.size - 4); paint(); });
+  });
+}
+function advance(dir){
+  if (!state.reading) return;
+  const lines = linesOf(SERIES.fases[state.fase]);
+  state.line = Math.max(0, Math.min(lines.length - 1, state.line + dir));
+  paint();
+}
+document.addEventListener("keydown", (e) => {
+  if (!state.reading) return;
+  if (e.key === " " || e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); advance(1); }
+  if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); advance(-1); }
+  if (e.key === "Escape") { state.reading = false; paint(); }
+});
+function fromHash(){
+  const id = decodeURIComponent(location.hash.replace("#",""));
+  const i = SERIES.fases.findIndex(f => f.id === id);
+  state.fase = i;
+  state.reading = false;
+  paint();
+}
+window.addEventListener("hashchange", fromHash);
+fromHash();
+</script>
+</body>
+</html>
