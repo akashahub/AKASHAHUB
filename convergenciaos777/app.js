@@ -277,7 +277,7 @@ function shell(html, top) {
     ["reel", svg('<rect x="3" y="3" width="18" height="18" rx="4"/><path d="m10 8 6 4-6 4z"/>')],
     ["eu", '<span class="me">' + esc((email() || "?").slice(0, 1).toUpperCase()) + "</span>"]
   ].map((item) => '<button class="' + (active === item[0] ? "on" : "") + '" data-act="go" data-id="' + item[0] + '" aria-label="' + item[0] + '">' + item[1] + "</button>").join("");
-  const bar = top || '<header class="top"><b>LegadOS's</b><div class="icons"><button data-act="go" data-id="eu" aria-label="Atividade">' + svg('<path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z"/>') + "</button></div></header>";
+  const bar = top || '<header class="top"><b>Convergência</b><div class="icons"><button data-act="go" data-id="eu" aria-label="Atividade">' + svg('<path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z"/>') + "</button></div></header>";
   return '<div class="wrap">' + bar + html + '<nav class="nav">' + nav + "</nav></div>";
 }
 function stories() {
@@ -289,7 +289,7 @@ function post(id, mark, name, sub, caption, roomId) {
 }
 
 function viewLogin() {
-  return '<div class="gate"><div class="k">LegadOS's · teste aberto</div><h1>Entra com Google.</h1><p class="q">Depois do Google a plataforma abre nos três pilares. Gestor entra sem ingresso.</p><button class="btn" data-act="google">' + (state.busy === "google" ? "Abrindo a plataforma..." : "Continuar com Google") + '</button>' + (state.loginError ? '<p class="q" style="color:#f0b2ac">' + esc(state.loginError) + "</p>" : "") + '<p class="m" style="margin-top:18px">Se o Google não abrir, entra com o código do e-mail.</p><label class="m">E-mail</label><input id="mail" type="email" value="' + esc(state.emailDraft) + '" placeholder="voce@gmail.com"><button class="btn btn2" data-act="send">Receber código</button><input id="code" inputmode="numeric" placeholder="000000"><button class="btn btn2" data-act="code">Entrar com o código</button></div>';
+  return '<div class="gate"><div class="k">Convergência · teste aberto</div><h1>Entra com Google.</h1><p class="q">Depois do Google a plataforma abre nos três pilares. Gestor entra sem ingresso.</p><button class="btn" data-act="google">' + (state.busy === "google" ? "Abrindo a plataforma..." : "Continuar com Google") + '</button>' + (state.loginError ? '<p class="q" style="color:#f0b2ac">' + esc(state.loginError) + "</p>" : "") + '<p class="m" style="margin-top:18px">Se o Google não abrir, entra com o código do e-mail.</p><label class="m">E-mail</label><input id="mail" type="email" value="' + esc(state.emailDraft) + '" placeholder="voce@gmail.com"><button class="btn btn2" data-act="send">Receber código</button><input id="code" inputmode="numeric" placeholder="000000"><button class="btn btn2" data-act="code">Entrar com o código</button></div>';
 }
 function viewTickets() {
   const cards = TICKETS.map((t) => '<article class="card"><div class="row"><h3>' + t.name + '</h3><span class="pill">' + t.price + '</span></div><p class="q">' + t.text + '</p><button class="btn" data-act="buy" data-id="' + t.id + '">Pagar ' + t.price + '</button></article>').join("");
@@ -480,7 +480,7 @@ function render() {
   else if (session && state.route === "gestao") html = viewGestao();
   else if (session) html = myTicket() ? viewHome() : viewTickets();
   root.innerHTML = html;
-  document.title = "LegadOS's";
+  document.title = "Convergência OS";
   paintChat();
 }
 
