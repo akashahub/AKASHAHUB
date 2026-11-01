@@ -254,6 +254,17 @@ select option{background:var(--ink2);color:var(--ivory)}
 .info-open-image img{transition:transform .35s ease}
 .info-open-image:hover img{transform:scale(1.035)}
 
+.therapist-note{margin-top:20px;max-width:35rem}
+.therapist-note-trigger{display:grid;gap:5px;width:100%;text-align:left;padding:14px 17px;border:1px solid rgba(224,184,94,.58);border-radius:10px;background:linear-gradient(120deg,rgba(198,161,91,.22),rgba(11,10,9,.55));color:var(--ivory);cursor:pointer;box-shadow:0 8px 28px rgba(0,0,0,.22);transition:transform .2s ease,border-color .2s ease,background .2s ease}
+.therapist-note-trigger:hover,.therapist-note-trigger:focus-visible{transform:translateY(-2px);border-color:#e6c36a;background:linear-gradient(120deg,rgba(198,161,91,.34),rgba(11,10,9,.72));outline:none}
+.note-trigger-eyebrow{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#e6c36a}
+.note-trigger-title{font-family:var(--display);font-size:1.55rem;line-height:1.05}
+.note-trigger-title span{color:#e6c36a}
+.note-trigger-hint{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ivory-dim)}
+.therapist-note-content{margin-top:10px;padding:16px 18px;border-left:2px solid #c6a15b;border-radius:0 9px 9px 0;background:rgba(11,10,9,.72);animation:noteReveal .3s ease}
+.therapist-note-content p{margin:0;font-size:.9rem;line-height:1.7;color:var(--ivory-dim)}
+.therapist-note-content[hidden]{display:none}
+@keyframes noteReveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .hero-sessions{position:absolute;z-index:6;right:var(--pad);bottom:22px;display:flex;justify-content:flex-end;width:max-content;max-width:calc(100% - 32px)}
 .hero-sessions button{border:1px solid rgba(243,238,230,.48);border-radius:999px;background:rgba(11,10,9,.42);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--ivory);padding:6px 11px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
 .hero-sessions button:hover,.hero-sessions button:focus-visible{background:var(--ivory);color:var(--ink);border-color:var(--ivory)}
@@ -408,7 +419,16 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
       <a class="btn btn-ivory" href="https://wa.me/5571983448621?text=Quero%20uma%20sess%C3%A3o" target="_blank" rel="noopener noreferrer" data-cta>Solicitar uma experiência</a>
       <a class="btn btn-ghost" href="#pilares">Ver a experiência</a>
     </div>
-    <p class="wait"><strong>Nota do terapeuta Felipe:</strong> Há mais de sete anos trabalhando com terapias, sempre soube que esse era um caminho que fazia sentido para mim. Hoje, meu principal trabalho é construir legados por meio de sistemas digitais na AKASHA Hub. Ainda assim, escolhi manter este espaço aberto para continuar fazendo algo que amo: trabalhar com o Tantra e com terapias que convidam à transformação. Minhas sessões exploram, com presença, paixão e respeito, as possibilidades do corpo, da mente e do campo, favorecendo a expansão da consciência de cada pessoa.</p>
+    <div class="therapist-note">
+      <button class="therapist-note-trigger" type="button" id="therapist-note-open" aria-expanded="false" aria-controls="therapist-note-content">
+        <span class="note-trigger-eyebrow">Uma mensagem pessoal</span>
+        <span class="note-trigger-title">Por trás do FLOW <span aria-hidden="true">✦</span></span>
+        <span class="note-trigger-hint">Felipe · Terapeuta</span>
+      </button>
+      <div class="therapist-note-content" id="therapist-note-content" hidden>
+        <p><strong>Nota do terapeuta Felipe:</strong> Há mais de sete anos trabalhando com terapias, sempre soube que esse era um caminho que fazia sentido para mim. Hoje, meu principal trabalho é construir legados por meio de sistemas digitais na AKASHA Hub. Ainda assim, escolhi manter este espaço aberto para continuar fazendo algo que amo: trabalhar com o Tantra e com terapias que convidam à transformação. Minhas sessões exploram, com presença, paixão e respeito, as possibilidades do corpo, da mente e do campo, favorecendo a expansão da consciência de cada pessoa.</p>
+      </div>
+    </div>
   </div>
   <div class="hero-sessions"><button type="button" id="experience-modal-open">Ver sessões</button></div>
 </section>
@@ -995,6 +1015,15 @@ infoModal?.addEventListener('click', event => {
 });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && infoModal && !infoModal.hidden) closeInfoModal();
+});
+
+const therapistNoteOpen = document.getElementById('therapist-note-open');
+const therapistNoteContent = document.getElementById('therapist-note-content');
+therapistNoteOpen?.addEventListener('click', () => {
+  const isOpen = therapistNoteOpen.getAttribute('aria-expanded') === 'true';
+  therapistNoteOpen.setAttribute('aria-expanded', String(!isOpen));
+  therapistNoteContent.hidden = isOpen;
+  if (!isOpen) therapistNoteContent.scrollIntoView({behavior:'smooth',block:'nearest'});
 });
 
 const spaceModal = document.getElementById('space-modal');
