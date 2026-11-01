@@ -257,6 +257,17 @@ select option{background:var(--ink2);color:var(--ivory)}
 .hero-sessions{position:absolute;z-index:6;right:var(--pad);bottom:22px;display:flex;justify-content:flex-end;width:max-content;max-width:calc(100% - 32px)}
 .hero-sessions button{border:1px solid rgba(243,238,230,.48);border-radius:999px;background:rgba(11,10,9,.42);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--ivory);padding:6px 11px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
 .hero-sessions button:hover,.hero-sessions button:focus-visible{background:var(--ivory);color:var(--ink);border-color:var(--ivory)}
+.space-trigger{display:flex;justify-content:flex-end;margin-top:10px}
+.space-trigger button{border:1px solid rgba(243,238,230,.38);border-radius:999px;background:rgba(11,10,9,.42);color:var(--ivory);padding:6px 11px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.space-trigger button:hover,.space-trigger button:focus-visible{background:var(--ivory);color:var(--ink);border-color:var(--ivory)}
+#space-modal[hidden]{display:none}
+#space-modal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.84);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.space-dialog{position:relative;width:min(900px,100%);max-height:92dvh;overflow:auto;border:1px solid var(--line-strong);border-radius:16px;background:var(--ink);box-shadow:0 24px 90px rgba(0,0,0,.6);padding:28px 20px 22px}
+.space-dialog h2{font-size:clamp(2rem,6vw,3rem);margin:8px 0 18px}
+.space-map{width:100%;height:min(58vh,520px);min-height:300px;border:1px solid var(--line);border-radius:10px;background:var(--ink2)}
+.space-actions{display:flex;justify-content:flex-end;margin-top:14px}
+.space-actions a{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ivory-dim);text-decoration:underline;text-underline-offset:4px}
+
 @media(max-width:767px){.hero-sessions{right:var(--pad);bottom:18px}}
 @media(min-width:768px){.experience-dialog .price{padding:42px 32px 32px}}
 
@@ -621,8 +632,19 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
     <a href="/flow/apresentacao/">Apresentação</a>
     <a href="/flow/termo/">Termo</a>
     <a href="https://akashahub.com.br">Akasha Hub</a>
+    <div class="space-trigger"><button type="button" id="space-open">Ver espaço</button></div>
   </div>
 </footer>
+
+<div id="space-modal" hidden>
+  <div class="space-dialog" role="dialog" aria-modal="true" aria-labelledby="space-title">
+    <button class="experience-close" type="button" id="space-close" aria-label="Fechar">×</button>
+    <p class="kicker">FLOW · Localização</p>
+    <h2 id="space-title">O espaço</h2>
+    <iframe class="space-map" title="Localização do espaço no Google Maps" src="https://maps.app.goo.gl/x5W3YurZsNP3eGpR7" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+    <div class="space-actions"><a href="https://maps.app.goo.gl/x5W3YurZsNP3eGpR7" target="_blank" rel="noopener noreferrer">Abrir no Google Maps ↗</a></div>
+  </div>
+</div>
 
 <div class="dock is-hero" id="dock"><a href="https://wa.me/5571983448621?text=Quero%20uma%20sess%C3%A3o" target="_blank" rel="noopener noreferrer" data-cta>Solicitar experiência</a></div>
 <button id="job-open" type="button">Trabalhe conosco</button>
@@ -973,6 +995,30 @@ infoModal?.addEventListener('click', event => {
 });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && infoModal && !infoModal.hidden) closeInfoModal();
+});
+
+const spaceModal = document.getElementById('space-modal');
+const spaceOpen = document.getElementById('space-open');
+const spaceClose = document.getElementById('space-close');
+function openSpaceModal(){
+  if (!spaceModal) return;
+  spaceModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  spaceClose?.focus();
+}
+function closeSpaceModal(){
+  if (!spaceModal || spaceModal.hidden) return;
+  spaceModal.hidden = true;
+  document.body.style.overflow = '';
+  spaceOpen?.focus();
+}
+spaceOpen?.addEventListener('click', openSpaceModal);
+spaceClose?.addEventListener('click', closeSpaceModal);
+spaceModal?.addEventListener('click', event => {
+  if (event.target === spaceModal) closeSpaceModal();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && spaceModal && !spaceModal.hidden) closeSpaceModal();
 });
 
 const experienceModal = document.getElementById('experience-modal');
