@@ -215,7 +215,28 @@ select option{background:var(--ink2);color:var(--ivory)}
 .experience-close{position:sticky;top:12px;float:right;z-index:5;margin:12px 12px -52px 0;width:38px;height:38px;border:1px solid var(--line-strong);border-radius:50%;background:rgba(11,10,9,.88);color:var(--ivory);font-size:26px;line-height:1;cursor:pointer}
 .experience-dialog .pgrid{grid-template-columns:1fr}
 @media(min-width:640px){.experience-dialog .pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 .experience-dialog .pcard{min-height:360px}
+.info-open{width:100%;margin-top:8px;min-height:46px;height:auto;padding:12px 16px;white-space:normal}
+.info-dialog{width:min(900px,100%)}
+.info-content{padding:42px clamp(20px,5vw,54px) 48px}
+.info-content h2{font-size:clamp(2.2rem,6vw,3.8rem);line-height:1.02;margin:12px 0 24px}
+.info-content h3{font-size:1.65rem;margin:30px 0 10px}
+.info-content p,.info-content li{font-size:15px;line-height:1.75;color:var(--ivory-dim)}
+.info-content ul{padding-left:20px;display:grid;gap:7px}
+.info-content .info-lead{font-size:1.08rem;color:var(--ivory);max-width:62rem}
+.info-content .info-grid{display:grid;grid-template-columns:1fr;gap:12px;margin:20px 0}
+@media(min-width:640px){.info-content .info-grid{grid-template-columns:1fr 1fr}}
+.info-content .info-panel{border:1px solid var(--line);background:var(--ink2);border-radius:12px;padding:18px}
+.info-content .info-panel h3{margin:0 0 8px;font-size:1.35rem}
+.info-content .chakra-list{display:grid;gap:12px;margin-top:18px}
+.info-content .chakra{border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--ink2)}
+.info-content .chakra h3{margin:0 0 6px}
+.info-content .source-list a{color:#e6c36a;text-decoration:underline;text-underline-offset:3px}
+.info-content .disclaimer{border-left:2px solid #c6a15b;padding:12px 16px;background:rgba(198,161,91,.07);margin-top:24px}
+.info-content .info-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.info-content .info-cta .btn{min-height:48px;height:auto}
+
 .hero-sessions{position:absolute;z-index:6;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;justify-content:center;width:max-content;max-width:calc(100% - 32px)}
 .hero-sessions button{border:1px solid rgba(243,238,230,.72);border-radius:999px;background:rgba(11,10,9,.48);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--ivory);padding:13px 24px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
 .hero-sessions button:hover,.hero-sessions button:focus-visible{background:var(--ivory);color:var(--ink);border-color:var(--ivory)}
@@ -350,7 +371,8 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
     <div class="body">
       <p class="kicker">O corpo</p>
       <h3 style="font-size:1.8rem;margin:0">Massagem Tântrica</h3>
-      
+      <p class="dim">Presença, respiração e consciência corporal.</p>
+      <button class="btn btn-ghost info-open" type="button" data-info="massagem">Conhecer os benefícios</button>
     </div>
   </article>
   <article class="card reveal">
@@ -358,7 +380,8 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
     <div class="body">
       <p class="kicker">O silêncio</p>
       <h3 style="font-size:1.8rem;margin:0">Meditação</h3>
-      
+      <p class="dim">Atenção, respiração e presença.</p>
+      <button class="btn btn-ghost info-open" type="button" data-info="meditacao">Conhecer os benefícios</button>
     </div>
   </article>
   <article class="card reveal">
@@ -366,10 +389,22 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
     <div class="body">
       <p class="kicker">O código</p>
       <h3 style="font-size:1.8rem;margin:0">Terapia de Alinhamento</h3>
-      
+      <p class="dim">Magnetismo, fascinação e estudo dos chakras.</p>
+      <button class="btn btn-ghost info-open" type="button" data-info="alinhamento">Explorar o alinhamento</button>
     </div>
   </article>
 </section>
+
+<div id="info-modal" class="experience-modal" hidden>
+  <div class="experience-dialog info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-modal-title" aria-describedby="info-modal-content" tabindex="-1">
+    <button class="experience-close" type="button" id="info-modal-close" aria-label="Fechar">×</button>
+    <section class="info-content" id="info-modal-content">
+      <p class="kicker">FLOW · Conhecimento e prática</p>
+      <h2 id="info-modal-title"></h2>
+      <div id="info-modal-body"></div>
+    </section>
+  </div>
+</div>
 
 <div id="experience-modal" class="experience-modal" hidden>
   <div class="experience-dialog" role="dialog" aria-modal="true" aria-labelledby="experience-modal-title">
@@ -799,6 +834,114 @@ async function pagarCard(session, mode){
 }
 document.querySelectorAll('[data-pay]').forEach((btn) => {
   btn.onclick = () => pagarCard(btn.getAttribute('data-pay'), btn.getAttribute('data-mode'));
+});
+
+
+const INFO_CONTENT = {
+  massagem: {
+    title: 'O corpo · Massagem Tântrica',
+    html: `
+      <p class="info-lead">Uma experiência de consciência corporal que utiliza toque, respiração e presença para convidar a pessoa a perceber o próprio corpo com mais atenção, respeito e liberdade.</p>
+      <h3>O que a prática pode favorecer</h3>
+      <div class="info-grid">
+        <div class="info-panel"><h3>Relaxamento</h3><p>Uma pausa da rotina, com espaço para desacelerar e reduzir a sensação subjetiva de tensão.</p></div>
+        <div class="info-panel"><h3>Percepção corporal</h3><p>Mais atenção às sensações, aos limites pessoais e às respostas do corpo durante a experiência.</p></div>
+        <div class="info-panel"><h3>Bem-estar</h3><p>Uma experiência de cuidado e acolhimento que algumas pessoas associam a conforto e tranquilidade.</p></div>
+        <div class="info-panel"><h3>Presença</h3><p>O convite para sair do piloto automático e acompanhar as sensações sem pressa ou julgamento.</p></div>
+      </div>
+      <h3>O que a pesquisa científica indica</h3>
+      <p>Estudos sobre massagem terapêutica apontam possíveis benefícios para alguns quadros de dor musculoesquelética e para a ansiedade em determinados contextos. A qualidade das evidências varia conforme a condição, a técnica e o estudo. Isso não significa que toda massagem produza os mesmos efeitos, nem que a massagem tântrica trate doenças.</p>
+      <p class="source-list">Leituras: <a href="https://www.hsrd.research.va.gov/publications/management_briefs/default.cfm?ManagementBriefsMenu=eBrief-no218&eBriefTitle=Evidence+Map+of+Massage+Therapy+for+Painful+Conditions%3A+Update+from+2018-2023" target="_blank" rel="noopener">Mapa de evidências da Veterans Health Administration (2024)</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/39008297/" target="_blank" rel="noopener">Revisão sistemática publicada no JAMA Network Open (2024)</a>.</p>
+      <h3>A abordagem aplicada por Filipe</h3>
+      <p>O trabalho reúne estudos e aprendizados inspirados em referências pioneiras contemporâneas das práticas tântricas, com recursos de consciência corporal, toque consciente, respiração, ritmo, atenção às respostas do corpo e condução progressiva da experiência.</p>
+      <p>A sessão pode integrar diferentes recursos e métodos avançados de trabalho corporal, escolhidos de acordo com a conversa inicial, a experiência da pessoa e os limites definidos em conjunto. Não existe uma sequência rígida ou uma resposta igual para todos.</p>
+      <h3>Como a experiência é conduzida</h3>
+      <ul><li>Conversa inicial sobre expectativas, conforto e limites.</li><li>Explicação das etapas e consentimento antes de cada prática.</li><li>Condução gradual, com possibilidade de pausar ou interromper a qualquer momento.</li><li>Fechamento com tempo para respirar, perceber o corpo e compartilhar impressões, se desejar.</li></ul>
+      <p class="disclaimer">A massagem é uma prática complementar de bem-estar, não substitui avaliação ou tratamento médico, fisioterapêutico ou psicológico. A sessão é conduzida com consentimento explícito, respeito aos limites e sem promessa de cura.</p>
+    `
+  },
+  meditacao: {
+    title: 'O silêncio · Meditação',
+    html: `
+      <p class="info-lead">Meditar é treinar a atenção. Em vez de tentar esvaziar a mente à força, a prática ensina a perceber pensamentos, emoções e sensações e a retornar, gentilmente, ao momento presente.</p>
+      <h3>Benefícios estudados</h3>
+      <div class="info-grid">
+        <div class="info-panel"><h3>Atenção consciente</h3><p>Praticar o retorno da atenção para um ponto escolhido, como a respiração ou as sensações do corpo.</p></div>
+        <div class="info-panel"><h3>Estresse e ansiedade</h3><p>Programas de mindfulness podem produzir reduções pequenas a moderadas em dimensões do sofrimento psicológico.</p></div>
+        <div class="info-panel"><h3>Autorregulação</h3><p>Reconhecer estados internos com mais clareza antes de reagir automaticamente.</p></div>
+        <div class="info-panel"><h3>Relação com o corpo</h3><p>Desenvolver uma observação mais atenta da respiração, postura e sensações físicas.</p></div>
+      </div>
+      <h3>O que dizem as pesquisas</h3>
+      <p>Uma revisão sistemática de 47 ensaios clínicos, com 3.515 participantes, encontrou evidência moderada de melhora pequena a moderada em ansiedade, depressão e dor com programas de meditação mindfulness. Os resultados dependem do programa e da população estudada; meditação não substitui tratamento indicado por profissionais de saúde.</p>
+      <p class="source-list">Referências: <a href="https://pubmed.ncbi.nlm.nih.gov/24395196/" target="_blank" rel="noopener">JAMA Internal Medicine · revisão sistemática e meta-análise</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4142584/" target="_blank" rel="noopener">Texto completo da revisão</a>.</p>
+      <h3>Práticas que podem fazer parte da sessão</h3>
+      <ul><li>Atenção à respiração, sem forçar o ritmo.</li><li>Escaneamento corporal para observar sensações.</li><li>Meditação guiada e contemplativa.</li><li>Momentos de silêncio e observação dos pensamentos.</li><li>Orientações simples para continuar praticando no cotidiano.</li></ul>
+      <h3>Como você pode se sentir depois</h3>
+      <p>Algumas pessoas relatam tranquilidade, maior clareza ou sensação de pausa. Outras percebem inquietação ou emoções que pedem acolhimento. Não há uma experiência universal: o objetivo é criar um espaço seguro de observação, sem exigir que a mente fique vazia.</p>
+      <p class="disclaimer">A prática é adaptada à pessoa. Se fechar os olhos, permanecer em silêncio ou focar na respiração causar desconforto, é possível manter os olhos abertos, mudar o foco ou interromper.</p>
+    `
+  },
+  alinhamento: {
+    title: 'O código · Terapia de Alinhamento',
+    html: `
+      <p class="info-lead">Uma prática de autoconhecimento que combina magnetismo pessoal, fascinação, atenção ao corpo e referências tradicionais do sistema dos sete chakras. O objetivo é investigar como a pessoa percebe sua energia, suas emoções, sua expressão e suas escolhas.</p>
+      <h3>Os três eixos do método</h3>
+      <div class="info-grid">
+        <div class="info-panel"><h3>Magnetismo</h3><p>Presença, intenção, postura, respiração e qualidade da atenção na relação consigo e com o ambiente.</p></div>
+        <div class="info-panel"><h3>Fascinação</h3><p>Recursos de comunicação, foco, imaginação e condução da atenção, sempre com transparência e respeito à autonomia.</p></div>
+        <div class="info-panel"><h3>Conhecimento dos chakras</h3><p>Um mapa simbólico tradicional para refletir sobre temas como segurança, prazer, ação, afeto, expressão, percepção e propósito.</p></div>
+        <div class="info-panel"><h3>Integração</h3><p>Escuta, auto-observação e práticas simples para levar os aprendizados para a vida cotidiana.</p></div>
+      </div>
+      <h3>Os sete chakras: temas, sinais subjetivos e práticas</h3>
+      <p>Na tradição iogue, os chakras são apresentados como centros sutis de energia. A lista abaixo é um mapa simbólico de reflexão, não um instrumento médico ou diagnóstico. As dificuldades descritas são possibilidades de auto-observação, não sinais clínicos de um chakra bloqueado.</p>
+      <div class="chakra-list">
+        <article class="chakra"><h3>1. Muladhara · Raiz</h3><p><b>Tema:</b> segurança, estabilidade e pertencimento.</p><p><b>Quando esse tema pede atenção:</b> sensação de insegurança, dificuldade de criar rotina ou de se sentir apoiado.</p><p><b>Investigue:</b> “O que hoje me dá sustentação? Quais necessidades básicas estou deixando de lado?”</p><p><b>Prática:</b> sentir os pés no chão, respiração tranquila, rotina e contato consciente com o ambiente.</p></article>
+        <article class="chakra"><h3>2. Svadhisthana · Sacral</h3><p><b>Tema:</b> emoções, criatividade, prazer e fluidez.</p><p><b>Quando esse tema pede atenção:</b> dificuldade de reconhecer desejos, rigidez ou desconexão das próprias emoções.</p><p><b>Investigue:</b> “O que sinto? O que me dá prazer de forma saudável e consensual?”</p><p><b>Prática:</b> movimento suave, escrita emocional e expressão criativa.</p></article>
+        <article class="chakra"><h3>3. Manipura · Plexo solar</h3><p><b>Tema:</b> ação, autonomia, confiança e direção.</p><p><b>Quando esse tema pede atenção:</b> indecisão, dificuldade de estabelecer limites ou excesso de autocobrança.</p><p><b>Investigue:</b> “Que escolha está nas minhas mãos? Onde preciso dizer sim ou não?”</p><p><b>Prática:</b> respiração confortável, metas pequenas e decisões coerentes com seus valores.</p></article>
+        <article class="chakra"><h3>4. Anahata · Cardíaco</h3><p><b>Tema:</b> afeto, compaixão, vínculos e equilíbrio entre dar e receber.</p><p><b>Quando esse tema pede atenção:</b> dificuldade de confiar, expressar carinho ou preservar limites nos relacionamentos.</p><p><b>Investigue:</b> “Como cuido de mim enquanto me relaciono com os outros?”</p><p><b>Prática:</b> respiração suave, gratidão realista e comunicação honesta.</p></article>
+        <article class="chakra"><h3>5. Vishuddha · Laríngeo</h3><p><b>Tema:</b> comunicação, expressão e verdade pessoal.</p><p><b>Quando esse tema pede atenção:</b> evitar conversas importantes, não conseguir expressar necessidades ou falar sem se escutar.</p><p><b>Investigue:</b> “O que preciso comunicar com clareza e respeito?”</p><p><b>Prática:</b> escrita, leitura em voz alta e comunicação assertiva.</p></article>
+        <article class="chakra"><h3>6. Ajna · Frontal</h3><p><b>Tema:</b> percepção, discernimento, imaginação e visão.</p><p><b>Quando esse tema pede atenção:</b> excesso de pensamentos, dificuldade de priorizar ou confundir suposições com fatos.</p><p><b>Investigue:</b> “O que eu sei, o que estou supondo e o que preciso verificar?”</p><p><b>Prática:</b> meditação de atenção, observação dos pensamentos e organização de prioridades.</p></article>
+        <article class="chakra"><h3>7. Sahasrara · Coronário</h3><p><b>Tema:</b> sentido, propósito, contemplação e conexão espiritual.</p><p><b>Quando esse tema pede atenção:</b> sensação de falta de sentido ou dificuldade de conectar escolhas a valores pessoais.</p><p><b>Investigue:</b> “O que dá significado à minha vida neste momento?”</p><p><b>Prática:</b> silêncio, contemplação, estudo e reflexão sobre valores.</p></article>
+      </div>
+      <h3>Como acontece o alinhamento na sessão</h3>
+      <ul><li><b>Escuta inicial:</b> você compartilha o que deseja compreender ou trabalhar, sem precisar expor nada que não queira.</li><li><b>Mapeamento reflexivo:</b> observamos os temas dos sete chakras por meio de perguntas, relatos e percepção corporal. Não é diagnóstico energético ou médico.</li><li><b>Práticas de alinhamento:</b> podem incluir respiração, atenção, visualização, magnetismo pessoal e exercícios de presença.</li><li><b>Integração:</b> organizamos percepções e sugestões simples para continuar o processo fora da sessão.</li></ul>
+      <h3>Como você pode se sentir depois</h3>
+      <p>É possível sair com sensação de pausa, maior consciência dos próprios padrões, clareza sobre temas que deseja trabalhar ou vontade de fazer mudanças práticas. Algumas pessoas podem também se sentir emocionalmente mobilizadas e precisar de descanso. Cada experiência é individual e não há promessa de desbloqueio ou resultado específico.</p>
+      <p class="disclaimer">Os chakras pertencem a tradições espirituais e contemplativas; não são estruturas anatômicas ou energéticas cuja existência tenha sido estabelecida pela ciência médica. A terapia de alinhamento é apresentada como prática complementar de autoconhecimento, não substitui avaliação ou tratamento de saúde. Magnetismo e fascinação são utilizados aqui como conceitos e recursos da abordagem, não como poderes cientificamente comprovados.</p>
+    `
+  }
+};
+const infoModal = document.getElementById('info-modal');
+const infoDialog = infoModal?.querySelector('.info-dialog');
+const infoTitle = document.getElementById('info-modal-title');
+const infoBody = document.getElementById('info-modal-body');
+const infoClose = document.getElementById('info-modal-close');
+let infoPreviousFocus = null;
+function openInfoModal(key){
+  const item = INFO_CONTENT[key];
+  if (!item || !infoModal) return;
+  infoPreviousFocus = document.activeElement;
+  infoTitle.textContent = item.title;
+  infoBody.innerHTML = item.html;
+  infoModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  infoClose?.focus();
+}
+function closeInfoModal(){
+  if (!infoModal || infoModal.hidden) return;
+  infoModal.hidden = true;
+  document.body.style.overflow = '';
+  if (infoPreviousFocus && typeof infoPreviousFocus.focus === 'function') infoPreviousFocus.focus();
+}
+document.querySelectorAll('[data-info]').forEach(button => {
+  button.addEventListener('click', () => openInfoModal(button.dataset.info));
+});
+infoClose?.addEventListener('click', closeInfoModal);
+infoModal?.addEventListener('click', event => {
+  if (event.target === infoModal) closeInfoModal();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && infoModal && !infoModal.hidden) closeInfoModal();
 });
 
 const experienceModal = document.getElementById('experience-modal');
