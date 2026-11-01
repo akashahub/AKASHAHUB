@@ -7,7 +7,6 @@ import { checkout } from "/audios/player.js";
 
 const SKIP = "akasha-login-gate";
 const AFTER = "akasha-pack-after-login";
-const home = location.pathname === "/" || location.pathname === "/index.html";
 const provider = new GoogleAuthProvider();
 let opened = false;
 let user = null;
@@ -139,9 +138,3 @@ onAuthStateChanged(auth, (next) => {
   if (next && document.getElementById("ah-gate") && sessionStorage.getItem(AFTER) !== "1") close(false);
 });
 
-if (home && location.search.indexOf("pack=1") < 0) {
-  setTimeout(() => {
-    if (user || sessionStorage.getItem(SKIP) === "off" || document.getElementById("ah-gate")) return;
-    open();
-  }, 3000);
-}
