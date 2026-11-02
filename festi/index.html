@@ -10,356 +10,206 @@
 <style>
 :root { --bg:#07060c; --surface:#14121c; --raised:#1e1a2a; --fg:#f6f3fb; --muted:#a79fb8; --faint:#726b84; --line:#2c2738; --magenta:#ff2f9b; --cyan:#3ee0ff; --ok:#3dd68c; }
 * { box-sizing:border-box; }
-html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font-family:Manrope,system-ui,sans-serif; }
+html, body { margin:0; background:var(--bg); color:var(--fg); font-family:Manrope,system-ui,sans-serif; }
 button { font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
 img { display:block; max-width:100%; }
-#shell { height:100dvh; max-width:1240px; margin:0 auto; display:flex; }
-.pane { min-width:0; height:100%; display:flex; flex-direction:column; }
-#noite { flex:1; position:relative; }
-#staff { display:none; background:var(--bg); }
-body[data-pane="staff"] #noite { display:none; }
-body[data-pane="staff"] #staff { display:flex; flex:1; }
-@media (min-width:960px) {
-  #shell { display:grid; grid-template-columns:430px minmax(0,1fr); }
-  #noite, #staff { display:flex !important; }
-  #staff { border-left:1px solid var(--line); }
-  .only-mobile { display:none !important; }
-}
-.scroll { min-height:0; flex:1; overflow:auto; padding:0 16px 16px; }
-.head { display:flex; align-items:center; justify-content:space-between; padding:16px 16px 12px; }
-.mark { font-family:Syne,sans-serif; font-weight:800; font-size:22px; letter-spacing:-.03em; }
+#app { min-height:100dvh; }
+.mark { font-family:Syne,sans-serif; font-weight:800; letter-spacing:-.03em; font-size:22px; }
 .mark i { color:var(--magenta); font-style:normal; }
-.hub { margin-left:6px; font-size:11px; letter-spacing:.16em; color:var(--muted); font-weight:700; }
-.iconbtn { width:44px; height:44px; border-radius:999px; background:var(--raised); display:grid; place-items:center; position:relative; }
-.dot { position:absolute; top:10px; right:10px; width:8px; height:8px; border-radius:99px; background:var(--magenta); }
-.chip { border-radius:999px; background:var(--raised); color:var(--muted); font-size:12px; font-weight:700; padding:8px 12px; }
-.nav { display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid var(--line); background:var(--surface); padding:8px 4px 12px; }
-.nav button { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--faint); font-size:11px; font-weight:700; }
-.nav button.on { color:var(--magenta); }
-.card { background:var(--surface); border:1px solid var(--line); border-radius:24px; padding:16px; }
-.h { font-family:Syne,sans-serif; font-weight:800; letter-spacing:-.03em; margin:0; }
+.h { font-family:Syne,sans-serif; font-weight:800; letter-spacing:-.03em; margin:0; line-height:1; }
+.wrap { max-width:960px; margin:0 auto; padding:24px 20px 40px; }
 .muted { color:var(--muted); }
-.faint { color:var(--faint); }
 .mag { color:var(--magenta); }
-.cyan { color:var(--cyan); }
+.grid3 { display:grid; gap:16px; }
+@media (min-width:800px) { .grid3 { grid-template-columns:1fr 1fr 1fr; } .mgr { display:grid; grid-template-columns:220px 1fr; min-height:100dvh; } .side { display:flex !important; } .mnav { display:none !important; } }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:24px; overflow:hidden; text-align:left; width:100%; }
+.pad { padding:16px; }
+.chip { height:40px; border-radius:999px; padding:0 14px; background:var(--raised); color:var(--muted); font-weight:700; }
+.chip.on { background:var(--fg); color:var(--bg); }
+.btn { height:48px; border-radius:999px; background:var(--magenta); color:#1a0610; font-weight:800; padding:0 16px; }
+.btn.ghost { background:transparent; color:var(--fg); border:1px solid var(--line); }
+.btn.line { background:transparent; }
+.photo { width:100%; object-fit:cover; }
 .row { display:flex; align-items:center; gap:10px; }
 .between { display:flex; align-items:center; justify-content:space-between; gap:10px; }
-.stack { display:flex; flex-direction:column; gap:14px; }
-.btn { height:48px; width:100%; border-radius:999px; background:var(--magenta); color:#1a0610; font-weight:800; font-size:14px; }
-.btn:disabled { opacity:.4; }
-.btn.ghost { background:transparent; color:var(--fg); border:1px solid var(--line); }
-.btn.line-cyan { background:transparent; color:var(--cyan); border:1px solid var(--cyan); }
-.btn.line-mag { background:transparent; color:var(--magenta); border:1px solid var(--magenta); }
-.map { position:relative; overflow:hidden; border-radius:24px; }
-.map img.cover { width:100%; height:100%; object-fit:cover; }
-.pin { position:absolute; transform:translate(-50%,-50%); width:32px; height:32px; border-radius:99px; display:grid; place-items:center; }
-.pin.done { background:var(--cyan); color:#1a0610; }
-.pin.now { background:var(--magenta); color:#1a0610; }
-.pin.wait { background:rgba(7,6,12,.8); }
-.bar { height:8px; border-radius:99px; background:var(--raised); overflow:hidden; }
-.bar > span { display:block; height:100%; background:var(--magenta); }
-.post img, .reward img, .room img { width:100%; object-fit:cover; border-radius:16px; }
-.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.stat { background:var(--surface); border-radius:16px; padding:12px 8px; text-align:center; }
-.stat b { display:block; font-family:Syne,sans-serif; font-size:18px; }
-.overlay { position:absolute; inset:0; z-index:5; background:rgba(7,6,12,.72); display:flex; align-items:flex-end; }
-.sheet { background:var(--surface); border-radius:24px 24px 0 0; padding:20px 20px 28px; width:100%; }
-.full { position:absolute; inset:0; z-index:5; background:var(--bg); display:flex; flex-direction:column; }
-.scanbox { width:176px; height:208px; margin:0 auto; border-radius:16px; overflow:hidden; position:relative; background:#000; }
-.scanline { position:absolute; left:12px; right:12px; height:2px; background:var(--magenta); animation:scan 1.15s ease-in-out infinite alternate; }
-@keyframes scan { from { top:16px; } to { top:180px; } }
-.metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:0 20px; }
-.metrics div { background:var(--surface); border-radius:16px; padding:10px 8px; }
-.metrics b { font-family:Syne,sans-serif; font-size:18px; }
-.pills { display:flex; gap:8px; padding:16px 20px 0; }
-.pills button { height:40px; border-radius:999px; padding:0 16px; background:var(--raised); color:var(--muted); font-weight:700; font-size:14px; }
-.pills button.on { background:var(--fg); color:var(--bg); }
-.toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--fg); color:var(--bg); border-radius:999px; padding:12px 16px; font-weight:700; font-size:14px; z-index:20; max-width:90vw; }
-.badge { position:absolute; top:12px; left:12px; background:var(--magenta); color:#1a0610; border-radius:999px; font-size:11px; font-weight:800; padding:4px 8px; }
-.lock { position:absolute; inset:0; background:rgba(7,6,12,.55); display:grid; place-items:center; }
-@media (prefers-reduced-motion: reduce) { .scanline { animation:none; top:50%; } }
+.stack { display:flex; flex-direction:column; gap:12px; }
+.nav5 { display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid var(--line); background:var(--surface); }
+.nav5 button { padding:10px 0 12px; color:var(--faint); font-size:11px; font-weight:700; }
+.nav5 button.on { color:var(--magenta); }
+.phone { max-width:430px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; }
+.side { display:none; flex-direction:column; border-right:1px solid var(--line); padding:16px; }
+.side button { text-align:left; height:44px; border-radius:16px; padding:0 12px; color:var(--muted); font-weight:700; }
+.side button.on { background:var(--fg); color:var(--bg); }
+.pill { height:36px; border-radius:999px; padding:0 12px; background:var(--raised); color:var(--muted); font-weight:700; font-size:14px; }
+.pill.on { background:var(--cyan); color:#1a0610; }
+.toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:var(--fg); color:var(--bg); border-radius:999px; padding:12px 16px; font-weight:700; z-index:5; }
 </style>
 </head>
-<body data-pane="noite">
-<div id="shell"></div>
+<body>
+<div id="app"></div>
 <div id="toast"></div>
 <script>
-const I = {
-  home: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>',
-  map: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
-  radio: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12a7 7 0 0 1 14 0"/><path d="M8.5 12a3.5 3.5 0 0 1 7 0"/><circle cx="12" cy="16" r="1.2" fill="currentColor"/></svg>',
-  gift: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-2-3-6-3-6 0h6zm0 0c2-3 6-3 6 0h-6z"/></svg>',
-  user: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.2"/><path d="M5 19c1.4-3 3.8-4.5 7-4.5S17.6 16 19 19"/></svg>',
-  bell: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9a6 6 0 1 1 12 0c0 7 2 7 2 9H4c0-2 2-2 2-9"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
-  check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12.5 10 17l9-10"/></svg>',
-  x: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>',
-  heart: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z"/></svg>',
-  qr: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>'
-};
-
-const fresh = () => ({
-  tab: "home",
-  overlay: null,
-  staff: "fila",
-  points: 6200,
-  cashback: 115,
-  focus: null,
-  activeRoom: "main",
-  approved: 18,
-  rejected: 4,
-  toast: "",
-  scanning: false,
-  checkpoints: [
-    { id:"portao", name:"Portão Norte", area:"Acesso", mission:"Check-in na entrada", hint:"Pulseira validada na chegada.", x:28, y:72, done:true },
-    { id:"praca", name:"Praça das luzes", area:"Centro", mission:"Passe pela praça", hint:"Caminho entre os dois palcos.", x:46, y:54, done:true },
-    { id:"dj", name:"Cabine do DJ", area:"Palco principal", mission:"Checkpoint 3: a cabine", hint:"Registre 5 segundos da energia da pista para liberar a próxima recompensa.", x:63, y:38, done:false },
-    { id:"sunset", name:"Palco Sunset", area:"Leste", mission:"Checkpoint 4: Sunset", hint:"Fique até o drop e valide o QR do palco.", x:78, y:60, done:false },
-    { id:"after", name:"After lounge", area:"Fundos", mission:"Checkpoint 5: after", hint:"Encerre a noite no lounge e troque os pontos.", x:40, y:78, done:false }
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => "&#" + c.charCodeAt(0) + ";");
+const pts = (n) => n.toLocaleString("pt-BR");
+let S = {
+  world: "gate", tab: "home", mgr: "painel", story: 0, mode: "historia", open: "supabase", toast: "",
+  points: 6200, cashback: 115, approved: 18, rejected: 4,
+  checks: [
+    { id:"portao", name:"Portão Norte", done:true },
+    { id:"praca", name:"Praça das luzes", done:true },
+    { id:"dj", name:"Cabine do DJ", done:false },
+    { id:"sunset", name:"Palco Sunset", done:false },
+    { id:"after", name:"After lounge", done:false }
   ],
-  posts: [
-    { id:"p1", handle:"julia.beats", avatar:"media/avatar-f.jpg", text:"A FESTI é outro nível. A pista inteira no mesmo pulso.", image:"media/selfie.jpg", likes:842, comments:127, liked:false, ago:"2 min" },
-    { id:"p2", handle:"marcelo.vibes", avatar:"media/avatar-m.jpg", text:"Irreal. O palco principal acendeu a cidade.", image:"media/crowd.jpg", likes:410, comments:56, liked:false, ago:"3 min" }
+  passes: [
+    { id:"marina", name:"Marina Costa", handle:"marina.noite", role:"membro", avatar:"media/avatar-f.jpg", rooms:{ main:true, back:false, vip:true }, blocked:false },
+    { id:"julia", name:"Julia Ribeiro", handle:"julia.beats", role:"equipe", avatar:"media/avatar-f.jpg", rooms:{ main:true, back:true, vip:true }, blocked:false },
+    { id:"marcelo", name:"Marcelo Viana", handle:"marcelo.vibes", role:"artista", avatar:"media/avatar-m.jpg", rooms:{ main:true, back:true, vip:false }, blocked:false },
+    { id:"leo", name:"Leo Martins", handle:"leo.night", role:"membro", avatar:"media/avatar-m.jpg", rooms:{ main:true, back:false, vip:false }, blocked:false }
   ],
   queue: [
-    { id:"q1", handle:"ana.pico", avatar:"media/avatar-f.jpg", text:"Cabine liberada. Quem chega no QR agora?", image:"media/dj.jpg", ago:"agora", duration:"0:08" },
-    { id:"q2", handle:"leo.night", avatar:"media/avatar-m.jpg", text:"Sunset começando. A luz mudou de lado.", image:"media/crowd.jpg", ago:"1 min", duration:"0:12" }
+    { id:"q1", handle:"ana.pico", text:"Cabine liberada. Quem chega no QR agora?", image:"media/dj.jpg" },
+    { id:"q2", handle:"leo.night", text:"Sunset começando. A luz mudou de lado.", image:"media/crowd.jpg" }
   ],
-  rooms: [
-    { id:"main", title:"Palco principal", subtitle:"Ao vivo agora", image:"media/dj.jpg" },
-    { id:"back", title:"Bastidores da cabine", subtitle:"Abre depois do checkpoint 3", image:"media/aerial.jpg", lock:"dj" },
-    { id:"vip", title:"Lounge VIP", subtitle:"Palco pop", image:"media/vip.jpg" }
-  ],
-  rewards: [
-    { id:"dose", title:"Dose da casa", detail:"Um drink no bar norte. Limite 1 por noite.", cost:800, image:"media/drinks.jpg", redeemed:false },
-    { id:"open", title:"Open bar · 1 hora", detail:"Bar da praça. Válido depois das 22h.", cost:2200, image:"media/vip.jpg", redeemed:false },
-    { id:"mesa", title:"Mesa no after", detail:"Quatro lugares no lounge final.", cost:4800, image:"media/crowd.jpg", redeemed:false }
-  ],
-  notes: [
-    { id:"n1", title:"Sala aberta", body:"Lounge VIP está no ar no palco pop.", ago:"há 12 min" },
-    { id:"n2", title:"Próximo checkpoint", body:"A cabine do DJ vale 1.000 pontos e R$ 12 de cashback.", ago:"há 28 min" }
+  posts: [
+    { id:"p1", handle:"julia.beats", text:"A FESTI é outro nível. A pista inteira no mesmo pulso.", image:"media/selfie.jpg", likes:842 }
   ]
-});
+};
+const me = () => S.passes.find((p) => p.id === "marina");
+const flash = (t) => { S.toast = t; render(); clearTimeout(flash.t); flash.t = setTimeout(() => { S.toast = ""; render(); }, 2200); };
+const chapters = [
+  ["media/crowd.jpg","1 · A festa","Uma casa. Muita gente.","A FESTI é a festa inteira num só lugar: palco, praça, lounge e a fila da porta."],
+  ["media/selfie.jpg","2 · A pulseira","Cada pessoa tem um nome.","A pulseira é o perfil. Com ela a pessoa entra, marca ponto e abre só o que é dela."],
+  ["media/aerial.jpg","3 · O caminho","Andar vira carimbo.","O mapa tem pontos. Chegou no ponto, leu o QR. O carimbo fica na pulseira."],
+  ["media/drinks.jpg","4 · O prêmio","Carimbo vira presente.","Ponto troca por drink, mesa ou cashback. A pessoa vê o saldo. A casa vê o resgate."],
+  ["media/dj.jpg","5 · Duas portas","Quem dança não vê a mesa.","O membro vê a noite. A gestão vê acessos, fila e números. Uma não entra na tela da outra."]
+];
+const plugins = [
+  ["supabase","Supabase","O caderno","Escreve quem entrou, quantos pontos e qual sala está aberta.","Cria uma lista de pulseiras. O app só lê e escreve nessa lista."],
+  ["firebase","Firebase","O sino","Quando alguém valida o QR, o sino toca na mesa da gestão na mesma hora.","Liga um aviso. A fila e o mapa mudam sem a pessoa atualizar a página."],
+  ["github","GitHub","A gaveta","Guarda o desenho do app. Se errar, volta para a versão de antes.","Cada mudança fica anotada. A equipe vê o que mudou e quem mudou."],
+  ["vercel","Vercel","A porta da rua","É o endereço que a pessoa abre no celular.","A gaveta publica sozinha. O app fica no ar sem montar um servidor na mão."],
+  ["cloudflare","Cloudflare","O segurança","Deixa a fila andar rápido e segura quem tenta atrapalhar.","Fica na frente do endereço. A página chega perto de quem está olhando."],
+  ["bunny","Bunny","O correio das fotos","A foto do palco sai da festa e chega rápido no celular.","Fotos e vídeos ficam numa rede de entrega. A página em si continua na porta da rua."]
+];
+const steps = ["Abre o caderno e cria a lista de pulseiras.","Liga o sino para a validação aparecer na hora.","Guarda o app na gaveta e abre a porta da rua.","Manda as fotos pelo correio e põe o segurança na calçada."];
 
-let S = fresh();
-const $ = (h) => h;
-const pts = (n) => n.toLocaleString("pt-BR");
-const money = (n) => n.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
-const nextCp = () => S.checkpoints.find((c) => !c.done) || null;
-const doneN = () => S.checkpoints.filter((c) => c.done).length;
-const locked = (room) => room.lock && !S.checkpoints.find((c) => c.id === room.lock)?.done;
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => "&#"+c.charCodeAt(0)+";");
-
-function flash(text) {
-  S.toast = text;
-  render();
-  clearTimeout(flash._t);
-  flash._t = setTimeout(() => { S.toast = ""; render(); }, 2400);
+function gate() {
+  const doors = [
+    ["story","media/crowd.jpg","Para entender","Apresentação","A história da festa em poucas telas. E o manual de como ligar as peças."],
+    ["member","media/selfie.jpg","Quem está na pista","Membro","Mapa, pontos, salas e prêmios. A mesa da casa não aparece aqui."],
+    ["manager","media/aerial.jpg","Quem manda na casa","Gestão","Painel interno, acessos, fila e números. Só a equipe entra."]
+  ];
+  return `<div class="wrap"><div class="mark">FEST<i>I</i></div>
+    <h1 class="h" style="font-size:44px;max-width:16ch;margin-top:28px">Três portas. Cada pessoa entra na sua.</h1>
+    <p class="muted" style="max-width:42ch;line-height:1.5">O membro vive a noite. A gestão controla quem entra. A apresentação explica as duas, sem misturar.</p>
+    <div class="grid3" style="margin-top:24px">${doors.map((d) => `<button class="card" data-act="world" data-id="${d[0]}"><img class="photo" style="height:160px" src="${d[1]}" alt=""><div class="pad"><div class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">${d[2]}</div><h2 class="h" style="font-size:28px;margin-top:6px">${d[3]}</h2><p class="muted">${d[4]}</p></div></button>`).join("")}</div></div>`;
 }
 
-function mapHtml(h) {
-  const cur = nextCp();
-  return `<div class="map" style="height:${h}px">
-    <img class="cover" src="media/aerial.jpg" alt="Mapa aéreo do festival">
-    ${cur ? `<span class="badge" style="left:auto;right:12px;background:rgba(7,6,12,.8);color:#fff">${esc(cur.name)}</span>` : ""}
-    ${S.checkpoints.map((c) => {
-      const cls = c.done ? "done" : c.id === cur?.id ? "now" : "wait";
-      const icon = c.done ? I.check : I.map;
-      return `<button class="pin ${cls}" style="left:${c.x}%;top:${c.y}%" data-act="focus" data-id="${c.id}" aria-label="${esc(c.name)}">${icon}</button>`;
-    }).join("")}
-  </div>`;
-}
-
-function postsHtml() {
-  return S.posts.map((p) => `<article class="card">
-    <div class="row"><img src="${p.avatar}" alt="" style="width:36px;height:36px;border-radius:99px;object-fit:cover"><div><b>@${esc(p.handle)}</b><div class="faint" style="font-size:12px">${esc(p.ago)}</div></div></div>
-    <p style="margin:8px 0 0;font-size:14px">${esc(p.text)}</p>
-    ${p.image ? `<img src="${p.image}" alt="" style="height:144px;margin-top:10px">` : ""}
-    <button data-act="like" data-id="${p.id}" style="margin-top:8px;color:${p.liked ? "var(--magenta)" : "var(--muted)"};font-weight:700;font-size:14px">${I.heart} ${pts(p.likes)}</button>
-  </article>`).join("");
-}
-
-function noite() {
-  const cur = nextCp();
-  const d = doneN();
-  let body = "";
-  if (S.tab === "home") {
-    body = `<div class="stack">
-      ${mapHtml(224)}
-      <section class="card">
-        <div class="mag" style="font-size:12px;font-weight:700">MISSÃO ATUAL</div>
-        <div class="row" style="margin-top:12px;align-items:flex-start">
-          <img src="media/dj.jpg" alt="" style="width:64px;height:64px;border-radius:12px;object-fit:cover">
-          <div><h2 class="h" style="font-size:18px">${esc(cur ? cur.mission : "Noite completa")}</h2>
-          <p class="muted" style="margin:6px 0 0;font-size:14px">${esc(cur ? cur.hint : "Todos os checkpoints desta noite já foram validados.")}</p></div>
-        </div>
-        <button class="btn" style="margin-top:14px" data-act="qr">${I.qr} Validar com QR</button>
-      </section>
-      <section>
-        <div class="between" style="margin-bottom:8px"><b>Seu progresso</b><span class="muted">${d} / ${S.checkpoints.length}</span></div>
-        <div class="bar"><span style="width:${(d / S.checkpoints.length) * 100}%"></span></div>
-        <p class="mag" style="text-align:center;font-weight:700;font-size:14px">+1.000 pontos no próximo · saldo ${pts(S.points)}</p>
-      </section>
-      <section>
-        <div class="between"><b>Feed ao vivo</b><button class="muted" data-act="tab" data-id="rooms">Ver salas</button></div>
-        <div class="stack" style="margin-top:8px">${postsHtml()}</div>
-      </section>
-    </div>`;
-  } else if (S.tab === "map") {
-    const shown = S.checkpoints.find((c) => c.id === S.focus) || cur;
-    body = `<div class="stack">${mapHtml(320)}
-      ${shown ? `<section class="card"><div class="faint" style="font-size:12px;font-weight:700">${esc(shown.area)}</div>
-        <h2 class="h" style="font-size:22px;margin-top:4px">${esc(shown.name)}</h2>
-        <p class="muted" style="font-size:14px">${esc(shown.hint)}</p>
-        <p style="font-weight:700">${shown.done ? "Já validado" : shown.id === cur?.id ? "Pode validar agora" : "Ainda na fila"}</p>
-        <button class="btn" data-act="qr" ${!cur || shown.id !== cur.id ? "disabled" : ""}>${I.qr} Validar este ponto</button>
-      </section>` : `<p class="card muted">Mapa da noite fechado.</p>`}
-    </div>`;
-  } else if (S.tab === "rooms") {
-    const main = S.rooms[0];
-    body = `<div class="stack">
-      <button data-act="room" data-id="${main.id}" style="text-align:left">
-        <div style="position:relative"><img src="${main.image}" alt="" style="height:208px;width:100%;object-fit:cover;border-radius:24px"><span class="badge">AO VIVO</span></div>
-        <p style="font-weight:700"><span class="mag">●</span> ${esc(main.title)}</p>
-      </button>
-      <b>Salas da noite</b>
-      <div class="grid2">${S.rooms.slice(1).map((r) => {
-        const lock = locked(r);
-        return `<button data-act="room" data-id="${r.id}" style="text-align:left;background:var(--surface);border-radius:16px;overflow:hidden">
-          <div style="position:relative"><img src="${r.image}" alt="" style="height:112px;width:100%;object-fit:cover;border-radius:0">${lock ? `<span class="lock">trancada</span>` : `<span class="badge" style="width:8px;height:8px;padding:0;border-radius:99px"></span>`}</div>
-          <div style="padding:8px"><b style="font-size:14px">${esc(r.title)}</b><div class="muted" style="font-size:12px">${lock ? "Bloqueada" : esc(r.subtitle)}</div></div>
-        </button>`;
-      }).join("")}</div>
-    </div>`;
-  } else if (S.tab === "rewards") {
-    body = `<div class="stack">
-      <div class="grid2">
-        <div class="card"><div class="muted" style="font-size:12px;font-weight:700">Cashback</div><div class="h" style="font-size:26px;margin-top:8px">${money(S.cashback)}</div></div>
-        <div class="card"><div class="muted" style="font-size:12px;font-weight:700">Pontos FESTI</div><div class="h mag" style="font-size:26px;margin-top:8px">${pts(S.points)}</div></div>
-      </div>
-      ${S.rewards.map((r) => {
-        const short = S.points < r.cost && !r.redeemed;
-        return `<article class="card" style="padding:0;overflow:hidden"><img src="${r.image}" alt="" style="height:144px;border-radius:0"><div style="padding:16px"><h3 class="h" style="font-size:18px">${esc(r.title)}</h3><p class="muted" style="font-size:14px">${esc(r.detail)}</p><div class="between" style="margin-top:12px"><b>${pts(r.cost)} pts</b><button class="btn" style="width:auto;padding:0 16px" data-act="redeem" data-id="${r.id}" ${r.redeemed || short ? "disabled" : ""}>${r.redeemed ? "Resgatado" : short ? "Faltam pontos" : "Resgatar"}</button></div></div></article>`;
-      }).join("")}
-    </div>`;
-  } else {
-    body = `<div class="stack">
-      <div class="row"><img src="media/avatar-f.jpg" alt="Marina Costa" style="width:80px;height:80px;border-radius:99px;object-fit:cover"><div><h2 class="h" style="font-size:26px">Marina Costa</h2><div class="muted">@marina.noite · pista principal</div></div></div>
-      <div class="grid2" style="grid-template-columns:1fr 1fr 1fr"><div class="stat"><b>${pts(S.points)}</b><span class="muted" style="font-size:12px">Pontos</span></div><div class="stat"><b>${money(S.cashback)}</b><span class="muted" style="font-size:12px">Cashback</span></div><div class="stat"><b>${doneN()}/5</b><span class="muted" style="font-size:12px">Feitos</span></div></div>
-      <section class="card"><b>Nesta noite</b>${S.checkpoints.map((c) => `<div class="between" style="margin-top:8px;font-size:14px"><span class="muted">${esc(c.name)}</span><span class="${c.done ? "cyan" : "faint"}">${c.done ? "Feito" : "Aberto"}</span></div>`).join("")}</section>
-      <button class="btn ghost" data-act="reset">Recomeçar a demo</button>
+function story() {
+  const c = chapters[S.story];
+  const top = `<div class="between"><button class="chip" data-act="world" data-id="gate">Portas</button><div><button class="chip ${S.mode==="historia"?"on":""}" data-act="mode" data-id="historia">História</button><button class="chip ${S.mode==="manual"?"on":""}" data-act="mode" data-id="manual">Manual</button></div></div>`;
+  if (S.mode === "manual") {
+    return `<div class="wrap stack">${top}
+      <p class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em">MANUAL CENTRAL</p>
+      <h1 class="h" style="font-size:40px">Poucas peças. Cada uma faz uma coisa.</h1>
+      <p class="muted">Não inventa um sistema novo. Junta o que já existe: caderno, sino, gaveta, porta, segurança e correio.</p>
+      <div class="grid3" style="grid-template-columns:1fr 1fr">${steps.map((s,i) => `<div class="card pad row" style="align-items:flex-start"><b class="mag">${i+1}</b><span>${s}</span></div>`).join("")}</div>
+      ${plugins.map((p) => `<button class="card pad" data-act="plug" data-id="${p[0]}" style="text-align:left"><div class="between"><b class="h" style="font-size:22px">${p[1]}</b><span class="mag">${p[2]}</span></div><p class="muted">${p[3]}</p>${S.open===p[0]?`<p>${p[4]}</p>`:""}</button>`).join("")}
+      <div class="row"><button class="btn" data-act="world" data-id="member">Ver como o membro vê</button><button class="btn ghost" data-act="world" data-id="manager">Ver a mesa da gestão</button></div>
     </div>`;
   }
-
-  const tabs = [["home","Início",I.home],["map","Mapa",I.map],["rooms","Salas",I.radio],["rewards","Prêmios",I.gift],["profile","Perfil",I.user]];
-  let overlay = "";
-  if (S.overlay === "qr") {
-    overlay = `<div class="overlay"><div class="sheet">
-      <div class="between"><h2 class="h" style="font-size:18px">Leitura do QR</h2><button class="iconbtn" data-act="close">${I.x}</button></div>
-      <div class="scanbox"><img src="media/aerial.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:.7">${S.scanning ? `<div class="scanline"></div>` : `<div style="position:absolute;inset:0;display:grid;place-items:center;background:rgba(7,6,12,.4)"><span style="width:64px;height:64px;border-radius:99px;background:#fff;color:#07060c;display:grid;place-items:center">${I.check}</span></div>`}</div>
-      <p class="muted" style="text-align:center">${S.scanning ? "Lendo o ponto…" : "Ponto na pulseira. A operação já viu a presença."}</p>
-      ${S.scanning ? "" : `<button class="btn" data-act="close">Voltar para a noite</button>`}
+  return `<div class="wrap" style="display:flex;flex-direction:column;min-height:100dvh">${top}
+    <img class="photo" style="height:280px;border-radius:24px;margin-top:16px" src="${c[0]}" alt="">
+    <p class="mag" style="font-weight:800;letter-spacing:.08em;font-size:12px">${c[1].toUpperCase()}</p>
+    <h1 class="h" style="font-size:42px">${c[2]}</h1>
+    <p class="muted" style="font-size:18px;line-height:1.5">${c[3]}</p>
+    <div class="between" style="margin-top:auto;padding-top:24px">
+      <button class="chip" data-act="story" data-id="prev" ${S.story===0?"disabled":""}>Anterior</button>
+      <span class="muted">${S.story+1} / ${chapters.length}</span>
+      ${S.story<chapters.length-1?`<button class="btn" data-act="story" data-id="next">Próxima</button>`:`<button class="btn" data-act="mode" data-id="manual">Ver o manual</button>`}
     </div></div>`;
-  } else if (S.overlay === "notes") {
-    overlay = `<div class="full"><header class="head"><button class="iconbtn" data-act="close">${I.x}</button><h2 class="h" style="font-size:18px">Notificações</h2><span></span></header><div class="scroll stack">${S.notes.map((n) => `<article class="card"><b>${esc(n.title)}</b><p class="muted" style="margin:6px 0 0">${esc(n.body)}</p><div class="faint" style="font-size:12px;margin-top:8px">${esc(n.ago)}</div></article>`).join("")}</div></div>`;
-  } else if (S.overlay === "room") {
-    const room = S.rooms.find((r) => r.id === S.activeRoom);
-    if (room) overlay = `<div class="full"><div style="position:relative"><img src="${room.image}" alt="" style="height:280px;width:100%;object-fit:cover"><button class="iconbtn" data-act="close" style="position:absolute;top:16px;left:16px">${I.x}</button></div><div style="padding:20px"><div class="mag" style="font-size:12px;font-weight:700">TRANSMITINDO</div><h2 class="h" style="font-size:28px">${esc(room.title)}</h2><p class="muted">${esc(room.subtitle)}. O áudio da casa fica nesta sala.</p></div></div>`;
-  }
-
-  return `<header class="head"><button class="chip only-mobile" data-act="pane" data-id="staff">Operação</button><div class="mark">FEST<i>I</i></div><button class="iconbtn" data-act="notes" aria-label="Notificações">${I.bell}${S.notes.length ? `<span class="dot"></span>` : ""}</button></header>
-  <div class="scroll">${body}</div>
-  <nav class="nav">${tabs.map(([id,label,icon]) => `<button class="${S.tab===id?"on":""}" data-act="tab" data-id="${id}">${icon}<span>${label}</span></button>`).join("")}</nav>
-  ${overlay}`;
 }
 
-function staff() {
-  const total = Math.max(1, S.approved + S.rejected + S.queue.length);
+function member() {
+  const marina = me();
+  const done = S.checks.filter((c) => c.done).length;
   let body = "";
-  if (S.staff === "fila") {
-    body = S.queue.length ? `<div class="grid2">${S.queue.map((q) => `<article class="card" style="padding:0;overflow:hidden"><div style="position:relative"><img src="${q.image}" alt="" style="height:150px;border-radius:0"><span class="badge" style="left:auto;right:12px;top:auto;bottom:12px;background:rgba(7,6,12,.8);color:#fff">${q.duration}</span></div><div style="padding:14px"><b>@${esc(q.handle)}</b><p class="muted" style="font-size:14px">${esc(q.text)}</p><div class="grid2" style="margin-top:10px"><button class="btn line-cyan" data-act="approve" data-id="${q.id}">${I.check} Aprovar</button><button class="btn line-mag" data-act="reject" data-id="${q.id}">${I.x} Recusar</button></div></div></article>`).join("")}</div>`
-      : `<div class="card"><h2 class="h" style="font-size:22px">Fila limpa</h2><p class="muted">Tudo que passou está no feed da pista.</p></div>`;
-  } else if (S.staff === "salas") {
-    body = `<div class="stack">${S.rooms.map((r) => `<article class="card row" style="align-items:flex-start"><img src="${r.image}" alt="" style="width:80px;height:80px;object-fit:cover"><div><b>${esc(r.title)}</b><p class="muted" style="margin:4px 0">${locked(r) ? "Trancada até a cabine ser validada na pista." : esc(r.subtitle)}</p><div class="cyan" style="font-size:12px;font-weight:700">${locked(r) ? "Fora do ar" : "No ar"}</div></div></article>`).join("")}</div>`;
-  } else {
-    body = `<div class="stack"><section class="card"><b>Moderação desta sessão</b><div class="bar" style="margin-top:14px;display:flex"><span style="width:${(S.approved/total)*100}%;background:var(--ok)"></span><span style="width:${(S.rejected/total)*100}%;background:var(--magenta)"></span><span style="width:${(S.queue.length/total)*100}%;background:var(--faint)"></span></div>
-      <div class="between" style="margin-top:10px"><span class="muted">Aprovados</span><b>${S.approved}</b></div>
-      <div class="between"><span class="muted">Recusados</span><b>${S.rejected}</b></div>
-      <div class="between"><span class="muted">Aguardando</span><b>${S.queue.length}</b></div></section>
-      <section class="card"><b>Presença no mapa</b><div class="h" style="font-size:36px;margin-top:8px">${doneN()}<span class="muted" style="font-size:18px"> / ${S.checkpoints.length}</span></div><p class="muted">Cada QR validado soma pontos e cashback na hora.</p></section></div>`;
+  if (S.tab === "home") body = `<div class="stack"><img class="photo" style="height:180px;border-radius:24px" src="media/aerial.jpg" alt="Mapa da festa"><div class="card pad"><div class="mag" style="font-size:12px;font-weight:800">MISSÃO ATUAL</div><h2 class="h" style="font-size:22px;margin-top:8px">${done===5?"Noite completa":"Próximo carimbo no mapa"}</h2><p class="muted">${done} de 5 pontos. Saldo ${pts(S.points)}.</p><button class="btn" data-act="qr" style="width:100%;margin-top:8px">Validar com QR</button></div><div class="card pad"><b>Feed</b>${S.posts.map((p) => `<p>@${esc(p.handle)} · ${esc(p.text)}</p>`).join("")}</div></div>`;
+  else if (S.tab === "rooms") {
+    const rooms = [["main","Palco principal","media/dj.jpg"],["back","Bastidores","media/aerial.jpg"],["vip","Lounge VIP","media/vip.jpg"]];
+    body = `<div class="stack">${rooms.map((r) => {
+      const closed = marina.blocked || !marina.rooms[r[0]] || (r[0]==="back" && !S.checks.find((c)=>c.id==="dj").done);
+      return `<button class="card" data-act="room" data-id="${r[0]}"><img class="photo" style="height:120px" src="${r[1]===rooms[0][1]?r[2]:r[2]}" alt=""><div class="pad"><b>${r[1]}</b><div class="muted">${closed?"Fechada para o seu perfil":"Aberta"}</div></div></button>`;
+    }).join("")}</div>`;
   }
-  const pills = [["fila","Fila"],["salas","Salas"],["numeros","Números"]];
-  return `<header class="head"><div><div class="mark">FEST<i>I</i><span class="hub">HUB</span></div><div class="muted" style="font-size:12px">Operação da noite · tempo real</div></div><button class="chip only-mobile" data-act="pane" data-id="noite">Voltar à noite</button></header>
-    <div class="metrics"><div><b>${S.queue.length}</b><div class="muted" style="font-size:12px">Na fila</div></div><div><b>${S.approved}</b><div class="muted" style="font-size:12px">Aprovados</div></div><div><b>${S.rejected}</b><div class="muted" style="font-size:12px">Recusados</div></div><div><b>${pts(S.points)}</b><div class="muted" style="font-size:12px">Pontos</div></div></div>
-    <div class="pills">${pills.map(([id,label]) => `<button class="${S.staff===id?"on":""}" data-act="staff" data-id="${id}">${label}</button>`).join("")}</div>
-    <div class="scroll">${body}</div>`;
+  else if (S.tab === "rewards") body = `<div class="card pad"><div class="muted">Pontos</div><div class="h mag" style="font-size:32px">${pts(S.points)}</div><p class="muted">Cashback ${S.cashback.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</p><button class="btn" data-act="redeem">Resgatar dose da casa · 800</button></div>`;
+  else body = `<div class="card pad"><h2 class="h" style="font-size:28px">Marina Costa</h2><p class="muted">@marina.noite · membro</p><p>Esta porta não mostra a mesa da gestão.</p></div>`;
+  const tabs = [["home","Início"],["rooms","Salas"],["rewards","Prêmios"],["profile","Perfil"]];
+  return `<div class="phone"><header class="between" style="padding:16px"><button class="chip" data-act="world" data-id="gate">Portas</button><div class="mark">FEST<i>I</i></div><span></span></header>
+    ${marina.blocked?`<p class="mag" style="margin:0 16px 8px">A gestão pausou o seu acesso.</p>`:""}
+    <div style="padding:0 16px 16px;flex:1">${body}</div>
+    <nav class="nav5">${tabs.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("")}<button data-act="tab" data-id="home">Mapa</button></nav></div>`;
+}
+
+function manager() {
+  const views = [["painel","Painel"],["acessos","Acessos"],["fila","Fila"],["numeros","Números"]];
+  let body = "";
+  if (S.mgr === "painel") {
+    const inside = S.passes.filter((p)=>!p.blocked).length;
+    body = `<div class="stack"><div class="grid3"><div class="card pad"><b>${inside}</b><div class="muted">Dentro</div></div><div class="card pad"><b>${S.queue.length}</b><div class="muted">Na fila</div></div><div class="card pad"><b>${pts(S.points)}</b><div class="muted">Pontos</div></div></div>
+      <div class="card pad"><h2 class="h" style="font-size:22px">Quem pode entrar</h2>${S.passes.map((p)=>`<div class="between" style="margin-top:8px"><span>${esc(p.name)}</span><span class="muted">${p.blocked?"pausado":p.role}</span></div>`).join("")}</div></div>`;
+  } else if (S.mgr === "acessos") {
+    body = `<div class="stack"><p class="muted">A Marina é o perfil da porta Membro. O que você mudar nela aparece só na noite dela.</p>${S.passes.map((p)=>`<article class="card pad"><div class="between"><div><b>${esc(p.name)}</b><div class="muted">${p.role}${p.id==="marina"?" · perfil da demo":""}</div></div><button class="chip ${p.blocked?"on":""}" data-act="block" data-id="${p.id}">${p.blocked?"Liberar":"Pausar"}</button></div><div class="row" style="margin-top:10px">${["main","back","vip"].map((r)=>`<button class="pill ${p.rooms[r]?"on":""}" data-act="roompass" data-id="${p.id}" data-room="${r}">${r==="main"?"Palco":r==="back"?"Cabine":"VIP"}</button>`).join("")}</div></article>`).join("")}</div>`;
+  } else if (S.mgr === "fila") {
+    body = S.queue.length?`<div class="stack">${S.queue.map((q)=>`<article class="card"><img class="photo" style="height:140px" src="${q.image}" alt=""><div class="pad"><b>@${esc(q.handle)}</b><p class="muted">${esc(q.text)}</p><div class="row"><button class="btn line" style="border:1px solid var(--cyan);color:var(--cyan)" data-act="approve" data-id="${q.id}">Aprovar</button><button class="btn line" style="border:1px solid var(--magenta);color:var(--magenta)" data-act="reject" data-id="${q.id}">Recusar</button></div></div></article>`).join("")}</div>`:`<div class="card pad"><h2 class="h" style="font-size:24px">Fila limpa</h2></div>`;
+  } else body = `<div class="card pad"><h2 class="h" style="font-size:24px">Números</h2><p>Aprovados ${S.approved}</p><p>Recusados ${S.rejected}</p><p>Checkpoints ${S.checks.filter(c=>c.done).length} / 5</p></div>`;
+  return `<div class="mgr"><aside class="side"><div class="mark">FEST<i>I</i></div><p class="muted">Mesa interna. O membro não vê esta porta.</p><nav class="stack" style="margin-top:16px">${views.map((v)=>`<button class="${S.mgr===v[0]?"on":""}" data-act="mgr" data-id="${v[0]}">${v[1]}</button>`).join("")}</nav><button data-act="world" data-id="gate" style="margin-top:auto">Trocar de porta</button></aside>
+    <section><header class="between" style="padding:16px 16px 0"><div><div class="mag" style="font-size:12px;font-weight:800">GESTÃO</div><h1 class="h" style="font-size:28px">A casa por dentro</h1></div><button class="chip mnav" data-act="world" data-id="gate">Portas</button></header>
+    <div class="mnav row" style="padding:12px 16px;overflow:auto">${views.map((v)=>`<button class="chip ${S.mgr===v[0]?"on":""}" data-act="mgr" data-id="${v[0]}">${v[1]}</button>`).join("")}</div>
+    <div style="padding:8px 16px 24px">${body}</div></section></div>`;
 }
 
 function render() {
-  document.body.dataset.pane = document.body.dataset.pane || "noite";
-  document.getElementById("shell").innerHTML = `<section class="pane" id="noite">${noite()}</section><section class="pane" id="staff">${staff()}</section>`;
-  document.getElementById("toast").innerHTML = S.toast ? `<div class="toast">${esc(S.toast)}</div>` : "";
+  const html = S.world==="gate"?gate():S.world==="story"?story():S.world==="manager"?manager():member();
+  document.getElementById("app").innerHTML = html;
+  document.getElementById("toast").innerHTML = S.toast?`<div class="toast">${esc(S.toast)}</div>`:"";
 }
-
-document.getElementById("shell").addEventListener("click", (e) => {
+document.getElementById("app").addEventListener("click", (e) => {
   const el = e.target.closest("[data-act]");
-  if (!el) return;
-  const act = el.dataset.act;
-  const id = el.dataset.id;
-  if (act === "tab") { S.tab = id; S.overlay = null; }
-  else if (act === "pane") document.body.dataset.pane = id;
-  else if (act === "staff") S.staff = id;
-  else if (act === "notes") S.overlay = "notes";
-  else if (act === "close") S.overlay = null;
-  else if (act === "focus") { S.focus = id; S.tab = "map"; }
-  else if (act === "like") {
-    const p = S.posts.find((x) => x.id === id);
-    if (p) { p.liked = !p.liked; p.likes += p.liked ? 1 : -1; }
-  }
-  else if (act === "qr") {
-    const cur = nextCp();
-    S.overlay = "qr";
-    S.scanning = !!cur;
-    render();
-    if (!cur) return;
-    clearTimeout(S._scan);
-    S._scan = setTimeout(() => {
-      if (S.overlay !== "qr") return;
-      const n = nextCp();
-      if (!n) { S.scanning = false; render(); return; }
-      n.done = true;
-      S.points += 1000;
-      S.cashback += 12;
-      S.notes.unshift({ id:"v"+n.id, title:"Checkpoint validado", body:`${n.name} · +1.000 pontos e R$ 12 de cashback.`, ago:"agora" });
-      S.scanning = false;
-      flash(`${n.name} validado. +1.000 pontos.`);
-    }, 1400);
+  if (!el || el.disabled) return;
+  const act = el.dataset.act, id = el.dataset.id;
+  if (act==="world") S.world = id;
+  else if (act==="mode") S.mode = id;
+  else if (act==="plug") S.open = S.open===id?null:id;
+  else if (act==="story") S.story = Math.max(0, Math.min(chapters.length-1, S.story + (id==="next"?1:-1)));
+  else if (act==="tab") S.tab = id;
+  else if (act==="mgr") S.mgr = id;
+  else if (act==="block") { const p = S.passes.find((x)=>x.id===id); p.blocked = !p.blocked; flash(p.blocked?p.name+" não entra mais.":p.name+" pode entrar de novo."); return; }
+  else if (act==="roompass") { const p = S.passes.find((x)=>x.id===id); p.rooms[el.dataset.room] = !p.rooms[el.dataset.room]; flash("Acesso de sala atualizado."); return; }
+  else if (act==="approve" || act==="reject") {
+    const q = S.queue.find((x)=>x.id===id); S.queue = S.queue.filter((x)=>x.id!==id);
+    if (act==="approve") { S.approved++; S.posts.unshift({ id:"l"+id, handle:q.handle, text:q.text, image:q.image, likes:12 }); flash("@"+q.handle+" entrou no feed."); }
+    else { S.rejected++; flash("@"+q.handle+" ficou fora do feed."); }
     return;
   }
-  else if (act === "room") {
-    const room = S.rooms.find((r) => r.id === id);
-    if (!room || locked(room)) { flash("Essa sala abre quando o checkpoint da cabine for validado."); }
-    else { S.activeRoom = id; S.overlay = "room"; }
+  else if (act==="qr") {
+    const n = S.checks.find((c)=>!c.done);
+    if (!n) { flash("Noite completa."); return; }
+    if (me().blocked) { flash("A casa pausou o seu acesso."); return; }
+    n.done = true; S.points += 1000; S.cashback += 12; flash(n.name+" validado. +1.000 pontos."); return;
   }
-  else if (act === "redeem") {
-    const r = S.rewards.find((x) => x.id === id);
-    if (!r || r.redeemed) return;
-    if (S.points < r.cost) { flash("Pontos ainda não cobrem esse resgate."); }
-    else { S.points -= r.cost; r.redeemed = true; S.notes.unshift({ id:"r"+id, title:"Benefício resgatado", body:r.title, ago:"agora" }); flash(`${r.title} reservado na casa.`); }
+  else if (act==="room") {
+    const marina = me();
+    if (marina.blocked || !marina.rooms[id]) { flash("A gestão não liberou esta sala para o seu perfil."); return; }
+    flash("Sala aberta na sua pulseira."); return;
   }
-  else if (act === "approve" || act === "reject") {
-    const q = S.queue.find((x) => x.id === id);
-    if (!q) return;
-    S.queue = S.queue.filter((x) => x.id !== id);
-    if (act === "approve") {
-      S.approved += 1;
-      S.posts.unshift({ id:"live-"+q.id, handle:q.handle, avatar:q.avatar, text:q.text, image:q.image, likes:12, comments:1, liked:false, ago:"agora" });
-      flash(`@${q.handle} entrou no feed ao vivo.`);
-    } else { S.rejected += 1; flash(`@${q.handle} ficou fora do feed.`); }
+  else if (act==="redeem") {
+    if (S.points<800) { flash("Pontos ainda não cobrem."); return; }
+    S.points -= 800; flash("Dose da casa reservada."); return;
   }
-  else if (act === "reset") { const pane = document.body.dataset.pane; S = fresh(); document.body.dataset.pane = pane; flash("Noite reiniciada."); return; }
   render();
 });
-
 render();
 </script>
 </body>
