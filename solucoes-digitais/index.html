@@ -86,6 +86,26 @@ h1 span{color:#888;font-weight:400}
 footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
 .footer-row{display:flex;align-items:center;justify-content:space-between;gap:24px;color:#777;font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase}
 .footer-row a{color:#333}
+.modal{position:fixed;inset:0;z-index:80;display:none;background:rgba(9,9,9,.72);padding:18px}
+.modal.open{display:grid;place-items:center}
+.modal-panel{width:min(920px,100%);max-height:min(92dvh,880px);overflow:auto;background:#fff;border:1px solid #e8e8e8}
+.modal-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;border-bottom:1px solid #eee}
+.modal-kicker{font:10px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--violet)}
+.modal-close{width:36px;height:36px;border:1px solid #ddd;background:#fff;cursor:pointer}
+.modal-stage{position:relative;background:#111;aspect-ratio:16/10}
+.modal-stage img{width:100%;height:100%;object-fit:cover;display:block}
+.modal-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border:0;border-radius:50%;background:#fff;cursor:pointer}
+.modal-nav.prev{left:12px}.modal-nav.next{right:12px}
+.modal-copy{padding:18px 18px 20px}
+.modal-copy h2{margin:6px 0 8px;font-size:28px;letter-spacing:-.05em;font-weight:600}
+.modal-copy p{margin:0;color:#555;font-size:14px;line-height:1.6}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.modal-actions .btn{padding:14px 16px}
+.modal-ghost{display:inline-flex;align-items:center;padding:14px 16px;border:1px solid #ddd;background:#fff;font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.thumbs{display:flex;gap:8px;margin-top:14px;overflow:auto}
+.thumbs button{width:84px;height:56px;padding:0;border:1px solid #ddd;background:#eee;cursor:pointer;flex:0 0 auto}
+.thumbs button.active{border-color:#111}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-right>a:not(.nav-cta){display:none}}
 @media(max-width:600px){.wrap{width:calc(100% - 32px)}.nav{height:66px}.brand{font-size:12px}.nav-cta{padding:10px 12px;font-size:9px}.hero{padding:62px 0 48px}h1{font-size:clamp(48px,14vw,76px)}.hero-bottom{align-items:start;flex-direction:column;gap:14px}.catalog{padding:38px 0 70px}.catalog-head{align-items:start;flex-direction:column}.tools{gap:7px}.search{max-width:none;flex-basis:100%}.filter{font-size:9px;padding:0 10px}.grid{grid-template-columns:1fr;gap:12px}.card{min-height:0}.card-visual{height:210px}.custom{padding:50px 0}.custom-inner{grid-template-columns:1fr;padding:26px 22px}.custom .btn{width:100%}.footer-row{align-items:start;flex-direction:column;gap:12px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
@@ -109,7 +129,7 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
   <h1>Soluções digitais<br><span>para negócios reais.</span></h1>
   <p class="hero-copy">Cada negócio tem uma operação, um público e um próximo nível. Explore modelos de sites, sistemas, plataformas e experiências digitais pensados para diferentes segmentos. A estrutura é adaptada à realidade de cada empresa.</p>
   <div class="hero-bottom">
-   <div class="hero-count"><strong>06+</strong> segmentos de referência para explorar</div>
+   <div class="hero-count"><strong>11</strong> segmentos de referência para explorar</div>
    <div class="hero-note">PORTFÓLIO EM EXPANSÃO<br>Novos modelos e demonstrações serão adicionados continuamente.</div>
   </div>
  </div>
@@ -124,6 +144,7 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
    <button class="filter" type="button" data-filter="saude">Saúde & bem-estar</button>
    <button class="filter" type="button" data-filter="educacao">Educação & treino</button>
    <button class="filter" type="button" data-filter="negocios">Negócios</button>
+   <button class="filter" type="button" data-filter="entretenimento">Entretenimento</button>
   </div>
   <div class="grid" id="grid">
    <a class="card" href="/solucoes-digitais/barbearia/" data-category="servicos" data-search="barbearia barbearias agenda clientes fidelidade pagamentos">
@@ -166,6 +187,10 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
     <div class="card-visual"><div class="visual-abstract"><span>Conteúdo → produto → comunidade</span></div><span class="card-number">10 / DIGITAL</span></div>
     <div class="card-body"><div class="card-meta"><span>Conteúdo · Produtos · Membros</span><b>10</b></div><h3>Criadores & negócios digitais</h3><p>Sites, produtos digitais, plataformas de membros, cursos, comunidades e automações.</p><div class="card-link"><span>Explorar solução</span><span class="arrow">↗</span></div></div>
    </a>
+   <a class="card" id="festi-card" href="/festi/" data-category="entretenimento" data-search="festi casas de entretenimento casa de show evento produtora festa mapa qr live gamificação">
+    <div class="card-visual"><img src="/festi/media/crowd.jpg" alt="Pista de uma casa de entretenimento na FESTI" loading="lazy"><span class="card-number">11 / ENTRETENIMENTO</span></div>
+    <div class="card-body"><div class="card-meta"><span>FESTI · Mapa · QR · Gestão</span><b>11</b></div><h3>Casas de entretenimento</h3><p>Solução digital para casa de show, produtora e entretenimento. Mapa, ingresso híbrido, salas, pontos e a mesa da casa.</p><div class="card-link"><span>Ver imagens</span><span class="arrow">↗</span></div></div>
+   </a>
   </div>
   <div class="empty" id="empty">Nenhum segmento encontrado. Experimente outra busca.</div>
  </div>
@@ -176,6 +201,29 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
   <a class="btn" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20quero%20conversar%20sobre%20uma%20solu%C3%A7%C3%A3o%20digital%20sob%20medida%20para%20meu%20neg%C3%B3cio." target="_blank" rel="noopener">Conversar sobre meu projeto ↗</a>
  </div>
 </section>
+<div class="modal" id="festi-modal" hidden>
+ <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="festi-title">
+  <div class="modal-top">
+   <div class="modal-kicker">AKASHA HUB · FESTI · antes de abrir</div>
+   <button class="modal-close" type="button" data-close aria-label="Fechar">✕</button>
+  </div>
+  <div class="modal-stage">
+   <img id="festi-photo" alt="">
+   <button class="modal-nav prev" type="button" data-step="-1" aria-label="Imagem anterior">←</button>
+   <button class="modal-nav next" type="button" data-step="1" aria-label="Próxima imagem">→</button>
+  </div>
+  <div class="modal-copy">
+   <div class="modal-kicker" id="festi-kicker">01 / 06</div>
+   <h2 id="festi-title">A pista</h2>
+   <p id="festi-line">A casa inteira, antes de entrar no app.</p>
+   <div class="thumbs" id="festi-thumbs"></div>
+   <div class="modal-actions">
+    <a class="btn" href="/festi/">Abrir a FESTI ↗</a>
+    <button class="modal-ghost" type="button" data-close>Fechar</button>
+   </div>
+  </div>
+ </div>
+</div>
 </main>
 <footer><div class="wrap footer-row"><span>© AKASHA HUB · Soluções Digitais</span><span><a href="/">Página principal</a>　/　<a href="/al/">Arquitetura de Legado</a></span></div></footer>
 <script>
@@ -193,6 +241,56 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
  }
  buttons.forEach(btn=>btn.addEventListener('click',()=>{active=btn.dataset.filter;buttons.forEach(b=>b.classList.toggle('active',b===btn));apply()}));
  search.addEventListener('input',apply);
+})();
+(()=>{
+ const shots=[
+  ["/festi/media/crowd.jpg","A pista","A casa cheia. É daqui que a solução começa."],
+  ["/festi/media/aerial.jpg","O mapa","Cada ponto da noite vira um lugar no aplicativo."],
+  ["/festi/media/dj.jpg","A cabine","Live, equipe de audiovisual e o vídeo de quem está na pista."],
+  ["/festi/media/drinks.jpg","O bar","Produto, bebida e prova. O QR fica no balcão."],
+  ["/festi/media/vip.jpg","O after","Promoção, cashback e quem volta na próxima."],
+  ["/festi/media/selfie.jpg","Quem está na noite","O membro vê a festa. A mesa da casa fica em outra porta."]
+ ];
+ const card=document.getElementById('festi-card');
+ const modal=document.getElementById('festi-modal');
+ const photo=document.getElementById('festi-photo');
+ const title=document.getElementById('festi-title');
+ const line=document.getElementById('festi-line');
+ const kicker=document.getElementById('festi-kicker');
+ const thumbs=document.getElementById('festi-thumbs');
+ let index=0;
+ function show(next){
+  index=(next+shots.length)%shots.length;
+  const shot=shots[index];
+  photo.src=shot[0];
+  photo.alt=shot[1];
+  title.textContent=shot[1];
+  line.textContent=shot[2];
+  kicker.textContent=String(index+1).padStart(2,'0')+' / 06';
+  [...thumbs.children].forEach((btn,i)=>btn.classList.toggle('active',i===index));
+ }
+ function open(){modal.hidden=false;modal.classList.add('open');document.body.style.overflow='hidden';show(index)}
+ function close(){modal.classList.remove('open');modal.hidden=true;document.body.style.overflow=''}
+ shots.forEach((shot,i)=>{
+  const btn=document.createElement('button');
+  btn.type='button';
+  btn.innerHTML='<img alt="" src="'+shot[0]+'">';
+  btn.addEventListener('click',()=>show(i));
+  thumbs.appendChild(btn);
+ });
+ card.addEventListener('click',(event)=>{event.preventDefault();open()});
+ modal.addEventListener('click',(event)=>{
+  if(event.target===modal||event.target.closest('[data-close]'))close();
+  const step=event.target.closest('[data-step]');
+  if(step)show(index+Number(step.dataset.step));
+ });
+ document.addEventListener('keydown',(event)=>{
+  if(!modal.classList.contains('open'))return;
+  if(event.key==='Escape')close();
+  if(event.key==='ArrowRight')show(index+1);
+  if(event.key==='ArrowLeft')show(index-1);
+ });
+ show(0);
 })();
 </script>
 </body>
