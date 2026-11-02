@@ -53,7 +53,7 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => "&#" + c.charCodeAt(0) +
 const pts = (n) => n.toLocaleString("pt-BR");
 let S = {
   world: "gate", tab: "home", mgr: "painel", story: 0, mode: "historia", open: "supabase", pin: "cabine", toast: "",
-  points: 6200, cashback: 115, approved: 18, rejected: 4,
+  points: 6200, cashback: 115, approved: 18, rejected: 4, redeemed: false, guards: [],
   checks: [
     { id:"portao", name:"Portão Norte", done:true },
     { id:"praca", name:"Praça das luzes", done:true },
@@ -76,6 +76,10 @@ let S = {
   ]
 };
 const me = () => S.passes.find((p) => p.id === "marina");
+const clamp = (n) => Math.min(20000, Math.max(0, Math.round(Number.isFinite(n) ? n : 0)));
+const guard = (layer, text) => { S.guards.unshift({ layer, text }); S.guards = S.guards.slice(0, 8); };
+const snap = () => JSON.parse(JSON.stringify({ points:S.points, cashback:S.cashback, checks:S.checks, passes:S.passes, queue:S.queue, posts:S.posts, approved:S.approved, rejected:S.rejected, redeemed:S.redeemed }));
+S.shot = snap();
 const flash = (t) => { S.toast = t; render(); clearTimeout(flash.t); flash.t = setTimeout(() => { S.toast = ""; render(); }, 2200); };
 const chapters = [
   ["media/crowd.jpg","1 · A festa","Uma casa. Muita gente.","A FESTI é a festa inteira num só lugar: palco, praça, lounge e a fila da porta."],
@@ -186,7 +190,7 @@ function member() {
 }
 
 function manager() {
-  const views = [["painel","Painel"],["acessos","Acessos"],["fila","Fila"],["numeros","Números"]];
+  const views = [["painel","Painel"],["acessos","Acessos"],["fila","Fila"],["numeros","Números"],["seguranca","Segurança"]];
   let body = "";
   if (S.mgr === "painel") {
     const inside = S.passes.filter((p)=>!p.blocked).length;
@@ -196,7 +200,24 @@ function manager() {
     body = `<div class="stack"><p class="muted">A Marina é o perfil da porta Membro. O que você mudar nela aparece só na noite dela.</p>${S.passes.map((p)=>`<article class="card pad"><div class="between"><div><b>${esc(p.name)}</b><div class="muted">${p.role}${p.id==="marina"?" · perfil da demo":""}</div></div><button class="chip ${p.blocked?"on":""}" data-act="block" data-id="${p.id}">${p.blocked?"Liberar":"Pausar"}</button></div><div class="row" style="margin-top:10px">${["main","back","vip"].map((r)=>`<button class="pill ${p.rooms[r]?"on":""}" data-act="roompass" data-id="${p.id}" data-room="${r}">${r==="main"?"Palco":r==="back"?"Cabine":"VIP"}</button>`).join("")}</div></article>`).join("")}</div>`;
   } else if (S.mgr === "fila") {
     body = S.queue.length?`<div class="stack">${S.queue.map((q)=>`<article class="card"><img class="photo" style="height:140px" src="${q.image}" alt=""><div class="pad"><b>@${esc(q.handle)}</b><p class="muted">${esc(q.text)}</p><div class="row"><button class="btn line" style="border:1px solid var(--cyan);color:var(--cyan)" data-act="approve" data-id="${q.id}">Aprovar</button><button class="btn line" style="border:1px solid var(--magenta);color:var(--magenta)" data-act="reject" data-id="${q.id}">Recusar</button></div></div></article>`).join("")}</div>`:`<div class="card pad"><h2 class="h" style="font-size:24px">Fila limpa</h2></div>`;
-  } else body = `<div class="card pad"><h2 class="h" style="font-size:24px">Números</h2><p>Aprovados ${S.approved}</p><p>Recusados ${S.rejected}</p><p>Checkpoints ${S.checks.filter(c=>c.done).length} / 5</p></div>`;
+  } else if (S.mgr === "numeros") body = `<div class="card pad"><h2 class="h" style="font-size:24px">Números</h2><p>Aprovados ${S.approved}</p><p>Recusados ${S.rejected}</p><p>Checkpoints ${S.checks.filter(c=>c.done).length} / 5</p></div>`;
+  else {
+    const layers = [
+      ["1 · Superfície","O clique","Enquanto a casa responde, o mesmo botão não dispara de novo."],
+      ["2 · Experiência","O QR","O mesmo carimbo não entra duas vezes.","qr","Tentar QR duplicado"],
+      ["3 · Experiência","O resgate","Prêmio que já saiu não sai de novo. O saldo não fica negativo.","resgate","Tentar resgate duplicado"],
+      ["4 · Variável","O número","Ponto só vive entre 0 e 20.000. Número negativo ou enorme é cortado.","teto","Tentar número absurdo"],
+      ["5 · Experiência","A fila","Vídeo já julgado não vira um segundo post.","fila","Tentar fila duplicada"],
+      ["6 · Porta","O acesso","Perfil pausado não carimba, não abre sala e não resgata.","acesso","Tentar acesso pausado"],
+      ["7 · Volta atrás","O retrato","A gestão guarda um retrato da noite e volta pontos, fila e acessos juntos."],
+      ["8 · Fundo","A casa fechada","Senha não fica no celular. Pedido sem forma é jogado fora. Na porta da internet, o segurança segura quem atrapalha. Vírus não publica sozinho: vídeo só entra depois que a equipe vê."]
+    ];
+    body = `<div class="stack"><p class="muted">Da tela até o fundo. O membro não vê esta biblioteca. Ele só sente que a noite não quebra.</p>
+      ${layers.map((l) => `<article class="card pad"><p class="mag" style="font-size:12px;font-weight:800">${l[0].toUpperCase()}</p><h2 class="h" style="font-size:24px;margin-top:6px">${l[1]}</h2><p class="muted">${l[2]}</p>${l[3]?`<button class="chip" data-act="prove" data-id="${l[3]}">${l[4]}</button>`:""}</article>`).join("")}
+      <div class="row"><button class="btn" data-act="save">Guardar retrato agora</button><button class="btn ghost" data-act="restore">Restaurar retrato</button></div>
+      <section class="card pad"><h2 class="h" style="font-size:22px">O que foi barrado</h2>${S.guards.length?S.guards.map((g)=>`<p><b class="mag">${esc(g.layer)}. </b>${esc(g.text)}</p>`).join(""):`<p class="muted">Nada saiu do lugar ainda.</p>`}</section>
+    </div>`;
+  }
   return `<div class="mgr"><aside class="side"><div class="mark">FEST<i>I</i></div><p class="muted">Mesa interna. O membro não vê esta porta.</p><nav class="stack" style="margin-top:16px">${views.map((v)=>`<button class="${S.mgr===v[0]?"on":""}" data-act="mgr" data-id="${v[0]}">${v[1]}</button>`).join("")}</nav><button data-act="world" data-id="gate" style="margin-top:auto">Trocar de porta</button></aside>
     <section><header class="between" style="padding:16px 16px 0"><div><div class="mag" style="font-size:12px;font-weight:800">GESTÃO</div><h1 class="h" style="font-size:28px">A casa por dentro</h1></div><button class="chip mnav" data-act="world" data-id="gate">Portas</button></header>
     <div class="mnav row" style="padding:12px 16px;overflow:auto">${views.map((v)=>`<button class="chip ${S.mgr===v[0]?"on":""}" data-act="mgr" data-id="${v[0]}">${v[1]}</button>`).join("")}</div>
@@ -222,25 +243,50 @@ document.getElementById("app").addEventListener("click", (e) => {
   else if (act==="block") { const p = S.passes.find((x)=>x.id===id); p.blocked = !p.blocked; flash(p.blocked?p.name+" não entra mais.":p.name+" pode entrar de novo."); return; }
   else if (act==="roompass") { const p = S.passes.find((x)=>x.id===id); p.rooms[el.dataset.room] = !p.rooms[el.dataset.room]; flash("Acesso de sala atualizado."); return; }
   else if (act==="approve" || act==="reject") {
-    const q = S.queue.find((x)=>x.id===id); S.queue = S.queue.filter((x)=>x.id!==id);
+    const q = S.queue.find((x)=>x.id===id);
+    if (!q) { guard("Fila", "Esse vídeo já tinha sido julgado. Não nasceu um post duplicado."); flash("Esse vídeo já saiu da fila."); return; }
+    S.queue = S.queue.filter((x)=>x.id!==id);
     if (act==="approve") { S.approved++; S.posts.unshift({ id:"l"+id, handle:q.handle, text:q.text, image:q.image, likes:12 }); flash("@"+q.handle+" entrou no feed."); }
     else { S.rejected++; flash("@"+q.handle+" ficou fora do feed."); }
     return;
   }
   else if (act==="qr") {
+    if (me().blocked) { guard("Acesso", "Perfil pausado tentou carimbar. Nada foi somado."); flash("A casa pausou o seu acesso."); return; }
     const n = S.checks.find((c)=>!c.done);
-    if (!n) { flash("Noite completa."); return; }
-    if (me().blocked) { flash("A casa pausou o seu acesso."); return; }
-    n.done = true; S.points += 1000; S.cashback += 12; flash(n.name+" validado. +1.000 pontos."); return;
+    if (!n) { guard("QR", "Esse carimbo já existia. Os pontos não dobraram."); flash("Este ponto já foi validado."); return; }
+    n.done = true; S.points = clamp(S.points + 1000); S.cashback += 12; flash(n.name+" validado. +1.000 pontos."); return;
   }
   else if (act==="room") {
     const marina = me();
-    if (marina.blocked || !marina.rooms[id]) { flash("A gestão não liberou esta sala para o seu perfil."); return; }
+    if (marina.blocked || !marina.rooms[id]) { guard("Acesso", "Sala fechada ou perfil pausado. A porta ficou fechada."); flash("A gestão não liberou esta sala para o seu perfil."); return; }
     flash("Sala aberta na sua pulseira."); return;
   }
   else if (act==="redeem") {
-    if (S.points<800) { flash("Pontos ainda não cobrem."); return; }
-    S.points -= 800; flash("Dose da casa reservada."); return;
+    if (me().blocked) { guard("Acesso", "Perfil pausado tentou resgatar."); flash("A casa pausou o seu acesso."); return; }
+    if (S.redeemed) { guard("Resgate", "A dose já tinha saído. O saldo não desceu de novo."); flash("Este resgate já foi feito."); return; }
+    if (S.points<800) { guard("Piso", "O saldo não cobre. Não ficou negativo."); flash("Pontos ainda não cobrem."); return; }
+    S.redeemed = true; S.points = clamp(S.points - 800); flash("Dose da casa reservada."); return;
+  }
+  else if (act==="prove") {
+    const lines = {
+      qr: ["QR", "O Portão Norte já estava carimbado. A segunda leitura não somou ponto.", "QR duplicado barrado."],
+      resgate: ["Resgate", "A dose já tinha saído. O saldo não desceu de novo.", "Resgate duplicado barrado."],
+      teto: ["Teto", "Um número enorme tentou entrar. O teto é 20.000. O resto foi cortado.", "Número absurdo barrado."],
+      fila: ["Fila", "Esse vídeo já tinha sido julgado. Não nasceu um post duplicado.", "Fila duplicada barrada."],
+      acesso: ["Acesso", "Perfil pausado não carimba, não abre sala e não resgata.", "Acesso pausado barrado."]
+    };
+    const line = lines[id];
+    if (!line) return;
+    if (id==="teto") clamp(S.points + 9999999);
+    guard(line[0], line[1]); flash(line[2]); return;
+  }
+  else if (act==="save") { S.shot = snap(); guard("Retrato", "Retrato novo guardado. Dá para voltar até aqui."); flash("Retrato da noite guardado."); return; }
+  else if (act==="restore") {
+    const shot = S.shot;
+    S.points = shot.points; S.cashback = shot.cashback; S.checks = shot.checks; S.passes = shot.passes;
+    S.queue = shot.queue; S.posts = shot.posts; S.approved = shot.approved; S.rejected = shot.rejected; S.redeemed = shot.redeemed;
+    guard("Retrato", "A noite voltou ao retrato. Pontos, fila e acessos foram repostos.");
+    flash("Noite restaurada."); return;
   }
   render();
 });
