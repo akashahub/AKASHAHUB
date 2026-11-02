@@ -52,7 +52,7 @@ img { display:block; max-width:100%; }
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => "&#" + c.charCodeAt(0) + ";");
 const pts = (n) => n.toLocaleString("pt-BR");
 let S = {
-  world: "gate", tab: "home", mgr: "painel", story: 0, mode: "historia", open: "supabase", toast: "",
+  world: "gate", tab: "home", mgr: "painel", story: 0, mode: "historia", open: "supabase", pin: "cabine", toast: "",
   points: 6200, cashback: 115, approved: 18, rejected: 4,
   checks: [
     { id:"portao", name:"Portão Norte", done:true },
@@ -93,6 +93,18 @@ const plugins = [
   ["bunny","Bunny","O correio das fotos","A foto do palco sai da festa e chega rápido no celular.","Fotos e vídeos ficam numa rede de entrega. A página em si continua na porta da rua."]
 ];
 const steps = ["Abre o caderno e cria a lista de pulseiras.","Liga o sino para a validação aparecer na hora.","Guarda o app na gaveta e abre a porta da rua.","Manda as fotos pelo correio e põe o segurança na calçada."];
+const loop = ["Abre o mapa e escolhe o ponto.","Lê o QR daquele ponto.","Grava um vídeo curto, ou encosta o QR de outra pessoa.","A gestão aprova. Se for regra automática, já entra.","Caem os pontos, o cashback e a prova no perfil."];
+const film = ["Celular em pé.","De 5 a 8 segundos.","O ponto do mapa aparece no fundo.","Uma ideia por vídeo. Sem tapar o rosto nem o som."];
+const mapPins = [
+  ["porta","Porta","Entrada","media/crowd.jpg","QR do perfil","Cada pessoa tem o próprio QR. Na porta ela mostra. A equipe lê. O nome entra na casa.","Um QR por pulseira, guardado no caderno. A leitura marca: entrou.","Check-in e os primeiros pontos da noite."],
+  ["praca","Praça","Centro","media/aerial.jpg","Conexão presencial","Duas pessoas leem o QR uma da outra. Os perfis ficam ligados: se encontraram aqui. Quem conecta mais sobe no ranking.","A leitura dos dois cria uma linha entre os perfis. A linha só nasce se os dois estiverem no mesmo ponto.","Pontos por conexão. No fim, prêmio e cashback para usar na festa ou na plataforma."],
+  ["cabine","Cabine","Palco principal","media/dj.jpg","Vídeo da energia","A pessoa abre o ponto, vê o QR e grava a pista. Se a gestão aprovar, o vídeo vai para o feed e os pontos caem.","O vídeo entra na fila da mesa. Aprovar publica. Recusar fica só com a equipe.","+1.000 pontos quando aprovado."],
+  ["bar","Bar","Balcão","media/drinks.jpg","Divulgar uma bebida","O QR fica no balcão, ao lado da dose. A pessoa mostra o copo e grava poucos segundos.","O ponto do mapa é o produto. Troca o texto e a foto. O resto do caminho é o mesmo.","A dose, ou cashback para gastar naquele bar."],
+  ["atracao","Atração","Pelo mapa","media/selfie.jpg","Produto, brinde ou entrevista","Qualquer atração ganha um pino: foto, brinde, marca ou uma pergunta de 10 segundos.","Não cria um app novo. Cria outro pino no mesmo mapa, com a regra daquele prêmio.","Pontos, brinde ou o nome no crédito da casa."],
+  ["palco","Palco","Lives","media/crowd.jpg","Sala oficial da equipe","A equipe de audiovisual grava a sala de verdade. O membro assiste e pode mandar um clipe para entrar na transmissão.","A sala oficial é da equipe. O clipe do membro usa a mesma fila. Aprovado, entra na live.","Pontos e aparição na sala da casa."],
+  ["after","After","Fidelidade","media/vip.jpg","Promoção e volta","Quem fechou o mapa vê a oferta da noite. O cashback fica no perfil para usar agora ou depois.","A regra é simples: fez os carimbos, o prêmio abre. O saldo não some no fim da pista.","Cashback na plataforma e benefício da casa."],
+  ["sala","Sua sala","Depois dos pontos","media/aerial.jpg","Abrir a própria sala","O perfil junta o mínimo de pontos no mapa e o botão de criar sala acende sozinho. A equipe de audiovisual pode gravar essa sala também.","Uma trava de pontos. Passou, a sala nasce já aprovada. Antes disso, o botão fica fechado.","A sala no ar e pontos de quem recebe gente."]
+];
 
 function gate() {
   const doors = [
@@ -106,9 +118,30 @@ function gate() {
     <div class="grid3" style="margin-top:24px">${doors.map((d) => `<button class="card" data-act="world" data-id="${d[0]}"><img class="photo" style="height:160px" src="${d[1]}" alt=""><div class="pad"><div class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">${d[2]}</div><h2 class="h" style="font-size:28px;margin-top:6px">${d[3]}</h2><p class="muted">${d[4]}</p></div></button>`).join("")}</div></div>`;
 }
 
+function ideias() {
+  const pin = mapPins.find((p) => p[0] === S.pin) || mapPins[2];
+  const top = `<div class="between"><button class="chip" data-act="world" data-id="gate">Portas</button><div class="row">${["historia","História","ideias","Ideias","manual","Manual"].reduce((html, item, i, arr) => i % 2 ? html : html + `<button class="chip ${S.mode===item?"on":""}" data-act="mode" data-id="${item}">${arr[i+1]}</button>`, "")}</div></div>`;
+  return `<div class="wrap stack">${top}
+    <p class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em">BIBLIOTECA DO MAPA</p>
+    <h1 class="h" style="font-size:40px">Um ponto. Uma brincadeira.</h1>
+    <p class="muted">O mapa manda. Cada pino é uma ideia pronta. A pessoa abre, lê o QR e faz o que a tela pede.</p>
+    ${loop.map((s,i) => `<div class="card pad row" style="align-items:flex-start"><b class="mag">${i+1}</b><span>${s}</span></div>`).join("")}
+    <div class="row" style="overflow:auto">${mapPins.map((p) => `<button class="chip ${S.pin===p[0]?"on":""}" data-act="pin" data-id="${p[0]}">${p[1]}</button>`).join("")}</div>
+    <img class="photo" style="height:160px;border-radius:24px" src="${pin[3]}" alt="">
+    <p class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em">${pin[2].toUpperCase()}</p>
+    <article class="card pad"><h2 class="h" style="font-size:26px">${pin[4]}</h2>
+      <p><b class="mag">Na prática. </b>${pin[5]}</p>
+      <p class="muted"><b style="color:var(--fg)">Como liga. </b>${pin[6]}</p>
+      <p><b style="color:var(--cyan)">Ganha. </b>${pin[7]}</p>
+    </article>
+    <section class="card pad"><h2 class="h" style="font-size:22px">Como gravar</h2><div class="grid3" style="grid-template-columns:1fr 1fr;margin-top:10px">${film.map((r) => `<div class="pad" style="background:var(--raised);border-radius:16px">${r}</div>`).join("")}</div><p class="muted">Entrevista, propaganda e live usam a mesma regra. Muda o ponto. Não muda o caminho.</p></section>
+  </div>`;
+}
+
 function story() {
   const c = chapters[S.story];
-  const top = `<div class="between"><button class="chip" data-act="world" data-id="gate">Portas</button><div><button class="chip ${S.mode==="historia"?"on":""}" data-act="mode" data-id="historia">História</button><button class="chip ${S.mode==="manual"?"on":""}" data-act="mode" data-id="manual">Manual</button></div></div>`;
+  const top = `<div class="between"><button class="chip" data-act="world" data-id="gate">Portas</button><div class="row"><button class="chip ${S.mode==="historia"?"on":""}" data-act="mode" data-id="historia">História</button><button class="chip ${S.mode==="ideias"?"on":""}" data-act="mode" data-id="ideias">Ideias</button><button class="chip ${S.mode==="manual"?"on":""}" data-act="mode" data-id="manual">Manual</button></div></div>`;
+  if (S.mode === "ideias") return ideias();
   if (S.mode === "manual") {
     return `<div class="wrap stack">${top}
       <p class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em">MANUAL CENTRAL</p>
@@ -127,7 +160,7 @@ function story() {
     <div class="between" style="margin-top:auto;padding-top:24px">
       <button class="chip" data-act="story" data-id="prev" ${S.story===0?"disabled":""}>Anterior</button>
       <span class="muted">${S.story+1} / ${chapters.length}</span>
-      ${S.story<chapters.length-1?`<button class="btn" data-act="story" data-id="next">Próxima</button>`:`<button class="btn" data-act="mode" data-id="manual">Ver o manual</button>`}
+      ${S.story<chapters.length-1?`<button class="btn" data-act="story" data-id="next">Próxima</button>`:`<button class="btn" data-act="mode" data-id="ideias">Ver as ideias</button>`}
     </div></div>`;
 }
 
@@ -181,6 +214,7 @@ document.getElementById("app").addEventListener("click", (e) => {
   const act = el.dataset.act, id = el.dataset.id;
   if (act==="world") S.world = id;
   else if (act==="mode") S.mode = id;
+  else if (act==="pin") S.pin = id;
   else if (act==="plug") S.open = S.open===id?null:id;
   else if (act==="story") S.story = Math.max(0, Math.min(chapters.length-1, S.story + (id==="next"?1:-1)));
   else if (act==="tab") S.tab = id;
