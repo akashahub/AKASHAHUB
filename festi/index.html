@@ -52,7 +52,7 @@ img { display:block; max-width:100%; }
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => "&#" + c.charCodeAt(0) + ";");
 const pts = (n) => n.toLocaleString("pt-BR");
 let S = {
-  world: "gate", tab: "home", mgr: "painel", story: 0, mode: "historia", open: "supabase", pin: "cabine", toast: "",
+  world: "pitch", tab: "home", mgr: "painel", story: 0, mode: "historia", open: "supabase", pin: "cabine", paper: false, toast: "",
   points: 6200, cashback: 115, approved: 18, rejected: 4, redeemed: false, guards: [],
   checks: [
     { id:"portao", name:"Portão Norte", done:true },
@@ -116,15 +116,89 @@ function gate() {
     ["member","media/selfie.jpg","Quem está na pista","Membro","Mapa, pontos, salas e prêmios. A mesa da casa não aparece aqui."],
     ["manager","media/aerial.jpg","Quem manda na casa","Gestão","Painel interno, acessos, fila e números. Só a equipe entra."]
   ];
-  return `<div class="wrap"><div class="mark">FEST<i>I</i></div>
-    <h1 class="h" style="font-size:44px;max-width:16ch;margin-top:28px">Três portas. Cada pessoa entra na sua.</h1>
+  return `<div class="wrap"><div class="between"><div class="mark">FEST<i>I</i></div><button class="chip" data-act="world" data-id="pitch">Pitch</button></div>
+    <p class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em;margin-top:24px">O APP, DEPOIS DO PITCH</p>
+    <h1 class="h" style="font-size:44px;max-width:16ch;margin-top:12px">Três portas. Cada pessoa entra na sua.</h1>
     <p class="muted" style="max-width:42ch;line-height:1.5">O membro vive a noite. A gestão controla quem entra. A apresentação explica as duas, sem misturar.</p>
     <div class="grid3" style="margin-top:24px">${doors.map((d) => `<button class="card" data-act="world" data-id="${d[0]}"><img class="photo" style="height:160px" src="${d[1]}" alt=""><div class="pad"><div class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">${d[2]}</div><h2 class="h" style="font-size:28px;margin-top:6px">${d[3]}</h2><p class="muted">${d[4]}</p></div></button>`).join("")}</div></div>`;
 }
 
+function opsHtml() {
+  const teach = [
+    ["Post","No feed da casa","Uma frase só: abre, aponta, ganha. O QR do ponto vai na imagem."],
+    ["Carrossel","Cinco telas","Abre o mapa. Acha o ponto. Lê o QR. Grava oito segundos. Espera a casa aprovar."],
+    ["Reel","Oito segundos","Celular em pé, o ponto no fundo. A pessoa copia o gesto sem ler manual."],
+    ["Live","Influencer ou modelo","Alguém conhecido faz na pista. A casa espelha na sala oficial e o QR fica na tela."],
+    ["Peça com IA","Antes de publicar","A casa gera a arte do ponto e do prêmio. A equipe confere. Só então entra no ar."]
+  ];
+  const times = [
+    ["Sete dias antes","Imprime o QR na porta, no bar e na atração. Avisa a equipe com uma frase.","Sobe post, carrossel e reels. A peça com IA sai só depois da conferência."],
+    ["Na abertura","Uma pessoa da casa mostra o gesto na fila. O telão repete.","O primeiro QR da porta cria o perfil. O nome entra na mesa."],
+    ["Durante a noite","Influencer ou modelo faz a live no ponto. A equipe de vídeo grava a sala.","A fila aprova, o ponto cai, a conexão entre perfis fica registrada."],
+    ["No dia seguinte","A casa publica o corte oficial e chama a próxima noite.","O ranking, o cashback e o retrato da noite continuam no perfil."]
+  ];
+  return `<p class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em">MAPA DE OPERAÇÃO</p>
+    <h2 class="h" style="font-size:36px">A casa de hoje. A casa com a FESTI.</h2>
+    <p class="muted">Primeiro a vida real. Depois o app. O plano cabe numa frase, num post e numa noite.</p>
+    <div class="grid3" style="grid-template-columns:1fr 1fr">
+      <section class="card pad"><h3 class="h" style="font-size:22px">Sem a FESTI</h3><p class="muted">A porta tem lista de papel. A promoção é banner, grito e story. Ninguém mede qual canto segurou a gente.</p></section>
+      <section class="card pad"><h3 class="h" style="font-size:22px">Com a FESTI</h3><p>Cada ponto tem um QR. Post, carrossel, reel e live ensinam o mesmo gesto. A mesa vê a fila na mesma noite.</p></section>
+    </div>
+    <h3 class="h" style="font-size:26px">Como ensinar a pista</h3>
+    ${teach.map((t)=>`<article class="card pad"><div class="between"><b class="h" style="font-size:22px">${t[0]}</b><span style="color:var(--cyan)">${t[1]}</span></div><p class="muted">${t[2]}</p></article>`).join("")}
+    <h3 class="h" style="font-size:26px">Quatro tempos</h3>
+    ${times.map((t,i)=>`<article class="card pad"><p class="mag" style="font-size:12px;font-weight:800">${i+1} · ${t[0].toUpperCase()}</p><p><b>Na casa. </b>${t[1]}</p><p class="muted"><b style="color:var(--fg)">No app. </b>${t[2]}</p></article>`).join("")}`;
+}
+
+function pitch() {
+  const why = ["Assinaturas de inteligência artificial","Tempo de quem constrói e fica junto","Luz e gastos de operação","Anos de estudo para conseguir operar isso","Suporte técnico durante um ano","O sistema no ar, sem limite mensal do que o app promete"];
+  if (S.paper) {
+    const clauses = [
+      ["1. Partes","Contratada: a operação que cria e acompanha a FESTI. Contratante: a casa, a produtora ou a empresa. Razão social, CNPJ e endereço entram na assinatura."],
+      ["2. Objeto","A contratada cria a FESTI para a contratante, liga o sistema na operação da casa e permanece junto por 12 meses. Entram mapa, QR, pontos, cashback, conexões, salas, fila, acessos e a área do membro."],
+      ["3. Prazo","O app oficial, já com a personalização da casa, fica no ar em no máximo 90 dias, contados do primeiro pagamento. Os 9 meses seguintes são de inovação, adaptação, nova personalização e suporte. Vigência total: 12 meses."],
+      ["4. Preço","Valor mínimo de R$ 39.000, à vista, por PIX. Em alternativa, 12 parcelas de R$ 3.300 no cartão, sem juros. Nessa forma o total é R$ 39.600. A contratante escolhe no aceite."],
+      ["5. O que o preço cobre","Assinaturas de inteligência artificial, o tempo de quem constrói e acompanha, luz, gastos de operação, os anos de estudo para fazer o sistema funcionar, e suporte técnico por 12 meses."],
+      ["6. Sem trava mensal","Dentro do que o app promete — entrada, mapa, QR, pontos, cashback, conexões, salas, lives da casa, fila e acessos — não há limite de operações por mês."],
+      ["7. Suporte","Durante 12 meses a contratada responde, corrige o que quebrar no combinado e acompanha a equipe. O suporte não cobre um produto diferente do apresentado."],
+      ["8. Personalização","Nos primeiros 90 dias a FESTI fica com a cara e a operação da casa. Nos 9 meses seguintes a personalização continua, com inovação e adaptação."],
+      ["9. O que a casa faz","A contratante entrega marca, pontos do mapa, regras de prêmio e uma pessoa para aprovar vídeo. Sem isso, a contagem dos 90 dias pausa."],
+      ["10. Ensino da pista","A implantação inclui posts, carrossel, reels, live com influenciador ou modelo e peças com IA, para ensinar o gesto sem um manual longo."],
+      ["11. Dados","Os dados dos perfis pertencem à casa. A contratada usa só para o sistema funcionar. Senha de pessoa não fica no celular da festa."],
+      ["12. Propriedade","Marca, fotos e lista são da contratante. A base da FESTI é da contratada, licenciada durante a vigência. No fim, a casa pode receber cópia dos seus dados."],
+      ["13. Rescisão","Qualquer parte encerra com aviso de 30 dias. O que já foi pago pelos meses decorridos não volta. Parcelas vencidas continuam devidas. Os dados saem em até 15 dias."],
+      ["14. Foro","As partes buscam acordo primeiro. Se precisar de juízo, fica o foro da comarca da contratante. Local, data e as duas assinaturas fecham o instrumento."]
+    ];
+    return `<div class="wrap stack"><div class="between"><p class="mag" style="font-size:12px;font-weight:800">PARA O INVESTIDOR</p><button class="chip" data-act="paper" data-id="close">Voltar ao pitch</button></div>
+      <p class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em">MODELO DE CONTRATO</p>
+      <h1 class="h" style="font-size:40px">Criação, implantação e um ano junto.</h1>
+      <p class="muted">Modelo para esta apresentação. Nomes e CNPJ entram na assinatura. Antes de assinar, um advogado lê com as duas partes.</p>
+      ${clauses.map((c)=>`<article class="card pad"><h2 class="h" style="font-size:22px">${c[0]}</h2><p class="muted">${c[1]}</p></article>`).join("")}
+      <p class="muted">Local e data. Assinatura da contratante. Assinatura da contratada.</p>
+    </div>`;
+  }
+  return `<div class="wrap stack"><div class="between"><p class="mag" style="font-size:12px;font-weight:800">PARA O INVESTIDOR</p><button class="chip" data-act="world" data-id="gate">Entrar no app</button></div>
+    <h1 class="h" style="font-size:44px;max-width:16ch">Primeiro o acordo. Depois a festa.</h1>
+    <p class="muted">A casa hoje vive de lista, grito e story. A FESTI troca isso por um gesto só. Eu crio o sistema para a empresa e fico junto por um ano.</p>
+    <aside class="card pad" style="border-color:var(--magenta)">
+      <p class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em">MÍNIMO PARA EXECUTAR</p>
+      <p class="h" style="font-size:44px;margin-top:8px">R$ 39 mil</p>
+      <p><b>no PIX</b></p>
+      <p class="muted">ou 12x de R$ 3.300 no cartão, sem juros. Nessa forma o total fica R$ 39.600.</p>
+      ${why.map((w)=>`<p>${w}</p>`).join("")}
+    </aside>
+    <div class="grid3" style="grid-template-columns:1fr 1fr">
+      <section class="card pad"><p class="mag" style="font-size:12px;font-weight:800">ATÉ 90 DIAS</p><p>App oficial no ar, com a personalização da casa.</p></section>
+      <section class="card pad"><p class="mag" style="font-size:12px;font-weight:800">OS 9 MESES SEGUINTES</p><p>Inovação, adaptação, mais personalização e suporte técnico.</p></section>
+    </div>
+    ${opsHtml()}
+    <div class="row"><button class="btn" data-act="paper" data-id="open">Ver o contrato</button><button class="btn ghost" data-act="world" data-id="gate">Entrar no app</button></div>
+  </div>`;
+}
+
 function ideias() {
   const pin = mapPins.find((p) => p[0] === S.pin) || mapPins[2];
-  const top = `<div class="between"><button class="chip" data-act="world" data-id="gate">Portas</button><div class="row">${["historia","História","ideias","Ideias","manual","Manual"].reduce((html, item, i, arr) => i % 2 ? html : html + `<button class="chip ${S.mode===item?"on":""}" data-act="mode" data-id="${item}">${arr[i+1]}</button>`, "")}</div></div>`;
+  const top = `<div class="between"><button class="chip" data-act="world" data-id="gate">Portas</button><div class="row">${["historia","História","ideias","Ideias","operacao","Operação","manual","Manual"].reduce((html, item, i, arr) => i % 2 ? html : html + `<button class="chip ${S.mode===item?"on":""}" data-act="mode" data-id="${item}">${arr[i+1]}</button>`, "")}</div></div>`;
   return `<div class="wrap stack">${top}
     <p class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em">BIBLIOTECA DO MAPA</p>
     <h1 class="h" style="font-size:40px">Um ponto. Uma brincadeira.</h1>
@@ -144,7 +218,8 @@ function ideias() {
 
 function story() {
   const c = chapters[S.story];
-  const top = `<div class="between"><button class="chip" data-act="world" data-id="gate">Portas</button><div class="row"><button class="chip ${S.mode==="historia"?"on":""}" data-act="mode" data-id="historia">História</button><button class="chip ${S.mode==="ideias"?"on":""}" data-act="mode" data-id="ideias">Ideias</button><button class="chip ${S.mode==="manual"?"on":""}" data-act="mode" data-id="manual">Manual</button></div></div>`;
+  const top = `<div class="between"><button class="chip" data-act="world" data-id="gate">Portas</button><div class="row"><button class="chip ${S.mode==="historia"?"on":""}" data-act="mode" data-id="historia">História</button><button class="chip ${S.mode==="ideias"?"on":""}" data-act="mode" data-id="ideias">Ideias</button><button class="chip ${S.mode==="operacao"?"on":""}" data-act="mode" data-id="operacao">Operação</button><button class="chip ${S.mode==="manual"?"on":""}" data-act="mode" data-id="manual">Manual</button></div></div>`;
+  if (S.mode === "operacao") return `<div class="wrap stack">${top}${opsHtml()}</div>`;
   if (S.mode === "ideias") return ideias();
   if (S.mode === "manual") {
     return `<div class="wrap stack">${top}
@@ -225,7 +300,7 @@ function manager() {
 }
 
 function render() {
-  const html = S.world==="gate"?gate():S.world==="story"?story():S.world==="manager"?manager():member();
+  const html = S.world==="pitch"?pitch():S.world==="gate"?gate():S.world==="story"?story():S.world==="manager"?manager():member();
   document.getElementById("app").innerHTML = html;
   document.getElementById("toast").innerHTML = S.toast?`<div class="toast">${esc(S.toast)}</div>`:"";
 }
@@ -236,6 +311,7 @@ document.getElementById("app").addEventListener("click", (e) => {
   if (act==="world") S.world = id;
   else if (act==="mode") S.mode = id;
   else if (act==="pin") S.pin = id;
+  else if (act==="paper") S.paper = id === "open";
   else if (act==="plug") S.open = S.open===id?null:id;
   else if (act==="story") S.story = Math.max(0, Math.min(chapters.length-1, S.story + (id==="next"?1:-1)));
   else if (act==="tab") S.tab = id;
