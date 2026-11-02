@@ -371,26 +371,9 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
 #gestao-close{float:right;background:none;border:0;color:#cfc4b4;font-size:24px;cursor:pointer}
 
 
-/* Sequência visual do card de Massagem Tântrica */
 .massage-media .massage-media-stage{position:relative;width:100%;height:100%;overflow:hidden;background:#171016}
-.massage-media .massage-cover,.massage-media .massage-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.massage-media .massage-cover{z-index:1;filter:brightness(.94) saturate(.88) hue-rotate(12deg)}
-.massage-media .massage-media-stage:after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(135deg,rgba(180,145,255,.23),rgba(214,178,255,.12));mix-blend-mode:screen}
-.massage-media .massage-video{z-index:3;opacity:0;transition:opacity .65s ease;filter:saturate(1.12) contrast(1.02)}
-.massage-media .massage-video.is-visible{opacity:1}
-.massage-media .massage-media-stage.video-active:before{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:rgba(255,105,160,.22);mix-blend-mode:screen}
-.massage-media .massage-media-stage.video-active:after{display:none}
-.massage-media .massage-cover.is-hidden{opacity:0;transition:opacity .65s ease}
-
-
-/* Tratamento sépia editorial nas imagens da seção A atmosfera */
-.gallery .ggrid img{filter:sepia(.38) saturate(.86) contrast(1.04) brightness(.96);transition:filter .45s ease,transform 1.6s cubic-bezier(.22,1,.36,1)}
-@media(hover:hover){.gallery .ggrid figure:hover img{filter:sepia(.2) saturate(.95) contrast(1.04) brightness(1)}}
-
-/* Véu violeta profundo apenas nas capas do curso e do livro */
-.course-cover-tint{position:relative;display:block;width:72px;height:72px;overflow:hidden;border-radius:8px;margin-bottom:8px}
-.course-cover-tint .course-cover{display:block;width:100%;height:100%;margin:0}
-.course-cover-tint.violet-deep:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(145deg,rgba(92,48,145,.46),rgba(39,20,75,.56));mix-blend-mode:multiply}
+.massage-media .massage-cover{display:block;width:100%;height:100%;object-fit:cover;filter:brightness(.94) saturate(.88) hue-rotate(12deg)}
+.massage-media .massage-media-stage:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(180,145,255,.23),rgba(214,178,255,.12));mix-blend-mode:screen}
 </style>
 </head>
 <body id="topo">
@@ -449,10 +432,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   <article class="card reveal">
     <div class="ph info-open-image massage-media" role="button" tabindex="0" aria-label="Abrir benefícios da Massagem Tântrica" data-info="massagem">
       <div class="massage-media-stage">
-        <img class="massage-cover" src="/flow/img/riad.jpg?v=8" alt="Imagem de capa do mentor"/>
-        <video class="massage-video" muted playsinline preload="metadata" webkit-playsinline>
-          <source src="https://res.cloudinary.com/dcbarseus/video/upload/v1793531777/VID_20261101_001950_233_bsl_ghtrot.mp4" type="video/mp4"/>
-        </video>
+        <img class="massage-cover" src="/flow/img/riad.jpg?v=8" alt="Imagem de Massagem Tântrica"/>
       </div>
     </div>
     <div class="body">
@@ -1199,43 +1179,7 @@ if ('IntersectionObserver' in window) {
 </script>
 
 
-<script>
-(() => {
-  const card = document.querySelector('.massage-media');
-  if (!card) return;
-  const stage = card.querySelector('.massage-media-stage');
-  const cover = card.querySelector('.massage-cover');
-  const video = card.querySelector('.massage-video');
-  if (!stage || !cover || !video) return;
-  let timer;
-  const showCoverThenPlay = () => {
-    clearTimeout(timer);
-    video.classList.remove('is-visible');
-    stage.classList.remove('video-active');
-    cover.classList.remove('is-hidden');
-    video.pause();
-    try { video.currentTime = 0; } catch (_) {}
-    timer = setTimeout(async () => {
-      try {
-        await video.play();
-        cover.classList.add('is-hidden');
-        video.classList.add('is-visible');
-        stage.classList.add('video-active');
-      } catch (_) {
-        // Mantém a imagem de capa se o navegador bloquear a reprodução automática.
-      }
-    }, 3000);
-  };
-  video.addEventListener('ended', showCoverThenPlay);
-  video.addEventListener('error', () => {
-    clearTimeout(timer);
-    cover.classList.remove('is-hidden');
-    video.classList.remove('is-visible');
-    stage.classList.remove('video-active');
-  });
-  showCoverThenPlay();
-})();
-</script>
+
 
 </body>
 </html>
