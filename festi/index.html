@@ -2,428 +2,365 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>FESTI - O Ecossistema de Festivais e Conexões</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FESTI</title>
+<meta name="theme-color" content="#07060c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0f0f1a;
-  --card: #1a1a2e;
-  --accent: #ff4d8d;
-  --accent2: #a855f7;
-  --gold: #f59e0b;
-  --text: #ffffff;
-  --text-dim: #a0a0b0;
-  --nav: #12121f;
+:root { --bg:#07060c; --surface:#14121c; --raised:#1e1a2a; --fg:#f6f3fb; --muted:#a79fb8; --faint:#726b84; --line:#2c2738; --magenta:#ff2f9b; --cyan:#3ee0ff; --ok:#3dd68c; }
+* { box-sizing:border-box; }
+html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font-family:Manrope,system-ui,sans-serif; }
+button { font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+img { display:block; max-width:100%; }
+#shell { height:100dvh; max-width:1240px; margin:0 auto; display:flex; }
+.pane { min-width:0; height:100%; display:flex; flex-direction:column; }
+#noite { flex:1; position:relative; }
+#staff { display:none; background:var(--bg); }
+body[data-pane="staff"] #noite { display:none; }
+body[data-pane="staff"] #staff { display:flex; flex:1; }
+@media (min-width:960px) {
+  #shell { display:grid; grid-template-columns:430px minmax(0,1fr); }
+  #noite, #staff { display:flex !important; }
+  #staff { border-left:1px solid var(--line); }
+  .only-mobile { display:none !important; }
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #000;
-  color: var(--text);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  overflow: hidden;
-}
-.phone {
-  width: 390px;
-  height: 844px;
-  background: var(--bg);
-  border-radius: 40px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  position: relative;
-  overflow: hidden;
-  border: 8px solid #222;
-}
-.screen {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 70px;
-  overflow-y: auto;
-  display: none;
-  padding: 20px 16px;
-}
-.screen.active { display: block; }
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0 20px;
-}
-.logo {
-  height: 36px;
-  background: linear-gradient(90deg, #f59e0b, #ff4d8d);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 28px;
-  font-weight: bold;
-}
-.icon-btn {
-  background: var(--card);
-  border: none;
-  color: var(--text);
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  font-size: 18px;
-  cursor: pointer;
-}
-.stories {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 16px;
-}
-.story {
-  text-align: center;
-  min-width: 70px;
-}
-.story img, .story .avatar {
-  width: 60px; height: 60px;
-  border-radius: 50%;
-  border: 3px solid var(--accent);
-  object-fit: cover;
-  background: #333;
-}
-.post, .event-card, .match-card {
-  background: var(--card);
-  border-radius: 16px;
-  margin-bottom: 16px;
-  overflow: hidden;
-}
-.post img, .event-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  background: linear-gradient(135deg, #a855f7, #ff4d8d);
-}
-.post-content, .event-info, .match-info {
-  padding: 12px;
-}
-.post-content h3, .event-info h3 { font-size: 16px; margin-bottom: 4px; }
-.post-content p, .event-info p { font-size: 14px; color: var(--text-dim); }
-.actions {
-  display: flex;
-  gap: 16px;
-  padding: 8px 12px 12px;
-  font-size: 14px;
-  color: var(--text-dim);
-}
-.btn {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 24px;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 8px;
-}
-.btn-secondary {
-  background: transparent;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-}
-.bottom-nav {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 70px;
-  background: var(--nav);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  border-top: 1px solid #2a2a3e;
-}
-.nav-item {
-  text-align: center;
-  color: var(--text-dim);
-  font-size: 11px;
-  cursor: pointer;
-  padding: 8px;
-}
-.nav-item.active { color: var(--accent); }
-.nav-item .icon { font-size: 22px; display: block; }
-.profile-header {
-  text-align: center;
-  padding: 20px 0;
-}
-.profile-header img {
-  width: 100px; height: 100px;
-  border-radius: 50%;
-  border: 4px solid var(--accent);
-  margin-bottom: 12px;
-  background: #333;
-}
-.stats {
-  display: flex;
-  justify-content: space-around;
-  margin: 16px 0;
-}
-.stat { text-align: center; }
-.stat strong { display: block; font-size: 18px; }
-.match-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.match-card {
-  text-align: center;
-  padding: 12px;
-}
-.match-card img {
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 12px;
-  background: #333;
-}
-.badge {
-  background: var(--gold);
-  color: #000;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 8px;
-  font-weight: bold;
-}
-.splash {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #0f0f1a, #1a0a2e);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-.splash h1 { font-size: 48px; background: linear-gradient(90deg, var(--gold), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
+.scroll { min-height:0; flex:1; overflow:auto; padding:0 16px 16px; }
+.head { display:flex; align-items:center; justify-content:space-between; padding:16px 16px 12px; }
+.mark { font-family:Syne,sans-serif; font-weight:800; font-size:22px; letter-spacing:-.03em; }
+.mark i { color:var(--magenta); font-style:normal; }
+.hub { margin-left:6px; font-size:11px; letter-spacing:.16em; color:var(--muted); font-weight:700; }
+.iconbtn { width:44px; height:44px; border-radius:999px; background:var(--raised); display:grid; place-items:center; position:relative; }
+.dot { position:absolute; top:10px; right:10px; width:8px; height:8px; border-radius:99px; background:var(--magenta); }
+.chip { border-radius:999px; background:var(--raised); color:var(--muted); font-size:12px; font-weight:700; padding:8px 12px; }
+.nav { display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid var(--line); background:var(--surface); padding:8px 4px 12px; }
+.nav button { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--faint); font-size:11px; font-weight:700; }
+.nav button.on { color:var(--magenta); }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:24px; padding:16px; }
+.h { font-family:Syne,sans-serif; font-weight:800; letter-spacing:-.03em; margin:0; }
+.muted { color:var(--muted); }
+.faint { color:var(--faint); }
+.mag { color:var(--magenta); }
+.cyan { color:var(--cyan); }
+.row { display:flex; align-items:center; gap:10px; }
+.between { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.stack { display:flex; flex-direction:column; gap:14px; }
+.btn { height:48px; width:100%; border-radius:999px; background:var(--magenta); color:#1a0610; font-weight:800; font-size:14px; }
+.btn:disabled { opacity:.4; }
+.btn.ghost { background:transparent; color:var(--fg); border:1px solid var(--line); }
+.btn.line-cyan { background:transparent; color:var(--cyan); border:1px solid var(--cyan); }
+.btn.line-mag { background:transparent; color:var(--magenta); border:1px solid var(--magenta); }
+.map { position:relative; overflow:hidden; border-radius:24px; }
+.map img.cover { width:100%; height:100%; object-fit:cover; }
+.pin { position:absolute; transform:translate(-50%,-50%); width:32px; height:32px; border-radius:99px; display:grid; place-items:center; }
+.pin.done { background:var(--cyan); color:#1a0610; }
+.pin.now { background:var(--magenta); color:#1a0610; }
+.pin.wait { background:rgba(7,6,12,.8); }
+.bar { height:8px; border-radius:99px; background:var(--raised); overflow:hidden; }
+.bar > span { display:block; height:100%; background:var(--magenta); }
+.post img, .reward img, .room img { width:100%; object-fit:cover; border-radius:16px; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.stat { background:var(--surface); border-radius:16px; padding:12px 8px; text-align:center; }
+.stat b { display:block; font-family:Syne,sans-serif; font-size:18px; }
+.overlay { position:absolute; inset:0; z-index:5; background:rgba(7,6,12,.72); display:flex; align-items:flex-end; }
+.sheet { background:var(--surface); border-radius:24px 24px 0 0; padding:20px 20px 28px; width:100%; }
+.full { position:absolute; inset:0; z-index:5; background:var(--bg); display:flex; flex-direction:column; }
+.scanbox { width:176px; height:208px; margin:0 auto; border-radius:16px; overflow:hidden; position:relative; background:#000; }
+.scanline { position:absolute; left:12px; right:12px; height:2px; background:var(--magenta); animation:scan 1.15s ease-in-out infinite alternate; }
+@keyframes scan { from { top:16px; } to { top:180px; } }
+.metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:0 20px; }
+.metrics div { background:var(--surface); border-radius:16px; padding:10px 8px; }
+.metrics b { font-family:Syne,sans-serif; font-size:18px; }
+.pills { display:flex; gap:8px; padding:16px 20px 0; }
+.pills button { height:40px; border-radius:999px; padding:0 16px; background:var(--raised); color:var(--muted); font-weight:700; font-size:14px; }
+.pills button.on { background:var(--fg); color:var(--bg); }
+.toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--fg); color:var(--bg); border-radius:999px; padding:12px 16px; font-weight:700; font-size:14px; z-index:20; max-width:90vw; }
+.badge { position:absolute; top:12px; left:12px; background:var(--magenta); color:#1a0610; border-radius:999px; font-size:11px; font-weight:800; padding:4px 8px; }
+.lock { position:absolute; inset:0; background:rgba(7,6,12,.55); display:grid; place-items:center; }
+@media (prefers-reduced-motion: reduce) { .scanline { animation:none; top:50%; } }
 </style>
 </head>
-<body>
-<div class="phone">
-  <div class="splash" id="splash">
-    <h1>FESTI</h1>
-    <p style="margin-top:10px; color:var(--text-dim);">Festivais. Conexões. Experiências.</p>
-  </div>
-
-  <!-- HOME -->
-  <div class="screen active" id="home">
-    <div class="header">
-      <div class="logo">FESTI</div>
-      <button class="icon-btn" onclick="showScreen('notifications')">🔔</button>
-    </div>
-    <div class="stories">
-      <div class="story"><div class="avatar" style="background:linear-gradient(45deg,#ff4d8d,#a855f7);"></div><small>Você</small></div>
-      <div class="story"><div class="avatar" style="background:#a855f7;"></div><small>Ana</small></div>
-      <div class="story"><div class="avatar" style="background:#ff4d8d;"></div><small>Pedro</small></div>
-      <div class="story"><div class="avatar" style="background:#333;"></div><small>Mais</small></div>
-    </div>
-    <div class="post">
-      <div style="height:180px; background:linear-gradient(135deg,#ff4d8d,#a855f7);"></div>
-      <div class="post-content">
-        <h3>Rock in Rio 2026 🎸</h3>
-        <p>Quem vai estar lá? Já garantiu seu ingresso?</p>
-      </div>
-      <div class="actions">
-        <span>❤️ 1.2k</span>
-        <span>💬 234</span>
-        <span>📤 Compartilhar</span>
-      </div>
-    </div>
-    <div class="post">
-      <div style="height:180px; background:linear-gradient(135deg,#f59e0b,#ff4d8d);"></div>
-      <div class="post-content">
-        <h3>Sunset Party • Ipanema</h3>
-        <p>Amanhã às 17h. Vibe eletrônica na beira da praia.</p>
-      </div>
-      <div class="actions">
-        <span>❤️ 856</span>
-        <span>💬 98</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- EVENTS -->
-  <div class="screen" id="events">
-    <div class="header">
-      <h2>Eventos</h2>
-      <button class="icon-btn">🔍</button>
-    </div>
-    <div class="event-card" onclick="showScreen('event-detail')">
-      <div style="height:180px; background:linear-gradient(135deg,#a855f7,#f59e0b);"></div>
-      <div class="event-info">
-        <span class="badge">DESTAQUE</span>
-        <h3>FESTI Summer Fest</h3>
-        <p>12-14 Dez • São Paulo • Eletrônico + Rock</p>
-        <button class="btn">Ver detalhes</button>
-      </div>
-    </div>
-    <div class="event-card">
-      <div style="height:180px; background:#333;"></div>
-      <div class="event-info">
-        <h3>Jazz Night</h3>
-        <p>20 Nov • Rio de Janeiro</p>
-        <button class="btn btn-secondary">Ingressos</button>
-      </div>
-    </div>
-    <div class="event-card">
-      <div style="height:180px; background:#444;"></div>
-      <div class="event-info">
-        <h3>Tech & Music</h3>
-        <p>5 Jan • Online + Presencial</p>
-        <button class="btn btn-secondary">Ingressos</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MATCH -->
-  <div class="screen" id="match">
-    <div class="header">
-      <h2>Conexões</h2>
-      <button class="icon-btn">⚙️</button>
-    </div>
-    <p style="color:var(--text-dim); margin-bottom:12px;">Pessoas que vão nos mesmos eventos</p>
-    <div class="match-grid">
-      <div class="match-card">
-        <div style="height:140px; background:linear-gradient(45deg,#ff4d8d,#a855f7); border-radius:12px;"></div>
-        <div class="match-info">
-          <strong>Mariana, 26</strong>
-          <p>Rock in Rio • Eletrônico</p>
-          <button class="btn" style="padding:8px;">Conectar</button>
-        </div>
-      </div>
-      <div class="match-card">
-        <div style="height:140px; background:linear-gradient(45deg,#f59e0b,#ff4d8d); border-radius:12px;"></div>
-        <div class="match-info">
-          <strong>Lucas, 29</strong>
-          <p>FESTI Summer • Jazz</p>
-          <button class="btn" style="padding:8px;">Conectar</button>
-        </div>
-      </div>
-      <div class="match-card">
-        <div style="height:140px; background:#555; border-radius:12px;"></div>
-        <div class="match-info">
-          <strong>Julia, 24</strong>
-          <p>Sunset Party</p>
-          <button class="btn" style="padding:8px;">Conectar</button>
-        </div>
-      </div>
-      <div class="match-card">
-        <div style="height:140px; background:#666; border-radius:12px;"></div>
-        <div class="match-info">
-          <strong>Rafael, 31</strong>
-          <p>Tech & Music</p>
-          <button class="btn" style="padding:8px;">Conectar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PROFILE -->
-  <div class="screen" id="profile">
-    <div class="profile-header">
-      <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(45deg,#ff4d8d,#a855f7); margin:0 auto 12px; border:4px solid var(--accent);"></div>
-      <h2>Você • FESTI</h2>
-      <p style="color:var(--text-dim);">São Paulo • Festivais & Música</p>
-    </div>
-    <div class="stats">
-      <div class="stat"><strong>128</strong><span>Eventos</span></div>
-      <div class="stat"><strong>45</strong><span>Conexões</span></div>
-      <div class="stat"><strong>12</strong><span>Tickets</span></div>
-    </div>
-    <div class="post">
-      <div class="post-content">
-        <h3>Meus próximos eventos</h3>
-        <p>• FESTI Summer Fest - 12 Dez<br>• Rock in Rio - Confirmado</p>
-      </div>
-    </div>
-    <button class="btn">Editar perfil</button>
-    <button class="btn btn-secondary" style="margin-top:8px;">Configurações</button>
-  </div>
-
-  <!-- EVENT DETAIL -->
-  <div class="screen" id="event-detail">
-    <div class="header">
-      <button class="icon-btn" onclick="showScreen('events')">←</button>
-      <h2>FESTI Summer Fest</h2>
-      <button class="icon-btn">♡</button>
-    </div>
-    <div style="width:100%; height:200px; background:linear-gradient(135deg,#a855f7,#f59e0b); border-radius:12px; margin-bottom:16px;"></div>
-    <h3>12-14 de Dezembro • Allianz Parque</h3>
-    <p style="color:var(--text-dim); margin:8px 0;">O maior festival de música e conexão do verão. 3 palcos, 40 artistas, experiências exclusivas FESTI.</p>
-    <div class="stats">
-      <div class="stat"><strong>15k</strong><span>Confirmados</span></div>
-      <div class="stat"><strong>R$ 280</strong><span>A partir de</span></div>
-    </div>
-    <button class="btn">Comprar ingresso</button>
-    <button class="btn btn-secondary">Ver line-up</button>
-    <div class="post" style="margin-top:16px;">
-      <div class="post-content">
-        <h3>Quem vai</h3>
-        <div class="stories" style="padding:0;">
-          <div class="story"><div class="avatar" style="background:#ff4d8d;"></div><small>Mari</small></div>
-          <div class="story"><div class="avatar" style="background:#a855f7;"></div><small>Lucas</small></div>
-          <div class="story"><div class="avatar" style="background:#555;"></div><small>+230</small></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- NOTIFICATIONS -->
-  <div class="screen" id="notifications">
-    <div class="header">
-      <button class="icon-btn" onclick="showScreen('home')">←</button>
-      <h2>Notificações</h2>
-    </div>
-    <div class="post">
-      <div class="post-content">
-        <strong>Nova conexão!</strong>
-        <p>Mariana aceitou seu convite • há 2h</p>
-      </div>
-    </div>
-    <div class="post">
-      <div class="post-content">
-        <strong>Ingresso disponível</strong>
-        <p>FESTI Summer Fest - lote 2 liberado • há 5h</p>
-      </div>
-    </div>
-    <div class="post">
-      <div class="post-content">
-        <strong>Evento próximo</strong>
-        <p>Sunset Party amanhã às 17h • ontem</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bottom Nav -->
-  <div class="bottom-nav">
-    <div class="nav-item active" onclick="showScreen('home')">
-      <span class="icon">🏠</span>Início
-    </div>
-    <div class="nav-item" onclick="showScreen('events')">
-      <span class="icon">📅</span>Eventos
-    </div>
-    <div class="nav-item" onclick="showScreen('match')">
-      <span class="icon">💫</span>Conexões
-    </div>
-    <div class="nav-item" onclick="showScreen('profile')">
-      <span class="icon">👤</span>Perfil
-    </div>
-  </div>
-</div>
-
+<body data-pane="noite">
+<div id="shell"></div>
+<div id="toast"></div>
 <script>
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const navMap = { home: 0, events: 1, match: 2, profile: 3 };
-  if (navMap[id] !== undefined) {
-    document.querySelectorAll('.nav-item')[navMap[id]].classList.add('active');
-  }
+const I = {
+  home: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>',
+  map: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
+  radio: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12a7 7 0 0 1 14 0"/><path d="M8.5 12a3.5 3.5 0 0 1 7 0"/><circle cx="12" cy="16" r="1.2" fill="currentColor"/></svg>',
+  gift: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-2-3-6-3-6 0h6zm0 0c2-3 6-3 6 0h-6z"/></svg>',
+  user: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.2"/><path d="M5 19c1.4-3 3.8-4.5 7-4.5S17.6 16 19 19"/></svg>',
+  bell: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9a6 6 0 1 1 12 0c0 7 2 7 2 9H4c0-2 2-2 2-9"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
+  check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12.5 10 17l9-10"/></svg>',
+  x: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  heart: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z"/></svg>',
+  qr: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>'
+};
+
+const fresh = () => ({
+  tab: "home",
+  overlay: null,
+  staff: "fila",
+  points: 6200,
+  cashback: 115,
+  focus: null,
+  activeRoom: "main",
+  approved: 18,
+  rejected: 4,
+  toast: "",
+  scanning: false,
+  checkpoints: [
+    { id:"portao", name:"Portão Norte", area:"Acesso", mission:"Check-in na entrada", hint:"Pulseira validada na chegada.", x:28, y:72, done:true },
+    { id:"praca", name:"Praça das luzes", area:"Centro", mission:"Passe pela praça", hint:"Caminho entre os dois palcos.", x:46, y:54, done:true },
+    { id:"dj", name:"Cabine do DJ", area:"Palco principal", mission:"Checkpoint 3: a cabine", hint:"Registre 5 segundos da energia da pista para liberar a próxima recompensa.", x:63, y:38, done:false },
+    { id:"sunset", name:"Palco Sunset", area:"Leste", mission:"Checkpoint 4: Sunset", hint:"Fique até o drop e valide o QR do palco.", x:78, y:60, done:false },
+    { id:"after", name:"After lounge", area:"Fundos", mission:"Checkpoint 5: after", hint:"Encerre a noite no lounge e troque os pontos.", x:40, y:78, done:false }
+  ],
+  posts: [
+    { id:"p1", handle:"julia.beats", avatar:"media/avatar-f.jpg", text:"A FESTI é outro nível. A pista inteira no mesmo pulso.", image:"media/selfie.jpg", likes:842, comments:127, liked:false, ago:"2 min" },
+    { id:"p2", handle:"marcelo.vibes", avatar:"media/avatar-m.jpg", text:"Irreal. O palco principal acendeu a cidade.", image:"media/crowd.jpg", likes:410, comments:56, liked:false, ago:"3 min" }
+  ],
+  queue: [
+    { id:"q1", handle:"ana.pico", avatar:"media/avatar-f.jpg", text:"Cabine liberada. Quem chega no QR agora?", image:"media/dj.jpg", ago:"agora", duration:"0:08" },
+    { id:"q2", handle:"leo.night", avatar:"media/avatar-m.jpg", text:"Sunset começando. A luz mudou de lado.", image:"media/crowd.jpg", ago:"1 min", duration:"0:12" }
+  ],
+  rooms: [
+    { id:"main", title:"Palco principal", subtitle:"Ao vivo agora", image:"media/dj.jpg" },
+    { id:"back", title:"Bastidores da cabine", subtitle:"Abre depois do checkpoint 3", image:"media/aerial.jpg", lock:"dj" },
+    { id:"vip", title:"Lounge VIP", subtitle:"Palco pop", image:"media/vip.jpg" }
+  ],
+  rewards: [
+    { id:"dose", title:"Dose da casa", detail:"Um drink no bar norte. Limite 1 por noite.", cost:800, image:"media/drinks.jpg", redeemed:false },
+    { id:"open", title:"Open bar · 1 hora", detail:"Bar da praça. Válido depois das 22h.", cost:2200, image:"media/vip.jpg", redeemed:false },
+    { id:"mesa", title:"Mesa no after", detail:"Quatro lugares no lounge final.", cost:4800, image:"media/crowd.jpg", redeemed:false }
+  ],
+  notes: [
+    { id:"n1", title:"Sala aberta", body:"Lounge VIP está no ar no palco pop.", ago:"há 12 min" },
+    { id:"n2", title:"Próximo checkpoint", body:"A cabine do DJ vale 1.000 pontos e R$ 12 de cashback.", ago:"há 28 min" }
+  ]
+});
+
+let S = fresh();
+const $ = (h) => h;
+const pts = (n) => n.toLocaleString("pt-BR");
+const money = (n) => n.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+const nextCp = () => S.checkpoints.find((c) => !c.done) || null;
+const doneN = () => S.checkpoints.filter((c) => c.done).length;
+const locked = (room) => room.lock && !S.checkpoints.find((c) => c.id === room.lock)?.done;
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => "&#"+c.charCodeAt(0)+";");
+
+function flash(text) {
+  S.toast = text;
+  render();
+  clearTimeout(flash._t);
+  flash._t = setTimeout(() => { S.toast = ""; render(); }, 2400);
 }
-setTimeout(() => {
-  document.getElementById('splash').style.display = 'none';
-}, 1800);
+
+function mapHtml(h) {
+  const cur = nextCp();
+  return `<div class="map" style="height:${h}px">
+    <img class="cover" src="media/aerial.jpg" alt="Mapa aéreo do festival">
+    ${cur ? `<span class="badge" style="left:auto;right:12px;background:rgba(7,6,12,.8);color:#fff">${esc(cur.name)}</span>` : ""}
+    ${S.checkpoints.map((c) => {
+      const cls = c.done ? "done" : c.id === cur?.id ? "now" : "wait";
+      const icon = c.done ? I.check : I.map;
+      return `<button class="pin ${cls}" style="left:${c.x}%;top:${c.y}%" data-act="focus" data-id="${c.id}" aria-label="${esc(c.name)}">${icon}</button>`;
+    }).join("")}
+  </div>`;
+}
+
+function postsHtml() {
+  return S.posts.map((p) => `<article class="card">
+    <div class="row"><img src="${p.avatar}" alt="" style="width:36px;height:36px;border-radius:99px;object-fit:cover"><div><b>@${esc(p.handle)}</b><div class="faint" style="font-size:12px">${esc(p.ago)}</div></div></div>
+    <p style="margin:8px 0 0;font-size:14px">${esc(p.text)}</p>
+    ${p.image ? `<img src="${p.image}" alt="" style="height:144px;margin-top:10px">` : ""}
+    <button data-act="like" data-id="${p.id}" style="margin-top:8px;color:${p.liked ? "var(--magenta)" : "var(--muted)"};font-weight:700;font-size:14px">${I.heart} ${pts(p.likes)}</button>
+  </article>`).join("");
+}
+
+function noite() {
+  const cur = nextCp();
+  const d = doneN();
+  let body = "";
+  if (S.tab === "home") {
+    body = `<div class="stack">
+      ${mapHtml(224)}
+      <section class="card">
+        <div class="mag" style="font-size:12px;font-weight:700">MISSÃO ATUAL</div>
+        <div class="row" style="margin-top:12px;align-items:flex-start">
+          <img src="media/dj.jpg" alt="" style="width:64px;height:64px;border-radius:12px;object-fit:cover">
+          <div><h2 class="h" style="font-size:18px">${esc(cur ? cur.mission : "Noite completa")}</h2>
+          <p class="muted" style="margin:6px 0 0;font-size:14px">${esc(cur ? cur.hint : "Todos os checkpoints desta noite já foram validados.")}</p></div>
+        </div>
+        <button class="btn" style="margin-top:14px" data-act="qr">${I.qr} Validar com QR</button>
+      </section>
+      <section>
+        <div class="between" style="margin-bottom:8px"><b>Seu progresso</b><span class="muted">${d} / ${S.checkpoints.length}</span></div>
+        <div class="bar"><span style="width:${(d / S.checkpoints.length) * 100}%"></span></div>
+        <p class="mag" style="text-align:center;font-weight:700;font-size:14px">+1.000 pontos no próximo · saldo ${pts(S.points)}</p>
+      </section>
+      <section>
+        <div class="between"><b>Feed ao vivo</b><button class="muted" data-act="tab" data-id="rooms">Ver salas</button></div>
+        <div class="stack" style="margin-top:8px">${postsHtml()}</div>
+      </section>
+    </div>`;
+  } else if (S.tab === "map") {
+    const shown = S.checkpoints.find((c) => c.id === S.focus) || cur;
+    body = `<div class="stack">${mapHtml(320)}
+      ${shown ? `<section class="card"><div class="faint" style="font-size:12px;font-weight:700">${esc(shown.area)}</div>
+        <h2 class="h" style="font-size:22px;margin-top:4px">${esc(shown.name)}</h2>
+        <p class="muted" style="font-size:14px">${esc(shown.hint)}</p>
+        <p style="font-weight:700">${shown.done ? "Já validado" : shown.id === cur?.id ? "Pode validar agora" : "Ainda na fila"}</p>
+        <button class="btn" data-act="qr" ${!cur || shown.id !== cur.id ? "disabled" : ""}>${I.qr} Validar este ponto</button>
+      </section>` : `<p class="card muted">Mapa da noite fechado.</p>`}
+    </div>`;
+  } else if (S.tab === "rooms") {
+    const main = S.rooms[0];
+    body = `<div class="stack">
+      <button data-act="room" data-id="${main.id}" style="text-align:left">
+        <div style="position:relative"><img src="${main.image}" alt="" style="height:208px;width:100%;object-fit:cover;border-radius:24px"><span class="badge">AO VIVO</span></div>
+        <p style="font-weight:700"><span class="mag">●</span> ${esc(main.title)}</p>
+      </button>
+      <b>Salas da noite</b>
+      <div class="grid2">${S.rooms.slice(1).map((r) => {
+        const lock = locked(r);
+        return `<button data-act="room" data-id="${r.id}" style="text-align:left;background:var(--surface);border-radius:16px;overflow:hidden">
+          <div style="position:relative"><img src="${r.image}" alt="" style="height:112px;width:100%;object-fit:cover;border-radius:0">${lock ? `<span class="lock">trancada</span>` : `<span class="badge" style="width:8px;height:8px;padding:0;border-radius:99px"></span>`}</div>
+          <div style="padding:8px"><b style="font-size:14px">${esc(r.title)}</b><div class="muted" style="font-size:12px">${lock ? "Bloqueada" : esc(r.subtitle)}</div></div>
+        </button>`;
+      }).join("")}</div>
+    </div>`;
+  } else if (S.tab === "rewards") {
+    body = `<div class="stack">
+      <div class="grid2">
+        <div class="card"><div class="muted" style="font-size:12px;font-weight:700">Cashback</div><div class="h" style="font-size:26px;margin-top:8px">${money(S.cashback)}</div></div>
+        <div class="card"><div class="muted" style="font-size:12px;font-weight:700">Pontos FESTI</div><div class="h mag" style="font-size:26px;margin-top:8px">${pts(S.points)}</div></div>
+      </div>
+      ${S.rewards.map((r) => {
+        const short = S.points < r.cost && !r.redeemed;
+        return `<article class="card" style="padding:0;overflow:hidden"><img src="${r.image}" alt="" style="height:144px;border-radius:0"><div style="padding:16px"><h3 class="h" style="font-size:18px">${esc(r.title)}</h3><p class="muted" style="font-size:14px">${esc(r.detail)}</p><div class="between" style="margin-top:12px"><b>${pts(r.cost)} pts</b><button class="btn" style="width:auto;padding:0 16px" data-act="redeem" data-id="${r.id}" ${r.redeemed || short ? "disabled" : ""}>${r.redeemed ? "Resgatado" : short ? "Faltam pontos" : "Resgatar"}</button></div></div></article>`;
+      }).join("")}
+    </div>`;
+  } else {
+    body = `<div class="stack">
+      <div class="row"><img src="media/avatar-f.jpg" alt="Marina Costa" style="width:80px;height:80px;border-radius:99px;object-fit:cover"><div><h2 class="h" style="font-size:26px">Marina Costa</h2><div class="muted">@marina.noite · pista principal</div></div></div>
+      <div class="grid2" style="grid-template-columns:1fr 1fr 1fr"><div class="stat"><b>${pts(S.points)}</b><span class="muted" style="font-size:12px">Pontos</span></div><div class="stat"><b>${money(S.cashback)}</b><span class="muted" style="font-size:12px">Cashback</span></div><div class="stat"><b>${doneN()}/5</b><span class="muted" style="font-size:12px">Feitos</span></div></div>
+      <section class="card"><b>Nesta noite</b>${S.checkpoints.map((c) => `<div class="between" style="margin-top:8px;font-size:14px"><span class="muted">${esc(c.name)}</span><span class="${c.done ? "cyan" : "faint"}">${c.done ? "Feito" : "Aberto"}</span></div>`).join("")}</section>
+      <button class="btn ghost" data-act="reset">Recomeçar a demo</button>
+    </div>`;
+  }
+
+  const tabs = [["home","Início",I.home],["map","Mapa",I.map],["rooms","Salas",I.radio],["rewards","Prêmios",I.gift],["profile","Perfil",I.user]];
+  let overlay = "";
+  if (S.overlay === "qr") {
+    overlay = `<div class="overlay"><div class="sheet">
+      <div class="between"><h2 class="h" style="font-size:18px">Leitura do QR</h2><button class="iconbtn" data-act="close">${I.x}</button></div>
+      <div class="scanbox"><img src="media/aerial.jpg" alt="" style="width:100%;height:100%;object-fit:cover;opacity:.7">${S.scanning ? `<div class="scanline"></div>` : `<div style="position:absolute;inset:0;display:grid;place-items:center;background:rgba(7,6,12,.4)"><span style="width:64px;height:64px;border-radius:99px;background:#fff;color:#07060c;display:grid;place-items:center">${I.check}</span></div>`}</div>
+      <p class="muted" style="text-align:center">${S.scanning ? "Lendo o ponto…" : "Ponto na pulseira. A operação já viu a presença."}</p>
+      ${S.scanning ? "" : `<button class="btn" data-act="close">Voltar para a noite</button>`}
+    </div></div>`;
+  } else if (S.overlay === "notes") {
+    overlay = `<div class="full"><header class="head"><button class="iconbtn" data-act="close">${I.x}</button><h2 class="h" style="font-size:18px">Notificações</h2><span></span></header><div class="scroll stack">${S.notes.map((n) => `<article class="card"><b>${esc(n.title)}</b><p class="muted" style="margin:6px 0 0">${esc(n.body)}</p><div class="faint" style="font-size:12px;margin-top:8px">${esc(n.ago)}</div></article>`).join("")}</div></div>`;
+  } else if (S.overlay === "room") {
+    const room = S.rooms.find((r) => r.id === S.activeRoom);
+    if (room) overlay = `<div class="full"><div style="position:relative"><img src="${room.image}" alt="" style="height:280px;width:100%;object-fit:cover"><button class="iconbtn" data-act="close" style="position:absolute;top:16px;left:16px">${I.x}</button></div><div style="padding:20px"><div class="mag" style="font-size:12px;font-weight:700">TRANSMITINDO</div><h2 class="h" style="font-size:28px">${esc(room.title)}</h2><p class="muted">${esc(room.subtitle)}. O áudio da casa fica nesta sala.</p></div></div>`;
+  }
+
+  return `<header class="head"><button class="chip only-mobile" data-act="pane" data-id="staff">Operação</button><div class="mark">FEST<i>I</i></div><button class="iconbtn" data-act="notes" aria-label="Notificações">${I.bell}${S.notes.length ? `<span class="dot"></span>` : ""}</button></header>
+  <div class="scroll">${body}</div>
+  <nav class="nav">${tabs.map(([id,label,icon]) => `<button class="${S.tab===id?"on":""}" data-act="tab" data-id="${id}">${icon}<span>${label}</span></button>`).join("")}</nav>
+  ${overlay}`;
+}
+
+function staff() {
+  const total = Math.max(1, S.approved + S.rejected + S.queue.length);
+  let body = "";
+  if (S.staff === "fila") {
+    body = S.queue.length ? `<div class="grid2">${S.queue.map((q) => `<article class="card" style="padding:0;overflow:hidden"><div style="position:relative"><img src="${q.image}" alt="" style="height:150px;border-radius:0"><span class="badge" style="left:auto;right:12px;top:auto;bottom:12px;background:rgba(7,6,12,.8);color:#fff">${q.duration}</span></div><div style="padding:14px"><b>@${esc(q.handle)}</b><p class="muted" style="font-size:14px">${esc(q.text)}</p><div class="grid2" style="margin-top:10px"><button class="btn line-cyan" data-act="approve" data-id="${q.id}">${I.check} Aprovar</button><button class="btn line-mag" data-act="reject" data-id="${q.id}">${I.x} Recusar</button></div></div></article>`).join("")}</div>`
+      : `<div class="card"><h2 class="h" style="font-size:22px">Fila limpa</h2><p class="muted">Tudo que passou está no feed da pista.</p></div>`;
+  } else if (S.staff === "salas") {
+    body = `<div class="stack">${S.rooms.map((r) => `<article class="card row" style="align-items:flex-start"><img src="${r.image}" alt="" style="width:80px;height:80px;object-fit:cover"><div><b>${esc(r.title)}</b><p class="muted" style="margin:4px 0">${locked(r) ? "Trancada até a cabine ser validada na pista." : esc(r.subtitle)}</p><div class="cyan" style="font-size:12px;font-weight:700">${locked(r) ? "Fora do ar" : "No ar"}</div></div></article>`).join("")}</div>`;
+  } else {
+    body = `<div class="stack"><section class="card"><b>Moderação desta sessão</b><div class="bar" style="margin-top:14px;display:flex"><span style="width:${(S.approved/total)*100}%;background:var(--ok)"></span><span style="width:${(S.rejected/total)*100}%;background:var(--magenta)"></span><span style="width:${(S.queue.length/total)*100}%;background:var(--faint)"></span></div>
+      <div class="between" style="margin-top:10px"><span class="muted">Aprovados</span><b>${S.approved}</b></div>
+      <div class="between"><span class="muted">Recusados</span><b>${S.rejected}</b></div>
+      <div class="between"><span class="muted">Aguardando</span><b>${S.queue.length}</b></div></section>
+      <section class="card"><b>Presença no mapa</b><div class="h" style="font-size:36px;margin-top:8px">${doneN()}<span class="muted" style="font-size:18px"> / ${S.checkpoints.length}</span></div><p class="muted">Cada QR validado soma pontos e cashback na hora.</p></section></div>`;
+  }
+  const pills = [["fila","Fila"],["salas","Salas"],["numeros","Números"]];
+  return `<header class="head"><div><div class="mark">FEST<i>I</i><span class="hub">HUB</span></div><div class="muted" style="font-size:12px">Operação da noite · tempo real</div></div><button class="chip only-mobile" data-act="pane" data-id="noite">Voltar à noite</button></header>
+    <div class="metrics"><div><b>${S.queue.length}</b><div class="muted" style="font-size:12px">Na fila</div></div><div><b>${S.approved}</b><div class="muted" style="font-size:12px">Aprovados</div></div><div><b>${S.rejected}</b><div class="muted" style="font-size:12px">Recusados</div></div><div><b>${pts(S.points)}</b><div class="muted" style="font-size:12px">Pontos</div></div></div>
+    <div class="pills">${pills.map(([id,label]) => `<button class="${S.staff===id?"on":""}" data-act="staff" data-id="${id}">${label}</button>`).join("")}</div>
+    <div class="scroll">${body}</div>`;
+}
+
+function render() {
+  document.body.dataset.pane = document.body.dataset.pane || "noite";
+  document.getElementById("shell").innerHTML = `<section class="pane" id="noite">${noite()}</section><section class="pane" id="staff">${staff()}</section>`;
+  document.getElementById("toast").innerHTML = S.toast ? `<div class="toast">${esc(S.toast)}</div>` : "";
+}
+
+document.getElementById("shell").addEventListener("click", (e) => {
+  const el = e.target.closest("[data-act]");
+  if (!el) return;
+  const act = el.dataset.act;
+  const id = el.dataset.id;
+  if (act === "tab") { S.tab = id; S.overlay = null; }
+  else if (act === "pane") document.body.dataset.pane = id;
+  else if (act === "staff") S.staff = id;
+  else if (act === "notes") S.overlay = "notes";
+  else if (act === "close") S.overlay = null;
+  else if (act === "focus") { S.focus = id; S.tab = "map"; }
+  else if (act === "like") {
+    const p = S.posts.find((x) => x.id === id);
+    if (p) { p.liked = !p.liked; p.likes += p.liked ? 1 : -1; }
+  }
+  else if (act === "qr") {
+    const cur = nextCp();
+    S.overlay = "qr";
+    S.scanning = !!cur;
+    render();
+    if (!cur) return;
+    clearTimeout(S._scan);
+    S._scan = setTimeout(() => {
+      if (S.overlay !== "qr") return;
+      const n = nextCp();
+      if (!n) { S.scanning = false; render(); return; }
+      n.done = true;
+      S.points += 1000;
+      S.cashback += 12;
+      S.notes.unshift({ id:"v"+n.id, title:"Checkpoint validado", body:`${n.name} · +1.000 pontos e R$ 12 de cashback.`, ago:"agora" });
+      S.scanning = false;
+      flash(`${n.name} validado. +1.000 pontos.`);
+    }, 1400);
+    return;
+  }
+  else if (act === "room") {
+    const room = S.rooms.find((r) => r.id === id);
+    if (!room || locked(room)) { flash("Essa sala abre quando o checkpoint da cabine for validado."); }
+    else { S.activeRoom = id; S.overlay = "room"; }
+  }
+  else if (act === "redeem") {
+    const r = S.rewards.find((x) => x.id === id);
+    if (!r || r.redeemed) return;
+    if (S.points < r.cost) { flash("Pontos ainda não cobrem esse resgate."); }
+    else { S.points -= r.cost; r.redeemed = true; S.notes.unshift({ id:"r"+id, title:"Benefício resgatado", body:r.title, ago:"agora" }); flash(`${r.title} reservado na casa.`); }
+  }
+  else if (act === "approve" || act === "reject") {
+    const q = S.queue.find((x) => x.id === id);
+    if (!q) return;
+    S.queue = S.queue.filter((x) => x.id !== id);
+    if (act === "approve") {
+      S.approved += 1;
+      S.posts.unshift({ id:"live-"+q.id, handle:q.handle, avatar:q.avatar, text:q.text, image:q.image, likes:12, comments:1, liked:false, ago:"agora" });
+      flash(`@${q.handle} entrou no feed ao vivo.`);
+    } else { S.rejected += 1; flash(`@${q.handle} ficou fora do feed.`); }
+  }
+  else if (act === "reset") { const pane = document.body.dataset.pane; S = fresh(); document.body.dataset.pane = pane; flash("Noite reiniciada."); return; }
+  render();
+});
+
+render();
 </script>
 </body>
 </html>
