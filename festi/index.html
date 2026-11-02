@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FESTI - O Ecossistema de Festivais e Conexões</title>
+<style>
+:root {
+  --bg: #0f0f1a;
+  --card: #1a1a2e;
+  --accent: #ff4d8d;
+  --accent2: #a855f7;
+  --gold: #f59e0b;
+  --text: #ffffff;
+  --text-dim: #a0a0b0;
+  --nav: #12121f;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #000;
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+.phone {
+  width: 390px;
+  height: 844px;
+  background: var(--bg);
+  border-radius: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+  border: 8px solid #222;
+}
+.screen {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 70px;
+  overflow-y: auto;
+  display: none;
+  padding: 20px 16px;
+}
+.screen.active { display: block; }
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 20px;
+}
+.logo {
+  height: 36px;
+  background: linear-gradient(90deg, #f59e0b, #ff4d8d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 28px;
+  font-weight: bold;
+}
+.icon-btn {
+  background: var(--card);
+  border: none;
+  color: var(--text);
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+}
+.stories {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+}
+.story {
+  text-align: center;
+  min-width: 70px;
+}
+.story img, .story .avatar {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  object-fit: cover;
+  background: #333;
+}
+.post, .event-card, .match-card {
+  background: var(--card);
+  border-radius: 16px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.post img, .event-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  background: linear-gradient(135deg, #a855f7, #ff4d8d);
+}
+.post-content, .event-info, .match-info {
+  padding: 12px;
+}
+.post-content h3, .event-info h3 { font-size: 16px; margin-bottom: 4px; }
+.post-content p, .event-info p { font-size: 14px; color: var(--text-dim); }
+.actions {
+  display: flex;
+  gap: 16px;
+  padding: 8px 12px 12px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+}
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+.bottom-nav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 70px;
+  background: var(--nav);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #2a2a3e;
+}
+.nav-item {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 8px;
+}
+.nav-item.active { color: var(--accent); }
+.nav-item .icon { font-size: 22px; display: block; }
+.profile-header {
+  text-align: center;
+  padding: 20px 0;
+}
+.profile-header img {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  border: 4px solid var(--accent);
+  margin-bottom: 12px;
+  background: #333;
+}
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 16px 0;
+}
+.stat { text-align: center; }
+.stat strong { display: block; font-size: 18px; }
+.match-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.match-card {
+  text-align: center;
+  padding: 12px;
+}
+.match-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #333;
+}
+.badge {
+  background: var(--gold);
+  color: #000;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+.splash {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0f0f1a, #1a0a2e);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.splash h1 { font-size: 48px; background: linear-gradient(90deg, var(--gold), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="splash" id="splash">
+    <h1>FESTI</h1>
+    <p style="margin-top:10px; color:var(--text-dim);">Festivais. Conexões. Experiências.</p>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen active" id="home">
+    <div class="header">
+      <div class="logo">FESTI</div>
+      <button class="icon-btn" onclick="showScreen('notifications')">🔔</button>
+    </div>
+    <div class="stories">
+      <div class="story"><div class="avatar" style="background:linear-gradient(45deg,#ff4d8d,#a855f7);"></div><small>Você</small></div>
+      <div class="story"><div class="avatar" style="background:#a855f7;"></div><small>Ana</small></div>
+      <div class="story"><div class="avatar" style="background:#ff4d8d;"></div><small>Pedro</small></div>
+      <div class="story"><div class="avatar" style="background:#333;"></div><small>Mais</small></div>
+    </div>
+    <div class="post">
+      <div style="height:180px; background:linear-gradient(135deg,#ff4d8d,#a855f7);"></div>
+      <div class="post-content">
+        <h3>Rock in Rio 2026 🎸</h3>
+        <p>Quem vai estar lá? Já garantiu seu ingresso?</p>
+      </div>
+      <div class="actions">
+        <span>❤️ 1.2k</span>
+        <span>💬 234</span>
+        <span>📤 Compartilhar</span>
+      </div>
+    </div>
+    <div class="post">
+      <div style="height:180px; background:linear-gradient(135deg,#f59e0b,#ff4d8d);"></div>
+      <div class="post-content">
+        <h3>Sunset Party • Ipanema</h3>
+        <p>Amanhã às 17h. Vibe eletrônica na beira da praia.</p>
+      </div>
+      <div class="actions">
+        <span>❤️ 856</span>
+        <span>💬 98</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENTS -->
+  <div class="screen" id="events">
+    <div class="header">
+      <h2>Eventos</h2>
+      <button class="icon-btn">🔍</button>
+    </div>
+    <div class="event-card" onclick="showScreen('event-detail')">
+      <div style="height:180px; background:linear-gradient(135deg,#a855f7,#f59e0b);"></div>
+      <div class="event-info">
+        <span class="badge">DESTAQUE</span>
+        <h3>FESTI Summer Fest</h3>
+        <p>12-14 Dez • São Paulo • Eletrônico + Rock</p>
+        <button class="btn">Ver detalhes</button>
+      </div>
+    </div>
+    <div class="event-card">
+      <div style="height:180px; background:#333;"></div>
+      <div class="event-info">
+        <h3>Jazz Night</h3>
+        <p>20 Nov • Rio de Janeiro</p>
+        <button class="btn btn-secondary">Ingressos</button>
+      </div>
+    </div>
+    <div class="event-card">
+      <div style="height:180px; background:#444;"></div>
+      <div class="event-info">
+        <h3>Tech & Music</h3>
+        <p>5 Jan • Online + Presencial</p>
+        <button class="btn btn-secondary">Ingressos</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MATCH -->
+  <div class="screen" id="match">
+    <div class="header">
+      <h2>Conexões</h2>
+      <button class="icon-btn">⚙️</button>
+    </div>
+    <p style="color:var(--text-dim); margin-bottom:12px;">Pessoas que vão nos mesmos eventos</p>
+    <div class="match-grid">
+      <div class="match-card">
+        <div style="height:140px; background:linear-gradient(45deg,#ff4d8d,#a855f7); border-radius:12px;"></div>
+        <div class="match-info">
+          <strong>Mariana, 26</strong>
+          <p>Rock in Rio • Eletrônico</p>
+          <button class="btn" style="padding:8px;">Conectar</button>
+        </div>
+      </div>
+      <div class="match-card">
+        <div style="height:140px; background:linear-gradient(45deg,#f59e0b,#ff4d8d); border-radius:12px;"></div>
+        <div class="match-info">
+          <strong>Lucas, 29</strong>
+          <p>FESTI Summer • Jazz</p>
+          <button class="btn" style="padding:8px;">Conectar</button>
+        </div>
+      </div>
+      <div class="match-card">
+        <div style="height:140px; background:#555; border-radius:12px;"></div>
+        <div class="match-info">
+          <strong>Julia, 24</strong>
+          <p>Sunset Party</p>
+          <button class="btn" style="padding:8px;">Conectar</button>
+        </div>
+      </div>
+      <div class="match-card">
+        <div style="height:140px; background:#666; border-radius:12px;"></div>
+        <div class="match-info">
+          <strong>Rafael, 31</strong>
+          <p>Tech & Music</p>
+          <button class="btn" style="padding:8px;">Conectar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="profile">
+    <div class="profile-header">
+      <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(45deg,#ff4d8d,#a855f7); margin:0 auto 12px; border:4px solid var(--accent);"></div>
+      <h2>Você • FESTI</h2>
+      <p style="color:var(--text-dim);">São Paulo • Festivais & Música</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><strong>128</strong><span>Eventos</span></div>
+      <div class="stat"><strong>45</strong><span>Conexões</span></div>
+      <div class="stat"><strong>12</strong><span>Tickets</span></div>
+    </div>
+    <div class="post">
+      <div class="post-content">
+        <h3>Meus próximos eventos</h3>
+        <p>• FESTI Summer Fest - 12 Dez<br>• Rock in Rio - Confirmado</p>
+      </div>
+    </div>
+    <button class="btn">Editar perfil</button>
+    <button class="btn btn-secondary" style="margin-top:8px;">Configurações</button>
+  </div>
+
+  <!-- EVENT DETAIL -->
+  <div class="screen" id="event-detail">
+    <div class="header">
+      <button class="icon-btn" onclick="showScreen('events')">←</button>
+      <h2>FESTI Summer Fest</h2>
+      <button class="icon-btn">♡</button>
+    </div>
+    <div style="width:100%; height:200px; background:linear-gradient(135deg,#a855f7,#f59e0b); border-radius:12px; margin-bottom:16px;"></div>
+    <h3>12-14 de Dezembro • Allianz Parque</h3>
+    <p style="color:var(--text-dim); margin:8px 0;">O maior festival de música e conexão do verão. 3 palcos, 40 artistas, experiências exclusivas FESTI.</p>
+    <div class="stats">
+      <div class="stat"><strong>15k</strong><span>Confirmados</span></div>
+      <div class="stat"><strong>R$ 280</strong><span>A partir de</span></div>
+    </div>
+    <button class="btn">Comprar ingresso</button>
+    <button class="btn btn-secondary">Ver line-up</button>
+    <div class="post" style="margin-top:16px;">
+      <div class="post-content">
+        <h3>Quem vai</h3>
+        <div class="stories" style="padding:0;">
+          <div class="story"><div class="avatar" style="background:#ff4d8d;"></div><small>Mari</small></div>
+          <div class="story"><div class="avatar" style="background:#a855f7;"></div><small>Lucas</small></div>
+          <div class="story"><div class="avatar" style="background:#555;"></div><small>+230</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="screen" id="notifications">
+    <div class="header">
+      <button class="icon-btn" onclick="showScreen('home')">←</button>
+      <h2>Notificações</h2>
+    </div>
+    <div class="post">
+      <div class="post-content">
+        <strong>Nova conexão!</strong>
+        <p>Mariana aceitou seu convite • há 2h</p>
+      </div>
+    </div>
+    <div class="post">
+      <div class="post-content">
+        <strong>Ingresso disponível</strong>
+        <p>FESTI Summer Fest - lote 2 liberado • há 5h</p>
+      </div>
+    </div>
+    <div class="post">
+      <div class="post-content">
+        <strong>Evento próximo</strong>
+        <p>Sunset Party amanhã às 17h • ontem</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="showScreen('home')">
+      <span class="icon">🏠</span>Início
+    </div>
+    <div class="nav-item" onclick="showScreen('events')">
+      <span class="icon">📅</span>Eventos
+    </div>
+    <div class="nav-item" onclick="showScreen('match')">
+      <span class="icon">💫</span>Conexões
+    </div>
+    <div class="nav-item" onclick="showScreen('profile')">
+      <span class="icon">👤</span>Perfil
+    </div>
+  </div>
+</div>
+
+<script>
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = { home: 0, events: 1, match: 2, profile: 3 };
+  if (navMap[id] !== undefined) {
+    document.querySelectorAll('.nav-item')[navMap[id]].classList.add('active');
+  }
+}
+setTimeout(() => {
+  document.getElementById('splash').style.display = 'none';
+}, 1800);
+</script>
+</body>
+</html>
