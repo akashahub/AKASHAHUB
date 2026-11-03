@@ -2,123 +2,208 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ala · a clínica</title>
-<meta name="description" content="A manhã da clínica numa tela. Confirmação, sala, retorno e exame, sem um atropelar o outro.">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Odonto SISO · demonstração</title>
+<meta name="description" content="Demonstração Akasha Hub para a Odonto SISO, em Vilas do Atlântico. Site, agendamento e o dia da clínica.">
 <link rel="canonical" href="https://akashahub.com.br/clinica/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
 <style>
-:root{--ward:#e4eee8;--chart:#f6faf7;--pulse:#10261f;--scrub:#0e6b52;--alarm:#8f2d24;--mist:#5c6b64}
+:root{--ward:#e7f0ea;--chart:#f7fbf8;--pulse:#10261f;--scrub:#0e6b52;--alarm:#8f2d24;--mist:#5c6b64}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--ward);color:var(--pulse);font-family:Karla,sans-serif}
-button,select{font:inherit;color:inherit;cursor:pointer}
-h1,h2,.name{font-family:"Source Serif 4",Georgia,serif;font-weight:500;margin:0}
+html,body{margin:0;background:var(--ward);color:var(--pulse);font:17px/1.5 Karla,sans-serif}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
 img{display:block;width:100%;height:100%;object-fit:cover}
-header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-end;padding:16px 20px;border-bottom:1px solid rgba(16,38,31,.1)}
-.nav{display:flex;gap:8px}
-.nav button,.act{height:44px;border:0;padding:0 14px}
-.nav button.on,.act.ink{background:var(--pulse);color:var(--chart)}
-.act.leaf{background:var(--scrub);color:var(--chart)}
-.act.ghost{background:var(--chart)}
-.notice{background:var(--scrub);color:var(--chart);padding:8px 20px;font-size:14px}
+h1,h2,h3,.name{font-family:"Source Serif 4",Georgia,serif;font-weight:500;margin:0;line-height:1.05}
+h1{font-size:clamp(42px,10vw,76px)}
+h2{font-size:clamp(30px,6vw,46px)}
+a{color:inherit}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 18px;background:var(--chart);position:sticky;top:0;z-index:5}
+.top b{font-family:"Source Serif 4",Georgia,serif;font-size:28px;font-weight:500}
+.nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav button{height:44px;border:0;background:transparent;padding:0 12px}
+.nav button.on{background:var(--pulse);color:var(--chart)}
+.banner{background:#10261f;color:var(--chart);padding:8px 18px;font-size:14px}
+.wrap{width:min(760px,calc(100% - 36px));margin:0 auto}
+.hero{position:relative;min-height:78vh;background:#000;color:var(--chart)}
+.hero img{position:absolute;inset:0}
+.hero .veil{position:absolute;inset:0;background:linear-gradient(transparent 15%,rgba(16,38,31,.88))}
+.hero .wrap{position:relative;min-height:78vh;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:88px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 18px;background:var(--scrub);color:var(--chart);border:0;text-decoration:none;font-weight:700}
+.btn.ink{background:var(--pulse)}
+.btn.ghost{background:var(--chart);color:var(--pulse)}
+.block{padding:56px 0}
+.lista{padding-left:18px}
+.lista li{margin:0 0 8px}
+.hora{display:flex;flex-wrap:wrap;gap:8px}
+.hora button{min-height:44px;border:1px solid rgba(16,38,31,.2);background:var(--chart);padding:0 12px}
+.hora button.on{background:var(--pulse);color:var(--chart);border-color:var(--pulse)}
+label{display:block;margin:14px 0 6px}
+input,select{width:100%;height:48px;border:0;border-bottom:1px solid rgba(16,38,31,.2);background:transparent}
+.check{display:flex;gap:10px;align-items:flex-start;margin:16px 0}
+.check input{width:auto;height:auto;margin-top:6px}
+.notice{background:var(--scrub);color:var(--chart);padding:8px 18px}
 .board{display:block}
-.day button{display:block;width:100%;text-align:left;background:transparent;border:0;border-top:1px solid rgba(16,38,31,.1);padding:12px 16px}
+.day button{display:block;width:100%;text-align:left;background:transparent;border:0;border-top:1px solid rgba(16,38,31,.12);padding:12px 16px}
 .day button.on{background:var(--chart)}
-.kicker{letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:var(--mist)}
-.alarm{color:var(--alarm)}
 .mist{color:var(--mist)}
-.stage{padding:18px 20px 40px}
-.side{padding:16px 16px 28px;border-top:1px solid rgba(16,38,31,.1)}
-.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.alarm{color:var(--alarm)}
+.wa{position:fixed;right:14px;bottom:14px;z-index:6;min-height:52px;padding:0 16px;background:var(--scrub);color:var(--chart);display:flex;align-items:center;text-decoration:none;font-weight:700}
+.nota{font-size:14px;color:var(--mist)}
 @media(min-width:980px){
- .board{display:grid;grid-template-columns:240px minmax(0,1fr) 280px;min-height:calc(100dvh - 78px)}
+ .board{display:grid;grid-template-columns:230px minmax(0,1fr) 270px}
  .day{border-right:1px solid rgba(16,38,31,.1)}
- .side{border-top:0;border-left:1px solid rgba(16,38,31,.1)}
- .room{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:24px;max-width:1000px;margin:0 auto}
+ .side{border-left:1px solid rgba(16,38,31,.1)}
 }
 </style>
 </head>
 <body>
-<header>
- <div><p class="name" style="font-size:40px;line-height:1">Ala</p><p class="mist">A manhã da clínica, numa tela só.</p></div>
+<div class="banner">Demonstração da Akasha Hub para a Odonto SISO. Fotos e textos entre colchetes são provisórios.</div>
+<header class="top">
+ <b>SISO</b>
  <nav class="nav" id="nav"></nav>
 </header>
 <div id="notice"></div>
 <main id="app"></main>
+<a class="wa" id="wa" href="https://wa.me/5571999881658" target="_blank" rel="noopener">WhatsApp</a>
 <script>
-const media={desk:"media/desk.jpg",room:"media/room.jpg",hall:"media/hall.jpg"};
-const roomName={"1":"Sala 1","2":"Sala 2",coleta:"Coleta"};
+/* Troque só este bloco quando a clínica confirmar. */
+const CLINIC={
+ nome:"Odonto SISO",
+ lugar:"Vilas do Atlântico, Lauro de Freitas — BA",
+ endereco:"Av. Praia de Itapuã, 949, lote 40, quadra 17, sala 06",
+ cep:"42707-650",
+ instagram:"sisoodontovillas",
+ whatsapp:"5571999881658",
+ fone:["71 3369-7101","71 3024-0273","71 99988-1658"]
+};
+/* Troque os arquivos. Os nomes podem ficar. */
+const FOTOS={capa:"media/desk.jpg",cadeira:"media/room.jpg",corredor:"media/hall.jpg"};
+const TRATOS=["Extração de siso","Cirurgia","Implante","[outro tratamento, a clínica completa a lista]"];
+const roomName={"1":"Cadeira 1","2":"Cadeira 2",apoio:"Apoio"};
 let visits=[
- {id:"h",name:"Helena Dias",time:"08:00",room:"1",reason:"Retorno da pressão",prep:"Traga a lista dos remédios.",allergy:"Nenhuma",status:"na espera",returnSet:null,paid:false},
- {id:"c",name:"Caio Nunes",time:"08:30",room:"1",reason:"Primeira consulta",prep:"Chegue 10 minutos antes.",allergy:"Dipirona",status:"falta confirmar",returnSet:null,paid:false},
- {id:"m",name:"Marina Luz",time:"08:00",room:"2",reason:"Dor no joelho",prep:"Vista uma roupa que suba acima do joelho.",allergy:"Nenhuma",status:"em sala",returnSet:null,paid:true},
- {id:"r",name:"Rita Paes",time:"09:30",room:"coleta",reason:"Coleta de sangue",prep:"Jejum de 8 horas.",allergy:"Nenhuma",status:"confirmado",returnSet:null,paid:false}
+ {id:"h",name:"Helena Dias",time:"08:00",room:"1",reason:"Retorno. Exemplo da demonstração.",prep:"Traga exames anteriores, se tiver.",allergy:"[alergia, se houver]",status:"na espera",returnSet:null,paid:false,origem:"Instagram",exemplo:true},
+ {id:"c",name:"Caio Nunes",time:"08:30",room:"1",reason:"Primeira vez. Exemplo da demonstração.",prep:"Chegue dez minutos antes.",allergy:"[alergia, se houver]",status:"falta confirmar",returnSet:null,paid:false,origem:"Google",exemplo:true},
+ {id:"m",name:"Marina Luz",time:"08:00",room:"2",reason:"Em atendimento. Exemplo da demonstração.",prep:"[orientação da clínica]",allergy:"[alergia, se houver]",status:"em sala",returnSet:null,paid:true,origem:"Indicação",exemplo:true},
+ {id:"r",name:"Rita Paes",time:"09:30",room:"apoio",reason:"Exame de apoio. Exemplo da demonstração.",prep:"[preparo do exame]",allergy:"[alergia, se houver]",status:"confirmado",returnSet:null,paid:false,origem:"Instagram",exemplo:true}
 ];
-let labs=[{id:"lab",name:"Helena Dias",exam:"Hemograma",told:false}];
-let walk={name:"Lúcia Prado",reason:"Dor de cabeça há dois dias"};
-let lens="recepcao", openId="h", notice="";
+let labs=[{id:"lab",name:"Helena Dias",exam:"Exame. Exemplo.",told:false}];
+let walk={name:"Lúcia Prado",reason:"Chegou sem hora. Exemplo da demonstração."};
+let lens="casa", openId="h", notice="", slot="", trato=TRATOS[0], dia="amanhã", origem="Instagram", ok=false;
 const esc=s=>String(s).replaceAll("&","&").replaceAll("<","<").replaceAll(">",">");
 function flash(t){notice=t;draw()}
 function current(){return visits.find(v=>v.id===openId)||visits[0]}
 function taken(room,id){return visits.some(v=>v.room===room&&v.status==="em sala"&&v.id!==id)}
+function counts(){
+ const hoje=visits.filter(v=>!v.id.endsWith("-r"));
+ return {
+  dia:hoje.length,
+  faltas:visits.filter(v=>v.status==="faltou").length,
+  novos:visits.filter(v=>v.origem&&v.id.startsWith("n")).length,
+  retornos:visits.filter(v=>v.status==="falta confirmar"&&v.id.endsWith("-r")).length,
+  instagram:visits.filter(v=>v.origem==="Instagram").length,
+  google:visits.filter(v=>v.origem==="Google").length,
+  indicacao:visits.filter(v=>v.origem==="Indicação").length
+ };
+}
+function casa(){
+ return `<section class="hero"><img src="${FOTOS.capa}" alt="Foto provisória da recepção. Substituir pela foto da SISO."><div class="veil"></div><div class="wrap"><p>Odonto SISO · ${esc(CLINIC.lugar)}</p><h1>Cuidar da boca, com hora marcada.</h1><p>O site da clínica estava fora. Esta é uma casa nova, para o agendamento não depender de um link que cai.</p><p><button class="btn" data-go="agendar">Agendar uma hora</button></p></div></section>
+ <section class="block"><div class="wrap"><h2>O que a clínica já publicou.</h2><p>No site da SISO, quando estava no ar, constavam estes cuidados. A lista fica curta de propósito, até a clínica confirmar.</p><ul class="lista">${TRATOS.map(t=>`<li>${esc(t)}</li>`).join("")}</ul><p class="nota">Sem preço aqui. Preço de tratamento odontológico não entra numa página de demonstração.</p></div></section>
+ <section class="block" style="background:var(--chart)"><div class="wrap"><h2>A equipe e a casa.</h2><img src="${FOTOS.cadeira}" alt="Foto provisória da cadeira. Substituir pela foto da clínica." style="height:240px"><p>[substituir pelas fotos e pelos nomes de quem atende]</p><p>No texto antigo da clínica, o compromisso era um ambiente limpo e o cuidado com a biossegurança. O endereço publicado era ${esc(CLINIC.endereco)}, ${esc(CLINIC.lugar)}, CEP ${esc(CLINIC.cep)}. Vale confirmar a sala.</p><p><a class="btn ghost" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CLINIC.endereco+" "+CLINIC.lugar)}" target="_blank" rel="noopener">Ver no mapa</a></p></div></section>
+ <section class="block"><div class="wrap"><h2>Horário que constava no site.</h2><p>Segunda a sexta, 8h às 12h e 13h30 às 17h30. Sábado, 8h às 12h. A clínica confirma se ainda é assim.</p><p>No mesmo site constava que não atendem pelo SUS.</p><h2 style="margin-top:28px">O que as pessoas dizem.</h2><p>[substituir pelos depoimentos da clínica, se ela quiser publicar]</p><p class="nota">Este espaço fica vazio. Depoimento inventado não entra.</p></div></section>
+ <section class="block" id="contato" style="padding-bottom:96px"><div class="wrap"><h2>Falar com a SISO.</h2><p>Instagram <a href="https://instagram.com/${CLINIC.instagram}">@${CLINIC.instagram}</a>.</p><p>Telefones que constavam no site: ${CLINIC.fone.map(esc).join(" · ")}.</p><p class="nota">Os dados de um agendamento feito aqui ficam só neste navegador. Ainda não vão para um banco. Isso é a próxima fase, com o consentimento de quem agenda.</p></div></section>`;
+}
+function agendar(){
+ const horas=["08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00"];
+ return `<section class="block"><div class="wrap"><h2>Escolha a hora.</h2><p>Tratamento, dia e horário. A confirmação aparece na hora. O lembrete, por WhatsApp, entra quando a clínica ligar o envio.</p>
+ <form id="agenda">
+ <label>Tratamento<select name="trato">${TRATOS.map(t=>`<option ${t===trato?"selected":""}>${esc(t)}</option>`).join("")}</select></label>
+ <label>Profissional<select name="pro"><option>A clínica indica. [substituir pelo nome]</option></select></label>
+ <label>Dia<select name="dia"><option ${dia==="amanhã"?"selected":""}>amanhã</option><option ${dia==="sábado"?"selected":""}>sábado</option></select></label>
+ <p>Horário</p><div class="hora">${horas.filter(h=>dia!=="sábado"||h<"13:00").map(h=>`<button type="button" class="${slot===h?"on":""}" data-slot="${h}">${h}</button>`).join("")}</div>
+ <label>Seu nome<input name="nome" required autocomplete="name"></label>
+ <label>Como chegou<select name="origem"><option>Instagram</option><option>Google</option><option>Indicação</option><option>Outro</option></select></label>
+ <label class="check"><input type="checkbox" name="lgpd" ${ok?"checked":""}>Entendo que esta é uma demonstração. Meu nome fica neste aparelho e a clínica ainda não guarda isso num sistema.</label>
+ <button class="btn ink" type="submit">Confirmar horário</button>
+ </form></div></section>`;
+}
 function chart(v,pay){
  const acts=[];
- if(v.status==="falta confirmar") acts.push(`<button class="act ink" data-act="confirm" data-id="${v.id}">Confirmar</button>`);
- if(v.status==="confirmado"||v.status==="falta confirmar") acts.push(`<button class="act ghost" data-act="arrive" data-id="${v.id}">Chegou</button>`);
- if(v.status==="na espera"||v.status==="confirmado") acts.push(`<button class="act leaf" data-act="call" data-id="${v.id}">Chamar para a sala</button>`);
- if(v.status==="em sala") acts.push(`<button class="act ink" data-act="finish" data-id="${v.id}" data-back="1">Encerrar e marcar retorno</button><button class="act ghost" data-act="finish" data-id="${v.id}" data-back="0">Alta, sem retorno</button>`);
- if(pay) acts.push(`<button class="act ghost" data-act="pay" data-id="${v.id}">${v.paid?"Pago na recepção":"Em aberto na recepção"}</button>`);
- const extra=v.returnSet===true?"<p>O retorno já está na lista, ainda por confirmar.</p>":v.returnSet===false?"<p>Alta registrada. Ninguém fica esperando um retorno que não existe.</p>":"";
- return `<p class="kicker">${v.time} · ${roomName[v.room]} · ${esc(v.status)}</p><h2 class="name" style="font-size:36px;margin-top:6px">${esc(v.name)}</h2><p>${esc(v.reason)}. Alergia: ${esc(v.allergy)}.</p><p class="mist">${esc(v.prep)}</p><div class="row">${acts.join("")}</div>${extra}`;
+ if(v.status==="falta confirmar") acts.push(`<button class="btn ink" data-act="confirm" data-id="${v.id}">Confirmar</button>`);
+ if(v.status==="confirmado"||v.status==="falta confirmar") acts.push(`<button class="btn ghost" data-act="arrive" data-id="${v.id}">Chegou</button>`);
+ if(v.status==="na espera"||v.status==="confirmado") acts.push(`<button class="btn" data-act="call" data-id="${v.id}">Chamar para a cadeira</button>`);
+ if(v.status==="em sala") acts.push(`<button class="btn ink" data-act="finish" data-id="${v.id}" data-back="1">Encerrar e marcar retorno</button><button class="btn ghost" data-act="finish" data-id="${v.id}" data-back="0">Alta, sem retorno</button>`);
+ if(v.status!=="atendido"&&v.status!=="faltou") acts.push(`<button class="btn ghost" data-act="falta" data-id="${v.id}">Marcar falta</button>`);
+ if(pay) acts.push(`<button class="btn ghost" data-act="pay" data-id="${v.id}">${v.paid?"Recebido na recepção":"Em aberto na recepção"}</button>`);
+ const extra=v.returnSet===true?"<p>O retorno entrou na lista, ainda por confirmar. O prazo é o que a clínica definir.</p>":v.returnSet===false?"<p>Alta registrada. Não fica um retorno fantasma.</p>":"";
+ return `<p class="mist">${v.time} · ${roomName[v.room]} · ${esc(v.status)}${v.exemplo?" · exemplo":""}</p><h2 class="name" style="font-size:36px;margin-top:6px">${esc(v.name)}</h2><p>${esc(v.reason)} ${pay?"Alergia: "+esc(v.allergy)+".":""}</p><p class="mist">${esc(v.prep)}</p><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${acts.join("")}</div>${extra}`;
 }
-function desk(){
+function painel(){
  const v=current();
- const list=[...visits].sort((a,b)=>a.time.localeCompare(b.time)||a.name.localeCompare(b.name)).map(item=>`<button class="${item.id===v.id?"on":""}" data-act="open" data-id="${item.id}"><span class="kicker">${item.time} · ${roomName[item.room]}</span><span class="name" style="display:block;font-size:22px">${esc(item.name)}</span><span class="${item.status==="falta confirmar"?"alarm":"mist"}">${esc(item.status)}</span></button>`).join("");
- const pending=visits.filter(item=>item.status==="falta confirmar").map(item=>`<li>${esc(item.name)} ainda não confirmou as ${item.time}.</li>`).join("");
- const quiet=labs.filter(item=>!item.told).map(item=>`<li>${esc(item.exam)} de ${esc(item.name)} chegou e ninguém avisou. <button class="act ink" data-act="tell" data-id="${item.id}">Avisar</button></li>`).join("");
- const door=walk?`<li>${esc(walk.name)} está na porta, sem hora. ${esc(walk.reason)}. <button class="act leaf" data-act="walk">Encaixar às 09:00</button></li>`:`<li>O buraco das 09:00 foi preenchido, sem duas pessoas no mesmo horário.</li>`;
- const busy=visits.filter(item=>item.status==="em sala").map(item=>`<li>${esc(item.name)} está na ${roomName[item.room]}. A sala não recebe outra pessoa.</li>`).join("");
- return `<div class="board"><aside class="day"><p class="kicker" style="padding:16px 16px 8px">Hoje</p>${list}</aside><section class="stage"><img src="${media.desk}" alt="Recepção da clínica" style="height:176px"><div style="margin-top:16px">${chart(v,true)}</div></section><aside class="side"><p class="kicker alarm">O que ainda trava o dia</p><ul>${pending}${quiet}${door}${busy}</ul><img src="${media.hall}" alt="Corredor da clínica" style="height:140px;margin-top:14px"></aside></div>`;
+ const c=counts();
+ const list=[...visits].sort((a,b)=>a.time.localeCompare(b.time)||a.name.localeCompare(b.name)).map(item=>`<button class="${item.id===v.id?"on":""}" data-act="open" data-id="${item.id}"><span class="mist">${item.time} · ${roomName[item.room]}</span><span class="name" style="display:block;font-size:22px">${esc(item.name)}</span><span class="${item.status==="falta confirmar"||item.status==="faltou"?"alarm":"mist"}">${esc(item.status)}</span></button>`).join("");
+ const pending=visits.filter(i=>i.status==="falta confirmar").map(i=>`<li>${esc(i.name)} ainda não confirmou as ${i.time}.</li>`).join("");
+ const quiet=labs.filter(i=>!i.told).map(i=>`<li>${esc(i.exam)} de ${esc(i.name)} chegou e ninguém avisou. <button class="btn ink" data-act="tell" data-id="${i.id}">Avisar</button></li>`).join("");
+ const door=walk?`<li>${esc(walk.name)} está na porta. <button class="btn" data-act="walk">Encaixar às 09:00</button></li>`:"<li>O horário das 09:00 foi ocupado sem sobrepor outra pessoa.</li>";
+ const busy=visits.filter(i=>i.status==="em sala").map(i=>`<li>${esc(i.name)} está na ${roomName[i.room]}.</li>`).join("");
+ const dono=lens==="dono"?`<p>${c.dia} horários no dia de exemplo. ${c.faltas} faltas. ${c.novos} marcações feitas nesta demonstração. ${c.retornos} retornos por confirmar.</p><p>Origem: Instagram ${c.instagram}, Google ${c.google}, indicação ${c.indicacao}.</p>`:"";
+ const pay=lens==="recepcao";
+ const body=lens==="paciente"?pessoa():lens==="cadeira"?`<div class="wrap" style="padding:20px"><img src="${FOTOS.cadeira}" alt="" style="height:200px">${visits.filter(i=>i.status==="em sala").map(i=>chart(i,false)).join("")||"<p>Ninguém na cadeira. A recepção chama quando ela está livre.</p>"}</div>`:`<div class="board"><aside class="day"><p class="mist" style="padding:14px">O dia</p>${list}</aside><section style="padding:18px"><img src="${FOTOS.capa}" alt="" style="height:160px">${dono}${chart(v,pay)}</section><aside class="side" style="padding:16px"><p class="alarm">O que ainda trava</p><ul class="lista">${pending}${quiet}${door}${busy}</ul></aside></div>`;
+ return body;
 }
-function room(){
- const inside=visits.filter(v=>v.status==="em sala");
- const wait=visits.filter(v=>v.status==="na espera").map(v=>`<p style="border-top:1px solid rgba(16,38,31,.1);padding-top:10px">${v.time} · ${esc(v.name)}<span class="mist" style="display:block">${roomName[v.room]} · ${esc(v.reason)}</span></p>`).join("");
- return `<div class="stage room"><div><img src="${media.room}" alt="Sala de consulta" style="height:220px">${inside.length?inside.map(v=>`<div style="margin-top:16px">${chart(v,false)}</div>`).join(""):"<p>Ninguém na sala. A recepção chama quando a sala está livre.</p>"}</div><aside><p class="kicker">Quem espera</p>${wait}</aside></div>`;
-}
-function person(){
+function pessoa(){
  const people=[...new Map(visits.map(v=>[v.name,v])).values()];
  const v=current();
- const mine=visits.filter(item=>item.name===v.name&&item.status!=="atendido");
- const cards=(mine.length?mine:[v]).map(item=>`<article style="border-top:1px solid rgba(16,38,31,.1);margin-top:16px;padding-top:12px"><p class="kicker">${item.time} · ${roomName[item.room]}</p><h2 class="name" style="font-size:32px">${esc(item.reason)}</h2><p>${esc(item.prep)}</p><p class="mist">A clínica não mostra aqui o que você deve. Isso fica na recepção.</p></article>`).join("");
- const told=labs.filter(l=>l.name===v.name&&l.told).map(l=>`<p>Seu ${esc(l.exam.toLowerCase())} já pode ser visto na clínica.</p>`).join("");
+ const mine=visits.filter(i=>i.name===v.name&&i.status!=="atendido"&&i.status!=="faltou");
+ const cards=(mine.length?mine:[v]).map(i=>`<article style="margin-top:16px"><p class="mist">${i.time} · ${roomName[i.room]}</p><h2 style="font-size:32px">${esc(i.reason)}</h2><p>${esc(i.prep)}</p><p class="nota">O valor, se houver, fica na recepção. Não aparece aqui.</p></article>`).join("");
+ const told=labs.filter(l=>l.name===v.name&&l.told).map(l=>`<p>Seu exame já pode ser visto na clínica.</p>`).join("");
  const hidden=labs.some(l=>l.name===v.name&&!l.told)?"<p class=\"mist\">Tem exame na casa. A clínica avisa quando puder mostrar.</p>":"";
- return `<div class="stage" style="max-width:560px"><label class="mist">Entrar como<select data-act="who" style="display:block;height:48px;width:100%;margin-top:8px;background:var(--chart);border:1px solid rgba(16,38,31,.15);padding:0 12px">${people.map(p=>`<option value="${p.id}" ${p.id===v.id?"selected":""}>${esc(p.name)}</option>`).join("")}</select></label><img src="${media.hall}" alt="" style="height:160px;margin-top:14px">${cards}${told}${hidden}</div>`;
+ return `<section class="block"><div class="wrap"><h2>Sua hora.</h2><label>Entrar como<select data-act="who">${people.map(p=>`<option value="${p.id}" ${p.id===v.id?"selected":""}>${esc(p.name)}${p.exemplo?" (exemplo)":""}</option>`).join("")}</select></label><img src="${FOTOS.corredor}" alt="" style="height:160px;margin-top:12px">${cards}${told}${hidden}</div></section>`;
 }
 function draw(){
- document.getElementById("nav").innerHTML=[["recepcao","Recepção"],["sala","Sala"],["paciente","Paciente"]].map(i=>`<button class="${lens===i[0]?"on":""}" data-act="lens" data-id="${i[0]}">${i[1]}</button>`).join("");
+ const items=[["casa","Início"],["agendar","Agendar"],["recepcao","Recepção"],["cadeira","Cadeira"],["paciente","Paciente"],["dono","Dono"]];
+ document.getElementById("nav").innerHTML=items.map(i=>`<button class="${lens===i[0]?"on":""}" data-go="${i[0]}">${i[1]}</button>`).join("");
  document.getElementById("notice").innerHTML=notice?`<p class="notice">${esc(notice)}</p>`:"";
- document.getElementById("app").innerHTML=lens==="sala"?room():lens==="paciente"?person():desk();
+ const app=document.getElementById("app");
+ app.innerHTML=lens==="casa"?casa():lens==="agendar"?agendar():painel();
+ document.getElementById("wa").href="https://wa.me/"+CLINIC.whatsapp+"?text="+encodeURIComponent("Olá, Odonto SISO. Vim pela demonstração e quero falar sobre uma hora.");
 }
 document.body.addEventListener("click",(e)=>{
+ const go=e.target.closest("[data-go]");
+ if(go){lens=go.dataset.go;notice="";draw();return}
+ const s=e.target.closest("[data-slot]");
+ if(s){slot=s.dataset.slot;document.querySelectorAll("[data-slot]").forEach((b)=>b.classList.toggle("on",b.dataset.slot===slot));return}
  const el=e.target.closest("[data-act]");
  if(!el) return;
- const act=el.dataset.act, id=el.dataset.id, v=visits.find(item=>item.id===id);
- if(act==="lens") lens=id;
- else if(act==="open") openId=id;
- else if(act==="confirm"&&v&&v.status==="falta confirmar"){v.status="confirmado";flash("Consulta confirmada.");return}
- else if(act==="arrive"&&v&&(v.status==="confirmado"||v.status==="falta confirmar")){v.status="na espera";flash("Chegou. Ainda não está na sala.");return}
- else if(act==="call"&&v){if(taken(v.room,id)){flash("A sala "+v.room+" ainda está ocupada.");return} v.status="em sala";openId=id;flash(v.name+" entrou na sala "+v.room+".");return}
- else if(act==="finish"&&v){if(v.status!=="em sala"){flash("Só se encerra quem está na sala.");return} const back=el.dataset.back==="1"; v.status="atendido"; v.returnSet=back; if(back) visits.push({...v,id:id+"-r",status:"falta confirmar",returnSet:null,paid:false,reason:"Retorno · "+v.reason}); flash(back?"Retorno marcado. A sala ficou livre.":"Alta sem retorno. A sala ficou livre.");return}
+ const act=el.dataset.act, id=el.dataset.id, v=visits.find(i=>i.id===id);
+ if(act==="open") openId=id;
+ else if(act==="confirm"&&v&&v.status==="falta confirmar"){v.status="confirmado";flash("Hora confirmada.");return}
+ else if(act==="arrive"&&v){v.status="na espera";flash("Chegou. Ainda não está na cadeira.");return}
+ else if(act==="call"&&v){if(taken(v.room,id)){flash("Essa cadeira ainda está ocupada.");return} v.status="em sala";openId=id;flash(v.name+" entrou na "+roomName[v.room]+".");return}
+ else if(act==="finish"&&v){if(v.status!=="em sala"){flash("Só se encerra quem está na cadeira.");return} const back=el.dataset.back==="1"; v.status="atendido"; v.returnSet=back; if(back) visits.push({...v,id:id+"-r",status:"falta confirmar",returnSet:null,paid:false,reason:"Retorno. O prazo é o da clínica."}); flash(back?"Retorno marcado. A cadeira ficou livre.":"Alta sem retorno. A cadeira ficou livre.");return}
+ else if(act==="falta"&&v){v.status="faltou";flash("Falta registrada. A cadeira ficou livre.");return}
  else if(act==="pay"&&v) v.paid=!v.paid;
- else if(act==="tell"){const lab=labs.find(item=>item.id===id); if(lab) lab.told=true; flash("A pessoa foi avisada. O resultado sai da fila.");return}
- else if(act==="walk"&&walk){if(visits.some(item=>item.time==="09:00"&&item.room==="1")){flash("As 09:00 da sala 1 já têm alguém.");return} visits.push({id:"lucia",name:walk.name,time:"09:00",room:"1",reason:walk.reason,prep:"Pode beber água.",allergy:"A confirmar na ficha",status:"na espera",returnSet:null,paid:false}); openId="lucia"; walk=null; flash("Lúcia entrou no buraco das 09:00. Não ficou em cima de outra pessoa.");return}
+ else if(act==="tell"){const lab=labs.find(i=>i.id===id); if(lab) lab.told=true; flash("A pessoa foi avisada.");return}
+ else if(act==="walk"&&walk){if(visits.some(i=>i.time==="09:00"&&i.room==="1")){flash("As 09:00 da cadeira 1 já têm alguém.");return} visits.push({id:"lucia",name:walk.name,time:"09:00",room:"1",reason:walk.reason,prep:"[preparo]",allergy:"[alergia, se houver]",status:"na espera",returnSet:null,paid:false,origem:"Outro",exemplo:true}); openId="lucia"; walk=null; flash("Encaixe feito, sem duas pessoas no mesmo horário.");return}
  draw();
 });
 document.body.addEventListener("change",(e)=>{
- const el=e.target.closest("[data-act=who]");
- if(!el) return;
- openId=el.value; draw();
+ const who=e.target.closest("[data-act=who]");
+ if(who){openId=who.value;draw()}
+});
+document.body.addEventListener("submit",(e)=>{
+ if(e.target.id!=="agenda") return;
+ e.preventDefault();
+ const f=e.target, d=new FormData(f);
+ if(!slot){flash("Escolha um horário.");return}
+ if(!f.lgpd.checked){flash("Para agendar, é preciso aceitar que isto é uma demonstração.");return}
+ const nome=String(d.get("nome")||"").trim();
+ if(nome.length<2){flash("Escreva o nome.");return}
+ if(visits.some(v=>v.time===slot&&v.room==="1"&&v.status!=="faltou"&&v.status!=="atendido")){flash("Esse horário da cadeira 1 já está ocupado.");return}
+ const id="n"+Math.random().toString(36).slice(2,7);
+ visits.push({id,name:nome,time:slot,room:"1",reason:String(d.get("trato")),prep:"A clínica confirma a orientação deste cuidado.",allergy:"[alergia, se houver]",status:"confirmado",returnSet:null,paid:false,origem:String(d.get("origem")),exemplo:false});
+ openId=id; lens="recepcao"; flash("Horário confirmado para "+nome+" às "+slot+". O lembrete automático entra na próxima fase.");
 });
 draw();
 </script>
