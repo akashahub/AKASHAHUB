@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mesa · demonstração</title>
+<meta name="description" content="Duas empresas, propostas e aceite. Uma não vê a outra.">
+<link rel="canonical" href="https://akashahub.com.br/empresa/mesa/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04030a;--gold:#c9a961;--violet:#4a2d6b;--ink:#f6f1e6;--mist:#b7ab9a;--line:rgba(201,169,97,.35)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.45 "Cormorant Garamond",Georgia,serif}
+button,input,select{font:inherit;color:inherit;background:transparent;border:0}
+button{cursor:pointer}
+img{width:100%;height:100%;object-fit:cover;display:block}
+h1,h2{font-weight:500;margin:0;line-height:1}
+a{color:var(--gold)}
+header{display:flex;justify-content:space-between;gap:8px;align-items:flex-end;padding:14px 16px;position:sticky;top:0;background:rgba(4,3,10,.94);z-index:3}
+.mark{font-family:Cinzel,serif;letter-spacing:.16em;color:var(--gold)}
+.nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav button,.btn{min-height:44px;padding:0 12px;border:1px solid var(--line)}
+.nav button.on,.btn{background:var(--violet)}
+.btn.gold{background:transparent;color:var(--gold)}
+main{padding:8px 16px 110px;max-width:800px}
+.aviso{color:var(--gold);padding:0 16px}
+.linha{border-top:1px solid var(--line);padding:12px 0}
+input,select{width:100%;border-bottom:1px solid var(--line);padding:8px 0}
+.dock{position:fixed;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;background:#0a0812;border-top:1px solid var(--line)}
+.dock button{flex:1 1 30%;min-height:48px}
+.mist{color:var(--mist)}
+</style>
+</head>
+<body>
+<header>
+ <div><div class="mark" id="marca">MESA</div><a href="../">voltar à oferta</a></div>
+ <div class="nav" id="papel"></div>
+</header>
+<p class="aviso" id="aviso"></p>
+<main id="app"></main>
+<nav class="dock" id="dock"></nav>
+<script>
+const KEY="mesa-v1";
+const LIMITE=5000;
+function casaVazia(nome){return {nome,cor:"#c9a961",propostas:[],chamados:[],log:[]}}
+function semente(){
+ const norte=casaVazia("Norte. Exemplo.");
+ norte.propostas.push({id:"n1",titulo:"Site institucional. Exemplo.",valor:8000,status:"aprovacao",nota:"Margem de exemplo. Só a casa vê.",cliente:"Marina Luz",aceite:""});
+ const sul=casaVazia("Sul. Exemplo.");
+ sul.propostas.push({id:"s1",titulo:"Manutenção mensal. Exemplo.",valor:1200,status:"enviada",nota:"Contrato curto. Só a casa vê.",cliente:"Rui Pires",aceite:""});
+ return {casa:"norte",papel:"gestor",tela:"mesa",aviso:"",casas:{norte,sul},aberta:"n1"};
+}
+let state;
+try{state=JSON.parse(localStorage.getItem(KEY))||semente()}catch{state=semente()}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function esc(s){return String(s??"").replace(/[&<>"]/g,(ch)=>({"&":"\u0026amp;","<":"\u0026lt;",">":"\u0026gt;","\"":"\u0026quot;"})[ch])}
+function atual(){return state.casas[state.casa]}
+function br(n){return "R$ "+Number(n).toLocaleString("pt-BR")}
+function flash(t){state.aviso=t;save();draw()}
+function anotar(texto){atual().log.unshift({quando:new Date().toISOString(),quem:state.papel,texto})}
+function propostasVisiveis(){
+ const lista=atual().propostas;
+ if(state.papel==="cliente") return lista.filter((p)=>["enviada","aceita","recusada"].includes(p.status));
+ return lista;
+}
+function mesa(){
+ const c=atual();
+ const lista=propostasVisiveis().map((p)=>`<button class="linha" data-id="${p.id}" style="width:100%;text-align:left"><b>${esc(p.titulo)}</b><span class="mist" style="display:block">${br(p.valor)} · ${esc(p.status)} · ${esc(p.cliente)}</span></button>`).join("")||"<p>Nada nesta casa para este perfil.</p>";
+ const interna=state.papel==="cliente"?"":`<p class="mist">Casa aberta: ${esc(c.nome)}. A outra não entra nesta lista.</p>`;
+ return `<h1>Propostas</h1><img src="../media/pasta.jpg" alt="" style="height:150px">${interna}${lista}`;
+}
+function uma(){
+ let p=atual().propostas.find((x)=>x.id===state.aberta);
+ if(!p||(state.papel==="cliente"&&!["enviada","aceita","recusada"].includes(p.status))) p=propostasVisiveis()[0];
+ if(!p) return `<p>Esta casa não tem proposta para você.</p>`;
+ const nota=state.papel==="cliente"?"":`<p class="mist">${esc(p.nota)}</p>`;
+ const aprovar=state.papel!=="cliente"&&p.status==="aprovacao"&&(state.papel==="gestor"||state.papel==="admin")?`<button class="btn" data-act="aprovar" data-id="${p.id}">Aprovar e enviar</button>`:"";
+ const travada=p.status==="aprovacao"&&state.papel==="colaborador"?"<p>Acima do limite de exemplo. Só o gestor solta.</p>":"";
+ const aceite=state.papel==="cliente"&&p.status==="enviada"?`<button class="btn" data-act="aceitar" data-id="${p.id}">Aceitar</button> <button class="btn gold" data-act="recusar" data-id="${p.id}">Recusar</button>`:"";
+ const quando=p.aceite?`<p>Aceite registrado em ${esc(p.aceite.slice(0,16).replace("T"," "))}. Exemplo, sem assinatura digital.</p>`:"";
+ return `<h1>${esc(p.titulo)}</h1><p>${br(p.valor)} · ${esc(p.status)}</p><p>Para ${esc(p.cliente)}.</p>${nota}${travada}<div style="display:flex;flex-wrap:wrap;gap:8px">${aprovar}${aceite}<button class="btn gold" data-act="folha" data-id="${p.id}">Ver a folha</button></div>${quando}<div id="folha"></div>`;
+}
+function portal(){
+ const c=atual();
+ const delas=propostasVisiveis();
+ return `<h1>Portal</h1><img src="../media/carta.jpg" alt="" style="height:140px"><p>${esc(c.nome)}</p>${delas.map((p)=>`<p class="linha">${esc(p.titulo)} · ${esc(p.status)}</p>`).join("")||"<p>Nenhuma proposta chegou.</p>"}<p class="mist">Segunda via: exemplo de fatura. Não é boleto.</p><form id="chamado"><input name="texto" required placeholder="Abrir um chamado"><button class="btn">Enviar</button></form>`;
+}
+function painel(){
+ if(state.papel==="cliente"||state.papel==="colaborador") return `<p>Os números ficam com o gestor.</p>`;
+ const lista=atual().propostas;
+ const conta=(s)=>lista.filter((p)=>p.status===s).length;
+ return `<h1>A casa</h1><p>${esc(atual().nome)}</p><p>Aguardando aprovação: ${conta("aprovacao")}. Enviadas: ${conta("enviada")}. Aceitas: ${conta("aceita")}.</p><p>Chamados: ${atual().chamados.length}.</p><h2 style="margin-top:16px">Quem fez</h2>${atual().log.slice(0,6).map((l)=>`<p class="linha">${esc(l.quem)} · ${esc(l.texto)}</p>`).join("")||"<p class='mist'>Ainda sem registro.</p>"}<label>Nome da casa<input id="nome" value="${esc(atual().nome)}"></label><button class="btn gold" data-act="marca">Aplicar nesta casa</button>`;
+}
+function draw(){
+ const c=atual();
+ document.documentElement.style.setProperty("--gold", c.cor||"#c9a961");
+ document.getElementById("marca").textContent="MESA";
+ document.getElementById("papel").innerHTML=["gestor","colaborador","cliente","admin"].map((p)=>`<button class="${state.papel===p?"on":""}" data-papel="${p}">${p}</button>`).join("")+" "+["norte","sul"].map((id)=>`<button class="${state.casa===id?"on":""}" data-casa="${id}">${id}</button>`).join("");
+ const telas=state.papel==="cliente"?[["portal","Portal"],["uma","Proposta"]]:[["mesa","Mesa"],["uma","Proposta"],["painel","Casa"]];
+ if(!telas.some((t)=>t[0]===state.tela)) state.tela=telas[0][0];
+ document.getElementById("dock").innerHTML=telas.map((t)=>`<button class="${state.tela===t[0]?"on":""}" data-tela="${t[0]}">${t[1]}</button>`).join("");
+ document.getElementById("app").innerHTML={mesa,uma,portal,painel}[state.tela]();
+ document.getElementById("aviso").textContent=state.aviso||"Duas casas de exemplo. Cada uma só lê a própria mesa. Nada aqui cobra de verdade.";
+}
+document.body.addEventListener("click",(e)=>{
+ const papel=e.target.closest("[data-papel]");
+ if(papel){state.papel=papel.dataset.papel;state.aviso="";save();draw();return}
+ const casa=e.target.closest("[data-casa]");
+ if(casa){state.casa=casa.dataset.casa;state.aberta=atual().propostas[0]?.id||"";state.aviso="";save();draw();return}
+ const tela=e.target.closest("[data-tela]");
+ if(tela){state.tela=tela.dataset.tela;state.aviso="";save();draw();return}
+ const idb=e.target.closest("[data-id]");
+ if(idb&&!e.target.closest("[data-act]")){state.aberta=idb.dataset.id;state.tela="uma";save();draw();return}
+ const act=e.target.closest("[data-act]");
+ if(!act) return;
+ const p=atual().propostas.find((x)=>x.id===act.dataset.id);
+ if(act.dataset.act==="aprovar"){
+  if(state.papel!=="gestor"&&state.papel!=="admin"){flash("Só o gestor aprova.");return}
+  p.status="enviada"; anotar("Aprovou "+p.titulo); flash("Proposta enviada ao cliente. A outra casa não recebeu."); return;
+ }
+ if(act.dataset.act==="aceitar"||act.dataset.act==="recusar"){
+  if(state.papel!=="cliente"){flash("O aceite é do cliente.");return}
+  p.status=act.dataset.act==="aceitar"?"aceita":"recusada";
+  p.aceite=new Date().toISOString();
+  anotar((p.status==="aceita"?"Aceitou ":"Recusou ")+p.titulo);
+  flash(p.status==="aceita"?"Aceite registrado com a data. Sem assinatura digital ainda.":"Recusa registrada.");
+  return;
+ }
+ if(act.dataset.act==="folha"){
+  const el=document.getElementById("folha");
+  if(el) el.innerHTML=`<article class="linha"><b>${esc(atual().nome)}</b><p>${esc(p.titulo)}</p><p>${br(p.valor)}. Exemplo.</p><p>Status: ${esc(p.status)}</p></article>`;
+  return;
+ }
+ if(act.dataset.act==="marca"){
+  atual().nome=(document.getElementById("nome").value||"Casa").slice(0,32);
+  anotar("Trocou o nome da casa");
+  flash("O nome mudou só nesta casa.");
+ }
+});
+document.body.addEventListener("submit",(e)=>{
+ if(e.target.id!=="chamado") return;
+ e.preventDefault();
+ const texto=String(new FormData(e.target).get("texto")||"").trim();
+ if(texto.length<2) return;
+ atual().chamados.unshift({texto,quando:new Date().toISOString()});
+ anotar("Chamado aberto");
+ flash("Chamado aberto nesta casa.");
+});
+draw();
+</script>
+</body>
+</html>

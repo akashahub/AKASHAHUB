@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function entrou() { return request.auth != null; }
+    function eu() { return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data; }
+    function naEmpresa(empresa) { return entrou() && eu().empresaId == empresa; }
+
+    match /empresas/{empresa} {
+      allow read: if naEmpresa(empresa);
+      allow write: if naEmpresa(empresa) && eu().papel in ["admin", "gestor"];
+
+      match /propostas/{id} {
+        allow read: if naEmpresa(empresa) && (
+          eu().papel in ["admin", "gestor", "colaborador"] ||
+          (eu().papel == "cliente" && resource.data.clienteId == request.auth.uid && resource.data.status in ["enviada", "aceita", "recusada"])
+        );
+        allow create: if naEmpresa(empresa) && eu().papel in ["admin", "gestor", "colaborador"];
+        allow update: if naEmpresa(empresa) && (
+          (eu().papel in ["admin", "gestor"]) ||
+          (eu().papel == "cliente" && resource.data.status == "enviada" && request.resource.data.status in ["aceita", "recusada"])
+        );
+      }
+
+      match /propostas/{id}/interna/{doc} {
+        allow read, write: if naEmpresa(empresa) && eu().papel in ["admin", "gestor"];
+      }
+
+      match /chamados/{id} {
+        allow read: if naEmpresa(empresa) && (eu().papel != "cliente" || resource.data.clienteId == request.auth.uid);
+        allow create: if naEmpresa(empresa);
+      }
+
+      match /auditoria/{id} {
+        allow read: if naEmpresa(empresa) && eu().papel in ["admin", "gestor"];
+        allow create: if naEmpresa(empresa);
+        allow update, delete: if false;
+      }
+    }
+  }
+}
