@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pátio · Colégio</title>
+<meta name="description" content="Pátio. A plataforma do colégio: chamada, boletim, recado, mensalidade e saída.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--quire:#f4efe4;--forest:#1b3a32;--leaf:#2f5d45;--ink:#1c1916;--rule:#d9d1c3}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--quire);color:var(--ink);font-family:Karla,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer;background:transparent}
+img{display:block;width:100%;object-fit:cover}
+.wrap{width:min(1100px,calc(100% - 32px));margin:0 auto}
+header{border-bottom:1px solid var(--rule);padding:22px 0}
+h1,h2{font-family:"Libre Baskerville",Georgia,serif;font-weight:400;margin:0}
+h1{font-size:clamp(44px,8vw,64px);line-height:.9}
+h2{font-size:clamp(28px,5vw,40px)}
+.kicker{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--leaf)}
+.leaf{color:var(--leaf);line-height:1.5}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:44px;border:0;border-radius:999px;padding:0 14px}
+.chip.on{background:var(--forest);color:var(--quire)}
+.layout{display:grid;gap:18px;padding:22px 0 120px}
+.card{background:#fff;border:1px solid var(--rule);border-radius:18px;overflow:hidden}
+.pad{padding:16px}
+.photo{height:240px}
+.btn{height:48px;width:100%;border:0;border-radius:999px;background:var(--forest);color:var(--quire);font-weight:700}
+.mnav{position:fixed;left:0;right:0;bottom:0;display:grid;background:var(--quire);border-top:1px solid var(--rule);z-index:4}
+.mnav button{height:64px;border:0;color:var(--leaf);font-size:12px;font-weight:700}
+.mnav button.on{color:var(--forest)}
+.side{display:none}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--forest);color:var(--quire);border-radius:999px;padding:12px 16px;z-index:6;max-width:min(440px,calc(100% - 32px));text-align:center}
+.split,.cols{display:grid;gap:12px}
+@media(min-width:900px){
+ .layout{grid-template-columns:200px minmax(0,1fr);padding-bottom:40px}
+ .side{display:grid;align-content:start;gap:6px}
+ .side button{height:44px;border:0;border-radius:999px;text-align:left;padding:0 12px;color:var(--leaf);font-weight:700}
+ .side button.on{background:var(--forest);color:var(--quire)}
+ .mnav{display:none}
+ .split{grid-template-columns:minmax(0,1.3fr) minmax(220px,.75fr)}
+ .cols-2{grid-template-columns:1fr 1fr}
+ .photo{height:320px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div style="display:flex;justify-content:space-between;gap:16px;align-items:end;flex-wrap:wrap">
+  <div><div class="kicker">Colégio</div><h1>Pátio</h1></div>
+  <div class="row" id="doors"></div>
+ </div>
+</header>
+<div class="layout">
+ <nav class="side" id="side"></nav>
+ <div>
+  <p class="leaf" id="line"></p>
+  <div id="view" style="margin-top:16px"></div>
+ </div>
+</div>
+</div>
+<nav class="mnav" id="nav"></nav>
+<div id="toast"></div>
+<script>
+const media={yard:"media/yard.jpg",room:"media/class.jpg",library:"media/library.jpg",gate:"media/gate.jpg"};
+const grades=[["Português","8,5"],["Matemática","7,0"],["Ciências","9,0"],["História","8,0"]];
+const lines={familia:"O dia do Miguel, a nota e o recado. Sem esperar a reunião.",professor:"A chamada da 4B. Quem está, quem falta, o que a família precisa saber.",secretaria:"A casa do colégio. Frequência, mensalidade e a saída com nome."};
+const nav={
+ familia:[["hoje","Hoje"],["boletim","Boletim"],["recados","Recados"],["mensalidade","Mensalidade"]],
+ professor:[["chamada","Chamada"],["turma","Turma"],["recado","Recado"]],
+ secretaria:[["hoje","Hoje"],["chamada","Chamada"],["caixa","Caixa"],["gargalo","Gargalo"]]
+};
+const S={
+ door:"familia", tab:"hoje", shot:"",
+ students:[
+  {id:"miguel",name:"Miguel Alves",year:"4º ano · 4B",here:true,out:false,paid:false,mine:true},
+  {id:"lia",name:"Lia Nunes",year:"4º ano · 4B",here:true,out:false,paid:true,mine:false},
+  {id:"theo",name:"Theo Ramos",year:"4º ano · 4B",here:false,out:false,paid:true,mine:false},
+  {id:"ana",name:"Ana Luz",year:"4º ano · 4B",here:true,out:false,paid:true,mine:false}
+ ],
+ notes:["Amanhã, livro de Ciências. A leitura é o capítulo da água."]
+};
+const mine=()=>S.students.find((s)=>s.mine);
+function flash(t){S.shot=t;render();clearTimeout(flash.t);flash.t=setTimeout(()=>{S.shot="";render()},2400)}
+function card(inner){return `<article class="card"><div class="pad">${inner}</div></article>`}
+function familia(){
+ const m=mine();
+ if(S.tab==="boletim") return card(`<div class="kicker">4º ano · 2º trimestre</div><h2>Boletim do Miguel</h2>${grades.map((g)=>`<p style="display:flex;justify-content:space-between;border-bottom:1px solid var(--rule);padding:8px 0"><span>${g[0]}</span><b style="font-family:Libre Baskerville,serif;font-size:24px">${g[1]}</b></p>`).join("")}<p class="leaf">A nota não espera a reunião de pais. E não fica atrás do boleto.</p>`);
+ if(S.tab==="recados") return S.notes.map((n)=>card(`<div class="kicker">Helena Prado · 4B</div><p style="font-size:18px">${n}</p>`)).join("");
+ if(S.tab==="mensalidade") return `<div class="split"><img class="photo" style="border-radius:18px" src="${media.library}" alt="">${card(`<div class="kicker">Abril</div><h2>${m.paid?"Quitado":"Em aberto"}</h2><p class="leaf">R$ 1.890. O boletim continua visível, pago ou não.</p><button class="btn" data-act="pay">Registrar pagamento</button>`)}</div>`;
+ const state=m.out?"Já saiu com a família.":m.here?"Está na aula. Matemática, 10h10.":"A chamada desta aula está em falta.";
+ return `<div class="split"><article class="card"><img class="photo" src="${media.yard}" alt=""><div class="pad"><div class="kicker">${m.year}</div><h2>${m.name}</h2><p class="leaf">${state}</p></div></article><div class="cols">${card(`<div class="kicker">Saída</div><p>${m.out?"A secretaria já tem o nome.":"Quem busca autoriza aqui. Não fica só no portão."}</p><button class="btn" data-act="leave">${m.out?"Saída feita":"Autorizar saída"}</button>`)}${card(`<div class="kicker">Recado</div><p>${S.notes[0]}</p>`)}</div></div>`;
+}
+function professor(){
+ if(S.tab==="turma") return `<div class="split"><img class="photo" style="border-radius:18px" src="${media.room}" alt="">${card(`<div class="kicker">4B</div><h2>${S.students.length} alunos</h2><p class="leaf">Uma turma. A mesma lista na chamada, no boletim e na saída.</p>`)}</div>`;
+ if(S.tab==="recado"){
+  const ready=["Amanhã, livro de Ciências. A leitura é o capítulo da água.","Reunião de pais na quinta, 18h30, no pátio coberto.","Educação física troca para a quadra. Trazer o agasalho."];
+  return ready.map((t)=>`<button class="card" data-act="post" data-id="${t}" style="display:block;width:100%;text-align:left;margin-bottom:12px"><div class="pad">${t}</div></button>`).join("");
+ }
+ return `<div class="cols cols-2"><h2 style="grid-column:1/-1">Chamada · 4B</h2>${S.students.map((s)=>card(`<div class="row" style="justify-content:space-between"><div><b>${s.name}</b><div class="leaf">${s.here?"Presente":"Falta"}</div></div><button class="chip" data-act="here" data-id="${s.id}">${s.here?"Marcar falta":"Marcar presente"}</button></div>`)).join("")}</div>`;
+}
+function secretaria(){
+ const inside=S.students.filter((s)=>s.here&&!s.out);
+ const open=S.students.filter((s)=>!s.paid);
+ if(S.tab==="chamada") return `<div class="cols cols-2">${S.students.map((s)=>card(`<b>${s.name}</b><div class="leaf">${s.out?"Saiu":s.here?"Na aula":"Falta"}</div>`)).join("")}</div>`;
+ if(S.tab==="caixa") return card(`<div class="kicker">Em aberto</div><h2>${open.length?open.length+" família":"Tudo quitado"}</h2>`)+S.students.map((s)=>card(`<div class="row" style="justify-content:space-between"><div><b>${s.name}</b><div class="leaf">${s.paid?"Abril quitado":"Abril em aberto · R$ 1.890"}</div></div>${s.mine&&!s.paid?'<button class="chip on" data-act="pay">Quitar</button>':""}</div>`)).join("");
+ if(S.tab==="gargalo"){
+  const cards=[
+   ["Oculto","Chamada no papel","A falta do Theo só aparecia no fim do mês. Agora a família vê a aula."],
+   ["Oculto","Recado no grupo","O aviso não depende de quem leu o WhatsApp. Sai da sala e chega em casa."],
+   ["Personalizado","Boletim só na reunião","A nota do Miguel está aberta no trimestre. A reunião explica. Não esconde."],
+   ["Padrão","Mensalidade e nota","O boleto e o boletim são coisas diferentes. Um atraso não apaga a nota."],
+   ["Oculto","Saída sem nome",inside.length+" ainda no colégio. Quem sai leva o nome na secretaria."]
+  ];
+  return `<div class="cols cols-2">${cards.map((c)=>card(`<div class="kicker">${c[0]}</div><h2>${c[1]}</h2><p class="leaf">${c[2]}</p>`)).join("")}</div>`;
+ }
+ return `<div class="split"><article class="card"><img class="photo" src="${media.gate}" alt=""><div class="pad"><div class="kicker">Hoje</div><h2>${inside.length} no colégio</h2><p class="leaf">${open.length} mensalidade em aberto.</p></div></article>${card(`<div class="kicker">4B</div><p>${S.students.map((s)=>s.name.split(" ")[0]).join(" · ")}</p>`)}</div>`;
+}
+function render(){
+ const list=nav[S.door];
+ if(!list.some((t)=>t[0]===S.tab)) S.tab=list[0][0];
+ document.getElementById("doors").innerHTML=["familia","Família","professor","Professor","secretaria","Secretaria"].reduce((html,item,i,arr)=>i%2?html:`${html}<button class="chip ${S.door===item?"on":""}" data-act="door" data-id="${item}">${arr[i+1]}</button>`,"");
+ document.getElementById("side").innerHTML=list.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
+ const navEl=document.getElementById("nav");
+ navEl.style.gridTemplateColumns=`repeat(${list.length},minmax(0,1fr))`;
+ navEl.innerHTML=list.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
+ document.getElementById("line").textContent=lines[S.door];
+ document.getElementById("view").innerHTML=S.door==="familia"?familia():S.door==="professor"?professor():secretaria();
+ document.getElementById("toast").innerHTML=S.shot?`<div class="toast">${S.shot}</div>`:"";
+}
+document.body.addEventListener("click",(e)=>{
+ const el=e.target.closest("[data-act]");
+ if(!el) return;
+ const act=el.dataset.act, id=el.dataset.id;
+ if(act==="door"){S.door=id;S.tab=nav[id][0][0]}
+ else if(act==="tab") S.tab=id;
+ else if(act==="here"){const s=S.students.find((x)=>x.id===id); s.here=!s.here; s.out=false; flash("A chamada mudou. A família vê na hora."); return}
+ else if(act==="leave"){const s=mine(); s.out=true; s.here=false; flash("Saída autorizada. A secretaria viu o nome."); return}
+ else if(act==="pay"){const s=mine(); if(s.paid){flash("Abril já estava quitado. Não cobrou de novo."); return} s.paid=true; flash("Mensalidade de abril registrada. O boletim continua aberto."); return}
+ else if(act==="post"){S.notes.unshift(id); flash("O recado saiu da sala e chegou na família."); return}
+ render();
+});
+render();
+</script>
+</body>
+</html>
