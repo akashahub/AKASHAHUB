@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Navalha · Barbearia</title>
+<meta name="description" content="Plataforma da barbearia Navalha. Assinatura, agenda, produtos e a mesa da casa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,650&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#f4efe6;--foam:#fffdf8;--shop:#16130f;--brass:#8c6239;--ash:#6d655c}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--cream);color:var(--shop);font-family:Figtree,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+img{display:block;width:100%;object-fit:cover}
+.app{max-width:1100px;margin:0 auto;min-height:100dvh}
+@media(min-width:900px){.app{display:grid;grid-template-columns:220px 1fr}.desk{display:flex}.mnav{display:none}}
+.desk{display:none;flex-direction:column;gap:16px;padding:24px 16px;border-right:1px solid rgba(22,19,15,.1)}
+.main{padding:20px 16px 108px}
+h1,h2{font-family:Newsreader,Georgia,serif;font-weight:500;letter-spacing:-.03em;margin:0}
+h1{font-size:42px;line-height:.9}
+h2{font-size:32px;line-height:1}
+.ash{color:var(--ash);line-height:1.5}
+.brass{color:var(--brass)}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:44px;border:0;border-radius:999px;padding:0 14px;background:var(--cream);font-weight:650}
+.chip.on{background:var(--shop);color:var(--cream)}
+.card{background:var(--foam);border:1px solid rgba(22,19,15,.1);border-radius:20px;overflow:hidden;margin-bottom:12px}
+.pad{padding:16px}
+.photo{height:200px}
+.btn{height:48px;width:100%;border:0;border-radius:999px;background:var(--shop);color:var(--cream);font-weight:700}
+.mnav{position:fixed;left:0;right:0;bottom:0;display:grid;background:var(--foam);border-top:1px solid rgba(22,19,15,.1)}
+.mnav button{height:64px;border:0;background:transparent;color:var(--ash);font-size:12px;font-weight:700}
+.mnav button.on{color:var(--brass)}
+.desk button.nav{display:block;width:100%;text-align:left;height:44px;border:0;border-radius:999px;background:transparent;color:var(--ash);font-weight:700;padding:0 12px}
+.desk button.nav.on{background:var(--shop);color:var(--cream)}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--shop);color:var(--cream);border-radius:999px;padding:12px 16px;font-weight:700;z-index:6}
+.sheet{position:fixed;inset:0;background:rgba(22,19,15,.72);display:grid;align-items:end;justify-content:center;padding:12px;z-index:5}
+.sheet .card{width:min(440px,100%);margin:0}
+.shop{display:grid;grid-template-columns:112px 1fr;gap:12px;padding:12px}
+.shop img{height:112px;border-radius:14px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="desk" id="desk"></aside>
+  <div>
+    <header class="main" style="padding-bottom:0" id="head"></header>
+    <main class="main" id="view"></main>
+  </div>
+</div>
+<nav class="mnav" id="nav"></nav>
+<div id="toast"></div>
+<div id="sheet"></div>
+<script>
+const media={chair:"media/chair.jpg",cut:"media/cut.jpg",beard:"media/beard.jpg",pomade:"media/pomade.jpg",door:"media/door.jpg",fade:"media/fade.jpg",comb:"media/comb.jpg"};
+const plans=[{id:"semana",name:"Semana",price:149,line:"Um corte por semana. O segundo, se quiser, paga avulso."},{id:"livre",name:"Livre",price:269,line:"Quantas vezes quiser, na semana e no mês. Cabelo e barba."},{id:"barba",name:"Barba",price:99,line:"Uma barba por semana. Corte fica fora deste plano."}];
+const services=[{name:"Corte",price:55,min:40,image:media.cut},{name:"Barba",price:40,min:30,image:media.beard},{name:"Corte e barba",price:80,min:60,image:media.fade},{name:"Infantil",price:40,min:30,image:media.fade}];
+const products=[{name:"Pomada",price:48,image:media.pomade,note:"Acabamento do corte."},{name:"Óleo de barba",price:62,image:media.pomade,note:"Para a barba não ressecar."},{name:"Shampoo",price:38,image:media.comb,note:"O mesmo da cadeira."},{name:"Pente",price:28,image:media.comb,note:"Madeira, para levar."}];
+const days=["Ter","Qua","Qui","Sex","Sáb"];
+const times=["09:00","10:00","11:00","14:00","15:00","16:00","17:00","18:00"];
+const barbers=["Heitor","Davi","Caio"];
+const money=(n)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const S={
+  role:"cliente", tab:"hoje", plan:null, sheet:null, day:"Ter", time:"15:00", barber:"Heitor", service:"Corte", shot:"",
+  bookings:[
+    {id:"b1",day:"Ter",time:"10:00",service:"Corte",barber:"Heitor",who:"André",mine:false,missed:false,price:55},
+    {id:"b2",day:"Qua",time:"11:00",service:"Barba",barber:"Davi",who:"Bruno",mine:false,missed:false,price:40},
+    {id:"b3",day:"Sex",time:"16:00",service:"Corte e barba",barber:"Caio",who:"Igor",mine:false,missed:false,price:80}
+  ],
+  orders:[],
+  posts:[
+    {id:"s1",text:"Degradê baixo, barba fechada. O corte da semana do Rafael.",image:media.fade,likes:18,liked:false},
+    {id:"s2",text:"Cadeira livre no fim da tarde. Quem tem o plano Livre entra sem fila.",image:media.chair,likes:9,liked:false}
+  ]
+};
+function covered(){
+  const price=(services.find((s)=>s.name===S.service)||{price:0}).price;
+  const mine=S.bookings.filter((b)=>b.mine);
+  const cuts=mine.filter((b)=>!b.missed&&b.service!=="Barba"&&b.price===0).length;
+  const beards=mine.filter((b)=>!b.missed&&b.service==="Barba"&&b.price===0).length;
+  if(S.plan==="livre") return {price:0,note:"O plano Livre cobre esta visita."};
+  if(S.plan==="semana"&&S.service!=="Barba"&&S.service!=="Infantil"&&cuts===0) return {price:0,note:"Este é o corte da semana. Entra na assinatura."};
+  if(S.plan==="semana"&&S.service!=="Barba"&&cuts>0) return {price,note:"A semana já tem um corte. Este sai avulso."};
+  if(S.plan==="barba"&&S.service==="Barba"&&beards===0) return {price:0,note:"A barba da semana entra na assinatura."};
+  if(S.plan==="barba"&&S.service==="Barba") return {price,note:"A barba desta semana já foi. Esta sai avulsa."};
+  if(!S.plan) return {price,note:"Sem plano. Paga o valor da cadeira."};
+  return {price,note:"Fora do plano. Paga o valor da cadeira."};
+}
+function flash(t){S.shot=t;render();clearTimeout(flash.t);flash.t=setTimeout(()=>{S.shot="";render()},2400)}
+function tabs(){
+  if(S.role==="cadeira") return [["hoje","Hoje"],["agenda","Agenda"],["ficha","Ficha"]];
+  if(S.role==="casa") return [["hoje","Hoje"],["agenda","Agenda"],["assinaturas","Planos"],["pedidos","Pedidos"],["gargalos","Gargalo"]];
+  return [["hoje","Hoje"],["agenda","Agenda"],["plano","Plano"],["loja","Loja"],["casa","Casa"]];
+}
+function card(img,inner){return `<article class="card">${img?`<img class="photo" src="${img}" alt="">`:""}<div class="pad">${inner}</div></article>`}
+function chips(list,key,cur){return `<div class="row">${list.map((item)=>`<button class="chip ${cur===item?"on":""}" data-act="${key}" data-id="${item}">${item}</button>`).join("")}</div>`}
+function cliente(){
+  const mine=S.bookings.filter((b)=>b.mine&&!b.missed);
+  const next=mine[0];
+  const active=plans.find((p)=>p.id===S.plan);
+  if(S.tab==="agenda"){
+    const q=covered();
+    return card(media.chair,`<h2>Marcar a cadeira</h2>${chips(services.map((s)=>s.name),"service",S.service)}${chips(days,"day",S.day)}${chips(times,"time",S.time)}${chips(barbers,"barber",S.barber)}<p class="ash">${q.note}</p><p><b>${q.price===0?"Incluso no plano":money(q.price)}</b></p><button class="btn" data-act="book">Confirmar ${S.day} · ${S.time}</button>`);
+  }
+  if(S.tab==="plano") return plans.map((p)=>card("",`<div class="row" style="justify-content:space-between"><h2>${p.name}</h2><b class="brass">${money(p.price)}/mês</b></div><p class="ash">${p.line}</p><button class="btn" data-act="${S.plan===p.id?"cancel":"sheet"}" data-id="${p.id}">${S.plan===p.id?"Assinatura ativa · encerrar":"Assinar"}</button>`)).join("")+`<p class="ash">Avulso continua na mesa: corte ${money(55)}, barba ${money(40)}, os dois ${money(80)}.</p>`;
+  if(S.tab==="loja") return products.map((p)=>`<article class="card"><div class="shop"><img src="${p.image}" alt=""><div><h2 style="font-size:24px">${p.name}</h2><p class="ash">${p.note}</p><p class="brass"><b>${money(p.price)}</b></p><div class="row"><button class="chip on" data-act="order" data-id="${p.name}" data-price="${p.price}" data-via="balcao">Encomendar</button><button class="chip" data-act="order" data-id="${p.name}" data-price="${p.price}" data-via="whats">WhatsApp</button></div></div></div></article>`).join("");
+  if(S.tab==="casa") return card(media.fade,`<p class="brass">Ficha</p><h2>Rafael Mendes</h2><p class="ash">Degradê baixo, barba fechada, máquina 1 na nuca. Barbeiro de costume: Heitor.</p>`)+S.posts.map((p)=>card(p.image,`<p>${p.text}</p><button class="chip" data-act="like" data-id="${p.id}">${p.liked?"Curtido":"Curtir"} · ${p.likes}</button>`)).join("");
+  return card(media.door,`<p class="brass">${active?active.name:"Avulso"}</p><h2>${next?next.day+" · "+next.time:"Sem horário marcado"}</h2><p class="ash">${next?next.service+" com "+next.barber+".":"A cadeira de terça, 15h, está aberta."}</p>`)+`<div class="row">${services.slice(0,2).map((s)=>`<article class="card" style="flex:1"><img class="photo" style="height:120px" src="${s.image}" alt=""><div class="pad"><b>${s.name}</b><div class="brass">${money(s.price)} · ${s.min} min</div></div></article>`).join("")}</div>`;
+}
+function cadeira(){
+  const list=S.bookings.filter((b)=>b.barber==="Heitor"&&!b.missed);
+  if(S.tab==="ficha") return card(media.fade,`<p class="brass">Antes de sentar</p><h2>Rafael</h2><p class="ash">Degradê baixo. Barba fechada. Máquina 1 na nuca. Não raspar a risca.</p>`);
+  return `<h2>Cadeira do Heitor</h2>`+list.map((b)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${b.day} · ${b.time}</b><div class="ash">${b.who} · ${b.service}</div></div><button class="chip" data-act="miss" data-id="${b.id}">Faltou</button></div>`)).join("")+(S.tab==="agenda"?`<p class="ash">Terça, 15h, ainda é um buraco se ninguém encaixou.</p>`:"");
+}
+function casa(){
+  const live=S.bookings.filter((b)=>!b.missed);
+  const holes=live.some((b)=>b.day==="Ter"&&b.time==="15:00"&&b.barber==="Heitor");
+  const subs=(S.plan?1:0)+6;
+  const mrr=(S.plan?(plans.find((p)=>p.id===S.plan)||{price:0}).price:0)+149*4+269*2;
+  if(S.tab==="agenda") return live.map((b)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${b.day} · ${b.time} · ${b.barber}</b><div class="ash">${b.who} · ${b.service} · ${b.price===0?"no plano":money(b.price)}</div></div><button class="chip" data-act="miss" data-id="${b.id}">Faltou</button></div>`)).join("");
+  if(S.tab==="assinaturas") return card("",`<div class="ash">Recorrência do mês</div><h2>${money(mrr)}</h2><p class="ash">${subs} assinaturas. A do Rafael ${S.plan?"é "+plans.find((p)=>p.id===S.plan).name:"ainda é avulsa"}.</p>`)+plans.map((p)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${p.name}</b><div class="ash">${p.line}</div></div><b class="brass">${money(p.price)}</b></div>`)).join("");
+  if(S.tab==="pedidos") return `<h2>Pedidos</h2>`+(S.orders.length?S.orders.map((o)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${o.item}</b><div class="ash">${o.via==="whats"?"Veio do WhatsApp":"Retira na cadeira"}</div></div><b>${money(o.price)}</b></div>`)).join(""):`<p class="ash">Nenhuma encomenda ainda. Balcão e WhatsApp caem aqui.</p>`);
+  if(S.tab==="gargalos") return [
+    card("",`<p class="brass">Oculto</p><h2 style="font-size:26px">Horário vazio</h2><p class="ash">Terça, 15h, a cadeira do Heitor ficava parada. Agora a casa oferece a quem tem o plano Livre.</p><button class="btn" data-act="hole">${holes?"Buraco preenchido":"Oferecer terça 15h"}</button>`),
+    card("",`<p class="brass">Oculto</p><h2 style="font-size:26px">Falta</h2><p class="ash">Quem não vem devolve o horário. Se era o corte da semana, a semana volta a ficar aberta.</p>`),
+    card("",`<p class="brass">Oculto</p><h2 style="font-size:26px">WhatsApp perdido</h2><p class="ash">${S.orders.length} pedido${S.orders.length===1?"":"s"} nesta mesa. A conversa não fica só no celular de um barbeiro.</p>`),
+    card("",`<p class="brass">Personalizado</p><h2 style="font-size:26px">O corte de cada um</h2><p class="ash">Rafael: degradê baixo, barba fechada, máquina 1 na nuca. A ficha abre na cadeira antes da tesoura.</p>`),
+    card("",`<p class="brass">Padrão</p><h2 style="font-size:26px">O mesmo preço para todos</h2><p class="ash">Corte, barba e os três planos usam a mesma regra. Não muda conforme quem atendeu.</p>`),
+    card(S.posts[0].image,`<h2 style="font-size:26px">A rede da casa</h2><p class="ash">O corte publicado aqui é o mesmo que sai no Instagram da barbearia.</p><button class="btn" data-act="publish">Publicar o corte de hoje</button>`)
+  ].join("");
+  return card(media.chair,`<p class="brass">Hoje</p><h2>${live.length} na agenda</h2><p class="ash">${holes?"Terça 15h já tem nome.":"Terça 15h ainda está vazia."}</p>`)+`<div class="row"><article class="card" style="flex:1"><div class="pad"><div class="ash">Assinaturas</div><h2>${subs}</h2></div></article><article class="card" style="flex:1"><div class="pad"><div class="ash">No mês</div><h2>${money(mrr)}</h2></div></article></div>`;
+}
+function render(){
+  const list=tabs();
+  if(!list.some((t)=>t[0]===S.tab)) S.tab=list[0][0];
+  const line=S.role==="cliente"?"Sua semana, sua cadeira, seu plano.":S.role==="cadeira"?"A agenda do Heitor e a ficha de quem senta.":"A mesa da casa. Agenda, assinatura, pedido e o que antes ficava invisível.";
+  document.getElementById("head").innerHTML=`<h1>Navalha</h1><p class="ash">Barbearia</p><div class="row" style="margin-top:14px"><button class="chip ${S.role==="cliente"?"on":""}" data-act="role" data-id="cliente">Cliente</button><button class="chip ${S.role==="cadeira"?"on":""}" data-act="role" data-id="cadeira">Cadeira</button><button class="chip ${S.role==="casa"?"on":""}" data-act="role" data-id="casa">Casa</button></div><p class="ash">${line}</p>`;
+  document.getElementById("desk").innerHTML=`<div><h1>Navalha</h1><p class="ash">Barbearia</p></div>`+list.map((t)=>`<button class="nav ${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
+  const nav=document.getElementById("nav");
+  nav.style.gridTemplateColumns=`repeat(${list.length},minmax(0,1fr))`;
+  nav.innerHTML=list.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
+  document.getElementById("view").innerHTML=S.role==="cliente"?cliente():S.role==="cadeira"?cadeira():casa();
+  document.getElementById("toast").innerHTML=S.shot?`<div class="toast">${S.shot}</div>`:"";
+  const chosen=plans.find((p)=>p.id===S.sheet);
+  document.getElementById("sheet").innerHTML=chosen?`<div class="sheet"><article class="card"><div class="pad"><p class="brass">Simulação</p><h2>${chosen.name}</h2><p class="ash">${chosen.line}</p><p><b>${money(chosen.price)} por mês · cartão final 4242</b></p><p class="ash">Na barbearia de verdade, o Stripe cobra e o Supabase guarda quem assinou. Aqui a tela é a mesma, sem cobrar.</p><button class="btn" data-act="confirm">Confirmar assinatura</button><button class="chip" data-act="sheet" data-id="">Voltar</button></div></article></div>`:"";
+}
+document.body.addEventListener("click",(e)=>{
+  const el=e.target.closest("[data-act]");
+  if(!el) return;
+  const act=el.dataset.act, id=el.dataset.id;
+  if(act==="role"){S.role=id;S.tab="hoje"}
+  else if(act==="tab") S.tab=id;
+  else if(act==="day") S.day=id;
+  else if(act==="time") S.time=id;
+  else if(act==="barber") S.barber=id;
+  else if(act==="service") S.service=id;
+  else if(act==="sheet"){S.sheet=id||null}
+  else if(act==="confirm"){S.plan=S.sheet;S.sheet=null;flash("Assinatura ativa. O Stripe cobraria agora. O Supabase guardaria o plano.");return}
+  else if(act==="cancel"){S.plan=null;flash("Assinatura encerrada no fim do mês.");return}
+  else if(act==="book"){
+    if(S.bookings.some((b)=>!b.missed&&b.day===S.day&&b.time===S.time&&b.barber===S.barber)){flash("Esse horário já tem alguém. Escolha outro.");return}
+    const q=covered();
+    S.bookings.push({id:"b"+Date.now(),day:S.day,time:S.time,service:S.service,barber:S.barber,who:"Rafael",mine:true,missed:false,price:q.price});
+    S.tab="hoje"; flash(q.note); return;
+  }
+  else if(act==="miss"){const b=S.bookings.find((x)=>x.id===id); if(b) b.missed=true; flash("Falta marcada. O horário voltou para a cadeira."); return}
+  else if(act==="hole"){
+    if(S.bookings.some((b)=>!b.missed&&b.day==="Ter"&&b.time==="15:00"&&b.barber==="Heitor")){flash("Esse buraco já foi preenchido.");return}
+    S.bookings.push({id:"h"+Date.now(),day:"Ter",time:"15:00",service:"Corte",barber:"Heitor",who:"Encaixe Livre",mine:false,missed:false,price:0});
+    flash("Terça, 15h, oferecida a quem tem o plano Livre."); return;
+  }
+  else if(act==="order"){S.orders.unshift({item:id,price:Number(el.dataset.price),via:el.dataset.via}); flash(el.dataset.via==="whats"?"A casa recebeu o pedido no WhatsApp.":"Encomenda feita para retirar na cadeira."); return}
+  else if(act==="like"){const p=S.posts.find((x)=>x.id===id); p.liked=!p.liked; p.likes+=p.liked?1:-1}
+  else if(act==="publish"){S.posts.unshift({id:"p"+Date.now(),text:"Corte de hoje na Navalha. A ficha do cliente fica na cadeira.",image:media.cut,likes:1,liked:false}); flash("Saiu no feed da casa. O mesmo post iria para o Instagram."); return}
+  render();
+});
+render();
+</script>
+</body>
+</html>
