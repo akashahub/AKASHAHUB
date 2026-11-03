@@ -40,6 +40,24 @@ h2{font-size:32px;line-height:1}
 .shop{display:grid;grid-template-columns:112px 1fr;gap:12px;padding:12px}
 .shop img{height:112px;border-radius:14px}
 
+/* SaaS demo clarity and resilient layouts */
+.demo-note{display:flex;flex-direction:column;gap:4px;margin-top:12px;padding:11px 13px;border:1px solid rgba(140,98,57,.28);border-radius:14px;background:rgba(140,98,57,.07);font-size:12px;line-height:1.45;color:var(--ash)}
+.demo-note b{font-size:10px;letter-spacing:.1em;color:var(--brass)}
+#head .row{gap:7px}
+#view>*{min-width:0}
+#view .row>.card{min-width:0}
+#view p{overflow-wrap:anywhere}
+.shop>div{min-width:0}
+.shop h2{overflow-wrap:anywhere}
+@media(min-width:640px) and (max-width:899px){
+  #view{grid-auto-flow:row}
+  #view>.card:has(.shop){grid-column:1/-1}
+}
+@media(max-width:639px){
+  .demo-note{font-size:11px}
+  #head>.row{flex-wrap:wrap}
+  #head>.row .chip{flex:1 1 auto}
+}
 /* Responsive system — mobile first, tablet and desktop */
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{min-width:320px;overflow-x:hidden}
@@ -133,7 +151,7 @@ const days=["Ter","Qua","Qui","Sex","Sáb"];
 const times=["09:00","10:00","11:00","14:00","15:00","16:00","17:00","18:00"];
 const barbers=["Heitor","Davi","Caio"];
 const money=(n)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-const S={
+const DEFAULT_STATE={
   role:"cliente", tab:"hoje", plan:null, sheet:null, day:"Ter", time:"15:00", barber:"Heitor", service:"Corte", shot:"",
   bookings:[
     {id:"b1",day:"Ter",time:"10:00",service:"Corte",barber:"Heitor",who:"André",mine:false,missed:false,price:55},
@@ -146,6 +164,26 @@ const S={
     {id:"s2",text:"Cadeira livre no fim da tarde. Quem tem o plano Livre entra sem fila.",image:media.chair,likes:9,liked:false}
   ]
 };
+// Persistência local apenas para demonstração. No SaaS, os dados virão da API autenticada.
+const STORAGE_KEY="akasha-barbearia-demo-v1";
+function loadDemoState(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
+    if(!saved||typeof saved!=="object") return {...DEFAULT_STATE};
+    return {...DEFAULT_STATE,...saved,
+      bookings:Array.isArray(saved.bookings)?saved.bookings:DEFAULT_STATE.bookings,
+      orders:Array.isArray(saved.orders)?saved.orders:[],
+      posts:Array.isArray(saved.posts)?saved.posts:DEFAULT_STATE.posts
+    };
+  }catch(error){return {...DEFAULT_STATE};}
+}
+const S=loadDemoState();
+function persistDemoState(){
+  try{
+    const {sheet,shot,...safeState}=S;
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(safeState));
+  }catch(error){console.warn("Não foi possível salvar a demonstração neste navegador.",error);}
+}
 function covered(){
   const price=(services.find((s)=>s.name===S.service)||{price:0}).price;
   const mine=S.bookings.filter((b)=>b.mine);
@@ -204,10 +242,11 @@ function casa(){
   return card(media.chair,`<p class="brass">Hoje</p><h2>${live.length} na agenda</h2><p class="ash">${holes?"Terça 15h já tem nome.":"Terça 15h ainda está vazia."}</p>`)+`<div class="row"><article class="card" style="flex:1"><div class="pad"><div class="ash">Assinaturas</div><h2>${subs}</h2></div></article><article class="card" style="flex:1"><div class="pad"><div class="ash">No mês</div><h2>${money(mrr)}</h2></div></article></div>`;
 }
 function render(){
+  persistDemoState();
   const list=tabs();
   if(!list.some((t)=>t[0]===S.tab)) S.tab=list[0][0];
   const line=S.role==="cliente"?"Sua semana, sua cadeira, seu plano.":S.role==="cadeira"?"A agenda do Heitor e a ficha de quem senta.":"A mesa da casa. Agenda, assinatura, pedido e o que antes ficava invisível.";
-  document.getElementById("head").innerHTML=`<h1>Navalha</h1><p class="ash">Barbearia</p><div class="row" style="margin-top:14px"><button class="chip ${S.role==="cliente"?"on":""}" data-act="role" data-id="cliente">Cliente</button><button class="chip ${S.role==="cadeira"?"on":""}" data-act="role" data-id="cadeira">Cadeira</button><button class="chip ${S.role==="casa"?"on":""}" data-act="role" data-id="casa">Casa</button></div><p class="ash">${line}</p>`;
+  document.getElementById("head").innerHTML=`<h1>Navalha</h1><p class="ash">Barbearia</p><div class="row" style="margin-top:14px"><button class="chip ${S.role==="cliente"?"on":""}" data-act="role" data-id="cliente">Cliente</button><button class="chip ${S.role==="cadeira"?"on":""}" data-act="role" data-id="cadeira">Cadeira</button><button class="chip ${S.role==="casa"?"on":""}" data-act="role" data-id="casa">Casa</button></div><p class="ash">${line}</p><div class="demo-note" role="status"><b>AMBIENTE DE DEMONSTRAÇÃO</b><span>Os dados ficam salvos somente neste navegador. Cobranças e sincronização entre barbearias ainda não estão ativadas.</span></div>`;
   document.getElementById("desk").innerHTML=`<div><h1>Navalha</h1><p class="ash">Barbearia</p></div>`+list.map((t)=>`<button class="nav ${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
   const nav=document.getElementById("nav");
   nav.style.gridTemplateColumns=`repeat(${list.length},minmax(0,1fr))`;
