@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Akasha · Especialistas</title>
+<meta name="description" content="Akasha Hub. Uma presença digital para especialistas e consultores: perfil, serviços, clientes e agenda, sem números inventados.">
+<link rel="canonical" href="https://akashahub.com.br/especialistas/">
+<meta property="og:title" content="Akasha · Especialistas">
+<meta property="og:description" content="Uma estrutura para apresentar o que você sabe e continuar o atendimento sem misturar um cliente com o outro.">
+<meta property="og:image" content="https://akashahub.com.br/especialistas/media/room.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{--folio:#f3f1eb;--navy:#121a24;--mineral:#5c6560;--bronze:#8d6b3f;--ivory:#fbfaf6}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--folio);color:var(--navy);font-family:"IBM Plex Sans",sans-serif}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;background:transparent;border:0}
+img{display:block;width:100%;object-fit:cover}
+a{color:inherit}
+h1,h2,h3{font-family:"Source Serif 4",Georgia,serif;font-weight:500;letter-spacing:-.02em;margin:0}
+h1{font-size:clamp(40px,7vw,76px);line-height:1.02}
+h2{font-size:clamp(32px,4vw,44px);line-height:1.1}
+.wrap{width:min(1100px,calc(100% - 40px));margin:0 auto}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;padding:24px 0;flex-wrap:wrap}
+.nav{display:flex;flex-wrap:wrap;gap:14px 20px;font-size:14px}
+.hero{display:grid;gap:32px;align-items:end;padding-bottom:48px}
+.hero figure{min-height:280px}
+.mineral{color:var(--mineral);line-height:1.6}
+.bronze{color:var(--bronze)}
+.kicker{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--bronze)}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 18px;background:var(--navy);color:var(--ivory);text-decoration:none}
+.ghost{display:inline-flex;align-items:center;height:48px;padding:0 18px;border:1px solid rgba(18,26,36,.2);text-decoration:none}
+.band{border-top:1px solid rgba(18,26,36,.1);border-bottom:1px solid rgba(18,26,36,.1)}
+.grid{display:grid;gap:28px;padding:64px 0}
+.mod{display:grid;grid-template-columns:3rem 1fr;gap:12px;width:100%;text-align:left;border-top:1px solid rgba(18,26,36,.1);padding:16px 0}
+.mod b{font-family:"Source Serif 4",Georgia,serif;font-size:26px;font-weight:500}
+.split{display:grid;gap:24px}
+label{display:grid;gap:8px;font-size:14px}
+input,textarea,select{border:1px solid rgba(18,26,36,.15);background:transparent;padding:12px;outline:none;width:100%}
+textarea{min-height:110px}
+.desk nav{display:flex;flex-wrap:wrap;gap:8px;padding:16px 0}
+.desk nav button{height:40px;padding:0 12px;font-size:14px;color:var(--mineral)}
+.desk nav button.on{background:var(--navy);color:var(--ivory)}
+.metrics{display:grid;gap:1px;background:rgba(18,26,36,.1);margin-top:24px}
+.metrics div{background:var(--folio);padding:16px}
+.metrics strong{display:block;font-family:"Source Serif 4",Georgia,serif;font-size:48px;font-weight:500;margin-top:8px}
+.empty{border:1px dashed rgba(18,26,36,.25);padding:20px;font-size:14px;color:var(--mineral)}
+.list{list-style:none;margin:0;padding:0}
+.list li{border-bottom:1px solid rgba(18,26,36,.1);padding:14px 0}
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--navy);color:var(--ivory);padding:12px 16px;z-index:5;max-width:min(440px,calc(100% - 32px));text-align:center}
+@media(min-width:900px){
+ .hero{grid-template-columns:1.3fr .8fr;min-height:78vh}
+ .hero figure{min-height:68vh}
+ .grid.two,.split{grid-template-columns:1fr 1fr}
+ .metrics{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+<script>
+const media={room:"media/room.jpg",desk:"media/desk.jpg",library:"media/library.jpg"};
+const KEY="akasha-especialistas-v1";
+const mods=[
+ ["01","Perfil","Biografia, especialidades e a forma como o trabalho é apresentado."],
+ ["02","Serviços","O que se oferece, como se atende e como se pede uma conversa."],
+ ["03","Captação","Um pedido de apresentação entra como oportunidade, sem pop-up."],
+ ["04","Cliente","Cada pessoa vê só o próprio atendimento, com um código."],
+ ["05","Conteúdo","Artigos escritos pelo especialista. Nada é publicado no lugar dele."],
+ ["06","Relação","Clientes, histórico curto e o que ficou combinado."],
+ ["07","Agenda","Horário marcado ou cancelado. O cliente vê o dele."],
+ ["08","Mesa","Os números saem do que foi registrado. Vazio continua vazio."]
+];
+const nav=[["visao","Visão"],["perfil","Perfil"],["servicos","Serviços"],["clientes","Clientes"],["oportunidades","Oportunidades"],["agenda","Agenda"],["conteudos","Conteúdos"]];
+function blank(){return {profile:{name:"",practice:"",bio:"",specialties:""},services:[],clients:[],leads:[],slots:[],pieces:[]}}
+function load(){try{const raw=localStorage.getItem(KEY);if(!raw) return blank();const p=JSON.parse(raw);return {...blank(),...p,profile:{...blank().profile,...(p.profile||{})}}}catch(e){return blank()}}
+function persist(){localStorage.setItem(KEY,JSON.stringify({profile:D.profile,services:D.services,clients:D.clients,leads:D.leads,slots:D.slots,pieces:D.pieces}))}
+function nid(){return Math.random().toString(36).slice(2,10)}
+function code(){const a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<6;i++) s+=a[Math.floor(Math.random()*a.length)];return s}
+const D=load();
+const S={screen:"casa",section:"visao",mod:"",code:"",notice:"",sent:false};
+function flash(t){S.notice=t;draw();clearTimeout(flash.t);flash.t=setTimeout(()=>{S.notice="";draw()},2600)}
+function esc(s){return String(s).replaceAll("&","&").replaceAll("<","<").replaceAll(">",">").replaceAll('"','"')}
+function field(name,label,value=""){return `<label>${label}<input name="${name}" value="${esc(value)}"></label>`}
+function house(){
+ const p=D.profile;
+ const has=p.name.trim().length>0;
+ return `<div class="wrap top"><p class="kicker">Akasha Hub</p><nav class="nav"><a href="#plataforma">Plataforma</a><button data-act="mesa">A mesa</button><button data-act="cliente">Área do cliente</button></nav></div>
+ <section class="wrap hero"><div><h1>Sua experiência merece uma presença digital extraordinária.</h1><p class="mineral">Uma estrutura para apresentar o que você sabe, receber um pedido com nome e continuar o atendimento sem misturar um cliente com o outro.</p><div class="row" style="margin-top:24px"><a class="btn" href="#plataforma">Conheça a plataforma</a><a class="ghost" href="#apresentacao">Solicite uma apresentação</a></div></div><figure><img src="${media.room}" alt="Sala de conversa, vazia, com luz de janela"></figure></section>
+ <section class="band"><div class="wrap grid two"><h2>Sua autoridade começa na forma como você se apresenta.</h2><p class="mineral">A plataforma não inventa trajetória, prêmio ou cliente. O que aparece na presença é o que o especialista escreve. Enquanto o perfil está vazio, a página diz que está vazio.</p></div></section>
+ <section class="wrap grid two" id="plataforma"><div><p class="kicker">Ecossistema</p><h2 style="margin-top:12px">Oito partes. Uma mesa.</h2></div><div>${mods.map((m)=>`<button class="mod" data-act="mod" data-id="${m[0]}"><span class="bronze">${m[0]}</span><span><b>${m[1]}</b>${S.mod===m[0]?`<span class="mineral" style="display:block;margin-top:8px">${m[2]}</span>`:""}</span></button>`).join("")}</div></section>
+ <section class="band"><div class="wrap split" style="padding:64px 0"><img src="${media.library}" alt="Biblioteca de um escritório" style="height:320px"><div><p class="kicker">Presença</p><h2 style="margin-top:12px">${has?p.name:"Ainda sem nome publicado."}</h2><p class="mineral">${has?(p.practice||p.bio):"O perfil, os serviços e os textos entram pela mesa. Não há depoimento, nota ou certificação de exemplo."}</p>${D.services.map((s)=>`<p><b>${s.name}</b><br><span class="mineral">${s.mode}</span></p>`).join("")}</div></div></section>
+ <section class="wrap split" id="apresentacao" style="padding:64px 0"><div><h2>Solicite uma apresentação.</h2><p class="mineral">O pedido fica na mesa, em oportunidades. Não dispara pop-up.</p><img src="${media.desk}" alt="Mesa de trabalho com caderno fechado" style="height:220px;margin-top:24px"></div><div>${S.sent?`<div style="border:1px solid rgba(18,26,36,.1);padding:24px"><h2>Pedido recebido.</h2><p class="mineral">Ele aparece em oportunidades, na mesa do especialista.</p><button class="btn" data-act="mesa" style="margin-top:16px">Abrir a mesa</button></div>`:`<form data-act="lead">${field("nome","Nome")}${field("email","E-mail")}${field("oficio","O que você faz")}<label>Mensagem<textarea name="mensagem"></textarea></label><button class="btn" type="submit">Enviar pedido</button><p><a href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20quero%20uma%20apresenta%C3%A7%C3%A3o%20da%20plataforma%20de%20especialistas.">Ou falar pelo WhatsApp</a></p></form>`}</div></section>`;
+}
+function desk(){
+ const sec=nav.some((n)=>n[0]===S.section)?S.section:"visao";
+ const open=D.slots.filter((s)=>s.status==="marcado");
+ let body="";
+ if(sec==="visao"){
+  const figs=[["Clientes",D.clients.length],["Oportunidades",D.leads.length],["Horários marcados",open.length],["Serviços",D.services.length]];
+  body=`<h2>Visão</h2><p class="mineral">Estes números contam o que está guardado neste navegador. Zero é zero.</p><div class="metrics">${figs.map((f)=>`<div><span class="mineral">${f[0]}</span><strong>${f[1]}</strong></div>`).join("")}</div>${D.clients.length+D.leads.length+open.length===0?'<p class="empty" style="margin-top:24px">Nada em andamento. Um perfil, um serviço ou um pedido de apresentação faz o primeiro registro.</p>':""}`;
+ }
+ if(sec==="perfil") body=`<form data-act="profile"><h2>Perfil</h2>${field("nome","Nome",D.profile.name)}${field("pratica","Em uma linha",D.profile.practice)}${field("especialidades","Especialidades",D.profile.specialties)}<label>Apresentação<textarea name="bio">${esc(D.profile.bio)}</textarea></label><button class="btn" type="submit">Guardar perfil</button></form>`;
+ if(sec==="servicos") body=`<div class="split"><form data-act="service"><h2>Serviços</h2>${field("nome","Nome do serviço")}${field("modo","Como acontece")}<label>Descrição<textarea name="detalhe"></textarea></label><button class="btn" type="submit">Publicar serviço</button></form><div>${D.services.length?`<ul class="list">${D.services.map((s)=>`<li><b>${s.name}</b><div class="bronze">${s.mode}</div><p class="mineral">${s.detail}</p></li>`).join("")}</ul>`:'<p class="empty">Nenhum serviço publicado.</p>'}</div></div>`;
+ if(sec==="clientes") body=`<div class="split"><form data-act="client"><h2>Clientes</h2><p class="mineral">Cada pessoa recebe um código. Sem o código, a área do cliente não abre o atendimento.</p>${field("nome","Nome")}${field("nota","O que ficou combinado")}<button class="btn" type="submit">Registrar cliente</button></form><ul class="list">${D.clients.length?D.clients.map((c)=>`<li><b>${c.name}</b><div class="bronze" style="letter-spacing:.16em">${c.code}</div><p class="mineral">${c.note}</p></li>`).join(""):'<li class="empty">Nenhum cliente.</li>'}</ul></div>`;
+ if(sec==="oportunidades") body=`<h2>Oportunidades</h2>${D.leads.length?`<ul class="list">${D.leads.map((l)=>`<li><b>${l.name}</b><div class="mineral">${l.email}${l.work?" · "+l.work:""}</div><p>${l.message}</p></li>`).join("")}</ul>`:'<p class="empty" style="margin-top:16px">Nenhum pedido de apresentação.</p>'}`;
+ if(sec==="agenda") body=`<div class="split"><form data-act="slot"><h2>Agenda</h2>${D.clients.length?"":'<p class="mineral">Registre um cliente antes de marcar horário.</p>'}<label>Cliente<select name="cliente"><option value="">Escolher</option>${D.clients.map((c)=>`<option value="${c.id}">${c.name}</option>`).join("")}</select></label>${field("quando","Quando")}<button class="btn" type="submit">Marcar</button></form><ul class="list">${D.slots.length?D.slots.map((s)=>{const c=D.clients.find((x)=>x.id===s.clientId);return `<li><b>${s.when}</b><div class="mineral">${c?c.name:"Cliente"} · ${s.status}</div>${s.status==="marcado"?`<button data-act="cancel" data-id="${s.id}">Cancelar</button>`:""}</li>`}).join(""):'<li class="empty">Nenhum horário.</li>'}</ul></div>`;
+ if(sec==="conteudos") body=`<div class="split"><form data-act="piece"><h2>Conteúdos</h2>${field("titulo","Título")}<label>Texto<textarea name="texto"></textarea></label><button class="btn" type="submit">Publicar</button></form><ul class="list">${D.pieces.length?D.pieces.map((p)=>`<li><h3>${p.title}</h3><p class="mineral">${p.body}</p></li>`).join(""):'<li class="empty">Nenhum texto.</li>'}</ul></div>`;
+ return `<div class="wrap desk"><header class="top"><button data-act="casa"><span class="kicker">Akasha</span><span style="display:block;font-family:Source Serif 4,Georgia,serif;font-size:32px">Especialistas</span></button><button data-act="cliente">Área do cliente</button></header><nav>${nav.map((n)=>`<button class="${sec===n[0]?"on":""}" data-act="sec" data-id="${n[0]}">${n[1]}</button>`).join("")}</nav>${body}</div>`;
+}
+function client(){
+ const found=D.clients.find((c)=>c.code===S.code.trim().toUpperCase());
+ const mine=found?D.slots.filter((s)=>s.clientId===found.id):[];
+ return `<div class="wrap" style="padding:32px 0 80px"><header class="top"><button data-act="casa"><span class="kicker">Akasha</span><span style="display:block;font-family:Source Serif 4,Georgia,serif;font-size:32px">Cliente</span></button><button data-act="mesa">Mesa</button></header><label>Código de acesso<input id="code" value="${S.code}" style="letter-spacing:.16em"></label><p class="mineral">O código nasce quando o especialista registra o cliente. Um código não abre o atendimento de outra pessoa. Nesta prévia, o registro fica neste navegador.</p>${!S.code.trim()?'<p class="empty" style="margin-top:24px">Nenhum atendimento aberto.</p>':""}${S.code.trim()&&!found?'<p class="empty" style="margin-top:24px">Código sem atendimento.</p>':""}${found?`<h2 style="margin-top:32px">${found.name}</h2><p class="mineral">${found.note||"Sem nota compartilhada."}</p><h3 style="margin-top:28px">Horários</h3>${mine.length?`<ul class="list">${mine.map((s)=>`<li>${s.when} · ${s.status}</li>`).join("")}</ul>`:'<p class="mineral">Nenhum horário no seu nome.</p>'}`:""}</div>`;
+}
+function draw(){document.getElementById("app").innerHTML=S.screen==="casa"?house():S.screen==="mesa"?desk():client();document.getElementById("toast").innerHTML=S.notice?`<div class="toast">${S.notice}</div>`:""}
+document.body.addEventListener("click",(e)=>{
+ const el=e.target.closest("[data-act]");
+ if(!el) return;
+ if(el.closest("form") && el.type==="submit") return;
+ const act=el.dataset.act, id=el.dataset.id;
+ if(act==="mesa") S.screen="mesa";
+ else if(act==="casa") S.screen="casa";
+ else if(act==="cliente") S.screen="cliente";
+ else if(act==="mod") S.mod=S.mod===id?"":id;
+ else if(act==="sec") S.section=id;
+ else if(act==="cancel"){const slot=D.slots.find((s)=>s.id===id); if(slot) slot.status="cancelado"; persist(); flash("Horário cancelado."); return}
+ draw();
+});
+document.body.addEventListener("input",(e)=>{
+ if(e.target.id==="code"){S.code=e.target.value.toUpperCase();draw();const input=document.getElementById("code"); if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length)}}
+});
+document.body.addEventListener("submit",(e)=>{
+ const form=e.target;
+ e.preventDefault();
+ const act=form.dataset.act;
+ const v=(n)=>String(new FormData(form).get(n)||"").trim();
+ if(act==="lead"){
+  if(v("nome").length<2||!v("email").includes("@")||v("mensagem").length<8){flash("Nome, e-mail válido e uma mensagem com pelo menos uma frase.");return}
+  D.leads.unshift({id:nid(),name:v("nome"),email:v("email"),work:v("oficio"),message:v("mensagem")}); persist(); S.sent=true; draw(); return;
+ }
+ if(act==="profile"){
+  if(v("nome").length<2){flash("O perfil precisa de um nome.");return}
+  D.profile={name:v("nome"),practice:v("pratica"),bio:v("bio"),specialties:v("especialidades")}; persist(); flash("Perfil guardado neste navegador."); return;
+ }
+ if(act==="service"){
+  if(v("nome").length<2||v("detalhe").length<8){flash("Serviço com nome e uma descrição.");return}
+  D.services.unshift({id:nid(),name:v("nome"),detail:v("detalhe"),mode:v("modo")}); persist(); flash("Serviço publicado na presença."); return;
+ }
+ if(act==="client"){
+  if(v("nome").length<2){flash("O cliente precisa de um nome.");return}
+  const c=code(); D.clients.unshift({id:nid(),name:v("nome"),note:v("nota"),code:c}); persist(); flash("Cliente registrado. Código "+c+"."); return;
+ }
+ if(act==="slot"){
+  if(v("quando").length<3||!v("cliente")){flash("Escolha o cliente e escreva o horário.");return}
+  D.slots.unshift({id:nid(),when:v("quando"),clientId:v("cliente"),status:"marcado"}); persist(); flash("Horário marcado."); return;
+ }
+ if(act==="piece"){
+  if(v("titulo").length<3||v("texto").length<20){flash("Título e um texto de verdade.");return}
+  D.pieces.unshift({id:nid(),title:v("titulo"),body:v("texto")}); persist(); flash("Texto publicado."); return;
+ }
+});
+draw();
+</script>
+</body>
+</html>
