@@ -42,7 +42,9 @@ img { display:block; max-width:100%; }
 .side button.on { background:var(--fg); color:var(--bg); }
 .pill { height:36px; border-radius:999px; padding:0 12px; background:var(--raised); color:var(--muted); font-weight:700; font-size:14px; }
 .pill.on { background:var(--cyan); color:#1a0610; }
-.toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:var(--fg); color:var(--bg); border-radius:999px; padding:12px 16px; font-weight:700; z-index:5; }
+.toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:var(--fg); color:var(--bg); border-radius:999px; padding:12px 16px; font-weight:700; z-index:40; }
+.sheet{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.72);display:grid;align-items:end;justify-content:center;padding:12px}
+@media(min-width:700px){.sheet{align-items:center}}
 </style>
 </head>
 <body>
@@ -52,7 +54,7 @@ img { display:block; max-width:100%; }
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => "&#" + c.charCodeAt(0) + ";");
 const pts = (n) => n.toLocaleString("pt-BR");
 let S = {
-  world: "prep", prepMode: "fala", beat: 0, reel: 0, line: 0, prepPlay: true, tab: "home", mgr: "painel", story: 0, mode: "historia", open: "supabase", pin: "cabine", paper: false, toast: "",
+  world: "member", gestor: "", login: false, loginErr: "", prepMode: "fala", beat: 0, reel: 0, line: 0, prepPlay: true, tab: "home", mgr: "painel", story: 0, mode: "historia", open: "supabase", pin: "cabine", paper: false, toast: "",
   points: 6200, cashback: 115, approved: 18, rejected: 4, redeemed: false, guards: [],
   checks: [
     { id:"portao", name:"Portão Norte", done:true },
@@ -116,7 +118,7 @@ function gate() {
     ["member","media/selfie.jpg","Quem está na pista","Membro","Mapa, pontos, salas e prêmios. A mesa da casa não aparece aqui."],
     ["manager","media/aerial.jpg","Quem manda na casa","Gestão","Painel interno, acessos, fila e números. Só a equipe entra."]
   ];
-  return `<div class="wrap"><div class="between"><div class="mark">FEST<i>I</i></div><button class="chip" data-act="world" data-id="pitch">Pitch</button></div>
+  return `<div class="wrap"><div class="between"><div class="mark">FEST<i>I</i></div><div class="row"><button class="chip" data-act="world" data-id="pitch">Pitch</button><button class="chip" data-act="logout">Sair</button></div></div>
     <p class="mag" style="font-size:12px;font-weight:800;letter-spacing:.08em;margin-top:24px">O APP, DEPOIS DO PITCH</p>
     <h1 class="h" style="font-size:44px;max-width:16ch;margin-top:12px">Três portas. Cada pessoa entra na sua.</h1>
     <p class="muted" style="max-width:42ch;line-height:1.5">O membro vive a noite. A gestão controla quem entra. A apresentação explica as duas, sem misturar.</p>
@@ -285,7 +287,7 @@ function member() {
   else if (S.tab === "rewards") body = `<div class="card pad"><div class="muted">Pontos</div><div class="h mag" style="font-size:32px">${pts(S.points)}</div><p class="muted">Cashback ${S.cashback.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</p><button class="btn" data-act="redeem">Resgatar dose da casa · 800</button></div>`;
   else body = `<div class="card pad"><h2 class="h" style="font-size:28px">Marina Costa</h2><p class="muted">@marina.noite · membro</p><p>Esta porta não mostra a mesa da gestão.</p></div>`;
   const tabs = [["home","Início"],["rooms","Salas"],["rewards","Prêmios"],["profile","Perfil"]];
-  return `<div class="phone"><header class="between" style="padding:16px"><button class="chip" data-act="world" data-id="gate">Portas</button><div class="mark">FEST<i>I</i></div><span></span></header>
+  return `<div class="phone"><header class="between" style="padding:16px">${S.gestor?'<button class="chip" data-act="world" data-id="gate">Portas</button>':'<button class="chip" data-act="login">Gestão</button>'}<div class="mark">FEST<i>I</i></div><span></span></header>
     ${marina.blocked?`<p class="mag" style="margin:0 16px 8px">A gestão pausou o seu acesso.</p>`:""}
     <div style="padding:0 16px 16px;flex:1">${body}</div>
     <nav class="nav5">${tabs.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("")}<button data-act="tab" data-id="home">Mapa</button></nav></div>`;
@@ -326,8 +328,13 @@ function manager() {
     <div style="padding:8px 16px 24px">${body}</div></section></div>`;
 }
 
+function sheet() {
+  if (!S.login) return "";
+  return `<div class="sheet" data-act="closelogin"><div class="card pad" data-act="stay" style="max-width:420px"><p class="mag" style="font-size:12px;font-weight:800">GESTÃO</p><h2 class="h" style="font-size:32px;margin-top:8px">Entre com o Gmail da casa.</h2><p class="muted">Pitch, apresentação, ideias e a parte técnica ficam nesta porta. Quem não entra continua na noite, como membro.</p><button class="btn" data-act="google" style="width:100%;margin-top:16px;background:#fff;color:#111">Continuar com Google</button>${S.loginErr?`<p class="mag">${esc(S.loginErr)}</p>`:""}<button class="chip" data-act="closelogin" style="width:100%;margin-top:8px">Continuar como membro</button></div></div>`;
+}
 function render() {
-  const html = S.world==="prep"?prep():S.world==="pitch"?pitch():S.world==="gate"?gate():S.world==="story"?story():S.world==="manager"?manager():member();
+  if (!S.gestor && S.world !== "member") S.world = "member";
+  const html = (S.world==="prep"?prep():S.world==="pitch"?pitch():S.world==="gate"?gate():S.world==="story"?story():S.world==="manager"?manager():member()) + sheet();
   document.getElementById("app").innerHTML = html;
   document.getElementById("toast").innerHTML = S.toast?`<div class="toast">${esc(S.toast)}</div>`:"";
 }
@@ -335,7 +342,28 @@ document.getElementById("app").addEventListener("click", (e) => {
   const el = e.target.closest("[data-act]");
   if (!el || el.disabled) return;
   const act = el.dataset.act, id = el.dataset.id;
-  if (act==="world") S.world = id;
+  if (act==="world") {
+    if (id !== "member" && !S.gestor) { S.login = true; flash("Pitch, apresentação e a parte técnica abrem com o Gmail da gestão."); return; }
+    S.world = id;
+  }
+  else if (act==="login") S.login = true;
+  else if (act==="closelogin") S.login = false;
+  else if (act==="stay") return;
+  else if (act==="google") {
+    if (!window.FestiAuth) { S.loginErr = "O Google ainda está carregando."; render(); return; }
+    window.FestiAuth.google().then((email) => { S.gestor = email; S.login = false; S.loginErr = ""; S.world = "gate"; render(); }).catch((err) => {
+      const code = err && err.code;
+      if (code === "auth/popup-closed-by-user") return;
+      S.loginErr = err && err.message === "denied" ? "Esse Gmail não libera a gestão." : "O Google não abriu agora. Tente de novo.";
+      render();
+    });
+    return;
+  }
+  else if (act==="logout") {
+    S.gestor = ""; S.world = "member"; S.login = false;
+    if (window.FestiAuth) window.FestiAuth.out();
+    return;
+  }
   else if (act==="mode") S.mode = id;
   else if (act==="pin") S.pin = id;
   else if (act==="paper") S.paper = id === "open";
@@ -400,6 +428,13 @@ document.getElementById("app").addEventListener("click", (e) => {
   }
   render();
 });
+window.festiOnAuth = (email) => {
+  const had = S.gestor;
+  S.gestor = email || "";
+  if (email && !had) { S.login = false; S.loginErr = ""; S.world = "gate"; }
+  if (!email && S.world !== "member") S.world = "member";
+  render();
+};
 render();
 setInterval(() => {
   if (S.world !== "prep" || S.prepMode !== "reels" || !S.prepPlay) return;
@@ -409,5 +444,35 @@ setInterval(() => {
   render();
 }, 2800);
 </script>
+
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const GESTORS = new Set(["yanfili.simon@gmail.com","ynfli.simon@gmail.com","srklehn@gmail.com","sendatantrica@gmail.com","sendatantoque@gmail.com"]);
+const name = "festi";
+const app = getApps().some((item) => item.name === name) ? getApp(name) : initializeApp({
+  apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+  authDomain: "hub-akasha.firebaseapp.com",
+  projectId: "hub-akasha",
+  appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
+}, name);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: "select_account" });
+window.FestiAuth = {
+  google: async () => {
+    const cred = await signInWithPopup(auth, provider);
+    const email = String(cred.user.email || "").trim().toLowerCase();
+    if (!GESTORS.has(email)) throw new Error("denied");
+    return email;
+  },
+  out: () => signOut(auth)
+};
+onAuthStateChanged(auth, (user) => {
+  const email = String(user && user.email || "").trim().toLowerCase();
+  if (window.festiOnAuth) window.festiOnAuth(GESTORS.has(email) ? email : "");
+});
+</script>
+
 </body>
 </html>
