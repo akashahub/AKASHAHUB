@@ -7,34 +7,47 @@
 <meta name="description" content="Duas empresas, propostas e aceite. Uma não vê a outra.">
 <link rel="canonical" href="https://akashahub.com.br/empresa/mesa/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#07060c">
 <style>
-:root{--bg:#04030a;--gold:#c9a961;--violet:#4a2d6b;--ink:#f6f1e6;--mist:#b7ab9a;--line:rgba(201,169,97,.35)}
+:root{--bg:#07060c;--raise:#121018;--ink:#f6f1e6;--muted:#c4b8a8;--gold:#c9a961;--violet:#5c3d86;--line:rgba(246,241,230,.12)}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.45 "Cormorant Garamond",Georgia,serif}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Manrope,system-ui,sans-serif}
 button,input,select{font:inherit;color:inherit;background:transparent;border:0}
 button{cursor:pointer}
-img{width:100%;height:100%;object-fit:cover;display:block}
-h1,h2{font-weight:500;margin:0;line-height:1}
-a{color:var(--gold)}
-header{display:flex;justify-content:space-between;gap:8px;align-items:flex-end;padding:14px 16px;position:sticky;top:0;background:rgba(4,3,10,.94);z-index:3}
-.mark{font-family:Cinzel,serif;letter-spacing:.16em;color:var(--gold)}
-.nav{display:flex;gap:6px;flex-wrap:wrap}
-.nav button,.btn{min-height:44px;padding:0 12px;border:1px solid var(--line)}
-.nav button.on,.btn{background:var(--violet)}
-.btn.gold{background:transparent;color:var(--gold)}
-main{padding:8px 16px 110px;max-width:800px}
-.aviso{color:var(--gold);padding:0 16px}
-.linha{border-top:1px solid var(--line);padding:12px 0}
-input,select{width:100%;border-bottom:1px solid var(--line);padding:8px 0}
-.dock{position:fixed;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;background:#0a0812;border-top:1px solid var(--line)}
-.dock button{flex:1 1 30%;min-height:48px}
-.mist{color:var(--mist)}
+img{width:100%;height:180px;object-fit:cover;display:block;border-radius:18px;margin:8px 0 14px}
+h1,h2{font-weight:500;letter-spacing:-.04em;line-height:1.05;margin:0}
+h1{font-size:clamp(32px,5vw,44px)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+header{position:sticky;top:0;z-index:4;background:rgba(7,6,12,.92);padding:14px 18px 8px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.mark{font-family:Cinzel,serif;letter-spacing:.18em;font-size:12px;color:var(--gold)}
+#marca{font-size:22px;letter-spacing:-.04em}
+.nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:12px}
+.roles,.casas{display:flex;gap:6px;flex-wrap:wrap}
+.nav button,.btn,.dock button{min-height:40px;padding:0 12px;border-radius:999px;border:1px solid var(--line)}
+.nav button.on,.dock button.on,.btn:not(.gold){background:var(--violet);border-color:var(--violet)}
+.nav button.casa.on{background:transparent;color:var(--gold);border-color:var(--gold)}
+.btn.gold{background:transparent;color:var(--ink)}
+main{padding:8px 18px 108px;max-width:760px}
+.aviso{color:var(--gold);padding:0 18px;min-height:1.3em}
+.aviso.quiet{color:var(--muted)}
+button.linha{display:block;width:100%;text-align:left;background:var(--raise);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-top:10px}
+p.linha{border-top:1px solid var(--line);padding-top:10px}
+input,select{width:100%;border-bottom:1px solid var(--line);padding:10px 0;border-radius:0}
+.dock{position:fixed;left:12px;right:12px;bottom:12px;display:flex;gap:6px;padding:6px;background:#121018;border:1px solid var(--line);border-radius:999px;z-index:5}
+.dock button{flex:1}
+.mist{color:var(--muted)}
+label{display:block;margin-top:12px}
 </style>
 </head>
 <body>
 <header>
- <div><div class="mark" id="marca">MESA</div><a href="../">voltar à oferta</a></div>
+ <div class="top">
+  <div><div class="mark">AKASHA</div><div id="marca">Mesa</div></div>
+  <a class="btn gold" href="../">Voltar</a>
+ </div>
  <div class="nav" id="papel"></div>
 </header>
 <p class="aviso" id="aviso"></p>
@@ -95,13 +108,17 @@ function painel(){
 function draw(){
  const c=atual();
  document.documentElement.style.setProperty("--gold", c.cor||"#c9a961");
- document.getElementById("marca").textContent="MESA";
- document.getElementById("papel").innerHTML=["gestor","colaborador","cliente","admin"].map((p)=>`<button class="${state.papel===p?"on":""}" data-papel="${p}">${p}</button>`).join("")+" "+["norte","sul"].map((id)=>`<button class="${state.casa===id?"on":""}" data-casa="${id}">${id}</button>`).join("");
+ document.getElementById("marca").textContent=c.nome;
+ const roles=["gestor","colaborador","cliente","admin"].map((p)=>`<button class="${state.papel===p?"on":""}" data-papel="${p}">${p}</button>`).join("");
+ const casas=["norte","sul"].map((id)=>`<button class="casa ${state.casa===id?"on":""}" data-casa="${id}">${id}</button>`).join("");
+ document.getElementById("papel").innerHTML=`<div class="roles">${roles}</div><div class="casas">${casas}</div>`;
  const telas=state.papel==="cliente"?[["portal","Portal"],["uma","Proposta"]]:[["mesa","Mesa"],["uma","Proposta"],["painel","Casa"]];
  if(!telas.some((t)=>t[0]===state.tela)) state.tela=telas[0][0];
  document.getElementById("dock").innerHTML=telas.map((t)=>`<button class="${state.tela===t[0]?"on":""}" data-tela="${t[0]}">${t[1]}</button>`).join("");
  document.getElementById("app").innerHTML={mesa,uma,portal,painel}[state.tela]();
- document.getElementById("aviso").textContent=state.aviso||"Duas casas de exemplo. Cada uma só lê a própria mesa. Nada aqui cobra de verdade.";
+ const aviso=document.getElementById("aviso");
+ aviso.textContent=state.aviso||"Duas casas de exemplo. Cada uma só lê a própria mesa. Nada aqui cobra de verdade.";
+ aviso.className=state.aviso?"aviso":"aviso quiet";
 }
 document.body.addEventListener("click",(e)=>{
  const papel=e.target.closest("[data-papel]");
