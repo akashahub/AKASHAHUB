@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>404 · AKASHA Hub</title>
+<meta name="description" content="Esta página não está aqui. Enquanto isso, uma peça.">
+<meta name="theme-color" content="#F7F4EE">
+<link rel="icon" href="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A227;--void:#F7F4EE;--ink:#0B0A0D;--muted:#514D59;--plum:#3E1F6E;--line:rgba(20,10,45,.12)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--void);color:var(--ink);font:16px/1.45 Manrope,system-ui,sans-serif}
+a{color:var(--plum)}
+body{min-height:100dvh}
+.page{width:min(980px,calc(100% - 32px));margin:0 auto;padding:22px 0 28px}
+.mark{font-family:"IBM Plex Mono",monospace;letter-spacing:.16em;font-size:12px}
+h1{font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:clamp(64px,12vw,108px);line-height:.85;margin:8px 0}
+.grid{display:grid;gap:22px}
+.board-wrap{display:flex;gap:14px;align-items:flex-start}
+canvas{background:#fff;border:1px solid var(--line);display:block;touch-action:none}
+.side{min-width:92px}
+.side b{font-family:"IBM Plex Mono",monospace;font-weight:500}
+.muted{color:var(--muted)}
+.home{display:inline-flex;min-height:48px;align-items:center;padding:0 16px;background:var(--plum);color:#fff;text-decoration:none}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.controls button{min-height:48px;min-width:48px;padding:0 12px;border:1px solid var(--line);background:#fff;font:inherit;cursor:pointer}
+.controls button.gold{background:var(--ink);color:#fff;border-color:var(--ink)}
+@media(min-width:800px){.grid{grid-template-columns:1fr auto;align-items:end}}
+</style>
+</head>
+<body>
+<main class="page">
+ <p class="mark">AKASHA HUB</p>
+ <div class="grid">
+  <div>
+   <h1>404</h1>
+   <p>Esta página não está aqui.</p>
+   <p class="muted">Enquanto isso, uma peça. Setas giram e andam. Espaço solta.</p>
+   <p><a class="home" href="/">Voltar para a casa</a></p>
+  </div>
+  <div>
+   <div class="board-wrap">
+    <canvas id="well" width="240" height="480" aria-label="Tetris"></canvas>
+    <div class="side">
+     <p class="muted">depois</p>
+     <canvas id="next" width="96" height="96" aria-hidden="true"></canvas>
+     <p><b id="pontos">0</b><span class="muted"> pontos</span></p>
+     <p><b id="linhas">0</b><span class="muted"> linhas</span></p>
+     <p id="estado" class="muted"></p>
+    </div>
+   </div>
+   <div class="controls">
+    <button type="button" data-k="left" aria-label="Esquerda">←</button>
+    <button type="button" data-k="right" aria-label="Direita">→</button>
+    <button type="button" data-k="rot" aria-label="Girar">girar</button>
+    <button type="button" data-k="down" aria-label="Descer">↓</button>
+    <button type="button" class="gold" data-k="drop" aria-label="Soltar">soltar</button>
+    <button type="button" data-k="pause" aria-label="Pausar">pausar</button>
+   </div>
+  </div>
+ </div>
+</main>
+<script>
+const COLS=10, ROWS=20, CELL=24;
+const well=document.getElementById("well");
+const nextC=document.getElementById("next");
+const wctx=well.getContext("2d");
+const nctx=nextC.getContext("2d");
+const KIT={
+ I:{c:"#C9A227",b:[[[0,1],[1,1],[2,1],[3,1]],[[2,0],[2,1],[2,2],[2,3]],[[0,2],[1,2],[2,2],[3,2]],[[1,0],[1,1],[1,2],[1,3]]]},
+ O:{c:"#3E1F6E",b:[[[0,0],[1,0],[0,1],[1,1]],[[0,0],[1,0],[0,1],[1,1]],[[0,0],[1,0],[0,1],[1,1]],[[0,0],[1,0],[0,1],[1,1]]]},
+ T:{c:"#0B0A0D",b:[[[1,0],[0,1],[1,1],[2,1]],[[1,0],[1,1],[2,1],[1,2]],[[0,1],[1,1],[2,1],[1,2]],[[1,0],[0,1],[1,1],[1,2]]]},
+ S:{c:"#8a5a32",b:[[[1,0],[2,0],[0,1],[1,1]],[[1,0],[1,1],[2,1],[2,2]],[[1,1],[2,1],[0,2],[1,2]],[[0,0],[0,1],[1,1],[1,2]]]},
+ Z:{c:"#7a4bb5",b:[[[0,0],[1,0],[1,1],[2,1]],[[2,0],[1,1],[2,1],[1,2]],[[0,1],[1,1],[1,2],[2,2]],[[1,0],[0,1],[1,1],[0,2]]]},
+ J:{c:"#3d7eb8",b:[[[0,0],[0,1],[1,1],[2,1]],[[1,0],[2,0],[1,1],[1,2]],[[0,1],[1,1],[2,1],[2,2]],[[1,0],[1,1],[0,2],[1,2]]]},
+ L:{c:"#514D59",b:[[[2,0],[0,1],[1,1],[2,1]],[[1,0],[1,1],[1,2],[2,2]],[[0,1],[1,1],[2,1],[0,2]],[[0,0],[1,0],[1,1],[1,2]]]}
+};
+const NAMES=Object.keys(KIT);
+let board, bag, piece, score, lines, over, paused, dropMs, last, acc;
+function empty(){return Array.from({length:ROWS},()=>Array(COLS).fill(null))}
+function shuffle(){const a=NAMES.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]} return a}
+function take(){if(bag.length<1) bag=shuffle(); return bag.pop()}
+function cells(p,rot){return KIT[p.n].b[(rot??p.r)%4].map(([x,y])=>[x+p.x,y+p.y])}
+function hits(p,rot){return cells(p,rot).some(([x,y])=>x<0||x>=COLS||y>=ROWS||(y>=0&&board[y][x]))}
+function spawn(n){
+ const p={n,r:0,x:3,y:0};
+ if(n==="I") p.y=-1;
+ if(hits(p)){over=true; piece=null; document.getElementById("estado").textContent="A pilha fechou."}
+ else piece=p;
+}
+function lock(){
+ cells(piece).forEach(([x,y])=>{if(y>=0) board[y][x]=KIT[piece.n].c});
+ let cleared=0;
+ board=board.filter((row)=>{const full=row.every(Boolean); if(full) cleared++; return !full});
+ while(board.length<ROWS) board.unshift(Array(COLS).fill(null));
+ if(cleared){lines+=cleared; score+=[0,100,300,500,800][cleared]; document.getElementById("linhas").textContent=lines; document.getElementById("pontos").textContent=score}
+ spawn(take());
+}
+function move(dx,dy){const n={...piece,x:piece.x+dx,y:piece.y+dy}; if(hits(n)) return false; piece=n; return true}
+function rotate(){
+ const r=(piece.r+1)%4;
+ const kicks=[[0,0],[-1,0],[1,0],[-2,0],[2,0],[0,-1]];
+ for(const [dx,dy] of kicks){const n={...piece,r,x:piece.x+dx,y:piece.y+dy}; if(!hits(n,r)){piece=n; return}}
+}
+function hard(){if(!piece) return; while(move(0,1)); lock(); draw()}
+function ghostY(){let y=piece.y; while(!hits({...piece,y:y+1})) y++; return y}
+function square(ctx,x,y,c,size){ctx.fillStyle=c; ctx.fillRect(x*size+1,y*size+1,size-2,size-2)}
+function draw(){
+ wctx.clearRect(0,0,well.width,well.height);
+ wctx.strokeStyle="rgba(20,10,45,.08)";
+ for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){wctx.strokeRect(x*CELL,y*CELL,CELL,CELL); if(board[y][x]) square(wctx,x,y,board[y][x],CELL)}
+ if(piece){
+  const gy=ghostY();
+  wctx.strokeStyle="#C9A227";
+  cells({...piece,y:gy}).forEach(([x,y])=>{if(y>=0) wctx.strokeRect(x*CELL+3,y*CELL+3,CELL-6,CELL-6)});
+  cells(piece).forEach(([x,y])=>{if(y>=0) square(wctx,x,y,KIT[piece.n].c,CELL)});
+ }
+ nctx.clearRect(0,0,96,96);
+ if(bag.length<1) bag=shuffle();
+ const n=bag[bag.length-1];
+ if(n) KIT[n].b[0].forEach(([x,y])=>square(nctx,x+0.2,y+0.6,KIT[n].c,22));
+}
+function step(t){
+ if(!last) last=t;
+ const dt=t-last; last=t;
+ if(!over&&!paused&&piece){acc+=dt; const every=Math.max(180,dropMs); if(acc>every){acc=0; if(!move(0,1)) lock()}}
+ draw();
+ requestAnimationFrame(step);
+}
+function reset(){
+ board=empty(); bag=shuffle(); score=0; lines=0; over=false; paused=false; dropMs=720; acc=0; last=0;
+ document.getElementById("pontos").textContent="0";
+ document.getElementById("linhas").textContent="0";
+ document.getElementById("estado").textContent="";
+ spawn(take());
+}
+function act(k){
+ if(k==="pause"){paused=!paused; document.getElementById("estado").textContent=paused?"Pausado.":""; return}
+ if(k==="restart"||over){reset(); return}
+ if(!piece||paused) return;
+ if(k==="left") move(-1,0);
+ if(k==="right") move(1,0);
+ if(k==="down"){if(!move(0,1)) lock()}
+ if(k==="rot") rotate();
+ if(k==="drop") hard();
+ draw();
+}
+document.addEventListener("keydown",(e)=>{
+ const map={ArrowLeft:"left",ArrowRight:"right",ArrowDown:"down",ArrowUp:"rot",Space:"drop",KeyP:"pause"};
+ if(!map[e.code]) return;
+ e.preventDefault();
+ act(map[e.code]);
+});
+document.querySelector(".controls").addEventListener("click",(e)=>{
+ const b=e.target.closest("[data-k]");
+ if(b) act(b.dataset.k);
+});
+reset();
+requestAnimationFrame(step);
+</script>
+</body>
+</html>
