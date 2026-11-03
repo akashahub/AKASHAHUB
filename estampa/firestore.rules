@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function entrou() { return request.auth != null; }
+    function eu() { return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data; }
+
+    match /pedidos/{id} {
+      allow read: if entrou() && (resource.data.uid == request.auth.uid || eu().papel == "casa");
+      allow create: if entrou() && request.resource.data.uid == request.auth.uid;
+      allow update: if entrou() && eu().papel == "casa";
+    }
+
+    match /designs/{id} {
+      allow read, write: if entrou() && resource.data.uid == request.auth.uid;
+      allow create: if entrou() && request.resource.data.uid == request.auth.uid;
+    }
+  }
+}

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Estampa · roupa com a sua marca</title>
+<meta name="description" content="Camiseta, moletom, boné, bolsa e caneca. Você coloca o texto ou a arte, vê o preço e pede. Exemplo, sem cobrança real.">
+<link rel="canonical" href="https://akashahub.com.br/estampa/">
+<meta property="og:title" content="Estampa · roupa com a sua marca">
+<meta property="og:image" content="https://akashahub.com.br/estampa/media/campanha.jpg">
+<meta name="theme-color" content="#f6f3ee">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":"Estampa","url":"https://akashahub.com.br/estampa/"}</script>
+<style>
+:root{--paper:#f6f3ee;--ink:#161410;--muted:#5e584f;--line:rgba(22,20,16,.14);--gold:#9a7430}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 Manrope,system-ui,sans-serif}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:transparent;border:0}
+img{display:block;width:100%;height:100%;object-fit:cover}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;position:sticky;top:0;background:rgba(246,243,238,.92);z-index:3}
+.mark{font-family:"Playfair Display",Georgia,serif;font-size:28px}
+nav{display:flex;gap:8px}
+nav button, .btn{min-height:44px;padding:0 14px}
+.btn{background:var(--ink);color:var(--paper)}
+.btn:disabled{opacity:.4}
+.hero{position:relative;min-height:72vh}
+.hero img{position:absolute;inset:0}
+.hero div{position:relative;z-index:1;min-height:72vh;display:flex;flex-direction:column;justify-content:flex-end;padding:28px 18px;background:linear-gradient(transparent,rgba(246,243,238,.92))}
+h1{font-family:"Playfair Display",Georgia,serif;font-weight:500;font-size:clamp(42px,8vw,78px);line-height:.95;margin:0}
+h2{font-weight:500;letter-spacing:-.03em;margin:0;font-size:clamp(26px,4vw,36px)}
+.grade{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px}
+.card{text-align:left}
+.card img{height:240px}
+.ficha{padding:8px 18px 40px}
+.cores{display:flex;gap:8px}
+.cores button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line)}
+.editor{display:grid;gap:16px}
+canvas{width:100%;max-width:360px;background:#fff;border:1px solid var(--line)}
+.muted{color:var(--muted)}
+input,select{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;padding:10px 0}
+.fila article{border-top:1px solid var(--line);padding:12px 0}
+.check{display:flex;gap:8px;align-items:flex-start}
+.check input{width:auto}
+@media(min-width:900px){
+ .grade{grid-template-columns:repeat(3,1fr);padding:28px}
+ .card img{height:420px}
+ .editor{grid-template-columns:360px 1fr;align-items:start}
+ .ficha{padding:28px}
+}
+</style>
+</head>
+<body>
+<header>
+ <button class="mark" data-ir="vitrine">Estampa</button>
+ <nav>
+  <button data-ir="sacola">Sacola <span id="qtd">0</span></button>
+  <button data-ir="fila">Casa</button>
+ </nav>
+</header>
+<main id="app"></main>
+<script>
+const pecas=[
+ {id:"reta",nome:"Camiseta reta",cat:"camiseta",preco:89,cores:["#f4f1ea","#1c1a17","#c2b8a4"],foto:"media/camiseta.jpg",prazo:"5 dias úteis de exemplo"},
+ {id:"larga",nome:"Camiseta larga",cat:"camiseta",preco:99,cores:["#f4f1ea","#1c1a17"],foto:"media/camiseta.jpg",prazo:"5 dias úteis de exemplo"},
+ {id:"moletom",nome:"Moletom",cat:"moletom",preco:189,cores:["#c2b8a4","#1c1a17"],foto:"media/moletom.jpg",prazo:"7 dias úteis de exemplo"},
+ {id:"bone",nome:"Boné",cat:"bone",preco:69,cores:["#1c1a17","#f4f1ea"],foto:"media/acessorios.jpg",prazo:"5 dias úteis de exemplo"},
+ {id:"bolsa",nome:"Ecobag",cat:"bolsa",preco:79,cores:["#f4f1ea","#c2b8a4"],foto:"media/acessorios.jpg",prazo:"5 dias úteis de exemplo"},
+ {id:"caneca",nome:"Caneca",cat:"caneca",preco:49,cores:["#f4f1ea","#c2b8a4"],foto:"media/caneca.jpg",prazo:"4 dias úteis de exemplo"}
+];
+const KEY="estampa-v1";
+let salvo={tela:"vitrine",busca:"",cat:"",id:"reta",sacola:[],pedidos:[]};
+try{salvo=Object.assign(salvo,JSON.parse(localStorage.getItem(KEY))||{})}catch{}
+let design={cor:"#f4f1ea",texto:"",fonte:22,tinta:"#1c1a17",tecnica:"dtf",img:null,imgOk:false,dx:0,dy:0,direitos:false,arte:""};
+function esc(s){return String(s??"").replace(/[&<>"]/g,(ch)=>({"&":"\u0026amp;","<":"\u0026lt;",">":"\u0026gt;","\"":"\u0026quot;"})[ch])}
+const br=n=>"R$ "+n;
+const peca=()=>pecas.find(p=>p.id===salvo.id)||pecas[0];
+function preco(p=peca()){
+ let n=p.preco;
+ if(design.tecnica==="bordado") n+=25;
+ if(design.tecnica==="silk") n+=15;
+ if(design.texto.trim()&&design.imgOk) n+=20;
+ return n;
+}
+function save(){const copia={...salvo}; localStorage.setItem(KEY,JSON.stringify(copia))}
+function conta(){document.getElementById("qtd").textContent=salvo.sacola.reduce((s,i)=>s+i.qtd,0)}
+function vitrine(){
+ const lista=pecas.filter(p=>(!salvo.cat||p.cat===salvo.cat)&&p.nome.toLowerCase().includes(salvo.busca.toLowerCase()));
+ return `<section class="hero"><img src="media/campanha.jpg" alt="Camisetas dobradas, sem estampa"><div><h1>A peça com a sua marca.</h1><p>Texto ou imagem na área de impressão. O preço muda na hora. Nada aqui cobra de verdade.</p><button class="btn" data-ir="peca" data-id="reta">Começar pela camiseta</button></div></section>
+ <div style="padding:18px"><input id="busca" placeholder="Buscar" value="${esc(salvo.busca)}" aria-label="Buscar"></div>
+ <div style="display:flex;gap:8px;padding:0 18px;flex-wrap:wrap">${["","camiseta","moletom","bone","bolsa","caneca"].map(c=>`<button data-cat="${c}">${c||"Tudo"}</button>`).join("")}</div>
+ <div class="grade">${lista.map(p=>`<button class="card" data-ir="peca" data-id="${p.id}"><img src="${p.foto}" alt="${esc(p.nome)}"><b>${esc(p.nome)}</b><span class="muted">${br(p.preco)}. Exemplo.</span></button>`).join("")||"<p>Nada com esse nome.</p>"}</div>`;
+}
+function area(){return {x:118,y:128,w:84,h:96}}
+function paint(){
+ const c=document.getElementById("preview"); if(!c) return;
+ const ctx=c.getContext("2d"); const p=peca();
+ ctx.clearRect(0,0,320,420);
+ ctx.fillStyle="#f6f3ee"; ctx.fillRect(0,0,320,420);
+ ctx.fillStyle=design.cor;
+ ctx.beginPath();
+ if(p.cat==="caneca"){ctx.rect(100,90,120,170)}
+ else if(p.cat==="bone"){ctx.ellipse(160,150,100,36,0,0,Math.PI*2); ctx.fill(); ctx.fillRect(60,145,200,28)}
+ else {ctx.moveTo(78,78);ctx.lineTo(118,52);ctx.lineTo(160,84);ctx.lineTo(202,52);ctx.lineTo(242,78);ctx.lineTo(224,128);ctx.lineTo(206,108);ctx.lineTo(206,300);ctx.lineTo(114,300);ctx.lineTo(114,108);ctx.lineTo(96,128);ctx.closePath()}
+ ctx.fill();
+ const a=area();
+ ctx.save(); ctx.beginPath(); ctx.rect(a.x,a.y,a.w,a.h); ctx.clip();
+ if(design.imgOk&&design.img){const iw=a.w-12; const ih=Math.min(a.h-28, iw*(design.img.height/design.img.width)); ctx.drawImage(design.img,a.x+6+design.dx,a.y+8+design.dy,iw,ih)}
+ if(design.arte==="circulo"){ctx.strokeStyle=design.tinta; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(a.x+a.w/2+design.dx,a.y+24+design.dy,14,0,Math.PI*2); ctx.stroke()}
+ if(design.texto.trim()){ctx.fillStyle=design.tinta; ctx.font=design.fonte+"px Manrope, sans-serif"; ctx.textAlign="center"; ctx.fillText(design.texto.trim().slice(0,16), a.x+a.w/2+design.dx, a.y+a.h*0.72+design.dy)}
+ ctx.restore();
+ ctx.strokeStyle="#9a7430"; ctx.strokeRect(a.x,a.y,a.w,a.h);
+ const valor=document.getElementById("valor"); if(valor) valor.textContent=br(preco());
+}
+function ficha(){
+ const p=peca();
+ return `<section class="ficha"><p><button data-ir="vitrine">Voltar</button></p><div class="editor"><div><img src="${p.foto}" alt="${esc(p.nome)}" style="height:280px"><canvas id="preview" width="320" height="420" aria-label="Prévia da estampa"></canvas><p class="muted">A linha dourada é a área de impressão. Arraste dentro dela.</p></div><div><h2>${esc(p.nome)}</h2><p id="valor">${br(preco())}</p><p class="muted">Preço de exemplo. Produção ${esc(p.prazo)}. Entrega some o frete, que aqui também é exemplo.</p><p>Cor da peça</p><div class="cores">${p.cores.map(c=>`<button data-cor="${c}" style="background:${c}" aria-label="Cor ${c}"></button>`).join("")}</div><label>Texto<input id="texto" maxlength="16" value="${esc(design.texto)}"></label><div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">${["casa","hoje","time"].map(f=>`<button data-frase="${f}">${f}</button>`).join("")}<button data-arte="circulo">círculo da casa</button></div><label>Técnica<select id="tecnica"><option value="dtf">DTF</option><option value="bordado">Bordado + R$ 25</option><option value="silk">Silk + R$ 15</option></select></label><label>Sua imagem<input id="arquivo" type="file" accept="image/*"></label><p id="aviso-arte" class="muted">A imagem precisa ter pelo menos 800 px de largura. Você declara que tem direito de usar a arte.</p><label class="check"><input id="direitos" type="checkbox">Tenho direito sobre o texto e a imagem.</label><p class="muted">Peça personalizada, pelo CDC, só troca se vier com defeito.</p><button class="btn" id="por">Colocar na sacola</button></div></div></section>`;
+}
+function sacola(){
+ const itens=salvo.sacola.map((i,n)=>`<article class="fila"><b>${esc(i.nome)}</b> · ${esc(i.tecnica)} · ${i.qtd} · ${br(i.preco*i.qtd)}<br><img src="${i.arte}" alt="Arte do pedido" style="height:120px;width:90px;object-fit:contain"><button data-tirar="${n}">tirar</button></article>`).join("")||"<p>A sacola está vazia.</p>";
+ const soma=salvo.sacola.reduce((s,i)=>s+i.preco*i.qtd,0);
+ return `<section class="ficha"><h2>Sacola</h2>${itens}<p>Peças ${br(soma)}. O frete aparece no pedido, como exemplo.</p>${salvo.sacola.length?`<form id="fechar"><label>Nome<input name="nome" required></label><label>E-mail<input name="email" type="email" required></label><label>CEP<input name="cep" inputmode="numeric" required></label><label class="check"><input type="checkbox" name="ciente" required>Sei que peça personalizada não troca por arrependimento, só por defeito.</label><button class="btn">Pedir com Pix de exemplo</button></form><p class="muted">Mercado Pago, Stripe ou Asaas entram com a chave. Este botão não cobra.</p>`:""}</section>`;
+}
+function fila(){
+ return `<section class="ficha"><h2>Fila da casa</h2><p class="muted">Quem produz vê a arte. O cliente, na vida real, veria só o próprio pedido.</p>${salvo.pedidos.map(p=>`<article><b>${esc(p.nome)}</b> · ${esc(p.status)} · ${br(p.total)}<p>${p.itens.map(i=>esc(i.nome)+" × "+i.qtd).join(", ")}</p>${p.status==="arte para aprovar"?`<button class="btn" data-aprovar="${p.id}">Aprovar a arte</button>`:""}</article>`).join("")||"<p>Nenhum pedido ainda.</p>"}</section>`;
+}
+function draw(){
+ document.getElementById("app").innerHTML={vitrine,peca:ficha,sacola,fila}[salvo.tela]();
+ conta();
+ if(salvo.tela==="peca"){const t=document.getElementById("tecnica"); if(t) t.value=design.tecnica; paint()}
+}
+document.body.addEventListener("click",(e)=>{
+ const ir=e.target.closest("[data-ir]");
+ if(ir){salvo.tela=ir.dataset.ir==="peca"?"peca":ir.dataset.ir; if(ir.dataset.id){salvo.id=ir.dataset.id; design={cor:peca().cores[0],texto:"",fonte:22,tinta:"#1c1a17",tecnica:"dtf",img:null,imgOk:false,dx:0,dy:0,direitos:false,arte:""}} save(); draw(); return}
+ const cat=e.target.closest("[data-cat]");
+ if(cat){salvo.cat=cat.dataset.cat; save(); draw(); return}
+ const cor=e.target.closest("[data-cor]");
+ if(cor){design.cor=cor.dataset.cor; paint(); return}
+ const frase=e.target.closest("[data-frase]");
+ if(frase){design.texto=frase.dataset.frase; const campo=document.getElementById("texto"); if(campo) campo.value=design.texto; paint(); return}
+ const arte=e.target.closest("[data-arte]");
+ if(arte){design.arte=design.arte===arte.dataset.arte?"":arte.dataset.arte; paint(); return}
+ const tirar=e.target.closest("[data-tirar]");
+ if(tirar){salvo.sacola.splice(Number(tirar.dataset.tirar),1); save(); draw(); return}
+ const ok=e.target.closest("[data-aprovar]");
+ if(ok){const p=salvo.pedidos.find(x=>x.id===ok.dataset.aprovar); if(p) p.status="em produção"; save(); draw(); return}
+ if(e.target.id==="por"){
+  if(!design.direitos){document.getElementById("aviso-arte").textContent="Marque que você tem direito sobre a arte."; return}
+  if(!design.texto.trim()&&!design.imgOk&&!design.arte){document.getElementById("aviso-arte").textContent="Escreva um texto ou envie uma imagem."; return}
+  const c=document.getElementById("preview");
+  salvo.sacola.push({nome:peca().nome,tecnica:design.tecnica,preco:preco(),qtd:1,arte:c.toDataURL("image/png")});
+  save(); salvo.tela="sacola"; draw();
+ }
+});
+document.body.addEventListener("input",(e)=>{
+ if(e.target.id==="busca"){salvo.busca=e.target.value; save(); draw(); const b=document.getElementById("busca"); if(b){b.focus(); b.setSelectionRange(salvo.busca.length,salvo.busca.length)} return}
+ if(e.target.id==="texto"){design.texto=e.target.value; paint()}
+ if(e.target.id==="tecnica"){design.tecnica=e.target.value; paint()}
+ if(e.target.id==="arquivo"&&e.target.files[0]){
+  const url=URL.createObjectURL(e.target.files[0]);
+  const img=new Image();
+  img.onload=()=>{
+   if(img.naturalWidth<800){design.img=null; design.imgOk=false; document.getElementById("aviso-arte").textContent="Imagem pequena demais. Precisa de 800 px de largura."; paint(); return}
+   design.img=img; design.imgOk=true; document.getElementById("aviso-arte").textContent="Imagem aceita na área de impressão."; paint();
+  };
+  img.src=url;
+ }
+});
+document.body.addEventListener("change",(e)=>{
+ if(e.target.id==="tecnica"){design.tecnica=e.target.value; paint()}
+ if(e.target.id==="direitos") design.direitos=e.target.checked;
+});
+document.body.addEventListener("submit",(e)=>{
+ if(e.target.id!=="fechar") return;
+ e.preventDefault();
+ const d=new FormData(e.target);
+ const cep=String(d.get("cep")||"").replace(/\D/g,"");
+ if(cep.length!==8){alert("CEP com 8 números."); return}
+ const soma=salvo.sacola.reduce((s,i)=>s+i.preco*i.qtd,0);
+ const frete=22;
+ salvo.pedidos.unshift({id:"p"+Date.now(),nome:String(d.get("nome")),email:String(d.get("email")),cep,itens:salvo.sacola.map(i=>({nome:i.nome,qtd:i.qtd,tecnica:i.tecnica})),total:soma+frete,status:"arte para aprovar",freteExemplo:true});
+ salvo.sacola=[];
+ salvo.tela="fila";
+ save(); draw();
+});
+const previewBox={arrastando:false,px:0,py:0};
+document.body.addEventListener("pointerdown",(e)=>{
+ if(e.target.id!=="preview") return;
+ previewBox.arrastando=true; previewBox.px=e.clientX; previewBox.py=e.clientY;
+});
+document.body.addEventListener("pointermove",(e)=>{
+ if(!previewBox.arrastando) return;
+ design.dx=Math.max(-18,Math.min(18,design.dx+(e.clientX-previewBox.px)));
+ design.dy=Math.max(-18,Math.min(18,design.dy+(e.clientY-previewBox.py)));
+ previewBox.px=e.clientX; previewBox.py=e.clientY; paint();
+});
+document.body.addEventListener("pointerup",()=>{previewBox.arrastando=false});
+draw();
+</script>
+</body>
+</html>
