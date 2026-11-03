@@ -449,7 +449,11 @@ let route = { view: "portal", nivel: 1, curso: "", mod: 0, aula: 0 };
 function esc(s) { return String(s || "").replace(/[&<>]/g, c => ({ "&": "&", "<": "<", ">": ">" }[c])); }
 function mail() { return ((user && user.email) || "").toLowerCase(); }
 function isYan() { return mail() === YAN; }
-function ownsArea(nivel) { return adminOn || rights.areas.includes(AREA[nivel]); }
+function ownsArea(nivel) { return adminOn || rights.areas.includes("amon") || rights.areas.includes(AREA[nivel]); }
+function temItemNaFaixa(nivel) {
+  const id = AREA[nivel] + ":";
+  return rights.cursos.some(k => String(k).indexOf(id) === 0) || rights.livros.some(k => String(k).indexOf(id) === 0) || rights.audios.some(k => String(k).indexOf(id) === 0);
+}
 function keyCurso(nivel, id) { return AREA[nivel] + ":" + id; }
 function ownsCurso(nivel, id) { return ownsArea(nivel) || rights.cursos.includes(keyCurso(nivel, id)); }
 function ownsLivro(nivel, nome) { return ownsArea(nivel) || rights.livros.includes(AREA[nivel] + ":" + nome); }
@@ -609,20 +613,36 @@ function side() {
 }
 
 function portal() {
+  const nome = user && (user.displayName || (mail().split("@")[0] || ""));
+  const completo = rights.areas.includes("amon");
   const cards = Object.keys(FAIXAS).map(num => {
     const f = FAIXAS[num];
     const open = ownsArea(Number(num));
-    return `<button class="card" data-nivel="${num}"><img alt="" src="${f.img}"><div><strong>${esc(f.nome)}</strong><span>${esc(f.tag)}</span><span class="badge ${open ? "on" : "off"}">${open ? "LIBERADO" : "BLOQUEADO · " + reais(PRECO_FAIXA[AREA[num]])}</span></div></button>`;
+    return `<button class="card" data-nivel="${num}"><img alt="" src="${f.img}"><div><strong>${esc(f.nome)}</strong><span>${esc(f.tag)}</span><span class="badge ${open ? "on" : "off"}">${open ? "LIBERADO" : "BLOQUEADO"}</span></div></button>`;
   }).join("");
   document.getElementById("app").innerHTML = `
     <p class="kicker">Portal</p>
-    <h1>Bem-vindo ao Members</h1>
-    <p class="sub">Sua jornada começa aqui. Cada faixa abre os fundamentos, os cursos da Doutrina, os livros e os áudios. O arquivo entra depois.</p>
+    <h1>${nome ? "Olá, " + esc(nome) : "Bem-vindo ao Members"}</h1>
+    ${completo ? `<p class="sub">ACESSO COMPLETO — AKASHA HUB RÁ</p>` : `<p class="sub">As quatro capas ficam à vista. Só abre a área que esta conta comprou. Rá abre as quatro.</p>`}
     <div class="grid">${cards}</div>
-    <p class="note">${adminOn ? "Sua conta administra e entra em todas as faixas." : "O cadeado é o que esse login ainda não tem. Comprar a faixa, ou receber o direito no Pix, abre só aquilo."}</p>`;
+    <p class="note">${adminOn ? "Sua conta administra e entra em todas as faixas." : "O cadeado é a área que esta conta ainda não comprou."}</p>`;
   document.getElementById("app").querySelectorAll("[data-nivel]").forEach(btn => {
-    btn.onclick = () => go({ view: "area", nivel: Number(btn.dataset.nivel) });
+    btn.onclick = () => {
+      const nivel = Number(btn.dataset.nivel);
+      if (!ownsArea(nivel) && !temItemNaFaixa(nivel)) { go({ view: "cadeado", nivel }); return; }
+      go({ view: "area", nivel });
+    };
   });
+}
+
+function cadeado() {
+  const f = faixa();
+  document.getElementById("app").innerHTML = `
+    <p class="crumb"><button data-back="portal">Início</button></p>
+    <h1>${esc(f.nome)}</h1>
+    <p class="sub">Esta área faz parte de uma experiência exclusiva do Akasha Hub. Adquira seu acesso para desbloquear os conteúdos.</p>
+    <a class="buy" href="/membros/#${esc(AREA[route.nivel])}">Conhecer planos e adquirir acesso</a>`;
+  document.querySelector("[data-back]").onclick = () => go({ view: "portal" });
 }
 
 function area() {
@@ -846,7 +866,11 @@ function audios() {
 
 function draw() {
   side();
+  if (!adminOn && route.view !== "portal" && route.view !== "cadeado" && route.view !== "gestao" && route.view !== "conteudo" && !ownsArea(route.nivel) && !temItemNaFaixa(route.nivel)) {
+    route.view = "cadeado";
+  }
   if (route.view === "portal") portal();
+  else if (route.view === "cadeado") cadeado();
   else if (route.view === "area") area();
   else if (route.view === "cursos") cursos();
   else if (route.view === "livros") livros();
