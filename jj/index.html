@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grace · Jiu-jitsu</title>
+<meta name="description" content="Plataforma da academia Grace. Aluno, professor e gestor. Presença, faixa, caixa e loja.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,680&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--mat:#f3efe6;--paper:#fffdf8;--ink:#161410;--quiet:#6e675e;--cord:#9f2d22}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--mat);color:var(--ink);font-family:Outfit,sans-serif}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+img{display:block;width:100%;object-fit:cover}
+.app{max-width:1100px;margin:0 auto;min-height:100dvh;display:grid}
+@media(min-width:900px){.app{grid-template-columns:220px 1fr}.desk{display:flex}.mobile-nav{display:none}}
+.desk{display:none;flex-direction:column;gap:18px;padding:24px 16px;border-right:1px solid rgba(22,20,16,.1)}
+.main{padding:20px 16px 108px}
+h1,h2{font-family:Fraunces,Georgia,serif;font-weight:560;letter-spacing:-.03em;margin:0}
+h1{font-size:40px;line-height:.9}
+h2{font-size:32px;line-height:1}
+.quiet{color:var(--quiet);line-height:1.5}
+.kicker{color:var(--cord);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:44px;border:0;border-radius:999px;padding:0 14px;background:var(--mat);font-weight:650}
+.chip.on{background:var(--ink);color:var(--mat)}
+.card{background:var(--paper);border:1px solid rgba(22,20,16,.1);border-radius:20px;overflow:hidden;margin-bottom:12px}
+.pad{padding:16px}
+.photo{height:210px}
+.btn{height:48px;width:100%;border:0;border-radius:999px;background:var(--ink);color:var(--mat);font-weight:700}
+.nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:var(--paper);border-top:1px solid rgba(22,20,16,.1)}
+.nav button{height:64px;border:0;background:transparent;color:var(--quiet);font-size:12px;font-weight:700}
+.nav button.on{color:var(--cord)}
+.desk button{display:block;width:100%;text-align:left;height:44px;border:0;border-radius:999px;background:transparent;color:var(--quiet);font-weight:700;padding:0 12px}
+.desk button.on{background:var(--ink);color:var(--mat)}
+.bar{height:8px;background:var(--mat);border-radius:99px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--cord)}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--ink);color:var(--mat);border-radius:999px;padding:12px 16px;font-weight:700;z-index:5}
+.qr{display:grid;grid-template-columns:repeat(7,12px);gap:4px;width:max-content}
+.qr i{display:block;height:12px;background:var(--mat)}
+.qr i.on{background:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.shop{display:grid;grid-template-columns:112px 1fr;gap:12px;padding:12px}
+.shop img{height:112px;border-radius:14px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="desk" id="desk"></aside>
+  <div>
+    <header class="main" style="padding-bottom:0" id="head"></header>
+    <main class="main" id="view"></main>
+  </div>
+</div>
+<nav class="nav mobile-nav" id="nav"></nav>
+<div id="toast"></div>
+<script>
+const media={class:"media/class.jpg",kids:"media/kids.jpg",compete:"media/compete.jpg",seminar:"media/seminar.jpg",kimono:"media/kimono.jpg",rash:"media/rash.jpg",belts:"media/belts.jpg",door:"media/door.jpg"};
+const belts={
+  branca:["Branca","É o começo. A pessoa aprende a cair e a levantar sem medo.","Postura, queda, guarda simples e o nome das posições."],
+  azul:["Azul","Já treina de verdade. Sabe por que está em cada posição.","Passagem, raspagem e uma finalização de cada lado."],
+  roxa:["Roxa","O jogo tem intenção. Não é mais só repetir o movimento.","Ligar a guarda com a passagem e ler o outro."],
+  marrom:["Marrom","Pressão e tempo. A pessoa espera o erro certo.","Sistema de jogo, defesa e como explicar para a azul."],
+  preta:["Preta","Quem usa a faixa preta também cuida de quem está começando.","Ensinar, ajustar e manter o padrão da casa."]
+};
+const products=[["Kimono Grace",389,media.kimono,"Branco, para treino e exame."],["Faixa",49,media.belts,"A cor certa para a próxima graduação."],["Rash guard",129,media.rash,"Por baixo do kimono, no treino sem kimono."]];
+const stages=["visita","experimental","aluno","equipe","professor"];
+const stageLabel={visita:"Visita",experimental:"Experimental",aluno:"Aluno",equipe:"Equipe",professor:"Professor"};
+const S={
+  role:"aluno", lane:"adulto", age:"7-9", tab:"hoje", live:true, checked:["bia"], orders:[], shot:"",
+  people:[
+    {id:"leo",name:"Leo Martins",belt:"branca",band:"4-6",competitor:false,classes:11,cycle:16,comps:0,paid:true,fee:180,kind:"aluno"},
+    {id:"bia",name:"Bia Nunes",belt:"branca",band:"7-9",competitor:false,classes:14,cycle:16,comps:0,paid:true,fee:190,kind:"aluno"},
+    {id:"gael",name:"Gael Pinto",belt:"branca",band:"10-13",competitor:false,classes:12,cycle:16,comps:1,paid:false,fee:210,kind:"aluno"},
+    {id:"helena",name:"Helena Costa",belt:"azul",band:"adulto",competitor:false,classes:14,cycle:20,comps:0,paid:false,fee:250,kind:"aluno"},
+    {id:"diego",name:"Diego Alves",belt:"roxa",band:"adulto",competitor:true,classes:16,cycle:20,comps:2,paid:true,fee:250,kind:"aluno"},
+    {id:"rita",name:"Rita Melo",belt:"branca",band:"adulto",competitor:false,classes:8,cycle:20,comps:0,paid:false,fee:250,kind:"aluno"},
+    {id:"caio",name:"Caio Reis",belt:"marrom",band:"adulto",competitor:true,classes:18,cycle:20,comps:1,paid:true,fee:0,kind:"equipe"},
+    {id:"nara",name:"Nara Lima",belt:"preta",band:"adulto",competitor:false,classes:20,cycle:20,comps:0,paid:true,fee:0,kind:"professor"}
+  ],
+  library:[
+    {title:"Guarda fechada",when:"Ontem · adulto",image:media.class},
+    {title:"Queda de joelhos",when:"Segunda · 4 a 6",image:media.kids},
+    {title:"Passagem de competidor",when:"Sábado · 8h",image:media.compete},
+    {title:"Seminário de guarda",when:"Gravado · fica na casa",image:media.seminar}
+  ],
+  prospects:[
+    {id:"p1",name:"Ana Vidal",stage:"visita",note:"Veio ver a turma das 18h."},
+    {id:"p2",name:"Bruno Kehl",stage:"experimental",note:"Adulto. Terça, 19h30."},
+    {id:"p3",name:"Caio Reis",stage:"equipe",note:"Já ajuda na porta. Pode dar aula."}
+  ]
+};
+function esc(s){
+  const amp=String.fromCharCode(38), lt=String.fromCharCode(60), gt=String.fromCharCode(62), q=String.fromCharCode(34);
+  return String(s).split(amp).join(amp+"amp;").split(lt).join(amp+"lt;").split(gt).join(amp+"gt;").split(q).join(amp+"quot;");
+}
+const money=(n)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const score=(p)=>p.classes+p.comps*2;
+const ready=(p)=>p.kind!=="professor"&&score(p)/p.cycle>=0.75;
+const me=()=>S.people.find((p)=>p.id===(S.lane==="infantil"?(S.age==="4-6"?"leo":S.age==="7-9"?"bia":"gael"):"helena"));
+const flash=(t)=>{S.shot=t;render();clearTimeout(flash.t);flash.t=setTimeout(()=>{S.shot="";render()},2200)};
+function tabs(){
+  if(S.role==="professor") return [["turma","Turma"],["chamada","Chamada"],["biblioteca","Fotos"],["graduacao","Faixas"],["vivo","Ao vivo"]];
+  if(S.role==="gestor") return [["casa","Casa"],["presenca","Presença"],["caixa","Caixa"],["loja","Loja"],["gente","Gente"]];
+  if(S.lane==="infantil") return [["hoje","Hoje"],["treinos","Treinos"],["vivo","Ao vivo"],["loja","Loja"],["eu","Faixa"]];
+  if(me().competitor) return [["hoje","Hoje"],["metodo","Método"],["agenda","Agenda"],["loja","Loja"],["eu","Eu"]];
+  return [["hoje","Hoje"],["treinos","Treinos"],["casa","Casa"],["loja","Loja"],["eu","Eu"]];
+}
+function card(img,inner){return `<article class="card">${img?`<img class="photo" src="${img}" alt="">`:""}<div class="pad">${inner}</div></article>`}
+function presence(p){
+  const pct=Math.min(100,Math.round(score(p)/p.cycle*100));
+  return `<p class="quiet">${score(p)} de ${p.cycle} presenças${p.comps?` · ${p.comps} campeonato${p.comps>1?"s":""} contam em dobro`:""}</p>
+  <div class="bar"><span style="width:${pct}%"></span></div>
+  <p class="${ready(p)?" ":"quiet"}" style="font-weight:700;color:${ready(p)?"var(--ink)":"var(--cord)"}">${ready(p)?"Pode graduar":"Ainda não"}</p>
+  <p class="quiet">A linha é 75%. Quem paga não pula a fila. Campeonato soma duas presenças e serve de recuperação.</p>`;
+}
+function aluno(){
+  const p=me(); const kid=S.lane==="infantil"; const comp=!kid&&p.competitor; const here=S.checked.includes(p.id);
+  if(S.tab==="hoje"){
+    const img=kid?media.kids:comp?media.compete:media.class;
+    const title=kid?`Turma de ${S.age} anos`:comp?"Treino de competidor":"Treino da casa";
+    const text=kid?"Chegue com a faixa amarrada. O professor chama a roda e a aula começa.":comp?"Sábado, 8h. Queda, passagem e o jogo que vai para o campeonato.":"Terça e quinta, 19h30. A aula de hoje é guarda fechada.";
+    return card(img,`<p class="kicker">Hoje</p><h2>${title}</h2><p class="quiet">${text}</p><p>${S.live?"A sala está no ar. Dá para ver o tatame antes de sair de casa.":"A sala ao vivo está fechada agora."}</p><button class="btn" data-act="check" data-id="${p.id}">${here?"Presença de hoje marcada":"Marcar presença na porta"}</button>`)
+      +(!comp&&!kid?card("",`<h2>Sem competir, a casa continua</h2><p class="quiet">Treino do dia, biblioteca, confraternização, loja e a faixa no tempo certo. O campeonato não é obrigatório.</p><button class="btn" data-act="comp" data-id="1">Mudar o cadastro para competidor</button>`):"");
+  }
+  if(S.tab==="treinos"||S.tab==="metodo"){
+    const grade=kid?(S.age==="4-6"?"Segunda e quarta, 17h. Brincadeira com queda e equilíbrio.":S.age==="7-9"?"Segunda e quarta, 18h. Guarda, passagem e roda final.":"Terça e quinta, 18h. Já entra o jogo e a primeira competição, se a família quiser."):comp?"A faixa azul treina passagem, raspagem e uma finalização de cada lado. O sábado é só de quem compete.":"Terça e quinta, 19h30, para todo aluno. Sábado de manhã é só competidor.";
+    return card("",`<h2>${comp?"Método da sua faixa":"Grade da semana"}</h2><p class="quiet">${grade}</p>`)+S.library.map((c)=>card(c.image,`<p class="quiet">${esc(c.when)}</p><h2 style="font-size:22px">${esc(c.title)}</h2>`)).join("");
+  }
+  if(S.tab==="casa"||S.tab==="agenda"||S.tab==="vivo"){
+    let html=card(S.live?media.class:media.door,`<p class="kicker">${S.live?"Ao vivo":"Sala fechada"}</p><h2>${S.live?"Tatame 1 · guarda fechada":"Ninguém está filmando agora"}</h2><p class="quiet">Quando a equipe filma, a aula fica aqui. O seminário ao vivo também fica gravado depois.</p>`);
+    html+=card(media.kids,`<p class="quiet">13 de dezembro · a casa inteira</p><h2 style="font-size:22px">Confraternização da Grace</h2><p class="quiet">Aluno, família e equipe. Não é campeonato.</p>`);
+    if(comp||kid) html+=card(media.seminar,`<p class="quiet">14 de novembro · ao vivo e gravado</p><h2 style="font-size:22px">Seminário de guarda</h2><p class="quiet">Quem não vier assiste depois, na biblioteca.</p>`);
+    else html+=card("",`<h2 style="font-size:22px">Campeonato fica no outro cadastro</h2><p class="quiet">Competidor vê a Copa da região, o treino de sábado e a pontuação que ajuda na faixa.</p>`);
+    if(comp) html+=card(media.compete,`<p class="quiet">22 de novembro · conta como duas presenças</p><h2 style="font-size:22px">Copa da região</h2><p class="quiet">Lutar aqui também empurra a graduação. É a recuperação de quem perdeu aula.</p>`);
+    if(kid) html+=card(media.kids,`<p class="quiet">29 de novembro · as três idades</p><h2 style="font-size:22px">Festival infantil</h2><p class="quiet">4 a 6, 7 a 9 e 10 a 13. Cada turma no seu horário.</p>`);
+    return html;
+  }
+  if(S.tab==="loja") return products.map((item)=>`<article class="card"><div class="shop"><img src="${item[2]}" alt=""><div><h2 style="font-size:22px">${item[0]}</h2><p class="quiet">${item[3]}</p><p><b>${money(item[1])}</b></p><button class="btn" data-act="buy" data-id="${esc(item[0])}" data-price="${item[1]}">Pedir</button></div></div></article>`).join("");
+  const b=belts[p.belt];
+  return card("",`<p class="kicker">${b[0]}</p><h2>${esc(p.name)}</h2>${presence(p)}<button class="btn" data-act="pay" data-id="${p.id}">${p.paid?"Mensalidade em dia":"Pagar "+money(p.fee)}</button>`)+card(media.belts,`<h2>O que esta faixa pede</h2><p class="quiet">${b[1]}</p><p>${b[2]}</p>`)+(!kid?`<div class="row"><button class="chip ${p.competitor?"":"on"}" data-act="comp" data-id="0">Aluno</button><button class="chip ${p.competitor?"on":""}" data-act="comp" data-id="1">Competidor</button></div>`:"");
+}
+function professor(){
+  const alunos=S.people.filter((p)=>p.kind==="aluno");
+  if(S.tab==="chamada") return `<h2>Quem passou na porta</h2>`+alunos.map((p)=>card("",`<div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><b>${esc(p.name)}</b><div class="quiet">${p.band==="adulto"?"Adulto":p.band+" anos"} · faixa ${p.belt}</div></div><button class="chip ${S.checked.includes(p.id)?"on":""}" data-act="check" data-id="${p.id}">${S.checked.includes(p.id)?"Presente":"Marcar"}</button></div>`)).join("");
+  if(S.tab==="biblioteca") return card("",`<h2>Postar o treino de hoje</h2><input id="title" value="Raspagem de hoje" style="height:48px;width:100%;border-radius:16px;border:1px solid rgba(22,20,16,.1);background:var(--mat);padding:0 12px"><div class="row" style="margin:8px 0"><button class="chip on" data-act="pic" data-id="class">Adulto</button><button class="chip" data-act="pic" data-id="kids">Infantil</button><button class="chip" data-act="pic" data-id="compete">Competidor</button></div><button class="btn" data-act="post">Publicar na biblioteca</button>`)+S.library.slice(0,3).map((c)=>card(c.image,`<p class="quiet">${esc(c.when)}</p><b>${esc(c.title)}</b>`)).join("");
+  if(S.tab==="graduacao") return `<h2>Quem a presença libera</h2><p class="quiet">75% do ciclo. Campeonato vale duas aulas. Pagamento não entra nesta lista.</p>`+alunos.map((p)=>card("",`<div style="display:flex;justify-content:space-between"><div><b>${esc(p.name)}</b><div class="quiet">${score(p)} de ${p.cycle}</div></div><b style="color:${ready(p)?"var(--ink)":"var(--cord)"}">${ready(p)?"Gradua":"Ainda não"}</b></div>`)).join("");
+  if(S.tab==="vivo") return card(media.class,`<h2>${S.live?"A casa está no ar":"A câmera está off"}</h2><p class="quiet">O aluno vê isto antes de sair. O seminário gravado fica na biblioteca quando a live acaba.</p><button class="btn" data-act="live">${S.live?"Encerrar a sala":"Abrir a sala"}</button>`);
+  return card(media.kids,`<h2>Infantil</h2><p class="quiet">17h os de 4 a 6. 18h os de 7 a 9. Terça, 18h, os de 10 a 13.</p>`)+card(media.class,`<h2>Adulto</h2><p class="quiet">19h30, terça e quinta. Sábado, 8h, só quem compete.</p>`);
+}
+function gestor(){
+  const alunos=S.people.filter((p)=>p.fee>0);
+  if(S.tab==="presenca") return `<h2>Presença do ciclo</h2>`+alunos.map((p)=>card("",`<div style="display:flex;justify-content:space-between"><b>${esc(p.name)}</b><span class="quiet">${S.checked.includes(p.id)?"Na casa hoje":"Ainda não chegou"}</span></div>${presence(p)}`)).join("");
+  if(S.tab==="caixa"){
+    const inn=alunos.filter((p)=>p.paid).reduce((s,p)=>s+p.fee,0);
+    const open=alunos.filter((p)=>!p.paid).reduce((s,p)=>s+p.fee,0);
+    return `<div class="stats"><article class="card"><div class="pad"><div class="quiet">Entrou</div><h2>${money(inn)}</h2></div></article><article class="card"><div class="pad"><div class="quiet">Em aberto</div><h2 style="color:var(--cord)">${money(open)}</h2></div></article></div>`+alunos.map((p)=>card("",`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><b>${esc(p.name)}</b><div class="quiet">${p.paid?"Pago":"Em aberto"} · ${money(p.fee)}</div></div>${p.paid?"":`<button class="chip on" data-act="pay" data-id="${p.id}">Registrar</button>`}</div>`)).join("");
+  }
+  if(S.tab==="loja") return `<h2>Pedidos da loja</h2>`+(S.orders.length?S.orders.map((o)=>card("",`<div style="display:flex;justify-content:space-between"><div><b>${esc(o.item)}</b><div class="quiet">${esc(o.who)}</div></div><b>${money(o.price)}</b></div>`)).join(""):`<p class="quiet">Ninguém pediu kimono, faixa ou rash guard ainda.</p>`);
+  if(S.tab==="gente") return `<h2>Da visita à aula</h2><p class="quiet">A pessoa entra para conhecer, vira aluno, ajuda a casa e pode dar aula.</p>`+S.prospects.map((p)=>card("",`<div style="display:flex;justify-content:space-between"><b>${esc(p.name)}</b><b style="color:var(--cord)">${stageLabel[p.stage]}</b></div><p class="quiet">${esc(p.note)}</p><div class="row">${stages.map((s)=>`<span class="chip ${s===p.stage?"on":""}" style="display:inline-flex;align-items:center">${stageLabel[s]}</span>`).join("")}</div>${p.stage==="professor"?"":`<button class="btn" data-act="step" data-id="${p.id}">Avançar um passo</button>`}`)).join("")+card("",`<b>Graduação não olha o caixa</b><p class="quiet">${S.people.filter(ready).length} pessoas já passaram de 75%. O restante continua no ciclo.</p>`);
+  const inside=S.people.filter((p)=>S.checked.includes(p.id));
+  const qr=Array.from({length:49},(_,i)=>{const r=Math.floor(i/7),c=i%7;const f=(r<3&&c<3)||(r<3&&c>3)||(r>3&&c<3);return `<i class="${f||(r*3+c)%2===0?"on":""}"></i>`}).join("");
+  return card(media.door,`<p class="kicker">QR da porta</p><h2>Quem entra, marca.</h2><p class="quiet">O código fica na entrada. O aluno confirma no celular. A chamada do professor e esta mesa recebem o mesmo nome.</p><div class="qr">${qr}</div><p><b>${inside.length} na casa agora</b></p><p class="quiet">${inside.map((p)=>esc(p.name)).join(" · ")||"Ninguém marcou ainda."}</p>`)+`<div class="stats"><article class="card"><div class="pad"><div class="quiet">Graduam</div><h2>${S.people.filter(ready).length}</h2></div></article><article class="card"><div class="pad"><div class="quiet">Em aberto</div><h2>${alunos.filter((p)=>!p.paid).length}</h2></div></article><article class="card"><div class="pad"><div class="quiet">Presenças</div><h2>${S.people.reduce((s,p)=>s+score(p),0)}</h2></div></article></div>`;
+}
+function render(){
+  const list=tabs();
+  if(!list.some((t)=>t[0]===S.tab)) S.tab=list[0][0];
+  const p=S.role==="aluno"?me():null;
+  const comp=p&&S.lane==="adulto"&&p.competitor;
+  document.getElementById("head").innerHTML=`<h1>Grace</h1><p class="quiet">Jiu-jitsu · modelo de academia</p>
+    <div class="row" style="margin-top:14px"><button class="chip ${S.role==="aluno"?"on":""}" data-act="role" data-id="aluno">Aluno</button><button class="chip ${S.role==="professor"?"on":""}" data-act="role" data-id="professor">Professor</button><button class="chip ${S.role==="gestor"?"on":""}" data-act="role" data-id="gestor">Gestor</button></div>
+    ${S.role==="aluno"?`<div class="row" style="margin-top:8px"><button class="chip ${S.lane==="infantil"?"on":""}" data-act="lane" data-id="infantil">Infantil</button><button class="chip ${S.lane==="adulto"?"on":""}" data-act="lane" data-id="adulto">Adulto</button></div>${S.lane==="infantil"?`<div class="row" style="margin-top:8px"><button class="chip ${S.age==="4-6"?"on":""}" data-act="age" data-id="4-6">4 a 6</button><button class="chip ${S.age==="7-9"?"on":""}" data-act="age" data-id="7-9">7 a 9</button><button class="chip ${S.age==="10-13"?"on":""}" data-act="age" data-id="10-13">10 a 13</button></div>`:`<p class="quiet">${comp?"Cadastro de competidor. A agenda mostra campeonato e seminário.":"Cadastro de aluno. O campeonato não entra nesta tela."}</p>`}`:`<p class="quiet">${S.role==="professor"?"A turma, a chamada e a faixa. A presença chega sozinha quando o aluno marca o código da porta.":"A mesa da casa. Presença, caixa, loja e quem está chegando."}</p>`}`;
+  document.getElementById("desk").innerHTML=`<div><h1>Grace</h1><p class="quiet">Jiu-jitsu</p></div>`+list.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
+  document.getElementById("nav").innerHTML=list.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
+  document.getElementById("view").innerHTML=S.role==="aluno"?aluno():S.role==="professor"?professor():gestor();
+  document.getElementById("toast").innerHTML=S.shot?`<div class="toast">${esc(S.shot)}</div>`:"";
+}
+document.body.addEventListener("click",(e)=>{
+  const el=e.target.closest("[data-act]");
+  if(!el) return;
+  const act=el.dataset.act, id=el.dataset.id;
+  if(act==="role"){S.role=id;S.tab=id==="aluno"?"hoje":id==="professor"?"turma":"casa"}
+  else if(act==="lane"){S.lane=id;S.tab="hoje"}
+  else if(act==="age"){S.age=id;S.tab="hoje"}
+  else if(act==="tab") S.tab=id;
+  else if(act==="check"){
+    if(S.checked.includes(id)){flash("A presença de hoje já está marcada.");return}
+    S.checked.push(id); const p=S.people.find((x)=>x.id===id); if(p) p.classes+=1; flash("Presença marcada na porta."); return;
+  }
+  else if(act==="pay"){
+    const p=S.people.find((x)=>x.id===id); if(!p||p.paid){flash("Esta mensalidade já entrou.");return} p.paid=true; flash("Mensalidade registrada. O caixa da casa atualiza agora."); return;
+  }
+  else if(act==="comp"){const p=me(); p.competitor=id==="1"; S.tab="hoje"; flash(p.competitor?"Cadastro de competidor. A agenda mudou.":"Cadastro de aluno. A casa volta ao treino do dia."); return}
+  else if(act==="buy"){S.orders.unshift({item:id,price:Number(el.dataset.price),who:me().name}); flash("Pedido feito na loja da casa."); return}
+  else if(act==="live"){S.live=!S.live; flash(S.live?"A sala está no ar.":"A sala fechou."); return}
+  else if(act==="pic"){S.pic=id; document.querySelectorAll('[data-act="pic"]').forEach((b)=>b.classList.toggle("on",b.dataset.id===id)); return}
+  else if(act==="post"){const title=(document.getElementById("title")||{}).value||"Treino de hoje"; S.library.unshift({title,when:"Agora",image:media[S.pic||"class"]}); flash("O treino entrou na biblioteca."); return}
+  else if(act==="step"){const p=S.prospects.find((x)=>x.id===id); const i=stages.indexOf(p.stage); p.stage=stages[Math.min(i+1,stages.length-1)]; flash("A pessoa avançou um passo."); return}
+  render();
+});
+render();
+</script>
+</body>
+</html>
