@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ateliê · Salão</title>
+<meta name="description" content="Ateliê. A plataforma do salão: agenda no tempo certo, pacote, ficha e a mesa da casa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--linen:#f3efe8;--sheet:#fffdfb;--ink:#1c1614;--clay:#8d3f38;--haze:#6f6762}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--linen);color:var(--ink);font-family:Sora,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+img{display:block;width:100%;object-fit:cover}
+.app{width:min(1100px,100%);margin:0 auto;min-height:100dvh}
+.desk{display:none}
+.main{padding:20px 16px calc(108px + env(safe-area-inset-bottom))}
+h1,h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;letter-spacing:-.03em;margin:0}
+h1{font-size:52px;line-height:.9}
+h2{font-size:clamp(28px,6vw,40px);line-height:1}
+.haze{color:var(--haze);line-height:1.5}
+.clay{color:var(--clay)}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:44px;border:0;border-radius:999px;padding:0 14px;background:var(--linen);font-weight:600;white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--linen)}
+.card{background:var(--sheet);border:1px solid rgba(28,22,20,.1);border-radius:20px;overflow:hidden;min-width:0}
+.pad{padding:16px}
+.photo{height:200px}
+.btn{height:48px;width:100%;border:0;border-radius:999px;background:var(--ink);color:var(--linen);font-weight:600}
+.mnav{position:fixed;left:0;right:0;bottom:0;display:grid;background:var(--sheet);border-top:1px solid rgba(28,22,20,.1);padding-bottom:env(safe-area-inset-bottom);z-index:4}
+.mnav button{height:64px;border:0;background:transparent;color:var(--haze);font-size:12px;font-weight:600;min-width:0}
+.mnav button.on{color:var(--clay)}
+.desk button.nav{display:block;width:100%;text-align:left;height:44px;border:0;border-radius:999px;background:transparent;color:var(--haze);font-weight:600;padding:0 12px}
+.desk button.nav.on{background:var(--ink);color:var(--linen)}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--linen);border-radius:999px;padding:12px 16px;font-weight:600;z-index:6;max-width:min(440px,calc(100% - 32px));text-align:center}
+#view{display:grid;gap:12px;align-content:start}
+.cols,.split{display:grid;gap:12px}
+@media(min-width:900px){
+ .app{display:grid;grid-template-columns:240px minmax(0,1fr)}
+ .desk{display:flex;flex-direction:column;gap:16px;padding:24px 16px;border-right:1px solid rgba(28,22,20,.1)}
+ .mnav{display:none}
+ .only-phone{display:none}
+ .main{padding:28px 28px 40px}
+ .cols-2{grid-template-columns:1fr 1fr}
+ .cols-3{grid-template-columns:1fr 1fr 1fr}
+ .split{grid-template-columns:minmax(0,1.4fr) minmax(220px,.8fr);align-items:start}
+ .agenda{display:grid;grid-template-columns:280px minmax(0,1fr)}
+ .agenda .photo{height:100%;min-height:320px}
+ .span-2{grid-column:1 / -1}
+ .toast{bottom:24px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="desk" id="desk"></aside>
+ <div>
+  <header class="main" style="padding-bottom:0" id="head"></header>
+  <main class="main" id="view"></main>
+ </div>
+</div>
+<nav class="mnav" id="nav"></nav>
+<div id="toast"></div>
+<script>
+const media={room:"media/room.jpg",color:"media/color.jpg",blow:"media/blow.jpg",nails:"media/nails.jpg",bottle:"media/color-bottle.jpg",door:"media/door.jpg"};
+const services=[
+ ["Corte",90,50,"Marina"],["Escova",70,45,"Marina"],["Coloração",280,150,"Marina"],
+ ["Acabamento",35,20,"Marina"],["Manicure",45,40,"Rita"],["Sobrancelha",40,20,"Lúcia"]
+];
+const days=["Ter","Qua","Qui","Sex","Sáb"];
+const times=["09:00","10:00","10:30","13:00","14:00","15:00","16:00","17:00"];
+const money=(n)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const mins=(c)=>{const p=c.split(":");return Number(p[0])*60+Number(p[1])};
+const hit=(a,am,b,bm)=>mins(a)<mins(b)+bm&&mins(b)<mins(a)+am;
+const S={role:"cliente",tab:"hoje",day:"Qui",start:"10:00",service:"Acabamento",brushes:3,tubes:6,shot:"",
+ visits:[
+  {id:"v1",day:"Qui",start:"09:00",minutes:50,service:"Corte",pro:"Marina",who:"Ana",mine:false,missed:false,price:90},
+  {id:"v2",day:"Qui",start:"10:30",minutes:150,service:"Coloração",pro:"Marina",who:"Bia",mine:false,missed:false,price:280},
+  {id:"v3",day:"Qui",start:"15:00",minutes:40,service:"Manicure",pro:"Rita",who:"Clara",mine:false,missed:false,price:45}
+ ]};
+const svc=()=>services.find((s)=>s[0]===S.service);
+function flash(t){S.shot=t;render();clearTimeout(flash.t);flash.t=setTimeout(()=>{S.shot="";render()},2600)}
+function tabs(){
+ if(S.role==="cadeira") return [["hoje","Hoje"],["agenda","Agenda"],["ficha","Ficha"]];
+ if(S.role==="casa") return [["hoje","Hoje"],["agenda","Agenda"],["comissao","Comissão"],["gargalo","Gargalo"]];
+ return [["hoje","Hoje"],["agenda","Agenda"],["pacote","Pacote"],["ficha","Ficha"]];
+}
+function card(img,inner){return `<article class="card">${img?`<img class="photo" src="${img}" alt="">`:""}<div class="pad">${inner}</div></article>`}
+function chips(list,key,cur){return `<div class="row">${list.map((item)=>`<button class="chip ${cur===item?"on":""}" data-act="${key}" data-id="${item}">${item}</button>`).join("")}</div>`}
+function cliente(){
+ const mine=S.visits.filter((v)=>v.mine&&!v.missed);
+ const next=mine[0];
+ const chosen=svc();
+ if(S.tab==="agenda") return `<article class="card agenda"><img class="photo" src="${media.room}" alt=""><div class="pad"><h2>Marcar</h2>${chips(services.map((s)=>s[0]),"service",S.service)}${chips(days,"day",S.day)}${chips(times,"time",S.start)}<p class="haze">${chosen[0]} leva ${chosen[2]} min com ${chosen[3]}. ${S.service==="Escova"&&S.brushes>0?"Esta sai do pacote.":money(chosen[1])}</p><button class="btn" data-act="book">Confirmar ${S.day} · ${S.start}</button></div></article>`;
+ if(S.tab==="pacote") return `<div class="cols cols-2">${card(media.blow,`<p class="clay">Pacote</p><h2>Quatro escovas</h2><p class="haze">Restam ${S.brushes} de 4 neste mês. A avulsa continua ${money(70)}.</p>`)}<article class="card"><div class="pad"><h2>Tabela</h2>${services.map((s)=>`<p style="display:flex;justify-content:space-between;gap:12px"><span>${s[0]} · ${s[2]} min</span><span class="clay">${money(s[1])}</span></p>`).join("")}</div></article></div>`;
+ if(S.tab==="ficha") return card(media.color,`<p class="clay">Helena Costa</p><h2>Raiz 7.1</h2><p class="haze">Oxidante 20 volumes. Retoque a cada 6 semanas. Marina. Não clarear o comprimento.</p>`);
+ return `<div class="split">${card(media.door,`<p class="clay">Helena</p><h2>${next?next.day+" · "+next.start:"Sem horário"}</h2><p class="haze">${next?next.service+" com "+next.pro+".":"Quinta, 10h, cabem 20 minutos na cadeira da Marina."}</p>`)}<div class="cols">${services.slice(0,2).map((s)=>card(s[0]==="Corte"?media.blow:media.blow,`<b>${s[0]}</b><div class="clay">${money(s[1])} · ${s[2]} min</div>`)).join("")}</div></div>`;
+}
+function cadeira(){
+ const list=S.visits.filter((v)=>v.pro==="Marina"&&!v.missed);
+ if(S.tab==="ficha") return card(media.color,`<p class="clay">Antes de misturar</p><h2>Helena · 7.1</h2><p class="haze">20 volumes. Só a raiz. O comprimento fica.</p>`);
+ return `<div class="cols cols-2"><h2 class="span-2">Cadeira da Marina</h2>${list.map((v)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${v.day} · ${v.start}</b><div class="haze">${v.who} · ${v.service} · ${v.minutes} min</div></div><button class="chip" data-act="miss" data-id="${v.id}">Faltou</button></div>`)).join("")}<article class="card span-2"><div class="pad" style="display:grid;gap:12px;grid-template-columns:120px 1fr;align-items:center"><img src="${media.bottle}" alt="" style="height:96px;border-radius:12px"><div><b>Tinta 7.1 · ${S.tubes} tubos</b><p class="haze">A coloração da Bia gasta um.</p><button class="chip on" data-act="tube">Baixar um tubo</button></div></div></article></div>`;
+}
+function casa(){
+ const live=S.visits.filter((v)=>!v.missed);
+ const marina=live.filter((v)=>v.pro==="Marina");
+ const commission=Math.round(marina.reduce((s,v)=>s+v.price,0)*0.4);
+ const filled=live.some((v)=>v.day==="Qui"&&v.start==="10:00"&&v.pro==="Marina");
+ if(S.tab==="agenda") return `<div class="cols cols-2">${live.map((v)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${v.day} · ${v.start} · ${v.pro}</b><div class="haze">${v.who} · ${v.service} · ${v.minutes} min · ${v.price===0?"no pacote":money(v.price)}</div></div><button class="chip" data-act="miss" data-id="${v.id}">Faltou</button></div>`)).join("")}</div>`;
+ if(S.tab==="comissao") return `<div class="cols cols-3"><div class="span-2">${card("",`<div class="haze">Marina hoje · 40%</div><h2>${money(commission)}</h2>`)}</div>${["Marina","Rita","Lúcia"].map((pro)=>{const rows=live.filter((v)=>v.pro===pro);const total=rows.reduce((s,v)=>s+v.price,0);return card("",`<b>${pro}</b><h2>${money(total)}</h2><p class="haze">${rows.length} serviço${rows.length===1?"":"s"} na cadeira</p>`)}).join("")}</div>`;
+ if(S.tab==="gargalo") return `<div class="cols cols-2">${card("",`<p class="clay">Oculto</p><h2>Trinta minutos parados</h2><p class="haze">Quinta, entre o corte das 9h e a cor das 10h30, a cadeira da Marina fica vazia. Cabe um acabamento. Não cabe uma coloração.</p><button class="btn" data-act="hole">${filled?"Buraco preenchido":"Encaixar quinta 10h"}</button>`)}${card("",`<p class="clay">Oculto</p><h2>Tinta que some</h2><p class="haze">${S.tubes} tubos de 7.1. Cada coloração baixa um.</p>`)}${card("",`<p class="clay">Personalizado</p><h2>A fórmula da Helena</h2><p class="haze">7.1, 20 volumes, só a raiz, a cada 6 semanas.</p>`)}${card("",`<p class="clay">Padrão</p><h2>O mesmo tempo para todos</h2><p class="haze">Corte 50 min. Escova 45. Coloração 2h30. A agenda não marca dois no mesmo relógio.</p>`)}</div>`;
+ return `<div class="split">${card(media.room,`<p class="clay">Quinta</p><h2>${live.length} na agenda</h2><p class="haze">${filled?"10h já tem nome.":"10h ainda está vazia na Marina."}</p>`)}<div class="cols">${card("",`<div class="haze">Comissão da Marina</div><h2>${money(commission)}</h2>`)}${card("",`<div class="haze">Tinta 7.1</div><h2>${S.tubes}</h2>`)}</div></div>`;
+}
+function render(){
+ const list=tabs();
+ if(!list.some((t)=>t[0]===S.tab)) S.tab=list[0][0];
+ const line=S.role==="cliente"?"Seu horário cabe no relógio. A fórmula fica na ficha.":S.role==="cadeira"?"A cadeira da Marina, o tempo de cada serviço e a tinta que saiu.":"A mesa do salão. Comissão, buraco e o que o caderno não mostrava.";
+ const roles=`<button class="chip ${S.role==="cliente"?"on":""}" data-act="role" data-id="cliente">Cliente</button><button class="chip ${S.role==="cadeira"?"on":""}" data-act="role" data-id="cadeira">Cadeira</button><button class="chip ${S.role==="casa"?"on":""}" data-act="role" data-id="casa">Casa</button>`;
+ document.getElementById("head").innerHTML=`<div class="only-phone"><h1>Ateliê</h1><p class="haze">Salão</p><div class="row" style="margin:14px 0">${roles}</div></div><p class="haze">${line}</p>`;
+ document.getElementById("desk").innerHTML=`<div><h1>Ateliê</h1><p class="haze">Salão</p></div><div class="row">${roles}</div>`+list.map((t)=>`<button class="nav ${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
+ const nav=document.getElementById("nav");
+ nav.style.gridTemplateColumns=`repeat(${list.length},minmax(0,1fr))`;
+ nav.innerHTML=list.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
+ document.getElementById("view").innerHTML=S.role==="cliente"?cliente():S.role==="cadeira"?cadeira():casa();
+ document.getElementById("toast").innerHTML=S.shot?`<div class="toast">${S.shot}</div>`:"";
+}
+document.body.addEventListener("click",(e)=>{
+ const el=e.target.closest("[data-act]");
+ if(!el) return;
+ const act=el.dataset.act, id=el.dataset.id;
+ if(act==="role"){S.role=id;S.tab="hoje"}
+ else if(act==="tab") S.tab=id;
+ else if(act==="day") S.day=id;
+ else if(act==="time") S.start=id;
+ else if(act==="service"){S.service=id; if(id==="Coloração") S.start="14:00"}
+ else if(act==="book"){
+  const chosen=svc();
+  const same=S.visits.filter((v)=>!v.missed&&v.day===S.day&&v.pro===chosen[3]);
+  if(same.some((v)=>hit(S.start,chosen[2],v.start,v.minutes))){flash(chosen[0]+" pede "+chosen[2]+" min. Esse horário já está ocupado na cadeira da "+chosen[3]+".");return}
+  const pack=S.service==="Escova"&&S.brushes>0;
+  S.visits.push({id:"v"+Date.now(),day:S.day,start:S.start,minutes:chosen[2],service:chosen[0],pro:chosen[3],who:"Helena",mine:true,missed:false,price:pack?0:chosen[1]});
+  if(pack) S.brushes--;
+  S.tab="hoje"; flash(pack?"Escova do pacote. Não cobrou de novo.":chosen[0]+" marcada. "+chosen[2]+" min com "+chosen[3]+"."); return;
+ }
+ else if(act==="miss"){
+  const v=S.visits.find((x)=>x.id===id);
+  if(v){v.missed=true; if(v.mine&&v.service==="Escova"&&v.price===0) S.brushes++}
+  flash("Falta marcada. O horário voltou para a cadeira."); return;
+ }
+ else if(act==="hole"){
+  if(S.visits.some((v)=>!v.missed&&v.day==="Qui"&&v.pro==="Marina"&&hit("10:00",20,v.start,v.minutes))){flash("O buraco das 10h já foi preenchido.");return}
+  S.visits.push({id:"h"+Date.now(),day:"Qui",start:"10:00",minutes:20,service:"Acabamento",pro:"Marina",who:"Encaixe",mine:false,missed:false,price:35});
+  flash("Quinta, 10h. Vinte minutos. A cadeira da Marina não fica parada."); return;
+ }
+ else if(act==="tube"){
+  if(S.tubes<=0){flash("A tinta 7.1 já tinha acabado. Não baixou de novo.");return}
+  S.tubes--; flash("Tinta 7.1 baixada no serviço da Bia."); return;
+ }
+ render();
+});
+render();
+</script>
+</body>
+</html>
