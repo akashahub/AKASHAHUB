@@ -1,0 +1,34 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function entrou() { return request.auth != null; }
+    function eu() { return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data; }
+    function peso(nivel) { return nivel == "casa" ? 2 : nivel == "aluno" ? 1 : 0; }
+
+    match /casas/{casa} {
+      allow read: if true;
+      allow write: if entrou() && eu().casaId == casa && eu().papel == "criador";
+
+      match /aulas/{id} {
+        allow read: if resource.data.nivel == "livre" || (entrou() && eu().casaId == casa && peso(eu().nivel) >= peso(resource.data.nivel)) || (entrou() && eu().papel == "criador");
+        allow write: if entrou() && eu().casaId == casa && eu().papel == "criador";
+      }
+
+      match /posts/{id} {
+        allow read: if true;
+        allow create: if entrou() && eu().casaId == casa;
+        allow update, delete: if entrou() && eu().casaId == casa && (eu().papel == "criador" || request.auth.uid == resource.data.autorId);
+      }
+
+      match /progresso/{uid} {
+        allow read, write: if entrou() && request.auth.uid == uid && eu().casaId == casa;
+      }
+
+      match /pedidos/{id} {
+        allow create: if entrou() && request.resource.data.casaId == casa;
+        allow read: if entrou() && eu().casaId == casa && (eu().papel == "criador" || request.auth.uid == resource.data.uid);
+        allow update: if false;
+      }
+    }
+  }
+}
