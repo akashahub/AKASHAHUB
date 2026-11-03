@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Núcleo · recepção</title>
+<meta name="description" content="Demonstração de academia. Check-in, turma, inadimplência e a ficha. Sem cobrança real.">
+<link rel="canonical" href="https://akashahub.com.br/treino/casa/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04030a;--gold:#c9a961;--violet:#4a2d6b;--ink:#f6f1e6;--mist:#b7ab9a;--line:rgba(201,169,97,.35)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.45 "Cormorant Garamond",Georgia,serif}
+button,input,select{font:inherit;color:inherit;background:transparent;border:0}
+button{cursor:pointer}
+img{width:100%;height:100%;object-fit:cover;display:block}
+h1,h2{font-weight:500;margin:0;line-height:1}
+a{color:var(--gold)}
+header{display:flex;justify-content:space-between;gap:8px;align-items:flex-end;padding:14px 16px;position:sticky;top:0;background:rgba(4,3,10,.94);z-index:3}
+.mark{font-family:Cinzel,serif;letter-spacing:.16em;color:var(--gold)}
+.nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav button,.btn{min-height:44px;padding:0 12px;border:1px solid var(--line)}
+.nav button.on,.btn{background:var(--violet)}
+.btn.gold{background:transparent;color:var(--gold)}
+.btn:disabled{opacity:.4}
+main{padding:8px 16px 110px;max-width:820px}
+.aviso{color:var(--gold);padding:0 16px}
+.linha{border-top:1px solid var(--line);padding:12px 0}
+input,select{width:100%;border-bottom:1px solid var(--line);padding:8px 0}
+.dock{position:fixed;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;background:#0a0812;border-top:1px solid var(--line)}
+.dock button{flex:1 1 30%;min-height:48px}
+.mist{color:var(--mist)}
+.check{display:flex;gap:8px;align-items:flex-start;margin:12px 0}
+.check input{width:auto}
+</style>
+</head>
+<body>
+<header>
+ <div><div class="mark" id="marca">NÚCLEO</div><a href="../">voltar à oferta</a></div>
+ <div class="nav" id="papel"></div>
+</header>
+<p class="aviso" id="aviso"></p>
+<main id="app"></main>
+<nav class="dock" id="dock"></nav>
+<script>
+const KEY="nucleo-v1";
+const ha12=new Date(Date.now()-12*86400000).toISOString();
+function semente(){
+ return {
+  papel:"recepcao", tela:"hoje", aviso:"", marca:"NÚCLEO", cor:"#c9a961", aberto:"h",
+  turma:{hora:"18h", vagas:1, dentro:["h"], espera:["l"]},
+  presentes:[],
+  alunos:[
+   {id:"h",nome:"Helena Dias",codigo:"1842",plano:"Mensal. Exemplo.",valor:180,pago:true,termo:true,restricao:"Joelho direito. Só o professor e a própria pessoa veem.",ultima:new Date().toISOString(),carga:20,exemplo:true},
+   {id:"c",nome:"Caio Nunes",codigo:"1907",plano:"Mensal. Exemplo.",valor:180,pago:false,termo:true,restricao:"",ultima:ha12,carga:12,exemplo:true},
+   {id:"l",nome:"Lúcia Prado",codigo:"2033",plano:"Mensal. Exemplo.",valor:180,pago:true,termo:true,restricao:"",ultima:new Date().toISOString(),carga:8,exemplo:true}
+  ]
+ };
+}
+let state;
+try{state=JSON.parse(localStorage.getItem(KEY))||semente()}catch{state=semente()}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function esc(s){return String(s??"").replace(/[&<>"]/g,(ch)=>({"&":"\u0026amp;","<":"\u0026lt;",">":"\u0026gt;","\"":"\u0026quot;"})[ch])}
+function aluno(id){return state.alunos.find((a)=>a.id===id)}
+function flash(t){state.aviso=t;save();draw()}
+function sumiu(a){return Date.now()-new Date(a.ultima).getTime()>10*86400000}
+function hoje(){
+ const lista=state.alunos.map((a)=>`<p class="linha">${esc(a.nome)} · ${a.pago?"em dia":"em atraso"} · ${state.presentes.includes(a.id)?"presente":"ainda não"} ${sumiu(a)?"· sumiu":""}</p>`).join("");
+ return `<h1>A recepção</h1><img src="../media/porta.jpg" alt="" style="height:160px"><p>Digite o código. Quem está em atraso não entra.</p><form id="porta"><input name="codigo" inputmode="numeric" placeholder="Código" required><button class="btn">Check-in</button></form>${lista}<h2 style="margin-top:16px">Matrícula</h2><form id="nova"><label>Nome<input name="nome" required></label><label class="check"><input type="checkbox" name="termo">Aceito o termo e o uso dos dados de treino só para a aula.</label><button class="btn gold">Cadastrar</button></form>`;
+}
+function turma(){
+ const t=state.turma;
+ const dentro=t.dentro.map((id)=>esc(aluno(id).nome)).join(", ")||"ninguém";
+ const espera=t.espera.map((id)=>esc(aluno(id).nome)).join(", ")||"ninguém";
+ return `<h1>Turma das ${esc(t.hora)}</h1><p>${t.dentro.length} de ${t.vagas}. Dentro: ${dentro}.</p><p>Espera: ${espera}.</p><div style="display:flex;flex-wrap:wrap;gap:8px"><button class="btn" data-act="reservar" data-id="c">Reservar o Caio</button><button class="btn gold" data-act="chamar">Chamar a espera</button><button class="btn gold" data-act="sair" data-id="h">Helena cancela com antecedência</button></div><p class="mist">Cancelar no mesmo dia, nesta casa, perde a vaga para quem espera. A regra aparece quando a vaga abre.</p>`;
+}
+function ficha(){
+ const a=aluno(state.aberto);
+ const saude=state.papel==="professor"||state.papel==="aluno";
+ return `<h1>Ficha</h1><img src="../media/barra.jpg" alt="" style="height:160px"><p>${state.alunos.map((p)=>`<button data-id="${p.id}">${esc(p.nome)}</button>`).join(" ")}</p><h2>${esc(a.nome)}</h2><p>Treino do dia: agachar ${a.carga} kg. Exemplo.</p>${saude?`<p>${a.restricao?esc(a.restricao):"Sem restrição anotada."}</p>`:"<p class='mist'>A recepção e o dono não veem a restrição.</p>"}<button class="btn" data-act="carga" data-id="${a.id}">Subir 2 kg</button>`;
+}
+function pessoa(){
+ const a=aluno(state.aberto);
+ return `<h1>Sua aula</h1><p>Entrar como ${state.alunos.map((p)=>`<button data-id="${p.id}">${esc(p.nome)}</button>`).join(" ")}</p><h2>${esc(a.nome)}</h2><p>Código ${esc(a.codigo)}. Plano ${esc(a.plano)} ${a.pago?"em dia":"em atraso"}.</p><p>Próxima turma: ${state.turma.dentro.includes(a.id)?state.turma.hora:"você ainda não está na turma das "+state.turma.hora}.</p><p>Treino: agachar ${a.carga} kg.</p><p>${a.restricao?esc(a.restricao):"Sem restrição na sua ficha."}</p><p class="mist">Valor de exemplo. A cobrança real não sai daqui.</p>`;
+}
+function painel(){
+ if(state.papel!=="dono") return `<p>Os números da casa ficam com o dono.</p>`;
+ const ativos=state.alunos.filter((a)=>a.pago).length;
+ const atraso=state.alunos.filter((a)=>!a.pago).length;
+ const ocup=Math.round(state.turma.dentro.length/state.turma.vagas*100);
+ return `<h1>A casa</h1><p>${ativos} em dia. ${atraso} em atraso. Ocupação da ${state.turma.hora}: ${ocup}%. Pico: a turma das ${state.turma.hora}.</p><p>Quem sumiu: ${state.alunos.filter(sumiu).map((a)=>esc(a.nome)).join(", ")||"ninguém"}.</p><button class="btn" data-act="quitar" data-id="c">Quitar o exemplo do Caio</button><p class="mist">Isto não gera Pix nem cartão. Asaas, Stripe ou Mercado Pago entram com a chave.</p><h2 style="margin-top:16px">A cara</h2><label>Nome<input id="nome" value="${esc(state.marca)}"></label><label>Cor<input id="cor" value="${esc(state.cor)}"></label><button class="btn gold" data-act="marca">Aplicar</button><h2 style="margin-top:16px">Avisos</h2><button class="btn gold" data-act="aviso">Copiar lembrete de vencimento</button>`;
+}
+function draw(){
+ document.documentElement.style.setProperty("--gold", state.cor||"#c9a961");
+ document.getElementById("marca").textContent=state.marca||"NÚCLEO";
+ document.getElementById("papel").innerHTML=["recepcao","professor","aluno","dono"].map((p)=>`<button class="${state.papel===p?"on":""}" data-papel="${p}">${p}</button>`).join("");
+ const telas={recepcao:[["hoje","Hoje"],["turma","Turma"]],professor:[["ficha","Ficha"],["turma","Turma"]],aluno:[["pessoa","Minha aula"]],dono:[["painel","Casa"],["hoje","Hoje"],["turma","Turma"]]}[state.papel];
+ if(!telas.some((t)=>t[0]===state.tela)) state.tela=telas[0][0];
+ document.getElementById("dock").innerHTML=telas.map((t)=>`<button class="${state.tela===t[0]?"on":""}" data-tela="${t[0]}">${t[1]}</button>`).join("");
+ const corpo={hoje,turma,ficha,pessoa,painel}[state.tela];
+ document.getElementById("app").innerHTML=corpo?corpo():hoje();
+ document.getElementById("aviso").textContent=state.aviso||"Demonstração neste aparelho. Nomes, planos e valores são exemplos.";
+}
+document.body.addEventListener("click",(e)=>{
+ const papel=e.target.closest("[data-papel]");
+ if(papel){state.papel=papel.dataset.papel;state.aviso="";save();draw();return}
+ const tela=e.target.closest("[data-tela]");
+ if(tela){state.tela=tela.dataset.tela;state.aviso="";save();draw();return}
+ const pick=e.target.closest("[data-id]");
+ if(pick&&!e.target.closest("[data-act]")){state.aberto=pick.dataset.id;save();draw();return}
+ const act=e.target.closest("[data-act]");
+ if(!act) return;
+ if(act.dataset.act==="reservar"){
+  const a=aluno(act.dataset.id);
+  if(!a.pago){flash(a.nome+" está em atraso. A vaga não abre.");return}
+  if(state.turma.dentro.includes(a.id)){flash(a.nome+" já está na turma.");return}
+  if(state.turma.dentro.length>=state.turma.vagas){if(!state.turma.espera.includes(a.id)) state.turma.espera.push(a.id);flash("Turma cheia. "+a.nome+" foi para a espera.");return}
+  state.turma.dentro.push(a.id);
+  state.turma.espera=state.turma.espera.filter((id)=>id!==a.id);
+  flash(a.nome+" entrou na turma.");return;
+ }
+ if(act.dataset.act==="chamar"){
+  if(state.turma.dentro.length>=state.turma.vagas){flash("Não há vaga. A espera continua.");return}
+  const id=state.turma.espera.shift();
+  if(!id){flash("Ninguém na espera.");return}
+  state.turma.dentro.push(id);
+  flash(aluno(id).nome+" saiu da espera e entrou.");return;
+ }
+ if(act.dataset.act==="sair"){
+  state.turma.dentro=state.turma.dentro.filter((id)=>id!==act.dataset.id);
+  flash("Vaga aberta. Quem espera pode ser chamado.");return;
+ }
+ if(act.dataset.act==="carga"){
+  if(state.papel!=="professor"&&state.papel!=="aluno"){flash("A carga é do professor.");return}
+  aluno(act.dataset.id).carga+=2;
+  flash("Carga anotada.");return;
+ }
+ if(act.dataset.act==="quitar"){aluno("c").pago=true;aluno("c").ultima=new Date().toISOString();flash("Exemplo quitado. Nenhuma cobrança foi feita.");return}
+ if(act.dataset.act==="marca"){state.marca=(document.getElementById("nome").value||"NÚCLEO").slice(0,24);state.cor=document.getElementById("cor").value||"#c9a961";flash("A cara mudou nesta demonstração.");return}
+ if(act.dataset.act==="aviso"){navigator.clipboard?.writeText("Sua mensalidade vence. Quando quiser, a recepção confirma.");flash("Lembrete copiado. Não foi enviado.");return}
+});
+document.body.addEventListener("submit",(e)=>{
+ e.preventDefault();
+ const f=e.target, d=new FormData(f);
+ if(f.id==="porta"){
+  const codigo=String(d.get("codigo")||"").replace(/\D/g,"");
+  const a=state.alunos.find((p)=>p.codigo===codigo);
+  if(!a){flash("Código não encontrado.");return}
+  if(!a.pago){flash(a.nome+" está em atraso. O check-in não abre.");return}
+  if(!state.presentes.includes(a.id)) state.presentes.push(a.id);
+  a.ultima=new Date().toISOString();
+  flash(a.nome+" entrou.");return;
+ }
+ if(f.id==="nova"){
+  const nome=String(d.get("nome")||"").trim();
+  if(nome.length<2){flash("Diga o nome.");return}
+  if(!f.termo.checked){flash("Sem o termo, a matrícula não segue.");return}
+  const id="n"+Date.now();
+  state.alunos.push({id,nome,codigo:String(1000+state.alunos.length),plano:"Mensal. Exemplo.",valor:180,pago:false,termo:true,restricao:"",ultima:new Date().toISOString(),carga:0,exemplo:false});
+  flash(nome+" entrou. O plano ainda está em aberto. O código é "+state.alunos.at(-1).codigo+".");return;
+ }
+});
+draw();
+</script>
+</body>
+</html>

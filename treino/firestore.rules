@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function entrou() { return request.auth != null; }
+    function eu() { return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data; }
+    function naCasa(casa) { return entrou() && eu().casaId == casa; }
+
+    match /casas/{casa} {
+      allow read: if naCasa(casa);
+      allow write: if naCasa(casa) && eu().papel == "dono";
+
+      match /alunos/{id} {
+        allow read: if naCasa(casa) && (eu().papel in ["dono", "recepcao", "professor"] || request.auth.uid == resource.data.uid);
+        allow create, update: if naCasa(casa) && eu().papel in ["dono", "recepcao"];
+      }
+
+      match /alunos/{id}/saude/{doc} {
+        allow read: if naCasa(casa) && (eu().papel == "professor" || request.auth.uid == id);
+        allow write: if naCasa(casa) && eu().papel == "professor";
+      }
+
+      match /turmas/{id} {
+        allow read: if naCasa(casa);
+        allow write: if naCasa(casa) && eu().papel in ["dono", "recepcao", "professor"];
+      }
+
+      match /presencas/{id} {
+        allow read: if naCasa(casa);
+        allow create: if naCasa(casa) && eu().papel in ["dono", "recepcao"];
+      }
+    }
+  }
+}
