@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Balcão · comércio e varejo</title>
+<meta name="description" content="A loja, a gôndola e o caixa no mesmo lugar. A venda só fecha quando a etiqueta e o estoque batem.">
+<link rel="canonical" href="https://akashahub.com.br/comercio/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f3eee4;--ticket:#fbf7f0;--ink:#1c140f;--gap:#b8432f;--mist:#6f655c;--line:rgba(28,20,15,.14)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 Figtree,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer;background:transparent;border:0}
+img{display:block;width:100%;height:100%;object-fit:cover}
+h1,h2,.name{font-family:Newsreader,Georgia,serif;font-weight:500;margin:0;line-height:1}
+a{color:inherit}
+header{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;padding:16px 18px;border-bottom:1px solid var(--line);background:var(--ticket);position:sticky;top:0;z-index:3}
+.mark{font-family:Newsreader,Georgia,serif;font-size:36px}
+.nav{display:flex;gap:6px}
+.nav button{height:44px;padding:0 12px}
+.nav button.on{background:var(--ink);color:var(--ticket)}
+.notice{background:var(--ink);color:var(--ticket);padding:8px 18px;font-size:14px}
+.shell{display:block}
+.shelf button{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:left;padding:14px 16px;border-top:1px solid var(--line)}
+.shelf button.on{background:var(--ticket)}
+.stage{padding:18px 18px 96px}
+.ticket{border:1px solid var(--ink);background:var(--ticket);padding:18px 18px 16px;max-width:420px}
+.ticket b{display:block;font-family:Newsreader,Georgia,serif;font-size:64px;font-weight:500;line-height:.9}
+.gap{color:var(--gap)}
+.btn{min-height:48px;padding:0 16px;background:var(--ink);color:var(--ticket)}
+.btn.gap{background:var(--gap)}
+.btn:disabled{opacity:.4}
+.side{padding:16px 16px 28px;border-top:1px solid var(--line)}
+.mist{color:var(--mist)}
+@media(min-width:980px){
+ .shell{display:grid;grid-template-columns:250px minmax(0,1fr) 280px;min-height:calc(100dvh - 74px)}
+ .shelf{border-right:1px solid var(--line)}
+ .side{border-top:0;border-left:1px solid var(--line)}
+ .stage{padding:28px 32px}
+}
+</style>
+</head>
+<body>
+<header>
+ <div><div class="mark">Balcão</div><div class="mist">A etiqueta, a gôndola e o caixa.</div></div>
+ <nav class="nav" id="nav"></nav>
+</header>
+<div id="notice"></div>
+<main id="app"></main>
+<script>
+const foto={loja:"media/loja.jpg",pecas:"media/pecas.jpg",vazio:"media/vazio.jpg"};
+let goods=[
+ {id:"cafe",name:"Café da casa",tag:28,caixa:28,gondola:4,fundo:12},
+ {id:"sabao",name:"Sabonete",tag:18,caixa:18,gondola:0,fundo:6},
+ {id:"caderno",name:"Caderno",tag:36,caixa:32,gondola:3,fundo:3}
+];
+let orders=[{id:"w1",who:"Pedido da porta",item:"cafe",qty:1,status:"esperando"}];
+let lens="loja", id="cafe", notice="";
+const esc=s=>String(s).replaceAll("&","&").replaceAll("<","<").replaceAll(">",">");
+const br=n=>"R$ "+n;
+const item=()=>goods.find(g=>g.id===id)||goods[0];
+function gaps(){
+ const list=[];
+ goods.forEach(g=>{
+  if(g.tag!==g.caixa) list.push({id:g.id,text:g.name+": a etiqueta diz "+br(g.tag)+" e o caixa diz "+br(g.caixa)+"."});
+  if(g.gondola===0&&g.fundo>0) list.push({id:g.id,text:g.name+": a gôndola está vazia e o fundo tem "+g.fundo+"."});
+ });
+ orders.filter(o=>o.status==="esperando").forEach(o=>{
+  const g=goods.find(x=>x.id===o.item);
+  list.push({id:o.item,text:(g?g.name:"Pedido")+" esperado na porta, ainda sem separar."});
+ });
+ return list;
+}
+function flash(t){notice=t;draw()}
+function draw(){
+ document.getElementById("nav").innerHTML=[["loja","Loja"],["caixa","Caixa"],["estoque","Estoque"]].map(i=>`<button class="${lens===i[0]?"on":""}" data-go="${i[0]}">${i[1]}</button>`).join("");
+ document.getElementById("notice").innerHTML=notice?`<p class="notice">${esc(notice)}</p>`:"";
+ const g=item();
+ const shelf=goods.map(p=>`<button class="${p.id===g.id?"on":""}" data-id="${p.id}"><span><span class="name" style="font-size:26px">${esc(p.name)}</span><span class="mist" style="display:block">${p.gondola?p.gondola+" na gôndola":"gôndola vazia"}</span></span><span>${br(lens==="loja"?p.tag:p.caixa)}</span></button>`).join("");
+ const wrong=g.tag!==g.caixa;
+ const empty=g.gondola<1;
+ const side=`<aside class="side"><p class="${gaps().length?"gap":"mist"}">O que não bate</p><ul style="padding-left:18px">${gaps().map(x=>`<li><button data-id="${x.id}">${esc(x.text)}</button></li>`).join("")||"<li>Nada fora do lugar.</li>"}</ul><img src="${foto.vazio}" alt="Gôndola com um vão" style="height:140px;margin-top:14px"></aside>`;
+ let stage="";
+ if(lens==="loja"){
+  stage=`<img src="${g.id==="cafe"?foto.pecas:foto.loja}" alt="" style="height:240px;max-width:640px"><div class="ticket" style="margin-top:16px"><span class="mist">etiqueta</span><b>${br(g.tag)}</b><span class="name" style="font-size:32px">${esc(g.name)}</span><p>${empty?"Não está na gôndola. Dá para pedir, e a casa separa do fundo.":"Está na gôndola."}</p><button class="btn" data-act="pedir">Pedir</button></div><p class="mist">Preços de exemplo. Não é uma loja real.</p>`;
+ }else if(lens==="caixa"){
+  const fila=orders.map(o=>{const p=goods.find(x=>x.id===o.item);return `<p>${esc(o.who)} · ${p?esc(p.name):""} · ${esc(o.status)} ${o.status==="esperando"?`<button class="btn" data-act="separar" data-order="${o.id}">Separar</button>`:""}</p>`}).join("");
+  stage=`<div class="ticket"><span class="mist">caixa</span><b class="${wrong?"gap":""}">${br(g.caixa)}</b><span class="name" style="font-size:32px">${esc(g.name)}</span>${wrong?`<p class="gap">A etiqueta está ${br(g.tag)}. O caixa não cobra os dois.</p><button class="btn gap" data-act="igualar">Igualar a etiqueta ao caixa</button>`:`<p>Etiqueta e caixa dizem a mesma coisa.</p>`}<p>${g.gondola} na gôndola · ${g.fundo} no fundo</p><button class="btn" data-act="cobrar" ${wrong||empty?"disabled":""}>Cobrar 1</button></div><h2 class="name" style="font-size:32px;margin-top:22px">Na porta</h2>${fila||"<p class='mist'>Nenhum pedido esperando.</p>"}`;
+ }else{
+  stage=`<img src="${empty?foto.vazio:foto.loja}" alt="" style="height:220px;max-width:640px"><h2 class="name" style="font-size:42px;margin-top:12px">${esc(g.name)}</h2><p>${g.gondola} na gôndola. ${g.fundo} no fundo.</p>${wrong?`<p class="gap">Etiqueta ${br(g.tag)} · caixa ${br(g.caixa)}</p>`:""}<div style="display:flex;flex-wrap:wrap;gap:8px"><button class="btn" data-act="repor" ${g.fundo<1||g.gondola>8?"disabled":""}>Repor a gôndola</button><button class="btn" data-act="igualar" ${wrong?"":"disabled"}>Corrigir a etiqueta</button></div>`;
+ }
+ document.getElementById("app").innerHTML=`<div class="shell"><aside class="shelf">${shelf}</aside><section class="stage">${stage}</section>${side}</div>`;
+}
+document.body.addEventListener("click",(e)=>{
+ const go=e.target.closest("[data-go]");
+ if(go){lens=go.dataset.go;notice="";draw();return}
+ const pick=e.target.closest("[data-id]");
+ if(pick&&!e.target.closest("[data-act]")){id=pick.dataset.id;draw();return}
+ const act=e.target.closest("[data-act]");
+ if(!act||act.disabled) return;
+ const g=item();
+ if(act.dataset.act==="pedir"){
+  orders.unshift({id:"w"+Math.random().toString(36).slice(2,6),who:"Pedido da loja",item:g.id,qty:1,status:"esperando"});
+  flash("Pedido anotado. O caixa separa. A gôndola ainda não baixou.");
+  return;
+ }
+ if(act.dataset.act==="igualar"){
+  g.tag=g.caixa;
+  flash("A etiqueta agora diz o mesmo que o caixa.");
+  return;
+ }
+ if(act.dataset.act==="repor"){
+  if(g.fundo<1){flash("Não há no fundo.");return}
+  g.fundo-=1; g.gondola+=1;
+  flash("Uma peça saiu do fundo e foi para a gôndola.");
+  return;
+ }
+ if(act.dataset.act==="cobrar"){
+  if(g.tag!==g.caixa){flash("Primeiro a etiqueta e o caixa precisam dizer o mesmo.");return}
+  if(g.gondola<1){flash("Não está na gôndola. Reponha antes de cobrar.");return}
+  g.gondola-=1;
+  flash("Venda feita. Saiu uma peça da gôndola.");
+  return;
+ }
+ if(act.dataset.act==="separar"){
+  const o=orders.find(x=>x.id===act.dataset.order);
+  const p=goods.find(x=>x.id===o.item);
+  if(p.gondola<1&&p.fundo<1){flash("Não há peça para separar.");return}
+  if(p.gondola<1){p.fundo-=1}else{p.gondola-=1}
+  o.status="separado";
+  flash("Pedido separado. O estoque baixou uma vez só.");
+ }
+ draw();
+});
+draw();
+</script>
+</body>
+</html>
