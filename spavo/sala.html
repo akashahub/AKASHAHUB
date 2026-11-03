@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sala · SPAVO Demo</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="demo-banner"><strong>Demo</strong> — Reserva</div>
+  <header class="org-header">
+    <div class="container header-inner">
+      <a href="salas.html" class="back-link" style="margin:0">← Salas</a>
+      <span class="org-name" style="font-size:0.95rem">SPAVO</span>
+    </div>
+  </header>
+  <main class="container detail-layout">
+    <div>
+      <div class="detail-photo" id="room-icon">☀</div>
+      <h1 class="page-title" id="room-name">Sala Luz</h1>
+      <p class="page-sub" id="room-desc">Sala ampla. (Demo)</p>
+      <dl style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;font-size:0.9rem">
+        <div><dt style="color:var(--stone-500)">Capacidade</dt><dd style="font-weight:600" id="room-cap">12 pessoas</dd></div>
+        <div><dt style="color:var(--stone-500)">Preço</dt><dd style="font-weight:600" id="room-price">R$ 80 / hora</dd></div>
+      </dl>
+      <div class="rules-box" style="margin-top:1.25rem"><strong>Regras</strong><p style="margin-top:0.35rem">Respeitar horário de silêncio. (Demo)</p></div>
+    </div>
+    <div class="form-card">
+      <h2>Solicitar reserva</h2>
+      <p class="hint">Simulação — nada é gravado.</p>
+      <div id="form-result"></div>
+      <form id="booking-form">
+        <div class="form-group"><label for="contact_name">Nome *</label><input id="contact_name" name="contact_name" required /></div>
+        <div class="form-row">
+          <div class="form-group"><label for="contact_email">E-mail</label><input id="contact_email" name="contact_email" type="email" /></div>
+          <div class="form-group"><label for="contact_phone">WhatsApp</label><input id="contact_phone" name="contact_phone" type="tel" /></div>
+        </div>
+        <p class="form-note">Informe e-mail ou telefone.</p>
+        <div class="form-row">
+          <div class="form-group"><label for="start_at">Data e hora *</label><input id="start_at" name="start_at" type="datetime-local" required /></div>
+          <div class="form-group"><label for="duration">Duração (min)</label><input id="duration" name="duration" type="number" value="60" min="60" step="30" /></div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Solicitar reserva</button>
+      </form>
+    </div>
+  </main>
+  <script>
+    const rooms = {
+      luz: { name: "Sala Luz", icon: "☀", desc: "Práticas coletivas e yoga. (Demo)", cap: "12 pessoas", price: "R$ 80 / hora" },
+      terra: { name: "Sala Terra", icon: "◎", desc: "Atendimentos individuais. (Demo)", cap: "4 pessoas", price: "R$ 60 / hora" },
+      vento: { name: "Sala Vento", icon: "◇", desc: "Workshops. (Demo)", cap: "8 pessoas", price: "R$ 70 / hora" }
+    };
+    const id = new URLSearchParams(location.search).get("id") || "luz";
+    const r = rooms[id] || rooms.luz;
+    document.getElementById("room-name").textContent = r.name;
+    document.getElementById("room-desc").textContent = r.desc;
+    document.getElementById("room-cap").textContent = r.cap;
+    document.getElementById("room-price").textContent = r.price;
+    document.getElementById("room-icon").textContent = r.icon;
+  </script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
