@@ -57,11 +57,11 @@ let S = {
   world: "member", gestor: "", login: false, loginErr: "", prepMode: "fala", beat: 0, reel: 0, line: 0, prepPlay: true, tab: "home", mgr: "painel", story: 0, mode: "historia", open: "supabase", pin: "cabine", paper: false, toast: "",
   points: 6200, cashback: 115, approved: 18, rejected: 4, redeemed: false, guards: [],
   checks: [
-    { id:"portao", name:"Portão Norte", done:true },
-    { id:"praca", name:"Praça das luzes", done:true },
-    { id:"dj", name:"Cabine do DJ", done:false },
-    { id:"sunset", name:"Palco Sunset", done:false },
-    { id:"after", name:"After lounge", done:false }
+    { id:"portao", name:"Portão Norte", done:true, x:28, y:72 },
+    { id:"praca", name:"Praça das luzes", done:true, x:46, y:54 },
+    { id:"dj", name:"Cabine do DJ", done:false, x:63, y:38 },
+    { id:"sunset", name:"Palco Sunset", done:false, x:78, y:60 },
+    { id:"after", name:"After lounge", done:false, x:40, y:78 }
   ],
   passes: [
     { id:"marina", name:"Marina Costa", handle:"marina.noite", role:"membro", avatar:"media/avatar-f.jpg", rooms:{ main:true, back:false, vip:true }, blocked:false },
@@ -285,12 +285,24 @@ function member() {
     }).join("")}</div>`;
   }
   else if (S.tab === "rewards") body = `<div class="card pad"><div class="muted">Pontos</div><div class="h mag" style="font-size:32px">${pts(S.points)}</div><p class="muted">Cashback ${S.cashback.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</p><button class="btn" data-act="redeem">Resgatar dose da casa · 800</button></div>`;
+  else if (S.tab === "map") {
+    const next = S.checks.find((c) => !c.done);
+    const focus = S.checks.find((c) => c.id === S.pinMap) || next;
+    const pins = S.checks.map((c) => {
+      const on = focus && focus.id === c.id;
+      const bg = c.done ? "var(--cyan)" : on ? "var(--magenta)" : "rgba(7,6,12,.8)";
+      const color = c.done || on ? "#1a0610" : "var(--fg)";
+      return `<button data-act="mappin" data-id="${c.id}" aria-label="${esc(c.name)}" style="position:absolute;left:${c.x}%;top:${c.y}%;transform:translate(-50%,-50%);width:36px;height:36px;border-radius:999px;background:${bg};color:${color};font-weight:800">${c.done ? "✓" : ""}</button>`;
+    }).join("");
+    const can = focus && next && focus.id === next.id;
+    body = `<div class="stack"><div style="position:relative;height:320px;border-radius:24px;overflow:hidden"><img class="photo" style="height:320px" src="media/aerial.jpg" alt="Mapa da festa">${pins}</div>${focus ? `<div class="card pad"><div class="mag" style="font-size:12px;font-weight:800">${esc(focus.name)}</div><p class="muted">${focus.done ? "Já validado." : can ? "Pode validar agora." : "Ainda na fila. Valide o ponto aberto primeiro."}</p>${can ? `<button class="btn" data-act="qr" style="width:100%;margin-top:8px">Validar este ponto</button>` : ""}</div>` : `<p class="muted">Mapa da noite fechado. Tudo validado.</p>`}</div>`;
+  }
   else body = `<div class="card pad"><h2 class="h" style="font-size:28px">Marina Costa</h2><p class="muted">@marina.noite · membro</p><p>Esta porta não mostra a mesa da gestão.</p></div>`;
   const tabs = [["home","Início"],["rooms","Salas"],["rewards","Prêmios"],["profile","Perfil"]];
   return `<div class="phone"><header class="between" style="padding:16px">${S.gestor?'<button class="chip" data-act="world" data-id="gate">Portas</button>':'<button class="chip" data-act="login">Gestão</button>'}<div class="mark">FEST<i>I</i></div><span></span></header>
     ${marina.blocked?`<p class="mag" style="margin:0 16px 8px">A gestão pausou o seu acesso.</p>`:""}
     <div style="padding:0 16px 16px;flex:1">${body}</div>
-    <nav class="nav5">${tabs.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("")}<button data-act="tab" data-id="home">Mapa</button></nav></div>`;
+    <nav class="nav5">${tabs.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("")}<button class="${S.tab==="map"?"on":""}" data-act="tab" data-id="map">Mapa</button></nav></div>`;
 }
 
 function manager() {
@@ -377,6 +389,7 @@ document.getElementById("app").addEventListener("click", (e) => {
   else if (act==="plug") S.open = S.open===id?null:id;
   else if (act==="story") S.story = Math.max(0, Math.min(chapters.length-1, S.story + (id==="next"?1:-1)));
   else if (act==="tab") S.tab = id;
+  else if (act==="mappin") { S.pinMap = id; S.tab = "map"; }
   else if (act==="mgr") S.mgr = id;
   else if (act==="block") { const p = S.passes.find((x)=>x.id===id); p.blocked = !p.blocked; flash(p.blocked?p.name+" não entra mais.":p.name+" pode entrar de novo."); return; }
   else if (act==="roompass") { const p = S.passes.find((x)=>x.id===id); p.rooms[el.dataset.room] = !p.rooms[el.dataset.room]; flash("Acesso de sala atualizado."); return; }
