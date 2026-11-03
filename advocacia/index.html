@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lide · Banca</title>
+<meta name="description" content="Lide. Banca de advocacia. O site da casa e a pauta das causas, no mesmo lugar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--chamber:#0c0d10;--docket:#14151a;--vellum:#e7e1d6;--brief:#f4f0e8;--seal:#a33b32;--ash:#9a948a}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--chamber);color:var(--vellum);font-family:"Instrument Sans",sans-serif}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;background:transparent;border:0}
+img{display:block;width:100%;height:100%;object-fit:cover}
+.seal{font-family:"Instrument Serif",Georgia,serif;font-weight:400}
+.kicker{letter-spacing:.28em;text-transform:uppercase;font-size:12px;color:var(--seal)}
+.ash{color:var(--ash)}
+.house{min-height:100dvh}
+.top{width:min(1100px,calc(100% - 40px));margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;padding:24px 0}
+.hero{width:min(1100px,calc(100% - 40px));margin:0 auto;display:grid;gap:32px;align-items:end;min-height:78vh;padding-bottom:40px}
+.hero h1{font-size:clamp(68px,12vw,120px);line-height:.86;margin:16px 0 0}
+.hero p{max-width:420px;line-height:1.55}
+.hero figure{min-height:320px}
+.areas{display:grid;border-top:1px solid rgba(255,255,255,.1)}
+.areas button{text-align:left;padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.areas button.on{background:var(--docket)}
+.areas .seal{display:block;font-size:30px;margin-top:24px}
+.band{width:min(1100px,calc(100% - 40px));margin:0 auto;display:grid;gap:28px;padding:64px 0}
+.people{list-style:none;margin:24px 0 0;padding:0;border-top:1px solid rgba(255,255,255,.1)}
+.people li{display:flex;justify-content:space-between;gap:16px;align-items:baseline;border-bottom:1px solid rgba(255,255,255,.1);padding:16px 0}
+.people .seal{font-size:30px}
+.intake{background:var(--docket);border-top:1px solid rgba(255,255,255,.1)}
+.intake form{width:min(1100px,calc(100% - 40px));margin:0 auto;display:grid;gap:16px;padding:56px 0}
+label{display:grid;gap:8px;font-size:14px}
+input{height:48px;border:1px solid rgba(255,255,255,.15);background:transparent;padding:0 12px;outline:none}
+.go{height:48px;background:var(--brief);color:var(--chamber);font-weight:600}
+.enter{border-bottom:1px solid var(--seal);padding-bottom:4px}
+.docket{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.mhead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.panes{min-height:0;flex:1;display:flex;flex-direction:column}
+.rail{display:none}
+.brief{background:var(--brief);color:var(--chamber);min-height:0;overflow:auto;flex:1}
+.sheet{width:min(640px,100%);margin:0 auto;padding:24px 20px 40px;display:grid;gap:16px}
+.sheet h2{font-size:clamp(40px,8vw,64px);line-height:.95;margin:0}
+.quote{border-left:2px solid var(--seal);padding-left:16px;font-size:18px;line-height:1.5}
+.verbs{display:grid;gap:8px}
+.verb{height:48px;background:var(--chamber);color:var(--brief)}
+.verb.line{background:transparent;color:var(--chamber);border:1px solid rgba(28,22,20,.2)}
+.lens{display:flex;gap:16px;font-size:14px}
+.steps{padding:24px 20px 32px}
+.dot{width:8px;height:8px;background:var(--seal);display:inline-block;margin-right:10px}
+.dim{background:rgba(255,255,255,.2)}
+.strip{display:flex;gap:8px;overflow:auto;padding:12px;border-bottom:1px solid rgba(255,255,255,.1);background:var(--docket)}
+.strip button{flex:0 0 auto;border:1px solid rgba(255,255,255,.15);padding:8px 12px;font-size:14px}
+.strip button.on{border-color:var(--seal)}
+.week{display:grid}
+.day{border-bottom:1px solid rgba(255,255,255,.1);padding:16px}
+.day button{display:block;width:100%;text-align:left;border:1px solid rgba(255,255,255,.1);padding:12px;margin-top:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--seal);color:var(--brief);padding:12px 16px;z-index:5;max-width:min(440px,calc(100% - 32px));text-align:center}
+@media(min-width:900px){
+ .hero{grid-template-columns:1.3fr .8fr}
+ .hero figure{min-height:70vh}
+ .areas{grid-template-columns:repeat(4,1fr)}
+ .areas button{border-bottom:0;border-right:1px solid rgba(255,255,255,.1)}
+ .band,.intake form{grid-template-columns:5fr 7fr;align-items:center}
+ .band figure{min-height:360px}
+ .mhead,.strip,.steps{display:none}
+ .panes{display:grid;grid-template-columns:272px minmax(0,1fr) 300px}
+ .panes.pauta{grid-template-columns:272px minmax(0,1fr)}
+ .rail{display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.1);background:var(--docket);min-height:0}
+ .rail nav{overflow:auto}
+ .rail button.row{display:block;width:100%;text-align:left;padding:16px;border-top:1px solid rgba(255,255,255,.1)}
+ .rail button.row.on{background:var(--chamber)}
+ .time{display:block;border-left:1px solid rgba(255,255,255,.1);overflow:auto;padding:24px 20px}
+ .week{grid-template-columns:repeat(5,1fr);min-height:100%}
+ .day{border-bottom:0;border-right:1px solid rgba(255,255,255,.1)}
+ .verbs{grid-template-columns:1fr 1fr}
+}
+@media(max-width:899px){.time{display:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+<script>
+const media={hall:"media/hall.jpg",table:"media/table.jpg",files:"media/files.jpg",stair:"media/stair.jpg"};
+const areas=[
+ ["Cível","A contestação tem hora. A banca vê o prazo. O cliente vê se a peça entrou."],
+ ["Trabalhista","A audiência não é um recado. Fica na pauta, com o que a pessoa pode e não pode dizer."],
+ ["Empresarial","Contrato e diligência. O que é interno não atravessa para a outra parte."],
+ ["Família","Acordo em linguagem de gente. O processo anda sem o cliente decifrar o jargão."]
+];
+const S={
+ screen:"casa", area:"Cível", lens:"banca", id:"014", name:"", line:"", shot:"",
+ matters:[
+  {id:"014",number:"0001842-11.2026.8.26.0100",title:"Silva × Construtora Norte",area:"Cível",who:"Helena Silva",adverse:"Construtora Norte",fatal:"Qui · 14h",day:"Qui",passed:false,filed:false,told:false,said:"A contestação ainda não foi protocolada. O prazo é quinta, 14h.",note:"Impugnar o laudo. Não mencionar a negociação de março.",steps:[["Distribuição","12 out","feito"],["Citação","21 out","feito"],["Contestação","Qui · 14h","agora"],["Réplica","a designar","depois"]]},
+  {id:"021",number:"1002219-40.2026.5.02.0034",title:"Almeida · reclamação",area:"Trabalhista",who:"Paulo Almeida",adverse:"Oficina Leste",fatal:"Sex · 9h",day:"Sex",passed:false,filed:false,told:true,said:"Audiência una na sexta, 9h. Levar contracheques. Não levar testemunha surpresa.",note:"Testemunha da banca: Rita M., já intimada.",steps:[["Petição inicial","03 set","feito"],["Defesa","18 out","feito"],["Audiência","Sex · 9h","agora"],["Sentença","a designar","depois"]]},
+  {id:"008",number:"Due diligence · interno",title:"Holding Vale",area:"Empresarial",who:"Holding Vale",adverse:"—",fatal:null,day:"Ter",passed:false,filed:false,told:false,said:"A leitura dos contratos segue. Ainda não há peça para o juízo.",note:"Cláusula de não concorrência no contrato 4. Não circular fora da banca.",steps:[["Data room","28 out","feito"],["Leitura","esta semana","agora"],["Parecer","a entregar","depois"]]},
+  {id:"003",number:"0011904-22.2025.8.26.0224",title:"Costa · acordo",area:"Família",who:"Marina Costa",adverse:"—",fatal:"Seg · 18h",day:"Seg",passed:true,filed:false,told:true,said:"O prazo da manifestação venceu. A banca não protocola fora da hora.",note:"Minuta de acordo pronta. Não protocolar. Pedir restituição de prazo, se couber.",steps:[["Acordo proposto","02 out","feito"],["Manifestação","vencida","agora"],["Homologação","parada","depois"]]}
+ ]
+};
+const cur=()=>S.matters.find((m)=>m.id===S.id)||S.matters[0];
+function flash(t){S.shot=t;draw();clearTimeout(flash.t);flash.t=setTimeout(()=>{S.shot="";draw()},2400)}
+function house(){
+ const line=areas.find((a)=>a[0]===S.area)[1];
+ return `<div class="house"><header class="top"><p class="seal" style="font-size:40px;margin:0">Lide</p><button class="enter" data-act="banca">Entrar na banca</button></header>
+ <section class="hero"><div><p class="kicker">Advocacia</p><h1 class="seal">O prazo<br>não espera.</h1><p class="ash">${line}</p></div><figure><img src="${media.hall}" alt="Galeria da banca, à noite"></figure></section>
+ <section class="areas">${areas.map((a,i)=>`<button class="${S.area===a[0]?"on":""}" data-act="area" data-id="${a[0]}"><span class="ash">0${i+1}</span><span class="seal">${a[0]}</span></button>`).join("")}</section>
+ <section class="band"><figure><img src="${media.stair}" alt="Escada do foro, de manhã"></figure><div><p class="kicker ash">A banca</p><ul class="people"><li><span class="seal">Helena Varga</span><span class="ash">Cível</span></li><li><span class="seal">Miguel Prado</span><span class="ash">Trabalhista</span></li><li><span class="seal">Rita Lam</span><span class="ash">Empresarial e família</span></li></ul></div></section>
+ <section class="intake"><form data-act="intake"><div><h2 class="seal" style="font-size:52px;margin:0">Abrir uma causa</h2><p class="ash">Entra direto na pauta. Sem formulário que some.</p></div><div><label>Nome<input name="nome" value="${S.name}"></label><label>Uma linha<input name="linha" value="${S.line}"></label><p class="ash">Área: ${S.area}</p><button class="go" type="submit">Levar para a banca</button></div></form></section></div>`;
+}
+function steps(m){return `<p class="kicker ash">Andamento</p><div style="margin-top:18px;display:grid;gap:16px">${m.steps.map((s)=>`<div><span class="dot ${s[2]==="depois"?"dim":""}"></span>${s[0]}<div class="ash" style="font-size:12px;margin-left:18px">${s[1]}</div></div>`).join("")}</div>`}
+function docket(){
+ const m=cur();
+ const pauta=S.lens==="pauta";
+ const client=S.lens==="cliente";
+ const rows=S.matters.map((item)=>`<button class="row ${item.id===m.id?"on":""}" data-act="open" data-id="${item.id}"><span class="kicker">${item.area}</span><span style="display:block;margin-top:4px">${item.title}</span><span class="ash" style="display:block;margin-top:8px;font-size:12px">${item.fatal?"Fatal "+item.fatal:"Sem fatal"}${item.passed?" · vencido":""}</span></button>`).join("");
+ const week=["Ter","Qua","Qui","Sex","Seg"].map((day)=>{
+  const items=S.matters.filter((item)=>item.day===day).map((item)=>`<button data-act="open" data-id="${item.id}">${item.title}<span class="kicker" style="display:block;margin-top:8px">${item.passed?"Vencido":item.fatal||"Interno"}</span></button>`).join("");
+  return `<div class="day"><p class="seal" style="font-size:32px;margin:0">${day}</p>${items}</div>`;
+ }).join("");
+ const body=pauta?`<section class="week">${week}</section>`:`<div class="strip">${S.matters.map((item)=>`<button class="${item.id===m.id?"on":""}" data-act="open" data-id="${item.id}">${item.title}</button>`).join("")}</div>
+  <article class="brief"><div class="sheet"><div class="lens"><button data-act="lens" data-id="banca" style="${client?"":"border-bottom:1px solid var(--seal)"}">Banca</button><button data-act="lens" data-id="cliente" style="${client?"border-bottom:1px solid var(--seal)":"opacity:.5"}">Cliente</button></div>
+  <p class="kicker">${m.number}</p><h2 class="seal">${m.title}</h2><p>${m.who}${m.adverse!=="—"?" × "+m.adverse:""}. ${m.area}.</p>
+  <p class="quote">${client?m.said:m.note}</p>
+  <p class="ash">${m.filed?"Peça protocolada.":m.passed?"Prazo vencido.":m.fatal?"Próximo fatal: "+m.fatal+".":"Sem prazo fatal nesta semana."}${m.told?" Cliente avisado.":" Cliente sem ciência."}</p>
+  ${client?"":`<div class="verbs"><button class="verb" data-act="file">Protocolar</button><button class="verb line" data-act="tell">Dar ciência</button></div>`}
+  <img src="${media.table}" alt="" style="height:180px"></div></article><div class="steps">${steps(m)}</div>`;
+ return `<div class="docket"><header class="mhead"><button class="seal" style="font-size:32px" data-act="casa">Lide</button><div class="lens"><button data-act="lens" data-id="banca">Causa</button><button data-act="lens" data-id="pauta">Pauta</button></div></header>
+ <div class="panes ${pauta?"pauta":""}"><aside class="rail"><div style="display:flex;justify-content:space-between;align-items:center;padding:16px"><button class="seal" style="font-size:32px" data-act="casa">Lide</button><button class="ash" data-act="lens" data-id="${pauta?"banca":"pauta"}">${pauta?"Causas":"Pauta"}</button></div><nav>${rows}</nav></aside>${body}${pauta?"":`<aside class="time">${steps(m)}<img src="${media.files}" alt="" style="height:160px;margin-top:28px"></aside>`}</div></div>`;
+}
+function draw(){
+ document.getElementById("app").innerHTML=S.screen==="casa"?house():docket();
+ document.getElementById("toast").innerHTML=S.shot?`<div class="toast">${S.shot}</div>`:"";
+}
+document.body.addEventListener("click",(e)=>{
+ const el=e.target.closest("[data-act]");
+ if(!el) return;
+ const act=el.dataset.act, id=el.dataset.id;
+ if(act==="banca") S.screen="banca";
+ else if(act==="casa") S.screen="casa";
+ else if(act==="area") S.area=id;
+ else if(act==="lens") S.lens=id;
+ else if(act==="open"){S.id=id;S.screen="banca";if(S.lens==="pauta") S.lens="banca"}
+ else if(act==="file"||act==="tell"){
+  const m=cur();
+  if(act==="file"){
+   if(m.passed){flash("Prazo fatal vencido. A peça não entra.");return}
+   if(m.filed){flash("Já protocolada. Não protocola de novo.");return}
+   m.filed=true; m.said="A peça entrou no prazo. A audiência, se houver, continua na pauta.";
+   m.steps=m.steps.map((s)=>s[2]==="agora"?[s[0],"protocolada","feito"]:s);
+   flash("Protocolada. O cliente ainda não foi avisado."); return;
+  }
+  if(m.told){flash("O cliente já tinha ciência. Não avisou duas vezes.");return}
+  m.told=true; flash("Ciência dada. A nota interna continua só na banca."); return;
+ }
+ draw();
+});
+document.body.addEventListener("submit",(e)=>{
+ const form=e.target.closest("form");
+ if(!form) return;
+ e.preventDefault();
+ const nome=form.nome.value.trim(), linha=form.linha.value.trim();
+ if(!nome||!linha){flash("Nome e uma linha. Sem isso a causa não abre.");return}
+ const id="n"+Date.now();
+ S.matters.unshift({id,number:"consulta · sem número",title:nome,area:S.area,who:nome,adverse:"—",fatal:null,day:"Qua",passed:false,filed:false,told:false,said:"Consulta aberta. Ainda não há prazo fatal.",note:linha,steps:[["Consulta","agora","agora"],["Procuração","a pedir","depois"]]});
+ S.id=id; S.screen="banca"; S.lens="banca"; S.name=""; S.line="";
+ flash("Causa aberta na banca.");
+});
+draw();
+</script>
+</body>
+</html>
