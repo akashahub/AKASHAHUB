@@ -13,122 +13,56 @@
 html,body{margin:0;background:var(--cream);color:var(--shop);font-family:Figtree,sans-serif}
 button{font:inherit;color:inherit;cursor:pointer}
 img{display:block;width:100%;object-fit:cover}
-.app{max-width:1100px;margin:0 auto;min-height:100dvh}
-@media(min-width:900px){.app{display:grid;grid-template-columns:220px 1fr}.desk{display:flex}.mnav{display:none}}
-.desk{display:none;flex-direction:column;gap:16px;padding:24px 16px;border-right:1px solid rgba(22,19,15,.1)}
-.main{padding:20px 16px 108px}
+.app{max-width:1100px;margin:0 auto;min-height:100dvh;width:100%}
+.desk{display:none}
+.main{padding:20px 16px calc(108px + env(safe-area-inset-bottom))}
 h1,h2{font-family:Newsreader,Georgia,serif;font-weight:500;letter-spacing:-.03em;margin:0}
-h1{font-size:42px;line-height:.9}
-h2{font-size:32px;line-height:1}
+h1{font-size:clamp(36px,8vw,42px);line-height:.9}
+h2{font-size:clamp(26px,6vw,32px);line-height:1}
 .ash{color:var(--ash);line-height:1.5}
 .brass{color:var(--brass)}
 .row{display:flex;flex-wrap:wrap;gap:8px}
-.chip{height:44px;border:0;border-radius:999px;padding:0 14px;background:var(--cream);font-weight:650}
+.chip{height:44px;border:0;border-radius:999px;padding:0 14px;background:var(--cream);font-weight:650;white-space:nowrap}
 .chip.on{background:var(--shop);color:var(--cream)}
-.card{background:var(--foam);border:1px solid rgba(22,19,15,.1);border-radius:20px;overflow:hidden;margin-bottom:12px}
+.card{background:var(--foam);border:1px solid rgba(22,19,15,.1);border-radius:20px;overflow:hidden;min-width:0}
 .pad{padding:16px}
 .photo{height:200px}
 .btn{height:48px;width:100%;border:0;border-radius:999px;background:var(--shop);color:var(--cream);font-weight:700}
-.mnav{position:fixed;left:0;right:0;bottom:0;display:grid;background:var(--foam);border-top:1px solid rgba(22,19,15,.1)}
-.mnav button{height:64px;border:0;background:transparent;color:var(--ash);font-size:12px;font-weight:700}
+.mnav{position:fixed;left:0;right:0;bottom:0;display:grid;background:var(--foam);border-top:1px solid rgba(22,19,15,.1);padding-bottom:env(safe-area-inset-bottom);z-index:4}
+.mnav button{height:64px;border:0;background:transparent;color:var(--ash);font-size:12px;font-weight:700;min-width:0;padding:0 2px}
 .mnav button.on{color:var(--brass)}
+.desk{flex-direction:column;gap:16px;padding:24px 16px;border-right:1px solid rgba(22,19,15,.1)}
 .desk button.nav{display:block;width:100%;text-align:left;height:44px;border:0;border-radius:999px;background:transparent;color:var(--ash);font-weight:700;padding:0 12px}
 .desk button.nav.on{background:var(--shop);color:var(--cream)}
-.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--shop);color:var(--cream);border-radius:999px;padding:12px 16px;font-weight:700;z-index:6}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--shop);color:var(--cream);border-radius:999px;padding:12px 16px;font-weight:700;z-index:6;max-width:min(420px,calc(100% - 32px));text-align:center}
 .sheet{position:fixed;inset:0;background:rgba(22,19,15,.72);display:grid;align-items:end;justify-content:center;padding:12px;z-index:5}
 .sheet .card{width:min(440px,100%);margin:0}
-.shop{display:grid;grid-template-columns:112px 1fr;gap:12px;padding:12px}
-.shop img{height:112px;border-radius:14px}
-
-/* SaaS demo clarity and resilient layouts */
-.demo-note{display:flex;flex-direction:column;gap:4px;margin-top:12px;padding:11px 13px;border:1px solid rgba(140,98,57,.28);border-radius:14px;background:rgba(140,98,57,.07);font-size:12px;line-height:1.45;color:var(--ash)}
-.demo-note b{font-size:10px;letter-spacing:.1em;color:var(--brass)}
-#head .row{gap:7px}
-#view>*{min-width:0}
-#view .row>.card{min-width:0}
-#view p{overflow-wrap:anywhere}
-.shop>div{min-width:0}
-.shop h2{overflow-wrap:anywhere}
-@media(min-width:640px) and (max-width:899px){
-  #view{grid-auto-flow:row}
-  #view>.card:has(.shop){grid-column:1/-1}
+.shop{display:grid;grid-template-columns:1fr;gap:12px;padding:12px}
+.shop img{height:160px;border-radius:14px}
+#view{display:grid;gap:12px;align-content:start}
+.cols,.pair,.split{display:grid;gap:12px}
+.pair{grid-template-columns:1fr 1fr}
+.agenda{display:grid}
+@media (min-width:420px){
+  .shop{grid-template-columns:112px minmax(0,1fr)}
+  .shop img{height:112px}
 }
-@media(max-width:639px){
-  .demo-note{font-size:11px}
-  #head>.row{flex-wrap:wrap}
-  #head>.row .chip{flex:1 1 auto}
-}
-/* Responsive system — mobile first, tablet and desktop */
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{min-width:320px;overflow-x:hidden}
-button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-button:focus-visible{outline:3px solid var(--brass);outline-offset:3px}
-img{max-width:100%;height:auto}
-.app{width:100%;max-width:1440px;min-width:0}
-.app>div{min-width:0}
-.main{width:100%;min-width:0;padding:clamp(16px,3vw,36px) clamp(14px,3.2vw,42px) 112px}
-#head{padding-bottom:0!important}
-#view{padding-top:clamp(16px,2.5vw,28px)}
-h1{font-size:clamp(36px,4.2vw,54px);line-height:.98}
-h2{font-size:clamp(26px,3vw,36px);line-height:1.04}
-.card{min-width:0;margin-bottom:14px;border-radius:clamp(16px,2vw,22px)}
-.pad{padding:clamp(14px,2vw,22px)}
-.photo{height:clamp(170px,24vw,280px)}
-.row{min-width:0;align-items:center}
-.chip{min-height:44px;height:auto;padding:12px 16px;white-space:normal;line-height:1.2}
-.btn{min-height:48px;height:auto;padding:14px 18px;line-height:1.25}
-.shop{grid-template-columns:minmax(88px,132px) minmax(0,1fr);align-items:center}
-.shop img{width:100%;height:clamp(100px,14vw,132px)}
-.mnav{z-index:4;padding-bottom:env(safe-area-inset-bottom);grid-template-columns:repeat(5,minmax(0,1fr));box-shadow:0 -8px 24px rgba(22,19,15,.07)}
-.mnav button{min-width:0;min-height:60px;height:auto;padding:8px 3px;font-size:clamp(10px,2.8vw,12px);overflow-wrap:anywhere}
-.sheet{padding:clamp(10px,3vw,24px);overflow-y:auto;align-items:end}
-.sheet .card{width:min(480px,100%);max-height:min(88dvh,760px);overflow-y:auto}
-.toast{width:max-content;max-width:calc(100vw - 28px);text-align:center;white-space:normal;bottom:calc(76px + env(safe-area-inset-bottom))}
-.desk{position:sticky;top:0;height:100dvh;min-height:100dvh;overflow-y:auto}
-@media(min-width:640px) and (max-width:899px){
-  .main{padding-left:clamp(22px,5vw,48px);padding-right:clamp(22px,5vw,48px)}
-  #view{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
-  #view>.card{margin:0;min-width:0}
-  #view>h2,#view>.ash{grid-column:1/-1}
-  #view>.row{grid-column:1/-1}
-  .photo{height:210px}
-}
-@media(min-width:900px){
-  .app{grid-template-columns:248px minmax(0,1fr);align-items:start}
-  .desk{padding:30px 18px;gap:12px}
-  .main{padding:28px clamp(28px,4vw,64px) 48px}
-  #view{display:block;max-width:1120px;margin-inline:auto}
-  #head{max-width:1120px;margin-inline:auto}
-  .mnav{display:none!important}
+@media (min-width:900px){
+  .app{display:grid;grid-template-columns:240px minmax(0,1fr)}
+  .desk{display:flex}
+  .mnav{display:none}
+  .only-phone{display:none}
+  .main{padding:28px 28px 40px}
+  .cols-2{grid-template-columns:1fr 1fr}
+  .cols-3{grid-template-columns:1fr 1fr 1fr}
+  .split{grid-template-columns:minmax(0,1.4fr) minmax(220px,.8fr);align-items:start}
+  .pair.stack{grid-template-columns:1fr}
+  .agenda{grid-template-columns:280px minmax(0,1fr)}
+  .agenda .photo{height:100%;min-height:320px}
   .toast{bottom:24px}
+  .sheet{align-items:center}
+  .span-2{grid-column:1 / -1}
 }
-@media(max-width:639px){
-  .main{padding-top:18px;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
-  h1{font-size:40px}
-  h2{font-size:29px}
-  .row{gap:7px}
-  .chip{padding:11px 13px;font-size:14px}
-  .photo{height:190px}
-  .shop{grid-template-columns:92px minmax(0,1fr);gap:10px;padding:10px}
-  .shop img{height:100px}
-  .shop .row{align-items:stretch}
-  .shop .chip{flex:1 1 auto}
-  .mnav button{font-size:10px;letter-spacing:-.02em}
-  .sheet{padding:10px}
-  .sheet .pad{padding:18px}
-}
-@media(max-width:360px){
-  .main{padding-left:12px;padding-right:12px}
-  .shop{grid-template-columns:78px minmax(0,1fr)}
-  .shop img{height:88px}
-  .shop .chip{font-size:12px;padding:10px}
-  .mnav button{font-size:9px}
-}
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-}
-
 </style>
 </head>
 <body>
@@ -151,7 +85,7 @@ const days=["Ter","Qua","Qui","Sex","Sáb"];
 const times=["09:00","10:00","11:00","14:00","15:00","16:00","17:00","18:00"];
 const barbers=["Heitor","Davi","Caio"];
 const money=(n)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-const DEFAULT_STATE={
+const S={
   role:"cliente", tab:"hoje", plan:null, sheet:null, day:"Ter", time:"15:00", barber:"Heitor", service:"Corte", shot:"",
   bookings:[
     {id:"b1",day:"Ter",time:"10:00",service:"Corte",barber:"Heitor",who:"André",mine:false,missed:false,price:55},
@@ -164,26 +98,6 @@ const DEFAULT_STATE={
     {id:"s2",text:"Cadeira livre no fim da tarde. Quem tem o plano Livre entra sem fila.",image:media.chair,likes:9,liked:false}
   ]
 };
-// Persistência local apenas para demonstração. No SaaS, os dados virão da API autenticada.
-const STORAGE_KEY="akasha-barbearia-demo-v1";
-function loadDemoState(){
-  try{
-    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
-    if(!saved||typeof saved!=="object") return {...DEFAULT_STATE};
-    return {...DEFAULT_STATE,...saved,
-      bookings:Array.isArray(saved.bookings)?saved.bookings:DEFAULT_STATE.bookings,
-      orders:Array.isArray(saved.orders)?saved.orders:[],
-      posts:Array.isArray(saved.posts)?saved.posts:DEFAULT_STATE.posts
-    };
-  }catch(error){return {...DEFAULT_STATE};}
-}
-const S=loadDemoState();
-function persistDemoState(){
-  try{
-    const {sheet,shot,...safeState}=S;
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(safeState));
-  }catch(error){console.warn("Não foi possível salvar a demonstração neste navegador.",error);}
-}
 function covered(){
   const price=(services.find((s)=>s.name===S.service)||{price:0}).price;
   const mine=S.bookings.filter((b)=>b.mine);
@@ -211,43 +125,43 @@ function cliente(){
   const active=plans.find((p)=>p.id===S.plan);
   if(S.tab==="agenda"){
     const q=covered();
-    return card(media.chair,`<h2>Marcar a cadeira</h2>${chips(services.map((s)=>s.name),"service",S.service)}${chips(days,"day",S.day)}${chips(times,"time",S.time)}${chips(barbers,"barber",S.barber)}<p class="ash">${q.note}</p><p><b>${q.price===0?"Incluso no plano":money(q.price)}</b></p><button class="btn" data-act="book">Confirmar ${S.day} · ${S.time}</button>`);
+    return `<article class="card agenda"><img class="photo" src="${media.chair}" alt=""><div class="pad"><h2>Marcar a cadeira</h2>${chips(services.map((s)=>s.name),"service",S.service)}${chips(days,"day",S.day)}${chips(times,"time",S.time)}${chips(barbers,"barber",S.barber)}<p class="ash">${q.note}</p><p><b>${q.price===0?"Incluso no plano":money(q.price)}</b></p><button class="btn" data-act="book">Confirmar ${S.day} · ${S.time}</button></div></article>`;
   }
-  if(S.tab==="plano") return plans.map((p)=>card("",`<div class="row" style="justify-content:space-between"><h2>${p.name}</h2><b class="brass">${money(p.price)}/mês</b></div><p class="ash">${p.line}</p><button class="btn" data-act="${S.plan===p.id?"cancel":"sheet"}" data-id="${p.id}">${S.plan===p.id?"Assinatura ativa · encerrar":"Assinar"}</button>`)).join("")+`<p class="ash">Avulso continua na mesa: corte ${money(55)}, barba ${money(40)}, os dois ${money(80)}.</p>`;
-  if(S.tab==="loja") return products.map((p)=>`<article class="card"><div class="shop"><img src="${p.image}" alt=""><div><h2 style="font-size:24px">${p.name}</h2><p class="ash">${p.note}</p><p class="brass"><b>${money(p.price)}</b></p><div class="row"><button class="chip on" data-act="order" data-id="${p.name}" data-price="${p.price}" data-via="balcao">Encomendar</button><button class="chip" data-act="order" data-id="${p.name}" data-price="${p.price}" data-via="whats">WhatsApp</button></div></div></div></article>`).join("");
-  if(S.tab==="casa") return card(media.fade,`<p class="brass">Ficha</p><h2>Rafael Mendes</h2><p class="ash">Degradê baixo, barba fechada, máquina 1 na nuca. Barbeiro de costume: Heitor.</p>`)+S.posts.map((p)=>card(p.image,`<p>${p.text}</p><button class="chip" data-act="like" data-id="${p.id}">${p.liked?"Curtido":"Curtir"} · ${p.likes}</button>`)).join("");
-  return card(media.door,`<p class="brass">${active?active.name:"Avulso"}</p><h2>${next?next.day+" · "+next.time:"Sem horário marcado"}</h2><p class="ash">${next?next.service+" com "+next.barber+".":"A cadeira de terça, 15h, está aberta."}</p>`)+`<div class="row">${services.slice(0,2).map((s)=>`<article class="card" style="flex:1"><img class="photo" style="height:120px" src="${s.image}" alt=""><div class="pad"><b>${s.name}</b><div class="brass">${money(s.price)} · ${s.min} min</div></div></article>`).join("")}</div>`;
+  if(S.tab==="plano") return `<div class="cols cols-3">`+plans.map((p)=>card("",`<div class="row" style="justify-content:space-between"><h2>${p.name}</h2><b class="brass">${money(p.price)}/mês</b></div><p class="ash">${p.line}</p><button class="btn" data-act="${S.plan===p.id?"cancel":"sheet"}" data-id="${p.id}">${S.plan===p.id?"Assinatura ativa · encerrar":"Assinar"}</button>`)).join("")+`<p class="ash span-2">Avulso continua na mesa: corte ${money(55)}, barba ${money(40)}, os dois ${money(80)}.</p></div>`;
+  if(S.tab==="loja") return `<div class="cols cols-2">`+products.map((p)=>`<article class="card"><div class="shop"><img src="${p.image}" alt=""><div><h2 style="font-size:24px">${p.name}</h2><p class="ash">${p.note}</p><p class="brass"><b>${money(p.price)}</b></p><div class="row"><button class="chip on" data-act="order" data-id="${p.name}" data-price="${p.price}" data-via="balcao">Encomendar</button><button class="chip" data-act="order" data-id="${p.name}" data-price="${p.price}" data-via="whats">WhatsApp</button></div></div></div></article>`).join("")+`</div>`;
+  if(S.tab==="casa") return card(media.fade,`<p class="brass">Ficha</p><h2>Rafael Mendes</h2><p class="ash">Degradê baixo, barba fechada, máquina 1 na nuca. Barbeiro de costume: Heitor.</p>`)+`<div class="cols cols-2">`+S.posts.map((p)=>card(p.image,`<p>${p.text}</p><button class="chip" data-act="like" data-id="${p.id}">${p.liked?"Curtido":"Curtir"} · ${p.likes}</button>`)).join("")+`</div>`;
+  return `<div class="split">`+card(media.door,`<p class="brass">${active?active.name:"Avulso"}</p><h2>${next?next.day+" · "+next.time:"Sem horário marcado"}</h2><p class="ash">${next?next.service+" com "+next.barber+".":"A cadeira de terça, 15h, está aberta."}</p>`)+`<div class="pair stack">`+services.slice(0,2).map((s)=>`<article class="card"><img class="photo" style="height:140px" src="${s.image}" alt=""><div class="pad"><b>${s.name}</b><div class="brass">${money(s.price)} · ${s.min} min</div></div></article>`).join("")+`</div></div>`;
 }
 function cadeira(){
   const list=S.bookings.filter((b)=>b.barber==="Heitor"&&!b.missed);
   if(S.tab==="ficha") return card(media.fade,`<p class="brass">Antes de sentar</p><h2>Rafael</h2><p class="ash">Degradê baixo. Barba fechada. Máquina 1 na nuca. Não raspar a risca.</p>`);
-  return `<h2>Cadeira do Heitor</h2>`+list.map((b)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${b.day} · ${b.time}</b><div class="ash">${b.who} · ${b.service}</div></div><button class="chip" data-act="miss" data-id="${b.id}">Faltou</button></div>`)).join("")+(S.tab==="agenda"?`<p class="ash">Terça, 15h, ainda é um buraco se ninguém encaixou.</p>`:"");
+  return `<div class="cols cols-2"><h2 class="span-2">Cadeira do Heitor</h2>`+list.map((b)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${b.day} · ${b.time}</b><div class="ash">${b.who} · ${b.service}</div></div><button class="chip" data-act="miss" data-id="${b.id}">Faltou</button></div>`)).join("")+(S.tab==="agenda"?`<p class="ash span-2">Terça, 15h, ainda é um buraco se ninguém encaixou.</p>`:"")+`</div>`;
 }
 function casa(){
   const live=S.bookings.filter((b)=>!b.missed);
   const holes=live.some((b)=>b.day==="Ter"&&b.time==="15:00"&&b.barber==="Heitor");
   const subs=(S.plan?1:0)+6;
   const mrr=(S.plan?(plans.find((p)=>p.id===S.plan)||{price:0}).price:0)+149*4+269*2;
-  if(S.tab==="agenda") return live.map((b)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${b.day} · ${b.time} · ${b.barber}</b><div class="ash">${b.who} · ${b.service} · ${b.price===0?"no plano":money(b.price)}</div></div><button class="chip" data-act="miss" data-id="${b.id}">Faltou</button></div>`)).join("");
-  if(S.tab==="assinaturas") return card("",`<div class="ash">Recorrência do mês</div><h2>${money(mrr)}</h2><p class="ash">${subs} assinaturas. A do Rafael ${S.plan?"é "+plans.find((p)=>p.id===S.plan).name:"ainda é avulsa"}.</p>`)+plans.map((p)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${p.name}</b><div class="ash">${p.line}</div></div><b class="brass">${money(p.price)}</b></div>`)).join("");
-  if(S.tab==="pedidos") return `<h2>Pedidos</h2>`+(S.orders.length?S.orders.map((o)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${o.item}</b><div class="ash">${o.via==="whats"?"Veio do WhatsApp":"Retira na cadeira"}</div></div><b>${money(o.price)}</b></div>`)).join(""):`<p class="ash">Nenhuma encomenda ainda. Balcão e WhatsApp caem aqui.</p>`);
-  if(S.tab==="gargalos") return [
+  if(S.tab==="agenda") return `<div class="cols cols-2">`+live.map((b)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${b.day} · ${b.time} · ${b.barber}</b><div class="ash">${b.who} · ${b.service} · ${b.price===0?"no plano":money(b.price)}</div></div><button class="chip" data-act="miss" data-id="${b.id}">Faltou</button></div>`)).join("")+`</div>`;
+  if(S.tab==="assinaturas") return `<div class="cols cols-3"><div class="span-2">`+card("",`<div class="ash">Recorrência do mês</div><h2>${money(mrr)}</h2><p class="ash">${subs} assinaturas. A do Rafael ${S.plan?"é "+plans.find((p)=>p.id===S.plan).name:"ainda é avulsa"}.</p>`)+`</div>`+plans.map((p)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${p.name}</b><div class="ash">${p.line}</div></div><b class="brass">${money(p.price)}</b></div>`)).join("")+`</div>`;
+  if(S.tab==="pedidos") return `<h2>Pedidos</h2>`+(S.orders.length?`<div class="cols cols-2">`+S.orders.map((o)=>card("",`<div class="row" style="justify-content:space-between"><div><b>${o.item}</b><div class="ash">${o.via==="whats"?"Veio do WhatsApp":"Retira na cadeira"}</div></div><b>${money(o.price)}</b></div>`)).join("")+`</div>`:`<p class="ash">Nenhuma encomenda ainda. Balcão e WhatsApp caem aqui.</p>`);
+  if(S.tab==="gargalos") return `<div class="cols cols-2">`+[
     card("",`<p class="brass">Oculto</p><h2 style="font-size:26px">Horário vazio</h2><p class="ash">Terça, 15h, a cadeira do Heitor ficava parada. Agora a casa oferece a quem tem o plano Livre.</p><button class="btn" data-act="hole">${holes?"Buraco preenchido":"Oferecer terça 15h"}</button>`),
     card("",`<p class="brass">Oculto</p><h2 style="font-size:26px">Falta</h2><p class="ash">Quem não vem devolve o horário. Se era o corte da semana, a semana volta a ficar aberta.</p>`),
     card("",`<p class="brass">Oculto</p><h2 style="font-size:26px">WhatsApp perdido</h2><p class="ash">${S.orders.length} pedido${S.orders.length===1?"":"s"} nesta mesa. A conversa não fica só no celular de um barbeiro.</p>`),
     card("",`<p class="brass">Personalizado</p><h2 style="font-size:26px">O corte de cada um</h2><p class="ash">Rafael: degradê baixo, barba fechada, máquina 1 na nuca. A ficha abre na cadeira antes da tesoura.</p>`),
     card("",`<p class="brass">Padrão</p><h2 style="font-size:26px">O mesmo preço para todos</h2><p class="ash">Corte, barba e os três planos usam a mesma regra. Não muda conforme quem atendeu.</p>`),
     card(S.posts[0].image,`<h2 style="font-size:26px">A rede da casa</h2><p class="ash">O corte publicado aqui é o mesmo que sai no Instagram da barbearia.</p><button class="btn" data-act="publish">Publicar o corte de hoje</button>`)
-  ].join("");
-  return card(media.chair,`<p class="brass">Hoje</p><h2>${live.length} na agenda</h2><p class="ash">${holes?"Terça 15h já tem nome.":"Terça 15h ainda está vazia."}</p>`)+`<div class="row"><article class="card" style="flex:1"><div class="pad"><div class="ash">Assinaturas</div><h2>${subs}</h2></div></article><article class="card" style="flex:1"><div class="pad"><div class="ash">No mês</div><h2>${money(mrr)}</h2></div></article></div>`;
+  ].join("")+`</div>`;
+  return `<div class="split">`+card(media.chair,`<p class="brass">Hoje</p><h2>${live.length} na agenda</h2><p class="ash">${holes?"Terça 15h já tem nome.":"Terça 15h ainda está vazia."}</p>`)+`<div class="pair stack"><article class="card"><div class="pad"><div class="ash">Assinaturas</div><h2>${subs}</h2></div></article><article class="card"><div class="pad"><div class="ash">No mês</div><h2>${money(mrr)}</h2></div></article></div></div>`;
 }
 function render(){
-  persistDemoState();
   const list=tabs();
   if(!list.some((t)=>t[0]===S.tab)) S.tab=list[0][0];
   const line=S.role==="cliente"?"Sua semana, sua cadeira, seu plano.":S.role==="cadeira"?"A agenda do Heitor e a ficha de quem senta.":"A mesa da casa. Agenda, assinatura, pedido e o que antes ficava invisível.";
-  document.getElementById("head").innerHTML=`<h1>Navalha</h1><p class="ash">Barbearia</p><div class="row" style="margin-top:14px"><button class="chip ${S.role==="cliente"?"on":""}" data-act="role" data-id="cliente">Cliente</button><button class="chip ${S.role==="cadeira"?"on":""}" data-act="role" data-id="cadeira">Cadeira</button><button class="chip ${S.role==="casa"?"on":""}" data-act="role" data-id="casa">Casa</button></div><p class="ash">${line}</p><div class="demo-note" role="status"><b>AMBIENTE DE DEMONSTRAÇÃO</b><span>Os dados ficam salvos somente neste navegador. Cobranças e sincronização entre barbearias ainda não estão ativadas.</span></div>`;
-  document.getElementById("desk").innerHTML=`<div><h1>Navalha</h1><p class="ash">Barbearia</p></div>`+list.map((t)=>`<button class="nav ${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
+  const roles=`<button class="chip ${S.role==="cliente"?"on":""}" data-act="role" data-id="cliente">Cliente</button><button class="chip ${S.role==="cadeira"?"on":""}" data-act="role" data-id="cadeira">Cadeira</button><button class="chip ${S.role==="casa"?"on":""}" data-act="role" data-id="casa">Casa</button>`;
+  document.getElementById("head").innerHTML=`<div class="only-phone"><h1>Navalha</h1><p class="ash">Barbearia</p><div class="row" style="margin:14px 0">${roles}</div></div><p class="ash">${line}</p>`;
+  document.getElementById("desk").innerHTML=`<div><h1>Navalha</h1><p class="ash">Barbearia</p></div><div class="row">${roles}</div>`+list.map((t)=>`<button class="nav ${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
   const nav=document.getElementById("nav");
   nav.style.gridTemplateColumns=`repeat(${list.length},minmax(0,1fr))`;
   nav.innerHTML=list.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
