@@ -115,7 +115,7 @@ window.akashaOferta = function (ref) {
   }
   var lista = kind === "curso" ? window.AKASHA_ITENS[area].cursos : kind === "livro" ? window.AKASHA_ITENS[area].livros : kind === "audio" ? window.AKASHA_ITENS[area].audios : null;
   if (!lista || lista.indexOf(item) < 0) return null;
-  var valor = kind === "livro" ? (window.AKASHA_PRECO.livros[item] || window.AKASHA_PRECO.livro) : window.AKASHA_PRECO[kind];
+  var valor = kind === "livro" ? (window.AKASHA_PRECO.livros[item] || window.AKASHA_PRECO.livro) : (kind === "curso" && item === "alinhamento" ? 3500 : window.AKASHA_PRECO[kind]);
   var titulo = item;
   if (kind === "curso") {
     for (var i = 0; i < faixa.courses.length; i++) {

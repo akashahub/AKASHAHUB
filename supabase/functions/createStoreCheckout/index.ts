@@ -115,7 +115,7 @@ function memberProduct(ref) {
   const lista = ITENS[area][kind];
   if (!lista || lista.indexOf(item) < 0) return null;
   const nome = kind === "curso" ? (NOMES[item] || item) : item;
-  const cents = kind === "livro" && item === "Paladin" ? 3900 : ITEM_CENTS[kind];
+  const cents = item === "alinhamento" ? 3500 : kind === "livro" && item === "Paladin" ? 3900 : ITEM_CENTS[kind];
   return { name: nome, cents, kind, area, item };
 }
 

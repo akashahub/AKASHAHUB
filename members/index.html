@@ -518,8 +518,10 @@ function listaCursos() {
   const ja = new Set();
   f.cursos.forEach(item => {
     const custom = extras.find(c => c.id === area + ":" + item.id);
-    if (custom && custom.status === "apagado") return;
-    if (custom && (custom.status === "oculto" || custom.status === "rascunho") && !adminOn) return;
+    if (item.id !== "alinhamento") {
+      if (custom && custom.status === "apagado") return;
+      if (custom && (custom.status === "oculto" || custom.status === "rascunho") && !adminOn) return;
+    }
     const base = moldarCurso(item);
     let curso = custom ? moldarCurso(custom) : base;
     if (custom) {
@@ -682,7 +684,7 @@ function cursos() {
       const capa = item.capa ? `<img class="capa" alt="Capa de ${esc(item.titulo)}" src="${esc(item.capa)}">` : "";
       const atos = adminOn ? `<div class="acts"><button type="button" data-edit-curso="${esc(item.id)}">Editar</button><button type="button" data-del-curso="${esc(item.id)}">Apagar</button></div>` : "";
       const marca = adminOn && item.status === "oculto" ? `<p class="sub">Oculto para os alunos</p>` : "";
-      return `<article class="course" data-curso="${esc(item.id)}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong>${item.descricao ? `<p class="sub">${esc(item.descricao)}</p>` : ""}<p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p>${marca}<span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : reais(PRECO_ITEM.curso)}</span>${atos}</article>`;
+      return `<article class="course" data-curso="${esc(item.id)}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong>${item.descricao ? `<p class="sub">${esc(item.descricao)}</p>` : ""}<p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p>${marca}<span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : reais(item.id === "alinhamento" ? 3500 : PRECO_ITEM.curso)}</span>${atos}</article>`;
     }).join("")}</div>`;
   document.querySelector("[data-back]").onclick = () => go({ view: "area" });
   const criarCursoCard = document.getElementById("criarCursoCard");
@@ -2000,7 +2002,19 @@ async function loadStripeGrants() {
   } catch (e) {}
 }
 
+function captureStripeReturn() {
+  let sessions = [];
+  try { sessions = JSON.parse(localStorage.getItem("akashaStripeSessions") || "[]"); } catch (e) {}
+  const incoming = new URLSearchParams(location.search).get("session_id");
+  const paid = incoming && incoming.indexOf("cs_") === 0;
+  if (paid && sessions.indexOf(incoming) < 0) sessions.push(incoming);
+  if (incoming) history.replaceState({}, "", location.pathname);
+  localStorage.setItem("akashaStripeSessions", JSON.stringify(sessions.slice(-20)));
+  return !!paid;
+}
+
 onAuthStateChanged(auth, async next => {
+  const voltouPago = captureStripeReturn();
   user = next;
   rights = { areas: [], cursos: [], livros: [], audios: [] };
   catalogVideos = {};
@@ -2071,6 +2085,9 @@ onAuthStateChanged(auth, async next => {
         console.warn("[members] conteúdo publicado não atualizou em tempo real:", error.code || error.message);
       });
     }
+  } else if (voltouPago) {
+    location.href = "/login/?next=" + encodeURIComponent("/members/");
+    return;
   } else if (stopPublicCms) {
     stopPublicCms();
     stopPublicCms = null;
