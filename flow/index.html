@@ -153,12 +153,25 @@ p{text-wrap:pretty}
 @keyframes shine{to{background-position:220% center}}
 .offer-akasha .buy{margin-top:16px;animation:ctaPulse 2.4s ease-in-out infinite}
 @keyframes ctaPulse{0%,100%{box-shadow:0 0 0 0 rgba(243,238,230,.0)}50%{box-shadow:0 0 0 6px rgba(230,195,106,.16)}}
-.cortes{margin-top:28px}
-.corte-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.cortes-open{position:absolute;left:50%;top:50%;z-index:3;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;border:0;background:transparent;color:#f3eee6;cursor:pointer;font-size:11px;letter-spacing:.18em;text-transform:uppercase;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+.cortes-open .ring{width:74px;height:74px;border-radius:50%;border:1px solid rgba(243,238,230,.75);background:rgba(11,10,9,.48);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:grid;place-items:center;box-shadow:0 12px 30px rgba(0,0,0,.4);transition:transform .2s ease,background .2s ease}
+.cortes-open .ring:before{content:"";border-style:solid;border-width:9px 0 9px 16px;border-color:transparent transparent transparent #f3eee6;margin-left:4px}
+.cortes-open:hover .ring,.cortes-open:focus-visible .ring{transform:scale(1.06);background:rgba(11,10,9,.68)}
+.cortes-open:focus-visible{outline:2px solid #e6c36a;outline-offset:4px}
+.cortes-modal[hidden]{display:none}
+.cortes-modal{position:fixed;inset:0;z-index:160;display:flex;align-items:flex-start;justify-content:center;padding:16px;background:rgba(0,0,0,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:auto}
+.cortes-dialog{position:relative;width:min(980px,100%);margin:auto;background:#141210;color:#f3eee6;border:1px solid rgba(230,195,106,.4);border-radius:18px;padding:22px 18px 20px}
+.cortes-dialog h2{font-size:clamp(1.7rem,4vw,2.4rem);margin:8px 0 0}
+.cortes-x{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:1px solid rgba(243,238,230,.45);background:rgba(11,10,9,.82);color:#f7f2ea;font-size:24px;line-height:1;cursor:pointer}
+.corte-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
 @media(min-width:800px){.corte-grid{grid-template-columns:repeat(3,1fr)}}
 .corte-grid figure{margin:0;min-width:0}
-.corte-grid video{width:100%;aspect-ratio:9/16;object-fit:cover;background:#0b0a09;border-radius:12px;border:1px solid var(--line)}
-.corte-grid figcaption{margin-top:6px;font-size:12px;color:var(--ivory-dim)}
+.corte-frame{position:relative;border-radius:12px;overflow:hidden;background:#0b0a09;border:1px solid var(--line);aspect-ratio:9/16}
+.corte-frame video{width:100%;height:100%;object-fit:cover;background:#0b0a09;display:block}
+.corte-capa{position:absolute;inset:0;border:0;cursor:pointer;color:#f7f2ea;background:radial-gradient(circle at 50% 30%,rgba(230,195,106,.28),transparent 46%),linear-gradient(180deg,#1a1612,#0b0a09 72%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.corte-capa b{font-family:var(--display);font-size:clamp(3.4rem,8vw,4.6rem);font-weight:500;line-height:.9}
+.corte-capa small{letter-spacing:.18em;text-transform:uppercase;font-size:10px;color:#cfc4b4}
+.corte-capa[hidden]{display:none}
 @media(prefers-reduced-motion:reduce){
   .promo-seal,.price-now,.offer-akasha .buy{animation:none}
   .price-now{color:var(--ivory);background:none;-webkit-text-fill-color:var(--ivory)}
@@ -589,6 +602,10 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
       <div class="cover">
         <span class="promo-seal"><i></i> Promoção</span>
         <img src="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png" alt="Capa do Código de Alinhamento Akáshico" loading="lazy"/>
+        <button class="cortes-open" type="button" id="cortes-open" aria-haspopup="dialog" aria-controls="cortes-modal">
+          <span class="ring" aria-hidden="true"></span>
+          Ver cortes
+        </button>
       </div>
       <div>
         <p class="kicker">Curso · Anúbis</p>
@@ -602,67 +619,6 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
         <p class="dim" style="margin:12px 0 0;font-size:.85rem;line-height:1.5">Stripe, cartão ou Pix. Depois, o login em /members libera apenas o Código de Alinhamento Akáshico.</p>
       </div>
     </article>
-    <div class="cortes">
-      <p class="kicker">Cortes do curso</p>
-      <h3 style="margin:8px 0 0;font-size:1.7rem">Um pedaço, antes de entrar.</h3>
-      <p class="dim" style="margin:8px 0 0;max-width:36rem;line-height:1.55">Trechos curtos para ver o tom da aula. O curso inteiro abre depois do pagamento.</p>
-      <div class="corte-grid">
-      <figure>
-        <video controls playsinline preload="none" poster="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png">
-          <source src="/flow/cortes/corte-01.mp4" type="video/mp4"/>
-        </video>
-        <figcaption>Corte 1 · 9s</figcaption>
-      </figure>
-      <figure>
-        <video controls playsinline preload="none" poster="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png">
-          <source src="/flow/cortes/corte-02.mp4" type="video/mp4"/>
-        </video>
-        <figcaption>Corte 2 · 16s</figcaption>
-      </figure>
-      <figure>
-        <video controls playsinline preload="none" poster="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png">
-          <source src="/flow/cortes/corte-03.mp4" type="video/mp4"/>
-        </video>
-        <figcaption>Corte 3 · 18s</figcaption>
-      </figure>
-      <figure>
-        <video controls playsinline preload="none" poster="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png">
-          <source src="/flow/cortes/corte-04.mp4" type="video/mp4"/>
-        </video>
-        <figcaption>Corte 4 · 12s</figcaption>
-      </figure>
-      <figure>
-        <video controls playsinline preload="none" poster="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png">
-          <source src="/flow/cortes/corte-05.mp4" type="video/mp4"/>
-        </video>
-        <figcaption>Corte 5 · 24s</figcaption>
-      </figure>
-      <figure>
-        <video controls playsinline preload="none" poster="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png">
-          <source src="/flow/cortes/corte-06.mp4" type="video/mp4"/>
-        </video>
-        <figcaption>Corte 6 · 12s</figcaption>
-      </figure>
-      <figure>
-        <video controls playsinline preload="none" poster="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png">
-          <source src="/flow/cortes/corte-07.mp4" type="video/mp4"/>
-        </video>
-        <figcaption>Corte 7 · 19s</figcaption>
-      </figure>
-      <figure>
-        <video controls playsinline preload="none" poster="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png">
-          <source src="/flow/cortes/corte-08.mp4" type="video/mp4"/>
-        </video>
-        <figcaption>Corte 8 · 13s</figcaption>
-      </figure>
-      <figure>
-        <video controls playsinline preload="none" poster="https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png">
-          <source src="/flow/cortes/corte-09.mp4" type="video/mp4"/>
-        </video>
-        <figcaption>Corte 9 · 19s</figcaption>
-      </figure>
-      </div>
-    </div>
     <div class="wgrid">
       <a class="work" href="https://pay.hotmart.com/W102015202C" target="_blank" rel="noopener noreferrer">
         <img class="course-cover" src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766004473/download_-_2025-12-17T174118.262_egaqea.jpg" alt="Capa do Desafio 7 Dias de Magnetismo Pessoal" loading="lazy"/>
@@ -675,9 +631,25 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </div>
 </section>
 
-
-
-
+<div id="cortes-modal" class="cortes-modal" hidden>
+  <div class="cortes-dialog" role="dialog" aria-modal="true" aria-labelledby="cortes-title">
+    <button class="cortes-x" id="cortes-close" type="button" aria-label="Fechar">×</button>
+    <p class="kicker">Cortes do curso</p>
+    <h2 id="cortes-title">Um pedaço, antes de entrar.</h2>
+    <p class="dim" style="margin:8px 0 0;max-width:36rem;line-height:1.55">Toque no número para assistir. O curso inteiro abre depois do pagamento.</p>
+    <div class="corte-grid">
+      <figure><div class="corte-frame"><video controls playsinline preload="none"><source src="/flow/cortes/corte-01.mp4" type="video/mp4"/></video><button class="corte-capa" type="button" aria-label="Assistir corte 1"><b>1</b><small>9s</small></button></div></figure>
+      <figure><div class="corte-frame"><video controls playsinline preload="none"><source src="/flow/cortes/corte-02.mp4" type="video/mp4"/></video><button class="corte-capa" type="button" aria-label="Assistir corte 2"><b>2</b><small>16s</small></button></div></figure>
+      <figure><div class="corte-frame"><video controls playsinline preload="none"><source src="/flow/cortes/corte-03.mp4" type="video/mp4"/></video><button class="corte-capa" type="button" aria-label="Assistir corte 3"><b>3</b><small>18s</small></button></div></figure>
+      <figure><div class="corte-frame"><video controls playsinline preload="none"><source src="/flow/cortes/corte-04.mp4" type="video/mp4"/></video><button class="corte-capa" type="button" aria-label="Assistir corte 4"><b>4</b><small>12s</small></button></div></figure>
+      <figure><div class="corte-frame"><video controls playsinline preload="none"><source src="/flow/cortes/corte-05.mp4" type="video/mp4"/></video><button class="corte-capa" type="button" aria-label="Assistir corte 5"><b>5</b><small>24s</small></button></div></figure>
+      <figure><div class="corte-frame"><video controls playsinline preload="none"><source src="/flow/cortes/corte-06.mp4" type="video/mp4"/></video><button class="corte-capa" type="button" aria-label="Assistir corte 6"><b>6</b><small>12s</small></button></div></figure>
+      <figure><div class="corte-frame"><video controls playsinline preload="none"><source src="/flow/cortes/corte-07.mp4" type="video/mp4"/></video><button class="corte-capa" type="button" aria-label="Assistir corte 7"><b>7</b><small>19s</small></button></div></figure>
+      <figure><div class="corte-frame"><video controls playsinline preload="none"><source src="/flow/cortes/corte-08.mp4" type="video/mp4"/></video><button class="corte-capa" type="button" aria-label="Assistir corte 8"><b>8</b><small>13s</small></button></div></figure>
+      <figure><div class="corte-frame"><video controls playsinline preload="none"><source src="/flow/cortes/corte-09.mp4" type="video/mp4"/></video><button class="corte-capa" type="button" aria-label="Assistir corte 9"><b>9</b><small>19s</small></button></div></figure>
+    </div>
+  </div>
+</div>
 
 <section class="qual reveal">
   <div>
@@ -1317,6 +1289,49 @@ if ('IntersectionObserver' in window) {
     });
   }, { threshold: 0.45 });
   io.observe(document.getElementById("alinhamento") || num);
+})();
+(function () {
+  var openBtn = document.getElementById("cortes-open");
+  var modal = document.getElementById("cortes-modal");
+  var closeBtn = document.getElementById("cortes-close");
+  if (!openBtn || !modal) return;
+  function stopAll() {
+    modal.querySelectorAll("video").forEach(function (video) { video.pause(); });
+    modal.querySelectorAll(".corte-capa").forEach(function (capa) { capa.hidden = false; });
+  }
+  function openModal() {
+    modal.hidden = false;
+    document.body.style.overflow = "hidden";
+    closeBtn.focus();
+  }
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = "";
+    stopAll();
+    openBtn.focus();
+  }
+  openBtn.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", function (event) {
+    if (event.target === modal) closeModal();
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && !modal.hidden) closeModal();
+  });
+  modal.querySelectorAll(".corte-capa").forEach(function (capa) {
+    capa.addEventListener("click", function () {
+      var frame = capa.parentElement;
+      var video = frame.querySelector("video");
+      modal.querySelectorAll("video").forEach(function (other) {
+        if (other !== video) other.pause();
+      });
+      modal.querySelectorAll(".corte-capa").forEach(function (other) {
+        if (other !== capa) other.hidden = false;
+      });
+      capa.hidden = true;
+      video.play();
+    });
+  });
 })();
 </script>
 
