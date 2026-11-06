@@ -53,9 +53,9 @@
 @media(min-width:768px){:root{--pad:40px}}
 @media(min-width:1200px){:root{--pad:56px}}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;overflow-x:clip}
 html,body{margin:0;background:var(--ink);color:var(--ivory);font-family:var(--sans);min-height:100%;max-width:100%}
-body{padding-bottom:var(--dock);overflow-x:hidden}
+body{padding-bottom:var(--dock);overflow-x:clip}
 @media(min-width:768px){body{padding-bottom:0}}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
@@ -118,7 +118,7 @@ p{text-wrap:pretty}
 .massage-media .massage-media-stage:after{content:none!important;display:none!important}
 .split{display:grid;gap:28px;padding:64px var(--pad);align-items:center}
 
-/* Sequência cinematográfica Flow: imagem amplia, revela o vídeo e o scroll controla cada frame. */
+/* Sequência cinematográfica Flow: vídeo contínuo, sticky central e saída suave no scroll. */
 .flow-cinematic{position:relative;height:220vh;background:#080807;margin:0;isolation:isolate}
 .flow-cinematic-sticky{position:sticky;top:0;width:100%;height:100vh;height:100dvh;min-height:520px;display:grid;place-items:center;overflow:hidden;background:#080807}
 .flow-cinematic-stage{position:relative;width:100vw;height:100vh;height:100dvh;min-height:520px;overflow:hidden;background:#080807;border-radius:0;transform:scale(1);transform-origin:center center;will-change:transform,opacity;box-shadow:none}
@@ -645,7 +645,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   <div class="flow-cinematic-sticky">
     <div class="flow-cinematic-stage">
       <img class="flow-cinematic-image" src="/primal/images/BZPnn.jpg" alt="Ambiente da experiência Flow"/>
-      <video class="flow-cinematic-video" muted playsinline preload="auto" poster="/primal/images/BZPnn.jpg" aria-label="Vídeo da experiência Flow controlado pela rolagem">
+      <video class="flow-cinematic-video" muted playsinline preload="auto" poster="/primal/images/BZPnn.jpg" aria-label="Vídeo da experiência Flow em reprodução contínua">
         <source src="https://res.cloudinary.com/dcbarseus/video/upload/v1793952770/generated_video_6_xuspfw.mp4" type="video/mp4"/>
       </video>
       <div class="flow-cinematic-copy">
@@ -1455,18 +1455,23 @@ if ('IntersectionObserver' in window) {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) {
     section.classList.add('is-static');
+    video.autoplay = false;
+    video.removeAttribute('autoplay');
+    video.loop = false;
     video.controls = true;
+    video.pause();
     return;
   }
 
   let raf = 0;
-  let videoReady = false;
-  video.pause();
+  let videoReady = !video.paused && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+  let playRequest = null;
   video.muted = true;
   video.defaultMuted = true;
   video.loop = true;
   video.playsInline = true;
   video.preload = 'auto';
+  video.autoplay = true;
   video.setAttribute('autoplay', '');
   video.setAttribute('muted', '');
   video.setAttribute('playsinline', '');
@@ -1486,16 +1491,14 @@ if ('IntersectionObserver' in window) {
 
     // Entrada curta, permanência estável e saída gradual no fim da seção.
     const entrance = clamp(progress / 0.10);
-    const exit = clamp((progress - 0.78) / 0.22);
-    const fadeIn = entrance;
-    const fadeOut = 1 - exit;
-    const visibility = fadeIn * fadeOut;
+    const exit = clamp((progress - 0.92) / 0.08);
+    const visibility = entrance * (1 - exit);
 
     stage.style.opacity = String(visibility);
     stage.style.transform = 'scale(' + (0.985 + entrance * 0.015 + exit * 0.012).toFixed(4) + ')';
     stage.style.borderRadius = '0px';
 
-    // A imagem fica visível até existir um quadro real do vídeo.
+    // A imagem de fallback só cede lugar depois que o vídeo está reproduzindo.
     video.style.opacity = videoReady ? String(visibility) : '0';
     image.style.opacity = videoReady ? '0' : '1';
     image.style.transform = 'scale(' + (1.025 + entrance * 0.015).toFixed(3) + ')';
@@ -1508,31 +1511,63 @@ if ('IntersectionObserver' in window) {
   }
 
   function startVideo() {
-    if (videoReady) return;
-    videoReady = true;
-    video.play().catch(function () {
-      // Se o navegador bloquear autoplay, a imagem de segurança continua visível.
+    if (videoReady || playRequest || video.error) return;
+    if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
+    if (!video.paused) {
+      videoReady = true;
+      requestUpdate();
+      return;
+    }
+
+    try {
+      const result = video.play();
+      if (!result || typeof result.then !== 'function') {
+        videoReady = !video.paused;
+        requestUpdate();
+        return;
+      }
+      playRequest = result;
+      result.then(function () {
+        videoReady = !video.paused && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+      }).catch(function () {
+        // A imagem e o poster permanecem visíveis se o navegador bloquear autoplay.
+        videoReady = false;
+      }).finally(function () {
+        playRequest = null;
+        requestUpdate();
+      });
+    } catch (error) {
       videoReady = false;
-      video.style.opacity = '0';
-      image.style.opacity = '1';
-    });
-    requestUpdate();
+      requestUpdate();
+    }
   }
 
-  video.addEventListener('loadeddata', startVideo, { once: true });
-  video.addEventListener('canplay', startVideo, { once: true });
+  video.addEventListener('loadeddata', startVideo);
+  video.addEventListener('canplay', startVideo);
+  video.addEventListener('playing', function () {
+    videoReady = true;
+    requestUpdate();
+  });
+  video.addEventListener('pause', function () {
+    if (!video.ended) {
+      videoReady = false;
+      requestUpdate();
+    }
+  });
   video.addEventListener('error', function () {
     videoReady = false;
-    video.style.opacity = '0';
-    image.style.opacity = '1';
+    requestUpdate();
   });
 
   window.addEventListener('scroll', requestUpdate, { passive: true });
   window.addEventListener('resize', requestUpdate);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && video.paused) startVideo();
+  });
   video.load();
+  startVideo();
   requestUpdate();
 })();
-
+</script>
 </body>
 </html>
-
