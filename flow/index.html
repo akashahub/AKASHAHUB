@@ -115,6 +115,9 @@ p{text-wrap:pretty}
 .ggrid img,.ggrid video{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.6s cubic-bezier(.22,1,.36,1)}
 @media(hover:hover){.ggrid figure:hover img,.ggrid figure:hover video{transform:scale(1.06)}}
 .massage-media .massage-media-stage video{filter:none!important}
+.atmosfera-frame{position:relative}
+.atmosfera-frame .atmosfera-final-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease;z-index:1}
+.atmosfera-frame .atmosfera-video{position:relative;z-index:2;transition:opacity .8s ease}
 .massage-media .massage-media-stage:after{content:none!important;display:none!important}
 .split{display:grid;gap:28px;padding:64px var(--pad);align-items:center}
 
@@ -668,7 +671,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   </div>
   <div class="ggrid">
     <figure class="wide"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1793964176/31752fdd-49e8-40ab-b758-a716c09e86b7_cmnmjz.jpg" alt="Imagem da atmosfera Flow" loading="lazy" decoding="async"></figure>
-    <figure class="wide"><video class="atmosfera-video" autoplay muted loop playsinline preload="metadata" aria-label="Vídeo da atmosfera Flow"><source src="https://res.cloudinary.com/dcbarseus/video/upload/v1793971128/grok-video-ccf2bb9f-82d8-490f-ba63-a28b66f8e720_xl5niy.mp4" type="video/mp4"></video></figure>
+    <figure class="wide atmosfera-frame"><img class="atmosfera-final-frame" src="https://res.cloudinary.com/dcbarseus/image/upload/v1793971720/grok-image-ebf3730a-9ba4-4834-9435-75d9feeb1637_anly4m.jpg" alt="Imagem final da atmosfera Flow" loading="lazy" decoding="async"><video class="atmosfera-video" autoplay muted playsinline preload="metadata" aria-label="Vídeo da atmosfera Flow"><source src="https://res.cloudinary.com/dcbarseus/video/upload/v1793971128/grok-video-ccf2bb9f-82d8-490f-ba63-a28b66f8e720_xl5niy.mp4" type="video/mp4"></video></figure>
   </div>
 </section>
 
@@ -1458,19 +1461,15 @@ if ('IntersectionObserver' in window) {
 <script>
 (function(){
   const video=document.querySelector('.atmosfera-video');
-  if(!video)return;
-  const trimSeconds=2;
-  let endAt=Infinity;
-  video.addEventListener('loadedmetadata',function(){
-    endAt=Math.max(0,video.duration-trimSeconds);
-    if(endAt>0 && video.currentTime>=endAt) video.currentTime=0;
-  });
-  video.addEventListener('timeupdate',function(){
-    if(endAt>0 && video.currentTime>=endAt){
-      video.currentTime=0;
-      if(!video.paused) video.play().catch(()=>{});
-    }
-  });
+  const finalFrame=document.querySelector('.atmosfera-final-frame');
+  if(!video || !finalFrame)return;
+  video.loop=false;
+  video.addEventListener('ended',function(){
+    video.pause();
+    video.style.opacity='0';
+    video.style.pointerEvents='none';
+    finalFrame.style.opacity='1';
+  },{once:true});
 })();
 </script>
 
