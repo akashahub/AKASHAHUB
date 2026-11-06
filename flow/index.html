@@ -119,7 +119,7 @@ p{text-wrap:pretty}
 .split{display:grid;gap:28px;padding:64px var(--pad);align-items:center}
 
 /* Sequência cinematográfica Flow: imagem amplia, revela o vídeo e o scroll controla cada frame. */
-.flow-cinematic{position:relative;height:300vh;background:#080807;margin:0;isolation:isolate}
+.flow-cinematic{position:relative;height:220vh;background:#080807;margin:0;isolation:isolate}
 .flow-cinematic-sticky{position:sticky;top:0;width:100%;height:100vh;height:100dvh;min-height:520px;display:grid;place-items:center;overflow:hidden;background:#080807}
 .flow-cinematic-stage{position:relative;width:100vw;height:100vh;height:100dvh;min-height:520px;overflow:hidden;background:#080807;border-radius:0;transform:scale(1);transform-origin:center center;will-change:transform,opacity;box-shadow:none}
 .flow-cinematic-image,.flow-cinematic-video{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;object-position:center center}
@@ -1442,7 +1442,7 @@ if ('IntersectionObserver' in window) {
 </script>
 
 <script>
-/* Scroll-scrubbing Flow: o scroll controla o vídeo sem revelar frames ainda não carregados. */
+/* Experiência cinematográfica Flow: vídeo contínuo, centralizado e saída suave no scroll. */
 (function () {
   const section = document.getElementById('flow-cinematic');
   if (!section) return;
@@ -1456,56 +1456,27 @@ if ('IntersectionObserver' in window) {
   if (reduceMotion) {
     section.classList.add('is-static');
     video.controls = true;
-    video.load();
     return;
   }
 
-  let duration = 0;
-  let desiredTime = 0;
-  let seeking = false;
   let raf = 0;
-  let lastRequested = -1;
-  let frameReady = false;
-
+  let videoReady = false;
   video.pause();
   video.muted = true;
+  video.defaultMuted = true;
+  video.loop = true;
   video.playsInline = true;
   video.preload = 'auto';
+  video.setAttribute('autoplay', '');
+  video.setAttribute('muted', '');
+  video.setAttribute('playsinline', '');
 
   function clamp(value) { return Math.max(0, Math.min(1, value)); }
+
   function requestUpdate() {
     if (raf) return;
     raf = requestAnimationFrame(update);
   }
-
-  video.addEventListener('loadedmetadata', function () {
-    duration = Number.isFinite(video.duration) ? video.duration : 0;
-    requestUpdate();
-  });
-  video.addEventListener('loadeddata', function () {
-    frameReady = video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
-    requestUpdate();
-  });
-  video.addEventListener('canplay', function () {
-    frameReady = video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
-    requestUpdate();
-  });
-
-  // Mantém apenas o seek mais recente para o vídeo não ficar atrasado em relação ao scroll.
-  function seekLatest() {
-    if (!frameReady || !duration || seeking) return;
-    if (Math.abs(video.currentTime - desiredTime) < 0.035) return;
-    seeking = true;
-    lastRequested = desiredTime;
-    try { video.currentTime = desiredTime; }
-    catch (error) { seeking = false; }
-  }
-  video.addEventListener('seeked', function () {
-    seeking = false;
-    frameReady = video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
-    if (Math.abs(desiredTime - lastRequested) > 0.045) seekLatest();
-    requestUpdate();
-  });
 
   function update() {
     raf = 0;
@@ -1513,46 +1484,54 @@ if ('IntersectionObserver' in window) {
     const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
     const progress = clamp(-rect.top / travel);
 
-    // O quadro ocupa a viewport inteira e não encolhe durante a sequência.
-    const entrance = clamp(progress / 0.12);
-    const exit = clamp((progress - 0.94) / 0.06);
-    const scale = 1 + entrance * 0.008 - exit * 0.012;
-    stage.style.transform = 'scale(' + scale.toFixed(4) + ')';
+    // Entrada curta, permanência estável e saída gradual no fim da seção.
+    const entrance = clamp(progress / 0.10);
+    const exit = clamp((progress - 0.78) / 0.22);
+    const fadeIn = entrance;
+    const fadeOut = 1 - exit;
+    const visibility = fadeIn * fadeOut;
+
+    stage.style.opacity = String(visibility);
+    stage.style.transform = 'scale(' + (0.985 + entrance * 0.015 + exit * 0.012).toFixed(4) + ')';
     stage.style.borderRadius = '0px';
-    stage.style.opacity = String(1 - exit);
 
-    // Se o MP4 ainda estiver carregando, a imagem original continua visível.
-    const reveal = clamp((progress - 0.06) / 0.16);
-    const visibleVideo = frameReady ? reveal : 0;
-    video.style.opacity = String(visibleVideo);
-    image.style.opacity = String(1 - visibleVideo);
-    image.style.transform = 'scale(' + (1.04 + entrance * 0.025).toFixed(3) + ')';
+    // A imagem fica visível até existir um quadro real do vídeo.
+    video.style.opacity = videoReady ? String(visibility) : '0';
+    image.style.opacity = videoReady ? '0' : '1';
+    image.style.transform = 'scale(' + (1.025 + entrance * 0.015).toFixed(3) + ')';
 
-    const textIn = clamp((progress - 0.28) / 0.12);
-    const textOut = clamp((progress - 0.86) / 0.07);
+    const textIn = clamp((progress - 0.22) / 0.12);
+    const textOut = clamp((progress - 0.76) / 0.12);
     const textOpacity = textIn * (1 - textOut);
     copy.style.opacity = String(textOpacity);
-    copy.style.transform = 'translateY(' + ((1 - textOpacity) * 22).toFixed(1) + 'px)';
-
-    if (duration > 0 && frameReady) {
-      const videoProgress = clamp((progress - 0.20) / 0.70);
-      desiredTime = Math.max(0, Math.min(duration - 0.04, videoProgress * duration));
-      seekLatest();
-    }
+    copy.style.transform = 'translateY(' + ((1 - textOpacity) * 18).toFixed(1) + 'px)';
   }
 
-  window.addEventListener('scroll', requestUpdate, { passive: true });
-  window.addEventListener('resize', requestUpdate);
+  function startVideo() {
+    if (videoReady) return;
+    videoReady = true;
+    video.play().catch(function () {
+      // Se o navegador bloquear autoplay, a imagem de segurança continua visível.
+      videoReady = false;
+      video.style.opacity = '0';
+      image.style.opacity = '1';
+    });
+    requestUpdate();
+  }
+
+  video.addEventListener('loadeddata', startVideo, { once: true });
+  video.addEventListener('canplay', startVideo, { once: true });
   video.addEventListener('error', function () {
-    frameReady = false;
+    videoReady = false;
     video.style.opacity = '0';
     image.style.opacity = '1';
   });
 
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate);
   video.load();
   requestUpdate();
 })();
-</script>
 
 </body>
 </html>
