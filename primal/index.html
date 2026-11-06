@@ -157,8 +157,97 @@
     .faq-item.active p { display: block; }
 
     .cta-final { background: var(--ivory); text-align: center; padding: 100px 0; }
+    .locations-intro { padding-bottom: 28px; }
+    .primal-scroll-sequence {
+      position: relative;
+      height: 280vh;
+      margin: 0;
+      background: #11110f;
+    }
+    .primal-scroll-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      min-height: 560px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      perspective: 1000px;
+    }
+    .primal-scroll-visual {
+      position: relative;
+      width: min(76vw, 1120px);
+      height: min(68vh, 720px);
+      min-height: 360px;
+      overflow: hidden;
+      border-radius: 22px;
+      background: #171714;
+      transform: scale(.88);
+      transform-origin: center center;
+      will-change: transform, border-radius;
+      box-shadow: 0 30px 100px rgba(0,0,0,.35);
+    }
+    .primal-scroll-image,
+    .primal-scroll-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+    .primal-scroll-image {
+      z-index: 1;
+      transform: scale(1.02);
+      will-change: opacity, transform;
+    }
+    .primal-scroll-video {
+      z-index: 2;
+      opacity: 0;
+      will-change: opacity;
+    }
+    .primal-scroll-caption {
+      position: absolute;
+      z-index: 3;
+      left: clamp(24px, 6vw, 84px);
+      right: 24px;
+      bottom: clamp(28px, 8vh, 88px);
+      max-width: 620px;
+      color: #fff;
+      opacity: 0;
+      transform: translateY(18px);
+      text-shadow: 0 2px 24px rgba(0,0,0,.55);
+      pointer-events: none;
+    }
+    .primal-scroll-caption span {
+      display: block;
+      margin-bottom: 10px;
+      color: #e2c98e;
+      font-size: .72rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+    .primal-scroll-caption h2 {
+      font-size: clamp(2.2rem, 5vw, 4.6rem);
+      line-height: .98;
+      margin-bottom: 14px;
+    }
+    .primal-scroll-caption p { font-size: clamp(.9rem, 1.4vw, 1.05rem); color: rgba(255,255,255,.88); }
+    .locations-more { padding-top: 76px; }
+
 
     @media (max-width: 768px) {
+      .primal-scroll-sequence { height: 230vh; }
+      .primal-scroll-sticky { min-height: 480px; }
+      .primal-scroll-visual {
+        width: 88vw;
+        height: 62vh;
+        min-height: 320px;
+        border-radius: 16px;
+      }
+      .primal-scroll-caption { left: 22px; right: 22px; bottom: 32px; }
+      .primal-scroll-caption h2 { font-size: clamp(2rem, 9vw, 3.2rem); }
+
       .hero { background-position: center; }
       .hero::before { background: linear-gradient(180deg, rgba(250,249,246,0.9) 0%, rgba(250,249,246,0.6) 50%, transparent 100%); }
       .hero-content { max-width: 100%; text-align: center; }
@@ -227,16 +316,32 @@
     </div>
   </section>
 
-  <section>
+  <section class="locations-intro">
     <div class="container">
       <h2 class="section-title">A experiência não depende de um único endereço.</h2>
       <p class="section-intro">Você não precisa ter um spa em casa. O local é definido de acordo com suas possibilidades, preferências e as condições necessárias para realizar a sessão.</p>
-      <div class="locais">
-        <div class="local">
-          <img src="images/BZPnn.jpg" alt="Residência do cliente com banheira">
-          <h3>Residência do cliente</h3>
-          <p>Quando houver estrutura apropriada.</p>
+    </div>
+  </section>
+
+  <section class="primal-scroll-sequence" id="primal-scroll-sequence" aria-label="Experiência visual dos espaços">
+    <div class="primal-scroll-sticky">
+      <div class="primal-scroll-visual">
+        <img class="primal-scroll-image" src="images/BZPnn.jpg" alt="Residência do cliente com banheira">
+        <video class="primal-scroll-video" muted playsinline preload="auto" aria-label="Vídeo da experiência em um espaço com banheira">
+          <source src="https://res.cloudinary.com/dcbarseus/video/upload/v1793952770/generated_video_6_xuspfw.mp4" type="video/mp4">
+        </video>
+        <div class="primal-scroll-caption">
+          <span>O espaço</span>
+          <h2>Um ambiente preparado para você.</h2>
+          <p>Residência do cliente, quando houver estrutura apropriada.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="locations-more">
+    <div class="container">
+      <div class="locais">
         <div class="local">
           <img src="images/md5AT.jpg" alt="Estúdio parceiro">
           <h3>Estúdio parceiro</h3>
@@ -331,6 +436,76 @@
         h.parentElement.classList.toggle('active');
       });
     });
+
+    // Sequência cinematográfica controlada pela rolagem: imagem -> zoom -> vídeo.
+    (() => {
+      const section = document.getElementById('primal-scroll-sequence');
+      const visual = section?.querySelector('.primal-scroll-visual');
+      const image = section?.querySelector('.primal-scroll-image');
+      const video = section?.querySelector('.primal-scroll-video');
+      const caption = section?.querySelector('.primal-scroll-caption');
+      if (!section || !visual || !image || !video) return;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reducedMotion) {
+        image.style.display = 'none';
+        video.style.position = 'relative';
+        video.style.opacity = '1';
+        video.controls = true;
+        visual.style.width = 'min(92vw, 1120px)';
+        visual.style.height = 'auto';
+        visual.style.aspectRatio = '16 / 9';
+        section.style.height = 'auto';
+        section.style.padding = '32px 0';
+        return;
+      }
+
+      let frame = 0;
+      let metadataReady = false;
+      let lastTarget = -1;
+      video.addEventListener('loadedmetadata', () => {
+        metadataReady = Number.isFinite(video.duration) && video.duration > 0;
+        updateSequence();
+      }, { once: true });
+
+      function clamp01(value) { return Math.max(0, Math.min(1, value)); }
+      function updateSequence() {
+        frame = 0;
+        frame = requestAnimationFrame(() => {
+          const rect = section.getBoundingClientRect();
+          const scrollable = Math.max(section.offsetHeight - window.innerHeight, 1);
+          const progress = clamp01(-rect.top / scrollable);
+
+          const zoomProgress = clamp01(progress / 0.28);
+          const scale = 0.88 + zoomProgress * 0.52;
+          visual.style.transform = 'scale(' + scale.toFixed(3) + ')';
+          visual.style.borderRadius = (22 * (1 - zoomProgress)).toFixed(1) + 'px';
+
+          const videoProgress = clamp01((progress - 0.22) / 0.78);
+          video.style.opacity = String(clamp01(videoProgress * 5));
+          image.style.opacity = String(1 - clamp01(videoProgress * 5));
+          image.style.transform = 'scale(' + (1.02 + zoomProgress * 0.12).toFixed(3) + ')';
+
+          if (metadataReady) {
+            const target = Math.max(0, Math.min(video.duration - 0.04, videoProgress * video.duration));
+            if (Math.abs(target - lastTarget) > 0.045) {
+              try { video.currentTime = target; lastTarget = target; } catch (_) {}
+            }
+          }
+
+          const captionProgress = clamp01((progress - 0.82) / 0.15);
+          caption.style.opacity = String(captionProgress);
+          caption.style.transform = 'translateY(' + ((1 - captionProgress) * 18).toFixed(1) + 'px)';
+        });
+      }
+      window.addEventListener('scroll', updateSequence, { passive: true });
+      window.addEventListener('resize', updateSequence);
+      video.addEventListener('error', () => {
+        // Se o vídeo não carregar, a imagem continua como fallback visual.
+        video.style.display = 'none';
+      });
+      updateSequence();
+    })();
 
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const canvas = document.getElementById('three-canvas');
