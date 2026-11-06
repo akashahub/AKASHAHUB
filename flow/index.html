@@ -373,8 +373,8 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
 
 #wpp-open{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;display:flex;width:40px;height:40px;align-items:center;justify-content:center;padding:0;border:0;border-radius:50%;background:#25d366;color:#06210f;box-shadow:0 10px 28px rgba(0,0,0,.4);transition:transform .15s ease,box-shadow .2s ease}#wpp-open svg{display:block;width:23px;height:23px}#wpp-open:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.48)}#wpp-open:active{transform:scale(.94)}
 @media(max-width:767px){#wpp-open{bottom:calc(16px + env(safe-area-inset-bottom))}}
-#job-open{position:fixed;top:calc(16px + env(safe-area-inset-top));right:16px;z-index:110;height:34px;padding:0 12px;border:0;border-radius:999px;background:linear-gradient(180deg,#f0e2b8,#c6a15b);color:#1a1408;font-size:11px;letter-spacing:.06em;font-weight:600;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.35)}
- #job-open{transition:opacity .25s ease,transform .25s ease,visibility .25s ease}#job-open.is-out-of-view{opacity:0;transform:translateY(-10px);visibility:hidden;pointer-events:none}
+#job-open{position:fixed;top:calc(25vh + env(safe-area-inset-top));right:16px;z-index:110;height:34px;padding:0 12px;border:0;border-radius:999px;background:linear-gradient(180deg,#f0e2b8,#c6a15b);color:#1a1408;font-size:11px;letter-spacing:.06em;font-weight:600;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.35);transition:opacity .25s ease,transform .25s ease,visibility .25s ease}
+#job-open.is-out-of-view{opacity:0;transform:translateY(-10px);visibility:hidden;pointer-events:none}
 
 #job-ask{position:fixed;inset:0;z-index:90;background:rgba(11,10,9,.72);display:flex;align-items:flex-end;justify-content:center;padding:16px}
 #job-ask[hidden]{display:none}
@@ -735,6 +735,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
       <label class="opt"><input type="radio" name="papel" value="social"> Sou social media</label>
       <label class="opt"><input type="radio" name="papel" value="patrocinio"> Sou patrocinador</label>
       <label class="opt"><input type="radio" name="papel" value="espaco"> Sou de um espaço terapêutico</label>
+      <label class="opt"><input type="radio" name="papel" value="modelo"> Quero ser modelo para cursos, aulas e divulgação e receber planos de massagens gratuitos</label>
     </fieldset>
     <label style="display:block;margin-top:16px">Desenvolva sua proposta, responderemos todas em até 48h
       <textarea id="job-text" required placeholder="Escolha uma opção. O texto entra pronto. Você só troca o que for seu."></textarea>
@@ -1174,12 +1175,18 @@ document.querySelectorAll('[data-cta]').forEach((cta) => {
   });
 });
 const jobOpen = document.getElementById('job-open');
-const flowHero = document.querySelector('.hero');
-if (jobOpen && flowHero && 'IntersectionObserver' in window) {
-  const jobButtonObserver = new IntersectionObserver(([entry]) => {
-    jobOpen.classList.toggle('is-out-of-view', !entry.isIntersecting);
-  }, {threshold: 0.08});
-  jobButtonObserver.observe(flowHero);
+function updateJobButtonVisibility(){
+  if (!jobOpen) return;
+  const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+  // Visível do início até a metade da página e novamente no trecho final.
+  const visible = progress <= 0.5 || progress >= 0.85;
+  jobOpen.classList.toggle('is-out-of-view', !visible);
+}
+if (jobOpen) {
+  window.addEventListener('scroll', updateJobButtonVisibility, {passive:true});
+  window.addEventListener('resize', updateJobButtonVisibility);
+  updateJobButtonVisibility();
 }
 const jobAsk = document.getElementById('job-ask');
 const jobText = document.getElementById('job-text');
@@ -1187,7 +1194,8 @@ const jobSug = {
   terapeuta: 'Olá, Yan. Sou terapeuta em Salvador. Trabalho com massagem e presença. Tenho prática com atendimento individual, em sala reservada, para maiores de 21 anos. Quero colaborar no Flow como apoio ou indicação, no mesmo tom da casa: uma pessoa, sem fila e sem exposição. Meu nome é __. Meu WhatsApp é __.',
   social: 'Olá, Yan. Cuido de redes. Posso gravar e publicar o Flow em talking head, sem mostrar a sala, com o link akashahub.com.br/flow na bio. Um vídeo por vez, frase curta, sem preço na fala e sem promessa. Meu nome é __. Meu perfil é __. Meu WhatsApp é __.',
   patrocinio: 'Olá, Yan. Represento __. Quero patrocinar o Flow ou a Arquitetura de Legado. Posso oferecer espaço, produto ou divulgação. Em troca, peço uma menção clara, sem misturar com a sessão. Meu nome é __. Meu WhatsApp é __.',
-  espaco: 'Olá, Yan. Tenho um espaço terapêutico em Salvador ou Lauro de Freitas. A sala é privativa, com maca, banho e entrada discreta. Cabe uma sessão de Flow, uma pessoa por vez, sem fila. O bairro é __. Quero receber o atendimento aqui. Meu nome é __. Meu WhatsApp é __.'
+  espaco: 'Olá, Yan. Tenho um espaço terapêutico em Salvador ou Lauro de Freitas. A sala é privativa, com maca, banho e entrada discreta. Cabe uma sessão de Flow, uma pessoa por vez, sem fila. O bairro é __. Quero receber o atendimento aqui. Meu nome é __. Meu WhatsApp é __.',
+  modelo: 'Olá, Yan. Tenho interesse em participar como modelo para cursos, aulas e divulgação do Flow. Gostaria de entender como funcionam as gravações, os cuidados com privacidade e consentimento e a possibilidade de receber planos de massagens gratuitos como contrapartida. Meu nome é __. Meu WhatsApp é __.'
 };
 let jobLast = '';
 jobOpen.onclick = () => { jobAsk.hidden = false; };
@@ -1203,7 +1211,7 @@ jobAsk.addEventListener('change', () => {
 document.getElementById('job-form').onsubmit = (e) => {
   e.preventDefault();
   const papel = (jobAsk.querySelector('input[name="papel"]:checked') || {}).value || '';
-  const nome = { terapeuta: 'Sou terapeuta', social: 'Sou social media', patrocinio: 'Sou patrocinador', espaco: 'Sou de um espaço terapêutico' }[papel] || 'Proposta';
+  const nome = { terapeuta: 'Sou terapeuta', social: 'Sou social media', patrocinio: 'Sou patrocinador', espaco: 'Sou de um espaço terapêutico', modelo: 'Quero ser modelo para cursos, aulas e divulgação' }[papel] || 'Proposta';
   const msg = nome + '\n\n' + jobText.value.trim();
   window.open('https://wa.me/5571983448621?text=' + encodeURIComponent(msg), '_blank', 'noopener,noreferrer');
   jobAsk.hidden = true;
