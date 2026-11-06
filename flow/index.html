@@ -1566,8 +1566,14 @@ if ('IntersectionObserver' in window) {
       stage.style.transform = 'scale(' + (1 + exit * 0.012).toFixed(4) + ')';
       stage.style.borderRadius = '0px';
       const showVideo = videoReady && (!isHero || heroIntroReady);
-      video.style.opacity = showVideo ? String(visibility) : '0';
-      image.style.opacity = showVideo ? String(1 - visibility) : '1';
+      if (isHero) {
+        // Blend the moving video over the cover image: 65% video + 35% image.
+        video.style.opacity = showVideo ? String(visibility * 0.65) : '0';
+        image.style.opacity = '1';
+      } else {
+        video.style.opacity = showVideo ? String(visibility) : '0';
+        image.style.opacity = showVideo ? String(1 - visibility) : '1';
+      }
       image.style.transform = 'scale(' + (1.025 + entrance * 0.015).toFixed(3) + ')';
 
       if (!isHero) {
