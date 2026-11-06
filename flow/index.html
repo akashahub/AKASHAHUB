@@ -164,8 +164,8 @@ p{text-wrap:pretty}
 @media(min-width:640px){.wgrid{grid-template-columns:repeat(3,1fr)}}
 .study-pair{display:grid;gap:12px;margin-top:18px}
 .study-pair .wgrid{grid-template-columns:1fr;margin-top:0}
-.study-video{display:none;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:var(--ink3);position:relative}
-.study-video video{display:block;width:100%;height:100%;min-height:100%;object-fit:cover;object-position:center;border-radius:inherit}
+.study-video{display:none;min-width:0;min-height:320px;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#0b0a09;position:relative;align-self:stretch}
+.study-video video{display:block;width:100%;height:100%;min-height:320px;object-fit:contain;object-position:center;border-radius:inherit;background:#0b0a09}
 @media(min-width:900px){
   .study-pair{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch;gap:16px}
   .study-pair .work{height:100%}
@@ -1442,7 +1442,7 @@ if ('IntersectionObserver' in window) {
 </script>
 
 <script>
-/* Scroll-scrubbing Flow: roda do mouse, teclado, barra de rolagem, touch e trackpad. */
+/* Scroll-scrubbing Flow: o scroll controla o vídeo sem revelar frames ainda não carregados. */
 (function () {
   const section = document.getElementById('flow-cinematic');
   if (!section) return;
@@ -1465,23 +1465,35 @@ if ('IntersectionObserver' in window) {
   let seeking = false;
   let raf = 0;
   let lastRequested = -1;
-  let ready = false;
+  let frameReady = false;
 
   video.pause();
+  video.muted = true;
+  video.playsInline = true;
   video.preload = 'auto';
+
+  function clamp(value) { return Math.max(0, Math.min(1, value)); }
+  function requestUpdate() {
+    if (raf) return;
+    raf = requestAnimationFrame(update);
+  }
+
   video.addEventListener('loadedmetadata', function () {
     duration = Number.isFinite(video.duration) ? video.duration : 0;
-    ready = duration > 0;
+    requestUpdate();
+  });
+  video.addEventListener('loadeddata', function () {
+    frameReady = video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
     requestUpdate();
   });
   video.addEventListener('canplay', function () {
-    ready = Number.isFinite(video.duration) && video.duration > 0;
+    frameReady = video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
     requestUpdate();
   });
 
-  // Um seek por vez: evita empilhar pedidos e deixar a imagem presa num único frame.
+  // Mantém apenas o seek mais recente para o vídeo não ficar atrasado em relação ao scroll.
   function seekLatest() {
-    if (!ready || seeking) return;
+    if (!frameReady || !duration || seeking) return;
     if (Math.abs(video.currentTime - desiredTime) < 0.035) return;
     seeking = true;
     lastRequested = desiredTime;
@@ -1490,44 +1502,40 @@ if ('IntersectionObserver' in window) {
   }
   video.addEventListener('seeked', function () {
     seeking = false;
+    frameReady = video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
     if (Math.abs(desiredTime - lastRequested) > 0.045) seekLatest();
+    requestUpdate();
   });
 
-  function clamp(value) { return Math.max(0, Math.min(1, value)); }
-  function requestUpdate() {
-    if (raf) return;
-    raf = requestAnimationFrame(update);
-  }
   function update() {
     raf = 0;
     const rect = section.getBoundingClientRect();
     const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
     const progress = clamp(-rect.top / travel);
 
-    // A cena ocupa o centro da viewport desde o início. O zoom é discreto,
-    // sem encolher o quadro nem deixar aparecer o fundo preto nas laterais.
+    // O quadro ocupa a viewport inteira e não encolhe durante a sequência.
     const entrance = clamp(progress / 0.12);
-    const exit = clamp((progress - 0.92) / 0.08);
-    const scale = 1 + entrance * 0.012 - exit * 0.025;
+    const exit = clamp((progress - 0.94) / 0.06);
+    const scale = 1 + entrance * 0.008 - exit * 0.012;
     stage.style.transform = 'scale(' + scale.toFixed(4) + ')';
     stage.style.borderRadius = '0px';
     stage.style.opacity = String(1 - exit);
 
-    // A fotografia abre a cena e se dissolve no vídeo; depois o vídeo
-    // permanece centralizado enquanto cada frame acompanha a rolagem.
+    // Se o MP4 ainda estiver carregando, a imagem original continua visível.
     const reveal = clamp((progress - 0.06) / 0.16);
-    const videoProgress = clamp((progress - 0.20) / 0.70);
-    video.style.opacity = String(reveal);
-    image.style.opacity = String(1 - reveal);
-    image.style.transform = 'scale(' + (1.04 + entrance * 0.035).toFixed(3) + ')';
+    const visibleVideo = frameReady ? reveal : 0;
+    video.style.opacity = String(visibleVideo);
+    image.style.opacity = String(1 - visibleVideo);
+    image.style.transform = 'scale(' + (1.04 + entrance * 0.025).toFixed(3) + ')';
 
     const textIn = clamp((progress - 0.28) / 0.12);
-    const textOut = clamp((progress - 0.84) / 0.07);
+    const textOut = clamp((progress - 0.86) / 0.07);
     const textOpacity = textIn * (1 - textOut);
     copy.style.opacity = String(textOpacity);
     copy.style.transform = 'translateY(' + ((1 - textOpacity) * 22).toFixed(1) + 'px)';
 
-    if (ready) {
+    if (duration > 0 && frameReady) {
+      const videoProgress = clamp((progress - 0.20) / 0.70);
       desiredTime = Math.max(0, Math.min(duration - 0.04, videoProgress * duration));
       seekLatest();
     }
@@ -1536,9 +1544,11 @@ if ('IntersectionObserver' in window) {
   window.addEventListener('scroll', requestUpdate, { passive: true });
   window.addEventListener('resize', requestUpdate);
   video.addEventListener('error', function () {
-    // Se o MP4 falhar, a fotografia original continua visível como fallback.
-    video.style.display = 'none';
+    frameReady = false;
+    video.style.opacity = '0';
+    image.style.opacity = '1';
   });
+
   video.load();
   requestUpdate();
 })();
