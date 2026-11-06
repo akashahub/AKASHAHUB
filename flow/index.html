@@ -1494,13 +1494,12 @@ if ('IntersectionObserver' in window) {
     const exit = clamp((progress - 0.92) / 0.08);
     const visibility = entrance * (1 - exit);
 
-    stage.style.opacity = String(visibility);
-    stage.style.transform = 'scale(' + (0.985 + entrance * 0.015 + exit * 0.012).toFixed(4) + ')';
+    stage.style.transform = 'scale(' + (1 + exit * 0.012).toFixed(4) + ')';
     stage.style.borderRadius = '0px';
 
-    // A imagem de fallback só cede lugar depois que o vídeo está reproduzindo.
+    // O poster e o vídeo se cruzam para não expor o fundo preto na transição.
     video.style.opacity = videoReady ? String(visibility) : '0';
-    image.style.opacity = videoReady ? '0' : '1';
+    image.style.opacity = videoReady ? String(1 - visibility) : '1';
     image.style.transform = 'scale(' + (1.025 + entrance * 0.015).toFixed(3) + ')';
 
     const textIn = clamp((progress - 0.22) / 0.12);
