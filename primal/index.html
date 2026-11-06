@@ -160,31 +160,34 @@
     .locations-intro { padding-bottom: 28px; }
     .primal-scroll-sequence {
       position: relative;
-      height: 280vh;
+      height: 300vh;
       margin: 0;
-      background: #11110f;
+      background: #080807;
     }
     .primal-scroll-sticky {
       position: sticky;
       top: 0;
+      width: 100%;
       height: 100vh;
       min-height: 560px;
       display: grid;
       place-items: center;
       overflow: hidden;
+      background: #080807;
       perspective: 1000px;
     }
     .primal-scroll-visual {
       position: relative;
-      width: min(76vw, 1120px);
-      height: min(68vh, 720px);
-      min-height: 360px;
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
       overflow: hidden;
-      border-radius: 22px;
-      background: #171714;
-      transform: scale(.88);
+      border-radius: 26px;
+      background: #080807;
+      transform: scale(.78);
       transform-origin: center center;
-      will-change: transform, border-radius;
+      opacity: 1;
+      will-change: transform, border-radius, opacity;
       box-shadow: 0 30px 100px rgba(0,0,0,.35);
     }
     .primal-scroll-image,
@@ -237,13 +240,13 @@
 
 
     @media (max-width: 768px) {
-      .primal-scroll-sequence { height: 230vh; }
+      .primal-scroll-sequence { height: 260vh; }
       .primal-scroll-sticky { min-height: 480px; }
       .primal-scroll-visual {
-        width: 88vw;
-        height: 62vh;
-        min-height: 320px;
-        border-radius: 16px;
+        width: 100vw;
+        height: 100vh;
+        min-height: 100vh;
+        border-radius: 18px;
       }
       .primal-scroll-caption { left: 22px; right: 22px; bottom: 32px; }
       .primal-scroll-caption h2 { font-size: clamp(2rem, 9vw, 3.2rem); }
@@ -476,15 +479,20 @@
           const scrollable = Math.max(section.offsetHeight - window.innerHeight, 1);
           const progress = clamp01(-rect.top / scrollable);
 
-          const zoomProgress = clamp01(progress / 0.28);
-          const scale = 0.88 + zoomProgress * 0.52;
-          visual.style.transform = 'scale(' + scale.toFixed(3) + ')';
-          visual.style.borderRadius = (22 * (1 - zoomProgress)).toFixed(1) + 'px';
+          // 0–18%: a fotografia cresce até ocupar a tela inteira.
+          const zoomProgress = clamp01(progress / 0.18);
+          const scale = 0.78 + zoomProgress * 0.24;
+          const exitProgress = clamp01((progress - 0.84) / 0.16);
+          visual.style.transform = 'scale(' + (scale * (1 - exitProgress * 0.08)).toFixed(3) + ')';
+          visual.style.borderRadius = (26 * (1 - zoomProgress)).toFixed(1) + 'px';
+          visual.style.opacity = String(1 - exitProgress);
 
-          const videoProgress = clamp01((progress - 0.22) / 0.78);
-          video.style.opacity = String(clamp01(videoProgress * 5));
-          image.style.opacity = String(1 - clamp01(videoProgress * 5));
-          image.style.transform = 'scale(' + (1.02 + zoomProgress * 0.12).toFixed(3) + ')';
+          // 18–84%: o vídeo ocupa a tela e sua reprodução acompanha a rolagem.
+          const videoProgress = clamp01((progress - 0.18) / 0.66);
+          const reveal = clamp01(videoProgress * 6);
+          video.style.opacity = String(reveal);
+          image.style.opacity = String(1 - reveal);
+          image.style.transform = 'scale(' + (1.02 + zoomProgress * 0.16).toFixed(3) + ')';
 
           if (metadataReady) {
             const target = Math.max(0, Math.min(video.duration - 0.04, videoProgress * video.duration));
@@ -493,7 +501,10 @@
             }
           }
 
-          const captionProgress = clamp01((progress - 0.82) / 0.15);
+          // A legenda aparece sobre a cena e desaparece antes da transição final.
+          const captionIn = clamp01((progress - 0.28) / 0.12);
+          const captionOut = clamp01((progress - 0.78) / 0.08);
+          const captionProgress = captionIn * (1 - captionOut);
           caption.style.opacity = String(captionProgress);
           caption.style.transform = 'translateY(' + ((1 - captionProgress) * 18).toFixed(1) + 'px)';
         });
