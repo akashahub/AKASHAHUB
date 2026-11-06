@@ -112,8 +112,10 @@ p{text-wrap:pretty}
 .ggrid figure{overflow:hidden;border-radius:10px;background:var(--ink2);margin:0;aspect-ratio:4/3;min-width:0}
 .ggrid figure.tall{aspect-ratio:3/4}
 .ggrid figure.wide{grid-column:span 2;aspect-ratio:16/10}
-.ggrid img{width:100%;height:100%;object-fit:cover;transition:transform 1.6s cubic-bezier(.22,1,.36,1)}
-@media(hover:hover){.ggrid figure:hover img{transform:scale(1.06)}}
+.ggrid img,.ggrid video{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.6s cubic-bezier(.22,1,.36,1)}
+@media(hover:hover){.ggrid figure:hover img,.ggrid figure:hover video{transform:scale(1.06)}}
+.massage-media .massage-media-stage video{filter:none!important}
+.massage-media .massage-media-stage:after{content:none!important;display:none!important}
 .split{display:grid;gap:28px;padding:64px var(--pad);align-items:center}
 @media(min-width:900px){.split{grid-template-columns:1fr 1fr;gap:56px;padding:96px var(--pad)}}
 .split img{width:100%;border-radius:14px;object-fit:cover;aspect-ratio:4/5;max-height:72vh}
@@ -578,7 +580,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
     <p class="muted" style="max-width:20rem;font-size:.9rem">Enquadramentos de campanha. Editorial. A sessão real não é conteúdo.</p>
   </div>
   <div class="ggrid">
-    <figure class="wide"><img src="/flow/img/hydro.jpg?v=3" alt="Hidroterapia"/></figure>
+    <figure class="wide"><video class="atmosfera-video" autoplay muted loop playsinline preload="metadata" aria-label="Vídeo da atmosfera Flow"><source src="https://res.cloudinary.com/dcbarseus/video/upload/v1793948073/generated_video_5_rc5yus.mp4" type="video/mp4"></video></figure>
     <figure class="wide"><img src="/flow/img/lisboa.jpg?v=5" alt="Lisboa"/></figure>
   </div>
 </section>
@@ -1342,6 +1344,25 @@ if ('IntersectionObserver' in window) {
 })();
 </script>
 
+
+<script>
+(function(){
+  const video=document.querySelector('.atmosfera-video');
+  if(!video)return;
+  const trimSeconds=2;
+  let endAt=Infinity;
+  video.addEventListener('loadedmetadata',function(){
+    endAt=Math.max(0,video.duration-trimSeconds);
+    if(endAt>0 && video.currentTime>=endAt) video.currentTime=0;
+  });
+  video.addEventListener('timeupdate',function(){
+    if(endAt>0 && video.currentTime>=endAt){
+      video.currentTime=0;
+      if(!video.paused) video.play().catch(()=>{});
+    }
+  });
+})();
+</script>
 </body>
 </html>
 
