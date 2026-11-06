@@ -666,7 +666,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
   <div class="flow-cinematic-sticky">
     <div class="flow-cinematic-stage">
       <img class="flow-cinematic-image" src="/primal/images/BZPnn.jpg" alt="Ambiente da experiência Flow"/>
-      <video class="flow-cinematic-video" muted playsinline preload="auto" poster="/primal/images/BZPnn.jpg" aria-label="Vídeo da experiência Flow em reprodução contínua">
+      <video class="flow-cinematic-video" data-desktop-src="https://res.cloudinary.com/dcbarseus/video/upload/v1793957789/generated_video_2_ysdmnh.mp4" data-mobile-src="https://res.cloudinary.com/dcbarseus/video/upload/v1793952770/generated_video_6_xuspfw.mp4" muted playsinline preload="auto" poster="/primal/images/BZPnn.jpg" aria-label="Vídeo da experiência Flow em reprodução contínua">
         <source src="https://res.cloudinary.com/dcbarseus/video/upload/v1793952770/generated_video_6_xuspfw.mp4" type="video/mp4"/>
       </video>
       <div class="flow-cinematic-copy">
@@ -1472,7 +1472,32 @@ if ('IntersectionObserver' in window) {
     const copy = section.querySelector('.flow-cinematic-copy');
     if (!stage || !image || !video || !copy) return;
 
+    const sourceQuery = window.matchMedia('(max-width: 767px)');
+    const mobileSource = video.dataset.mobileSrc || video.querySelector('source')?.src;
+    const desktopSource = video.dataset.desktopSrc;
+    const hasResponsiveSources = Boolean(desktopSource && mobileSource);
+    let sourceGeneration = 0;
+    function selectResponsiveSource() {
+      if (!hasResponsiveSources) return false;
+      const requestedSource = sourceQuery.matches ? mobileSource : desktopSource;
+      const nextSource = new URL(requestedSource, document.baseURI).href;
+      if (video.dataset.activeSrc === nextSource) return false;
+      sourceGeneration += 1;
+      videoReady = false;
+      playRequest = null;
+      video.pause();
+      video.dataset.activeSrc = nextSource;
+      video.src = nextSource;
+      video.load();
+      return true;
+    }
+
     const isHero = section.classList.contains('hero-cinematic');
+    let raf = 0;
+    let videoReady = !video.paused && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+    let playRequest = null;
+    selectResponsiveSource();
+
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduceMotion) {
       section.classList.add('is-static');
@@ -1481,12 +1506,13 @@ if ('IntersectionObserver' in window) {
       video.loop = false;
       video.controls = true;
       video.pause();
+      if (hasResponsiveSources) {
+        if (sourceQuery.addEventListener) sourceQuery.addEventListener('change', selectResponsiveSource);
+        else sourceQuery.addListener(selectResponsiveSource);
+      }
       return;
     }
 
-    let raf = 0;
-    let videoReady = !video.paused && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
-    let playRequest = null;
     video.muted = true;
     video.defaultMuted = true;
     video.loop = true;
@@ -1538,13 +1564,16 @@ if ('IntersectionObserver' in window) {
           requestUpdate();
           return;
         }
+        const requestGeneration = sourceGeneration;
         playRequest = result;
         result.then(function () {
+          if (requestGeneration !== sourceGeneration) return;
           videoReady = !video.paused && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
         }).catch(function () {
+          if (requestGeneration !== sourceGeneration) return;
           videoReady = false;
         }).finally(function () {
-          playRequest = null;
+          if (playRequest === result) playRequest = null;
           requestUpdate();
         });
       } catch (error) {
@@ -1559,12 +1588,21 @@ if ('IntersectionObserver' in window) {
       if (!video.ended) { videoReady = false; requestUpdate(); }
     });
     video.addEventListener('error', function () { videoReady = false; requestUpdate(); });
+    if (hasResponsiveSources) {
+      function handleSourceChange() {
+        if (!selectResponsiveSource()) return;
+        startVideo();
+        requestUpdate();
+      }
+      if (sourceQuery.addEventListener) sourceQuery.addEventListener('change', handleSourceChange);
+      else sourceQuery.addListener(handleSourceChange);
+    }
     window.addEventListener('scroll', requestUpdate, { passive: true });
     window.addEventListener('resize', requestUpdate);
     document.addEventListener('visibilitychange', function () {
       if (!document.hidden && video.paused) startVideo();
     });
-    video.load();
+    if (!hasResponsiveSources) video.load();
     startVideo();
     requestUpdate();
   });
