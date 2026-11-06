@@ -543,7 +543,7 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
 
 <section id="pilares" class="pillars">
   <article class="card reveal">
-    <div class="ph info-open-image" role="button" tabindex="0" aria-label="Abrir benefícios da Meditação" data-info="meditacao"><video autoplay muted loop playsinline preload="metadata" aria-label="Vídeo de meditação"><source src="https://res.cloudinary.com/dcbarseus/video/upload/v1793956106/grok-video-1e4914ec-d3df-4fb4-b81a-b4b6b0299733_f47a7p.mp4" type="video/mp4"></video></div>
+    <div class="ph info-open-image" role="button" tabindex="0" aria-label="Abrir benefícios da Meditação" data-info="meditacao"><video muted loop playsinline preload="metadata" data-delayed-autoplay="2500" aria-label="Vídeo de meditação"><source src="https://res.cloudinary.com/dcbarseus/video/upload/v1793956106/grok-video-1e4914ec-d3df-4fb4-b81a-b4b6b0299733_f47a7p.mp4" type="video/mp4"></video></div>
     <div class="body">
       <p class="kicker">O silêncio</p>
       <h3 style="font-size:1.8rem;margin:0">Meditação</h3>
@@ -1650,6 +1650,20 @@ if ('IntersectionObserver' in window) {
   } else {
     startAfterDelay();
   }
+})();
+</script>
+
+<script>
+/* Primeiro vídeo do card Meditação: inicia o autoplay após 2,5 segundos. */
+(function(){
+  const video = document.querySelector('#pilares article.card:first-child video[data-delayed-autoplay]');
+  if (!video) return;
+  const delay = Number(video.dataset.delayedAutoplay) || 2500;
+  window.setTimeout(function(){
+    if (!video.isConnected) return;
+    const play = video.play();
+    if (play && typeof play.catch === 'function') play.catch(function(){});
+  }, delay);
 })();
 </script>
 </body>
