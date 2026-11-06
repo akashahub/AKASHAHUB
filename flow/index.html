@@ -1506,6 +1506,9 @@ if ('IntersectionObserver' in window) {
     let raf = 0;
     let videoReady = !video.paused && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
     let playRequest = null;
+    let heroIntroReady = !isHero;
+    let heroIntroTimer = null;
+    let heroWasAtTop = false;
     selectResponsiveSource();
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1543,13 +1546,28 @@ if ('IntersectionObserver' in window) {
       const rect = section.getBoundingClientRect();
       const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
       const progress = clamp(-rect.top / travel);
-      const entrance = clamp(progress / 0.10);
+      const atTop = isHero && rect.top >= -2;
+      if (isHero && atTop && !heroWasAtTop) {
+        heroIntroReady = false;
+        videoReady = false;
+        if (heroIntroTimer) window.clearTimeout(heroIntroTimer);
+        heroIntroTimer = window.setTimeout(function () {
+          heroIntroTimer = null;
+          heroIntroReady = true;
+          startVideo();
+          requestUpdate();
+        }, 3000);
+        video.pause();
+      }
+      heroWasAtTop = atTop;
+      const entrance = isHero ? 1 : clamp(progress / 0.10);
       const exit = clamp((progress - 0.92) / 0.08);
       const visibility = entrance * (1 - exit);
       stage.style.transform = 'scale(' + (1 + exit * 0.012).toFixed(4) + ')';
       stage.style.borderRadius = '0px';
-      video.style.opacity = videoReady ? String(visibility) : '0';
-      image.style.opacity = videoReady ? String(1 - visibility) : '1';
+      const showVideo = videoReady && (!isHero || heroIntroReady);
+      video.style.opacity = showVideo ? String(visibility) : '0';
+      image.style.opacity = showVideo ? String(1 - visibility) : '1';
       image.style.transform = 'scale(' + (1.025 + entrance * 0.015).toFixed(3) + ')';
 
       if (!isHero) {
@@ -1561,6 +1579,7 @@ if ('IntersectionObserver' in window) {
       }
     }
     function startVideo() {
+      if (isHero && !heroIntroReady) return;
       if (videoReady || playRequest || video.error || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
       if (!video.paused) {
         videoReady = true;
