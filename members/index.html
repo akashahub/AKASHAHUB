@@ -60,6 +60,7 @@ h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:42px;margin:
 .book .cover{height:140px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold);font-family:"Cormorant Garamond",serif;letter-spacing:.12em;margin-bottom:10px;background:#f7f1e4}
 .book img.capa{width:100%;height:240px;object-fit:cover;object-position:center 20%;border-radius:12px;margin-bottom:10px;display:block;background:#120f0c}
 .course img.capa{width:100%;height:auto;object-fit:contain;border-radius:12px;margin-bottom:8px;display:block;background:#120f0c}
+.course video.capa-video{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin-bottom:8px;display:block;background:#120f0c}
 @media(min-width:801px){
   .books{gap:22px}
   .book img.capa,.book .cover{height:auto;aspect-ratio:2/3;min-height:520px;object-fit:contain;object-position:center}
@@ -219,7 +220,7 @@ const FAIXAS = {
       { nome: "Manifestação Aplicada", aulas: aulas(["Os 4 Princípios da Realidade", "Colapso de Onda na Prática", "Alinhamento Mente-Emoção-Intenção", "Exercício Final"]) }
     ],
     cursos: [
-      cursoBunny("alinhamento", "Código de Alinhamento Akáshico", ALINHAMENTO_AULAS, "https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png", [
+      Object.assign(cursoBunny("alinhamento", "Código de Alinhamento Akáshico", ALINHAMENTO_AULAS, "https://res.cloudinary.com/dcbarseus/image/upload/v1785613808/3e66904a-9471-4164-b0c6-8d9bcaadd681_hnukek.png", [
         "Boas-vindas 𓂀 O que é o Akasha?",
         "O Tantra",
         "Yin Yang e chakras",
@@ -230,7 +231,7 @@ const FAIXAS = {
         "O transe",
         "Simbologia e arquétipos",
         "Magnetismo"
-      ]),
+      ]), { capaVideo: "https://res.cloudinary.com/dcbarseus/video/upload/v1793962209/grok-video-67c64813-568c-486a-ad2b-b800ea353d97_lyjot9.mp4" }),
       Object.assign(curso("7-dias", "Desafio 7 Dias de Magnetismo", 7, 14), { capa: "https://res.cloudinary.com/dlueoyrhe/image/upload/v1766004473/download_-_2025-12-17T174118.262_egaqea.jpg" }),
       curso("tantra", "Tantra Diferente de Sexo", 5, 10),
       curso("fascinacao", "O Poder da Fascinação", 2, 6),
@@ -495,6 +496,7 @@ function moldarCurso(raw) {
   return {
     id: curto,
     capa: raw.capa || "",
+    capaVideo: raw.capaVideo || "",
     descricao: raw.descricao || "",
     titulo: raw.titulo,
     status: raw.status || "publicado",
@@ -542,6 +544,7 @@ function listaCursos() {
     if (item.id === "alinhamento") {
       curso.titulo = base.titulo;
       curso.capa = base.capa || curso.capa;
+      curso.capaVideo = base.capaVideo || curso.capaVideo;
       const oficiais = (base.modules[0] && base.modules[0].aulas) || [];
       const atuais = (curso.modules[0] && curso.modules[0].aulas) || [];
       curso.modules = [{
@@ -681,7 +684,7 @@ function cursos() {
     <div class="courses">${(adminOn ? `<button class="course" id="criarCursoCard"><div class="play">+</div><strong>Criar novo curso</strong><p class="sub">Nasce nesta faixa. Na hora você cola a capa. Depois, o card continua com editar e apagar.</p></button>` : "") + listaCursos().map(item => {
       const aulasN = item.modules.reduce((n, m) => n + m.aulas.length, 0);
       const open = ownsCurso(route.nivel, item.id);
-      const capa = item.capa ? `<img class="capa" alt="Capa de ${esc(item.titulo)}" src="${esc(item.capa)}">` : "";
+      const capa = item.capaVideo ? `<video class="capa-video" data-delayed-cover autoplay="false" muted playsinline loop preload="none" poster="${esc(item.capa || "")}" aria-label="Vídeo de capa do curso ${esc(item.titulo)}"><source src="${esc(item.capaVideo)}" type="video/mp4"></video>` : (item.capa ? `<img class="capa" alt="Capa de ${esc(item.titulo)}" src="${esc(item.capa)}">` : "");
       const atos = adminOn ? `<div class="acts"><button type="button" data-edit-curso="${esc(item.id)}">Editar</button><button type="button" data-del-curso="${esc(item.id)}">Apagar</button></div>` : "";
       const marca = adminOn && item.status === "oculto" ? `<p class="sub">Oculto para os alunos</p>` : "";
       return `<article class="course" data-curso="${esc(item.id)}">${capa}<div class="play">${open ? "▶" : "🔒"}</div><strong>${esc(item.titulo)}</strong>${item.descricao ? `<p class="sub">${esc(item.descricao)}</p>` : ""}<p class="sub">Módulos: ${item.modules.length} · Aulas: ${aulasN}</p>${marca}<span class="badge ${open ? "on" : "off"}">${open ? "ABERTO" : reais(item.id === "alinhamento" ? 3500 : PRECO_ITEM.curso)}</span>${atos}</article>`;
@@ -697,6 +700,13 @@ function cursos() {
   });
   document.querySelectorAll("[data-curso]").forEach(btn => {
     btn.onclick = () => go({ view: "player", curso: btn.dataset.curso, mod: 0, aula: 0 });
+  });
+  document.querySelectorAll("video[data-delayed-cover]").forEach(video => {
+    window.setTimeout(() => {
+      if (!video.isConnected) return;
+      const play = video.play();
+      if (play && typeof play.catch === "function") play.catch(() => {});
+    }, 3000);
   });
 }
 
