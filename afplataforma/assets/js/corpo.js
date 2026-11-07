@@ -93,6 +93,8 @@ const AREAS = [
   }
 ];
 
+function spaceSlug(value) { return String(value || "").normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+
 function shellHead(kicker, title, subtitle) {
   return `<p class="hero-line">${esc(kicker)}</p><h2 class="hero-title">${esc(title)}</h2><p class="hero-sub">${esc(subtitle)}</p>`;
 }
@@ -132,7 +134,7 @@ export function renderCorpoArea(id) {
   const spaces = area.spaces.map(([title, desc, status], index) => `
     <article class="corpo-space-card">
       <span class="corpo-space-index">${String(index + 1).padStart(2, "0")}</span>
-      <div><h3>${esc(title)}</h3><p>${esc(desc)}</p></div>
+      <div class="corpo-space-copy"><h3>${esc(title)}</h3><p>${esc(desc)}</p><button type="button" class="corpo-open-space" data-nav="corpo:${area.id}:${spaceSlug(title)}">Abrir espaço →</button></div>
       <span class="corpo-space-status">${esc(status)}</span>
     </article>`).join("");
   const links = area.links.map(([label, view]) => `<button type="button" class="tool-btn" data-nav="${esc(view)}">${esc(label)}</button>`).join("");
@@ -143,6 +145,26 @@ export function renderCorpoArea(id) {
     <div class="corpo-space-list">${spaces}</div>
     ${links ? `<section class="corpo-legacy-links"><h2>Ferramentas já existentes</h2><p>Atalhos para os recursos atuais da AF. Seus identificadores, mídias e dados permanecem nos módulos originais.</p><div>${links}</div></section>` : ""}
     <p class="corpo-footnote">Conteúdo em preparação. Orientações de saúde e segurança serão revisadas antes da publicação.</p>
+  </div>`;
+}
+
+
+export function renderCorpoSpace(areaId, slug) {
+  const area = AREAS.find((item) => item.id === areaId);
+  const space = area?.spaces.find(([title]) => spaceSlug(title) === slug);
+  if (!area || !space) return `<div class="view active corpo-view"><p class="empty">Espaço não encontrado.</p><button class="tool-btn" data-nav="corpo">Voltar para CORPO</button></div>`;
+  const [title, description, status] = space;
+  return `<div class="view active corpo-view">
+    <button type="button" class="corpo-back" data-nav="corpo:${area.id}">← ${esc(area.title)}</button>
+    <section class="corpo-area-hero"><span>${area.number} / 05 · ESPAÇO INTERNO</span><h1>${esc(title)}</h1><p>${esc(area.title)}</p><div>${esc(description)}</div></section>
+    <section class="corpo-doc-callout"><strong>${esc(status)}</strong><p>Este espaço já possui endereço e estrutura próprios. O conteúdo será desenvolvido em uma etapa individual, sem alterar as ferramentas existentes.</p></section>
+    <div class="corpo-space-grid">
+      <article><span>01 · CONTEÚDO</span><h2>Biblioteca e aulas</h2><p>Área reservada para textos, videoaulas, guias, protocolos educativos e materiais revisados.</p><small>Preparado para conteúdo</small></article>
+      <article><span>02 · MÍDIA</span><h2>Vídeos, áudios e imagens</h2><p>Área reservada para mídia publicada pelo mentor, com autoria, fonte e identificação de licença.</p><small>Preparado para mídia</small></article>
+      <article><span>03 · INTELIGÊNCIA</span><h2>Assistente e ferramentas IA</h2><p>Espaço reservado para recursos inteligentes contextualizados a este ambiente.</p><small>Integração futura</small></article>
+      <article><span>04 · REFERÊNCIAS</span><h2>Fontes e materiais</h2><p>Área para referências, data de revisão, classificação da evidência e contexto tradicional quando aplicável.</p><small>Preparado para referências</small></article>
+    </div>
+    <p class="corpo-footnote">Nenhum conteúdo clínico ou prescrição é gerado nesta estrutura vazia. A publicação será feita após revisão específica.</p>
   </div>`;
 }
 
