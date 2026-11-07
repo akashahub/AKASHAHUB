@@ -251,3 +251,38 @@ Ferramentas existentes de Alimentação, Treino, Yoga e Meditação deverão ser
 - `assets/js/plans.js`: planos, permissões e liberações individuais.
 
 **Princípio final:** construir a estrutura inteira de CORPO primeiro; preencher, aprofundar e aperfeiçoar cada ambiente em ciclos independentes, preservando integralmente o que já existe na Arquitetura de Legado.
+
+
+---
+
+## 11. Implementação estrutural · primeira entrega
+
+**Status:** estrutura adicionada ao repositório; preenchimento editorial e funcional profundo permanece planejado por área.
+
+Arquivos novos:
+- `assets/js/corpo.js`: home CORPO, cinco ambientes, espaços internos e visão de gestão do mentor.
+- `assets/css/corpo.css`: identidade visual responsiva e componentes da frente.
+- `CORPO/ARQUITETURA-MESTRE.md`: este documento mestre.
+
+Arquivos de integração alterados:
+- `index.html`: inclusão do CSS CORPO e atualização de versão do app para cache.
+- `assets/js/navigation.js`: entrada CORPO abaixo das cinco fases, estado ativo próprio e roteamento dos ambientes/espaços.
+- `assets/js/app.js`: registro das páginas CORPO e inclusão de acesso ao documento mestre no Dashboard do mentor.
+
+Rotas internas:
+- `corpo`: home da frente.
+- `corpo:movimento`, `corpo:nutricao`, `corpo:consciencia`, `corpo:regeneracao`, `corpo:longevidade`: páginas dos cinco ambientes.
+- `corpo:<ambiente>:<espaco>`: página individual de cada espaço interno.
+- `corpo-gestao`: visão do documento mestre, restrita à sessão do mentor.
+
+Integrações sem migração de dados:
+- Movimento aponta para os recursos atuais `comp:treino` e `comp:yoga`.
+- Nutrição aponta para `comp:alimentacao`.
+- Consciência aponta para `comp:meditacao` e `comp:yoga`.
+- Regeneração aponta para `sono` e `comp:mindzone`.
+
+Os atalhos abrem os módulos originais. Não foram renomeados IDs de mídia, alteradas chaves de armazenamento, migradas coleções, modificadas permissões nem removidos recursos antigos.
+
+A gestão do mentor ganhou uma entrada para o documento mestre e uma página interna de referência. A versão integral deste documento continua disponível em Markdown e no GitHub.
+
+**Limite de validação:** a integração foi gravada no branch `main`. Antes de considerar a publicação validada em produção, executar testes reais de login mentor/mentorado, navegação mobile/desktop, cinco fases, rotas antigas `comp:*`, players e edição de mídia.
