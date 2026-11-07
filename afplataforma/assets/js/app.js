@@ -64,6 +64,7 @@ import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt47";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
 import { renderCorpoHome, renderCorpoArea, renderCorpoSpace, renderCorpoMentorGuide } from "./corpo.js?v=2";
+import { renderCentralArquitetura, bindCentralArquitetura } from "./central-arquitetura.js?v=1";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -610,6 +611,12 @@ function renderMentor() {
       <p>Storytelling completo sobre a trajetória do mentor, os mais de 2 mil atendimentos, o livro Códigos de Origem e a evolução até o Arquitetura de Legado. Acesso exclusivo ao mentor.</p>
       <a class="tool-btn" href="${mentorHref("interno/roteiro-boas-vindas.html")}">Abrir roteiro de boas-vindas</a>
     </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Operação comercial · nova central</p>
+      <h3>Central de Arquitetura</h3>
+      <p>Sessão guiada, cadastro e qualificação, mapa mental, teleprompter, apresentação das cinco fases, propostas, contratos, objeções e captação. Área privada do mentor.</p>
+      <button class="tool-btn" type="button" data-nav="central-arquitetura">Abrir Central de Arquitetura</button>
+    </article>
     ${renderSessoesAccess()}
     ${renderAccessAdminPanel()}
   </div>`;
@@ -703,6 +710,7 @@ function renderEmpresas() {
 registerRenderers({
   dashboard: renderLifeOsDashboard,
   "arquitetura-legado": renderArquiteturaLegado,
+  "central-arquitetura": () => (isMentorSession() ? renderCentralArquitetura() : `<div class="view active"><p class="empty">Acesso restrito à Gestão do Mentor.</p></div>`),
   "mapas-mentais": renderMindMaps,
   "af-dashboard": renderDashboard,
   metas: viewMetas,
@@ -771,6 +779,7 @@ registerRenderers({
 onAfterNavigate((view) => {
   onCallNavigate(view === "call");
   if (view === "dashboard") bindLifeOsDashboard();
+  if (view === "central-arquitetura") bindCentralArquitetura();
   if (view === "profile") bindProfileForm();
   if (view === "mentor") {
     bindAccessAdmin();
