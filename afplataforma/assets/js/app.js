@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=rt46";
+} from "./navigation.js?v=corpo2";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
