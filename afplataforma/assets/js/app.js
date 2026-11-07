@@ -63,6 +63,7 @@ import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audio
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt47";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
+import { renderCorpoHome, renderCorpoArea, renderCorpoMentorGuide } from "./corpo.js?v=1";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -598,6 +599,12 @@ function renderMentor() {
       <a class="tool-btn" href="interno/patrocinadores-b2b.pdf" target="_blank" rel="noopener">Patrocinadores · B2B</a>
     </article>
     <article class="q-feature livro-entry">
+      <p class="hero-line">NOVA FRENTE · USO INTERNO</p>
+      <h3>CORPO · Documento mestre e gestão da implantação</h3>
+      <p>Arquitetura oficial, preservação das cinco fases, mapa dos cinco ambientes, integração das ferramentas existentes e roadmap de implementação.</p>
+      <button class="tool-btn" type="button" data-nav="corpo-gestao">Abrir gestão da frente CORPO</button>
+    </article>
+    <article class="q-feature livro-entry">
       <p class="hero-line">Boas-vindas · uso interno</p>
       <h3>Roteiro do vídeo de boas-vindas</h3>
       <p>Storytelling completo sobre a trajetória do mentor, os mais de 2 mil atendimentos, o livro Códigos de Origem e a evolução até o Arquitetura de Legado. Acesso exclusivo ao mentor.</p>
@@ -705,6 +712,9 @@ registerRenderers({
   tools: renderToolsView,
   call: renderCallView,
   mentor: renderMentor,
+  corpo: renderCorpoHome,
+  corpoArea: renderCorpoArea,
+  "corpo-gestao": renderCorpoMentorGuide,
   ascensao: () => (isMentorSession()
     ? `<div class="view active">
         <div class="back-link" data-nav="mentor">← Gestão</div>
