@@ -63,7 +63,7 @@ import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audio
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt47";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
-import { renderCorpoHome, renderCorpoArea, renderCorpoMentorGuide } from "./corpo.js?v=1";
+import { renderCorpoHome, renderCorpoArea, renderCorpoSpace, renderCorpoMentorGuide } from "./corpo.js?v=2";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -714,6 +714,7 @@ registerRenderers({
   mentor: renderMentor,
   corpo: renderCorpoHome,
   corpoArea: renderCorpoArea,
+  corpoSpace: renderCorpoSpace,
   "corpo-gestao": renderCorpoMentorGuide,
   ascensao: () => (isMentorSession()
     ? `<div class="view active">
