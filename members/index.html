@@ -2179,15 +2179,13 @@ onAuthStateChanged(auth, async next => {
 
     // Leituras independentes em paralelo: reduz várias viagens sequenciais ao Firestore.
     const read = path => getDoc(doc(db, path[0], path[1])).catch(() => null);
-    const [adminSnap, accSnap, painelSnap, accessSnap, entitlementSnap, publicSnap, videosSnap, mentorSnap] = await Promise.all([
+    const [adminSnap, accSnap, painelSnap, accessSnap, entitlementSnap, publicSnap] = await Promise.all([
       read(["membersAdmins", mail()]),
       read(["afAccess", user.uid]),
       read(["afMentorNotes", "membersPainel"]),
       read(["membrosAcessos", mail()]),
       read(["entitlements", mail()]),
-      read(["membrosGestao", "conteudo"]),
-      read(["membrosGestao", "videos"]),
-      read(["afMentorNotes", "membersConteudo"])
+      read(["membrosGestao", "conteudo"])
     ]);
 
     if (adminSnap && adminSnap.exists() && adminSnap.data().active) adminOn = true;
@@ -2204,10 +2202,17 @@ onAuthStateChanged(auth, async next => {
     if (accessSnap && accessSnap.exists()) pullRights(accessSnap.data());
     if (entitlementSnap && entitlementSnap.exists()) pullRights(entitlementSnap.data());
 
-    if (adminOn && videosSnap && videosSnap.exists()) Object.assign(catalogVideos, videosSnap.data());
+    let mentor = null;
+    if (adminOn) {
+      const [videosSnap, mentorSnap] = await Promise.all([
+        read(["membrosGestao", "videos"]),
+        read(["afMentorNotes", "membersConteudo"])
+      ]);
+      if (videosSnap && videosSnap.exists()) Object.assign(catalogVideos, videosSnap.data());
+      if (mentorSnap && mentorSnap.exists()) mentor = mentorSnap.data();
+    }
 
     const publico = publicSnap && publicSnap.exists() ? publicSnap.data() : null;
-    const mentor = adminOn && mentorSnap && mentorSnap.exists() ? mentorSnap.data() : null;
     const escolhido = momentoCms(mentor) > momentoCms(publico) ? mentor : publico;
     if (escolhido) aplicarCms(escolhido);
     if (adminOn && escolhido && escolhido === mentor && momentoCms(mentor) > momentoCms(publico)) {
