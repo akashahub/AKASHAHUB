@@ -173,8 +173,9 @@ export async function navigate(view) {
     const id = view.split(":")[1];
     html = renderers.moduleDetail ? renderers.moduleDetail(id) : "";
   } else if (view.startsWith("corpo:")) {
-    const id = view.split(":")[1];
-    html = renderers.corpoArea ? renderers.corpoArea(id) : "";
+    const parts = view.split(":");
+    const id = parts[1];
+    html = parts[2] && renderers.corpoSpace ? renderers.corpoSpace(id, parts.slice(2).join(":")) : (renderers.corpoArea ? renderers.corpoArea(id) : "");
   } else if (view.startsWith("comp:")) {
     const id = view.split(":")[1];
     html = renderers.compApp ? renderers.compApp(id) : "";
