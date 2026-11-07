@@ -153,13 +153,15 @@ export async function navigate(view) {
     "legado-tcc": "TCC",
     "legado-slides": "Lâminas",
     "audios-pnl": "Áudios PNL",
-    "conteudos-al": "Conteúdos AL"
+    "conteudos-al": "Conteúdos AL",
+    corpo: "CORPO · Vitalidade e Longevidade",
+    "corpo-gestao": "CORPO · Documento mestre"
   };
   const top = document.getElementById("topTitle");
   if (top) {
     top.textContent =
       titles[view] ||
-      (view.startsWith("module:") ? "Módulo" : view.startsWith("comp:") ? "Complementar" : "AF");
+      (view.startsWith("corpo:") ? (view.split(":").length > 2 ? "CORPO · Espaço interno" : "CORPO · Ambiente") : view.startsWith("module:") ? "Módulo" : view.startsWith("comp:") ? "Complementar" : "AF");
   }
 
   const root = document.getElementById("content");
