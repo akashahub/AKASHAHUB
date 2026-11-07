@@ -45,6 +45,8 @@ export function buildNav() {
     { id: "fase3", label: "Fase 3 · AF", ico: `<img src="assets/img/fases/af.svg" alt="">` },
     { id: "fase4", label: "Fase 4 · Expansão", ico: `<img src="assets/img/fases/expansao.svg" alt="">` },
     { id: "fase5", label: "Fase 5 · Legado", ico: `<img src="assets/img/fases/legado.svg" alt="">` },
+    { sep: true, label: "Frente independente" },
+    { id: "corpo", label: "CORPO · Vitalidade e Longevidade", ico: "✧" },
     { sep: true, label: "Práticas pessoais" },
     { id: "fortalecimento-mental", label: "Fortalecimento mental", ico: "✧" }
   );
@@ -79,6 +81,7 @@ function isActive(id) {
   if (id === "fase2" && currentView.startsWith("fase2")) return true;
   if (id === "fase4" && currentView.startsWith("fase4")) return true;
   if (id === "fase5" && currentView.startsWith("fase5")) return true;
+  if (id === "corpo" && (currentView === "corpo" || currentView.startsWith("corpo:"))) return true;
   if (id === "fase3" && fase3Aberta(currentView)) return true;
   if (currentView.startsWith("module:") && id === "modules") return true;
   if (currentView.startsWith("comp:") && id === "complementar") return true;
@@ -97,6 +100,7 @@ function setActiveNav(view) {
         (id === "fase2" && view.startsWith("fase2")) ||
         (id === "fase4" && view.startsWith("fase4")) ||
         (id === "fase5" && view.startsWith("fase5")) ||
+        (id === "corpo" && (view === "corpo" || view.startsWith("corpo:"))) ||
         (id === "fase3" && fase3Aberta(view)) ||
         (view.startsWith("module:") && id === "modules") ||
         (view.startsWith("comp:") && id === "complementar") ||
@@ -168,6 +172,9 @@ export async function navigate(view) {
   if (view.startsWith("module:")) {
     const id = view.split(":")[1];
     html = renderers.moduleDetail ? renderers.moduleDetail(id) : "";
+  } else if (view.startsWith("corpo:")) {
+    const id = view.split(":")[1];
+    html = renderers.corpoArea ? renderers.corpoArea(id) : "";
   } else if (view.startsWith("comp:")) {
     const id = view.split(":")[1];
     html = renderers.compApp ? renderers.compApp(id) : "";
