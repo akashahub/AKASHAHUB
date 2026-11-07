@@ -82,9 +82,92 @@ input,label{color:var(--text)}
   .hero img{width:100%;height:180px}
   h1{font-size:32px}
 }
+
+/* Vitrine editorial de livros: independente do app autenticado */
+.members-library{
+  --gold-33:rgba(139,105,20,.33);--surface:#fff;--on-primary:#fff;
+  --serif:"Cormorant Garamond",serif;--sans:"Josefin Sans",sans-serif;--max:1100px;
+  position:relative;z-index:2;padding:30px 0 42px;background:#fbf8f3;
+  border-bottom:1px solid var(--line);
+}
+.members-library .wrap{width:min(1100px,calc(100% - 44px));max-width:1100px;margin:0 auto}
+.members-library .livraria-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:18px}
+.members-library .livraria-head h2{font-family:var(--serif);font-weight:700;font-size:clamp(28px,4vw,42px);margin:6px 0 0}
+.members-library .livraria-head p{margin:8px 0 0;max-width:46ch;color:var(--muted);line-height:1.55}
+.members-library .eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:0}
+.members-library .shelf{display:flex;gap:16px;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;scroll-snap-type:x mandatory;scroll-behavior:auto;padding:4px 58px 18px 2px;scrollbar-width:thin;scrollbar-color:var(--gold-33) transparent}
+.members-library .shelf::-webkit-scrollbar{height:6px}
+.members-library .shelf::-webkit-scrollbar-thumb{background:var(--gold-33);border-radius:99px}
+.members-library .shelf-controls{position:absolute;top:50%;right:22px;transform:translateY(-50%);z-index:5;display:flex;flex-direction:column;gap:8px;align-items:center}
+.members-library .shelf-arrow{display:grid;place-items:center;width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:#fff;color:var(--gold);font:32px/1 var(--sans);box-shadow:0 6px 22px rgba(0,0,0,.12);cursor:pointer}
+.members-library .shelf-arrow:hover,.members-library .shelf-arrow:focus-visible{background:var(--gold);color:#fff;border-color:var(--gold)}
+.members-library .shelf-arrow:focus-visible,.members-library .shelf:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.members-library .book-card{flex:0 0 210px;scroll-snap-align:start;min-width:0}
+.members-library .book-card img{width:100%;aspect-ratio:2/3;object-fit:cover;object-position:center;border-radius:12px;background:#120f0c;display:block}
+.members-library .book-card h3{font-family:var(--serif);font-weight:600;font-size:18px;line-height:1.15;margin:12px 0 4px}
+.members-library .book-card .preco{margin:0 0 10px;color:var(--gold);font-size:14px;letter-spacing:.04em}
+.members-library .book-card .buy{display:flex;flex-direction:column;gap:6px}
+.members-library .book-card .buy a{display:block;text-align:center;text-decoration:none;border-radius:999px;padding:9px 10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.members-library .book-card .landing{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.members-library .book-card .landing:hover{background:var(--gold);color:#fff}
+.members-library .book-card .stripe{background:var(--gold);color:#fff}
+.members-library .book-card .zap{background:#25d366;color:#06210f}
+.members-library .book-card-free .free-label{display:inline-block;margin:10px 0 0;padding:4px 8px;border:1px solid rgba(184,150,62,.55);color:#7654b8;font-size:10px;letter-spacing:.16em;font-weight:700;text-transform:uppercase}
+@media(max-width:800px){.members-library .livraria-head{align-items:flex-start}.members-library .shelf{gap:12px;padding-right:52px}.members-library .book-card{flex-basis:clamp(150px,48vw,190px)}.members-library .shelf-controls{right:10px}.members-library .shelf-arrow{width:36px;height:36px}}
+@media(prefers-reduced-motion:reduce){.members-library .shelf{scroll-behavior:auto}}
+/* Loading premium com o Olho de Hórus */
+body.members-loading{overflow:hidden}
+#membersLoader{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:radial-gradient(ellipse at center,#211a10 0%,#090909 72%);color:#e8c875;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
+#membersLoader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
+#membersLoader .loader-inner{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;padding:24px}
+#membersLoader .horus-eye{width:min(150px,38vw);height:auto;overflow:visible;filter:drop-shadow(0 0 14px rgba(215,177,86,.28));animation:horus-pulse 2.8s ease-in-out infinite}
+#membersLoader .horus-eye path{fill:none;stroke:#d7b156;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+#membersLoader .loader-brand{font-family:"Cormorant Garamond",serif;font-size:17px;letter-spacing:.32em;color:#f1d58b}
+#membersLoader .loader-caption{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(241,213,139,.68)}
+#membersLoader .loader-track{width:150px;height:2px;background:rgba(215,177,86,.18);overflow:hidden}
+#membersLoader .loader-track span{display:block;width:38%;height:100%;background:#d7b156;box-shadow:0 0 12px #d7b156;animation:loader-sweep 2.2s ease-in-out infinite}
+@keyframes horus-pulse{0%,100%{transform:scale(.94);opacity:.72}50%{transform:scale(1.04);opacity:1}}
+@keyframes loader-sweep{0%{transform:translateX(-110%)}100%{transform:translateX(370%)}}
+@media(prefers-reduced-motion:reduce){#membersLoader .horus-eye,#membersLoader .loader-track span{animation:none}#membersLoader .loader-track span{width:100%}}
+
 </style>
 </head>
 <body>
+
+<div id="membersLoader" role="status" aria-live="polite" aria-label="Carregando área de membros">
+  <div class="loader-inner">
+    <svg class="horus-eye" viewBox="0 0 180 100" role="img" aria-label="Olho de Hórus">
+      <path d="M12 43 Q47 8 90 20 Q132 8 168 43 Q137 77 91 78 Q45 77 12 43Z"/>
+      <path d="M13 43 Q43 53 62 72 Q73 84 69 96 Q88 80 91 62"/>
+      <path d="M90 20 Q89 37 91 62 Q111 58 132 43"/>
+      <path d="M90 20 Q89 8 97 3"/>
+      <path d="M90 62 Q99 79 113 86"/>
+      <circle cx="91" cy="43" r="14"/>
+      <circle cx="91" cy="43" r="5"/>
+    </svg>
+    <div class="loader-brand">AKASHA HUB</div>
+    <div class="loader-caption">Acessando sua jornada</div>
+    <div class="loader-track" aria-hidden="true"><span></span></div>
+  </div>
+</div>
+<script>
+(function(){
+  document.body.classList.add("members-loading");
+  var layer=document.getElementById("membersLoader");
+  var started=performance.now(),closed=false;
+  function close(){
+    if(closed||!layer)return;
+    closed=true;layer.classList.add("is-hidden");document.body.classList.remove("members-loading");
+    setTimeout(function(){if(layer&&layer.parentNode)layer.parentNode.removeChild(layer);},500);
+  }
+  window.__membersLoadingReady=function(){
+    var wait=Math.max(0,3000-(performance.now()-started));
+    setTimeout(close,wait);
+  };
+  setTimeout(close,6000);
+})();
+</script>
+
 <a href="/baixar-paladins.html" style="display:block;background:#8b6914;color:#fff;text-align:center;padding:16px 18px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:15px">Baixar o livro paladin</a>
 <header class="top">
   <div class="brand">☥<div>MEMBERS<small>SUA JORNADA DE CONHECIMENTO</small></div></div>
@@ -94,6 +177,66 @@ input,label{color:var(--text)}
 <div class="moon" id="vitrine">
   <img class="on" alt="AKASHA Hub Members" src="https://res.cloudinary.com/dcbarseus/image/upload/v1793333727/71792fca-6b01-4dca-b312-dfdfbdb711e2_dsoxwp.png">
 </div>
+<section class="livraria members-library" id="livros" aria-label="Vitrine de livros" data-forma="onda" data-alfa="0.35">
+  <div class="wrap">
+    <div class="livraria-head">
+      <div>
+        <p class="eyebrow">the collection</p>
+        <h2>Books</h2>
+        <p>Explore the collection at your own pace. The shelf moves gently, and you can move forward or back whenever you like.</p>
+      </div>
+      <div class="shelf-controls" role="group" aria-label="Controles da vitrine de livros">
+        <button class="shelf-arrow" type="button" data-shelf-direction="-1" aria-label="Books anteriores" title="Books anteriores">‹</button>
+        <button class="shelf-arrow" type="button" data-shelf-direction="1" aria-label="Próximos livros" title="Próximos livros">›</button>
+      </div>
+    </div>
+    <div class="shelf" id="bookShelf" tabindex="0" aria-label="Books. Use as setas para navegar.">
+      <article class="book-card"><img src="https://hotmart.s3.amazonaws.com/product_pictures/5a86b4d7-4171-42fe-8305-ab2dd09fc1f1/AKASHAOCODIGOSECRETODOUNIVERSO.png" alt="O Código Secreto do Universo" loading="eager" decoding="async"><h3>O Código Secreto do Universo</h3><p class="preco">R$ 25,62</p><div class="buy"><a class="landing" href="https://akashahub.com.br/codsecret/" aria-label="Conhecer O Código Secreto do Universo">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aanubis%3AO%20C%C3%B3digo%20Secreto%20do%20Universo">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20O%20C%C3%B3digo%20Secreto%20do%20Universo." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://hotmart.s3.amazonaws.com/product_pictures/21992551-c579-48c7-8146-5d70e1b5c758/1000229694.png" alt="Código Quântico" loading="eager" decoding="async"><h3>Código Quântico</h3><p class="preco">R$ 47,00</p><div class="buy"><a class="landing" href="https://akashahub.com.br/codigoquantico/" aria-label="Conhecer Código Quântico">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aanubis%3AC%C3%B3digo%20Qu%C3%A2ntico">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20C%C3%B3digo%20Qu%C3%A2ntico." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1785615030/6b180fb0-4b30-440b-9195-d094b16dc611_nobxps.png" alt="Revelações Quânticas" loading="lazy" decoding="async"><h3>Revelações Quânticas</h3><p class="preco">R$ 15,00</p><div class="buy"><a class="landing" href="https://akashahub.com.br/revela/" aria-label="Conhecer Revelações Quânticas">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aanubis%3ARevela%C3%A7%C3%B5es%20Qu%C3%A2nticas">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Revela%C3%A7%C3%B5es%20Qu%C3%A2nticas." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="/members/capas/provas/fim-das-trevas.jpg?v=p1" alt="O Fim das Trevas" loading="lazy" decoding="async"><h3>O Fim das Trevas</h3><p class="preco">R$ 17</p><div class="buy"><a class="landing" href="https://akashahub.com.br/fimdastrevas/" aria-label="Conhecer O Fim das Trevas">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aanubis%3AO%20Fim%20das%20Trevas">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20O%20Fim%20das%20Trevas." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://hotmart.s3.amazonaws.com/product_pictures/3133daf4-75c5-481d-a274-40620ce4691a/download20260124T161807608.jfif" alt="Código de Conduta — 10 Mandamentos da Senda" loading="lazy" decoding="async"><h3>Código de Conduta</h3><p class="preco">R$ 47,07</p><div class="buy"><a class="landing" href="https://akashahub.com.br/codigodeconduta/" aria-label="Conhecer Código de Conduta">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Ahorus%3AC%C3%B3digo%20de%20Conduta">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20C%C3%B3digo%20de%20Conduta." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://hotmart.s3.amazonaws.com/product_pictures/34ef7bc9-318d-4878-8242-3155577dc887/b.jfif" alt="O Que é Tantra?" loading="lazy" decoding="async"><h3>O Que é Tantra?</h3><p class="preco">R$ 26,73</p><div class="buy"><a class="landing" href="https://akashahub.com.br/oqueetantra/" aria-label="Conhecer O Que é Tantra?">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Ahorus%3AO%20Que%20%C3%A9%20Tantra%3F">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20O%20Que%20%C3%A9%20Tantra%3F" target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://hotmart.s3.amazonaws.com/product_pictures/1b1148c3-9452-48ab-acd9-ef188de96ea6/download4.jfif" alt="Shiva, Shakti e Shava" loading="lazy" decoding="async"><h3>Shiva, Shakti e Shava</h3><p class="preco">R$ 26,79</p><div class="buy"><a class="landing" href="https://akashahub.com.br/shiva-shakti-shava/" aria-label="Conhecer Shiva, Shakti e Shava">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Ahorus%3AShiva%2C%20Shakti%20e%20Shava">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Shiva%2C%20Shakti%20e%20Shava." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://hotmart.s3.amazonaws.com/product_pictures/4e98b40d-9257-45c5-bcae-49ec4d38169d/jk.jfif" alt="Honrar a Deusa" loading="lazy" decoding="async"><h3>Honrar a Deusa</h3><p class="preco">R$ 47,98</p><div class="buy"><a class="landing" href="https://akashahub.com.br/honrar-a-deusa/" aria-label="Conhecer Honrar a Deusa">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Ahorus%3AHonrar%20a%20Deusa">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Honrar%20a%20Deusa." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766008470/download_-_2025-12-17T185202.806_deqbli.jpg" alt="Tantra Descomplicado" loading="lazy" decoding="async"><h3>Tantra Descomplicado</h3><p class="preco">R$ 45,00</p><div class="buy"><a class="landing" href="https://akashahub.com.br/descomplicado/" aria-label="Conhecer Tantra Descomplicado">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Ahorus%3ATantra%20Descomplicado">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Tantra%20Descomplicado." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1793333547/d924d328-9d82-4ddf-9724-b2db7bac4ed2_b1it5d.png" alt="Mini Curso de Energia Sexual" loading="lazy" decoding="async"><h3>Mini Curso de Energia Sexual</h3><p class="preco">R$ 17</p><div class="buy"><a class="landing" href="https://akashahub.com.br/mini-curso-energia-sexual/" aria-label="Conhecer Mini Curso de Energia Sexual">Conhecer curso</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Ahorus%3AMini%20Curso%20de%20Energia%20Sexual">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Mini%20Curso%20de%20Energia%20Sexual." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="/members/capas/provas/tecnologia-da-alma.jpg?v=p1" alt="Tecnologia da Alma" loading="lazy" decoding="async"><h3>Tecnologia da Alma</h3><p class="preco">R$ 17</p><div class="buy"><a class="landing" href="https://akashahub.com.br/tecnologia-da-alma/" aria-label="Conhecer Tecnologia da Alma">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aisis%3ATecnologia%20da%20Alma">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Tecnologia%20da%20Alma." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://res.cloudinary.com/dlueoyrhe/image/upload/v1766010823/download_-_2025-12-17T193301.014_k1ia6c.jpg" alt="Paladin" loading="lazy" decoding="async"><h3>Paladin</h3><p class="preco">R$ 72,00</p><div class="buy"><a class="landing" href="https://akashahub.com.br/paladin/" aria-label="Conhecer Paladin">Conhecer livro</a><a class="stripe" href="https://buy.stripe.com/8x2bJ1bhrgl57Bm1TxdjO0k">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Paladin." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="/members/capas/provas/autoestima-blindada.jpg?v=p1" alt="Autoestima Blindada" loading="lazy" decoding="async"><h3>Autoestima Blindada</h3><p class="preco">R$ 43,00</p><div class="buy"><a class="landing" href="https://akashahub.com.br/autoestima/" aria-label="Conhecer Autoestima Blindada">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aisis%3AAutoestima%20Blindada">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Autoestima%20Blindada." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://hotmart.s3.amazonaws.com/product_pictures/481a187c-659e-4225-b56e-b4563b70caa6/download20251228T123455411.jfif" alt="Como Blindar Sua Mente?" loading="lazy" decoding="async"><h3>Como Blindar Sua Mente?</h3><p class="preco">R$ 43,00</p><div class="buy"><a class="landing" href="https://akashahub.com.br/blindagem/" aria-label="Conhecer Como Blindar Sua Mente?">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aisis%3AComo%20Blindar%20Sua%20Mente%3F">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Como%20Blindar%20Sua%20Mente%3F" target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="/members/capas/provas/triplex-mente.jpg?v=p1" alt="Triplex na Mente" loading="lazy" decoding="async"><h3>Triplex na Mente</h3><p class="preco">R$ 39,90</p><div class="buy"><a class="landing" href="https://akashahub.com.br/triplex/" aria-label="Conhecer Triplex na Mente">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aisis%3ATriplex%20na%20Mente">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Triplex%20na%20Mente." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="/members/capas/provas/kemet.jpg?v=p1" alt="Kemet" loading="lazy" decoding="async"><h3>Kemet</h3><p class="preco">R$ 17</p><div class="buy"><a class="landing" href="https://akashahub.com.br/kemet/" aria-label="Conhecer Kemet">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aisis%3AKemet">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Kemet." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1793333179/5038d522-135a-4efe-9546-d096f76b71a1_pkzryd.png" alt="Coletânea Alinhamento Financeiro" loading="lazy" decoding="async"><h3>Coletânea Alinhamento Financeiro</h3><p class="preco">R$ 70,00</p><div class="buy"><a class="landing" href="https://akashahub.com.br/coletanea-alinhamento-financeiro/" aria-label="Conhecer Coletânea Alinhamento Financeiro">Conhecer coletânea</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aamon%3AColet%C3%A2nea%20Alinhamento%20Financeiro">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20a%20Colet%C3%A2nea%20Alinhamento%20Financeiro." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="/members/capas/zero-ao-zen.jpg?v=z2" alt="Do Zero ao Zen Negócios" loading="lazy" decoding="async"><h3>Do Zero ao Zen Negócios</h3><p class="preco">R$ 17</p><div class="buy"><a class="landing" href="https://akashahub.com.br/zero-ao-zen/" aria-label="Conhecer Do Zero ao Zen Negócios">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aamon%3ADo%20Zero%20ao%20Zen%20Neg%C3%B3cios">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Do%20Zero%20ao%20Zen%20Neg%C3%B3cios." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1785388669/image_-_2026-07-30T020906.810_wtua29.jpg" alt="Códigos de Origem" loading="lazy" decoding="async"><h3>Códigos de Origem</h3><p class="preco">R$ 97,00</p><div class="buy"><a class="landing" href="https://akashahub.com.br/codigosdeorigem/" aria-label="Conhecer Códigos de Origem">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aamon%3AC%C3%B3digos%20de%20Origem">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20C%C3%B3digos%20de%20Origem." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card"><img src="/members/capas/provas/toth-hermes-enoque.jpg?v=p1" alt="Toth, Hermes e Enoque" loading="lazy" decoding="async"><h3>Toth, Hermes e Enoque</h3><p class="preco">R$ 17</p><div class="buy"><a class="landing" href="https://akashahub.com.br/toth/" aria-label="Conhecer Toth, Hermes e Enoque">Conhecer livro</a><a class="stripe" href="/membros/checkout.html?ref=livro%3Aamon%3AToth%2C%20Hermes%20e%20Enoque">Buy with Stripe</a><a class="zap" href="https://wa.me/5571983448621?text=Ol%C3%A1!%20Quero%20comprar%20o%20livro%20Toth%2C%20Hermes%20e%20Enoque." target="_blank" rel="noopener">Buy via WhatsApp</a></div></article>
+      <article class="book-card book-card-free"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png" alt="Pindorama — O Código Oculto do Brasil" loading="lazy" decoding="async"><span class="free-label">FREE · PDF</span><h3>Pindorama</h3><p class="preco">Free digital book</p><div class="buy"><a class="landing" href="https://akashahub.com.br/pindorama/" aria-label="Read Pindorama for free">Read for free</a><a class="stripe" href="https://res.cloudinary.com/dcbarseus/image/upload/v1787043540/PINDORAMA_O_CODIGO_OCULTO_DO_BRASIL_LIVRO_COMPLETO_1_dqmspv.pdf" target="_blank" rel="noopener">Download PDF</a></div></article>
+    </div>
+  </div>
+</section>
+
+<script>
+(function bookShelfControls(){
+  const shelf=document.getElementById("bookShelf");
+  if(!shelf)return;
+  const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)");
+  document.querySelectorAll("[data-shelf-direction]").forEach(button=>button.addEventListener("click",()=>{
+    const direction=Number(button.dataset.shelfDirection)||1;
+    const card=shelf.querySelector(".book-card");
+    const step=card?card.getBoundingClientRect().width+16:Math.max(240,shelf.clientWidth*.75);
+    shelf.scrollBy({left:direction*step*2,behavior:reduceMotion.matches?"auto":"smooth"});
+  }));
+  shelf.addEventListener("keydown",event=>{
+    if(event.key!=="ArrowRight"&&event.key!=="ArrowLeft")return;
+    event.preventDefault();
+    const card=shelf.querySelector(".book-card");
+    const step=card?card.getBoundingClientRect().width+16:240;
+    shelf.scrollBy({left:(event.key==="ArrowRight"?1:-1)*step,behavior:reduceMotion.matches?"auto":"smooth"});
+  });
+})();
+</script>
+
 <script>
 (function () {
   var frames = document.querySelectorAll("#vitrine img");
@@ -2029,61 +2172,48 @@ onAuthStateChanged(auth, async next => {
   rights = { areas: [], cursos: [], livros: [], audios: [] };
   catalogVideos = {};
   adminOn = isYan();
+
   if (user && mail()) {
-    try { await setDoc(doc(db, "users", user.uid), { email: mail(), membersAqui: true, membersSeen: Date.now() }, { merge: true }); } catch (e) {}
-    try {
-      const admin = await getDoc(doc(db, "membersAdmins", mail()));
-      if (admin.exists() && admin.data().active) adminOn = true;
-    } catch (e) {}
-    try {
-      const acc = await getDoc(doc(db, "afAccess", user.uid));
-      if (acc.exists() && acc.data().membersGrant) {
-        pullRights(acc.data().membersGrant);
-        if (acc.data().membersGrant.admin) adminOn = true;
-      }
-    } catch (e) {}
-    try {
-      const painel = await getDoc(doc(db, "afMentorNotes", "membersPainel"));
-      if (painel.exists()) {
-        const grant = (painel.data().grants || {})[mail()];
-        if (grant) pullRights(grant);
-        if ((painel.data().admins || []).includes(mail())) adminOn = true;
-      }
-    } catch (e) {}
-    try {
-      const grant = await getDoc(doc(db, "membrosAcessos", mail()));
-      if (grant.exists()) pullRights(grant.data());
-    } catch (e) {}
-    try {
-      const grant = await getDoc(doc(db, "entitlements", mail()));
-      if (grant.exists()) pullRights(grant.data());
-    } catch (e) {}
-    if (adminOn) {
-      try {
-        const videos = await getDoc(doc(db, "membrosGestao", "videos"));
-        if (videos.exists()) Object.assign(catalogVideos, videos.data());
-      } catch (e) {}
+    // Registro de presença não bloqueia a abertura da área.
+    setDoc(doc(db, "users", user.uid), { email: mail(), membersAqui: true, membersSeen: Date.now() }, { merge: true }).catch(() => {});
+
+    // Leituras independentes em paralelo: reduz várias viagens sequenciais ao Firestore.
+    const read = path => getDoc(doc(db, path[0], path[1])).catch(() => null);
+    const [adminSnap, accSnap, painelSnap, accessSnap, entitlementSnap, publicSnap, videosSnap, mentorSnap] = await Promise.all([
+      read(["membersAdmins", mail()]),
+      read(["afAccess", user.uid]),
+      read(["afMentorNotes", "membersPainel"]),
+      read(["membrosAcessos", mail()]),
+      read(["entitlements", mail()]),
+      read(["membrosGestao", "conteudo"]),
+      read(["membrosGestao", "videos"]),
+      read(["afMentorNotes", "membersConteudo"])
+    ]);
+
+    if (adminSnap && adminSnap.exists() && adminSnap.data().active) adminOn = true;
+    if (accSnap && accSnap.exists() && accSnap.data().membersGrant) {
+      pullRights(accSnap.data().membersGrant);
+      if (accSnap.data().membersGrant.admin) adminOn = true;
     }
-    let publico = null;
-    let mentor = null;
-    try {
-      const tree = await getDoc(doc(db, "membrosGestao", "conteudo"));
-      if (tree.exists()) publico = tree.data();
-    } catch (e) {}
-    if (adminOn) {
-      try {
-        const copia = await getDoc(doc(db, "afMentorNotes", "membersConteudo"));
-        if (copia.exists()) mentor = copia.data();
-      } catch (e) {}
+    if (painelSnap && painelSnap.exists()) {
+      const painel = painelSnap.data();
+      const grant = (painel.grants || {})[mail()];
+      if (grant) pullRights(grant);
+      if ((painel.admins || []).includes(mail())) adminOn = true;
     }
+    if (accessSnap && accessSnap.exists()) pullRights(accessSnap.data());
+    if (entitlementSnap && entitlementSnap.exists()) pullRights(entitlementSnap.data());
+
+    if (adminOn && videosSnap && videosSnap.exists()) Object.assign(catalogVideos, videosSnap.data());
+
+    const publico = publicSnap && publicSnap.exists() ? publicSnap.data() : null;
+    const mentor = adminOn && mentorSnap && mentorSnap.exists() ? mentorSnap.data() : null;
     const escolhido = momentoCms(mentor) > momentoCms(publico) ? mentor : publico;
     if (escolhido) aplicarCms(escolhido);
     if (adminOn && escolhido && escolhido === mentor && momentoCms(mentor) > momentoCms(publico)) {
-      try { await saveCms(); } catch (e) {}
+      saveCms().catch(() => {});
     }
-    await loadStripeGrants();
-    // Os alunos ficam inscritos no conteúdo compartilhado: uma publicação do mentor
-    // atualiza a área sem depender de novo login ou de um refresh manual.
+
     if (stopPublicCms) { stopPublicCms(); stopPublicCms = null; }
     if (!adminOn) {
       stopPublicCms = onSnapshot(doc(db, "membrosGestao", "conteudo"), snap => {
@@ -2102,8 +2232,18 @@ onAuthStateChanged(auth, async next => {
     stopPublicCms();
     stopPublicCms = null;
   }
+
   garantirTechub();
   draw();
+  if (window.__membersLoadingReady) window.__membersLoadingReady();
+
+  // A verificação de compras Stripe acontece em segundo plano, sem segurar a primeira renderização.
+  if (user && mail()) {
+    loadStripeGrants().then(() => {
+      garantirTechub();
+      draw();
+    }).catch(error => console.warn("[members] verificação Stripe:", error));
+  }
 });
 </script>
 </body>
