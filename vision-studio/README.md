@@ -31,7 +31,8 @@ Campos principais do projeto:
 - `country`, `region`, `location`, `landArea`, `dimensions`, `terrain`
 - `environments`, `goals`, `features`
 - `budget`, `deadline`, `status`, `modules`
-- `createdAt`, `updatedAt`, `isDemo`
+- `createdAt`, `updatedAt`, `isDemo`, `dataSchemaVersion`
+- `futureIntegrations.meditationGeneration` e `futureIntegrations.voiceNarration` (reservados como integrações futuras)
 
 Campos principais das referências:
 - `ownerUid`, `type`, `item`, `value`, `unit`, `region`
