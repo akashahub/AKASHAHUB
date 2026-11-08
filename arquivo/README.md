@@ -1,8 +1,8 @@
 # Arquivo offline
 
-FLOW saiu do ar público.
-Pasta: arquivo/flow
-Não republicar em /flow sem pedido explícito.
+FLOW foi reativado em /flow com acesso privado obrigatório por login.
+A página ativa está em flow/index.html; a cópia offline permanece em arquivo/flow.
+O cadastro FLOW é feito uma única vez e salvo no perfil autenticado do usuário.
 
 
 Academy (/academy) e Convergência OS 777 (/convergenciaos777) saíram do ar público.
