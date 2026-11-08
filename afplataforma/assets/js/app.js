@@ -63,7 +63,16 @@ import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audio
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt47";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
-import { renderCorpoHome, renderCorpoArea, renderCorpoSpace, renderCorpoMentorGuide } from "./corpo.js?v=2";
+// CORPO é carregado sob demanda para que uma falha isolada nessa frente
+// nunca impeça a inicialização do login e das cinco fases principais.
+function renderCorpoLazy(renderer, ...args) {
+  return import("./corpo.js?v=3")
+    .then((mod) => mod[renderer](...args))
+    .catch((error) => {
+      console.error("[AF CORPO] Falha ao carregar a frente:", error);
+      return '<div class="view active"><p class="empty">Não foi possível carregar o ambiente CORPO agora. As demais áreas da plataforma continuam disponíveis. Tente novamente mais tarde.</p></div>';
+    });
+}
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -712,10 +721,10 @@ registerRenderers({
   tools: renderToolsView,
   call: renderCallView,
   mentor: renderMentor,
-  corpo: renderCorpoHome,
-  corpoArea: renderCorpoArea,
-  corpoSpace: renderCorpoSpace,
-  "corpo-gestao": renderCorpoMentorGuide,
+  corpo: () => renderCorpoLazy("renderCorpoHome"),
+  corpoArea: (id) => renderCorpoLazy("renderCorpoArea", id),
+  corpoSpace: (areaId, slug) => renderCorpoLazy("renderCorpoSpace", areaId, slug),
+  "corpo-gestao": () => renderCorpoLazy("renderCorpoMentorGuide"),
   ascensao: () => (isMentorSession()
     ? `<div class="view active">
         <div class="back-link" data-nav="mentor">← Gestão</div>
