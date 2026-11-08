@@ -373,5 +373,18 @@ service cloud.firestore {
       allow read, write: if isSignedIn() && request.auth.uid == uid;
       allow read: if isAfMentor();
     }
+
+    // VISION STUDIO — dados isolados por proprietário, fora das coleções da AF.
+    match /visionStudioProjects/{uid}/projects/{projectId} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.ownerId == uid;
+    }
+    match /visionStudioUsers/{uid}/catalogs/{catalogId} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid;
+    }
   }
 }
