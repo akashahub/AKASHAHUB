@@ -98,7 +98,7 @@ const AREAS = [
   }
 ];
 
-function spaceSlug(value) { return String(value || "").normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+function spaceSlug(value) { return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
 
 function shellHead(kicker, title, subtitle) {
   return `<p class="hero-line">${esc(kicker)}</p><h2 class="hero-title">${esc(title)}</h2><p class="hero-sub">${esc(subtitle)}</p>`;
@@ -161,7 +161,7 @@ export function renderCorpoSpace(areaId, slug) {
   const [title, description, status] = space;
   const functionalSpaces = ["biblioteca-de-exercicios", "planejamento-de-treino", "diario-de-treino", "evolucao-e-progressao", "planejador-assistido"];
   if (area.id === "movimento" && functionalSpaces.includes(slug)) {
-    return import("./corpo-treino.js?v=1").then((mod) => mod.renderCorpoTrainingSpace(slug));
+    return import("./corpo-treino.js?v=20261108-0825").then((mod) => mod.renderCorpoTrainingSpace(slug));
   }
   return `<div class="view active corpo-view">
     <button type="button" class="corpo-back" data-nav="corpo:${area.id}">← ${esc(area.title)}</button>
