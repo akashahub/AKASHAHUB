@@ -20,7 +20,7 @@ const AREAS = [
       ["Planejamento de treino", "Organização semanal por objetivo, disponibilidade e modalidade.", "Funcional"],
       ["Diário de treino", "Registro de séries, repetições, cargas e esforço percebido.", "Funcional"],
       ["Evolução e progressão", "Histórico de sessões, consistência e acompanhamento de cargas.", "Funcional"],
-      ["Treinamento com IA", "Planejador assistido por objetivos, experiência e equipamentos.", "Planejador assistido"]
+      ["Planejador assistido", "Estrutura semanal por objetivo, experiência e equipamentos; integração de IA fica para etapa posterior.", "Funcional"]
     ],
     links: [
       ["Abrir Treino existente", "comp:treino"],
