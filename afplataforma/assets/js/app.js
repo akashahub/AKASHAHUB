@@ -67,10 +67,17 @@ import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-le
 // nunca impeça a inicialização do login e das cinco fases principais.
 function renderCorpoLazy(renderer, ...args) {
   return import("./corpo.js?v=20261108-0825")
-    .then((mod) => mod[renderer](...args))
+    .then((mod) => {
+      const render = mod?.[renderer];
+      if (typeof render !== "function") {
+        throw new Error("O módulo CORPO foi carregado, mas a função " + renderer + " não foi encontrada.");
+      }
+      return render(...args);
+    })
     .catch((error) => {
       console.error("[AF CORPO] Falha ao carregar a frente:", error);
-      return '<div class="view active"><p class="empty">Não foi possível carregar o ambiente CORPO agora. As demais áreas da plataforma continuam disponíveis. Tente novamente mais tarde.</p></div>';
+      const detail = esc(error?.message || error?.name || "Falha desconhecida");
+      return '<div class="view active corpo-view"><section class="corpo-area-hero"><span>DIAGNÓSTICO DE CARREGAMENTO</span><h1>Não foi possível abrir o CORPO</h1><p>As demais áreas da plataforma continuam disponíveis. O sistema identificou esta falha:</p><div role="alert" style="margin-top:16px;padding:14px;border:1px solid rgba(180,120,80,.35);border-radius:10px;background:rgba(180,120,80,.08);overflow-wrap:anywhere"><strong>Detalhe técnico</strong><br>' + detail + '</div><p style="margin-top:16px">Envie uma captura desta mensagem para identificar o arquivo ou recurso que precisa de correção.</p></section></div>';
     });
 }
 
