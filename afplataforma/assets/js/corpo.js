@@ -15,7 +15,12 @@ const AREAS = [
       ["Academia e máquinas", "Exercícios guiados, execução, adaptações e acompanhamento.", "Ferramenta existente"],
       ["Biblioteca de exercícios", "Demonstrações, músculos envolvidos, técnica, erros comuns e variações.", "Espaço preparado"],
       ["Treinamento com IA", "Planos ajustados a objetivos, experiência, disponibilidade e equipamentos.", "Espaço preparado"],
-      ["Yoga e movimento consciente", "Séries, mobilidade, flexibilidade, respiração e práticas guiadas.", "Ferramenta existente"]
+      ["Yoga e movimento consciente", "Séries, mobilidade, flexibilidade, respiração e práticas guiadas.", "Ferramenta existente"],
+      ["Biblioteca de exercícios", "Técnica, grupos musculares, execução e adaptações.", "Funcional"],
+      ["Planejamento de treino", "Organização semanal por objetivo, disponibilidade e modalidade.", "Funcional"],
+      ["Diário de treino", "Registro de séries, repetições, cargas e esforço percebido.", "Funcional"],
+      ["Evolução e progressão", "Histórico de sessões, consistência e acompanhamento de cargas.", "Funcional"],
+      ["Treinamento com IA", "Planejador assistido por objetivos, experiência e equipamentos.", "Planejador assistido"]
     ],
     links: [
       ["Abrir Treino existente", "comp:treino"],
@@ -154,6 +159,10 @@ export function renderCorpoSpace(areaId, slug) {
   const space = area?.spaces.find(([title]) => spaceSlug(title) === slug);
   if (!area || !space) return `<div class="view active corpo-view"><p class="empty">Espaço não encontrado.</p><button class="tool-btn" data-nav="corpo">Voltar para CORPO</button></div>`;
   const [title, description, status] = space;
+  const functionalSpaces = ["biblioteca-de-exercicios", "planejamento-de-treino", "diario-de-treino", "evolucao-e-progressao", "treinamento-com-ia"];
+  if (area.id === "movimento" && functionalSpaces.includes(slug)) {
+    return import("./corpo-treino.js?v=1").then((mod) => mod.renderCorpoTrainingSpace(slug));
+  }
   return `<div class="view active corpo-view">
     <button type="button" class="corpo-back" data-nav="corpo:${area.id}">← ${esc(area.title)}</button>
     <section class="corpo-area-hero"><span>${area.number} / 05 · ESPAÇO INTERNO</span><h1>${esc(title)}</h1><p>${esc(area.title)}</p><div>${esc(description)}</div></section>
