@@ -66,7 +66,7 @@ import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-le
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
 function renderCorpoLazy(renderer, ...args) {
-  return import("./corpo.js?v=3")
+  return import("./corpo.js?v=4")
     .then((mod) => mod[renderer](...args))
     .catch((error) => {
       console.error("[AF CORPO] Falha ao carregar a frente:", error);
