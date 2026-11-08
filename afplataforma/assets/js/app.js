@@ -64,6 +64,7 @@ import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt47";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
 import { renderCorpoHome, renderCorpoArea, renderCorpoSpace, renderCorpoMentorGuide } from "./corpo.js?v=2";
+import { renderVisionStudio, bindVisionStudio } from "./vision-studio.js?v=1";
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -715,6 +716,7 @@ registerRenderers({
   corpo: renderCorpoHome,
   corpoArea: renderCorpoArea,
   corpoSpace: renderCorpoSpace,
+  "vision-studio": renderVisionStudio,
   "corpo-gestao": renderCorpoMentorGuide,
   ascensao: () => (isMentorSession()
     ? `<div class="view active">
@@ -771,6 +773,7 @@ registerRenderers({
 onAfterNavigate((view) => {
   onCallNavigate(view === "call");
   if (view === "dashboard") bindLifeOsDashboard();
+  if (view === "vision-studio") bindVisionStudio();
   if (view === "profile") bindProfileForm();
   if (view === "mentor") {
     bindAccessAdmin();
