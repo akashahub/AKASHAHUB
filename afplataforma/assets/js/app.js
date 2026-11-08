@@ -810,6 +810,11 @@ onAfterNavigate((view) => {
   }
   if (view === "audios-pnl") bindAudiosPnl();
   if (view === "producao-audios-pnl") bindProducaoAudiosPnl();
+  if (view.startsWith("corpo:movimento:")) {
+    import("./corpo-treino.js?v=1")
+      .then((mod) => mod.bindCorpoTraining())
+      .catch((error) => console.error("[CORPO treino] Falha ao conectar controles:", error));
+  }
 });
 
 function friendlyAuthError(error, fallback = "Não foi possível entrar. Tente novamente.") {
