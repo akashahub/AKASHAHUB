@@ -159,7 +159,7 @@ export function renderCorpoSpace(areaId, slug) {
   const space = area?.spaces.find(([title]) => spaceSlug(title) === slug);
   if (!area || !space) return `<div class="view active corpo-view"><p class="empty">Espaço não encontrado.</p><button class="tool-btn" data-nav="corpo">Voltar para CORPO</button></div>`;
   const [title, description, status] = space;
-  const functionalSpaces = ["biblioteca-de-exercicios", "planejamento-de-treino", "diario-de-treino", "evolucao-e-progressao", "treinamento-com-ia"];
+  const functionalSpaces = ["biblioteca-de-exercicios", "planejamento-de-treino", "diario-de-treino", "evolucao-e-progressao", "planejador-assistido"];
   if (area.id === "movimento" && functionalSpaces.includes(slug)) {
     return import("./corpo-treino.js?v=1").then((mod) => mod.renderCorpoTrainingSpace(slug));
   }
