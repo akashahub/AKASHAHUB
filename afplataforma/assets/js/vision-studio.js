@@ -5,7 +5,7 @@
 import { session } from "./auth.js";
 import { db } from "../../firebase/firebase-config.js";
 import {
-  addDoc, collection, deleteDoc, doc, getDocs, serverTimestamp, updateDoc
+  addDoc, collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { esc } from "./navigation.js";
 
@@ -95,16 +95,9 @@ async function ensureReferenceCatalogs() {
   const known = new Set(existing.docs.map(d => d.id));
   for (const [id, label] of CATALOGS) {
     if (known.has(id)) continue;
-    await addDoc(collection(db, "visionStudioUsers", session.uid, "catalogs"), {
+    await setDoc(doc(db, "visionStudioUsers", session.uid, "catalogs", id), {
       catalogId: id, label, entries: [], source: null, referenceDate: null,
       reliability: "not_available", createdAt: serverTimestamp(), updatedAt: serverTimestamp()
-    }).catch(async () => {
-      // IDs determinísticos são gravados pelo caminho abaixo se addDoc não for permitido.
-      const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-      await setDoc(doc(db, "visionStudioUsers", session.uid, "catalogs", id), {
-        catalogId: id, label, entries: [], source: null, referenceDate: null,
-        reliability: "not_available", createdAt: serverTimestamp(), updatedAt: serverTimestamp()
-      });
     });
   }
 }
