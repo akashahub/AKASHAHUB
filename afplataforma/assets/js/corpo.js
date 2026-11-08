@@ -78,6 +78,12 @@ export function renderCorpoSpace(areaId, slug) {
   if (area.id === "movimento" && functionalSpaces.includes(slug)) {
     return import("./corpo-treino.js?v=20261108-0825").then((mod) => mod.renderCorpoTrainingSpace(slug));
   }
+  if (area.id === "nutricao" && slug === "alimentos-e-propriedades") {
+    return import("./corpo-nutricao.js?v=20261108-0937").then((mod) => mod.renderCorpoNutricaoSpace(slug));
+  }
+  if (area.id === "regeneracao" && slug === "sono-e-ritmo-circadiano") {
+    return import("./corpo-sono.js?v=20261108-0937").then((mod) => mod.renderCorpoSonoSpace(slug));
+  }
   return `<div class="view active corpo-view">
     <button type="button" class="corpo-back" data-nav="corpo:${area.id}">← ${esc(area.title)}</button>
     <section class="corpo-area-hero"><span>${area.number} / 05 · ESPAÇO INTERNO</span><h1>${esc(title)}</h1><p>${esc(area.title)}</p><div>${esc(description)}</div></section>

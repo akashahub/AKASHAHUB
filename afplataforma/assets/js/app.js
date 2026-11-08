@@ -822,6 +822,16 @@ onAfterNavigate((view) => {
       .then((mod) => mod.bindCorpoTraining())
       .catch((error) => console.error("[CORPO treino] Falha ao conectar controles:", error));
   }
+  if (view === "corpo:nutricao:alimentos-e-propriedades") {
+    import("./corpo-nutricao.js?v=20261108-0937")
+      .then((mod) => mod.bindCorpoNutricao())
+      .catch((error) => console.error("[CORPO nutrição] Falha ao conectar controles:", error));
+  }
+  if (view === "corpo:regeneracao:sono-e-ritmo-circadiano") {
+    import("./corpo-sono.js?v=20261108-0937")
+      .then((mod) => mod.bindCorpoSono())
+      .catch((error) => console.error("[CORPO sono] Falha ao conectar controles:", error));
+  }
 });
 
 function friendlyAuthError(error, fallback = "Não foi possível entrar. Tente novamente.") {
