@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"/>
+<meta name="robots" content="noindex,nofollow"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <link rel="icon" href="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png"/>
 <title>Massagem Tântrica em Salvador | Flow · Lauro de Freitas</title>
@@ -502,6 +503,36 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
 .massage-media .massage-media-stage{position:relative;width:100%;height:100%;overflow:hidden;background:#171016}
 .massage-media .massage-cover{display:block;width:100%;height:100%;object-fit:cover;filter:brightness(.94) saturate(.88) hue-rotate(12deg)}
 .massage-media .massage-media-stage:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(180,145,255,.23),rgba(214,178,255,.12));mix-blend-mode:screen}
+
+/* FLOW — portal privado e cadastro único */
+body.flow-locked{overflow:hidden!important}
+body.flow-locked>:not(#flow-gate){display:none!important}
+#flow-gate{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:22px;background:radial-gradient(ellipse at 50% 20%,rgba(121,83,160,.2),transparent 42%),linear-gradient(145deg,rgba(7,6,9,.97),rgba(15,12,16,.99)),url('/flow/img/hero.jpg') center/cover}
+#flow-gate[hidden]{display:none!important}
+#flow-gate .gate-card{width:min(480px,100%);max-height:min(92dvh,850px);overflow:auto;padding:clamp(22px,5vw,38px);border:1px solid rgba(230,195,106,.35);border-radius:18px;background:rgba(12,10,12,.88);box-shadow:0 24px 100px #000a;backdrop-filter:blur(18px)}
+#flow-gate .gate-mark{width:66px;height:66px;margin:0 auto 18px;border:1px solid rgba(230,195,106,.55);border-radius:50%;display:grid;place-items:center;color:#e6c36a;font-family:var(--display);font-size:26px;letter-spacing:.08em}
+#flow-gate h1{margin:0;text-align:center;font-family:var(--display);font-weight:500;font-size:clamp(2.3rem,9vw,3.5rem);letter-spacing:.2em}
+#flow-gate .gate-sub{text-align:center;color:var(--ivory-dim);font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin:8px 0 26px}
+#flow-gate .gate-intro{color:var(--ivory-dim);font-size:14px;line-height:1.65;text-align:center;margin:0 0 22px}
+#flow-gate .gate-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);margin-bottom:20px}
+#flow-gate .gate-tabs button{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--stone);padding:12px 8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+#flow-gate .gate-tabs button.active{color:#e6c36a;border-bottom-color:#c6a15b}
+#flow-gate .gate-field{display:grid;gap:7px;margin:13px 0}
+#flow-gate .gate-field label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#e6c36a}
+#flow-gate input,#flow-gate textarea{width:100%;border:1px solid rgba(243,238,230,.2);border-radius:8px;background:rgba(255,255,255,.045);padding:13px 14px;color:var(--ivory);outline:none}
+#flow-gate input:focus,#flow-gate textarea:focus{border-color:#c6a15b}
+#flow-gate textarea{min-height:145px;resize:vertical;line-height:1.55}
+#flow-gate .gate-btn{width:100%;min-height:48px;margin-top:12px;border:1px solid #d7bc7b;border-radius:7px;background:linear-gradient(110deg,#f3eee6,#d9c18c);color:#17120c;font-weight:600;cursor:pointer}
+#flow-gate .gate-google{width:100%;min-height:46px;margin-top:10px;border:1px solid rgba(243,238,230,.3);border-radius:7px;background:transparent;color:var(--ivory);cursor:pointer}
+#flow-gate .gate-error{display:none;margin:12px 0;padding:11px;border:1px solid rgba(230,100,100,.4);border-radius:7px;color:#ffb4ad;font-size:12px;line-height:1.5}
+#flow-gate .gate-error.show{display:block}
+#flow-gate .gate-note{font-size:11px;line-height:1.55;color:var(--stone);margin:14px 0 0;text-align:center}
+#flow-gate .gate-consent{display:flex;gap:10px;align-items:flex-start;margin-top:15px;color:var(--ivory-dim);font-size:11px;line-height:1.5}
+#flow-gate .gate-consent input{width:17px;height:17px;flex:0 0 17px;margin:0;accent-color:#c6a15b}
+#flow-gate .gate-view[hidden]{display:none!important}
+#flow-gate .gate-loading{display:none;color:#e6c36a;text-align:center;font-size:11px;letter-spacing:.12em;margin-top:14px}
+#flow-gate .gate-loading.show{display:block}
+@media(prefers-reduced-motion:reduce){#flow-gate *{scroll-behavior:auto!important}}
 </style>
 </head>
 <body id="topo">
@@ -891,8 +922,8 @@ footer{display:flex;flex-direction:column;gap:24px;border-top:1px solid var(--li
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const app = initializeApp({
   apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
   authDomain: "hub-akasha.firebaseapp.com",
@@ -910,6 +941,15 @@ window.flowCollection = collection;
 window.flowGetDocs = getDocs;
 window.flowQuery = query;
 window.flowOrderBy = orderBy;
+window.flowDoc = doc;
+window.flowGetDoc = getDoc;
+window.flowSetDoc = setDoc;
+window.flowSignInWithPopup = signInWithPopup;
+window.flowSignInWithEmailAndPassword = signInWithEmailAndPassword;
+window.flowCreateUserWithEmailAndPassword = createUserWithEmailAndPassword;
+window.flowGoogleProvider = new GoogleAuthProvider();
+window.flowSignOut = signOut;
+window.flowServerTimestamp = serverTimestamp;
 
 </script>
 <script>
@@ -1701,6 +1741,132 @@ if ('IntersectionObserver' in window) {
     const play = video.play();
     if (play && typeof play.catch === 'function') play.catch(function(){});
   }, delay);
+})();
+</script>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const gate = $('flow-gate'), authView = $('flow-auth-view'), profileView = $('flow-profile-view');
+  const error = $('flow-gate-error'), loading = $('flow-gate-loading');
+  let currentUser = null, profileLoaded = false, busy = false, mode = 'login';
+  const showError = message => { error.textContent = message; error.classList.add('show'); };
+  const clearError = () => { error.textContent = ''; error.classList.remove('show'); };
+  const setBusy = value => { busy = value; loading.classList.toggle('show', value); gate.querySelectorAll('button,input,textarea').forEach(el => el.disabled = value); };
+  const messages = {
+    'auth/invalid-credential':'E-mail ou senha incorretos.',
+    'auth/user-not-found':'Conta não encontrada. Crie seu acesso ou entre com Google.',
+    'auth/wrong-password':'Senha incorreta.',
+    'auth/email-already-in-use':'Este e-mail já possui uma conta. Entre com ela.',
+    'auth/weak-password':'A senha precisa ter pelo menos 6 caracteres.',
+    'auth/invalid-email':'Informe um e-mail válido.',
+    'auth/popup-closed-by-user':'A janela do Google foi fechada antes da conclusão.',
+    'auth/popup-blocked':'Permita a janela de autenticação do Google e tente novamente.',
+    'auth/network-request-failed':'Falha de conexão. Verifique sua internet e tente novamente.'
+  };
+  function setMode(next) {
+    mode = next;
+    $('flow-login-fields').hidden = next !== 'login';
+    $('flow-register-fields').hidden = next !== 'register';
+    gate.querySelectorAll('[data-gate-tab]').forEach(b => b.classList.toggle('active', b.dataset.gateTab === next));
+    clearError();
+  }
+  gate.querySelectorAll('[data-gate-tab]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.gateTab)));
+  async function saveNewAccount(user) {
+    const userRef = window.flowDoc(window.flowDb, 'users', user.uid);
+    const snap = await window.flowGetDoc(userRef);
+    if (!snap.exists()) await window.flowSetDoc(userRef, {
+      nome: user.displayName || '', email: user.email || '', nivel: 0, produtos: [],
+      criadoEm: window.flowServerTimestamp()
+    });
+  }
+  async function checkProfile(user) {
+    currentUser = user;
+    if (!user) {
+      document.body.classList.add('flow-locked');
+      gate.hidden = false; authView.hidden = false; profileView.hidden = true;
+      profileLoaded = false;
+      return;
+    }
+    setBusy(true); clearError();
+    try {
+      await saveNewAccount(user);
+      const ref = window.flowDoc(window.flowDb, 'users', user.uid);
+      const snap = await window.flowGetDoc(ref);
+      const data = snap.exists() ? snap.data() : {};
+      const profile = data.flowProfile || null;
+      if (profile && profile.nome && profile.telefone && profile.apresentacao) {
+        gate.hidden = true;
+        document.body.classList.remove('flow-locked');
+        profileLoaded = true;
+      } else {
+        gate.hidden = false; authView.hidden = true; profileView.hidden = false;
+        $('flow-profile-email').value = user.email || '';
+        $('flow-profile-name').value = profile?.nome || user.displayName || data.nome || '';
+        $('flow-profile-phone').value = profile?.telefone || '';
+        $('flow-profile-story').value = profile?.apresentacao || '';
+        profileLoaded = false;
+      }
+    } catch (e) {
+      showError('Não foi possível verificar seu cadastro. Tente novamente. ' + (e.message || ''));
+    } finally { setBusy(false); }
+  }
+  $('flow-login-btn').addEventListener('click', async () => {
+    clearError();
+    const email = $('flow-login-email').value.trim(), password = $('flow-login-password').value;
+    if (!email || !password) return showError('Informe seu e-mail e sua senha.');
+    setBusy(true);
+    try { await window.flowSignInWithEmailAndPassword(window.flowAuth, email, password); }
+    catch(e) { showError(messages[e.code] || 'Não foi possível entrar. Verifique seus dados.'); }
+    finally { setBusy(false); }
+  });
+  $('flow-register-btn').addEventListener('click', async () => {
+    clearError();
+    const email = $('flow-register-email').value.trim(), password = $('flow-register-password').value;
+    if (!email || password.length < 6) return showError('Informe um e-mail válido e uma senha com pelo menos 6 caracteres.');
+    setBusy(true);
+    try { await window.flowCreateUserWithEmailAndPassword(window.flowAuth, email, password); }
+    catch(e) { showError(messages[e.code] || 'Não foi possível criar sua conta.'); }
+    finally { setBusy(false); }
+  });
+  $('flow-google-btn').addEventListener('click', async () => {
+    clearError(); setBusy(true);
+    try { await window.flowSignInWithPopup(window.flowAuth, window.flowGoogleProvider); }
+    catch(e) { showError(messages[e.code] || 'Não foi possível autenticar com Google.'); }
+    finally { setBusy(false); }
+  });
+  $('flow-profile-form').addEventListener('submit', async event => {
+    event.preventDefault(); clearError();
+    if (!currentUser) return showError('Entre novamente para concluir seu cadastro.');
+    const nome = $('flow-profile-name').value.trim();
+    const telefone = $('flow-profile-phone').value.trim();
+    const apresentacao = $('flow-profile-story').value.trim();
+    if (nome.length < 2 || telefone.replace(/\\D/g,'').length < 10 || apresentacao.length < 20 || !$('flow-profile-consent').checked) {
+      return showError('Confira os campos obrigatórios e confirme o aviso de privacidade.');
+    }
+    setBusy(true);
+    try {
+      const ref = window.flowDoc(window.flowDb, 'users', currentUser.uid);
+      const snap = await window.flowGetDoc(ref);
+      const existing = snap.exists() ? snap.data() : {};
+      await window.flowSetDoc(ref, {
+        nome, email: currentUser.email || '', telefone,
+        flowProfile: {
+          nome, email: currentUser.email || '', telefone, apresentacao,
+          consentimento: true, atualizadoEm: window.flowServerTimestamp(),
+          origem: 'flow'
+        }
+      }, { merge: true });
+      gate.hidden = true; document.body.classList.remove('flow-locked'); profileLoaded = true;
+    } catch(e) {
+      showError('Não foi possível salvar sua apresentação. Tente novamente. ' + (e.message || ''));
+    } finally { setBusy(false); }
+  });
+  if (window.flowOnAuthStateChanged && window.flowAuth) {
+    window.flowOnAuthStateChanged(window.flowAuth, user => { checkProfile(user); });
+  } else {
+    showError('O sistema de acesso não carregou. Atualize a página em instantes.');
+  }
 })();
 </script>
 </body>
