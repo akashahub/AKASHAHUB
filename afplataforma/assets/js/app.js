@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=corpo2";
+} from "./navigation.js?v=vision1";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
@@ -33,7 +33,7 @@ import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./t
 import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI, onCallNavigate } from "./call.js?v=ux1";
 import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
-import { renderComplementarHome, renderComplementarApp } from "./complementar.js";
+import { renderComplementarHome, renderComplementarApp } from "./complementar.js?v=vision1";
 import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js?v=rt14";
 import { renderSessoesAccess, bindSessoesAccess } from "./sessoes-access.js?v=1";
 import { renderQuitei, bindQuitei } from "./quitei.js";
