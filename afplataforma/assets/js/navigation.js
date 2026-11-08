@@ -118,6 +118,7 @@ export async function navigate(view) {
   const lang = session.lang || "pt-BR";
   const titles = {
     dashboard: t(lang, "dash"),
+    "vision-studio": "VISION STUDIO",
     modules: t(lang, "modules"),
     tools: t(lang, "tools"),
     call: t(lang, "call"),
