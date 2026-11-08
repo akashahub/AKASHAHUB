@@ -1,4 +1,4 @@
-import { esc } from "./navigation.js";
+import { esc } from "./navigation.js?v=corpo2";
 import { isMentorSession } from "./auth.js";
 
 const AREAS = [
