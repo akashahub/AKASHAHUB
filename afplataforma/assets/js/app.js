@@ -63,6 +63,7 @@ import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audio
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt47";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
+import { renderCatalogoCapacidades, bindCatalogoCapacidades } from "./catalogo-capacidades.js?v=20261108-1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
 function renderCorpoLazy(renderer, ...args) {
@@ -626,6 +627,12 @@ function renderMentor() {
       <p>Storytelling completo sobre a trajetória do mentor, os mais de 2 mil atendimentos, o livro Códigos de Origem e a evolução até o Arquitetura de Legado. Acesso exclusivo ao mentor.</p>
       <a class="tool-btn" href="${mentorHref("interno/roteiro-boas-vindas.html")}">Abrir roteiro de boas-vindas</a>
     </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Akasha Hub · inventário estratégico</p>
+      <h3>Catálogo de Capacidades</h3>
+      <p>Mapa interno dos dez departamentos, serviços, competências e possibilidades de execução. Do serviço pontual à estruturação de organizações e operações internacionais.</p>
+      <button class="tool-btn" type="button" data-nav="catalogo-capacidades">Abrir catálogo completo</button>
+    </article>
     ${renderSessoesAccess()}
     ${renderAccessAdminPanel()}
   </div>`;
@@ -719,6 +726,7 @@ function renderEmpresas() {
 registerRenderers({
   dashboard: renderLifeOsDashboard,
   "arquitetura-legado": renderArquiteturaLegado,
+  "catalogo-capacidades": renderCatalogoCapacidades,
   "mapas-mentais": renderMindMaps,
   "af-dashboard": renderDashboard,
   metas: viewMetas,
@@ -792,6 +800,7 @@ onAfterNavigate((view) => {
     bindAccessAdmin();
     bindSessoesAccess();
   }
+  if (view === "catalogo-capacidades") bindCatalogoCapacidades();
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();
   if (["fase1", "fase2", "fase3", "fase4", "fase5"].includes(view)) {
