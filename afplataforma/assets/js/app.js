@@ -66,7 +66,7 @@ import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-le
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
 function renderCorpoLazy(renderer, ...args) {
-  return import("./corpo.js?v=4")
+  return import("./corpo.js?v=20261108-0825")
     .then((mod) => mod[renderer](...args))
     .catch((error) => {
       console.error("[AF CORPO] Falha ao carregar a frente:", error);
@@ -811,7 +811,7 @@ onAfterNavigate((view) => {
   if (view === "audios-pnl") bindAudiosPnl();
   if (view === "producao-audios-pnl") bindProducaoAudiosPnl();
   if (view.startsWith("corpo:movimento:")) {
-    import("./corpo-treino.js?v=1")
+    import("./corpo-treino.js?v=20261108-0825")
       .then((mod) => mod.bindCorpoTraining())
       .catch((error) => console.error("[CORPO treino] Falha ao conectar controles:", error));
   }
