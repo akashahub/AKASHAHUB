@@ -215,6 +215,8 @@ async function loadProjects() {
       features:"Integração com a natureza; autonomia energética e hídrica; produção de alimentos; privacidade; planejamento técnico e ambiental.",
       budget:"", deadline:"", isDemo:true, status:"planning",
       modules: MODULES.map(m=>({id:m[0],status:"prepared"})),
+      dataSchemaVersion:1,
+      futureIntegrations:{meditationGeneration:{status:"planned"},voiceNarration:{status:"planned"}},
       createdAt:serverTimestamp(), updatedAt:serverTimestamp()
     };
     const ref = doc(projectCollection());
@@ -278,6 +280,8 @@ function bindEditor(){
       features:val("pFeatures"), budget:val("pBudget"), deadline:val("pDeadline"),
       isDemo:existing?.isDemo===true, status:existing?.status || "planning",
       modules:existing?.modules || MODULES.map(m=>({id:m[0],status:"prepared"})),
+      dataSchemaVersion:1,
+      futureIntegrations:existing?.futureIntegrations || {meditationGeneration:{status:"planned"},voiceNarration:{status:"planned"}},
       createdAt:existing?.createdAt || serverTimestamp(), updatedAt:serverTimestamp()
     };
     try{
