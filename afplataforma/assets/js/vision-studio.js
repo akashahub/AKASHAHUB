@@ -118,7 +118,7 @@ async function loadProjects() {
       features: "Proximidade do mar, integração com a natureza, autonomia energética e hídrica, produção de alimentos e planejamento técnico responsável.",
       isReference: true, ownerId: session.uid, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
     });
-    projects.push({ id: demo.id, name: "REFÚGIO 777", slug: "refugio-777", kind: "Residencial", status: "Projeto de referência", country: "Brasil", horizon: "Até 5 anos", objective: "Desenvolver uma propriedade costeira integrada à natureza, com autonomia e espaços para morar, criar e produzir." });
+    projects.push({ id: demo.id, name: "REFÚGIO 777", slug: "refugio-777", kind: "Residencial", status: "Projeto de referência", country: "Brasil", horizon: "Até 5 anos", objective: "Desenvolver uma propriedade costeira integrada à natureza, com autonomia e espaços para morar, criar e produzir.", isReference: true });
   }
   projects.sort((a,b) => (a.isReference === b.isReference ? 0 : a.isReference ? -1 : 1));
   const list = document.getElementById("vsProjectList");
