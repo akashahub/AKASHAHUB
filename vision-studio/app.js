@@ -4,7 +4,7 @@ import {
   onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
-  collection, doc, getDocs, setDoc, deleteDoc, addDoc, serverTimestamp
+  collection, doc, getDoc, getDocs, setDoc, deleteDoc, addDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const root = document.getElementById("visionApp");
@@ -203,6 +203,9 @@ async function loadProjects() {
     return tb - ta;
   });
   if (!projects.length) {
+    const markerRef = doc(db, "visionStudioProjects", currentUser.uid, "settings", "profile");
+    const markerSnap = await getDoc(markerRef);
+    if (markerSnap.exists() && markerSnap.data()?.initialized === true) return;
     const demo = {
       ownerUid: currentUser.uid, name:"REFÚGIO 777", category:"Residencial",
       description:"Projeto demonstrativo para transformar uma visão de vida integrada à natureza em um plano concreto. Os campos técnicos e financeiros permanecem em aberto até serem definidos e verificados.",
@@ -216,6 +219,7 @@ async function loadProjects() {
     };
     const ref = doc(projectCollection());
     await setDoc(ref,demo);
+    await setDoc(markerRef,{ownerUid:currentUser.uid,initialized:true,initializedAt:serverTimestamp()});
     projects = [{id:ref.id,...demo,updatedAt:new Date()}];
   }
 }
