@@ -29,7 +29,7 @@ function save(data) {
   const uid = session.uid || "local";
   Store.set(KEY + "_" + uid, data);
 }
-function today() { return new Date().toISOString().slice(0,10); }
+function today() { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
 function field(label, name, type="text", value="", extra="") {
   return `<label class="ct-field"><span>${label}</span><input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`;
 }
@@ -88,7 +88,7 @@ export function renderCorpoTrainingSpace(slug) {
     "planejamento-de-treino": [navHead("MOVIMENTO · PLANEJAMENTO","Planejamento semanal","Organize seus treinos e distribua os estímulos ao longo da semana."),plannerMarkup(data)],
     "diario-de-treino": [navHead("MOVIMENTO · DIÁRIO","Diário de treino","Registre séries, repetições, carga e percepção de esforço."),logMarkup(data)],
     "evolucao-e-progressao": [navHead("MOVIMENTO · EVOLUÇÃO","Evolução e progressão","Acompanhe consistência, cargas e histórico de sessões."),progressMarkup(data)],
-    "treinamento-com-ia": [navHead("MOVIMENTO · PLANEJADOR","Planejador assistido","Uma estrutura inicial configurável, revisável e ajustável."),generatorMarkup(data)]
+    "planejador-assistido": [navHead("MOVIMENTO · PLANEJADOR","Planejador assistido","Uma estrutura inicial configurável, revisável e ajustável."),generatorMarkup(data)]
   };
   const page = pages[slug];
   if (!page) return null;
