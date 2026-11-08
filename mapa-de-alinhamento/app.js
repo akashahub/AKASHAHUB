@@ -1,39 +1,147 @@
-import {session,loginEmail,loginGoogle,resetPassword,logout,startAuthListener,setAuthCallbacks,isMentorSession} from "../afplataforma/assets/js/auth.js";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,sendPasswordResetEmail,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,collection,doc,setDoc,deleteDoc,onSnapshot,query,where} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const STORE="akasha_mapa_alinhamento_v1";
-const vectors=["Rotina","Tempo","Financeiro","Trabalho e renda","Saúde prática","Objetivos","Projetos","Tarefas","Compras e investimentos","Ambiente","Conteúdo e comunicação","Família e dinheiro"];
-const steps=[
-{title:"Abertura e contexto",time:"5 min",goal:"Criar segurança, alinhar expectativas e combinar como a conversa será conduzida.",questions:["O que fez você reservar este tempo para a sessão?","O que seria valioso levar desta conversa?","Posso registrar notas para organizar a devolutiva? A gravação, se houver, exige autorização específica?"]},
-{title:"História e realidade atual",time:"10–15 min",goal:"Compreender a pessoa antes de interpretar seus desafios.",questions:["Como você descreveria seu momento atual?","Quais experiências trouxeram você até aqui?","O que está funcionando bem hoje?","O que está consumindo energia ou ficando para depois?"]},
-{title:"Mapa de alinhamento",time:"15–20 min",goal:"Mapear os vetores relevantes sem obrigar o preenchimento de todos.",questions:["Quais áreas pedem mais atenção agora?","Onde existe conflito entre intenção, tempo e ação?","Que recursos ou ativos já estão disponíveis?","O que você gostaria de reorganizar primeiro?"]},
-{title:"Síntese e devolutiva",time:"8–10 min",goal:"Separar fatos, percepções e hipóteses; confirmar a leitura com a pessoa.",questions:["O que você reconhece nesta síntese?","O que eu entendi de forma incompleta?","Qual padrão merece ser observado sem julgamento?"]},
-{title:"Direção e possibilidades",time:"8–10 min",goal:"Apresentar caminhos proporcionais à necessidade identificada.",questions:["Se uma mudança pudesse começar agora, qual faria diferença?","Que apoio, estrutura ou conhecimento está faltando?","Qual caminho parece realista para seu momento?"]},
-{title:"Prioridade e capacidade",time:"5–8 min",goal:"Verificar prioridade, disponibilidade e condições reais para executar.",questions:["De 0 a 10, quão prioritário é resolver isso? O que explica essa nota?","Quanto tempo e energia você consegue dedicar?","Há outras pessoas que participam dessa decisão?","Existe alguma condição que precisamos respeitar?"]},
-{title:"Próximo passo",time:"5 min",goal:"Encerrar com clareza, sem pressão ou promessa de resultado.",questions:["Qual é o próximo passo mais útil?","O que precisa ser esclarecido antes de decidir?","Quando faz sentido retomar esta conversa?"]}
-];
-let data={sessions:[]},currentId=null,currentView="dashboard",currentStep=0;
-function load(){try{data=JSON.parse(localStorage.getItem(STORE)||'{"sessions":[]}')}catch{data={sessions:[]}}}
-function save(){localStorage.setItem(STORE,JSON.stringify(data))}
-function active(){return data.sessions.find(x=>x.id===currentId)}
-function esc(v=""){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function toast(s){const t=$("#toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2300)}
-function newSession(){const s={id:crypto.randomUUID(),name:"",email:"",profession:"",origin:"",date:new Date().toISOString().slice(0,10),status:"Em andamento",objective:"",context:"",notes:"",vectors:Object.fromEntries(vectors.map(v=>[v,""])),synthesis:"",pattern:"",priority:"",action7:"",readiness:"",nextStep:"",createdAt:Date.now()};data.sessions.unshift(s);currentId=s.id;save();show("session")}
-function renderDashboard(){const list=$("#sessionList");$("#totalSessions").textContent=data.sessions.length;$("#activeSessions").textContent=data.sessions.filter(s=>s.status==="Em andamento").length;$("#doneSessions").textContent=data.sessions.filter(s=>s.status==="Concluída").length;if(!data.sessions.length){list.innerHTML='<div class="empty">Nenhuma sessão registrada ainda.<br>Comece criando uma nova sessão.</div>';return}list.innerHTML=data.sessions.map(s=>'<article class="session-row"><div><h3>'+esc(s.name||"Nova sessão")+'</h3><p>'+esc(s.profession||"Perfil não informado")+' · '+esc(s.date||"Sem data")+' · '+esc(s.status)+'</p></div><div class="row-actions"><button class="secondary" data-open="'+s.id+'">Abrir sessão</button><button class="ghost" data-delete="'+s.id+'">Excluir</button></div></article>').join("");$$("[data-open]").forEach(b=>b.onclick=()=>{currentId=b.dataset.open;show("session")});$$("[data-delete]").forEach(b=>b.onclick=()=>{if(confirm("Excluir esta sessão deste dispositivo?")){data.sessions=data.sessions.filter(s=>s.id!==b.dataset.delete);save();renderDashboard()}})}
-function show(view){currentView=view;$$(".view").forEach(v=>v.classList.add("hidden"));$("#"+view+"View").classList.remove("hidden");$$(".nav").forEach(n=>n.classList.toggle("active",n.dataset.view===view));if(view==="dashboard")renderDashboard();if(view==="session")renderSession();if(view==="map")renderMap();if(view==="guide")renderGuide();if(view==="summary")renderSummary()}
-function pageHead(kicker,title,desc,actions=""){return '<div class="page-head"><div><div class="eyebrow">'+kicker+'</div><h1>'+title+'</h1><p>'+desc+'</p></div>'+actions+'</div>'}
-function field(label,key,value,placeholder="",type="text"){return '<div class="field"><label>'+label+'</label><input data-key="'+key+'" type="'+type+'" value="'+esc(value||"")+'" placeholder="'+placeholder+'"></div>'}
-function bindFields(){const s=active();$$("[data-key]").forEach(el=>el.addEventListener("input",()=>{s[el.dataset.key]=el.value;save()}));}
-function renderSession(){const s=active();if(!s){$("#sessionView").innerHTML='<div class="empty">Selecione ou crie uma sessão.</div>';return}$("#sessionView").innerHTML=pageHead("SESSÃO ATIVA","Condução do encontro","Registre o essencial. A sessão deve acompanhar a pessoa, não transformar a conversa em interrogatório.",'<button id="finishBtn" class="primary">Concluir sessão</button>')+'<div class="panel"><h2>Identificação</h2><div class="grid2">'+field("Nome","name",s.name,"Nome da pessoa")+field("E-mail (opcional)","email",s.email,"E-mail","email")+field("Profissão / atividade","profession",s.profession,"Ex.: empresário, médica, consultor")+field("Origem do contato","origin",s.origin,"Indicação, Instagram, evento...")+field("Data da sessão","date",s.date,"","date")+'<div class="field"><label>Status</label><select data-key="status"><option '+(s.status==="Em andamento"?"selected":"")+'>Em andamento</option><option '+(s.status==="Aguardando retorno"?"selected":"")+'>Aguardando retorno</option><option '+(s.status==="Concluída"?"selected":"")+'>Concluída</option></select></div></div><div class="field"><label>Objetivo declarado para a sessão</label><textarea data-key="objective" placeholder="O que a pessoa deseja compreender ou organizar?">'+esc(s.objective)+'</textarea></div><div class="field"><label>Contexto e notas privadas do mentor</label><textarea data-key="notes" placeholder="Anotações de trabalho. Não incluir dados sensíveis desnecessários.">'+esc(s.notes)+'</textarea></div></div><div class="panel"><h2>Etapas da conversa</h2><div class="stepper">'+steps.map((st,i)=>'<button class="step '+(i===currentStep?"active":"")+'" data-step="'+i+'">'+(i+1)+". "+st.title+'</button>').join("")+'</div><div id="stepContent"></div><div class="toolbar"><button id="prevStep" class="ghost">← Anterior</button><button id="nextStep" class="primary">Próxima etapa →</button><button id="openMap" class="secondary">Abrir mapa mental</button></div></div>';bindFields();$("#finishBtn").onclick=()=>{s.status="Concluída";save();renderSession();toast("Sessão marcada como concluída")};$$("[data-step]").forEach(b=>b.onclick=()=>{currentStep=+b.dataset.step;renderSession()});$("#prevStep").onclick=()=>{currentStep=Math.max(0,currentStep-1);renderSession()};$("#nextStep").onclick=()=>{currentStep=Math.min(steps.length-1,currentStep+1);renderSession()};$("#openMap").onclick=()=>show("map");renderStepContent()}
-function renderStepContent(){const st=steps[currentStep];$("#stepContent").innerHTML='<div class="tag">'+st.time.toUpperCase()+'</div><h2>'+st.title+'</h2><p class="muted">'+st.goal+'</p>'+st.questions.map((q,i)=>'<div class="question"><h3>'+q+'</h3><textarea class="field-input" data-answer="'+currentStep+'_'+i+'" placeholder="Registro da conversa...">'+esc(active().answers?.[currentStep+"_"+i]||"")+'</textarea></div>').join("");$$("[data-answer]").forEach(el=>el.oninput=()=>{const s=active();s.answers=s.answers||{};s.answers[el.dataset.answer]=el.value;save()})}
-function renderMap(){const s=active();if(!s){$("#mapView").innerHTML=pageHead("MAPA MENTAL","Mapa de alinhamento","Crie uma visão da realidade atual da pessoa.")+'<div class="empty">Crie ou abra uma sessão para preencher o mapa.</div>';return}$("#mapView").innerHTML=pageHead("MAPA MENTAL","Os vetores da realidade","Preencha apenas as áreas relevantes. O objetivo é revelar relações e prioridades, não completar um formulário inteiro.")+'<div class="panel"><div class="tag">MAPA PESSOAL E PROFISSIONAL</div><div class="vector-grid">'+vectors.map((v,i)=>'<article class="vector"><div class="tag">VETOR '+String(i+1).padStart(2,"0")+'</div><h3>'+v+'</h3><textarea data-vector="'+esc(v)+'" placeholder="O que está acontecendo nesta área?">'+esc(s.vectors[v]||"")+'</textarea></article>').join("")+'</div></div><div class="panel"><h2>Síntese complementar</h2><div class="grid2"><div class="field"><label>PADRÃO OU CONEXÃO OBSERVADA</label><textarea data-sum="pattern" placeholder="O que conecta os vetores?">'+esc(s.pattern)+'</textarea></div><div class="field"><label>PRIORIDADE PRINCIPAL</label><textarea data-sum="priority" placeholder="O que merece atenção primeiro?">'+esc(s.priority)+'</textarea></div><div class="field"><label>GESTO PRÁTICO DE 7 DIAS</label><textarea data-sum="action7" placeholder="Uma ação pequena, clara e possível">'+esc(s.action7)+'</textarea></div><div class="field"><label>NOTA DE PRONTIDÃO (0–10)</label><input data-sum="readiness" type="number" min="0" max="10" value="'+esc(s.readiness)+'" placeholder="Sem obrigar uma nota 10"></div></div></div>';$$("[data-vector]").forEach(el=>el.oninput=()=>{s.vectors[el.dataset.vector]=el.value;save()});$$("[data-sum]").forEach(el=>el.oninput=()=>{s[el.dataset.sum]=el.value;save()})}
-function renderGuide(){$("#guideView").innerHTML=pageHead("GUIA DE CONDUÇÃO","Roteiro da sessão","Uma estrutura sugerida de 60 a 75 minutos. Adapte a profundidade ao contexto e ao ritmo da pessoa.")+'<div class="guide-list">'+steps.map((st,i)=>'<article class="guide-item"><div class="guide-num">'+(i+1)+'</div><div><div class="tag">'+st.time.toUpperCase()+'</div><h3>'+st.title+'</h3><p>'+st.goal+'</p><ul>'+st.questions.map(q=>'<li>'+q+'</li>').join("")+'</ul></div></article>').join("")+'</div><div class="panel"><h2>Cuidados de condução</h2><ul class="muted"><li>Peça autorização antes de gravar ou compartilhar qualquer informação.</li><li>Diferencie fatos, percepções e hipóteses; confirme a síntese com a pessoa.</li><li>Não diagnostique questões clínicas, jurídicas ou financeiras fora da sua competência.</li><li>Não prometa faturamento, transformação garantida ou resultados que dependem de terceiros.</li><li>Respeite o tempo de decisão e a consulta a sócios, familiares ou especialistas.</li></ul></div>'}
-function renderSummary(){const s=active();if(!s){$("#summaryView").innerHTML=pageHead("DEVOLUTIVA","Síntese e direção","Gere uma visão clara da conversa.")+'<div class="empty">Abra uma sessão para preparar a síntese.</div>';return}const text='MAPA DE ALINHAMENTO · AKASHA HUB\nPessoa: '+(s.name||"Não informado")+'\nAtividade: '+(s.profession||"Não informado")+'\nData: '+s.date+'\n\nOBJETIVO\n'+(s.objective||"—")+'\n\nSÍNTESE\n'+(s.synthesis||"—")+'\n\nPADRÃO / CONEXÃO\n'+(s.pattern||"—")+'\n\nPRIORIDADE\n'+(s.priority||"—")+'\n\nAÇÃO DE 7 DIAS\n'+(s.action7||"—")+'\n\nPRÓXIMO PASSO\n'+(s.nextStep||"—")+'\n\nMAPA DOS VETORES\n'+vectors.map(v=>v+'\n'+(s.vectors[v]||"Não explorado")).join("\n\n");$("#summaryView").innerHTML=pageHead("DEVOLUTIVA","Síntese e direção","Organize a leitura e prepare uma devolutiva clara, sem confundir hipótese com fato.",'<button id="printBtn" class="secondary">Imprimir / PDF</button>')+'<div class="panel"><h2>Síntese da sessão</h2><div class="field"><label>DEVOLUTIVA PRINCIPAL</label><textarea data-key="synthesis" placeholder="O que a pessoa precisa compreender sobre o momento atual?">'+esc(s.synthesis)+'</textarea></div><div class="field"><label>PRÓXIMO PASSO COMBINADO</label><textarea data-key="nextStep" placeholder="Ação, responsável e data de retomada">'+esc(s.nextStep)+'</textarea></div><div class="summary-box">'+esc(text)+'</div><div class="toolbar"><button id="exportBtn" class="primary">Exportar resumo (.txt)</button><button id="jsonBtn" class="ghost">Backup da sessão (.json)</button></div></div>';bindFields();$("#printBtn").onclick=()=>window.print();$("#exportBtn").onclick=()=>download(text,"mapa-alinhamento-"+(s.name||"sessao")+".txt","text/plain");$("#jsonBtn").onclick=()=>download(JSON.stringify(s,null,2),"sessao-alinhamento-backup.json","application/json")}
-function download(content,name,type){const a=document.createElement("a"),url=URL.createObjectURL(new Blob([content],{type}));a.href=url;a.download=name.replace(/[^a-z0-9._-]/gi,"-");a.click();URL.revokeObjectURL(url)}
-function enter(){if(!isMentorSession()){showAuth("Esta conta não possui permissão de mentor.");return}$("#authView").classList.add("hidden");$("#appView").classList.remove("hidden");$("#logoutBtn").classList.remove("hidden");$("#userLabel").textContent=session.name||session.email||"Mentor";load();renderDashboard();show("dashboard")}
-function showAuth(msg=""){ $("#authView").classList.remove("hidden");$("#appView").classList.add("hidden");$("#authMessage").textContent=msg;$("#logoutBtn").classList.add("hidden")}
-$("#loginBtn").onclick=async()=>{try{await loginEmail($("#email").value,$("#password").value)}catch(e){$("#authMessage").textContent="Não foi possível entrar. Confira os dados e tente novamente."}};
-$("#googleBtn").onclick=async()=>{try{await loginGoogle()}catch(e){$("#authMessage").textContent="Não foi possível autenticar com Google."}};
-$("#resetBtn").onclick=async()=>{try{await resetPassword($("#email").value);$("#authMessage").textContent="Se o e-mail estiver cadastrado, você receberá as instruções."}catch(e){$("#authMessage").textContent="Informe um e-mail válido para recuperar a senha."}};
-$("#logoutBtn").onclick=logout;$("#newSessionBtn").onclick=newSession;$$(".nav").forEach(b=>b.onclick=()=>show(b.dataset.view));
-setAuthCallbacks({onReady:enter,onDenied:()=>showAuth("Acesso restrito à conta de mentor."),onLogout:()=>showAuth()});startAuthListener();
+const ADMIN_UID="1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+const CONFIG={apiKey:"AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",authDomain:"hub-akasha.firebaseapp.com",projectId:"hub-akasha",storageBucket:"hub-akasha.firebasestorage.app",messagingSenderId:"370851875474",appId:"1:370851875474:web:29b1ba3a76b0fed7d9344b"};
+
+const app=initializeApp(CONFIG),auth=getAuth(app),db=getFirestore(app);
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)};
+
+/* ===== CONTEÚDO DO MÉTODO (M.A.P.A.) ===== */
+const ETAPAS=[
+{t:"Abertura",min:5,obj:"Dar contexto, gerar confiança e combinar o formato.",
+ chk:["Apresentei quem sou e a Akasha Hub","Disse a duração (60–75 min) e o resultado: Mapa de Direção","Pedi autorização para registrar/gravar","Disse com transparência que no final posso apresentar uma proposta, sem obrigação"],
+ perg:["Como você chegou até aqui?","O que você espera levar desta conversa?"],
+ fala:["Hoje você sai com uma leitura organizada da sua realidade e um próximo passo claro.","Vou te escutar bastante. Se fizer sentido, no final te mostro como posso ajudar.","Pode me corrigir a qualquer momento: o mapa é seu."],
+ nao:"Prometer resultado financeiro ou esconder que existe uma proposta.",av:"Pessoa confirmou o formato e autorizou o registro."},
+{t:"Investigação",min:15,obj:"Entender história, negócio, ativos, objetivos e gargalos.",
+ chk:["Profissão/negócio e tempo de atuação","Ativos que já existem (conteúdo, clientes, livro, site)","Objetivo dos próximos 12 meses","Principal gargalo, nas palavras dela","Quem mais participa das decisões"],
+ perg:["O que você já construiu até hoje?","O que depende só de você?","O que te impede de dar o próximo passo?","Se nada mudar em 12 meses, como fica?"],
+ fala:["Antes de decidir o que construir, precisamos entender o que em você já tem valor.","Sua história pode ser matéria-prima de um método.","Deixa eu repetir como entendi, me diga se está certo."],
+ nao:"Oferecer solução antes de entender o problema.",av:"Tenho história, ativos, objetivo e gargalo registrados."},
+{t:"Mapa mental",min:10,obj:"Construir a leitura visual junto com a pessoa.",
+ chk:["Escolhi o mapa certo (Pessoal, Negócios ou Legado)","Ativei só os vetores que fazem sentido","Preenchi com as palavras dela","Marquei o vetor mais crítico"],
+ perg:["Qual dessas áreas mais pesa hoje?","Onde você sente que perde mais energia?"],
+ fala:["Não vamos mexer em tudo. Só no que faz sentido para você.","Veja sua realidade organizada numa tela só.","Qual desses pontos, se resolvido, destrava os outros?"],
+ nao:"Preencher todos os vetores por obrigação.",av:"Mapa validado e vetor prioritário definido."},
+{t:"Devolutiva",min:10,obj:"Separar fatos, hipóteses e oportunidades e fixar a prioridade.",
+ chk:["Resumi em 3 pontos","Separei fato, hipótese e oportunidade","Ela confirmou que a leitura está certa","Preenchi padrão, número e gesto","Defini a ação de 7 dias"],
+ perg:["Essa leitura faz sentido?","O que eu deixei de fora?","Qual seria o primeiro movimento?"],
+ fala:["O que vejo é um padrão: você já tem a matéria-prima, falta estrutura.","Isso é fato, isso é hipótese minha. Me corrija.","Esse é o seu Mapa de Direção, ele é seu mesmo se não contratar nada."],
+ nao:"Diagnosticar problema que a pessoa não reconhece.",av:"Ela disse com as próprias palavras que precisa de estrutura."},
+{t:"Apresentação",min:15,obj:"Mostrar as 5 fases e o que pode ser construído em cada uma.",
+ chk:["Mostrei as 5 fases em tela compartilhada (sem notas privadas)","Liguei cada fase ao gargalo dela","Diferenciei mentoria x processo executivo","Deixei claro o que é exemplo e o que é escopo"],
+ perg:["Qual fase te chamou mais atenção?","O que aqui você já tem e o que falta?"],
+ fala:["Conhecimento que só existe na sua cabeça ainda depende da sua presença.","Não criamos ferramenta por vaidade. Construímos o que resolve o gargalo.","Legado é o que continua gerando valor quando você não está presente."],
+ nao:"Prometer tudo do catálogo em qualquer contrato.",av:"Ela explica com as próprias palavras o que precisa construir."},
+{t:"Qualificação",min:5,obj:"Verificar encaixe antes de falar de preço. Interesse ≠ capacidade ≠ prontidão.",
+ chk:[],perg:["De 0 a 10, quão pronta você está para começar? O que faltaria para subir um ponto?","Quem mais participa dessa decisão? Podemos chamar para a call?","Você tem agenda para encontros e execução?"],
+ fala:["A escala é para eu entender o seu momento, não para pressionar.","Se não for o momento, eu te digo com honestidade.","Só falo de investimento se fizer sentido para os dois lados."],
+ nao:"Presumir capacidade pela profissão ou aparência. Falar preço antes do portão.",av:"Portão de aptidão liberado (5 critérios)."},
+{t:"Proposta e decisão",min:10,obj:"Recomendar o formato, explicar escopo e investimento, e definir o próximo passo.",
+ chk:["Recomendei UM formato com motivo","Expliquei escopo, encontros e limites","Disse o investimento com clareza","Respondi dúvidas e objeções","Quem decide junto participou","Defini próximo passo com data (contrato, pagamento ou retomada)"],
+ perg:["O que falta para você decidir hoje?","Quer que eu chame quem decide junto?"],
+ fala:["Pelo que você me mostrou, o formato mais coerente é este, e por quê.","Se a decisão precisar de mais alguém, vamos fazer essa conversa juntos.","Se precisar de tempo, combinamos exatamente o que falta e quando retomamos."],
+ nao:"Urgência falsa, culpa, pressão ou impedir consulta a terceiros.",av:"Sim, não ou retomada com data e pendência registradas."}];
+
+const PORTAO=["Necessidade real","Capacidade financeira confirmada (por ela)","Disponibilidade de agenda","Autoridade de decisão (ou decisor presente)","Compatibilidade com o formato"];
+const OFERTAS=[["AL em grupo",39000,"12 meses · 24 encontros em grupo · 3 imersões · 3 individuais"],["AL individual",69000,"12 meses · base: 6 encontros individuais (definir)"],["Alinhamento Financeiro",5000,"~3 meses · downsell, oferta complementar"],["Essência + Império Digital",null,"Projeto delimitado · preço pendente de decisão"]];
+const FASES=[["Arquitetura de Essência","Dossiê, narrativa, posicionamento, método próprio"],["Império Digital","Site, plataforma, produtos, CRM, pagamentos, conteúdo"],["Alinhamento Financeiro","Cash-flow, precificação, metas, processo comercial"],["Expansão","Aquisição, SDR, equipe, processos, indicadores"],["Legado e Continuidade","Documentação, comunidade, governança, formação"]];
+const OBJ=[
+["Está caro / quero desconto","Valor ainda não ficou claro, ou o caixa aperta.","O que exatamente pesa: o valor total ou o fluxo? Comparado a quê?","Retomo o que você disse que precisa construir e o que cada fase resolve.","Acesso Estratégico (só se autorizado) ou formato menor com escopo próprio."],
+["Preciso falar com cônjuge/sócio/contador","Decisão compartilhada, legítima.","Quer chamar essa pessoa agora para eu explicar junto?","Conversa conjunta ainda hoje ou retomada com data.","Nunca impedir a consulta."],
+["Quero pensar","Falta de clareza ou confiança.","O que ainda não ficou claro para decidir?","Registro o que falta e marco retomada objetiva.","Se a resposta é vaga, não avançar."],
+["Não tenho tempo","Prioridade ou medo de não executar.","Quantas horas por semana são realistas?","Mostro o ritmo real: encontros + execução comigo.","Se não há agenda, não recomendar agora."],
+["Já tenho equipe/agência/site","Medo de duplicar.","O que essa estrutura entrega hoje e o que falta?","Posiciono como direção, não substituição.","Escopo só nas lacunas."],
+["Já investi em outra mentoria","Desconfiança.","O que faltou naquela experiência?","Mostro critérios de entrega verificáveis e escopo por escrito.","Sem promessa de faturamento."],
+["Quero garantia","Segurança.","Que garantia te deixaria seguro?","Garantia de execução do escopo contratado, nunca de resultado de mercado.","Revisão jurídica do contrato."],
+["Quero só o financeiro / só a Essência","Necessidade menor ou receio.","Esse recorte resolve seu gargalo principal?","Ofereço o projeto menor com resultado e limites próprios.","Não empurrar o ciclo completo sem necessidade."],
+["Moro longe / não vou ao presencial","Logística.","O que impede: custo, agenda ou distância?","Imersões têm calendário prévio; individual pode ter formato adaptado.","Custos de deslocamento em contrato."]];
+const V12=["Rotina","Tempo","Financeiro","Trabalho e renda","Saúde prática","Objetivos","Projetos","Tarefas","Compras e investimentos","Ambiente","Conteúdo","Família e dinheiro"];
+const MAPAS={pessoal:["Alinhamento Pessoal",V12],negocios:["Zero ao Zen Negócios",["Ideia","Público","Problema","Valor","Oferta","Aquisição","Operação","Finanças","Próximo passo"]],legado:["Arquitetura de Legado",FASES.map(f=>f[0])]};
+const brl=n=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+
+/* ===== ESTADO ===== */
+const S={user:null,list:[],cur:null,view:"dashboard",stage:0,unsub:null};
+let timer;const save=()=>{if(!S.cur)return;S.cur.atualizado=Date.now();clearTimeout(timer);timer=setTimeout(()=>setDoc(doc(db,"mapaSessoes",S.cur.id),S.cur).catch(e=>toast("Erro ao salvar: "+e.code)),500)};
+const nova=()=>({id:crypto.randomUUID(),owner:S.user.uid,nome:"",origem:"",perfil:"",mapa:"pessoal",etapa:0,check:{},vet:{},sint:{padrao:"",numero:"",gesto:"",sete:""},pront:null,portao:{},notas:"",status:"andamento",resultado:"",criado:Date.now(),atualizado:Date.now()});
+const setView=v=>{S.view=v;$$(".nav").forEach(b=>b.classList.toggle("active",b.dataset.view===v));$$(".view").forEach(e=>e.classList.add("hidden"));$("#"+v+"View").classList.remove("hidden");render()};
+
+/* ===== AUTH ===== */
+const autorizado=u=>u.uid===ADMIN_UID;
+$("#loginBtn").onclick=()=>signInWithEmailAndPassword(auth,$("#email").value,$("#password").value).catch(e=>$("#authMessage").textContent="Não foi possível entrar: "+e.code);
+$("#googleBtn").onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(e=>$("#authMessage").textContent=e.code);
+$("#resetBtn").onclick=()=>$("#email").value?sendPasswordResetEmail(auth,$("#email").value).then(()=>$("#authMessage").textContent="E-mail de redefinição enviado."):$("#authMessage").textContent="Digite seu e-mail.";
+$("#logoutBtn").onclick=()=>signOut(auth);
+onAuthStateChanged(auth,u=>{
+ S.unsub&&S.unsub();
+ if(u&&autorizado(u)){S.user=u;$("#authView").classList.add("hidden");$("#appView").classList.remove("hidden");$("#logoutBtn").classList.remove("hidden");$("#userLabel").textContent=u.email;
+  S.unsub=onSnapshot(query(collection(db,"mapaSessoes"),where("owner","==",u.uid)),s=>{S.list=s.docs.map(d=>d.data()).sort((a,b)=>b.atualizado-a.atualizado);if(S.cur){const f=S.list.find(x=>x.id===S.cur.id);if(f&&f.atualizado>S.cur.atualizado)S.cur=f}if(!document.activeElement||!/INPUT|TEXTAREA/.test(document.activeElement.tagName))render()});setView("dashboard")}
+ else{if(u){signOut(auth);$("#authMessage").textContent="Conta sem acesso de mentor."}S.user=null;$("#authView").classList.remove("hidden");$("#appView").classList.add("hidden");$("#logoutBtn").classList.add("hidden")}});
+$$(".nav").forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$("#newSessionBtn").onclick=()=>{S.cur=nova();S.stage=0;save();setView("session")};
+
+/* ===== RENDER ===== */
+const needS=()=>S.cur?"":`<div class="card"><p>Abra ou crie uma sessão no Painel.</p></div>`;
+function render(){
+ if(S.view==="dashboard"){const L=S.list;$("#totalSessions").textContent=L.length;$("#activeSessions").textContent=L.filter(s=>s.status==="andamento").length;$("#doneSessions").textContent=L.filter(s=>s.status!=="andamento").length;
+  $("#sessionList").innerHTML=L.map(s=>`<div class="card row"><div><b>${esc(s.nome||"Sem nome")}</b><br><small>${esc(s.origem||"origem?")} · etapa ${s.etapa+1}/7 · ${esc(s.status)}${s.resultado?" · "+esc(s.resultado):""}</small></div><div><button class="secondary" data-open="${s.id}">Abrir</button> <button class="ghost" data-del="${s.id}">✕</button></div></div>`).join("")||`<div class="card">Nenhuma sessão ainda.</div>`;
+  $$("[data-open]").forEach(b=>b.onclick=()=>{S.cur=S.list.find(x=>x.id===b.dataset.open);S.stage=S.cur.etapa;setView("session")});
+  $$("[data-del]").forEach(b=>b.onclick=()=>confirm("Apagar sessão?")&&deleteDoc(doc(db,"mapaSessoes",b.dataset.del)))}
+ else if(S.view==="session")sessao();else if(S.view==="map")mapa();else if(S.view==="guide")roteiro();else resumo()}
+
+const bind=(root,obj)=>root.querySelectorAll("[data-k]").forEach(el=>{const p=el.dataset.k.split(".");const get=()=>p.reduce((o,k)=>o?.[k],obj);el.value=get()??"";el.oninput=()=>{let o=obj;p.slice(0,-1).forEach(k=>o=o[k]??={});o[p.at(-1)]=el.type==="number"?(el.value===""?null:+el.value):el.value;save()}});
+
+function sessao(){
+ const el=$("#sessionView");if(!S.cur){el.innerHTML=needS();return}
+ const s=S.cur,e=ETAPAS[S.stage],ok=PORTAO.every((_,i)=>s.portao[i]);
+ let extra="";
+ if(S.stage===5)extra=`<div class="card"><h3>Portão de aptidão</h3>${PORTAO.map((p,i)=>`<label class="chk"><input type="checkbox" data-p="${i}" ${s.portao[i]?"checked":""}> ${p}</label>`).join("")}<label>Prontidão 0–10 (avalia, não exige 10)<input type="number" min="0" max="10" data-k="pront"></label><p class="gate ${ok?"open":""}">${ok?"✓ Portão liberado: pode apresentar proposta.":"Portão fechado: não falar preço. Ofereça retomada ou encerre com o Mapa de Direção."}</p></div>`;
+ if(S.stage===6)extra=ok?`<div class="card"><h3>Ofertas (visão privada)</h3>${OFERTAS.map(o=>`<div class="row"><span><b>${o[0]}</b><br><small>${o[2]}</small></span><span>${o[1]?brl(o[1]):"a definir"}${o[1]?`<br><small>Acesso Estratégico 10%: ${brl(o[1]*.1)} + saldo ${brl(o[1]*.9)}</small>`:""}</span></div>`).join("")}<small>Acesso Estratégico: condição interna, só se autorizada por você. Contrato e prazos escritos.</small></div>
+ <div class="card"><h3>Objeções</h3>${OBJ.map(o=>`<details><summary>${o[0]}</summary><p><b>Pode significar:</b> ${o[1]}<br><b>Investigar:</b> ${o[2]}<br><b>Resposta:</b> ${o[3]}<br><b>Alternativa / limite:</b> ${o[4]}</p></details>`).join("")}</div>
+ <div class="card"><h3>Resultado</h3><select data-k="resultado"><option value="">Em aberto</option><option>Fechou</option><option>Retomada marcada</option><option>Não é o momento</option><option>Sem encaixe</option></select></div>`:`<div class="card gate">Preço e proposta bloqueados até liberar o portão na etapa 6.</div>`;
+ el.innerHTML=`<div class="card"><div class="grid3"><label>Nome<input data-k="nome"></label><label>Origem (Reel, live, indicação…)<input data-k="origem"></label><label>Perfil/profissão<input data-k="perfil"></label></div></div>
+ <div class="steps">${ETAPAS.map((x,i)=>`<button class="step ${i===S.stage?"on":""}" data-s="${i}">${i+1}<small>${x.t}</small></button>`).join("")}</div>
+ <div class="card"><div class="row"><h2>${S.stage+1}. ${e.t} <small>· ${e.min} min</small></h2><button class="primary" id="tele">▶ Teleprompter</button></div><p>${e.obj}</p>
+ ${e.chk.length?`<h3>Checklist</h3>${e.chk.map((c,i)=>`<label class="chk"><input type="checkbox" data-c="${S.stage}.${i}" ${s.check[S.stage+"."+i]?"checked":""}> ${c}</label>`).join("")}`:""}
+ <h3>Perguntas</h3><ul>${e.perg.map(p=>`<li>${p}</li>`).join("")}</ul><h3>Frases-chave</h3><ul class="quote">${e.fala.map(p=>`<li>${p}</li>`).join("")}</ul>
+ <p class="warn"><b>Não dizer:</b> ${e.nao}</p><p><b>Avançar quando:</b> ${e.av}</p></div>${extra}
+ <div class="card"><label>Notas privadas (nunca aparecem no compartilhamento)<textarea data-k="notas" rows="4"></textarea></label></div>
+ <div class="row"><button class="secondary" id="prev">← Anterior</button><button class="primary" id="next">Próxima →</button></div>`;
+ bind(el,s);
+ el.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>go(+b.dataset.s));
+ el.querySelectorAll("[data-c]").forEach(b=>b.onchange=()=>{s.check[b.dataset.c]=b.checked;save()});
+ el.querySelectorAll("[data-p]").forEach(b=>b.onchange=()=>{s.portao[b.dataset.p]=b.checked;save();sessao()});
+ el.querySelectorAll("[data-k=resultado]").forEach(b=>b.onchange=()=>{s.status=b.value?"concluida":"andamento"});
+ $("#prev").onclick=()=>go(S.stage-1);$("#next").onclick=()=>go(S.stage+1);$("#tele").onclick=tele;
+}
+function go(i){if(i<0||i>6)return;S.stage=i;S.cur.etapa=i;save();sessao()}
+function tele(){const e=ETAPAS[S.stage],o=document.createElement("div");o.className="tele";let k=0;const L=[...e.fala,...e.perg];
+ const draw=()=>o.innerHTML=`<button class="ghost" id="x">✕ Fechar</button><small>${S.stage+1}. ${e.t} · ${k+1}/${L.length}</small><p>${L[k]}</p><div class="row"><button class="secondary" id="a">←</button><button class="primary" id="b">→</button></div>`;
+ draw();document.body.append(o);o.onclick=ev=>{const id=ev.target.id;if(id==="x")o.remove();if(id==="a"&&k>0){k--;draw()}if(id==="b"&&k<L.length-1){k++;draw()}}}
+
+function mapa(){
+ const el=$("#mapView");if(!S.cur){el.innerHTML=needS();return}
+ const s=S.cur,[nm,V]=MAPAS[s.mapa];
+ el.innerHTML=`<div class="row"><h2>Mapa mental</h2><select id="mp">${Object.entries(MAPAS).map(([k,v])=>`<option value="${k}" ${k===s.mapa?"selected":""}>${v[0]}</option>`).join("")}</select></div><p class="muted">Ative só o que faz sentido para a pessoa. Escreva com as palavras dela.</p>
+ <div class="tree"><div class="root">${esc(s.nome||"Pessoa")}</div><div class="nodes">${V.map((v,i)=>{const k=s.mapa+i,d=s.vet[k]||{};return `<div class="node ${d.on?"on":""} ${d.pri?"pri":""}"><div class="row"><label class="chk"><input type="checkbox" data-on="${k}" ${d.on?"checked":""}> <b>${String(i+1).padStart(2,"0")} ${v}</b></label><button class="ghost" data-pri="${k}">★</button></div>${d.on?`<textarea rows="3" data-t="${k}" placeholder="O que ela disse…">${esc(d.txt||"")}</textarea>`:""}</div>`}).join("")}</div></div>`;
+ $("#mp").onchange=e=>{s.mapa=e.target.value;save();mapa()};
+ const g=k=>s.vet[k]??={};
+ el.querySelectorAll("[data-on]").forEach(b=>b.onchange=()=>{g(b.dataset.on).on=b.checked;save();mapa()});
+ el.querySelectorAll("[data-pri]").forEach(b=>b.onclick=()=>{g(b.dataset.pri).pri=!g(b.dataset.pri).pri;save();mapa()});
+ el.querySelectorAll("[data-t]").forEach(b=>b.oninput=()=>{g(b.dataset.t).txt=b.value;save()});
+}
+
+function roteiro(){$("#guideView").innerHTML=`<h2>Roteiro completo</h2><p class="muted">Sessão de 60–75 min · M.A.P.A.: Mapeamento, Análise, Projeção, Avanço</p>`+ETAPAS.map((e,i)=>`<details class="card"><summary><b>${i+1}. ${e.t}</b> · ${e.min} min</summary><p>${e.obj}</p><ul>${e.chk.map(c=>`<li>${c}</li>`).join("")}</ul><p><b>Perguntas:</b></p><ul>${e.perg.map(c=>`<li>${c}</li>`).join("")}</ul><ul class="quote">${e.fala.map(c=>`<li>${c}</li>`).join("")}</ul><p class="warn">Não dizer: ${e.nao}</p></details>`).join("")+`<h2>As 5 fases</h2>${FASES.map((f,i)=>`<div class="card"><b>${i+1}. ${f[0]}</b><br><small>${f[1]}</small></div>`).join("")}`}
+
+function resumo(){
+ const el=$("#summaryView");if(!S.cur){el.innerHTML=needS();return}
+ const s=S.cur,[nm,V]=MAPAS[s.mapa];
+ const txt=()=>`MAPA DE DIREÇÃO · ${s.nome||""}\n\nPadrão: ${s.sint.padrao}\nNúmero: ${s.sint.numero}\nGesto: ${s.sint.gesto}\n\nÁreas (${nm}):\n`+V.map((v,i)=>({v,d:s.vet[s.mapa+i]})).filter(x=>x.d?.on&&x.d.txt).map(x=>`${x.d.pri?"★ ":"• "}${x.v}: ${x.d.txt}`).join("\n")+`\n\nPróximos 7 dias: ${s.sint.sete}`;
+ el.innerHTML=`<h2>Síntese e direção</h2><div class="card"><label>Padrão<textarea rows="2" data-k="sint.padrao"></textarea></label><label>Número<input data-k="sint.numero"></label><label>Gesto<input data-k="sint.gesto"></label><label>Ação de 7 dias (uma ação, um responsável, um critério)<textarea rows="2" data-k="sint.sete"></textarea></label></div><div class="card"><h3>Prévia compartilhável</h3><p class="muted">Só os campos acima e o mapa. Notas privadas e preços nunca entram.</p><pre id="pv"></pre><div class="row"><button class="primary" id="cp">Copiar</button><button class="secondary" id="pr">Imprimir / PDF</button></div></div>`;
+ bind(el,s);const pv=$("#pv"),up=()=>pv.textContent=txt();up();el.addEventListener("input",up);
+ $("#cp").onclick=()=>navigator.clipboard.writeText(txt()).then(()=>toast("Copiado"));$("#pr").onclick=()=>window.print();
+}
