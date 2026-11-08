@@ -189,16 +189,18 @@ async function removeProject(id) {
 
 export function bindVisionStudio() {
   const root = document.getElementById("content");
-  if (!root || root.dataset.visionStudioBound === "1") return;
-  root.dataset.visionStudioBound = "1";
-  root.addEventListener("click", event => {
-    const create = event.target.closest("#vsNewProject");
-    const edit = event.target.closest("[data-vs-edit]");
-    const remove = event.target.closest("[data-vs-delete]");
-    if (create) openEditor();
-    if (edit) editProject(edit.dataset.vsEdit);
-    if (remove) removeProject(remove.dataset.vsDelete);
-  });
+  if (!root) return;
+  if (root.dataset.visionStudioBound !== "1") {
+    root.dataset.visionStudioBound = "1";
+    root.addEventListener("click", event => {
+      const create = event.target.closest("#vsNewProject");
+      const edit = event.target.closest("[data-vs-edit]");
+      const remove = event.target.closest("[data-vs-delete]");
+      if (create) openEditor();
+      if (edit) editProject(edit.dataset.vsEdit);
+      if (remove) removeProject(remove.dataset.vsDelete);
+    });
+  }
   loadProjects().catch(error => {
     console.error("[Vision Studio] load:", error);
     status("Não foi possível carregar os projetos. Verifique sua conexão e as regras do Firestore.", true);
