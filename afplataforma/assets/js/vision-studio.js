@@ -74,6 +74,7 @@ function editorMarkup(p = {}) {
 
 export function renderVisionStudio() {
   return `<div class="view active vision-studio-view">
+    <div class="back-link" data-nav="comp:meditacao">← Meditação</div>
     <section class="vs-hero">
       <div class="vs-hero-copy"><span class="vs-eyebrow">AKASHA HUB · AMBIENTE DE CRIAÇÃO</span><h1>VISION <em>STUDIO</em></h1><p>Transforme uma visão em um projeto estruturado. Reúna território, mercado, custos, arquitetura e planejamento em um só lugar.</p>
       <div class="vs-hero-actions"><button class="vs-button" type="button" id="vsNewProject">＋ Criar projeto</button><span class="vs-private-note">◈ Espaço privado da sua conta</span></div></div>
