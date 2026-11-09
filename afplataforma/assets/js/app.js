@@ -64,6 +64,7 @@ import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt47";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
 import { renderCatalogoCapacidades, bindCatalogoCapacidades } from "./catalogo-capacidades.js?v=20261108-1";
+import { renderAgenteIA, bindAgenteIA } from "./agente-ia.js?v=20261109-1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
 function renderCorpoLazy(renderer, ...args) {
@@ -633,6 +634,7 @@ function renderMentor() {
       <p>Mapa interno dos dez departamentos, serviços, competências e possibilidades de execução. Do serviço pontual à estruturação de organizações e operações internacionais.</p>
       <button class="tool-btn" type="button" data-nav="catalogo-capacidades">Abrir catálogo completo</button>
     </article>
+    ${renderAgenteIA()}
     ${renderSessoesAccess()}
     ${renderAccessAdminPanel()}
   </div>`;
@@ -799,6 +801,7 @@ onAfterNavigate((view) => {
   if (view === "mentor") {
     bindAccessAdmin();
     bindSessoesAccess();
+    bindAgenteIA();
   }
   if (view === "catalogo-capacidades") bindCatalogoCapacidades();
   if (view === "call") bindCallControls(navigate);
