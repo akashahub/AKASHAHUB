@@ -141,6 +141,9 @@ const catDesc = {
   "Patrimônio e investimentos": "Aportes para a meta de R$ 100 mil."
 };
 let state = JSON.parse(localStorage.getItem('abundancia_state')) || data.map((x,i)=>({...x,id:i,price:"",qty:1,status:"Não iniciado",notes:""}));
+// Migração aditiva: injeta apenas referências de preço ausentes; preserva preço final, status, quantidade, prioridade, notas e IDs existentes.
+state = state.map((x,i)=>({...data[i],...x,suggestedPrice:(x.suggestedPrice!==undefined && x.suggestedPrice!==null && x.suggestedPrice!=="")?x.suggestedPrice:(data[i]?.suggestedPrice??""),suggestedPriceLow:x.suggestedPriceLow??data[i]?.suggestedPriceLow??0,suggestedPriceHigh:x.suggestedPriceHigh??data[i]?.suggestedPriceHigh??0,estimateType:x.estimateType??data[i]?.estimateType??"Estimativa pendente"}));
+localStorage.setItem('abundancia_state',JSON.stringify(state));
 window.__abundanciaState = state;
 function save(){localStorage.setItem('abundancia_state',JSON.stringify(state));window.__abundanciaState=state;if(!window.__abundanciaCloudApplying)window.dispatchEvent(new CustomEvent('abundancia:local-change'));}
 const money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
