@@ -1,5 +1,5 @@
 import { isMentorSession } from "./auth.js";
-import { CATALOG } from "./catalogo-capacidades-data.js";
+import { CATALOG } from "./catalogo-capacidades-data.js?v=20261110-1";
 
 
 
