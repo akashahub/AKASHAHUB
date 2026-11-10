@@ -531,7 +531,13 @@ function renderMentor() {
   return `<div class="view active">
     <p class="hero-line">Controle</p>
     <h2 class="hero-title">Dashboard do mentor</h2>
-    <p class="hero-sub">Liberação no Firestore: <code>afAccess/{uid}</code> com approved, active e modules.</p>
+    <p class="hero-sub">Liberação no Firestore: <code>afAccess/{uid}</code> com approved, active e modules.</p>    
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Planejamento pessoal · uso interno</p>
+      <h3>Projeto Abundância</h3>
+      <p>Centro de comando de objetivos, orçamento, engenharia financeira e execução. Acesso exclusivo à conta autorizada do mentor.</p>
+      ${String(session.email || "").trim().toLowerCase() === "yanfili.simon@gmail.com" ? '<a class="tool-btn" href="/projetoabundancia/">Abrir Projeto Abundância</a>' : ""}
+    </article>
     <div class="mentor-hero">
       <img src="assets/img/mentor/yan.jpg" alt="Mentor">
       <div>
