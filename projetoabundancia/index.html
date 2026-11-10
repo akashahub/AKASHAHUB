@@ -58,6 +58,7 @@ main{max-width:1280px;margin:auto;padding:20px 16px 80px}
   .hero-stats{grid-template-columns:1fr 1fr}
 }
 </style>
+<link rel="stylesheet" href="./abundancia-v2.css">
 </head>
 <body>
 <header>
@@ -140,7 +141,8 @@ const catDesc = {
   "Patrimônio e investimentos": "Aportes para a meta de R$ 100 mil."
 };
 let state = JSON.parse(localStorage.getItem('abundancia_state')) || data.map((x,i)=>({...x,id:i,price:"",qty:1,status:"Não iniciado",notes:""}));
-function save(){localStorage.setItem('abundancia_state',JSON.stringify(state));}
+window.__abundanciaState = state;
+function save(){localStorage.setItem('abundancia_state',JSON.stringify(state));window.__abundanciaState=state;if(!window.__abundanciaCloudApplying)window.dispatchEvent(new CustomEvent('abundancia:local-change'));}
 const money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&','<':'<','>':'>','"':'"',"'":'&#39;'}[c]));
 function calcStats(){
@@ -223,6 +225,7 @@ function showGrid(){
   renderGrid();
 }
 function update(id,k,v){state[id][k]=v;save();renderGrid();if(document.getElementById('detailView').classList.contains('active')){const cat=state[id].category;openCategory(cat);}}
+window.__setAbundanciaState = function(next){if(!Array.isArray(next))return;window.__abundanciaCloudApplying=true;try{state=next;save();renderGrid();}finally{window.__abundanciaCloudApplying=false;}};
 ['search','filterPriority','filterStatus'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{if(document.getElementById('detailView').classList.contains('active'))showGrid();else renderGrid();}));
 document.getElementById('monthly').addEventListener('change',()=>{localStorage.setItem('abundancia_monthly',document.getElementById('monthly').value);});
 document.getElementById('goal').addEventListener('change',()=>{localStorage.setItem('abundancia_goal',document.getElementById('goal').value);calcStats();});
@@ -233,5 +236,6 @@ document.getElementById('goal').value=localStorage.getItem('abundancia_goal')||'
 document.getElementById('months').value=localStorage.getItem('abundancia_months')||'';
 renderGrid();
 </script>
+<script type="module" src="./abundancia-v2.js"></script>
 </body>
 </html>
