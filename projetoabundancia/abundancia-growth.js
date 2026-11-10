@@ -1,4 +1,4 @@
-import { CATALOG } from "../afplataforma/assets/js/catalogo-capacidades.js";
+import { CATALOG } from "../afplataforma/assets/js/catalogo-capacidades-data.js";
 
 const KEY="abundancia_growth_state";
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
