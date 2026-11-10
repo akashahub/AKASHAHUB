@@ -60,6 +60,7 @@ main{max-width:1280px;margin:auto;padding:20px 16px 80px}
 </style>
 <link rel="stylesheet" href="./abundancia-v2.css?v=20261110-item-icons-1">
 <script src="./item-icons.js?v=20261110-item-icons-1"></script>
+<script src="./category-colors.js?v=20261110-category-colors-1"></script>
 </head>
 <body>
 <header>
@@ -183,7 +184,8 @@ function renderGrid(){
     const pct=items.length?Math.round(bought/items.length*100):0;
     const img=catImages[cat]||'';
     const desc=catDesc[cat]||'';
-    html+=`<div class="cat-card" onclick="openCategory('${esc(cat)}')">
+    const palette=window.ABUNDANCIA_CATEGORY_COLORS?.[cat]||{accent:'#9A7325',rgb:'154,115,37'};
+    html+=`<div class="cat-card" style="--category-accent:${palette.accent};--category-rgb:${palette.rgb}" onclick="openCategory('${esc(cat)}')">
       <div class="cat-img" style="background-image:url('${img}')"></div>
       <div class="cat-body">
         <h3>${esc(cat)}</h3>
@@ -203,6 +205,7 @@ function openCategory(cat){
   const items=state.filter(x=>x.category===cat);
   const img=catImages[cat]||'';
   const desc=catDesc[cat]||'';
+  const palette=window.ABUNDANCIA_CATEGORY_COLORS?.[cat]||{accent:'#9A7325',rgb:'154,115,37'};
   const bannerPosition=catBannerPosition[cat]||'center';
   let rows='';
   items.forEach(x=>{
@@ -219,9 +222,11 @@ function openCategory(cat){
     '</div>';
   });
   document.getElementById('detailView').innerHTML=`
-    <div class="detail-banner" style="background-image:url('${img}');background-position:${bannerPosition}"><h2>${esc(cat)}</h2></div>
-    <p style="color:var(--muted)">${esc(desc)}</p>
-    <div class="item-list">${rows}</div>`;
+    <div class="category-detail" style="--category-accent:${palette.accent};--category-rgb:${palette.rgb}">
+      <div class="detail-banner" style="background-image:url('${img}');background-position:${bannerPosition}"><h2>${esc(cat)}</h2></div>
+      <p style="color:var(--muted)">${esc(desc)}</p>
+      <div class="item-list">${rows}</div>
+    </div>`;
   calcStats();
 }
 function showGrid(){
