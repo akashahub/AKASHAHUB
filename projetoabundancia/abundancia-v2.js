@@ -3,7 +3,7 @@ import { auth, db } from "../afplataforma/firebase/firebase-config.js";
 import { GoogleAuthProvider,onAuthStateChanged,signInWithPopup,signInWithEmailAndPassword,sendPasswordResetEmail,signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc,getDoc,setDoc,serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAfTool } from "../afplataforma/firebase/firestore.js";
-import { renderGrowthEngine, bindGrowthEngine } from "./abundancia-growth.js";
+import { renderGrowthEngine, bindGrowthEngine } from "./abundancia-growth.js?v=20261110-agents-1";
 
 const OWNER_EMAIL="yanfili.simon@gmail.com";
 const DEFAULT_FINANCE={housing:2000,food:700,transport:0,health:0,tools:0,subscriptions:0,taxes:0,leisure:0,other:0,targetRevenue:39000,reserveGoal:12000,reserveCurrent:0,revenueReceived:0,patrimonyGoal:100000};
