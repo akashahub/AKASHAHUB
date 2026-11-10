@@ -69,3 +69,68 @@ Firebase existente: projeto hub-akasha, configuração compartilhada em afplataf
 - Confirmar deploy estático e ausência de regressões.
 
 A implementação desta branch não deve ser considerada produção até essas validações.
+
+
+## Implementação financeira e comercial — 10/11/2026
+
+### Fases executadas no código principal
+
+- Adicionados preços de referência editáveis aos 118 itens originais, com faixa baixa/alta indicativa e classificação do tipo de estimativa.
+- Migração aditiva para dados locais já existentes: injeta referências ausentes sem substituir preço final, quantidade, status, prioridade, notas ou IDs.
+- Restauração da nuvem mescla referências de preço do inventário local quando snapshots antigos ainda não as contêm.
+- Nova aba Plano 2.0 com orçamento por categoria, recorte de prioridades, projeção de despesas para 3, 6 e 12 meses, combinações de faturamento, quantidade de vendas por oferta e metas do funil.
+- Engenharia financeira ampliada com campos editáveis para moradia/contas, alimentação, transporte, saúde, ferramentas/IA, assinaturas, impostos provisionados, lazer/extras e outras despesas.
+- Funil comercial com metas mensais e campos de realizado para contatos, conversas, reuniões, propostas, vendas e receita recebida.
+- Cash Flow permanece consultado pela função existente getAfTool(uid, "cashflow"), no documento afTools/{uid}/tools/cashflow, sem operações de escrita.
+
+### Orçamento de referência calculado
+
+Valores unitários iniciais inseridos no inventário, quantidade padrão 1:
+
+- Soma dos 118 registros, incluindo a meta de aporte patrimonial: R$ 388.470.
+- Itens, serviços e experiências sem a meta patrimonial: R$ 288.470.
+- Recorte Crítica + Alta, incluindo a meta patrimonial: R$ 118.990.
+- Recorte Crítica + Alta sem a meta patrimonial: R$ 18.990.
+- Meta patrimonial de R$ 100.000 permanece separada como objetivo de aporte, não compra.
+
+Os preços são valores centrais de planejamento com intervalos indicativos; não são 118 cotações verificadas. Viagens, veículos, projetos personalizados e itens sem especificação têm incerteza maior. Rapés ficaram sem estimativa de compra (R$ 0) por exigir reavaliação de legalidade e riscos. A consulta médica e a revisão profissional foram orçadas como serviço de referência, não como compra de medicamento.
+
+### Despesas-base e fôlego
+
+Com os valores iniciais informados pelo usuário (moradia/contas R$ 2.000 e alimentação R$ 700), e as demais categorias em zero até preenchimento:
+
+- Base mensal: R$ 2.700.
+- 3 meses: R$ 8.100; mais reserva desejada de R$ 12.000 = R$ 20.100.
+- 6 meses: R$ 16.200; mais reserva desejada = R$ 28.200.
+- 12 meses: R$ 32.400; mais reserva desejada = R$ 44.400.
+
+### Simulação comercial inicial
+
+Referências de preço editáveis no Money Engine:
+- Arquitetura de Legado: R$ 39.000.
+- Mentoria/projeto executivo: R$ 1.000.
+- Site institucional simples: R$ 1.000.
+- Consultoria/diagnóstico: R$ 350.
+- Sessão de alinhamento: gratuita.
+
+Combinações ilustrativas para R$ 39.000 brutos:
+- 1 contrato de Arquitetura de Legado.
+- 20 sites + 19 mentorias a R$ 1.000.
+- 15 sites + 15 mentorias + 26 consultorias a R$ 350 = R$ 39.100.
+
+Funil inicial sugerido, editável: 100 contatos qualificados/mês, 20 conversas, 10 reuniões, 5 propostas e 20% de conversão proposta-venda. Isso representa 1 venda esperada por ciclo mensal se as taxas se confirmarem; ainda é hipótese, não histórico validado. O painel agora permite registrar realizado e recalibrar taxas.
+
+### Fontes de referência para alguns grupos
+
+- Tablets e celulares: catálogos de medianas de preço atualizados em novembro de 2026.
+- Webcams e microfones: comparadores e guias de mercado.
+- Ferramentas domésticas, kits de segurança e equipamento de jiu-jitsu: guias de preços nacionais.
+
+### Validação pendente antes de considerar produção
+
+- Verificar sintaxe e comportamento no navegador em desktop e mobile.
+- Testar migração com cópia de dados reais, incluindo conflito local/nuvem.
+- Testar leitura Cash Flow com o usuário autenticado.
+- Confirmar regras Firestore publicadas e isolamento de acesso.
+- Confirmar deploy do site público. O commit na branch main, isoladamente, não comprova publicação no hosting.
+- Validar valores unitários e faixas com pesquisa específica antes de compras de alto valor.
