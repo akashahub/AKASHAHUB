@@ -63,7 +63,7 @@ import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audio
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt47";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
-import { renderCatalogoCapacidades, bindCatalogoCapacidades } from "./catalogo-capacidades.js?v=20261108-1";
+import { renderCatalogoCapacidades, bindCatalogoCapacidades } from "./catalogo-capacidades.js?v=20261110-1";
 import { renderAgenteIA, bindAgenteIA } from "./agente-ia.js?v=20261109-1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
