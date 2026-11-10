@@ -145,3 +145,16 @@ Funil inicial sugerido, editável: 100 contatos qualificados/mês, 20 conversas,
 - Documentação detalhada em `projetoabundancia/GROWTH-ENGINE-365.md`, com estratégia de aquisição, rotina semanal, modelo de dados, arquitetura de seis agentes e checklists.
 - Limite atual: não há CRM individual completo, conexão com Instagram/Meta Ads, publicação automática, disparo de WhatsApp/e-mail ou execução dos agentes. A interface prepara pautas, rascunhos e processos; a automação externa será uma fase separada com aprovação humana e auditoria.
 - Validação de produção continua pendente: testar importação do catálogo, renderização, clipboard, sincronização, desktop/mobile e regressões no navegador.
+
+
+## Programação dos agentes de IA — 10/11/2026
+
+- Mantida a área existente dentro do Growth Engine; não foi criada uma central paralela.
+- Adicionado `abundancia-agents.js` com dez prompts departamentais completos e individualizados: Essência e Posicionamento, Branding, Arquitetura Digital, Inteligência Financeira, Growth, Comercial, Expansão Empresarial, Automação e IA, Conhecimento, Patrimônio e Legado.
+- Cada prompt possui missão, escopo, método, entregáveis, limites, regras de segurança, colaboração e formato de resposta.
+- Interface com editor por agente, salvamento individual e cópia do prompt.
+- Os seis agentes anteriores do Growth Engine foram preservados e identificados como agentes operacionais existentes.
+- Os prompts são armazenados no objeto `departmentAgents` dentro de `abundancia_growth_state`; o snapshot já sincroniza o objeto `growth` com `projetoAbundancia/{uid}/state/main`.
+- Inicialização aditiva: preenche somente agentes ausentes e preserva prompts já existentes. A inicialização ocorre após carregar o estado remoto; quando a nuvem está disponível, solicita sincronização.
+- Cache dos módulos atualizado para a nova versão.
+- Limite: cadastro e persistência de prompts não ativam automaticamente chamadas de modelo, ferramentas ou execução autônoma. Homologação de navegador e confirmação de sincronização Firestore ainda precisam ser verificadas na sessão autenticada.
