@@ -14,9 +14,15 @@ const AGENTS=[
 ];
 function read(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch{return{}}}
 function persist(state){localStorage.setItem(KEY,JSON.stringify(state));window.dispatchEvent(new CustomEvent("abundancia:local-change"))}
+export function ensureAgentPrograms(){
+ const state=read(),saved=state.departmentAgents||{},next={...saved};
+ let changed=false;
+ for(const a of AGENTS){if(!Object.prototype.hasOwnProperty.call(next,a.id)){next[a.id]={prompt:a.prompt,status:"Prompt-base pronto",updatedAt:null};changed=true}}
+ if(changed){state.departmentAgents=next;persist(state)}
+ return next;
+}
 export function renderAgentPrograms(){
- const state=read(),saved=state.departmentAgents||{},agents=AGENTS.map(a=>({...a,prompt:saved[a.id]?.prompt||a.prompt,status:saved[a.id]?.status||"Prompt-base pronto"}));
- if(!state.departmentAgents){state.departmentAgents=Object.fromEntries(agents.map(a=>[a.id,{prompt:a.prompt,status:"Prompt-base pronto",updatedAt:null}]));persist(state)}
+ const saved=ensureAgentPrograms(),agents=AGENTS.map(a=>({...a,prompt:saved[a.id]?.prompt??a.prompt,status:saved[a.id]?.status||"Prompt-base pronto"}));
  return '<section class="ab-v2-card tone-violet ab-agent-programs"><div class="ab-v2-kicker">CENTRAL DE PROMPTS · 10 DEPARTAMENTOS</div><h3>Programação dos agentes de IA</h3><p>Prompts individuais, editáveis e persistidos no estado sincronizado do Projeto Abundância. Os seis agentes operacionais de Growth permanecem preservados.</p><div class="ab-agent-summary"><strong>10 especialistas</strong><span>·</span><span>10 prompts completos</span><span>·</span><span>Salvamento individual</span></div><div class="ab-agent-list">'+agents.map((a,i)=>'<details class="ab-agent-item" '+(i===0?'open':'')+'><summary><span><b>'+String(i+1).padStart(2,"0")+'. '+esc(a.name)+'</b><small>'+esc(a.department)+' · '+esc(a.objective)+'</small></span><em>'+esc(a.status)+'</em></summary><div class="ab-agent-editor"><label>Prompt principal completo<textarea data-agent-prompt="'+a.id+'" rows="14">'+esc(a.prompt)+'</textarea></label><div class="ab-agent-actions"><button class="ab-v2-action" type="button" data-agent-save="'+a.id+'">Salvar prompt deste agente</button><button class="ab-v2-action light" type="button" data-agent-copy="'+a.id+'">Copiar prompt</button><span data-agent-status="'+a.id+'">Pronto para edição</span></div></div></details>').join("")+'</div><p class="ab-v2-note">O salvamento registra a programação. A conexão de cada agente a um modelo, ferramentas e execução autônoma é uma etapa separada; nenhum envio, publicação, pagamento ou alteração externa é ativado por estes prompts.</p></section>';
 }
 export function bindAgentPrograms(){
