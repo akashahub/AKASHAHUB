@@ -146,7 +146,7 @@ function save(){localStorage.setItem('abundancia_state',JSON.stringify(state));w
 const money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&','<':'<','>':'>','"':'"',"'":'&#39;'}[c]));
 function calcStats(){
-  const total=state.reduce((a,x)=>a+(Number(x.price)||0)*(Number(x.qty)||1),0);
+  const total=state.reduce((a,x)=>a+(Number(x.price||x.suggestedPrice)||0)*(Number(x.qty)||1),0);
   const done=state.filter(x=>x.status==='Comprado').length;
   const spent=state.filter(x=>x.status==='Comprado').reduce((a,x)=>a+(Number(x.price)||0)*(Number(x.qty)||1),0);
   const pending=state.length-done;
@@ -174,7 +174,7 @@ function renderGrid(){
   cats.forEach(cat=>{
     const items=state.filter(x=>x.category===cat&&(!q||(x.name+' '+x.category+' '+x.destination).toLowerCase().includes(q))&&(!p||x.priority===p)&&(!s||x.status===s));
     if(!items.length)return;
-    const total=items.reduce((a,x)=>a+(Number(x.price)||0)*(Number(x.qty)||1),0);
+    const total=items.reduce((a,x)=>a+(Number(x.price||x.suggestedPrice)||0)*(Number(x.qty)||1),0);
     const bought=items.filter(x=>x.status==='Comprado').length;
     const pct=items.length?Math.round(bought/items.length*100):0;
     const img=catImages[cat]||'';
@@ -202,14 +202,16 @@ function openCategory(cat){
   const bannerPosition=catBannerPosition[cat]||'center';
   let rows='';
   items.forEach(x=>{
-    rows+=`<div class="item-row" data-id="${x.id}">
-      <div class="name"><div style="font-weight:650">${esc(x.name)}</div><small>${esc(x.priority)} • Destino: ${esc(x.destination)}</small></div>
-      <label><small>Preço (R$)</small><input type="number" min="0" step="0.01" value="${esc(x.price)}" placeholder="A pesquisar" onchange="update(${x.id},'price',this.value)"></label>
-      <label><small>Qtd</small><input type="number" min="1" value="${x.qty}" onchange="update(${x.id},'qty',this.value)"></label>
-      <label><small>Status</small><select onchange="update(${x.id},'status',this.value)">${["Não iniciado","Pesquisando","Pronto para comprar","Comprado","Adiado"].map(v=>`<option ${x.status===v?'selected':''}>${v}</option>`).join('')}</select></label>
-      <div><small>Subtotal</small><b>${money((Number(x.price)||0)*(Number(x.qty)||1))}</b></div>
-      <label><small>Notas</small><input type="text" value="${esc(x.notes||'')}" placeholder="Obs." onchange="update(${x.id},'notes',this.value)"></label>
-    </div>`;
+    rows+='<div class="item-row" data-id="'+x.id+'">'+
+      '<div class="name"><div style="font-weight:650">'+esc(x.name)+'</div><small>Destino: '+esc(x.destination)+'</small></div>'+
+      '<label><small>Preço sugerido (R$)</small><input type="number" min="0" step="0.01" value="'+esc(x.suggestedPrice||'')+'" placeholder="Pesquisar" onchange="update('+x.id+',\'suggestedPrice\',this.value)"></label>'+
+      '<label><small>Preço final (R$)</small><input type="number" min="0" step="0.01" value="'+esc(x.price)+'" placeholder="Editar" onchange="update('+x.id+',\'price\',this.value)"></label>'+
+      '<label><small>Qtd</small><input type="number" min="1" value="'+x.qty+'" onchange="update('+x.id+',\'qty\',this.value)"></label>'+
+      '<label><small>Status</small><select onchange="update('+x.id+',\'status\',this.value)">'+["Não iniciado","Pesquisando","Pronto para comprar","Comprado","Adiado"].map(v=>'<option '+(x.status===v?'selected':'')+'>'+v+'</option>').join('')+'</select></label>'+
+      '<label><small>Prioridade</small><select onchange="update('+x.id+',\'priority\',this.value)">'+["Crítica","Alta","Média","Baixa","A definir"].map(v=>'<option '+((x.priority||"A definir")===v?'selected':'')+'>'+v+'</option>').join('')+'</select></label>'+
+      '<div><small>Subtotal estimado</small><b>'+money((Number(x.price||x.suggestedPrice)||0)*(Number(x.qty)||1))+'</b></div>'+
+      '<label><small>Notas</small><input type="text" value="'+esc(x.notes||'')+'" placeholder="Obs." onchange="update('+x.id+',\'notes\',this.value)"></label>'+
+    '</div>';
   });
   document.getElementById('detailView').innerHTML=`
     <div class="detail-banner" style="background-image:url('${img}');background-position:${bannerPosition}"><h2>${esc(cat)}</h2></div>
@@ -230,7 +232,7 @@ window.__setAbundanciaState = function(next){if(!Array.isArray(next))return;wind
 document.getElementById('monthly').addEventListener('change',()=>{localStorage.setItem('abundancia_monthly',document.getElementById('monthly').value);});
 document.getElementById('goal').addEventListener('change',()=>{localStorage.setItem('abundancia_goal',document.getElementById('goal').value);calcStats();});
 document.getElementById('months').addEventListener('change',()=>{localStorage.setItem('abundancia_months',document.getElementById('months').value);});
-function exportCSV(){const rows=[['Categoria','Item','Prioridade','Destino','Preço unitário','Quantidade','Subtotal','Status','Notas'],...state.map(x=>[x.category,x.name,x.priority,x.destination,x.price,x.qty,(Number(x.price)||0)*(Number(x.qty)||1),x.status,x.notes||''])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='projeto-abundancia.csv';a.click();URL.revokeObjectURL(a.href)}
+function exportCSV(){const rows=[['Categoria','Item','Prioridade','Destino','Preço sugerido','Preço final','Quantidade','Subtotal estimado','Status','Notas'],...state.map(x=>[x.category,x.name,x.priority,x.destination,x.suggestedPrice||'',x.price,x.qty,(Number(x.price||x.suggestedPrice)||0)*(Number(x.qty)||1),x.status,x.notes||''])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='projeto-abundancia.csv';a.click();URL.revokeObjectURL(a.href)}
 document.getElementById('monthly').value=localStorage.getItem('abundancia_monthly')||'';
 document.getElementById('goal').value=localStorage.getItem('abundancia_goal')||'100000';
 document.getElementById('months').value=localStorage.getItem('abundancia_months')||'';
