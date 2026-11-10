@@ -134,3 +134,14 @@ Funil inicial sugerido, editável: 100 contatos qualificados/mês, 20 conversas,
 - Confirmar regras Firestore publicadas e isolamento de acesso.
 - Confirmar deploy do site público. O commit na branch main, isoladamente, não comprova publicação no hosting.
 - Validar valores unitários e faixas com pesquisa específica antes de compras de alto valor.
+
+
+## Akasha Growth Engine — integração do inventário de serviços
+
+- Exportado o catálogo mestre da Gestão do Mentor como fonte compartilhada, sem duplicar os 10 departamentos, 39 grupos e 160 capacidades.
+- Criado `projetoabundancia/abundancia-growth.js` com aba Growth Engine, calendário de 365 dias, rotação por serviço, cinco ângulos editoriais, funil por serviço, checklist de prontidão e prompts para programação de agentes.
+- Integrado o estado do Growth Engine ao snapshot sincronizado do Projeto Abundância.
+- Adicionados cinco rascunhos-base por serviço selecionado: problema, educação, processo, prova e oferta; precisam de revisão e personalização antes da publicação.
+- Documentação detalhada em `projetoabundancia/GROWTH-ENGINE-365.md`, com estratégia de aquisição, rotina semanal, modelo de dados, arquitetura de seis agentes e checklists.
+- Limite atual: não há CRM individual completo, conexão com Instagram/Meta Ads, publicação automática, disparo de WhatsApp/e-mail ou execução dos agentes. A interface prepara pautas, rascunhos e processos; a automação externa será uma fase separada com aprovação humana e auditoria.
+- Validação de produção continua pendente: testar importação do catálogo, renderização, clipboard, sincronização, desktop/mobile e regressões no navegador.
