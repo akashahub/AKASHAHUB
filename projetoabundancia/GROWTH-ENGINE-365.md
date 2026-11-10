@@ -26,7 +26,7 @@ O catálogo mestre continua sendo o lugar para classificar cada capacidade como 
 - A aba **Growth Engine** importa diretamente os 160 serviços do catálogo mestre.
 - O calendário anual gera 365 pautas: cada dia destaca um serviço e alterna cinco ângulos editoriais.
 - Ao selecionar qualquer serviço, a interface exibe um funil de aquisição e dez itens de prontidão.
-- Para cada serviço selecionado, há cinco rascunhos-base: Problema, Educação, Processo, Prova e Oferta. Os textos são pontos de partida, não publicações prontas: completar ICP, contexto, prova autorizada, escopo, preço e CTA antes de publicar.
+- Para cada um dos 160 serviços, a interface gera cinco rascunhos-base (800 combinações de conteúdo): Problema, Educação, Processo, Prova e Oferta. Os textos são personalizados pelo nome e contexto do serviço, mas precisam de edição humana e validação factual. Os textos são pontos de partida, não publicações prontas: completar ICP, contexto, prova autorizada, escopo, preço e CTA antes de publicar.
 - O estado do calendário e os checklists são incluídos na sincronização do Projeto Abundância com a nuvem.
 - O motor não publica nem envia mensagens automaticamente.
 
