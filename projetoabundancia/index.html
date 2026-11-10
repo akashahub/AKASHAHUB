@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Projeto Abundância | Akasha Hub</title>
+<style>
+:root{--bg:#090a0e;--panel:#14161d;--panel2:#1c1f28;--line:#2b2e39;--text:#f4f1e9;--muted:#a6a7b0;--gold:#d6b46a;--green:#7fbd91;--red:#e58b83;--purple:#7c5cbf}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#292316 0,transparent 32%),var(--bg);color:var(--text);font:15px/1.45 'Inter',system-ui,Arial;min-height:100vh}
+header{padding:24px max(18px,calc((100vw - 1280px)/2));border-bottom:1px solid var(--line);background:#0c0d12ee;backdrop-filter:blur(8px);position:sticky;top:0;z-index:10}
+.eyebrow{color:var(--gold);letter-spacing:.18em;font-size:11px;font-weight:700;text-transform:uppercase}
+h1{font-size:clamp(26px,4vw,42px);line-height:1.05;margin:8px 0;font-weight:800}
+.tagline{color:var(--muted);font-size:14px;margin:4px 0 0}
+main{max-width:1280px;margin:auto;padding:20px 16px 80px}
+.hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0 28px}
+.stat-card{background:linear-gradient(145deg,var(--panel),#101117);border:1px solid var(--line);border-radius:16px;padding:16px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),transparent)}
+.stat-card strong{display:block;font-size:22px;color:var(--gold);font-weight:800}
+.stat-card span{font-size:12px;color:var(--muted)}
+.budget-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0 20px}
+.budget-row label{font-size:12px;color:var(--muted);display:block}
+.budget-row input{width:100%;margin-top:4px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px}
+.note{border-left:3px solid var(--gold);padding:10px 14px;background:#d6b46a0d;border-radius:0 10px 10px 0;color:#d9d2c1;margin:12px 0;font-size:13px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.toolbar input,.toolbar select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;min-width:120px}
+.toolbar input{flex:1}
+.btn{background:var(--gold);color:#17130a;border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;font-size:13px}
+.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.btn:hover{opacity:.9}
+.categories-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin:20px 0}
+.cat-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative}
+.cat-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px #0006}
+.cat-img{height:140px;background-size:cover;background-position:center;position:relative}
+.cat-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,#0008,transparent 60%)}
+.cat-body{padding:14px}
+.cat-body h3{margin:0 0 6px;font-size:16px}
+.cat-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px}
+.progress-bar{height:4px;background:#ffffff15;border-radius:2px;margin:8px 0;overflow:hidden}
+.progress-bar>div{height:100%;background:var(--gold);border-radius:2px}
+.priority-badge{font-size:10px;padding:2px 6px;border-radius:6px;background:#d6b46a22;color:var(--gold)}
+.detail-view{display:none}
+.detail-view.active{display:block}
+.detail-banner{height:200px;background-size:cover;background-position:center;border-radius:18px;margin-bottom:16px;position:relative}
+.detail-banner h2{position:absolute;bottom:16px;left:16px;margin:0;font-size:28px;text-shadow:0 2px 8px #000}
+.item-list{display:flex;flex-direction:column;gap:8px}
+.item-row{display:grid;grid-template-columns:minmax(200px,2fr) 100px 80px 120px 100px 90px;gap:8px;align-items:center;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.item-row small{display:block;color:var(--muted);font-size:11px}
+.item-row input,.item-row select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:6px;font-size:13px}
+.goal-section{background:linear-gradient(135deg,#1a1610,var(--panel));border:1px solid var(--gold);border-radius:18px;padding:20px;margin:24px 0}
+.goal-bar{height:8px;background:#ffffff15;border-radius:4px;margin:12px 0;overflow:hidden}
+.goal-bar>div{height:100%;background:linear-gradient(90deg,var(--gold),#f0d48a);border-radius:4px}
+.footer{color:var(--muted);font-size:12px;margin-top:32px;text-align:center}
+.hidden{display:none!important}
+@media(max-width:700px){
+  .item-row{grid-template-columns:1fr 1fr;gap:6px}
+  .item-row .name{grid-column:1/-1}
+  .categories-grid{grid-template-columns:1fr}
+  .hero-stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">AKASHA HUB • PLANEJAMENTO PESSOAL E PATRIMONIAL</div>
+  <h1>PROJETO <span style="color:var(--gold)">ABUNDÂNCIA</span></h1>
+  <p class="tagline">Construindo patrimônio, liberdade e estrutura.</p>
+</header>
+<main>
+  <section class="hero-stats" id="stats"></section>
+  <section class="panel" style="background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:20px">
+    <h2 style="margin:0 0 12px;font-size:18px">⚙️ Configuração do plano</h2>
+    <div class="budget-row">
+      <label>Orçamento mensal disponível (R$)<input id="monthly" type="number" min="0" placeholder="Definir"></label>
+      <label>Meta de investimento (R$)<input id="goal" type="number" value="100000"></label>
+      <label>Prazo da meta (meses)<input id="months" type="number" min="1" placeholder="Ex.: 24"></label>
+    </div>
+    <div class="note">Preços começam vazios: preencha com valores pesquisados. Indicadores e progresso atualizam automaticamente. Dados salvos localmente no navegador.</div>
+  </section>
+  <div class="toolbar">
+    <input id="search" placeholder="🔎 Buscar item, categoria ou destino...">
+    <select id="filterPriority"><option value="">Todas prioridades</option><option>Crítica</option><option>Alta</option><option>Média</option><option>Baixa</option><option>A definir</option></select>
+    <select id="filterStatus"><option value="">Todos status</option><option>Não iniciado</option><option>Pesquisando</option><option>Pronto para comprar</option><option>Comprado</option><option>Adiado</option></select>
+    <button class="btn secondary" onclick="exportCSV()">Exportar CSV</button>
+    <button class="btn secondary" onclick="window.print()">Imprimir</button>
+    <button class="btn secondary" id="backBtn" onclick="showGrid()" style="display:none">← Voltar às categorias</button>
+  </div>
+  <div id="categoriesGrid" class="categories-grid"></div>
+  <div id="detailView" class="detail-view"></div>
+  <section class="goal-section">
+    <h2 style="margin:0 0 8px">💰 Meta Patrimonial • R$ 100.000</h2>
+    <p style="color:var(--muted);margin:0 0 12px">Aportes efetivos (somente itens marcados como Comprado na categoria Patrimônio). Não contabiliza planejado.</p>
+    <div id="goalProgress"></div>
+  </section>
+  <section style="margin-top:24px">
+    <h2>🧭 Direção estratégica</h2>
+    <p><b>Fase 1 — Receita:</b> vender e entregar Arquitetura de Legado; manter prospecção ativa.</p>
+    <p><b>Fase 2 — Infraestrutura:</b> financiar ferramentas que aumentem capacidade de entrega.</p>
+    <p><b>Fase 3 — Base pessoal:</b> documentação, casa, saúde, organização e mobilidade essencial.</p>
+    <p><b>Fase 4 — Expansão:</b> hobbies, veículos, viagens e projetos conforme caixa e reserva.</p>
+    <p><b>Fase 5 — Patrimônio:</b> aportes consistentes até R$ 100 mil, separado de compras.</p>
+  </section>
+  <div class="footer">Painel local. Dados persistidos em localStorage. Exportar CSV para backup. Área exclusiva do mentor.</div>
+</main>
+<script>
+const data = [{"category": "Trabalho e tecnologia", "name": "Assinaturas de IA e ferramentas profissionais", "priority": "Crítica", "destination": "Empresa"}, {"category": "Trabalho e tecnologia", "name": "Plano anual de ferramentas de IA (uma ou duas licenças)", "priority": "Crítica", "destination": "Empresa"}, {"category": "Trabalho e tecnologia", "name": "Tablet", "priority": "Alta", "destination": "Empresa/pessoal"}, {"category": "Trabalho e tecnologia", "name": "Celular premium com câmera de referência", "priority": "Alta", "destination": "Pessoal/trabalho"}, {"category": "Trabalho e tecnologia", "name": "Webcam", "priority": "Média", "destination": "Empresa"}, {"category": "Trabalho e tecnologia", "name": "Kit informática: mouse, teclado e acessórios", "priority": "Alta", "destination": "Empresa"}, {"category": "Trabalho e tecnologia", "name": "Pendrive", "priority": "Média", "destination": "Empresa"}, {"category": "Trabalho e tecnologia", "name": "Kit escritório diário e organização", "priority": "Média", "destination": "Pessoal"}, {"category": "Trabalho e tecnologia", "name": "Kit trader", "priority": "Baixa", "destination": "Pessoal"}, {"category": "Trabalho e tecnologia", "name": "Kit câmeras de segurança para Stella", "priority": "Alta", "destination": "Stella Maris"}, {"category": "Trabalho e tecnologia", "name": "Microfone para conteúdo", "priority": "Alta", "destination": "Empresa"}, {"category": "Casa e infraestrutura", "name": "Retirar/organizar móveis de Stella", "priority": "Alta", "destination": "Stella Maris"}, {"category": "Casa e infraestrutura", "name": "Banheira portátil para Stella", "priority": "Média", "destination": "Stella Maris"}, {"category": "Casa e infraestrutura", "name": "Banheira portátil para residência atual", "priority": "Média", "destination": "Atual"}, {"category": "Casa e infraestrutura", "name": "Aspirador de pó", "priority": "Média", "destination": "Atual"}, {"category": "Casa e infraestrutura", "name": "Mop", "priority": "Média", "destination": "Atual"}, {"category": "Casa e infraestrutura", "name": "Fonte pequena de água", "priority": "Baixa", "destination": "Atual"}, {"category": "Casa e infraestrutura", "name": "Kit ferramentas com bolsa organizadora", "priority": "Alta", "destination": "Casa"}, {"category": "Casa e infraestrutura", "name": "Parafusadeira e furadeira", "priority": "Alta", "destination": "Casa"}, {"category": "Casa e infraestrutura", "name": "Kit ferramentas adicionais", "priority": "Média", "destination": "Casa"}, {"category": "Casa e infraestrutura", "name": "Pistola de pintura", "priority": "Baixa", "destination": "Casa"}, {"category": "Casa e infraestrutura", "name": "Mini motosserra com proteções e uso seguro", "priority": "Baixa", "destination": "Terreno"}, {"category": "Casa e infraestrutura", "name": "Gazebo coberto personalizado", "priority": "Baixa", "destination": "Praia/terreno"}, {"category": "Casa e infraestrutura", "name": "Gerador/estação de energia solar portátil", "priority": "Média", "destination": "Camping"}, {"category": "Casa e infraestrutura", "name": "Móveis adicionais (inventariar primeiro)", "priority": "A definir", "destination": "Stella Maris"}, {"category": "Esporte e condicionamento", "name": "Kit jiu-jitsu: kimono, faixa e acessórios", "priority": "Alta", "destination": "Pessoal"}, {"category": "Esporte e condicionamento", "name": "Kit boxe: luvas e proteção essencial", "priority": "Alta", "destination": "Pessoal"}, {"category": "Esporte e condicionamento", "name": "Roupas para jiu-jitsu e boxe", "priority": "Média", "destination": "Pessoal"}, {"category": "Esporte e condicionamento", "name": "Roupas de treino e corrida", "priority": "Alta", "destination": "Pessoal"}, {"category": "Esporte e condicionamento", "name": "Tênis esportivos", "priority": "Alta", "destination": "Pessoal"}, {"category": "Esporte e condicionamento", "name": "Skate", "priority": "Baixa", "destination": "Pessoal"}, {"category": "Esporte e condicionamento", "name": "Prancha simples de surf", "priority": "Baixa", "destination": "Pessoal"}, {"category": "Esporte e condicionamento", "name": "Kit halteres", "priority": "Média", "destination": "Casa"}, {"category": "Esporte e condicionamento", "name": "Barra/paralelas para treino em casa", "priority": "Média", "destination": "Casa"}, {"category": "Esporte e condicionamento", "name": "Mini trampolim de treino", "priority": "Média", "destination": "Casa"}, {"category": "Esporte e condicionamento", "name": "Esteira compacta", "priority": "Baixa", "destination": "Casa"}, {"category": "Esporte e condicionamento", "name": "Auxiliar de abdominal", "priority": "Baixa", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Máquina de água com gás", "priority": "Média", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Kit churrasco", "priority": "Média", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Jogo de facas de cozinha", "priority": "Média", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Panelas de cerâmica", "priority": "Média", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Jogo de taças e copos", "priority": "Baixa", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Garrafa de água", "priority": "Média", "destination": "Pessoal"}, {"category": "Alimentação e cozinha", "name": "Kit marmitas e bolsas térmicas", "priority": "Alta", "destination": "Pessoal"}, {"category": "Alimentação e cozinha", "name": "Potes para congelamento e organização", "priority": "Alta", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Potes de vidro", "priority": "Média", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Kit chimarrão", "priority": "Baixa", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Kit cafeteira", "priority": "Média", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Cafeteira portátil", "priority": "Baixa", "destination": "Viagem"}, {"category": "Alimentação e cozinha", "name": "Kit chá", "priority": "Baixa", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Kit vinho", "priority": "Baixa", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Kit fabricação caseira de cerveja", "priority": "Baixa", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Chopeira portátil", "priority": "Baixa", "destination": "Casa"}, {"category": "Alimentação e cozinha", "name": "Kit para fazer pizza", "priority": "Baixa", "destination": "Casa"}, {"category": "Cuidados pessoais", "name": "Kit skincare e cremes faciais", "priority": "Média", "destination": "Pessoal"}, {"category": "Cuidados pessoais", "name": "Consulta com dermatologista", "priority": "Alta", "destination": "Pessoal"}, {"category": "Cuidados pessoais", "name": "Máquina de barbear", "priority": "Média", "destination": "Pessoal"}, {"category": "Cuidados pessoais", "name": "Tesoura profissional para cabelo", "priority": "Baixa", "destination": "Pessoal"}, {"category": "Cuidados pessoais", "name": "Navalha inoxidável", "priority": "Baixa", "destination": "Pessoal"}, {"category": "Cuidados pessoais", "name": "Kit de unhas", "priority": "Baixa", "destination": "Pessoal"}, {"category": "Cuidados pessoais", "name": "Sabonetes, moldes e materiais", "priority": "Baixa", "destination": "Hobby"}, {"category": "Cuidados pessoais", "name": "Moldes e materiais para velas e vasos", "priority": "Baixa", "destination": "Hobby"}, {"category": "Cuidados pessoais", "name": "Óleos essenciais e óleos corporais", "priority": "Média", "destination": "Pessoal"}, {"category": "Cuidados pessoais", "name": "Creme de massagem", "priority": "Baixa", "destination": "Pessoal"}, {"category": "Música e criação", "name": "Kit instrumentos musicais (definir instrumentos)", "priority": "Média", "destination": "Hobby"}, {"category": "Música e criação", "name": "Kit estúdio: interface/mixer, microfone e fones", "priority": "Média", "destination": "Criação"}, {"category": "Música e criação", "name": "Tratamento acústico/abafamento de som", "priority": "Média", "destination": "Criação"}, {"category": "Música e criação", "name": "Vitrola", "priority": "Baixa", "destination": "Casa"}, {"category": "Música e criação", "name": "Coleção inicial de vinis", "priority": "Baixa", "destination": "Casa"}, {"category": "Música e criação", "name": "Kit cordas de violão", "priority": "Baixa", "destination": "Hobby"}, {"category": "Música e criação", "name": "Canetas tinteiro", "priority": "Baixa", "destination": "Escritório"}, {"category": "Natureza e experiências", "name": "Aquário completo e montagem", "priority": "Baixa", "destination": "Casa"}, {"category": "Natureza e experiências", "name": "Kit criação de peixes e camarões", "priority": "Baixa", "destination": "Casa"}, {"category": "Natureza e experiências", "name": "Kit horta doméstica", "priority": "Média", "destination": "Casa"}, {"category": "Natureza e experiências", "name": "Telescópio/luneta", "priority": "Baixa", "destination": "Hobby"}, {"category": "Natureza e experiências", "name": "Kit cristais dos chakras", "priority": "Baixa", "destination": "Hobby"}, {"category": "Natureza e experiências", "name": "Japamala", "priority": "Baixa", "destination": "Hobby"}, {"category": "Natureza e experiências", "name": "Incensário e acessórios", "priority": "Baixa", "destination": "Casa"}, {"category": "Natureza e experiências", "name": "Itens simples para os gatos", "priority": "Alta", "destination": "Casa"}, {"category": "Natureza e experiências", "name": "Kit fazendinha (após definir terreno)", "priority": "Baixa", "destination": "Terreno"}, {"category": "Natureza e experiências", "name": "Rapés (reavaliar legalidade e riscos)", "priority": "A definir", "destination": "Pessoal"}, {"category": "Mobilidade", "name": "Jeep Renegade branco", "priority": "Baixa", "destination": "Mobilidade"}, {"category": "Mobilidade", "name": "Moto (comparar elétrica e convencional)", "priority": "Média", "destination": "Mobilidade"}, {"category": "Mobilidade", "name": "Bicicleta elétrica", "priority": "Média", "destination": "Mobilidade"}, {"category": "Mobilidade", "name": "Patinete elétrico", "priority": "Baixa", "destination": "Mobilidade"}, {"category": "Mobilidade", "name": "Quadriciclo", "priority": "Baixa", "destination": "Terreno/lazer"}, {"category": "Mobilidade", "name": "Kit de acessórios para carro", "priority": "Média", "destination": "Mobilidade"}, {"category": "Mobilidade", "name": "Kit moto: capacete e equipamentos de proteção", "priority": "Média", "destination": "Mobilidade"}, {"category": "Fotografia e audiovisual", "name": "Drone de entrada", "priority": "Média", "destination": "Criação"}, {"category": "Fotografia e audiovisual", "name": "Câmera instantânea Instax (geração atual a confirmar)", "priority": "Baixa", "destination": "Hobby"}, {"category": "Fotografia e audiovisual", "name": "Câmera portátil de mão para streaming/vlog", "priority": "Média", "destination": "Criação"}, {"category": "Fotografia e audiovisual", "name": "GoPro (modelo e geração a confirmar)", "priority": "Média", "destination": "Criação"}, {"category": "Fotografia e audiovisual", "name": "Câmera/fone para produção de conteúdo (avaliar redundância)", "priority": "A definir", "destination": "Criação"}, {"category": "Praia, camping e lazer", "name": "Barraca de camping", "priority": "Média", "destination": "Viagens"}, {"category": "Praia, camping e lazer", "name": "Kit praia e roupas de praia", "priority": "Média", "destination": "Pessoal"}, {"category": "Praia, camping e lazer", "name": "Kit camping e trilhas", "priority": "Média", "destination": "Viagens"}, {"category": "Praia, camping e lazer", "name": "Gazebo e estrutura para vôlei na praia", "priority": "Baixa", "destination": "Praia"}, {"category": "Praia, camping e lazer", "name": "Pedras quentes e kit de ventosas", "priority": "Baixa", "destination": "Hobby"}, {"category": "Vestuário e acessórios", "name": "Sapato social", "priority": "Média", "destination": "Pessoal"}, {"category": "Vestuário e acessórios", "name": "Roupas casuais e camisetas", "priority": "Média", "destination": "Pessoal"}, {"category": "Vestuário e acessórios", "name": "Cuecas", "priority": "Média", "destination": "Pessoal"}, {"category": "Vestuário e acessórios", "name": "Ternos", "priority": "Baixa", "destination": "Pessoal"}, {"category": "Vestuário e acessórios", "name": "Bonés", "priority": "Baixa", "destination": "Pessoal"}, {"category": "Vestuário e acessórios", "name": "Óculos", "priority": "Média", "destination": "Pessoal"}, {"category": "Vestuário e acessórios", "name": "Kit roupa de praia", "priority": "Média", "destination": "Pessoal"}, {"category": "Viagens e documentação", "name": "Passaporte e documentação", "priority": "Alta", "destination": "Viagens"}, {"category": "Viagens e documentação", "name": "Viagem Reino Unido", "priority": "Média", "destination": "Viagens"}, {"category": "Viagens e documentação", "name": "Viagem Tailândia", "priority": "Média", "destination": "Viagens"}, {"category": "Viagens e documentação", "name": "Viagem Croácia", "priority": "Baixa", "destination": "Viagens"}, {"category": "Viagens e documentação", "name": "Viagem Suíça", "priority": "Baixa", "destination": "Viagens"}, {"category": "Viagens e documentação", "name": "Viagem Luxemburgo", "priority": "Baixa", "destination": "Viagens"}, {"category": "Viagens e documentação", "name": "Viagem Austrália", "priority": "Baixa", "destination": "Viagens"}, {"category": "Viagens e documentação", "name": "Viagem Estados Unidos", "priority": "Média", "destination": "Viagens"}, {"category": "Saúde: avaliação profissional", "name": "Avaliação médica antes de qualquer hormônio ou medicamento", "priority": "Crítica", "destination": "Saúde"}, {"category": "Saúde: avaliação profissional", "name": "Revisão médica dos itens citados: testosterona, estimulantes, cabergolina, bupropiona, ioimbina e outros", "priority": "Crítica", "destination": "Saúde"}, {"category": "Saúde: avaliação profissional", "name": "Revisar suplementos: vitamina C, B12, colágeno e demais", "priority": "Média", "destination": "Saúde"}, {"category": "Saúde: avaliação profissional", "name": "Pesquisar mistura alimentar natural (maca, feno-grego, farinha de arroz, catuaba etc.) com orientação", "priority": "Baixa", "destination": "Saúde"}, {"category": "Patrimônio e investimentos", "name": "Plano para investir R$ 100 mil ao longo do tempo", "priority": "Alta", "destination": "Patrimônio"}];
+const catImages = {
+  "Trabalho e tecnologia": "assets/images/trabalho_tecnologia.jpg",
+  "Casa e infraestrutura": "assets/images/casa_infraestrutura.jpg",
+  "Esporte e condicionamento": "assets/images/esporte_condicionamento.jpg",
+  "Alimentação e cozinha": "assets/images/alimentacao_cozinha.jpg",
+  "Cuidados pessoais": "assets/images/cuidados_pessoais.jpg",
+  "Música e criação": "assets/images/musica_criacao.jpg",
+  "Natureza e experiências": "assets/images/natureza_experiencias.jpg",
+  "Mobilidade": "assets/images/mobilidade.jpg",
+  "Fotografia e audiovisual": "assets/images/fotografia_audiovisual.jpg",
+  "Praia, camping e lazer": "assets/images/praia_camping.jpg",
+  "Vestuário e acessórios": "assets/images/vestuario_acessorios.jpg",
+  "Viagens e documentação": "assets/images/viagens_documentacao.jpg"
+};
+const catDesc = {
+  "Trabalho e tecnologia": "Ferramentas, assinaturas e equipamentos que aumentam capacidade de entrega e receita.",
+  "Casa e infraestrutura": "Organização, ferramentas e melhorias da residência e espaços.",
+  "Esporte e condicionamento": "Equipamentos para jiu-jitsu, boxe, treino e condicionamento físico.",
+  "Alimentação e cozinha": "Utensílios, potes e kits para organização e preparo de refeições.",
+  "Cuidados pessoais": "Skincare, higiene e itens de bem-estar pessoal.",
+  "Música e criação": "Instrumentos, estúdio e materiais criativos.",
+  "Natureza e experiências": "Horta, aquário, itens para pets e experiências naturais.",
+  "Mobilidade": "Veículos e acessórios de transporte.",
+  "Fotografia e audiovisual": "Câmeras, drones e equipamentos de conteúdo.",
+  "Praia, camping e lazer": "Itens para trilhas, praia e experiências ao ar livre.",
+  "Vestuário e acessórios": "Roupas e acessórios pessoais.",
+  "Viagens e documentação": "Passaporte e planejamento de viagens.",
+  "Saúde: avaliação profissional": "Consultas e revisões médicas prioritárias.",
+  "Patrimônio e investimentos": "Aportes para a meta de R$ 100 mil."
+};
+let state = JSON.parse(localStorage.getItem('abundancia_state')) || data.map((x,i)=>({...x,id:i,price:"",qty:1,status:"Não iniciado",notes:""}));
+function save(){localStorage.setItem('abundancia_state',JSON.stringify(state));}
+const money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&','<':'<','>':'>','"':'"',"'":'&#39;'}[c]));
+function calcStats(){
+  const total=state.reduce((a,x)=>a+(Number(x.price)||0)*(Number(x.qty)||1),0);
+  const done=state.filter(x=>x.status==='Comprado').length;
+  const spent=state.filter(x=>x.status==='Comprado').reduce((a,x)=>a+(Number(x.price)||0)*(Number(x.qty)||1),0);
+  const pending=state.length-done;
+  document.getElementById('stats').innerHTML=`
+    <div class="stat-card"><strong>${state.length}</strong><span>itens no inventário</span></div>
+    <div class="stat-card"><strong>${money(total)}</strong><span>orçamento preenchido</span></div>
+    <div class="stat-card"><strong>${done}</strong><span>itens comprados</span></div>
+    <div class="stat-card"><strong>${money(total-spent)}</strong><span>saldo estimado a comprar</span></div>
+    <div class="stat-card"><strong>${money(spent)}</strong><span>total efetivamente investido</span></div>
+    <div class="stat-card"><strong>${pending}</strong><span>itens pendentes</span></div>`;
+  // Goal: only Patrimônio bought
+  const patrimonio=state.filter(x=>x.category==='Patrimônio e investimentos'&&x.status==='Comprado').reduce((a,x)=>a+(Number(x.price)||0)*(Number(x.qty)||1),0);
+  const goal=Number(document.getElementById('goal').value)||100000;
+  const pct=Math.min(100,Math.round(patrimonio/goal*100));
+  document.getElementById('goalProgress').innerHTML=`
+    <div style="display:flex;justify-content:space-between;font-size:14px"><span>Acumulado: <b>${money(patrimonio)}</b></span><span>${pct}% da meta</span></div>
+    <div class="goal-bar"><div style="width:${pct}%"></div></div>
+    <div style="font-size:13px;color:var(--muted)">Restante: ${money(Math.max(0,goal-patrimonio))}</div>`;
+}
+function renderGrid(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const p=document.getElementById('filterPriority').value;
+  const s=document.getElementById('filterStatus').value;
+  const cats=[...new Set(state.map(x=>x.category))];
+  let html='';
+  cats.forEach(cat=>{
+    const items=state.filter(x=>x.category===cat&&(!q||(x.name+' '+x.category+' '+x.destination).toLowerCase().includes(q))&&(!p||x.priority===p)&&(!s||x.status===s));
+    if(!items.length)return;
+    const total=items.reduce((a,x)=>a+(Number(x.price)||0)*(Number(x.qty)||1),0);
+    const bought=items.filter(x=>x.status==='Comprado').length;
+    const pct=items.length?Math.round(bought/items.length*100):0;
+    const img=catImages[cat]||'';
+    const desc=catDesc[cat]||'';
+    html+=`<div class="cat-card" onclick="openCategory('${esc(cat)}')">
+      <div class="cat-img" style="background-image:url('${img}')"></div>
+      <div class="cat-body">
+        <h3>${esc(cat)}</h3>
+        <p style="font-size:12px;color:var(--muted);margin:4px 0">${esc(desc)}</p>
+        <div class="progress-bar"><div style="width:${pct}%"></div></div>
+        <div class="cat-meta"><span>${items.length} itens • ${bought} comprados</span><span>${money(total)}</span></div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('categoriesGrid').innerHTML=html||'<p>Nenhum item encontrado.</p>';
+  calcStats();
+}
+function openCategory(cat){
+  document.getElementById('categoriesGrid').style.display='none';
+  document.getElementById('detailView').classList.add('active');
+  document.getElementById('backBtn').style.display='inline-block';
+  const items=state.filter(x=>x.category===cat);
+  const img=catImages[cat]||'';
+  const desc=catDesc[cat]||'';
+  let rows='';
+  items.forEach(x=>{
+    rows+=`<div class="item-row" data-id="${x.id}">
+      <div class="name"><div style="font-weight:650">${esc(x.name)}</div><small>${esc(x.priority)} • Destino: ${esc(x.destination)}</small></div>
+      <label><small>Preço (R$)</small><input type="number" min="0" step="0.01" value="${esc(x.price)}" placeholder="A pesquisar" onchange="update(${x.id},'price',this.value)"></label>
+      <label><small>Qtd</small><input type="number" min="1" value="${x.qty}" onchange="update(${x.id},'qty',this.value)"></label>
+      <label><small>Status</small><select onchange="update(${x.id},'status',this.value)">${["Não iniciado","Pesquisando","Pronto para comprar","Comprado","Adiado"].map(v=>`<option ${x.status===v?'selected':''}>${v}</option>`).join('')}</select></label>
+      <div><small>Subtotal</small><b>${money((Number(x.price)||0)*(Number(x.qty)||1))}</b></div>
+      <label><small>Notas</small><input type="text" value="${esc(x.notes||'')}" placeholder="Obs." onchange="update(${x.id},'notes',this.value)"></label>
+    </div>`;
+  });
+  document.getElementById('detailView').innerHTML=`
+    <div class="detail-banner" style="background-image:url('${img}')"><h2>${esc(cat)}</h2></div>
+    <p style="color:var(--muted)">${esc(desc)}</p>
+    <div class="item-list">${rows}</div>`;
+  calcStats();
+}
+function showGrid(){
+  document.getElementById('categoriesGrid').style.display='grid';
+  document.getElementById('detailView').classList.remove('active');
+  document.getElementById('detailView').innerHTML='';
+  document.getElementById('backBtn').style.display='none';
+  renderGrid();
+}
+function update(id,k,v){state[id][k]=v;save();renderGrid();if(document.getElementById('detailView').classList.contains('active')){const cat=state[id].category;openCategory(cat);}}
+['search','filterPriority','filterStatus'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{if(document.getElementById('detailView').classList.contains('active'))showGrid();else renderGrid();}));
+document.getElementById('monthly').addEventListener('change',()=>{localStorage.setItem('abundancia_monthly',document.getElementById('monthly').value);});
+document.getElementById('goal').addEventListener('change',()=>{localStorage.setItem('abundancia_goal',document.getElementById('goal').value);calcStats();});
+document.getElementById('months').addEventListener('change',()=>{localStorage.setItem('abundancia_months',document.getElementById('months').value);});
+function exportCSV(){const rows=[['Categoria','Item','Prioridade','Destino','Preço unitário','Quantidade','Subtotal','Status','Notas'],...state.map(x=>[x.category,x.name,x.priority,x.destination,x.price,x.qty,(Number(x.price)||0)*(Number(x.qty)||1),x.status,x.notes||''])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='projeto-abundancia.csv';a.click();URL.revokeObjectURL(a.href)}
+// Load saved config
+document.getElementById('monthly').value=localStorage.getItem('abundancia_monthly')||'';
+document.getElementById('goal').value=localStorage.getItem('abundancia_goal')||'100000';
+document.getElementById('months').value=localStorage.getItem('abundancia_months')||'';
+renderGrid();
+</script>
+</body>
+</html>
