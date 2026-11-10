@@ -58,7 +58,8 @@ main{max-width:1280px;margin:auto;padding:20px 16px 80px}
   .hero-stats{grid-template-columns:1fr 1fr}
 }
 </style>
-<link rel="stylesheet" href="./abundancia-v2.css">
+<link rel="stylesheet" href="./abundancia-v2.css?v=20261110-item-icons-1">
+<script src="./item-icons.js?v=20261110-item-icons-1"></script>
 </head>
 <body>
 <header>
@@ -205,8 +206,9 @@ function openCategory(cat){
   const bannerPosition=catBannerPosition[cat]||'center';
   let rows='';
   items.forEach(x=>{
+    const icon=window.ABUNDANCIA_ITEM_ICONS?.[x.name]||'package';
     rows+='<div class="item-row" data-id="'+x.id+'">'+
-      '<div class="name"><div style="font-weight:650">'+esc(x.name)+'</div><small>Destino: '+esc(x.destination)+'</small></div>'+
+      '<div class="name"><div class="item-main"><span class="item-visual" aria-hidden="true"><img src="./icons/'+icon+'.svg" alt="" loading="lazy" width="30" height="30"></span><div class="item-copy"><div class="item-title">'+esc(x.name)+'</div><small>Destino: '+esc(x.destination)+'</small></div></div></div>'+
       '<label><small>Preço sugerido (R$)</small><input type="number" min="0" step="0.01" value="'+esc(x.suggestedPrice||'')+'" placeholder="Pesquisar" onchange="update('+x.id+',\'suggestedPrice\',this.value)"></label>'+
       '<label><small>Preço final (R$)</small><input type="number" min="0" step="0.01" value="'+esc(x.price)+'" placeholder="Editar" onchange="update('+x.id+',\'price\',this.value)"></label>'+
       '<label><small>Qtd</small><input type="number" min="1" value="'+x.qty+'" onchange="update('+x.id+',\'qty\',this.value)"></label>'+
