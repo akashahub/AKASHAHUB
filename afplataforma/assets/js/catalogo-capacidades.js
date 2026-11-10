@@ -1,6 +1,6 @@
 import { isMentorSession } from "./auth.js";
 
-const CATALOG = [
+export const CATALOG = [
 { id:"essencia", name:"01 · Arquitetura de Essência", summary:"Identidade, trajetória, autoconhecimento, capacidades e direção.", groups:[
 ["Investigação e diagnóstico pessoal",["Leitura de trajetória pessoal e profissional","Mapeamento de história de vida, talentos, competências e experiências","Mapeamento de valores, princípios, interesses e aptidões","Investigação de objetivos, aspirações e oportunidades","Mapeamento de habilidades comercializáveis","Construção de visão de futuro e dossiê de essência"]],
 ["Identidade e posicionamento pessoal",["Identidade profissional e perfil executivo","Posicionamento de empresários, especialistas e profissionais liberais","Construção de autoridade e narrativa pessoal","Biografia estratégica, currículo e portfólio","Apresentações pessoais e comunicação de competências"]],
