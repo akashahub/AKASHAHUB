@@ -404,5 +404,15 @@ service cloud.firestore {
       allow delete: if request.auth != null && request.auth.uid == uid;
     }
 
+    // PROJETO ABUNDÂNCIA — somente a conta proprietária do mentor.
+    // Caminho isolado; não concede acesso aos demais mentores da AF.
+    match /projetoAbundancia/{uid}/state/{documentId} {
+      allow read, create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.auth.token.email == "yanfili.simon@gmail.com"
+        && request.auth.token.email_verified == true;
+      allow delete: if false;
+    }
+
   }
 }
