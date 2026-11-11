@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, arrayUnion, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { startAkashaTracking, stopAkashaTracking } from "/shared-tools/akasha-telemetry.js";
 
 export const MENTOR = "yanfili.simon@gmail.com";
 const app = initializeApp({
@@ -13,6 +14,17 @@ const app = initializeApp({
 });
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+let trackedUid = null;
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    trackedUid = user.uid;
+    startAkashaTracking(user);
+  } else {
+    stopAkashaTracking();
+    trackedUid = null;
+  }
+});
 
 export function isMentor(email) {
   return String(email || "").trim().toLowerCase() === MENTOR;
