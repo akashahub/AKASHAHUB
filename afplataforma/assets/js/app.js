@@ -65,6 +65,7 @@ import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.j
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
 import { renderCatalogoCapacidades, bindCatalogoCapacidades } from "./catalogo-capacidades.js?v=20261110-1";
 import { renderAgenteIA, bindAgenteIA } from "./agente-ia.js?v=20261109-1";
+import { initGlobalSearch } from "./global-search.js?v=20261111-search-1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
 function renderCorpoLazy(renderer, ...args) {
@@ -953,6 +954,9 @@ async function onResetPassword() {
 }
 
 function init() {
+  initGlobalSearch();
+  window.addEventListener("af:global-search-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
+  window.addEventListener("af:global-search-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
   const demoWrap = document.getElementById("demoButtons");
   if (demoWrap) demoWrap.style.display = isDemoEnabled() ? "block" : "none";
 
