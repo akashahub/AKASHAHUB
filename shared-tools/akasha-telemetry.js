@@ -1,6 +1,7 @@
 const ENDPOINT = "https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/ah-user-intelligence";
 const SUPABASE_PUBLIC_KEY = "sb_publishable_cZOBLAGhZVoJ5w8aZxfHjQ_3zZbr-II";
 const SESSION_KEY = "ah_intelligence_session_v1";
+const STARTED_KEY = "ah_intelligence_started_v1";
 const HEARTBEAT_MS = 60_000;
 
 let activeUser = null;
@@ -17,6 +18,16 @@ function sessionId() {
     return id;
   } catch {
     return crypto.randomUUID();
+  }
+}
+
+function markSessionStarted() {
+  try {
+    const first = !sessionStorage.getItem(STARTED_KEY);
+    if (first) sessionStorage.setItem(STARTED_KEY, "1");
+    return first;
+  } catch {
+    return true;
   }
 }
 
@@ -60,11 +71,7 @@ export function startAkashaTracking(user) {
   activeUser = user;
   currentSessionId = sessionId();
 
-  const firstPageInTab = !sessionStorage.getItem("ah_intelligence_started_v1");
-  if (firstPageInTab) {
-    sessionStorage.setItem("ah_intelligence_started_v1", "1");
-    void send("session_start", user);
-  }
+  if (markSessionStarted()) void send("session_start", user);
   void send("page_view", user);
 
   heartbeatTimer = setInterval(() => {
