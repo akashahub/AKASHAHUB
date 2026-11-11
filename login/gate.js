@@ -1,4 +1,4 @@
-import { auth } from "/login/firebase.js";
+import { auth, recordLogin } from "/login/firebase.js";
 import {
   signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   GoogleAuthProvider, updateProfile, onAuthStateChanged,
@@ -72,6 +72,7 @@ function card(reason) {
   };
   async function done(cred) {
     err.textContent = "";
+    await recordLogin(cred.user);
     if (sessionStorage.getItem(AFTER) === "1") {
       sessionStorage.removeItem(AFTER);
       try {
