@@ -51,7 +51,6 @@ const GROUPS = [
   ["Mapa de Rede","Contatos e oportunidades","tool","network"],
   ["Lista de tarefas","Prioridades e execução","tool","tasks"],
   ["Pack de áudios","Biblioteca de áudios","url","/audios/"],
-  ["Catálogo de Capacidades","Inventário estratégico · acesso do mentor","view","catalogo-capacidades"]
  ]}
 ];
 
