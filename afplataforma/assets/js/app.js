@@ -954,6 +954,8 @@ async function onResetPassword() {
 }
 
 function init() {
+  window.addEventListener("af:phase-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
+  window.addEventListener("af:phase-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
   initGlobalSearch();
   window.addEventListener("af:global-search-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
   window.addEventListener("af:global-search-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
