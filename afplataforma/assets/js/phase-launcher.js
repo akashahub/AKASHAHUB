@@ -4,7 +4,7 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/f
 /* Atalhos das cinco fases + apoio transversal. A camada é aditiva e só aparece na AF Plataforma. */
 const GROUPS = [
  {id:"fase1",icon:"✧",title:"Fase 1 · Essência",desc:"Identidade, história e direção",items:[
-  ["Abrir roteiro em Sessões","26 formulários e roteiros","url","/sessoes/"],
+  ["Abrir roteiro em Sessões","26 encontros · perguntas e tarefas","url","/sessoes/"],
   ["Mesa da Essência","8 estações de aprofundamento","view","fase1-jogo"],
   ["Formulário de Marca / Identidade","Direção da marca e do projeto","view","fase1-marca"],
   ["Dossiê vivo","Fatos, hipóteses e decisões","view","fase1-dossie"],
