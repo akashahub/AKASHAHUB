@@ -404,6 +404,20 @@ service cloud.firestore {
       allow delete: if request.auth != null && request.auth.uid == uid;
     }
 
+    // LEGACY VAULT — links de bibliotecas compartilhados; edição somente por mentores AF.
+    match /legacyVault/{documentId} {
+      allow read: if request.auth != null;
+      allow create, update: if isAfMentor()
+        && request.resource.data.phaseLinks is map
+        && request.resource.data.phaseLinks.keys().hasAll(["1", "2", "3", "4", "5"])
+        && request.resource.data.phaseLinks["1"] is string
+        && request.resource.data.phaseLinks["2"] is string
+        && request.resource.data.phaseLinks["3"] is string
+        && request.resource.data.phaseLinks["4"] is string
+        && request.resource.data.phaseLinks["5"] is string;
+      allow delete: if false;
+    }
+
     // PROJETO ABUNDÂNCIA — somente a conta proprietária do mentor.
     // Caminho isolado; não concede acesso aos demais mentores da AF.
     match /projetoAbundancia/{uid}/state/{documentId} {
