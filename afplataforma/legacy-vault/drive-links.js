@@ -12,7 +12,7 @@ export const DRIVE_VAULT = {
     ]
   },
   phases: [
-    { id: "1", name: "Arquitetura de Essência", short: "Essência", icon: "✧", description: "Identidade, história, valores e direção inicial.", folderUrl: "", pillars: [
+    { id: "1", name: "Arquitetura de Essência", short: "Essência", icon: "✧", description: "Identidade, história, valores e direção inicial.", folderUrl: "https://drive.google.com/drive/folders/1q0niePuAqNwUhQQsT9JM_aJ137c8xqhp?usp=drive_link", pillars: [
       { id: "historia", title: "Identidade e história", description: "História pessoal, familiar, referências e visão de mundo.", icon: "◉", url: "" },
       { id: "valores", title: "Valores e capacidades", description: "Valores, talentos, competências e possibilidades.", icon: "◇", url: "" },
       { id: "consciencia", title: "Consciência e desenvolvimento", description: "Exercícios, leituras, práticas e conteúdos de aprofundamento.", icon: "✧", url: "" },
@@ -20,7 +20,7 @@ export const DRIVE_VAULT = {
       { id: "objetivos", title: "Objetivos e direção", description: "Objetivos pessoais, empresariais e visão de futuro.", icon: "◎", url: "" },
       { id: "leitura-financeira", title: "Leitura financeira inicial", description: "Materiais de introdução à realidade financeira e às prioridades.", icon: "⌁", url: "" }
     ] },
-    { id: "2", name: "Império Digital", short: "Império Digital", icon: "◈", description: "Posicionamento, marca, oferta e ativos digitais.", folderUrl: "", pillars: [
+    { id: "2", name: "Império Digital", short: "Império Digital", icon: "◈", description: "Posicionamento, marca, oferta e ativos digitais.", folderUrl: "https://drive.google.com/drive/folders/1jLAlheJSqDfuTTa5uUj2tS9eT3VSZ7RZ?usp=drive_link", pillars: [
       { id: "estrategia", title: "Estratégia e posicionamento", description: "Pesquisa, diferenciação, público e proposta de valor.", icon: "◎", url: "" },
       { id: "branding", title: "Branding e comunicação", description: "Identidade visual, verbal, narrativa e materiais.", icon: "✧", url: "" },
       { id: "ofertas", title: "Produtos, serviços e ofertas", description: "Modelos de negócio, ofertas, precificação inicial e monetização.", icon: "◇", url: "" },
@@ -28,7 +28,7 @@ export const DRIVE_VAULT = {
       { id: "marketing", title: "Marketing e aquisição", description: "Conteúdo, canais, campanhas e relacionamento.", icon: "↗", url: "" },
       { id: "jornada-comercial", title: "Jornada comercial", description: "Experiência do cliente, processo de venda e materiais comerciais.", icon: "⇢", url: "" }
     ] },
-    { id: "3", name: "Alinhamento Financeiro", short: "Alinhamento Financeiro", icon: "◎", description: "Organização financeira, indicadores, capital e decisões.", folderUrl: "", pillars: [
+    { id: "3", name: "Alinhamento Financeiro", short: "Alinhamento Financeiro", icon: "◎", description: "Organização financeira, indicadores, capital e decisões.", folderUrl: "https://drive.google.com/drive/folders/1jnj4k0tc-wqP3EGj4sIpw9uc3dXZjuv2?usp=drive_link", pillars: [
       { id: "educacao-financeira", title: "Educação financeira", description: "Fundamentos, hábitos e tomada de decisão.", icon: "▤", url: "" },
       { id: "cashflow", title: "Fluxo de caixa", description: "Entradas, saídas, previsibilidade e organização do caixa.", icon: "⇄", url: "" },
       { id: "planejamento", title: "Planejamento e metas", description: "Orçamento, metas, cenários e revisões.", icon: "◎", url: "" },
@@ -36,7 +36,7 @@ export const DRIVE_VAULT = {
       { id: "capital", title: "Capital e investimentos", description: "Capital, risco, liquidez e decisões de investimento.", icon: "↗", url: "" },
       { id: "patrimonio", title: "Organização patrimonial", description: "Visão de patrimônio, proteção e estruturação.", icon: "⌂", url: "" }
     ] },
-    { id: "4", name: "Expansão", short: "Expansão", icon: "↗", description: "Processos, aquisição, pessoas e crescimento sustentável.", folderUrl: "", pillars: [
+    { id: "4", name: "Expansão", short: "Expansão", icon: "↗", description: "Processos, aquisição, pessoas e crescimento sustentável.", folderUrl: "https://drive.google.com/drive/folders/1iBZ_ufGB7bEMsPZxJXwF8nEJDMgSRCAu?usp=drive_link", pillars: [
       { id: "processos", title: "Processos e procedimentos", description: "Fluxos, SOPs, padrões e rotinas operacionais.", icon: "▤", url: "" },
       { id: "gestao", title: "Gestão e liderança", description: "Papéis, responsabilidades, delegação e liderança.", icon: "♙", url: "" },
       { id: "canais", title: "Marketing e canais", description: "Aquisição, distribuição, conteúdo e campanhas.", icon: "↗", url: "" },
@@ -44,7 +44,7 @@ export const DRIVE_VAULT = {
       { id: "indicadores", title: "Indicadores e performance", description: "Métricas, experimentos, análise e melhoria contínua.", icon: "▥", url: "" },
       { id: "internacionalizacao", title: "Internacionalização", description: "Mercados, preparação e expansão geográfica.", icon: "◎", url: "" }
     ] },
-    { id: "5", name: "Legado", short: "Legado", icon: "⌂", description: "Continuidade, patrimônio, governança e transmissão.", folderUrl: "", pillars: [
+    { id: "5", name: "Legado", short: "Legado", icon: "⌂", description: "Continuidade, patrimônio, governança e transmissão.", folderUrl: "https://drive.google.com/drive/folders/1RLD71aMSimwNnA7l9h_MKeVrvCfNIJPY?usp=drive_link", pillars: [
       { id: "zen-negocios", title: "Zen Negócios", description: "Consciência, contexto, estratégia, capital, risco, estrutura e continuidade.", icon: "✧", url: "" },
       { id: "governanca", title: "Governança e estrutura", description: "Governança, organização societária e mecanismos de decisão.", icon: "⌘", url: "" },
       { id: "patrimonio-legado", title: "Patrimônio e proteção", description: "Organização patrimonial, ativos e visão de longo prazo.", icon: "⌂", url: "" },
