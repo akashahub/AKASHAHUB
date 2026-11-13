@@ -171,29 +171,50 @@ export async function navigate(view) {
   if (dock && dock.parentElement !== document.body) document.body.appendChild(dock);
 
   let html = "";
-  if (view.startsWith("module:")) {
-    const id = view.split(":")[1];
-    html = renderers.moduleDetail ? renderers.moduleDetail(id) : "";
-  } else if (view.startsWith("corpo:")) {
-    const parts = view.split(":");
-    const id = parts[1];
-    html = parts[2] && renderers.corpoSpace ? renderers.corpoSpace(id, parts.slice(2).join(":")) : (renderers.corpoArea ? renderers.corpoArea(id) : "");
-  } else if (view.startsWith("comp:")) {
-    const id = view.split(":")[1];
-    html = renderers.compApp ? renderers.compApp(id) : "";
-  } else if (renderers[view]) {
-    html = renderers[view]();
-  } else {
-    html = `<div class="view active"><p class="empty">View não encontrada</p></div>`;
+  try {
+    if (view.startsWith("module:")) {
+      const id = view.split(":")[1];
+      html = renderers.moduleDetail ? renderers.moduleDetail(id) : "";
+    } else if (view.startsWith("corpo:")) {
+      const parts = view.split(":");
+      const id = parts[1];
+      html = parts[2] && renderers.corpoSpace
+        ? renderers.corpoSpace(id, parts.slice(2).join(":"))
+        : (renderers.corpoArea ? renderers.corpoArea(id) : "");
+    } else if (view.startsWith("comp:")) {
+      const id = view.split(":")[1];
+      html = renderers.compApp ? renderers.compApp(id) : "";
+    } else if (renderers[view]) {
+      html = renderers[view]();
+    } else {
+      html = `<div class="view active"><p class="empty">View não encontrada: ${esc(view)}</p></div>`;
+    }
+
+    if (html && typeof html.then === "function") {
+      root.innerHTML = `<div class="view active"><p class="empty">Carregando…</p></div>`;
+      html = await html;
+      if (currentView !== view) return;
+    }
+  } catch (error) {
+    console.error("[AF navigation] Falha ao renderizar a view " + view + ":", error);
+    const detail = esc(error?.message || error?.name || "Erro desconhecido");
+    html = `<div class="view active" role="alert">
+      <section style="max-width:760px;margin:28px auto;padding:22px;border:1px solid rgba(190,120,90,.45);border-radius:16px;background:rgba(190,120,90,.08)">
+        <p class="hero-line">DIAGNÓSTICO DE RENDERIZAÇÃO</p>
+        <h2 class="hero-title">Esta área encontrou um erro ao abrir</h2>
+        <p class="hero-sub">A navegação e as outras áreas continuam disponíveis. O erro foi isolado para evitar que o conteúdo desapareça.</p>
+        <p style="padding:12px;border-radius:9px;background:rgba(0,0,0,.18);overflow-wrap:anywhere"><strong>Área:</strong> ${esc(view)}<br><strong>Detalhe:</strong> ${detail}</p>
+        <button class="tool-btn" type="button" data-nav="dashboard">Voltar ao painel</button>
+      </section>
+    </div>`;
   }
 
-  if (html && typeof html.then === "function") {
-    root.innerHTML = `<div class="view active"><p class="empty">Carregando…</p></div>`;
-    html = await html;
-    if (currentView !== view) return;
+  if (typeof html !== "string" || !html.trim()) {
+    console.error("[AF navigation] A view não retornou conteúdo:", view, html);
+    html = `<div class="view active" role="alert"><section style="max-width:760px;margin:28px auto;padding:22px;border:1px solid rgba(190,120,90,.45);border-radius:16px"><h2 class="hero-title">Conteúdo indisponível</h2><p class="hero-sub">A área "${esc(view)}" foi localizada, mas não retornou conteúdo para exibição.</p><button class="tool-btn" type="button" data-nav="dashboard">Voltar ao painel</button></section></div>`;
   }
 
-  if (typeof html === "string" && fase3Aberta(view)) {
+  if (fase3Aberta(view)) {
     html = html.replace('<div class="view active">', '<div class="view active"><div class="back-link" data-nav="fase3">← Fase 3</div>');
   }
 
@@ -224,7 +245,14 @@ export async function navigate(view) {
   };
 
   setActiveNav(view);
-  if (afterNavigateHook) afterNavigateHook(view);
+  if (afterNavigateHook) {
+    try {
+      afterNavigateHook(view);
+    } catch (error) {
+      // Uma falha ao conectar controles não deve apagar a página já renderizada.
+      console.error("[AF navigation] Falha ao conectar controles da view " + view + ":", error);
+    }
+  }
 }
 
 export function openSide() {
