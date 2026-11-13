@@ -8,64 +8,57 @@ let data = { sistema: "", padroes: "", relacoes: "", reflexoes: "", observacoes:
 let view = "dashboard";
 
 function toast(msg) {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.classList.remove("hidden");
-  clearTimeout(window._t);
-  window._t = setTimeout(() => el.classList.add("hidden"), 2800);
+  const el = document.getElementById("toast"); if (!el) return;
+  el.textContent = msg; el.classList.remove("hidden");
+  clearTimeout(window._t); window._t = setTimeout(() => el.classList.add("hidden"), 2800);
 }
-
 function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c])); }
-
 async function loadData(uid) {
-  const ref = doc(db, COL, uid);
-  const snap = await getDoc(ref);
-  if (snap.exists()) data = { ...data, ...snap.data() };
+  try { const snap = await getDoc(doc(db, COL, uid)); if (snap.exists()) data = { ...data, ...snap.data() }; } catch {}
   render();
 }
-
 async function saveData() {
-  if (!currentUser) return;
-  const ref = doc(db, COL, currentUser.uid);
-  await setDoc(ref, { ...data, updatedAt: serverTimestamp(), uid: currentUser.uid }, { merge: true });
-  toast("Salvo com sucesso.");
+  if (!currentUser) { toast("Faça login para salvar."); return; }
+  try { await setDoc(doc(db, COL, currentUser.uid), { ...data, updatedAt: serverTimestamp(), uid: currentUser.uid }, { merge: true }); toast("Salvo com sucesso."); }
+  catch { toast("Erro ao salvar."); }
   render();
 }
-
 function progress() {
   const fields = ["sistema", "padroes", "relacoes", "reflexoes"];
-  const filled = fields.filter(f => (data[f] || "").trim().length > 20).length;
-  return Math.round((filled / fields.length) * 100);
+  return Math.round((fields.filter(f => (data[f] || "").trim().length > 20).length / fields.length) * 100);
 }
-
 function nextStep(current) {
   const STEPS = ["sistema", "padroes", "relacoes", "reflexoes"];
   const i = STEPS.indexOf(current);
-  if (i === -1 || i === STEPS.length - 1) return "mapa";
-  return STEPS[i + 1];
+  return i === -1 || i === STEPS.length - 1 ? "mapa" : STEPS[i + 1];
 }
 window.setView = setView;
-
 function setView(v) {
   view = v;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v));
-  document.getElementById("sidebar").classList.remove("open");
+  const side = document.getElementById("sidebar"); if (side) side.classList.remove("open");
   render();
 }
-
-document.getElementById("nav").addEventListener("click", e => {
-  const b = e.target.closest("button[data-view]");
-  if (b) setView(b.dataset.view);
-});
-document.getElementById("menuBtn").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("open"));
-
+function bind() {
+  const nav = document.getElementById("nav"); if (nav) nav.addEventListener("click", e => { const b = e.target.closest("button[data-view]"); if (b) setView(b.dataset.view); });
+  const menu = document.getElementById("menuBtn"); if (menu) menu.addEventListener("click", () => { const s = document.getElementById("sidebar"); if (s) s.classList.toggle("open"); });
+  document.addEventListener("click", e => {
+    const goto = e.target.closest("[data-goto]"); if (goto) { setView(goto.dataset.goto); return; }
+    const cont = e.target.closest("[data-continue]");
+    if (cont) {
+      document.querySelectorAll("textarea[id^='f-']").forEach(el => { const key = el.id.slice(2); if (key in data) data[key] = el.value; });
+      saveData().then(() => setView(nextStep(cont.dataset.continue)));
+    }
+  });
+}
 function render() {
   const p = progress();
-  const content = document.getElementById("content");
-  document.getElementById("breadcrumb").textContent = "CONSTELAÇÃO / " + view.toUpperCase();
+  const content = document.getElementById("content"); if (!content) return;
+  const crumb = document.getElementById("breadcrumb"); if (crumb) crumb.textContent = "CONSTELAÇÃO / " + view.toUpperCase();
+  const notice = !currentUser ? `<div class="card" style="border-color:#d6b45d66"><p><strong>Login necessário para salvar.</strong> <a class="btn" href="/afplataforma/">Fazer login</a></p></div>` : "";
 
   if (view === "dashboard") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Constelação Familiar</div>
       <h1 class="title">Seu sistema</h1>
       <p class="sub">Mapeamento reflexivo de padrões, relações e dinâmica familiar. Não é terapia; é observação consciente.</p>
@@ -84,7 +77,7 @@ function render() {
         <p>Use o exemplo da Akasha Hub como espelho. Observe sem julgamento e idealize o que faz sentido para o seu sistema.</p>
       </div>`;
   } else if (view === "sistema") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Sistema familiar</h1>
       <p class="sub">Estrutura, membros relevantes e dinâmica observada.</p>
@@ -104,7 +97,7 @@ function render() {
       </div>
       <button class="btn" data-continue="sistema">Salvar e Continuar</button>`;
   } else if (view === "padroes") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Padrões observados</h1>
       <p class="sub">Repetições, lealdades e dinâmicas que se repetem.</p>
@@ -124,7 +117,7 @@ function render() {
       </div>
       <button class="btn" data-continue="padroes">Salvar e Continuar</button>`;
   } else if (view === "relacoes") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Relações chave</h1>
       <p class="sub">Relações que mais influenciam decisões e identidade.</p>
@@ -144,7 +137,7 @@ function render() {
       </div>
       <button class="btn" data-continue="relacoes">Salvar e Continuar</button>`;
   } else if (view === "reflexoes") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Reflexões</h1>
       <p class="sub">O que isso revela sobre suas escolhas atuais.</p>
@@ -164,7 +157,7 @@ function render() {
       </div>
       <button class="btn" data-continue="reflexoes">Salvar e Continuar</button>`;
   } else if (view === "mapa") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Entregável · Nível Completo</div>
       <h1 class="title">Mapa de Constelação</h1>
       <p class="sub">Síntese reflexiva do sistema, padrões e relações. Uso pessoal e confidencial.</p>
@@ -180,27 +173,15 @@ function render() {
   }
 }
 
-document.addEventListener("click", e => {
-  const goto = e.target.closest("[data-goto]");
-  if (goto) { setView(goto.dataset.goto); return; }
-  const cont = e.target.closest("[data-continue]");
-  if (cont) {
-    const step = cont.dataset.continue;
-    document.querySelectorAll("textarea[id^='f-']").forEach(el => {
-      let key = el.id.slice(2);
-      if (key in data) data[key] = el.value;
-    });
-    saveData().then(() => setView(nextStep(step)));
-  }
-});
+bind();
+render();
 
 onAuthStateChanged(auth, user => {
-  if (!user) {
-    document.getElementById("content").innerHTML = `<div class="card"><h1>Acesso restrito</h1><p>Faça login na AF Plataforma.</p><a class="btn" href="/afplataforma/">Ir para login</a></div>`;
-    return;
-  }
-  currentUser = user;
-  document.getElementById("userPill").textContent = user.email || "Mentorando";
-  document.getElementById("avatar").textContent = (user.email || "C")[0].toUpperCase();
-  loadData(user.uid);
+  currentUser = user || null;
+  if (user) {
+    const pill = document.getElementById("userPill"); const av = document.getElementById("avatar");
+    if (pill) pill.textContent = user.email || "Mentorando";
+    if (av) av.textContent = (user.email || "C")[0].toUpperCase();
+    loadData(user.uid);
+  } else render();
 });
