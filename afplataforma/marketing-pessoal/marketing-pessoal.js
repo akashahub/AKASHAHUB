@@ -15,7 +15,7 @@ function toast(msg) {
   window._t = setTimeout(() => el.classList.add("hidden"), 2800);
 }
 
-function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c])); }
 
 async function loadData(uid) {
   const ref = doc(db, COL, uid);
@@ -66,7 +66,7 @@ function render() {
 
   if (view === "dashboard") {
     content.innerHTML = `
-      <div class="eyebrow">Marketing Pessoal</div>
+      <div class="eyebrow">Marketing Pessoal OS</div>
       <h1 class="title">Seu marketing</h1>
       <p class="sub">Narrativa, público, canais e ações. O resultado é um Plano de Marketing Pessoal utilizável.</p>
       <div class="card">
@@ -78,34 +78,86 @@ function render() {
         <h3>Próximo passo</h3>
         <p>${p < 100 ? "Continue preenchendo para gerar seu plano completo." : "Plano pronto. Use como guia de ação."}</p>
         <button class="btn" data-goto="narrativa">Começar</button>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Como usar</div>
+        <p>Exemplos reais da Akasha Hub + orientação para você idealizar o seu marketing pessoal.</p>
       </div>`;
   } else if (view === "narrativa") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Narrativa</h1>
       <p class="sub">A história que você conta sobre si e seu trabalho.</p>
       <div class="field"><label>Narrativa principal</label><textarea id="f-narrativa">${esc(data.narrativa)}</textarea></div>
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>De consumidores de transformação a construtores de legado. A narrativa da Akasha Hub é a de quem já entendeu que identidade mal mapeada gera autoridade frágil — e criou o sistema operacional que resolve isso. Tecnologia da alma a serviço de quem constrói.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir a história que você conta sobre o que faz.</p>
+        <ul>
+          <li>Qual é o problema que você resolve de forma única?</li>
+          <li>Qual transformação você ajuda a pessoa a viver?</li>
+        </ul>
+      </div>
       <button class="btn" data-continue="narrativa">Salvar e Continuar</button>`;
   } else if (view === "publico") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Público</h1>
       <p class="sub">Quem você quer alcançar e o que eles precisam.</p>
       <div class="field"><label>Público-alvo</label><textarea id="f-publico">${esc(data.publico)}</textarea></div>
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Empresários, investidores e profissionais de alto potencial que já consomem muita transformação, mas querem construir legado real. Pessoas que valorizam essência, autoridade consciente e sistemas que sustentam crescimento.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: descrever quem é a pessoa ideal (não todo mundo).</p>
+        <ul>
+          <li>Quem já está pronto para o que você oferece?</li>
+          <li>Qual é a dor ou desejo central desse público?</li>
+        </ul>
+      </div>
       <button class="btn" data-continue="publico">Salvar e Continuar</button>`;
   } else if (view === "canais") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Canais</h1>
       <p class="sub">Onde você se apresenta e gera presença.</p>
       <div class="field"><label>Canais prioritários</label><textarea id="f-canais">${esc(data.canais)}</textarea></div>
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Site próprio (akashahub.com.br), plataforma AF, conteúdo de autoridade (identidade + tecnologia), e canais onde o público de alto potencial já está. Foco em profundidade, não em volume.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: escolher onde sua presença faz mais sentido.</p>
+        <ul>
+          <li>Onde seu público já consome conteúdo de qualidade?</li>
+          <li>Qual canal você consegue sustentar com consistência?</li>
+        </ul>
+      </div>
       <button class="btn" data-continue="canais">Salvar e Continuar</button>`;
   } else if (view === "acoes") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Ações</h1>
       <p class="sub">O que você vai fazer de forma consistente.</p>
       <div class="field"><label>Ações e rotina</label><textarea id="f-acoes">${esc(data.acoes)}</textarea></div>
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Publicar conteúdo de autoridade sobre identidade e legado, manter a AF Plataforma como sistema operacional vivo, e gerar conversas de alto nível com empresários e profissionais que querem construir em vez de consumir.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir ações pequenas e consistentes.</p>
+        <ul>
+          <li>Qual ação semanal você consegue sustentar?</li>
+          <li>Como essa ação reforça sua narrativa e autoridade?</li>
+        </ul>
+      </div>
       <button class="btn" data-continue="acoes">Salvar e Continuar</button>`;
   } else if (view === "plano") {
     content.innerHTML = `
