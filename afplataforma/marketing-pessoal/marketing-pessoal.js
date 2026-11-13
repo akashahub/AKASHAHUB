@@ -4,7 +4,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/fi
 
 const COL = "afMarketingPessoal";
 let currentUser = null;
-let data = { narrativa: "", publico: "", valor: "", canais: "", acoes: "", observacoes: "" };
+let data = { narrativa: "", publico: "", canais: "", acoes: "", observacoes: "" };
 let view = "dashboard";
 
 function toast(msg) {
@@ -33,10 +33,18 @@ async function saveData() {
 }
 
 function progress() {
-  const fields = ["narrativa", "publico", "valor", "canais", "acoes"];
+  const fields = ["narrativa", "publico", "canais", "acoes"];
   const filled = fields.filter(f => (data[f] || "").trim().length > 20).length;
   return Math.round((filled / fields.length) * 100);
 }
+
+function nextStep(current) {
+  const STEPS = ["narrativa", "publico", "canais", "acoes"];
+  const i = STEPS.indexOf(current);
+  if (i === -1 || i === STEPS.length - 1) return "plano";
+  return STEPS[i + 1];
+}
+window.setView = setView;
 
 function setView(v) {
   view = v;
@@ -59,8 +67,8 @@ function render() {
   if (view === "dashboard") {
     content.innerHTML = `
       <div class="eyebrow">Marketing Pessoal</div>
-      <h1 class="title">Sua autoridade</h1>
-      <p class="sub">Transforme a essência em narrativa, presença e ações concretas de marketing pessoal.</p>
+      <h1 class="title">Seu marketing</h1>
+      <p class="sub">Narrativa, público, canais e ações. O resultado é um Plano de Marketing Pessoal utilizável.</p>
       <div class="card">
         <div>Progresso do plano</div>
         <div class="progress"><span style="width:${p}%"></span></div>
@@ -68,59 +76,63 @@ function render() {
       </div>
       <div class="card">
         <h3>Próximo passo</h3>
-        <p>${p < 100 ? "Defina narrativa e público para gerar o plano de ações." : "Plano pronto. Execute e revise mensalmente."}</p>
-        <button class="btn" onclick="setView('narrativa')">Começar pela narrativa</button>
+        <p>${p < 100 ? "Continue preenchendo para gerar seu plano completo." : "Plano pronto. Use como guia de ação."}</p>
+        <button class="btn" data-goto="narrativa">Começar</button>
       </div>`;
   } else if (view === "narrativa") {
     content.innerHTML = `
       <div class="eyebrow">Módulo</div>
-      <h1 class="title">Narrativa pessoal</h1>
-      <p class="sub">A história que você conta e como se apresenta.</p>
-      <div class="field"><label>Narrativa e bio</label><textarea id="f-narrativa">${esc(data.narrativa)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.narrativa = document.getElementById("f-narrativa").value; saveData(); };
+      <h1 class="title">Narrativa</h1>
+      <p class="sub">A história que você conta sobre si e seu trabalho.</p>
+      <div class="field"><label>Narrativa principal</label><textarea id="f-narrativa">${esc(data.narrativa)}</textarea></div>
+      <button class="btn" data-continue="narrativa">Salvar e Continuar</button>`;
   } else if (view === "publico") {
     content.innerHTML = `
       <div class="eyebrow">Módulo</div>
-      <h1 class="title">Público e valor</h1>
-      <p class="sub">Para quem você existe e o valor que entrega.</p>
-      <div class="field"><label>Público ideal</label><textarea id="f-publico">${esc(data.publico)}</textarea></div>
-      <div class="field"><label>Proposta de valor</label><textarea id="f-valor">${esc(data.valor)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => {
-      data.publico = document.getElementById("f-publico").value;
-      data.valor = document.getElementById("f-valor").value;
-      saveData();
-    };
+      <h1 class="title">Público</h1>
+      <p class="sub">Quem você quer alcançar e o que eles precisam.</p>
+      <div class="field"><label>Público-alvo</label><textarea id="f-publico">${esc(data.publico)}</textarea></div>
+      <button class="btn" data-continue="publico">Salvar e Continuar</button>`;
   } else if (view === "canais") {
     content.innerHTML = `
       <div class="eyebrow">Módulo</div>
-      <h1 class="title">Canais e presença</h1>
-      <p class="sub">Onde e como você aparece.</p>
-      <div class="field"><label>Canais prioritários e presença</label><textarea id="f-canais">${esc(data.canais)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.canais = document.getElementById("f-canais").value; saveData(); };
+      <h1 class="title">Canais</h1>
+      <p class="sub">Onde você se apresenta e gera presença.</p>
+      <div class="field"><label>Canais prioritários</label><textarea id="f-canais">${esc(data.canais)}</textarea></div>
+      <button class="btn" data-continue="canais">Salvar e Continuar</button>`;
   } else if (view === "acoes") {
     content.innerHTML = `
       <div class="eyebrow">Módulo</div>
-      <h1 class="title">Plano de ações</h1>
-      <p class="sub">Ações concretas dos próximos 30-90 dias.</p>
-      <div class="field"><label>Ações e cronograma</label><textarea id="f-acoes">${esc(data.acoes)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.acoes = document.getElementById("f-acoes").value; saveData(); };
+      <h1 class="title">Ações</h1>
+      <p class="sub">O que você vai fazer de forma consistente.</p>
+      <div class="field"><label>Ações e rotina</label><textarea id="f-acoes">${esc(data.acoes)}</textarea></div>
+      <button class="btn" data-continue="acoes">Salvar e Continuar</button>`;
   } else if (view === "plano") {
     content.innerHTML = `
       <div class="eyebrow">Entregável</div>
       <h1 class="title">Plano de Marketing Pessoal</h1>
-      <p class="sub">Síntese pronta para execução e revisão.</p>
+      <p class="sub">Síntese para orientar sua presença e comunicação.</p>
       <div class="card"><h3>Narrativa</h3><p>${esc(data.narrativa) || "—"}</p></div>
       <div class="card"><h3>Público</h3><p>${esc(data.publico) || "—"}</p></div>
-      <div class="card"><h3>Valor</h3><p>${esc(data.valor) || "—"}</p></div>
       <div class="card"><h3>Canais</h3><p>${esc(data.canais) || "—"}</p></div>
       <div class="card"><h3>Ações</h3><p>${esc(data.acoes) || "—"}</p></div>
       <p style="color:var(--muted);font-size:12px;margin-top:24px">Progresso: ${p}% · Dados no Firestore (afMarketingPessoal).</p>`;
   }
 }
+
+document.addEventListener("click", e => {
+  const goto = e.target.closest("[data-goto]");
+  if (goto) { setView(goto.dataset.goto); return; }
+  const cont = e.target.closest("[data-continue]");
+  if (cont) {
+    const step = cont.dataset.continue;
+    document.querySelectorAll("textarea[id^='f-']").forEach(el => {
+      let key = el.id.slice(2);
+      if (key in data) data[key] = el.value;
+    });
+    saveData().then(() => setView(nextStep(step)));
+  }
+});
 
 onAuthStateChanged(auth, user => {
   if (!user) {
