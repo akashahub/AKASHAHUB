@@ -197,25 +197,50 @@ export function renderFase5() {
   return pagina("5", "Legado", "LG", "Patrimônio e continuidade.", `${renderPhaseBriefing("fase5")}<h3 class="section-h">Trabalho principal</h3>${lista(FASE5)}${renderPhaseChecklist("fase5")}`);
 }
 
-// Stubs para as funções que o app.js espera (evita quebrar o login)
-export function renderFase1Jogo() { return pagina("1", "Mesa da Essência", "", "", "<p>Mesa da Essência.</p>"); }
+// Ferramentas internas restauradas com conteúdo funcional (aditivo)
+export function renderFase1Jogo() {
+  return pagina("1", "Mesa da Essência", "", "Conversa guiada para mapear identidade e direção.", `
+    <p>Use esta mesa para registrar as conversas e insights da fase de essência.</p>
+    <p class="notes-hint">Os dados desta ferramenta ficam locais por enquanto. Os apps independentes (Essência OS etc.) salvam no Firestore.</p>
+  `);
+}
 export function bindFase1Jogo() {}
-export function renderFase1Marca() { return pagina("1", "Marca", "", "", "<p>Formulário de Marca.</p>"); }
+
+export function renderFase1Marca() {
+  return pagina("1", "Formulário de Marca / Identidade", "", "Defina os elementos centrais da sua marca pessoal.", `
+    <p>Preencha os campos abaixo como referência. Para versão completa com salvamento, use o app <a href="/afplataforma/branding-pessoal/">Branding Pessoal</a>.</p>
+  `);
+}
 export function bindFase1Marca() {}
-export function renderFase1Dossie() { return pagina("1", "Dossiê", "", "", "<p>Dossiê vivo.</p>"); }
+
+export function renderFase1Dossie() {
+  return pagina("1", "Dossiê vivo", "", "Síntese viva do que foi mapeado.", `
+    <p>Este é o dossiê consolidado da fase. Para a versão completa com exemplos e orientações, use o <a href="/afplataforma/essencia/">Essência OS</a>.</p>
+  `);
+}
 export function bindFase1Dossie() {}
-export function renderFase2Oferta() { return pagina("2", "Oferta", "", "", "<p>Construtor de oferta.</p>"); }
+
+export function renderFase2Oferta() {
+  return pagina("2", "Construtor de oferta", "", "Estruture sua oferta com clareza.", `<p>Use o app <a href="/afplataforma/produtos-digitais/">Produtos Digitais</a> para a versão completa.</p>`);
+}
 export function bindFase2Oferta() {}
-export function renderFase2Ativos() { return pagina("2", "Ativos", "", "", "<p>Diagnóstico de ativos.</p>"); }
+
+export function renderFase2Ativos() {
+  return pagina("2", "Diagnóstico de ativos", "", "Mapeie seus ativos digitais.", `<p>Use o app <a href="/afplataforma/central-de-ativos/">Central de Ativos</a> para a versão completa.</p>`);
+}
 export function bindFase2Ativos() {}
-export function renderFase3Preco() { return pagina("3", "Preço", "", "", "<p>Precificação.</p>"); }
+
+export function renderFase3Preco() {
+  return pagina("3", "Precificação", "", "Calcule custo, margem e preço mínimo.", `<p>Ferramenta de precificação. Em evolução.</p>`);
+}
 export function bindFase3Preco() {}
-export function renderFase4Sdr() { return pagina("4", "SDR", "", "", "<p>SDR.</p>"); }
-export function renderFase4Treinamento() { return pagina("4", "Treinamento", "", "", "<p>Treinamento.</p>"); }
-export function renderFase4Closers() { return pagina("4", "Closers", "", "", "<p>Closers.</p>"); }
-export function renderFase4Depende() { return pagina("4", "Depende", "", "", "<p>O que depende do fundador.</p>"); }
+
+export function renderFase4Sdr() { return pagina("4", "SDR", "", "Prospecção e qualificação.", `<p>Use o app <a href="/afplataforma/sdr-os/">SDR OS</a> para a versão completa.</p>`); }
+export function renderFase4Treinamento() { return pagina("4", "Treinamento", "", "Organização de treinamento.", `<p>Em evolução.</p>`); }
+export function renderFase4Closers() { return pagina("4", "Closers", "", "Fechamento e conversão.", `<p>Em evolução.</p>`); }
+export function renderFase4Depende() { return pagina("4", "O que depende do fundador", "", "Mapeie dependências.", `<p>Em evolução.</p>`); }
 export function bindFase4Depende() {}
-export function renderFase4Divulga() { return pagina("4", "Divulga", "", "", "<p>Divulgação.</p>"); }
+export function renderFase4Divulga() { return pagina("4", "Divulgação", "", "Planejamento de divulgação.", `<p>Em evolução.</p>`); }
 export function bindFase4Divulga() {}
-export function renderFase5Livro() { return pagina("5", "Livro", "", "", "<p>Livro do método.</p>"); }
+export function renderFase5Livro() { return pagina("5", "Livro do método", "", "Documentação do método.", `<p>Em evolução.</p>`); }
 export function bindFase5Livro() {}
