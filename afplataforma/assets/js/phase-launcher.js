@@ -93,7 +93,9 @@ function build(){
   const group=GROUPS.find(g=>g.id===btn.dataset.phaseGroup);if(!group)return;
   layer.querySelector("#ah-phase-title").textContent=group.title;
   layer.querySelector("#ah-phase-desc").textContent=group.desc;
-  layer.querySelector("#ah-phase-grid").innerHTML=group.items.map(([title,desc,type,value])=>{
+  const vaultPhase=group.id==="apoio"?"geral":group.id.replace("fase","");
+  const phaseItems=[...group.items,["Legacy Vault · Biblioteca da fase","Conteúdos, mídias e materiais no Google Drive","url",`/afplataforma/legacy-vault/?fase=${vaultPhase}`]];
+  layer.querySelector("#ah-phase-grid").innerHTML=phaseItems.map(([title,desc,type,value])=>{
    const tag=type==="url"?"a":"button";const href=type==="url"?` href="${value}"`:" type=\"button\"";
    const attrs=type==="url"?"":" data-phase-action=\""+type+"\" data-phase-value=\""+value+"\"";
    return `<${tag} class="ah-phase-item"${href}${attrs}><span class="ico" aria-hidden="true">${group.icon}</span><span><strong>${title}</strong><small>${desc}</small></span></${tag}>`;
