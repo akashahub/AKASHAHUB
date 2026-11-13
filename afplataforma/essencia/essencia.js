@@ -1,4 +1,4 @@
-import { auth, db, isMentorIdentity } from "../firebase/firebase-config.js";
+import { auth, db } from "../firebase/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -8,64 +8,63 @@ let data = { historia: "", valores: "", crencas: "", posicionamento: "", proposi
 let view = "dashboard";
 
 function toast(msg) {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.classList.remove("hidden");
-  clearTimeout(window._t);
-  window._t = setTimeout(() => el.classList.add("hidden"), 2800);
+  const el = document.getElementById("toast"); if (!el) return;
+  el.textContent = msg; el.classList.remove("hidden");
+  clearTimeout(window._t); window._t = setTimeout(() => el.classList.add("hidden"), 2800);
 }
-
 function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c])); }
 
 async function loadData(uid) {
-  const ref = doc(db, COL, uid);
-  const snap = await getDoc(ref);
-  if (snap.exists()) data = { ...data, ...snap.data() };
+  try { const snap = await getDoc(doc(db, COL, uid)); if (snap.exists()) data = { ...data, ...snap.data() }; } catch {}
   render();
 }
-
 async function saveData() {
-  if (!currentUser) return;
-  const ref = doc(db, COL, currentUser.uid);
-  await setDoc(ref, { ...data, updatedAt: serverTimestamp(), uid: currentUser.uid }, { merge: true });
-  toast("Salvo com sucesso.");
+  if (!currentUser) { toast("Faça login para salvar."); return; }
+  try { await setDoc(doc(db, COL, currentUser.uid), { ...data, updatedAt: serverTimestamp(), uid: currentUser.uid }, { merge: true }); toast("Salvo com sucesso."); }
+  catch { toast("Erro ao salvar."); }
   render();
 }
-
 function progress() {
   const fields = ["historia", "valores", "crencas", "posicionamento", "proposito"];
-  const filled = fields.filter(f => (data[f] || "").trim().length > 20).length;
-  return Math.round((filled / fields.length) * 100);
+  return Math.round((fields.filter(f => (data[f] || "").trim().length > 20).length / fields.length) * 100);
 }
-
 function nextStep(current) {
   const STEPS = ["historia", "valores", "posicionamento", "proposito"];
   const i = STEPS.indexOf(current);
-  if (i === -1 || i === STEPS.length - 1) return "dossie";
-  return STEPS[i + 1];
+  return i === -1 || i === STEPS.length - 1 ? "dossie" : STEPS[i + 1];
 }
 window.setView = setView;
-
 function setView(v) {
   view = v;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v));
-  document.getElementById("sidebar").classList.remove("open");
+  const side = document.getElementById("sidebar"); if (side) side.classList.remove("open");
   render();
 }
-
-document.getElementById("nav").addEventListener("click", e => {
-  const b = e.target.closest("button[data-view]");
-  if (b) setView(b.dataset.view);
-});
-document.getElementById("menuBtn").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("open"));
-
+function bind() {
+  const nav = document.getElementById("nav"); if (nav) nav.addEventListener("click", e => { const b = e.target.closest("button[data-view]"); if (b) setView(b.dataset.view); });
+  const menu = document.getElementById("menuBtn"); if (menu) menu.addEventListener("click", () => { const s = document.getElementById("sidebar"); if (s) s.classList.toggle("open"); });
+  document.addEventListener("click", e => {
+    const goto = e.target.closest("[data-goto]"); if (goto) { setView(goto.dataset.goto); return; }
+    const cont = e.target.closest("[data-continue]");
+    if (cont) {
+      document.querySelectorAll("textarea[id^='f-']").forEach(el => {
+        let key = el.id.slice(2);
+        const map = {pos: 'posicionamento', prop: 'proposito'};
+        if (key in map) key = map[key];
+        if (key in data) data[key] = el.value;
+      });
+      saveData().then(() => setView(nextStep(cont.dataset.continue)));
+    }
+  });
+}
 function render() {
   const p = progress();
-  const content = document.getElementById("content");
-  document.getElementById("breadcrumb").textContent = "ESSÊNCIA / " + view.toUpperCase().replace("-", " ");
+  const content = document.getElementById("content"); if (!content) return;
+  const crumb = document.getElementById("breadcrumb"); if (crumb) crumb.textContent = "ESSÊNCIA / " + view.toUpperCase().replace("-", " ");
+  const notice = !currentUser ? `<div class="card" style="border-color:#d6b45d66"><p><strong>Login necessário para salvar.</strong> <a class="btn" href="/afplataforma/">Fazer login</a></p></div>` : "";
 
   if (view === "dashboard") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Arquitetura de Essência</div>
       <h1 class="title">Sua essência</h1>
       <p class="sub">Mapeie identidade, história, valores e direção. O resultado é um Dossiê de Essência claro e utilizável.</p>
@@ -84,7 +83,7 @@ function render() {
         <p>Cada etapa tem um exemplo real da Akasha Hub + uma orientação para você idealizar o seu. Não copie — use como espelho para encontrar a sua versão.</p>
       </div>`;
   } else if (view === "historia") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">História pessoal</h1>
       <p class="sub">Contexto, experiências formativas e o que moldou quem você é.</p>
@@ -104,7 +103,7 @@ function render() {
       </div>
       <button class="btn" data-continue="historia">Salvar e Continuar</button>`;
   } else if (view === "valores") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Valores e crenças</h1>
       <p class="sub">Princípios que orientam decisões e padrões a observar.</p>
@@ -126,7 +125,7 @@ function render() {
       </div>
       <button class="btn" data-continue="valores">Salvar e Continuar</button>`;
   } else if (view === "posicionamento") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Posicionamento</h1>
       <p class="sub">Como você se apresenta, diferenciais e autoridade.</p>
@@ -146,7 +145,7 @@ function render() {
       </div>
       <button class="btn" data-continue="posicionamento">Salvar e Continuar</button>`;
   } else if (view === "proposito") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Propósito e direção</h1>
       <p class="sub">Direção clara e o que você está construindo.</p>
@@ -166,7 +165,7 @@ function render() {
       </div>
       <button class="btn" data-continue="proposito">Salvar e Continuar</button>`;
   } else if (view === "dossie") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Entregável · Nível Completo</div>
       <h1 class="title">Dossiê de Essência</h1>
       <p class="sub">Síntese do que foi mapeado. Use como base para branding, comunicação e liderança.</p>
@@ -183,29 +182,15 @@ function render() {
   }
 }
 
-document.addEventListener("click", e => {
-  const goto = e.target.closest("[data-goto]");
-  if (goto) { setView(goto.dataset.goto); return; }
-  const cont = e.target.closest("[data-continue]");
-  if (cont) {
-    const step = cont.dataset.continue;
-    document.querySelectorAll("textarea[id^='f-']").forEach(el => {
-      let key = el.id.slice(2);
-      const map = {'pos': 'posicionamento', 'prop': 'proposito'};
-      if (key in map) key = map[key];
-      if (key in data) data[key] = el.value;
-    });
-    saveData().then(() => setView(nextStep(step)));
-  }
-});
+bind();
+render();
 
 onAuthStateChanged(auth, user => {
-  if (!user) {
-    document.getElementById("content").innerHTML = `<div class="card"><h1>Acesso restrito</h1><p>Faça login na AF Plataforma para acessar a Essência.</p><a class="btn" href="/afplataforma/">Ir para login</a></div>`;
-    return;
-  }
-  currentUser = user;
-  document.getElementById("userPill").textContent = user.email || "Mentorando";
-  document.getElementById("avatar").textContent = (user.email || "E")[0].toUpperCase();
-  loadData(user.uid);
+  currentUser = user || null;
+  if (user) {
+    const pill = document.getElementById("userPill"); const av = document.getElementById("avatar");
+    if (pill) pill.textContent = user.email || "Mentorando";
+    if (av) av.textContent = (user.email || "E")[0].toUpperCase();
+    loadData(user.uid);
+  } else render();
 });
