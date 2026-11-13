@@ -4,7 +4,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/fi
 
 const COL = "afBrandingPessoal";
 let currentUser = null;
-let data = { identidade: "", arquétipos: "", voz: "", diferenciais: "", elementos: "", observacoes: "" };
+let data = { identidade: "", arquetipos: "", voz: "", diferenciais: "", elementos: "", observacoes: "" };
 let view = "dashboard";
 
 function toast(msg) {
@@ -15,7 +15,7 @@ function toast(msg) {
   window._t = setTimeout(() => el.classList.add("hidden"), 2800);
 }
 
-function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c])); }
 
 async function loadData(uid) {
   const ref = doc(db, COL, uid);
@@ -33,10 +33,18 @@ async function saveData() {
 }
 
 function progress() {
-  const fields = ["identidade", "arquétipos", "voz", "diferenciais", "elementos"];
+  const fields = ["identidade", "arquetipos", "voz", "diferenciais", "elementos"];
   const filled = fields.filter(f => (data[f] || "").trim().length > 20).length;
   return Math.round((filled / fields.length) * 100);
 }
+
+function nextStep(current) {
+  const STEPS = ["identidade", "voz", "diferenciais", "elementos"];
+  const i = STEPS.indexOf(current);
+  if (i === -1 || i === STEPS.length - 1) return "guia";
+  return STEPS[i + 1];
+}
+window.setView = setView;
 
 function setView(v) {
   view = v;
@@ -69,58 +77,117 @@ function render() {
       <div class="card">
         <h3>Próximo passo</h3>
         <p>${p < 100 ? "Mapeie identidade e voz para consolidar o guia de branding." : "Guia pronto. Use como referência em toda comunicação."}</p>
-        <button class="btn" onclick="setView('identidade')">Começar pela identidade</button>
+        <button class="btn" data-goto="identidade">Começar pela identidade</button>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Como usar</div>
+        <p>Exemplos da marca Akasha Hub + orientação para você idealizar a sua.</p>
       </div>`;
   } else if (view === "identidade") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Identidade e arquétipos</h1>
       <p class="sub">Quem você é como marca e quais arquétipos representam.</p>
       <div class="field"><label>Identidade de marca</label><textarea id="f-identidade">${esc(data.identidade)}</textarea></div>
-      <div class="field"><label>Arquétipos</label><textarea id="f-arquetipos">${esc(data.arquétipos)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => {
-      data.identidade = document.getElementById("f-identidade").value;
-      data.arquétipos = document.getElementById("f-arquetipos").value;
-      saveData();
-    };
+      <div class="field"><label>Arquétipos</label><textarea id="f-arquetipos">${esc(data.arquetipos)}</textarea></div>
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Identidade: Tecnologia da Alma · Arquitetura de Essência e Legado. Arquétipos: o Sábio + o Criador + o Guia. Marca que une profundidade, clareza e sistemas que sustentam crescimento consciente.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir a identidade visual e verbal da sua marca pessoal.</p>
+        <ul>
+          <li>Qual arquétipo combina com a sua essência?</li>
+          <li>Como sua marca se diferencia de outras no mesmo espaço?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="identidade">Salvar e Continuar</button>`;
   } else if (view === "voz") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Tom de voz</h1>
       <p class="sub">Como você fala, escreve e se comunica.</p>
       <div class="field"><label>Tom de voz e linguagem</label><textarea id="f-voz">${esc(data.voz)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.voz = document.getElementById("f-voz").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Tom: claro, profundo, direto e elegante. Sem hype. Linguagem que une tecnologia e alma. Fala com autoridade sem precisar gritar. Luxo silencioso.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir como sua marca fala.</p>
+        <ul>
+          <li>Qual tom combina com sua essência?</li>
+          <li>O que você nunca diz na sua comunicação?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="voz">Salvar e Continuar</button>`;
   } else if (view === "diferenciais") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Diferenciais</h1>
       <p class="sub">O que te torna único e como se diferencia.</p>
       <div class="field"><label>Diferenciais e posicionamento</label><textarea id="f-diferenciais">${esc(data.diferenciais)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.diferenciais = document.getElementById("f-diferenciais").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>União de constelação, branding de essência e plataforma tecnológica. Não é só mentoria nem só software — é o sistema operacional de identidade e legado.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: listar o que só a sua marca combina.</p>
+        <ul>
+          <li>Qual combinação é única em você?</li>
+          <li>O que as pessoas já reconhecem na sua forma de fazer?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="diferenciais">Salvar e Continuar</button>`;
   } else if (view === "elementos") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Elementos de marca</h1>
       <p class="sub">Cores, tipografia, símbolos e referências visuais.</p>
       <div class="field"><label>Elementos visuais e referências</label><textarea id="f-elementos">${esc(data.elementos)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.elementos = document.getElementById("f-elementos").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Paleta: dourado + violeta sobre fundo escuro. Tipografia: Cormorant Garamond + Inter. Símbolo: flor de lótus / mandala. Estética de luxo silencioso e profundidade.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir os elementos visuais que representam sua marca.</p>
+        <ul>
+          <li>Quais cores e formas já combinam com sua essência?</li>
+          <li>Qual referência visual você quer que as pessoas associem a você?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="elementos">Salvar e Continuar</button>`;
   } else if (view === "guia") {
     content.innerHTML = `
       <div class="eyebrow">Entregável</div>
       <h1 class="title">Guia de Branding Pessoal</h1>
       <p class="sub">Referência consolidada da sua marca pessoal.</p>
       <div class="card"><h3>Identidade</h3><p>${esc(data.identidade) || "—"}</p></div>
-      <div class="card"><h3>Arquétipos</h3><p>${esc(data.arquétipos) || "—"}</p></div>
+      <div class="card"><h3>Arquétipos</h3><p>${esc(data.arquetipos) || "—"}</p></div>
       <div class="card"><h3>Tom de voz</h3><p>${esc(data.voz) || "—"}</p></div>
       <div class="card"><h3>Diferenciais</h3><p>${esc(data.diferenciais) || "—"}</p></div>
       <div class="card"><h3>Elementos</h3><p>${esc(data.elementos) || "—"}</p></div>
       <p style="color:var(--muted);font-size:12px;margin-top:24px">Progresso: ${p}% · Dados no Firestore (afBrandingPessoal).</p>`;
   }
 }
+
+document.addEventListener("click", e => {
+  const goto = e.target.closest("[data-goto]");
+  if (goto) { setView(goto.dataset.goto); return; }
+  const cont = e.target.closest("[data-continue]");
+  if (cont) {
+    const step = cont.dataset.continue;
+    document.querySelectorAll("textarea[id^='f-']").forEach(el => {
+      let key = el.id.slice(2);
+      if (key === "arquetipos") key = "arquetipos";
+      if (key in data) data[key] = el.value;
+    });
+    saveData().then(() => setView(nextStep(step)));
+  }
+});
 
 onAuthStateChanged(auth, user => {
   if (!user) {
