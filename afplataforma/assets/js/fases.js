@@ -15,6 +15,12 @@ function pagina(numero, titulo, sigla, texto, corpo) {
     <h2 class="hero-title">${titulo}</h2>
     <p class="hero-sub">${texto}</p>
     ${corpo}
+    <section class="legacy-vault-phase-entry" style="margin:26px 0;padding:18px;border:1px solid rgba(205,174,94,.45);border-radius:18px;background:linear-gradient(135deg,rgba(31,22,39,.96),rgba(17,14,22,.98));color:#f7f0df">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between">
+        <div><p style="margin:0 0 5px;color:#d6bd7a;font-size:10px;letter-spacing:.18em;text-transform:uppercase">LEGACY VAULT · BIBLIOTECA DA FASE ${numero}</p><h3 style="margin:0 0 5px;font:600 22px Georgia,serif">Conteúdos, mídias e materiais de apoio</h3><p style="margin:0;color:#c8bfce;font-size:13px">Acesse a biblioteca desta etapa e abra os materiais hospedados no Google Drive.</p></div>
+        <a href="/afplataforma/legacy-vault/?fase=${numero}" class="tool-btn" style="background:#d6bd7a;color:#211a24;border:0;text-decoration:none">Abrir Legacy Vault ↗</a>
+      </div>
+    </section>
   </div>`;
 }
 
