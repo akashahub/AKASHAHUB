@@ -15,7 +15,7 @@ function toast(msg) {
   window._t = setTimeout(() => el.classList.add("hidden"), 2800);
 }
 
-function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c])); }
 
 async function loadData(uid) {
   const ref = doc(db, COL, uid);
@@ -37,6 +37,14 @@ function progress() {
   const filled = fields.filter(f => (data[f] || "").trim().length > 20).length;
   return Math.round((filled / fields.length) * 100);
 }
+
+function nextStep(current) {
+  const STEPS = ["estilo", "mensagens", "presenca", "autoridade", "plano"];
+  const i = STEPS.indexOf(current);
+  if (i === -1 || i === STEPS.length - 1) return "plano";
+  return STEPS[i + 1];
+}
+window.setView = setView;
 
 function setView(v) {
   view = v;
@@ -69,40 +77,88 @@ function render() {
       <div class="card">
         <h3>Próximo passo</h3>
         <p>${p < 100 ? "Mapeie estilo e mensagens para consolidar a comunicação." : "Plano pronto. Use como referência em toda interação."}</p>
-        <button class="btn" onclick="setView('estilo')">Começar pelo estilo</button>
+        <button class="btn" data-goto="estilo">Começar</button>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Como usar</div>
+        <p>Exemplos da Akasha Hub como referência de tom e profundidade. Idealize a comunicação que combina com sua essência.</p>
       </div>`;
   } else if (view === "estilo") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Estilo de comunicação</h1>
       <p class="sub">Como você se comunica e o estilo que deseja desenvolver.</p>
       <div class="field"><label>Estilo atual e desejado</label><textarea id="f-estilo">${esc(data.estilo)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.estilo = document.getElementById("f-estilo").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Estilo: claro, profundo, direto e elegante. Sem hype. Linguagem que une tecnologia e alma. Fala com autoridade sem precisar gritar. Luxo silencioso — menos volume, mais precisão e coerência.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir o tom que combina com quem você é.</p>
+        <ul>
+          <li>Como você se comunica quando está no seu melhor?</li>
+          <li>Qual tom você quer que as pessoas associem a você?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="estilo">Salvar e Continuar</button>`;
   } else if (view === "mensagens") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Mensagens-chave</h1>
       <p class="sub">O que você quer que as pessoas lembrem e entendam.</p>
       <div class="field"><label>Mensagens principais</label><textarea id="f-mensagens">${esc(data.mensagens)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.mensagens = document.getElementById("f-mensagens").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Mensagens centrais: “Pare de consumir transformação e comece a construir legado.” “Tecnologia da alma a serviço da essência.” “Identidade clara gera autoridade real.” Mensagens que conectam essência, identidade e construção digital.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir 2-3 mensagens que você quer que as pessoas lembrem.</p>
+        <ul>
+          <li>Qual é a frase que resume o que você faz?</li>
+          <li>O que você quer que as pessoas entendam sobre você sem você precisar explicar?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="mensagens">Salvar e Continuar</button>`;
   } else if (view === "presenca") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Presença e impacto</h1>
       <p class="sub">Como você ocupa espaço e gera impacto.</p>
       <div class="field"><label>Presença e impacto</label><textarea id="f-presenca">${esc(data.presenca)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.presenca = document.getElementById("f-presenca").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Presença de profundidade, não de volume. Impacto que vem da coerência entre o que se é e o que se comunica. Menos postagens, mais clareza. A presença da Akasha Hub é a de quem já mapeou a essência e constrói a partir dela.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir como você quer ocupar espaço.</p>
+        <ul>
+          <li>Como você gera impacto quando fala ou escreve?</li>
+          <li>O que você quer que as pessoas sintam ao interagir com você?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="presenca">Salvar e Continuar</button>`;
   } else if (view === "autoridade") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Autoridade</h1>
       <p class="sub">Como comunica autoridade e gera confiança.</p>
       <div class="field"><label>Autoridade na comunicação</label><textarea id="f-autoridade">${esc(data.autoridade)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.autoridade = document.getElementById("f-autoridade").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Autoridade comunicada pela coerência, não pelo volume. Confiança gerada por quem já mapeou sua essência e ajuda outros a fazerem o mesmo. A comunicação de autoridade da Akasha Hub é precisa, profunda e alinhada com o que se constrói.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir como você comunica autoridade sem forçar.</p>
+        <ul>
+          <li>Como você transmite confiança na comunicação?</li>
+          <li>O que você não faz para proteger sua autoridade comunicativa?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="autoridade">Salvar e Continuar</button>`;
   } else if (view === "plano") {
     content.innerHTML = `
       <div class="eyebrow">Entregável</div>
@@ -113,9 +169,27 @@ function render() {
       <div class="card"><h3>Presença</h3><p>${esc(data.presenca) || "—"}</p></div>
       <div class="card"><h3>Autoridade</h3><p>${esc(data.autoridade) || "—"}</p></div>
       <div class="card"><h3>Plano</h3><p>${esc(data.plano) || "—"}</p></div>
-      <p style="color:var(--muted);font-size:12px;margin-top:24px">Progresso: ${p}% · Dados no Firestore (afComunicacao).</p>`;
+      <p style="color:var(--muted);font-size:12px;margin-top:24px">Progresso: ${p}% · Dados no Firestore (afComunicacao).</p>
+      <div class="guidance">
+        <div class="eyebrow">Próximo nível</div>
+        <p>Use este plano junto com Marketing Pessoal e Authority & Leadership OS. A comunicação ganha força quando está alinhada com a essência mapeada.</p>
+      </div>`;
   }
 }
+
+document.addEventListener("click", e => {
+  const goto = e.target.closest("[data-goto]");
+  if (goto) { setView(goto.dataset.goto); return; }
+  const cont = e.target.closest("[data-continue]");
+  if (cont) {
+    const step = cont.dataset.continue;
+    document.querySelectorAll("textarea[id^='f-']").forEach(el => {
+      let key = el.id.slice(2);
+      if (key in data) data[key] = el.value;
+    });
+    saveData().then(() => setView(nextStep(step)));
+  }
+});
 
 onAuthStateChanged(auth, user => {
   if (!user) {
