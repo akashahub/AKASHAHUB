@@ -8,64 +8,57 @@ let data = { identidade: "", valores: "", narrativa: "", diferenciais: "", obser
 let view = "dashboard";
 
 function toast(msg) {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.classList.remove("hidden");
-  clearTimeout(window._t);
-  window._t = setTimeout(() => el.classList.add("hidden"), 2800);
+  const el = document.getElementById("toast"); if (!el) return;
+  el.textContent = msg; el.classList.remove("hidden");
+  clearTimeout(window._t); window._t = setTimeout(() => el.classList.add("hidden"), 2800);
 }
-
 function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c])); }
-
 async function loadData(uid) {
-  const ref = doc(db, COL, uid);
-  const snap = await getDoc(ref);
-  if (snap.exists()) data = { ...data, ...snap.data() };
+  try { const snap = await getDoc(doc(db, COL, uid)); if (snap.exists()) data = { ...data, ...snap.data() }; } catch {}
   render();
 }
-
 async function saveData() {
-  if (!currentUser) return;
-  const ref = doc(db, COL, currentUser.uid);
-  await setDoc(ref, { ...data, updatedAt: serverTimestamp(), uid: currentUser.uid }, { merge: true });
-  toast("Salvo com sucesso.");
+  if (!currentUser) { toast("Faça login para salvar."); return; }
+  try { await setDoc(doc(db, COL, currentUser.uid), { ...data, updatedAt: serverTimestamp(), uid: currentUser.uid }, { merge: true }); toast("Salvo com sucesso."); }
+  catch { toast("Erro ao salvar."); }
   render();
 }
-
 function progress() {
   const fields = ["identidade", "valores", "narrativa", "diferenciais"];
-  const filled = fields.filter(f => (data[f] || "").trim().length > 20).length;
-  return Math.round((filled / fields.length) * 100);
+  return Math.round((fields.filter(f => (data[f] || "").trim().length > 20).length / fields.length) * 100);
 }
-
 function nextStep(current) {
   const STEPS = ["identidade", "valores", "narrativa", "diferenciais"];
   const i = STEPS.indexOf(current);
-  if (i === -1 || i === STEPS.length - 1) return "mapa";
-  return STEPS[i + 1];
+  return i === -1 || i === STEPS.length - 1 ? "mapa" : STEPS[i + 1];
 }
 window.setView = setView;
-
 function setView(v) {
   view = v;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v));
-  document.getElementById("sidebar").classList.remove("open");
+  const side = document.getElementById("sidebar"); if (side) side.classList.remove("open");
   render();
 }
-
-document.getElementById("nav").addEventListener("click", e => {
-  const b = e.target.closest("button[data-view]");
-  if (b) setView(b.dataset.view);
-});
-document.getElementById("menuBtn").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("open"));
-
+function bind() {
+  const nav = document.getElementById("nav"); if (nav) nav.addEventListener("click", e => { const b = e.target.closest("button[data-view]"); if (b) setView(b.dataset.view); });
+  const menu = document.getElementById("menuBtn"); if (menu) menu.addEventListener("click", () => { const s = document.getElementById("sidebar"); if (s) s.classList.toggle("open"); });
+  document.addEventListener("click", e => {
+    const goto = e.target.closest("[data-goto]"); if (goto) { setView(goto.dataset.goto); return; }
+    const cont = e.target.closest("[data-continue]");
+    if (cont) {
+      document.querySelectorAll("textarea[id^='f-']").forEach(el => { const key = el.id.slice(2); if (key in data) data[key] = el.value; });
+      saveData().then(() => setView(nextStep(cont.dataset.continue)));
+    }
+  });
+}
 function render() {
   const p = progress();
-  const content = document.getElementById("content");
-  document.getElementById("breadcrumb").textContent = "IDENTITY / " + view.toUpperCase();
+  const content = document.getElementById("content"); if (!content) return;
+  const crumb = document.getElementById("breadcrumb"); if (crumb) crumb.textContent = "IDENTITY / " + view.toUpperCase();
+  const notice = !currentUser ? `<div class="card" style="border-color:#d6b45d66"><p><strong>Login necessário para salvar.</strong> <a class="btn" href="/afplataforma/">Fazer login</a></p></div>` : "";
 
   if (view === "dashboard") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Identity Studio</div>
       <h1 class="title">Sua identidade</h1>
       <p class="sub">Defina identidade, valores, narrativa e diferenciais com clareza e profundidade.</p>
@@ -84,7 +77,7 @@ function render() {
         <p>Use os exemplos da Akasha Hub como espelho. Idealize a sua versão a partir do que já é verdadeiro em você.</p>
       </div>`;
   } else if (view === "identidade") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Identidade</h1>
       <p class="sub">Quem você é no núcleo e como se reconhece.</p>
@@ -103,7 +96,7 @@ function render() {
       </div>
       <button class="btn" data-continue="identidade">Salvar e Continuar</button>`;
   } else if (view === "valores") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Valores</h1>
       <p class="sub">Princípios inegociáveis que orientam decisões.</p>
@@ -122,7 +115,7 @@ function render() {
       </div>
       <button class="btn" data-continue="valores">Salvar e Continuar</button>`;
   } else if (view === "narrativa") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Narrativa</h1>
       <p class="sub">A história que você conta sobre si e sua jornada.</p>
@@ -141,7 +134,7 @@ function render() {
       </div>
       <button class="btn" data-continue="narrativa">Salvar e Continuar</button>`;
   } else if (view === "diferenciais") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Diferenciais</h1>
       <p class="sub">O que te torna único e reconhecível.</p>
@@ -160,7 +153,7 @@ function render() {
       </div>
       <button class="btn" data-continue="diferenciais">Salvar e Continuar</button>`;
   } else if (view === "mapa") {
-    content.innerHTML = `
+    content.innerHTML = notice + `
       <div class="eyebrow">Entregável</div>
       <h1 class="title">Mapa de Identidade</h1>
       <p class="sub">Síntese da sua identidade, valores, narrativa e diferenciais.</p>
@@ -172,27 +165,15 @@ function render() {
   }
 }
 
-document.addEventListener("click", e => {
-  const goto = e.target.closest("[data-goto]");
-  if (goto) { setView(goto.dataset.goto); return; }
-  const cont = e.target.closest("[data-continue]");
-  if (cont) {
-    const step = cont.dataset.continue;
-    document.querySelectorAll("textarea[id^='f-']").forEach(el => {
-      let key = el.id.slice(2);
-      if (key in data) data[key] = el.value;
-    });
-    saveData().then(() => setView(nextStep(step)));
-  }
-});
+bind();
+render();
 
 onAuthStateChanged(auth, user => {
-  if (!user) {
-    document.getElementById("content").innerHTML = `<div class="card"><h1>Acesso restrito</h1><p>Faça login na AF Plataforma.</p><a class="btn" href="/afplataforma/">Ir para login</a></div>`;
-    return;
-  }
-  currentUser = user;
-  document.getElementById("userPill").textContent = user.email || "Mentorando";
-  document.getElementById("avatar").textContent = (user.email || "I")[0].toUpperCase();
-  loadData(user.uid);
+  currentUser = user || null;
+  if (user) {
+    const pill = document.getElementById("userPill"); const av = document.getElementById("avatar");
+    if (pill) pill.textContent = user.email || "Mentorando";
+    if (av) av.textContent = (user.email || "I")[0].toUpperCase();
+    loadData(user.uid);
+  } else render();
 });
