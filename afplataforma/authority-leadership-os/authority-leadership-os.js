@@ -15,7 +15,7 @@ function toast(msg) {
   window._t = setTimeout(() => el.classList.add("hidden"), 2800);
 }
 
-function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c])); }
 
 async function loadData(uid) {
   const ref = doc(db, COL, uid);
@@ -37,6 +37,14 @@ function progress() {
   const filled = fields.filter(f => (data[f] || "").trim().length > 20).length;
   return Math.round((filled / fields.length) * 100);
 }
+
+function nextStep(current) {
+  const STEPS = ["estilo", "comunicacao", "reputacao", "competencias"];
+  const i = STEPS.indexOf(current);
+  if (i === -1 || i === STEPS.length - 1) return "plano";
+  return STEPS[i + 1];
+}
+window.setView = setView;
 
 function setView(v) {
   view = v;
@@ -69,40 +77,88 @@ function render() {
       <div class="card">
         <h3>Próximo passo</h3>
         <p>${p < 100 ? "Defina estilo e comunicação para consolidar a autoridade." : "Plano pronto. Use como referência em liderança e presença."}</p>
-        <button class="btn" onclick="setView('estilo')">Começar pelo estilo</button>
+        <button class="btn" data-goto="estilo">Começar pelo estilo</button>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Como usar</div>
+        <p>Exemplos da Akasha Hub + orientação para você construir sua autoridade de forma coerente com sua essência.</p>
       </div>`;
   } else if (view === "estilo") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Estilo de liderança</h1>
       <p class="sub">Como você lidera e o estilo que deseja consolidar.</p>
       <div class="field"><label>Estilo de liderança</label><textarea id="f-estilo">${esc(data.estilo)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.estilo = document.getElementById("f-estilo").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Liderança por essência e clareza. Não por volume nem por hype. Direção clara, frequência alinhada e sistemas que sustentam crescimento consciente. Liderar é criar o espaço onde as pessoas constroem legado.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir como você lidera quando está no seu melhor.</p>
+        <ul>
+          <li>Qual estilo de liderança já é natural em você?</li>
+          <li>Como você quer ser lembrado como líder?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="estilo">Salvar e Continuar</button>`;
   } else if (view === "comunicacao") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Comunicação de autoridade</h1>
       <p class="sub">Como comunica direção, visão e confiança.</p>
       <div class="field"><label>Comunicação de autoridade</label><textarea id="f-comunicacao">${esc(data.comunicacao)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.comunicacao = document.getElementById("f-comunicacao").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Comunicação precisa e profunda. Menos volume, mais clareza. Fala a partir da essência mapeada e da experiência real. Autoridade que não precisa gritar — é reconhecida pela coerência.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir como você comunica autoridade sem forçar.</p>
+        <ul>
+          <li>Como você transmite confiança quando fala?</li>
+          <li>Qual é o tom que combina com sua essência?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="comunicacao">Salvar e Continuar</button>`;
   } else if (view === "reputacao") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Reputação e influência</h1>
       <p class="sub">Como constrói e protege sua reputação.</p>
       <div class="field"><label>Reputação e influência</label><textarea id="f-reputacao">${esc(data.reputacao)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.reputacao = document.getElementById("f-reputacao").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Reputação construída sobre essência e resultados reais. Não sobre hype. Influência que vem de quem já mapeou sua identidade e ajuda outros a fazerem o mesmo. Proteção da reputação pela coerência.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: definir como você quer ser reconhecido e o que protege isso.</p>
+        <ul>
+          <li>Pelo que você quer ser conhecido?</li>
+          <li>O que você não faz para proteger sua reputação?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="reputacao">Salvar e Continuar</button>`;
   } else if (view === "competencias") {
     content.innerHTML = `
-      <div class="eyebrow">Módulo</div>
+      <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Competências</h1>
       <p class="sub">Competências de liderança e autoridade a desenvolver.</p>
       <div class="field"><label>Competências prioritárias</label><textarea id="f-competencias">${esc(data.competencias)}</textarea></div>
-      <button class="btn" id="save">Salvar</button>`;
-    document.getElementById("save").onclick = () => { data.competencias = document.getElementById("f-competencias").value; saveData(); };
+      <div class="example">
+        <div class="eyebrow">Exemplo Akasha Hub</div>
+        <p>Clareza de identidade, comunicação de autoridade, construção de sistemas que sustentam legado, e capacidade de guiar pessoas de alto potencial da essência à execução.</p>
+      </div>
+      <div class="guidance">
+        <div class="eyebrow">Orientação</div>
+        <p>Missão: listar o que você precisa fortalecer para consolidar autoridade.</p>
+        <ul>
+          <li>Quais competências já são fortes em você?</li>
+          <li>Quais 1-2 você quer desenvolver agora?</li>
+        </ul>
+      </div>
+      <button class="btn" data-continue="competencias">Salvar e Continuar</button>`;
   } else if (view === "plano") {
     content.innerHTML = `
       <div class="eyebrow">Entregável</div>
@@ -115,6 +171,20 @@ function render() {
       <p style="color:var(--muted);font-size:12px;margin-top:24px">Progresso: ${p}% · Dados no Firestore (afAuthorityLeadership).</p>`;
   }
 }
+
+document.addEventListener("click", e => {
+  const goto = e.target.closest("[data-goto]");
+  if (goto) { setView(goto.dataset.goto); return; }
+  const cont = e.target.closest("[data-continue]");
+  if (cont) {
+    const step = cont.dataset.continue;
+    document.querySelectorAll("textarea[id^='f-']").forEach(el => {
+      let key = el.id.slice(2);
+      if (key in data) data[key] = el.value;
+    });
+    saveData().then(() => setView(nextStep(step)));
+  }
+});
 
 onAuthStateChanged(auth, user => {
   if (!user) {
