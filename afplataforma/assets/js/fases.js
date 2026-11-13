@@ -172,15 +172,13 @@ export function renderFase2() {
   const trabalho = FASE2.map((texto, i) => `
     <div class="mod-row">
       <div class="mod-num">${i + 1}</div>
-      <div class="mod-body">
-        <h3>${texto}</h3>
-      </div>
+      <div class="mod-body"><h3>${texto}</h3></div>
     </div>`).join("");
   return pagina(
     "2",
     "Império Digital",
     "ID",
-    "Posicionamento, linguagem e os ativos digitais do projeto. A biblioteca mostra o que dá para construir. A oferta sai daqui, ainda sem campanha.",
+    "Posicionamento, linguagem e os ativos digitais do projeto.",
     `${appsFase2}
     ${renderPhaseBriefing("fase2")}
     <h3 class="section-h">Trabalho principal da fase</h3>
@@ -189,6 +187,35 @@ export function renderFase2() {
   );
 }
 
-// As funções renderFase3, renderFase4, renderFase5 e demais permanecem no arquivo original.
-// Este push restaura a estrutura essencial para o login armar novamente.
-// Os apps da Fase 02 já estão acessíveis pelos links diretos.
+export function renderFase3() {
+  return pagina("3", "Alinhamento Financeiro", "AF", "Organização e capital.", `${renderPhaseBriefing("fase3")}<h3 class="section-h">Trabalho principal</h3>${lista(FASE3)}${renderPhaseChecklist("fase3")}`);
+}
+export function renderFase4() {
+  return pagina("4", "Expansão", "EX", "Escala e oportunidades.", `${renderPhaseBriefing("fase4")}<h3 class="section-h">Trabalho principal</h3>${lista(FASE4)}${renderPhaseChecklist("fase4")}`);
+}
+export function renderFase5() {
+  return pagina("5", "Legado", "LG", "Patrimônio e continuidade.", `${renderPhaseBriefing("fase5")}<h3 class="section-h">Trabalho principal</h3>${lista(FASE5)}${renderPhaseChecklist("fase5")}`);
+}
+
+// Stubs para as funções que o app.js espera (evita quebrar o login)
+export function renderFase1Jogo() { return pagina("1", "Mesa da Essência", "", "", "<p>Mesa da Essência.</p>"); }
+export function bindFase1Jogo() {}
+export function renderFase1Marca() { return pagina("1", "Marca", "", "", "<p>Formulário de Marca.</p>"); }
+export function bindFase1Marca() {}
+export function renderFase1Dossie() { return pagina("1", "Dossiê", "", "", "<p>Dossiê vivo.</p>"); }
+export function bindFase1Dossie() {}
+export function renderFase2Oferta() { return pagina("2", "Oferta", "", "", "<p>Construtor de oferta.</p>"); }
+export function bindFase2Oferta() {}
+export function renderFase2Ativos() { return pagina("2", "Ativos", "", "", "<p>Diagnóstico de ativos.</p>"); }
+export function bindFase2Ativos() {}
+export function renderFase3Preco() { return pagina("3", "Preço", "", "", "<p>Precificação.</p>"); }
+export function bindFase3Preco() {}
+export function renderFase4Sdr() { return pagina("4", "SDR", "", "", "<p>SDR.</p>"); }
+export function renderFase4Treinamento() { return pagina("4", "Treinamento", "", "", "<p>Treinamento.</p>"); }
+export function renderFase4Closers() { return pagina("4", "Closers", "", "", "<p>Closers.</p>"); }
+export function renderFase4Depende() { return pagina("4", "Depende", "", "", "<p>O que depende do fundador.</p>"); }
+export function bindFase4Depende() {}
+export function renderFase4Divulga() { return pagina("4", "Divulga", "", "", "<p>Divulgação.</p>"); }
+export function bindFase4Divulga() {}
+export function renderFase5Livro() { return pagina("5", "Livro", "", "", "<p>Livro do método.</p>"); }
+export function bindFase5Livro() {}
