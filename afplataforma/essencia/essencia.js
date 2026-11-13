@@ -1,4 +1,4 @@
-// v4 - render imediato
+// v5 - render imediato + esc corrigido
 const COL = "afEssencia";
 let currentUser = null;
 let data = { historia: "", valores: "", crencas: "", posicionamento: "", proposito: "", observacoes: "" };
@@ -11,7 +11,11 @@ function toast(msg) {
   el.textContent = msg; el.classList.remove("hidden");
   clearTimeout(window._t); window._t = setTimeout(() => el.classList.add("hidden"), 2800);
 }
-function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c])); }
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, function(c) {
+    return { "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c];
+  });
+}
 
 function progress() {
   const fields = ["historia", "valores", "crencas", "posicionamento", "proposito"];
@@ -22,13 +26,13 @@ function nextStep(current) {
   const i = STEPS.indexOf(current);
   return i === -1 || i === STEPS.length - 1 ? "dossie" : STEPS[i + 1];
 }
-window.setView = setView;
 function setView(v) {
   view = v;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v));
   const side = document.getElementById("sidebar"); if (side) side.classList.remove("open");
   render();
 }
+window.setView = setView;
 function bind() {
   const nav = document.getElementById("nav"); if (nav) nav.addEventListener("click", e => { const b = e.target.closest("button[data-view]"); if (b) setView(b.dataset.view); });
   const menu = document.getElementById("menuBtn"); if (menu) menu.addEventListener("click", () => { const s = document.getElementById("sidebar"); if (s) s.classList.toggle("open"); });
@@ -38,7 +42,7 @@ function bind() {
     if (cont) {
       document.querySelectorAll("textarea[id^='f-']").forEach(el => {
         let key = el.id.slice(2);
-        const map = {pos: 'posicionamento', prop: 'proposito'};
+        const map = {pos: "posicionamento", prop: "proposito"};
         if (key in map) key = map[key];
         if (key in data) data[key] = el.value;
       });
@@ -59,7 +63,7 @@ function render() {
   const p = progress();
   const content = document.getElementById("content"); if (!content) return;
   const crumb = document.getElementById("breadcrumb"); if (crumb) crumb.textContent = "ESSÊNCIA / " + view.toUpperCase().replace("-", " ");
-  const notice = !currentUser ? `<div class="card" style="border-color:#d6b45d66"><p><strong>Login necessário para salvar.</strong> <a class="btn" href="/afplataforma/">Fazer login</a></p></div>` : "";
+  const notice = !currentUser ? '<div class="card" style="border-color:#d6b45d66"><p><strong>Login necessário para salvar.</strong> <a class="btn" href="/afplataforma/">Fazer login</a></p></div>' : "";
 
   if (view === "dashboard") {
     content.innerHTML = notice + `
@@ -86,7 +90,7 @@ function render() {
       <h1 class="title">História pessoal</h1>
       <p class="sub">Contexto, experiências formativas e o que moldou quem você é.</p>
       <div class="field"><label>Narrativa pessoal</label><textarea id="f-historia">${esc(data.historia)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>A Akasha Hub nasceu da percepção de que a maioria das pessoas consome transformação, mas poucos constroem legado. Unimos tecnologia, identidade e frequência para criar uma incubadora de essência.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>A Akasha Hub nasceu da percepção de que a maioria das pessoas consome transformação, mas poucos constroem legado.</p></div>
       <div class="guidance"><div class="eyebrow">Orientação</div><p>Conte o arco que explica por que você faz o que faz hoje.</p></div>
       <button class="btn" data-continue="historia">Salvar e Continuar</button>`;
   } else if (view === "valores") {
@@ -119,11 +123,9 @@ function render() {
   }
 }
 
-// Render imediato, sem depender do Firebase
 bind();
 render();
 
-// Tenta conectar ao Firebase em segundo plano (opcional)
 (async () => {
   try {
     const configMod = await import("../firebase/firebase-config.js");
