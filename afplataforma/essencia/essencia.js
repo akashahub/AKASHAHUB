@@ -1,4 +1,4 @@
-// v5 - render imediato + esc corrigido
+// v6 - render imediato + esc seguro
 const COL = "afEssencia";
 let currentUser = null;
 let data = { historia: "", valores: "", crencas: "", posicionamento: "", proposito: "", observacoes: "" };
@@ -7,42 +7,64 @@ let db = null;
 let auth = null;
 
 function toast(msg) {
-  const el = document.getElementById("toast"); if (!el) return;
-  el.textContent = msg; el.classList.remove("hidden");
-  clearTimeout(window._t); window._t = setTimeout(() => el.classList.add("hidden"), 2800);
+  const el = document.getElementById("toast");
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.remove("hidden");
+  clearTimeout(window._t);
+  window._t = setTimeout(() => el.classList.add("hidden"), 2800);
 }
+
 function esc(s) {
-  return String(s ?? "").replace(/[&<>"']/g, function(c) {
-    return { "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" }[c];
-  });
+  if (s == null) return "";
+  return String(s)
+    .replace(/&/g, "&")
+    .replace(/</g, "<")
+    .replace(/>/g, ">")
+    .replace(/"/g, """)
+    .replace(/'/g, "&#39;");
 }
 
 function progress() {
   const fields = ["historia", "valores", "crencas", "posicionamento", "proposito"];
-  return Math.round((fields.filter(f => (data[f] || "").trim().length > 20).length / fields.length) * 100);
+  const filled = fields.filter(f => (data[f] || "").trim().length > 20).length;
+  return Math.round((filled / fields.length) * 100);
 }
+
 function nextStep(current) {
   const STEPS = ["historia", "valores", "posicionamento", "proposito"];
   const i = STEPS.indexOf(current);
   return i === -1 || i === STEPS.length - 1 ? "dossie" : STEPS[i + 1];
 }
+
 function setView(v) {
   view = v;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v));
-  const side = document.getElementById("sidebar"); if (side) side.classList.remove("open");
+  const side = document.getElementById("sidebar");
+  if (side) side.classList.remove("open");
   render();
 }
 window.setView = setView;
+
 function bind() {
-  const nav = document.getElementById("nav"); if (nav) nav.addEventListener("click", e => { const b = e.target.closest("button[data-view]"); if (b) setView(b.dataset.view); });
-  const menu = document.getElementById("menuBtn"); if (menu) menu.addEventListener("click", () => { const s = document.getElementById("sidebar"); if (s) s.classList.toggle("open"); });
+  const nav = document.getElementById("nav");
+  if (nav) nav.addEventListener("click", e => {
+    const b = e.target.closest("button[data-view]");
+    if (b) setView(b.dataset.view);
+  });
+  const menu = document.getElementById("menuBtn");
+  if (menu) menu.addEventListener("click", () => {
+    const s = document.getElementById("sidebar");
+    if (s) s.classList.toggle("open");
+  });
   document.addEventListener("click", e => {
-    const goto = e.target.closest("[data-goto]"); if (goto) { setView(goto.dataset.goto); return; }
+    const goto = e.target.closest("[data-goto]");
+    if (goto) { setView(goto.dataset.goto); return; }
     const cont = e.target.closest("[data-continue]");
     if (cont) {
       document.querySelectorAll("textarea[id^='f-']").forEach(el => {
         let key = el.id.slice(2);
-        const map = {pos: "posicionamento", prop: "proposito"};
+        const map = { pos: "posicionamento", prop: "proposito" };
         if (key in map) key = map[key];
         if (key in data) data[key] = el.value;
       });
@@ -50,19 +72,25 @@ function bind() {
     }
   });
 }
+
 async function saveData() {
   if (!currentUser || !db) { toast("Faça login para salvar."); return; }
   try {
     const { doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     await setDoc(doc(db, COL, currentUser.uid), { ...data, updatedAt: serverTimestamp(), uid: currentUser.uid }, { merge: true });
     toast("Salvo com sucesso.");
-  } catch { toast("Erro ao salvar."); }
+  } catch {
+    toast("Erro ao salvar.");
+  }
   render();
 }
+
 function render() {
   const p = progress();
-  const content = document.getElementById("content"); if (!content) return;
-  const crumb = document.getElementById("breadcrumb"); if (crumb) crumb.textContent = "ESSÊNCIA / " + view.toUpperCase().replace("-", " ");
+  const content = document.getElementById("content");
+  if (!content) return;
+  const crumb = document.getElementById("breadcrumb");
+  if (crumb) crumb.textContent = "ESSÊNCIA / " + view.toUpperCase().replace("-", " ");
   const notice = !currentUser ? '<div class="card" style="border-color:#d6b45d66"><p><strong>Login necessário para salvar.</strong> <a class="btn" href="/afplataforma/">Fazer login</a></p></div>' : "";
 
   if (view === "dashboard") {
