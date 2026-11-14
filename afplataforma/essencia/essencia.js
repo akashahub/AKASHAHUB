@@ -1,4 +1,4 @@
-// v7 - render imediato + esc 100% seguro
+// v8 - render imediato, esc sem aspas problemáticas
 const COL = "afEssencia";
 let currentUser = null;
 let data = { historia: "", valores: "", crencas: "", posicionamento: "", proposito: "", observacoes: "" };
@@ -17,12 +17,13 @@ function toast(msg) {
 
 function esc(s) {
   if (s == null) return "";
-  return String(s)
-    .replace(/&/g, "&")
-    .replace(/</g, "<")
-    .replace(/>/g, ">")
-    .replace(/"/g, """)
-    .replace(/'/g, "&#39;");
+  var str = String(s);
+  str = str.split("&").join("&");
+  str = str.split("<").join("<");
+  str = str.split(">").join(">");
+  str = str.split('"').join(""");
+  str = str.split("'").join("&#39;");
+  return str;
 }
 
 function progress() {
