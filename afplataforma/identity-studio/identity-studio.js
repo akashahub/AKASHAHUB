@@ -4,6 +4,50 @@ let data = { identidade: "", valores: "", narrativa: "", diferenciais: "", obser
 let view = "dashboard";
 let db = null;
 let auth = null;
+let currentTargetField = null;
+
+const DISCOVERY = {
+  identidade: {
+    title: "Descobrir minha identidade",
+    subtitle: "Selecione ou escreva para definir quem você é no núcleo.",
+    questions: [
+      { id: "q1", label: "Como você se reconhece quando remove cargo e status?", options: ["Construtor de sistemas", "Observador de padrões", "Facilitador de clareza", "Criador de pontes", "Outro"] },
+      { id: "q2", label: "Qual papel você mais se identifica?", options: ["Mentor", "Estrategista", "Arquiteto", "Educador", "Outro"] },
+      { id: "q3", label: "O que permanece quando você tira o título?", type: "text" }
+    ],
+    generate: (a) => `No núcleo, me reconheço como ${a.q1 || "alguém que cria clareza"}. Meu papel natural é ${a.q2 || "facilitar"}. O que permanece é ${a.q3 || "a capacidade de organizar complexidade"}.`
+  },
+  valores: {
+    title: "Descobrir meus valores",
+    subtitle: "Escolha o que é inegociável.",
+    questions: [
+      { id: "q1", label: "Quais valores você não abre mão? (até 3)", options: ["Clareza", "Integridade", "Liberdade", "Excelência", "Autenticidade", "Impacto", "Simplicidade"], multi: true },
+      { id: "q2", label: "O que você já recusou por princípio?", options: ["Hype e exagero", "Projeto sem propósito", "Escala sem estrutura", "Promessas vazias", "Outro"] },
+      { id: "q3", label: "Qual valor mais te define?", type: "text" }
+    ],
+    generate: (a) => `Valores centrais: ${(a.q1 || []).join(", ") || "clareza e integridade"}. Já recusei ${a.q2 || "o que não combina com minha essência"}. O que mais me define é ${a.q3 || "a busca por coerência"}.`
+  },
+  narrativa: {
+    title: "Descobrir minha narrativa",
+    subtitle: "Construa a história que explica por que você faz o que faz.",
+    questions: [
+      { id: "q1", label: "Qual foi a virada de chave?", options: ["Uma crise", "Um mentor", "Um fracasso", "Uma descoberta", "Outro"] },
+      { id: "q2", label: "O que você parou de fazer?", options: ["Consumir mais conteúdo", "Fazer tudo sozinho", "Escalar sem clareza", "Seguir modismos", "Outro"] },
+      { id: "q3", label: "Qual é a mensagem central da sua história?", type: "text" }
+    ],
+    generate: (a) => `A virada aconteceu com ${a.q1 || "uma experiência marcante"}. Parei de ${a.q2 || "consumir sem construir"}. Minha mensagem é: ${a.q3 || "clareza gera resultados reais"}.`
+  },
+  diferenciais: {
+    title: "Descobrir meus diferenciais",
+    subtitle: "Identifique o que é único na sua combinação.",
+    questions: [
+      { id: "q1", label: "Qual combinação você tem que poucos têm?", options: ["Essência + sistemas", "Pessoas + tecnologia", "Estratégia + profundidade", "Branding + operação", "Outro"] },
+      { id: "q2", label: "O que as pessoas já notam em você?", options: ["Clareza", "Coerência", "Profundidade", "Praticidade", "Outro"] },
+      { id: "q3", label: "O que te diferencia de quem faz algo parecido?", type: "text" }
+    ],
+    generate: (a) => `Minha combinação única é ${a.q1 || "essência com estrutura"}. As pessoas já notam ${a.q2 || "minha clareza"}. Me diferencio porque ${a.q3 || "uno profundidade com sistema"}.`
+  }
+};
 
 function toast(msg) {
   const el = document.getElementById("toast"); if (!el) return;
@@ -30,6 +74,76 @@ function setView(v) {
   render();
 }
 window.setView = setView;
+
+function openDiscovery(field) {
+  const cfg = DISCOVERY[field];
+  if (!cfg) return;
+  currentTargetField = field;
+  document.getElementById("modalTitle").textContent = cfg.title;
+  document.getElementById("modalSubtitle").textContent = cfg.subtitle;
+  const qEl = document.getElementById("modalQuestions");
+  qEl.innerHTML = cfg.questions.map(q => {
+    if (q.options) {
+      const multi = q.multi ? ' data-multi="1"' : '';
+      return `<div class="field"><label>${q.label}</label>
+        <div class="options" data-qid="${q.id}"${multi}>
+          ${q.options.map(opt => `<button type="button" class="opt" data-value="${opt}">${opt}</button>`).join("")}
+        </div>
+        ${q.options.includes("Outro") ? `<input type="text" class="other-input hidden" data-for="${q.id}" placeholder="Especifique...">` : ""}
+      </div>`;
+    }
+    return `<div class="field"><label>${q.label}</label><textarea id="disc-${q.id}" placeholder="Sua resposta..."></textarea></div>`;
+  }).join("");
+
+  qEl.querySelectorAll(".options").forEach(box => {
+    const multi = box.dataset.multi;
+    box.querySelectorAll(".opt").forEach(btn => {
+      btn.onclick = () => {
+        if (multi) btn.classList.toggle("selected");
+        else {
+          box.querySelectorAll(".opt").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          const other = box.parentElement.querySelector(".other-input");
+          if (other) other.classList.toggle("hidden", btn.dataset.value !== "Outro");
+        }
+      };
+    });
+  });
+
+  document.getElementById("modalResult").classList.add("hidden");
+  document.getElementById("discoveryForm").classList.remove("hidden");
+  document.getElementById("discoveryModal").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("discoveryModal").classList.add("hidden");
+  currentTargetField = null;
+}
+
+function collectAnswers(cfg) {
+  const answers = {};
+  cfg.questions.forEach(q => {
+    if (q.options) {
+      const box = document.querySelector(`.options[data-qid="${q.id}"]`);
+      if (q.multi) {
+        answers[q.id] = Array.from(box.querySelectorAll(".opt.selected")).map(b => b.dataset.value);
+      } else {
+        const sel = box.querySelector(".opt.selected");
+        let val = sel ? sel.dataset.value : "";
+        if (val === "Outro") {
+          const other = document.querySelector(`.other-input[data-for="${q.id}"]`);
+          val = other ? other.value.trim() : "";
+        }
+        answers[q.id] = val;
+      }
+    } else {
+      const el = document.getElementById("disc-" + q.id);
+      answers[q.id] = el ? el.value.trim() : "";
+    }
+  });
+  return answers;
+}
+
 function bind() {
   const nav = document.getElementById("nav"); if (nav) nav.addEventListener("click", e => { const b = e.target.closest("button[data-view]"); if (b) setView(b.dataset.view); });
   const menu = document.getElementById("menuBtn"); if (menu) menu.addEventListener("click", () => { const s = document.getElementById("sidebar"); if (s) s.classList.toggle("open"); });
@@ -39,9 +153,40 @@ function bind() {
     if (cont) {
       document.querySelectorAll("textarea[id^='f-']").forEach(el => { const key = el.id.slice(2); if (key in data) data[key] = el.value; });
       saveData().then(() => setView(nextStep(cont.dataset.continue)));
+      return;
     }
+    const disc = e.target.closest("[data-discover]");
+    if (disc) openDiscovery(disc.dataset.discover);
   });
+
+  document.getElementById("modalClose").onclick = closeModal;
+  document.getElementById("modalCancel").onclick = closeModal;
+  document.querySelector(".modal-backdrop").onclick = closeModal;
+
+  document.getElementById("discoveryForm").onsubmit = (e) => {
+    e.preventDefault();
+    const cfg = DISCOVERY[currentTargetField];
+    if (!cfg) return;
+    const answers = collectAnswers(cfg);
+    const suggestion = cfg.generate(answers);
+    document.getElementById("suggestionText").textContent = suggestion;
+    document.getElementById("discoveryForm").classList.add("hidden");
+    document.getElementById("modalResult").classList.remove("hidden");
+  };
+
+  document.getElementById("useSuggestion").onclick = () => {
+    const text = document.getElementById("suggestionText").textContent;
+    if (currentTargetField && text) {
+      data[currentTargetField] = text;
+      const ta = document.getElementById("f-" + currentTargetField);
+      if (ta) ta.value = text;
+      toast("Sugestão aplicada. Você pode editar antes de salvar.");
+    }
+    closeModal();
+    render();
+  };
 }
+
 async function saveData() {
   if (!currentUser || !db) { toast("Faça login para salvar."); return; }
   try {
@@ -51,6 +196,11 @@ async function saveData() {
   } catch { toast("Erro ao salvar."); }
   render();
 }
+
+function discoverBtn(field) {
+  return `<button class="btn secondary" data-discover="${field}" style="margin-top:8px">Descobrir</button>`;
+}
+
 function render() {
   const p = progress();
   const content = document.getElementById("content"); if (!content) return;
@@ -61,7 +211,7 @@ function render() {
     content.innerHTML = notice + `
       <div class="eyebrow">Identity Studio</div>
       <h1 class="title">Sua identidade</h1>
-      <p class="sub">Defina identidade, valores, narrativa e diferenciais com clareza e profundidade.</p>
+      <p class="sub">Defina identidade, valores, narrativa e diferenciais com clareza.</p>
       <div class="card">
         <div>Progresso do mapa</div>
         <div class="progress"><span style="width:${p}%"></span></div>
@@ -69,45 +219,37 @@ function render() {
       </div>
       <div class="card">
         <h3>Próximo passo</h3>
-        <p>${p < 100 ? "Mapeie identidade e valores para consolidar o mapa." : "Mapa pronto. Use como base para posicionamento e branding."}</p>
         <button class="btn" data-goto="identidade">Começar pela identidade</button>
       </div>
-      <div class="guidance">
-        <div class="eyebrow">Como usar</div>
-        <p>Cada etapa tem um exemplo prático do tipo de resposta esperada. Use como referência para encontrar a sua versão.</p>
-      </div>`;
+      <div class="guidance"><div class="eyebrow">Como usar</div><p>Cada etapa tem um botão “Descobrir” com opções clicáveis.</p></div>`;
   } else if (view === "identidade") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Identidade</h1>
-      <p class="sub">Quem você é no núcleo e como se reconhece.</p>
       <div class="field"><label>Identidade central</label><textarea id="f-identidade">${esc(data.identidade)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Sou a pessoa que cria estrutura onde antes só existia esforço. No núcleo, sou alguém que transforma complexidade em clareza. Quando tiro o título de “consultor” ou “empresário”, o que resta é alguém que observa sistemas (pessoas, negócios, famílias) e ajuda a reorganizar o que está desalinhado. Me reconheço mais como construtor de pontes do que como especialista em um nicho.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Descreva quem você é quando remove o cargo, o produto e o status. O que permanece?</p></div>
+      ${discoverBtn("identidade")}
+      <div class="example"><div class="eyebrow">Exemplo</div><p>No núcleo, me reconheço como construtor de sistemas. Meu papel natural é arquiteto. O que permanece é a capacidade de organizar complexidade em clareza.</p></div>
       <button class="btn" data-continue="identidade">Salvar e Continuar</button>`;
   } else if (view === "valores") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Valores</h1>
       <div class="field"><label>Valores centrais</label><textarea id="f-valores">${esc(data.valores)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Clareza acima de velocidade. Prefiro ir mais devagar e construir certo do que escalar rápido e ter que desfazer depois. Integridade mesmo quando ninguém está olhando — já recusei projetos lucrativos que não combinavam com o que acredito. Responsabilidade compartilhada: não quero ser o único que carrega o sistema. Legado acima de hype.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Liste 3-5 valores que você realmente não abre mão, mesmo que isso custe dinheiro ou popularidade.</p></div>
+      ${discoverBtn("valores")}
       <button class="btn" data-continue="valores">Salvar e Continuar</button>`;
   } else if (view === "narrativa") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Narrativa</h1>
       <div class="field"><label>Narrativa pessoal</label><textarea id="f-narrativa">${esc(data.narrativa)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Durante anos eu consumia cursos, mentorias e frameworks achando que o próximo método ia resolver. Só quando parei e mapeei quem eu realmente era que as decisões ficaram mais fáceis e os resultados mais consistentes. Hoje minha narrativa é: parei de consumir transformação e comecei a construir legado com estrutura. Ajudo outras pessoas a fazerem o mesmo.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Conte a história que explica por que você faz o que faz. Qual foi a virada de chave?</p></div>
+      ${discoverBtn("narrativa")}
       <button class="btn" data-continue="narrativa">Salvar e Continuar</button>`;
   } else if (view === "diferenciais") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Diferenciais</h1>
       <div class="field"><label>Diferenciais e unicidade</label><textarea id="f-diferenciais">${esc(data.diferenciais)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Uno três coisas que raramente andam juntas: leitura sistêmica de pessoas e famílias, clareza de identidade e branding, e capacidade de transformar isso em sistemas e plataformas digitais. Não sou só mentor nem só técnico. Crio o espaço onde a pessoa se encontra e já sai com estrutura para construir.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual combinação de experiência + visão + forma de fazer é só sua? O que as pessoas já notam em você sem você precisar explicar?</p></div>
+      ${discoverBtn("diferenciais")}
       <button class="btn" data-continue="diferenciais">Salvar e Continuar</button>`;
   } else if (view === "mapa") {
     content.innerHTML = notice + `
