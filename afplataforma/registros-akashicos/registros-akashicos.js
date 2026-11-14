@@ -4,6 +4,50 @@ let data = { intencao: "", reflexoes: "", insights: "", integracao: "", observac
 let view = "dashboard";
 let db = null;
 let auth = null;
+let currentTargetField = null;
+
+const DISCOVERY = {
+  intencao: {
+    title: "Descobrir minha intenção",
+    subtitle: "Defina o que você deseja observar.",
+    questions: [
+      { id: "q1", label: "Qual tema você deseja explorar?", options: ["Por que ainda consumo mais do que construo", "Medo de me expor", "Dificuldade de agir com a clareza que já tenho", "Padrão de adiar", "Outro"] },
+      { id: "q2", label: "O que você deseja ver com mais clareza?", options: ["O que me impede de construir", "Qual é o próximo passo real", "Onde ainda existe lealdade antiga", "O que já está pronto em mim", "Outro"] },
+      { id: "q3", label: "Qual pergunta importante ainda não tem resposta?", type: "text" }
+    ],
+    generate: (a) => `Quero explorar ${a.q1 || "por que ainda adio a construção"}. Desejo ver com mais clareza ${a.q2 || "o que já está pronto em mim"}. A pergunta é: ${a.q3 || "o que preciso integrar para agir"}.`
+  },
+  reflexoes: {
+    title: "Descobrir reflexões",
+    subtitle: "Anote o que emerge sem forçar.",
+    questions: [
+      { id: "q1", label: "O que surge quando você fica em silêncio com a intenção?", options: ["Medo de me expor", "Sensão de não estar pronto", "Uso do consumo como proteção", "Desejo de construir", "Outro"] },
+      { id: "q2", label: "Qual imagem ou sensação se repete?", options: ["Estar sempre se preparando", "Carregar sozinho", "Esperar o momento perfeito", "Evitar vulnerabilidade", "Outro"] },
+      { id: "q3", label: "O que essa reflexão revela sobre você?", type: "text" }
+    ],
+    generate: (a) => `Quando fico em silêncio, surge ${a.q1 || "o medo de me expor"}. A sensação que se repete é ${a.q2 || "estar sempre se preparando"}. Isso revela ${a.q3 || "que uso a preparação como proteção"}.`
+  },
+  insights: {
+    title: "Descobrir insights",
+    subtitle: "Identifique a percepção mais importante.",
+    questions: [
+      { id: "q1", label: "Qual é o insight principal?", options: ["Já tenho clareza suficiente", "O consumo é uma forma de evitar", "Não preciso estar 100% pronto", "A vulnerabilidade faz parte", "Outro"] },
+      { id: "q2", label: "O que você entendeu sobre si que antes não estava claro?", options: ["Que adio por medo", "Que já sei o suficiente", "Que preciso me expor", "Que a preparação tem limite", "Outro"] },
+      { id: "q3", label: "Como esse insight muda sua visão?", type: "text" }
+    ],
+    generate: (a) => `O insight principal é ${a.q1 || "que já tenho clareza suficiente"}. Entendi que ${a.q2 || "o consumo é uma forma de evitar a construção"}. Isso muda minha visão porque ${a.q3 || "posso agir com o que já tenho"}.`
+  },
+  integracao: {
+    title: "Descobrir integração",
+    subtitle: "Defina o próximo passo concreto.",
+    questions: [
+      { id: "q1", label: "Qual mudança prática você pode fazer?", options: ["Publicar algo real", "Reduzir o consumo", "Começar um ativo", "Pedir feedback", "Outro"] },
+      { id: "q2", label: "Qual é o próximo passo pequeno?", options: ["Escrever um conteúdo", "Definir uma ação semanal", "Conversar com alguém", "Registrar um compromisso", "Outro"] },
+      { id: "q3", label: "Como você vai observar o resultado?", type: "text" }
+    ],
+    generate: (a) => `Próximo passo: ${a.q1 || "publicar algo real"}. Ação pequena: ${a.q2 || "escrever um conteúdo esta semana"}. Vou observar ${a.q3 || "o que acontece quando ajo com a clareza que já tenho"}.`
+  }
+};
 
 function toast(msg) {
   const el = document.getElementById("toast"); if (!el) return;
@@ -30,6 +74,76 @@ function setView(v) {
   render();
 }
 window.setView = setView;
+
+function openDiscovery(field) {
+  const cfg = DISCOVERY[field];
+  if (!cfg) return;
+  currentTargetField = field;
+  document.getElementById("modalTitle").textContent = cfg.title;
+  document.getElementById("modalSubtitle").textContent = cfg.subtitle;
+  const qEl = document.getElementById("modalQuestions");
+  qEl.innerHTML = cfg.questions.map(q => {
+    if (q.options) {
+      const multi = q.multi ? ' data-multi="1"' : '';
+      return `<div class="field"><label>${q.label}</label>
+        <div class="options" data-qid="${q.id}"${multi}>
+          ${q.options.map(opt => `<button type="button" class="opt" data-value="${opt}">${opt}</button>`).join("")}
+        </div>
+        ${q.options.includes("Outro") ? `<input type="text" class="other-input hidden" data-for="${q.id}" placeholder="Especifique...">` : ""}
+      </div>`;
+    }
+    return `<div class="field"><label>${q.label}</label><textarea id="disc-${q.id}" placeholder="Sua resposta..."></textarea></div>`;
+  }).join("");
+
+  qEl.querySelectorAll(".options").forEach(box => {
+    const multi = box.dataset.multi;
+    box.querySelectorAll(".opt").forEach(btn => {
+      btn.onclick = () => {
+        if (multi) btn.classList.toggle("selected");
+        else {
+          box.querySelectorAll(".opt").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          const other = box.parentElement.querySelector(".other-input");
+          if (other) other.classList.toggle("hidden", btn.dataset.value !== "Outro");
+        }
+      };
+    });
+  });
+
+  document.getElementById("modalResult").classList.add("hidden");
+  document.getElementById("discoveryForm").classList.remove("hidden");
+  document.getElementById("discoveryModal").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("discoveryModal").classList.add("hidden");
+  currentTargetField = null;
+}
+
+function collectAnswers(cfg) {
+  const answers = {};
+  cfg.questions.forEach(q => {
+    if (q.options) {
+      const box = document.querySelector(`.options[data-qid="${q.id}"]`);
+      if (q.multi) {
+        answers[q.id] = Array.from(box.querySelectorAll(".opt.selected")).map(b => b.dataset.value);
+      } else {
+        const sel = box.querySelector(".opt.selected");
+        let val = sel ? sel.dataset.value : "";
+        if (val === "Outro") {
+          const other = document.querySelector(`.other-input[data-for="${q.id}"]`);
+          val = other ? other.value.trim() : "";
+        }
+        answers[q.id] = val;
+      }
+    } else {
+      const el = document.getElementById("disc-" + q.id);
+      answers[q.id] = el ? el.value.trim() : "";
+    }
+  });
+  return answers;
+}
+
 function bind() {
   const nav = document.getElementById("nav"); if (nav) nav.addEventListener("click", e => { const b = e.target.closest("button[data-view]"); if (b) setView(b.dataset.view); });
   const menu = document.getElementById("menuBtn"); if (menu) menu.addEventListener("click", () => { const s = document.getElementById("sidebar"); if (s) s.classList.toggle("open"); });
@@ -39,9 +153,40 @@ function bind() {
     if (cont) {
       document.querySelectorAll("textarea[id^='f-']").forEach(el => { const key = el.id.slice(2); if (key in data) data[key] = el.value; });
       saveData().then(() => setView(nextStep(cont.dataset.continue)));
+      return;
     }
+    const disc = e.target.closest("[data-discover]");
+    if (disc) openDiscovery(disc.dataset.discover);
   });
+
+  document.getElementById("modalClose").onclick = closeModal;
+  document.getElementById("modalCancel").onclick = closeModal;
+  document.querySelector(".modal-backdrop").onclick = closeModal;
+
+  document.getElementById("discoveryForm").onsubmit = (e) => {
+    e.preventDefault();
+    const cfg = DISCOVERY[currentTargetField];
+    if (!cfg) return;
+    const answers = collectAnswers(cfg);
+    const suggestion = cfg.generate(answers);
+    document.getElementById("suggestionText").textContent = suggestion;
+    document.getElementById("discoveryForm").classList.add("hidden");
+    document.getElementById("modalResult").classList.remove("hidden");
+  };
+
+  document.getElementById("useSuggestion").onclick = () => {
+    const text = document.getElementById("suggestionText").textContent;
+    if (currentTargetField && text) {
+      data[currentTargetField] = text;
+      const ta = document.getElementById("f-" + currentTargetField);
+      if (ta) ta.value = text;
+      toast("Sugestão aplicada. Você pode editar antes de salvar.");
+    }
+    closeModal();
+    render();
+  };
 }
+
 async function saveData() {
   if (!currentUser || !db) { toast("Faça login para salvar."); return; }
   try {
@@ -51,6 +196,11 @@ async function saveData() {
   } catch { toast("Erro ao salvar."); }
   render();
 }
+
+function discoverBtn(field) {
+  return `<button class="btn secondary" data-discover="${field}" style="margin-top:8px">Descobrir</button>`;
+}
+
 function render() {
   const p = progress();
   const content = document.getElementById("content"); if (!content) return;
@@ -61,48 +211,36 @@ function render() {
     content.innerHTML = notice + `
       <div class="eyebrow">Registros Akáshicos</div>
       <h1 class="title">Sua jornada</h1>
-      <p class="sub">Jornada guiada de autoconhecimento e reflexão.</p>
-      <div class="card">
-        <div>Progresso do registro</div>
-        <div class="progress"><span style="width:${p}%"></span></div>
-        <strong>${p}% preenchido</strong>
-      </div>
-      <div class="card">
-        <h3>Próximo passo</h3>
-        <p>${p < 100 ? "Defina a intenção e avance nas reflexões." : "Registro completo."}</p>
-        <button class="btn" data-goto="intencao">Começar</button>
-      </div>`;
+      <p class="sub">Jornada guiada de autoconhecimento.</p>
+      <div class="card"><div>Progresso</div><div class="progress"><span style="width:${p}%"></span></div><strong>${p}%</strong></div>
+      <div class="card"><button class="btn" data-goto="intencao">Começar</button></div>`;
   } else if (view === "intencao") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Intenção</h1>
       <div class="field"><label>Intenção da jornada</label><textarea id="f-intencao">${esc(data.intencao)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Quero entender por que continuo consumindo informação e cursos mesmo sabendo que já tenho clareza suficiente para agir. Desejo observar onde ainda existe medo de construir de verdade e o que precisa ser integrado para que eu pare de adiar a criação dos meus ativos digitais.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual pergunta importante ainda não tem resposta? O que você deseja ver com mais clareza?</p></div>
+      ${discoverBtn("intencao")}
       <button class="btn" data-continue="intencao">Salvar e Continuar</button>`;
   } else if (view === "reflexoes") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Reflexões guiadas</h1>
       <div class="field"><label>Reflexões</label><textarea id="f-reflexoes">${esc(data.reflexoes)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Quando fico em silêncio com essa intenção, surge a percepção de que eu uso o consumo de conteúdo como uma forma de me sentir produtivo sem me expor. Também aparece o medo de que, se eu começar a construir de verdade, as pessoas vão ver que ainda não sei tudo. Há uma parte de mim que prefere permanecer na preparação.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Anote o que emerge sem forçar conclusões. Quais imagens, sensações ou pensamentos se repetem?</p></div>
+      ${discoverBtn("reflexoes")}
       <button class="btn" data-continue="reflexoes">Salvar e Continuar</button>`;
   } else if (view === "insights") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Insights</h1>
       <div class="field"><label>Insights principais</label><textarea id="f-insights">${esc(data.insights)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>O insight principal é que eu não preciso estar 100% pronto para começar. A clareza suficiente já existe. O que falta é a disposição de me expor construindo. Outra percepção: a maior parte do meu consumo de transformação é uma forma de evitar a vulnerabilidade de criar algo real.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual percepção mais importante apareceu? O que você entendeu sobre si que antes não estava claro?</p></div>
+      ${discoverBtn("insights")}
       <button class="btn" data-continue="insights">Salvar e Continuar</button>`;
   } else if (view === "integracao") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Integração</h1>
       <div class="field"><label>Integração e próximos passos</label><textarea id="f-integracao">${esc(data.integracao)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Próximo passo concreto: esta semana vou publicar um conteúdo real sobre o que estou construindo, mesmo que não esteja perfeito. Também vou reduzir o tempo gasto consumindo cursos e usar esse tempo para avançar em um ativo digital. Vou observar o que acontece quando eu ajo com a clareza que já tenho.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual mudança prática você pode fazer a partir deste insight? Qual é o próximo passo pequeno e real?</p></div>
+      ${discoverBtn("integracao")}
       <button class="btn" data-continue="integracao">Salvar e Continuar</button>`;
   } else if (view === "registro") {
     content.innerHTML = notice + `
