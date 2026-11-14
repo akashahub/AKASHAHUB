@@ -102,37 +102,48 @@ function render() {
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Propósito do site</h1>
       <div class="field"><label>Propósito e objetivo principal</label><textarea id="f-proposito">${esc(data.proposito)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>O site da Akasha Hub não vende cursos. Ele posiciona a Arquitetura de Legado como sistema operacional de essência e autoridade.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>O site deve posicionar minha marca como referência em construção de legado para empresários. Objetivo principal: atrair pessoas qualificadas e direcioná-las para uma conversa ou para a plataforma. Não é um site de vendas agressivas. É uma porta de entrada clara e sofisticada.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual é a função principal deste site? Posicionar, captar, educar ou vender?</p></div>
       <button class="btn" data-continue="proposito">Salvar e Continuar</button>`;
   } else if (view === "estrutura") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Estrutura e páginas</h1>
       <div class="field"><label>Estrutura proposta</label><textarea id="f-estrutura">${esc(data.estrutura)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Home (posicionamento + frequência da marca), Sobre (essência e história), Plataforma (acesso às fases), Conteúdos, Contato. Cada página tem um objetivo claro e direciona para o próximo passo. Menos páginas, mais clareza.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais páginas são essenciais e qual o objetivo de cada uma?</p></div>
       <button class="btn" data-continue="estrutura">Salvar e Continuar</button>`;
   } else if (view === "conteudo") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Conteúdo e narrativa</h1>
       <div class="field"><label>Narrativa e mensagens-chave</label><textarea id="f-conteudo">${esc(data.conteudo)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Mensagem central: “Pare de consumir transformação. Construa legado.” Tom: direto, sofisticado, sem hype. Cada página reforça identidade e autoridade. O visitante deve entender em poucos segundos quem eu ajudo e o que ofereço de diferente.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual mensagem principal o site precisa comunicar?</p></div>
       <button class="btn" data-continue="conteudo">Salvar e Continuar</button>`;
   } else if (view === "visual") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Identidade visual</h1>
       <div class="field"><label>Diretrizes visuais</label><textarea id="f-visual">${esc(data.visual)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Paleta: dourado e violeta sobre fundo escuro. Tipografia serifada para títulos e sans-serif para corpo. Muito espaço em branco. Nada de excesso visual. O design deve transmitir profundidade e clareza, não distração.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como o site deve parecer e sentir? O que deve ser evitado?</p></div>
       <button class="btn" data-continue="visual">Salvar e Continuar</button>`;
   } else if (view === "tecnico") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 5</div>
       <h1 class="title">Aspectos técnicos</h1>
       <div class="field"><label>Decisões técnicas</label><textarea id="f-tecnico">${esc(data.tecnico)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Site estático de alta performance. Hospedagem rápida. Formulários que alimentam o CRM. Integração com a plataforma interna. Prioridade: velocidade e simplicidade de manutenção.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual plataforma ou abordagem técnica faz mais sentido agora?</p></div>
       <button class="btn" data-continue="tecnico">Salvar e Continuar</button>`;
   } else if (view === "plano") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 6</div>
       <h1 class="title">Plano de construção</h1>
       <div class="field"><label>Cronograma e ações</label><textarea id="f-plano">${esc(data.plano)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>1. Consolidar este brief. 2. Wireframes das páginas principais. 3. Design alinhado à identidade. 4. Desenvolvimento. 5. Integração com formulários e CRM. 6. Lançamento e ajustes com base em uso real.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais são as próximas 3-5 ações concretas?</p></div>
       <button class="btn" data-continue="plano">Salvar e Finalizar</button>`;
   }
 }
