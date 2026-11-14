@@ -76,27 +76,36 @@ function render() {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 1</div><h1 class="title">Problema e usuário</h1>
       <div class="field"><label>Qual problema resolve e para quem?</label><textarea id="f-problema">${esc(data.problema)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>A AF Plataforma resolve a fragmentação de ferramentas de autoconhecimento e posicionamento.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Empresários e profissionais de alto potencial têm várias ferramentas de autoconhecimento, mas nenhuma se conecta. Eles perdem clareza e não conseguem transformar reflexão em ação consistente. O problema é a fragmentação e a falta de um sistema operacional único de identidade e legado.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quem sofre com o quê hoje? Seja específico sobre o usuário e a dor.</p></div>
       <button class="btn" data-continue="problema">Salvar e Continuar</button>`;
   } else if (view === "solucao") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 2</div><h1 class="title">Solução e valor</h1>
       <div class="field"><label>Como o app resolve e qual valor entrega?</label><textarea id="f-solucao">${esc(data.solucao)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Uma plataforma única com fases progressivas, persistência de dados e acompanhamento. O valor é clareza e continuidade: a pessoa mapeia sua essência e constrói ativos digitais no mesmo lugar, sem perder o fio da meada entre ferramentas.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como o app resolve o problema e qual valor concreto entrega?</p></div>
       <button class="btn" data-continue="solucao">Salvar e Continuar</button>`;
   } else if (view === "funcionalidades") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 3</div><h1 class="title">Funcionalidades</h1>
       <div class="field"><label>Principais funcionalidades (MVP)</label><textarea id="f-funcionalidades">${esc(data.funcionalidades)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Login com Firebase, dashboards por fase, apps independentes com save/continue, mentor pode acompanhar o progresso, exemplos e orientações embutidos em cada etapa, dados isolados por usuário.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais funcionalidades são essenciais na primeira versão?</p></div>
       <button class="btn" data-continue="funcionalidades">Salvar e Continuar</button>`;
   } else if (view === "arquitetura") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 4</div><h1 class="title">Arquitetura</h1>
       <div class="field"><label>Decisões de arquitetura</label><textarea id="f-arquitetura">${esc(data.arquitetura)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Apps standalone em HTML/JS/CSS com Firebase Auth e Firestore. Cada app em sua pasta. Coleções isoladas por UID. Integração com a plataforma principal via links. Prioridade: simplicidade e velocidade de evolução.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais decisões de arquitetura fazem mais sentido para o MVP?</p></div>
       <button class="btn" data-continue="arquitetura">Salvar e Continuar</button>`;
   } else if (view === "roadmap") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 5</div><h1 class="title">Roadmap</h1>
       <div class="field"><label>Próximos passos e fases</label><textarea id="f-roadmap">${esc(data.roadmap)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Fase 01: Essência e identidade. Fase 02: Império Digital (sites, apps, funis, CRM, IA). Evolução contínua com feedback dos usuários. Próximo marco: consolidar a Fase 02 e começar a Fase 03 financeira.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais são as próximas fases e marcos do app?</p></div>
       <button class="btn" data-continue="roadmap">Salvar e Finalizar</button>`;
   }
 }
