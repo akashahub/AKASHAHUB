@@ -77,25 +77,32 @@ function render() {
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Estilo de liderança</h1>
       <div class="field"><label>Estilo atual e desejado</label><textarea id="f-estilo">${esc(data.estilo)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Liderança por clareza e essência. Direção precisa e criação de sistemas que permitem que as pessoas construam.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Meu estilo atual é mais diretivo: eu defino o caminho e espero que as pessoas sigam. Quero evoluir para um estilo que cria clareza e espaço para as pessoas construírem com autonomia. Liderar, para mim, deve ser menos sobre controlar e mais sobre alinhar essência e direção, e depois confiar no processo.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você lidera hoje e como gostaria de liderar daqui para frente?</p></div>
       <button class="btn" data-continue="estilo">Salvar e Continuar</button>`;
   } else if (view === "valores") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Valores de liderança</h1>
       <div class="field"><label>Valores e princípios</label><textarea id="f-valores">${esc(data.valores)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Clareza acima de velocidade. Prefiro alinhar bem do que avançar rápido e ter que corrigir depois. Responsabilidade compartilhada: não quero ser o único que carrega. Integridade mesmo quando é mais fácil omitir. Respeito ao ritmo das pessoas, sem abandonar a direção.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais valores você não abre mão na forma de liderar, mesmo que custe resultado no curto prazo?</p></div>
       <button class="btn" data-continue="valores">Salvar e Continuar</button>`;
   } else if (view === "comunicacao") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Comunicação</h1>
       <div class="field"><label>Comunicação de liderança</label><textarea id="f-comunicacao">${esc(data.comunicacao)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Comunico a visão de forma clara e direta, sem rodeios. Prefiro conversas individuais quando o assunto é sensível. Dou feedback específico e baseado em fatos, não em impressões. Também peço feedback sobre minha própria comunicação para não perder a conexão com o time.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você transmite direção, dá feedback e gera confiança?</p></div>
       <button class="btn" data-continue="comunicacao">Salvar e Continuar</button>`;
   } else if (view === "autoridade") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Autoridade e influência</h1>
       <div class="field"><label>Autoridade e influência</label><textarea id="f-autoridade">${esc(data.autoridade)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Construo autoridade pela coerência entre o que digo e o que faço. Não busco ser o mais carismático, mas o mais confiável. Influencio mais por exemplo e clareza do que por pressão. Quero ser reconhecido como alguém que cria condições para as pessoas crescerem, não como quem precisa estar no centro de tudo.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você constrói e protege sua autoridade? Pelo que quer ser reconhecido como líder?</p></div>
       <button class="btn" data-continue="autoridade">Salvar e Continuar</button>`;
   } else if (view === "plano") {
     content.innerHTML = notice + `
