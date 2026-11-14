@@ -77,26 +77,32 @@ function render() {
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Narrativa</h1>
       <div class="field"><label>Narrativa principal</label><textarea id="f-narrativa">${esc(data.narrativa)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>De consumidores de transformação a construtores de legado.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Ajudo empresários que já tentaram de tudo a parar de consumir mais conteúdo e começar a construir um sistema real de identidade e autoridade. Minha narrativa é: a maioria das pessoas não precisa de mais informação — precisa de clareza sobre quem é e de estrutura para agir a partir disso. Eu construo essa estrutura junto com elas.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual é a história que você conta sobre o problema que resolve e a transformação que gera? Seja específico.</p></div>
       <button class="btn" data-continue="narrativa">Salvar e Continuar</button>`;
   } else if (view === "publico") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Público</h1>
       <div class="field"><label>Público-alvo</label><textarea id="f-publico">${esc(data.publico)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Empresários, investidores e profissionais de alto potencial que querem construir legado real.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Empresários e profissionais entre 30 e 50 anos que já faturam bem, mas sentem que estão correndo sem direção clara. Já fizeram vários cursos e mentorias, mas ainda não conseguiram transformar conhecimento em legado ou ativos digitais consistentes. Valorizam profundidade e não querem mais hype. Têm capacidade de investir tempo e dinheiro em algo que realmente faça sentido.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Descreva quem é a pessoa ideal (não “todo mundo”). Qual a dor ou desejo central dela?</p></div>
       <button class="btn" data-continue="publico">Salvar e Continuar</button>`;
   } else if (view === "canais") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Canais</h1>
       <div class="field"><label>Canais prioritários</label><textarea id="f-canais">${esc(data.canais)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Site próprio como base de autoridade. LinkedIn para alcançar empresários e decisores. Conteúdo de profundidade (artigos e vídeos curtos) em vez de posts diários. Indicações e conversas 1 a 1 com pessoas já qualificadas. Não priorizo Instagram de alto volume neste momento.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Onde seu público já está? Quais canais você consegue sustentar com qualidade e consistência?</p></div>
       <button class="btn" data-continue="canais">Salvar e Continuar</button>`;
   } else if (view === "acoes") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Ações</h1>
       <div class="field"><label>Ações e rotina</label><textarea id="f-acoes">${esc(data.acoes)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>1 post de autoridade por semana no LinkedIn (baseado em reflexões reais, não em tendência). 1 artigo ou vídeo mais profundo por mês. 2-3 conversas estratégicas por semana com pessoas do público ideal. Revisão mensal do que está gerando resultado e do que não está. Foco em profundidade, não em volume.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Defina ações pequenas e consistentes. O que você consegue sustentar toda semana sem se esgotar?</p></div>
       <button class="btn" data-continue="acoes">Salvar e Continuar</button>`;
   } else if (view === "plano") {
     content.innerHTML = notice + `
