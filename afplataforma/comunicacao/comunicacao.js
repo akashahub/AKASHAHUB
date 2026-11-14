@@ -77,26 +77,32 @@ function render() {
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Estilo de comunicação</h1>
       <div class="field"><label>Estilo atual e desejado</label><textarea id="f-estilo">${esc(data.estilo)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Estilo: claro, profundo, direto e elegante. Sem hype. Luxo silencioso.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Meu estilo é claro e direto, com profundidade. Evito exageros e frases prontas. Prefiro dizer menos e com precisão. Quando escrevo ou falo, busco que a pessoa se sinta respeitada e compreendida, não pressionada. Quero que minha comunicação transmita confiança sem precisar ser alta ou frequente.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você se comunica quando está no seu melhor? Qual tom combina com sua essência?</p></div>
       <button class="btn" data-continue="estilo">Salvar e Continuar</button>`;
   } else if (view === "mensagens") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Mensagens-chave</h1>
       <div class="field"><label>Mensagens principais</label><textarea id="f-mensagens">${esc(data.mensagens)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Mensagem central: Pare de consumir transformação e comece a construir legado.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Mensagem principal: “Clareza de identidade gera autoridade real.” Outra: “Pare de consumir mais informação e comece a construir com estrutura.” Quero que as pessoas lembrem que eu ajudo a sair do ciclo de consumo e entrar em construção consciente de legado.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais 2-3 mensagens você quer que as pessoas lembrem sobre você?</p></div>
       <button class="btn" data-continue="mensagens">Salvar e Continuar</button>`;
   } else if (view === "presenca") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Presença e impacto</h1>
       <div class="field"><label>Presença e impacto</label><textarea id="f-presenca">${esc(data.presenca)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Minha presença é mais de profundidade do que de volume. Prefiro aparecer menos e com mais substância. Quando interajo, quero que as pessoas saiam com mais clareza sobre si mesmas ou sobre o próximo passo. O impacto que busco é de confiança e direção, não de entretenimento.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você quer ocupar espaço? O que as pessoas devem sentir ao interagir com você?</p></div>
       <button class="btn" data-continue="presenca">Salvar e Continuar</button>`;
   } else if (view === "autoridade") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Autoridade</h1>
       <div class="field"><label>Autoridade na comunicação</label><textarea id="f-autoridade">${esc(data.autoridade)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Transmito autoridade pela coerência e pela precisão, não pelo volume de conteúdo. Não preciso falar de tudo. Quando falo, as pessoas sentem que há experiência e clareza por trás. Protejo minha autoridade evitando promessas exageradas e mantendo o que digo alinhado com o que faço.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você comunica autoridade sem forçar? O que você não faz para proteger isso?</p></div>
       <button class="btn" data-continue="autoridade">Salvar e Continuar</button>`;
   } else if (view === "plano") {
     content.innerHTML = notice + `
