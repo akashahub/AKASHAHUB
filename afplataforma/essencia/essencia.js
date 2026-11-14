@@ -1,10 +1,54 @@
-// v12 - exemplos autoexplicativos
+// v13 - modal de descoberta
 const COL = "afEssencia";
 let currentUser = null;
 let data = { historia: "", valores: "", crencas: "", posicionamento: "", proposito: "", observacoes: "" };
 let view = "dashboard";
 let db = null;
 let auth = null;
+let currentTargetField = null;
+
+const DISCOVERY = {
+  historia: {
+    title: "Descobrir minha história",
+    subtitle: "Responda para gerar uma narrativa pessoal.",
+    questions: [
+      { id: "q1", label: "Qual experiência mais marcou sua trajetória profissional ou pessoal?" },
+      { id: "q2", label: "O que você aprendeu com uma dificuldade importante?" },
+      { id: "q3", label: "Por que você faz o que faz hoje?" }
+    ],
+    generate: (a) => `Nasci e cresci em um contexto que me ensinou ${a.q1 || "lições importantes"}. Uma experiência marcante foi ${a.q2 || "um desafio que me transformou"}. Isso me levou a ${a.q3 || "fazer o que faço hoje"}.`
+  },
+  valores: {
+    title: "Descobrir meus valores",
+    subtitle: "Identifique o que é inegociável para você.",
+    questions: [
+      { id: "q1", label: "Qual valor você já pagou preço para manter?" },
+      { id: "q2", label: "O que você não faz, mesmo que seja lucrativo ou popular?" },
+      { id: "q3", label: "Qual crença ou padrão ainda influencia suas decisões?" }
+    ],
+    generate: (a) => `Valores: ${a.q1 || "Clareza e integridade"}. Não faço ${a.q2 || "o que contradiz minha essência"}. Crença/Padrão: ${a.q3 || "ainda carrego algumas lealdades antigas"}.`
+  },
+  posicionamento: {
+    title: "Descobrir meu posicionamento",
+    subtitle: "Defina quem você ajuda e como se diferencia.",
+    questions: [
+      { id: "q1", label: "Quem você ajuda de verdade?" },
+      { id: "q2", label: "Qual problema principal você resolve?" },
+      { id: "q3", label: "O que te diferencia de quem faz algo parecido?" }
+    ],
+    generate: (a) => `Ajudo ${a.q1 || "pessoas que buscam clareza"} a resolver ${a.q2 || "a falta de direção"}. Me diferencio porque ${a.q3 || "uno essência e estrutura"}.`
+  },
+  proposito: {
+    title: "Descobrir meu propósito",
+    subtitle: "Conecte o porquê maior com os próximos passos.",
+    questions: [
+      { id: "q1", label: "Por que isso importa para você no longo prazo?" },
+      { id: "q2", label: "Qual resultado você quer ver em 12 meses?" },
+      { id: "q3", label: "Qual é o próximo passo concreto?" }
+    ],
+    generate: (a) => `Meu propósito é ${a.q1 || "criar impacto real"}. Em 12 meses quero ${a.q2 || "ter consolidado minha base"}. Próximo passo: ${a.q3 || "avançar com clareza"}.`
+  }
+};
 
 function toast(msg) {
   const el = document.getElementById("toast");
@@ -41,6 +85,26 @@ function setView(v) {
 }
 window.setView = setView;
 
+function openDiscovery(field) {
+  const cfg = DISCOVERY[field];
+  if (!cfg) return;
+  currentTargetField = field;
+  document.getElementById("modalTitle").textContent = cfg.title;
+  document.getElementById("modalSubtitle").textContent = cfg.subtitle;
+  const qEl = document.getElementById("modalQuestions");
+  qEl.innerHTML = cfg.questions.map(q => `
+    <div class="field"><label>${q.label}</label><textarea id="disc-${q.id}" placeholder="Sua resposta..."></textarea></div>
+  `).join("");
+  document.getElementById("modalResult").classList.add("hidden");
+  document.getElementById("discoveryForm").classList.remove("hidden");
+  document.getElementById("discoveryModal").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("discoveryModal").classList.add("hidden");
+  currentTargetField = null;
+}
+
 function bind() {
   const nav = document.getElementById("nav");
   if (nav) nav.addEventListener("click", e => {
@@ -64,8 +128,44 @@ function bind() {
         if (key in data) data[key] = el.value;
       });
       saveData().then(() => setView(nextStep(cont.dataset.continue)));
+      return;
     }
+    const disc = e.target.closest("[data-discover]");
+    if (disc) openDiscovery(disc.dataset.discover);
   });
+
+  document.getElementById("modalClose").onclick = closeModal;
+  document.getElementById("modalCancel").onclick = closeModal;
+  document.querySelector(".modal-backdrop").onclick = closeModal;
+
+  document.getElementById("discoveryForm").onsubmit = (e) => {
+    e.preventDefault();
+    const cfg = DISCOVERY[currentTargetField];
+    if (!cfg) return;
+    const answers = {};
+    cfg.questions.forEach(q => {
+      const el = document.getElementById("disc-" + q.id);
+      answers[q.id] = el ? el.value.trim() : "";
+    });
+    const suggestion = cfg.generate(answers);
+    document.getElementById("suggestionText").textContent = suggestion;
+    document.getElementById("discoveryForm").classList.add("hidden");
+    document.getElementById("modalResult").classList.remove("hidden");
+  };
+
+  document.getElementById("useSuggestion").onclick = () => {
+    const text = document.getElementById("suggestionText").textContent;
+    if (currentTargetField && text) {
+      data[currentTargetField] = text;
+      const map = { posicionamento: "pos", proposito: "prop" };
+      const id = "f-" + (map[currentTargetField] || currentTargetField);
+      const ta = document.getElementById(id);
+      if (ta) ta.value = text;
+      toast("Sugestão aplicada. Você pode editar antes de salvar.");
+    }
+    closeModal();
+    render();
+  };
 }
 
 async function saveData() {
@@ -78,6 +178,10 @@ async function saveData() {
     toast("Erro ao salvar.");
   }
   render();
+}
+
+function discoverBtn(field) {
+  return `<button class="btn secondary" data-discover="${field}" style="margin-top:8px">Descobrir minha essência</button>`;
 }
 
 function render() {
@@ -105,7 +209,7 @@ function render() {
       </div>
       <div class="guidance">
         <div class="eyebrow">Como usar este app</div>
-        <p>Cada etapa tem um exemplo prático para você entender o tipo de resposta esperada. Use como referência, não como cópia.</p>
+        <p>Cada etapa tem um botão “Descobrir” que abre perguntas guiadas para te ajudar a preencher.</p>
       </div>`;
   } else if (view === "historia") {
     content.innerHTML = notice + `
@@ -113,8 +217,9 @@ function render() {
       <h1 class="title">História pessoal</h1>
       <p class="sub">Contexto, experiências formativas e o que moldou quem você é.</p>
       <div class="field"><label>Narrativa pessoal</label><textarea id="f-historia">${esc(data.historia)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Nasci em uma família de empreendedores e desde cedo vi meu pai trabalhar muitas horas sem estrutura clara. Isso me fez querer criar sistemas que permitam às pessoas construir com mais clareza e menos desgaste. A experiência de quase falir em 2018 me mostrou que identidade mal definida gera decisões erradas. Hoje ajudo empresários a mapear quem são antes de escalar o negócio.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Conte o arco que explica por que você faz o que faz hoje. Inclua experiências marcantes, viradas de chave e o que te trouxe até aqui.</p></div>
+      ${discoverBtn("historia")}
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Nasci em uma família de empreendedores e desde cedo vi meu pai trabalhar muitas horas sem estrutura clara. Isso me fez querer criar sistemas que permitam às pessoas construir com mais clareza e menos desgaste.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Conte o arco que explica por que você faz o que faz hoje.</p></div>
       <button class="btn" data-continue="historia">Salvar e Continuar</button>`;
   } else if (view === "valores") {
     content.innerHTML = notice + `
@@ -122,24 +227,27 @@ function render() {
       <h1 class="title">Valores e crenças</h1>
       <div class="field"><label>Valores centrais</label><textarea id="f-valores">${esc(data.valores)}</textarea></div>
       <div class="field"><label>Crenças e padrões</label><textarea id="f-crencas">${esc(data.crencas)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p><strong>Valores:</strong> Clareza antes de velocidade. Essência antes de estratégia. Construção real acima de hype. Integridade mesmo quando ninguém está olhando.<br><br><strong>Crenças/Padrões:</strong> Acredito que a maioria das pessoas tenta escalar sem saber quem é, e isso gera autoriedade frágil. Padrão que já repeti: tentar fazer tudo sozinho por medo de perder o controle.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Liste 3-5 valores que você realmente não abre mão. Depois descreva crenças ou padrões (seus ou da família) que ainda influenciam suas decisões.</p></div>
+      ${discoverBtn("valores")}
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Valores: Clareza antes de velocidade. Integridade mesmo quando ninguém está olhando.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Liste 3-5 valores que você realmente não abre mão.</p></div>
       <button class="btn" data-continue="valores">Salvar e Continuar</button>`;
   } else if (view === "posicionamento") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Posicionamento</h1>
       <div class="field"><label>Posicionamento e narrativa</label><textarea id="f-pos">${esc(data.posicionamento)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Ajudo empresários e profissionais de alto potencial a sair do consumo de transformação e entrar na construção de legado. Não vendo mais conteúdo. Crio o sistema operacional de identidade e autoridade para quem já decidiu construir de verdade. Meu posicionamento é: clareza de essência gera autoriedade real e sustentável.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Descreva em 2-4 frases quem você ajuda, qual problema resolve e como se diferencia. Evite frases genéricas como "ajudo pessoas a terem sucesso".</p></div>
+      ${discoverBtn("posicionamento")}
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Ajudo empresários a sair do consumo de transformação e entrar na construção de legado.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Descreva em 2-4 frases quem você ajuda e como se diferencia.</p></div>
       <button class="btn" data-continue="posicionamento">Salvar e Continuar</button>`;
   } else if (view === "proposito") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Propósito e direção</h1>
       <div class="field"><label>Propósito e próximos passos</label><textarea id="f-prop">${esc(data.proposito)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Meu propósito é criar um ecossistema onde empresários mapeiam sua essência e constroem legado com estrutura, não com mais esforço. Nos próximos 12 meses quero consolidar a AF Plataforma como sistema operacional de referência e formar um grupo seleto de mentorandos que já estão construindo ativos digitais alinhados à sua identidade.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Defina o propósito maior (por que isso importa) e 1-2 direções concretas para os próximos meses ou anos.</p></div>
+      ${discoverBtn("proposito")}
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Meu propósito é criar um ecossistema onde empresários mapeiam sua essência e constroem legado com estrutura.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Defina o propósito maior e 1-2 direções concretas.</p></div>
       <button class="btn" data-continue="proposito">Salvar e Continuar</button>`;
   } else if (view === "dossie") {
     content.innerHTML = notice + `
