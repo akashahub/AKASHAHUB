@@ -71,27 +71,36 @@ function render() {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 1</div><h1 class="title">Público e dor</h1>
       <div class="field"><label>Quem é o público e qual a dor principal?</label><textarea id="f-publico">${esc(data.publico)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Empresários e profissionais de alto potencial que consomem muito conteúdo de transformação mas não constroem legado real.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Empresários e profissionais de alto potencial que já consumiram muitos cursos e mentorias, mas ainda não conseguiram transformar conhecimento em legado ou ativos digitais consistentes. Dor principal: sensação de estar sempre se preparando e nunca construindo de verdade.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quem é a pessoa ideal e qual dor ou desejo ela tem hoje?</p></div>
       <button class="btn" data-continue="publico">Salvar e Continuar</button>`;
   } else if (view === "oferta") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 2</div><h1 class="title">Oferta e promessa</h1>
       <div class="field"><label>Qual a oferta e a promessa clara?</label><textarea id="f-oferta">${esc(data.oferta)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Acesso à AF Plataforma + acompanhamento. Promessa: sair do consumo de transformação e entrar na construção de identidade, autoridade e legado com um sistema real. Não é mais conteúdo. É estrutura e continuidade.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual é a oferta concreta e a promessa que você pode cumprir?</p></div>
       <button class="btn" data-continue="oferta">Salvar e Continuar</button>`;
   } else if (view === "etapas") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 3</div><h1 class="title">Etapas do funil</h1>
       <div class="field"><label>Etapas (awareness → consideração → conversão)</label><textarea id="f-etapas">${esc(data.etapas)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>1. Conteúdo de autoridade (awareness). 2. Lead magnet ou diagnóstico (consideração). 3. Sessão de alinhamento. 4. Acesso à plataforma. Cada etapa tem um objetivo claro e reduz a fricção para a próxima.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais são as etapas do funil e o objetivo de cada uma?</p></div>
       <button class="btn" data-continue="etapas">Salvar e Continuar</button>`;
   } else if (view === "paginas") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 4</div><h1 class="title">Páginas e criativos</h1>
       <div class="field"><label>Páginas necessárias e tipo de criativos</label><textarea id="f-paginas">${esc(data.paginas)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Landing de captação, página de obrigado, sequência de e-mail ou WhatsApp, criativos com a frequência da marca (luxo silencioso, sem hype). Foco em clareza e autoridade, não em volume.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais páginas e tipos de criativos são necessários?</p></div>
       <button class="btn" data-continue="paginas">Salvar e Continuar</button>`;
   } else if (view === "metricas") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 5</div><h1 class="title">Métricas</h1>
       <div class="field"><label>Quais métricas importam?</label><textarea id="f-metricas">${esc(data.metricas)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Taxa de captação de leads qualificados, custo por lead, taxa de conversão para sessão, engajamento na plataforma. Foco em qualidade, não apenas em volume de leads.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais métricas realmente importam para este funil?</p></div>
       <button class="btn" data-continue="metricas">Salvar e Finalizar</button>`;
   }
 }
