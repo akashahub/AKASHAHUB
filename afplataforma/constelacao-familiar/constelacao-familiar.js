@@ -77,26 +77,32 @@ function render() {
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Sistema familiar</h1>
       <div class="field"><label>Descrição do sistema</label><textarea id="f-sistema">${esc(data.sistema)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Na origem da Akasha Hub existe uma dinâmica de quem carrega a responsabilidade de construir o que os outros apenas consomem.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Na minha família, o pai era o único provedor e carregava tudo sozinho. Minha mãe cuidava da casa e dos filhos, mas raramente era ouvida nas decisões importantes. Eu cresci vendo que “ser forte” significava não pedir ajuda. Hoje percebo que ainda ocupo o lugar de quem resolve tudo, mesmo quando não é minha responsabilidade.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Descreva o sistema sem julgar. Quem ocupa qual lugar? O que se repete?</p></div>
       <button class="btn" data-continue="sistema">Salvar e Continuar</button>`;
   } else if (view === "padroes") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Padrões observados</h1>
       <div class="field"><label>Padrões e dinâmicas</label><textarea id="f-padroes">${esc(data.padroes)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Padrão observado: quem constrói carrega sozinho.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Padrão que se repete: carregar sozinho. Lealdade invisível a não ter mais que os outros ou a não “brilhar” demais. Já tentei mudar isso várias vezes, mas quando as coisas ficam difíceis eu volto a fazer tudo sozinho. Também percebo que evito pedir ajuda mesmo quando seria mais inteligente.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Liste o que se repete sem tentar corrigir agora. Quais situações voltam no mesmo formato?</p></div>
       <button class="btn" data-continue="padroes">Salvar e Continuar</button>`;
   } else if (view === "relacoes") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Relações chave</h1>
       <div class="field"><label>Relações relevantes</label><textarea id="f-relacoes">${esc(data.relacoes)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>A relação com meu pai ainda influencia muito: herdei a ideia de que pedir ajuda é fraqueza. Com minha mãe, herdei a sensibilidade de cuidar dos outros, mas também a dificuldade de me colocar em primeiro lugar. Com meu sócio atual, percebo que ainda tento carregar mais do que deveria.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais 2-3 relações mais impactam suas escolhas hoje? O que você herdou de cada uma?</p></div>
       <button class="btn" data-continue="relacoes">Salvar e Continuar</button>`;
   } else if (view === "reflexoes") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Reflexões</h1>
       <div class="field"><label>Reflexões e insights</label><textarea id="f-reflexoes">${esc(data.reflexoes)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Percebo que carregar sozinho me dá sensação de controle, mas também me esgota e limita o crescimento do que eu construo. Uma escolha consciente que posso fazer é começar a delegar pequenas coisas e observar o que acontece. Isso se conecta com meu desejo de construir legado sem precisar estar em tudo.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>O que esse mapa revela sobre as escolhas que você faz hoje? Qual passo consciente você pode dar?</p></div>
       <button class="btn" data-continue="reflexoes">Salvar e Continuar</button>`;
   } else if (view === "mapa") {
     content.innerHTML = notice + `
