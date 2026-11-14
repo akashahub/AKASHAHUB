@@ -4,6 +4,50 @@ let data = { identidade: "", arquetipos: "", voz: "", diferenciais: "", elemento
 let view = "dashboard";
 let db = null;
 let auth = null;
+let currentTargetField = null;
+
+const DISCOVERY = {
+  identidade: {
+    title: "Descobrir minha identidade de marca",
+    subtitle: "Defina como você quer ser reconhecido.",
+    questions: [
+      { id: "q1", label: "Qual arquétipo principal combina com você?", options: ["O Sábio", "O Criador", "O Guia", "O Herói", "O Explorador", "Outro"] },
+      { id: "q2", label: "Como você quer ser reconhecido?", options: ["Por clareza", "Por profundidade", "Por estrutura", "Por autenticidade", "Outro"] },
+      { id: "q3", label: "Qual é a essência da sua marca em uma frase?", type: "text" }
+    ],
+    generate: (a) => `Minha identidade de marca é ${a.q1 || "O Sábio + O Criador"}. Quero ser reconhecido ${a.q2 || "por clareza e profundidade"}. Essência: ${a.q3 || "clareza que gera legado"}.`
+  },
+  voz: {
+    title: "Descobrir meu tom de voz",
+    subtitle: "Defina como você se comunica.",
+    questions: [
+      { id: "q1", label: "Qual tom combina com você?", options: ["Claro e direto", "Profundo e reflexivo", "Elegante e preciso", "Caloroso e humano", "Outro"] },
+      { id: "q2", label: "O que você evita na comunicação?", options: ["Hype e exagero", "Frases prontas", "Volume sem substância", "Linguagem técnica demais", "Outro"] },
+      { id: "q3", label: "Como você fala quando está no seu melhor?", type: "text" }
+    ],
+    generate: (a) => `Meu tom é ${a.q1 || "claro e direto"}. Evito ${a.q2 || "hype e exagero"}. Quando estou no meu melhor, ${a.q3 || "falo com precisão e respeito"}.`
+  },
+  diferenciais: {
+    title: "Descobrir meus diferenciais",
+    subtitle: "Identifique o que é único na sua marca.",
+    questions: [
+      { id: "q1", label: "Qual combinação é só sua?", options: ["Essência + sistemas", "Pessoas + tecnologia", "Profundidade + praticidade", "Branding + operação", "Outro"] },
+      { id: "q2", label: "O que as pessoas já reconhecem em você?", options: ["Clareza", "Coerência", "Profundidade", "Capacidade de estruturar", "Outro"] },
+      { id: "q3", label: "O que te diferencia de quem faz algo parecido?", type: "text" }
+    ],
+    generate: (a) => `Minha combinação única é ${a.q1 || "essência com estrutura"}. As pessoas já reconhecem ${a.q2 || "minha clareza"}. Me diferencio porque ${a.q3 || "uno profundidade com sistema real"}.`
+  },
+  elementos: {
+    title: "Descobrir meus elementos de marca",
+    subtitle: "Defina referências visuais e sensoriais.",
+    questions: [
+      { id: "q1", label: "Qual estética combina com você?", options: ["Luxo silencioso", "Minimalista", "Elegante e estruturado", "Caloroso e humano", "Outro"] },
+      { id: "q2", label: "Quais cores ou referências visuais te representam?", options: ["Dourado e violeta", "Tons terrosos", "Preto e branco", "Azul e dourado", "Outro"] },
+      { id: "q3", label: "O que sua marca deve transmitir visualmente?", type: "text" }
+    ],
+    generate: (a) => `Estética: ${a.q1 || "luxo silencioso"}. Referências: ${a.q2 || "dourado e profundidade"}. Transmitir: ${a.q3 || "clareza, estrutura e profundidade"}.`
+  }
+};
 
 function toast(msg) {
   const el = document.getElementById("toast"); if (!el) return;
@@ -30,6 +74,76 @@ function setView(v) {
   render();
 }
 window.setView = setView;
+
+function openDiscovery(field) {
+  const cfg = DISCOVERY[field];
+  if (!cfg) return;
+  currentTargetField = field;
+  document.getElementById("modalTitle").textContent = cfg.title;
+  document.getElementById("modalSubtitle").textContent = cfg.subtitle;
+  const qEl = document.getElementById("modalQuestions");
+  qEl.innerHTML = cfg.questions.map(q => {
+    if (q.options) {
+      const multi = q.multi ? ' data-multi="1"' : '';
+      return `<div class="field"><label>${q.label}</label>
+        <div class="options" data-qid="${q.id}"${multi}>
+          ${q.options.map(opt => `<button type="button" class="opt" data-value="${opt}">${opt}</button>`).join("")}
+        </div>
+        ${q.options.includes("Outro") ? `<input type="text" class="other-input hidden" data-for="${q.id}" placeholder="Especifique...">` : ""}
+      </div>`;
+    }
+    return `<div class="field"><label>${q.label}</label><textarea id="disc-${q.id}" placeholder="Sua resposta..."></textarea></div>`;
+  }).join("");
+
+  qEl.querySelectorAll(".options").forEach(box => {
+    const multi = box.dataset.multi;
+    box.querySelectorAll(".opt").forEach(btn => {
+      btn.onclick = () => {
+        if (multi) btn.classList.toggle("selected");
+        else {
+          box.querySelectorAll(".opt").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          const other = box.parentElement.querySelector(".other-input");
+          if (other) other.classList.toggle("hidden", btn.dataset.value !== "Outro");
+        }
+      };
+    });
+  });
+
+  document.getElementById("modalResult").classList.add("hidden");
+  document.getElementById("discoveryForm").classList.remove("hidden");
+  document.getElementById("discoveryModal").classList.remove("hidden");
+}
+
+function closeModal() {
+  document.getElementById("discoveryModal").classList.add("hidden");
+  currentTargetField = null;
+}
+
+function collectAnswers(cfg) {
+  const answers = {};
+  cfg.questions.forEach(q => {
+    if (q.options) {
+      const box = document.querySelector(`.options[data-qid="${q.id}"]`);
+      if (q.multi) {
+        answers[q.id] = Array.from(box.querySelectorAll(".opt.selected")).map(b => b.dataset.value);
+      } else {
+        const sel = box.querySelector(".opt.selected");
+        let val = sel ? sel.dataset.value : "";
+        if (val === "Outro") {
+          const other = document.querySelector(`.other-input[data-for="${q.id}"]`);
+          val = other ? other.value.trim() : "";
+        }
+        answers[q.id] = val;
+      }
+    } else {
+      const el = document.getElementById("disc-" + q.id);
+      answers[q.id] = el ? el.value.trim() : "";
+    }
+  });
+  return answers;
+}
+
 function bind() {
   const nav = document.getElementById("nav"); if (nav) nav.addEventListener("click", e => { const b = e.target.closest("button[data-view]"); if (b) setView(b.dataset.view); });
   const menu = document.getElementById("menuBtn"); if (menu) menu.addEventListener("click", () => { const s = document.getElementById("sidebar"); if (s) s.classList.toggle("open"); });
@@ -39,9 +153,40 @@ function bind() {
     if (cont) {
       document.querySelectorAll("textarea[id^='f-']").forEach(el => { const key = el.id.slice(2); if (key in data) data[key] = el.value; });
       saveData().then(() => setView(nextStep(cont.dataset.continue)));
+      return;
     }
+    const disc = e.target.closest("[data-discover]");
+    if (disc) openDiscovery(disc.dataset.discover);
   });
+
+  document.getElementById("modalClose").onclick = closeModal;
+  document.getElementById("modalCancel").onclick = closeModal;
+  document.querySelector(".modal-backdrop").onclick = closeModal;
+
+  document.getElementById("discoveryForm").onsubmit = (e) => {
+    e.preventDefault();
+    const cfg = DISCOVERY[currentTargetField];
+    if (!cfg) return;
+    const answers = collectAnswers(cfg);
+    const suggestion = cfg.generate(answers);
+    document.getElementById("suggestionText").textContent = suggestion;
+    document.getElementById("discoveryForm").classList.add("hidden");
+    document.getElementById("modalResult").classList.remove("hidden");
+  };
+
+  document.getElementById("useSuggestion").onclick = () => {
+    const text = document.getElementById("suggestionText").textContent;
+    if (currentTargetField && text) {
+      data[currentTargetField] = text;
+      const ta = document.getElementById("f-" + currentTargetField);
+      if (ta) ta.value = text;
+      toast("Sugestão aplicada. Você pode editar antes de salvar.");
+    }
+    closeModal();
+    render();
+  };
 }
+
 async function saveData() {
   if (!currentUser || !db) { toast("Faça login para salvar."); return; }
   try {
@@ -51,6 +196,11 @@ async function saveData() {
   } catch { toast("Erro ao salvar."); }
   render();
 }
+
+function discoverBtn(field) {
+  return `<button class="btn secondary" data-discover="${field}" style="margin-top:8px">Descobrir</button>`;
+}
+
 function render() {
   const p = progress();
   const content = document.getElementById("content"); if (!content) return;
@@ -61,49 +211,37 @@ function render() {
     content.innerHTML = notice + `
       <div class="eyebrow">Branding Pessoal</div>
       <h1 class="title">Sua marca</h1>
-      <p class="sub">Defina identidade, voz, diferenciais e elementos visuais da sua marca pessoal.</p>
-      <div class="card">
-        <div>Progresso do guia</div>
-        <div class="progress"><span style="width:${p}%"></span></div>
-        <strong>${p}% preenchido</strong>
-      </div>
-      <div class="card">
-        <h3>Próximo passo</h3>
-        <p>${p < 100 ? "Mapeie identidade e voz para consolidar o guia." : "Guia pronto."}</p>
-        <button class="btn" data-goto="identidade">Começar pela identidade</button>
-      </div>`;
+      <p class="sub">Defina identidade, voz, diferenciais e elementos visuais.</p>
+      <div class="card"><div>Progresso</div><div class="progress"><span style="width:${p}%"></span></div><strong>${p}%</strong></div>
+      <div class="card"><button class="btn" data-goto="identidade">Começar</button></div>`;
   } else if (view === "identidade") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 1</div>
       <h1 class="title">Identidade e arquétipos</h1>
       <div class="field"><label>Identidade de marca</label><textarea id="f-identidade">${esc(data.identidade)}</textarea></div>
       <div class="field"><label>Arquétipos</label><textarea id="f-arquetipos">${esc(data.arquetipos)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p><strong>Identidade:</strong> Marca que une clareza de essência com construção de legado. Não é apenas consultoria nem apenas tecnologia — é o sistema operacional de quem já decidiu construir de verdade.<br><br><strong>Arquétipos:</strong> O Sábio (traz clareza) + O Criador (constrói sistemas) + O Guia (conduz sem ocupar o lugar do outro).</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você quer ser reconhecido? Quais arquétipos combinam com sua essência?</p></div>
+      ${discoverBtn("identidade")}
       <button class="btn" data-continue="identidade">Salvar e Continuar</button>`;
   } else if (view === "voz") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Tom de voz</h1>
       <div class="field"><label>Tom de voz e linguagem</label><textarea id="f-voz">${esc(data.voz)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Tom claro, profundo e direto. Sem exageros nem hype. Linguagem que respeita a inteligência da pessoa e não tenta impressionar. Prefiro dizer menos e com precisão do que falar muito sem substância. Autoridade que não precisa gritar.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você fala quando está no seu melhor? O que você nunca diz na sua comunicação?</p></div>
+      ${discoverBtn("voz")}
       <button class="btn" data-continue="voz">Salvar e Continuar</button>`;
   } else if (view === "diferenciais") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Diferenciais</h1>
       <div class="field"><label>Diferenciais e posicionamento</label><textarea id="f-diferenciais">${esc(data.diferenciais)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Uno leitura sistêmica de pessoas, clareza de identidade e capacidade de transformar isso em plataformas e sistemas digitais. Não entrego apenas diagnóstico nem apenas tecnologia. Crio o espaço onde a pessoa se encontra e já sai com estrutura para construir.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual combinação é única em você? O que as pessoas já reconhecem na sua forma de fazer?</p></div>
+      ${discoverBtn("diferenciais")}
       <button class="btn" data-continue="diferenciais">Salvar e Continuar</button>`;
   } else if (view === "elementos") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Elementos de marca</h1>
       <div class="field"><label>Elementos visuais e referências</label><textarea id="f-elementos">${esc(data.elementos)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Paleta de cores: dourado e violeta sobre fundo escuro. Tipografia: serifada para títulos (elegância) e sans-serif para corpo (clareza). Estética de luxo silencioso — espaço em branco, poucos elementos, nada de excesso. Símbolo ou referência visual que transmita profundidade e estrutura.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais cores, formas e referências visuais já combinam com sua essência?</p></div>
+      ${discoverBtn("elementos")}
       <button class="btn" data-continue="elementos">Salvar e Continuar</button>`;
   } else if (view === "guia") {
     content.innerHTML = notice + `
