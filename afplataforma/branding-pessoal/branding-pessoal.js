@@ -78,27 +78,32 @@ function render() {
       <h1 class="title">Identidade e arquétipos</h1>
       <div class="field"><label>Identidade de marca</label><textarea id="f-identidade">${esc(data.identidade)}</textarea></div>
       <div class="field"><label>Arquétipos</label><textarea id="f-arquetipos">${esc(data.arquetipos)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Identidade: Tecnologia da Alma · Arquitetura de Essência e Legado. Arquétipos: o Sábio + o Criador + o Guia.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p><strong>Identidade:</strong> Marca que une clareza de essência com construção de legado. Não é apenas consultoria nem apenas tecnologia — é o sistema operacional de quem já decidiu construir de verdade.<br><br><strong>Arquétipos:</strong> O Sábio (traz clareza) + O Criador (constrói sistemas) + O Guia (conduz sem ocupar o lugar do outro).</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você quer ser reconhecido? Quais arquétipos combinam com sua essência?</p></div>
       <button class="btn" data-continue="identidade">Salvar e Continuar</button>`;
   } else if (view === "voz") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Tom de voz</h1>
       <div class="field"><label>Tom de voz e linguagem</label><textarea id="f-voz">${esc(data.voz)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Tom: claro, profundo, direto e elegante. Sem hype. Luxo silencioso.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Tom claro, profundo e direto. Sem exageros nem hype. Linguagem que respeita a inteligência da pessoa e não tenta impressionar. Prefiro dizer menos e com precisão do que falar muito sem substância. Autoridade que não precisa gritar.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você fala quando está no seu melhor? O que você nunca diz na sua comunicação?</p></div>
       <button class="btn" data-continue="voz">Salvar e Continuar</button>`;
   } else if (view === "diferenciais") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Diferenciais</h1>
       <div class="field"><label>Diferenciais e posicionamento</label><textarea id="f-diferenciais">${esc(data.diferenciais)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Uno leitura sistêmica de pessoas, clareza de identidade e capacidade de transformar isso em plataformas e sistemas digitais. Não entrego apenas diagnóstico nem apenas tecnologia. Crio o espaço onde a pessoa se encontra e já sai com estrutura para construir.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual combinação é única em você? O que as pessoas já reconhecem na sua forma de fazer?</p></div>
       <button class="btn" data-continue="diferenciais">Salvar e Continuar</button>`;
   } else if (view === "elementos") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Elementos de marca</h1>
       <div class="field"><label>Elementos visuais e referências</label><textarea id="f-elementos">${esc(data.elementos)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Paleta: dourado + violeta. Tipografia: Cormorant Garamond + Inter. Estética de luxo silencioso.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Paleta de cores: dourado e violeta sobre fundo escuro. Tipografia: serifada para títulos (elegância) e sans-serif para corpo (clareza). Estética de luxo silencioso — espaço em branco, poucos elementos, nada de excesso. Símbolo ou referência visual que transmita profundidade e estrutura.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais cores, formas e referências visuais já combinam com sua essência?</p></div>
       <button class="btn" data-continue="elementos">Salvar e Continuar</button>`;
   } else if (view === "guia") {
     content.innerHTML = notice + `
