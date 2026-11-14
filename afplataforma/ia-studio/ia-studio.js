@@ -68,22 +68,29 @@ function render() {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 1</div><h1 class="title">Agentes</h1>
       <div class="field"><label>Quais agentes fazem sentido para você?</label><textarea id="f-agentes">${esc(data.agentes)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Agente de reflexão de essência, agente de geração de conteúdo alinhado à identidade.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Agente de reflexão de essência (ajuda a aprofundar respostas nos apps), agente de geração de conteúdo alinhado à identidade, e agente de acompanhamento de mentorandos (sugere próximos passos com base no progresso). Agentes que amplificam a essência, não que a substituem.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais agentes de IA fazem sentido para o seu trabalho e para a experiência dos seus clientes?</p></div>
       <button class="btn" data-continue="agentes">Salvar e Continuar</button>`;
   } else if (view === "prompts") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 2</div><h1 class="title">Prompts</h1>
       <div class="field"><label>Prompts e sistemas de prompt</label><textarea id="f-prompts">${esc(data.prompts)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Prompts que forçam alinhamento com o Dossiê de Essência e a frequência da marca. Nunca genéricos. Sistemas de prompt que incluem contexto da identidade, valores e tom de voz antes de gerar qualquer resposta ou conteúdo.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais prompts ou sistemas de prompt você usa ou pretende criar?</p></div>
       <button class="btn" data-continue="prompts">Salvar e Continuar</button>`;
   } else if (view === "automacoes") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 3</div><h1 class="title">Automações</h1>
       <div class="field"><label>Automações com IA</label><textarea id="f-automacoes">${esc(data.automacoes)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Geração de orientações personalizadas com base no progresso do mentorando, resumos de sessões, sugestões de próximos passos. Automações que liberam tempo sem perder a profundidade e o alinhamento com a essência.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais automações com IA fazem sentido no seu fluxo de trabalho?</p></div>
       <button class="btn" data-continue="automacoes">Salvar e Continuar</button>`;
   } else if (view === "casos") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 4</div><h1 class="title">Casos de uso</h1>
       <div class="field"><label>Casos de uso prioritários</label><textarea id="f-casos">${esc(data.casos)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Suporte ao mentor na revisão de dossiês, geração de conteúdo para o império digital alinhado à marca, e automação de processos repetitivos sem perder a essência. Casos de uso que amplificam o que já é feito bem, não que criam volume vazio.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais são os casos de uso prioritários de IA no seu contexto?</p></div>
       <button class="btn" data-continue="casos">Salvar e Finalizar</button>`;
   }
 }
