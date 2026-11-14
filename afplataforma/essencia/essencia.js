@@ -1,4 +1,4 @@
-// v8 - render imediato, esc sem aspas problemáticas
+// v9 - render imediato, esc sem aspas problemáticas
 const COL = "afEssencia";
 let currentUser = null;
 let data = { historia: "", valores: "", crencas: "", posicionamento: "", proposito: "", observacoes: "" };
