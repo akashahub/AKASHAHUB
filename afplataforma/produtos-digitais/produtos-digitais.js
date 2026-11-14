@@ -68,22 +68,29 @@ function render() {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 1</div><h1 class="title">Catálogo</h1>
       <div class="field"><label>Quais produtos digitais você oferece ou pretende oferecer?</label><textarea id="f-catalogo">${esc(data.catalogo)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>AF Plataforma, Dossiê de Essência, comunidades seletivas e conteúdos de autoridade.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>AF Plataforma (sistema operacional de fases), Dossiê de Essência como produto digital, comunidades seletivas, e conteúdos de autoridade. Produtos que amplificam a essência, não que geram mais consumo vazio.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais produtos digitais você já tem ou pretende criar?</p></div>
       <button class="btn" data-continue="catalogo">Salvar e Continuar</button>`;
   } else if (view === "ofertas") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 2</div><h1 class="title">Ofertas</h1>
       <div class="field"><label>Como estruturar as ofertas?</label><textarea id="f-ofertas">${esc(data.ofertas)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Acesso progressivo às fases da plataforma, mentorias de alto toque, e produtos digitais que amplificam (não substituem) a experiência humana. Ofertas claras, com promessa específica e critérios de entrada.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você estrutura suas ofertas digitais?</p></div>
       <button class="btn" data-continue="ofertas">Salvar e Continuar</button>`;
   } else if (view === "entrega") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 3</div><h1 class="title">Entrega e experiência</h1>
       <div class="field"><label>Como é a experiência de entrega?</label><textarea id="f-entrega">${esc(data.entrega)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Plataforma premium com progressão gamificada, exemplos reais em cada etapa, e acompanhamento do mentor. Experiência de luxo silencioso: clareza, profundidade e continuidade. A entrega é tão importante quanto o produto.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como é a experiência de quem consome seus produtos digitais?</p></div>
       <button class="btn" data-continue="entrega">Salvar e Continuar</button>`;
   } else if (view === "monetizacao") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 4</div><h1 class="title">Monetização</h1>
       <div class="field"><label>Modelo de monetização</label><textarea id="f-monetizacao">${esc(data.monetizacao)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Acesso à plataforma + mentoria. Valor baseado em transformação real e legado, não em volume de conteúdo. Modelo que permite profundidade e continuidade, não apenas escala de baixo ticket.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual é o modelo de monetização dos seus produtos digitais?</p></div>
       <button class="btn" data-continue="monetizacao">Salvar e Finalizar</button>`;
   }
 }
