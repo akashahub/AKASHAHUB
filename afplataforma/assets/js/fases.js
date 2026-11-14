@@ -188,8 +188,33 @@ export function renderFase2() {
 }
 
 export function renderFase3() {
-  return pagina("3", "Alinhamento Financeiro", "AF", "Organização e capital.", `${renderPhaseBriefing("fase3")}<h3 class="section-h">Trabalho principal</h3>${lista(FASE3)}${renderPhaseChecklist("fase3")}`);
+  const appsFase3 = `
+    <h3 class="section-h">Apps da Fase 03 — Acesso direto</h3>
+    <p class="notes-hint">Cada app é independente, salva no seu UID no Firestore e tem modal de descoberta com opções clicáveis. Comece pelo Fluxo de Caixa OS.</p>
+    <p style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+      <a class="tool-btn" href="/afplataforma/fluxo-de-caixa/">Fluxo de Caixa OS</a>
+      <a class="tool-btn" href="/afplataforma/precificacao/">Precificação</a>
+      <a class="tool-btn" href="/afplataforma/indicadores-financeiros/">Indicadores Financeiros</a>
+      <a class="tool-btn" href="/afplataforma/metas-financeiras/">Metas Financeiras</a>
+      <a class="tool-btn" href="/afplataforma/planejamento-financeiro/">Planejamento Financeiro</a>
+      <a class="tool-btn" href="/afplataforma/sustentabilidade-ofertas/">Sustentabilidade das Ofertas</a>
+      <a class="tool-btn" href="/afplataforma/decisoes-comerciais/">Decisões Comerciais</a>
+      <a class="tool-btn" href="/afplataforma/acompanhamento-resultados/">Acompanhamento de Resultados</a>
+    </p>
+  `;
+  return pagina(
+    "3",
+    "Alinhamento Financeiro",
+    "AF",
+    "Organização e capital.",
+    `${appsFase3}
+    ${renderPhaseBriefing("fase3")}
+    <h3 class="section-h">Trabalho principal da fase</h3>
+    ${lista(FASE3)}
+    ${renderPhaseChecklist("fase3")}`
+  );
 }
+
 export function renderFase4() {
   return pagina("4", "Expansão", "EX", "Escala e oportunidades.", `${renderPhaseBriefing("fase4")}<h3 class="section-h">Trabalho principal</h3>${lista(FASE4)}${renderPhaseChecklist("fase4")}`);
 }
@@ -231,7 +256,7 @@ export function renderFase2Ativos() {
 export function bindFase2Ativos() {}
 
 export function renderFase3Preco() {
-  return pagina("3", "Precificação", "", "Calcule custo, margem e preço mínimo.", `<p>Ferramenta de precificação. Em evolução.</p>`);
+  return pagina("3", "Precificação", "", "Calcule custo, margem e preço mínimo.", `<p>Use o app <a href="/afplataforma/precificacao/">Precificação</a> para a versão completa.</p>`);
 }
 export function bindFase3Preco() {}
 
