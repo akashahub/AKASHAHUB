@@ -216,8 +216,33 @@ export function renderFase3() {
 }
 
 export function renderFase4() {
-  return pagina("4", "Expansão", "EX", "Escala e oportunidades.", `${renderPhaseBriefing("fase4")}<h3 class="section-h">Trabalho principal</h3>${lista(FASE4)}${renderPhaseChecklist("fase4")}`);
+  const appsFase4 = `
+    <h3 class="section-h">Apps da Fase 04 — Acesso direto</h3>
+    <p class="notes-hint">Cada app é independente, salva no seu UID no Firestore e tem modal de descoberta com opções clicáveis. Comece por Dependências do Fundador.</p>
+    <p style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+      <a class="tool-btn" href="/afplataforma/dependencias-fundador/">Dependências do Fundador</a>
+      <a class="tool-btn" href="/afplataforma/processos-operacionais/">Processos Operacionais</a>
+      <a class="tool-btn" href="/afplataforma/responsabilidades/">Responsabilidades e Funções</a>
+      <a class="tool-btn" href="/afplataforma/padronizacao/">Padronização</a>
+      <a class="tool-btn" href="/afplataforma/documentacao/">Documentação</a>
+      <a class="tool-btn" href="/afplataforma/fluxos-trabalho/">Fluxos de Trabalho</a>
+      <a class="tool-btn" href="/afplataforma/acompanhamento-operacao/">Acompanhamento da Operação</a>
+      <a class="tool-btn" href="/afplataforma/divulgacao/">Divulgação e Presença</a>
+    </p>
+  `;
+  return pagina(
+    "4",
+    "Expansão",
+    "EX",
+    "Escala e oportunidades.",
+    `${appsFase4}
+    ${renderPhaseBriefing("fase4")}
+    <h3 class="section-h">Trabalho principal da fase</h3>
+    ${lista(FASE4)}
+    ${renderPhaseChecklist("fase4")}`
+  );
 }
+
 export function renderFase5() {
   return pagina("5", "Legado", "LG", "Patrimônio e continuidade.", `${renderPhaseBriefing("fase5")}<h3 class="section-h">Trabalho principal</h3>${lista(FASE5)}${renderPhaseChecklist("fase5")}`);
 }
@@ -263,9 +288,9 @@ export function bindFase3Preco() {}
 export function renderFase4Sdr() { return pagina("4", "SDR", "", "Prospecção e qualificação.", `<p>Use o app <a href="/afplataforma/sdr-os/">SDR OS</a> para a versão completa.</p>`); }
 export function renderFase4Treinamento() { return pagina("4", "Treinamento", "", "Organização de treinamento.", `<p>Em evolução.</p>`); }
 export function renderFase4Closers() { return pagina("4", "Closers", "", "Fechamento e conversão.", `<p>Em evolução.</p>`); }
-export function renderFase4Depende() { return pagina("4", "O que depende do fundador", "", "Mapeie dependências.", `<p>Em evolução.</p>`); }
+export function renderFase4Depende() { return pagina("4", "O que depende do fundador", "", "Mapeie dependências.", `<p>Use o app <a href="/afplataforma/dependencias-fundador/">Dependências do Fundador</a> para a versão completa.</p>`); }
 export function bindFase4Depende() {}
-export function renderFase4Divulga() { return pagina("4", "Divulgação", "", "Planejamento de divulgação.", `<p>Em evolução.</p>`); }
+export function renderFase4Divulga() { return pagina("4", "Divulgação", "", "Planejamento de divulgação.", `<p>Use o app <a href="/afplataforma/divulgacao/">Divulgação e Presença</a> para a versão completa.</p>`); }
 export function bindFase4Divulga() {}
 export function renderFase5Livro() { return pagina("5", "Livro do método", "", "Documentação do método.", `<p>Em evolução.</p>`); }
 export function bindFase5Livro() {}
