@@ -1,4 +1,4 @@
-// v11 - esc simples
+// v12 - exemplos autoexplicativos
 const COL = "afEssencia";
 let currentUser = null;
 let data = { historia: "", valores: "", crencas: "", posicionamento: "", proposito: "", observacoes: "" };
@@ -105,7 +105,7 @@ function render() {
       </div>
       <div class="guidance">
         <div class="eyebrow">Como usar este app</div>
-        <p>Cada etapa tem um exemplo real da Akasha Hub + uma orientação para você idealizar o seu. Não copie — use como espelho para encontrar a sua versão.</p>
+        <p>Cada etapa tem um exemplo prático para você entender o tipo de resposta esperada. Use como referência, não como cópia.</p>
       </div>`;
   } else if (view === "historia") {
     content.innerHTML = notice + `
@@ -113,8 +113,8 @@ function render() {
       <h1 class="title">História pessoal</h1>
       <p class="sub">Contexto, experiências formativas e o que moldou quem você é.</p>
       <div class="field"><label>Narrativa pessoal</label><textarea id="f-historia">${esc(data.historia)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>A Akasha Hub nasceu da percepção de que a maioria das pessoas consome transformação, mas poucos constroem legado.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Conte o arco que explica por que você faz o que faz hoje.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Nasci em uma família de empreendedores e desde cedo vi meu pai trabalhar muitas horas sem estrutura clara. Isso me fez querer criar sistemas que permitam às pessoas construir com mais clareza e menos desgaste. A experiência de quase falir em 2018 me mostrou que identidade mal definida gera decisões erradas. Hoje ajudo empresários a mapear quem são antes de escalar o negócio.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Conte o arco que explica por que você faz o que faz hoje. Inclua experiências marcantes, viradas de chave e o que te trouxe até aqui.</p></div>
       <button class="btn" data-continue="historia">Salvar e Continuar</button>`;
   } else if (view === "valores") {
     content.innerHTML = notice + `
@@ -122,18 +122,24 @@ function render() {
       <h1 class="title">Valores e crenças</h1>
       <div class="field"><label>Valores centrais</label><textarea id="f-valores">${esc(data.valores)}</textarea></div>
       <div class="field"><label>Crenças e padrões</label><textarea id="f-crencas">${esc(data.crencas)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p><strong>Valores:</strong> Clareza antes de velocidade. Essência antes de estratégia. Construção real acima de hype. Integridade mesmo quando ninguém está olhando.<br><br><strong>Crenças/Padrões:</strong> Acredito que a maioria das pessoas tenta escalar sem saber quem é, e isso gera autoriedade frágil. Padrão que já repeti: tentar fazer tudo sozinho por medo de perder o controle.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Liste 3-5 valores que você realmente não abre mão. Depois descreva crenças ou padrões (seus ou da família) que ainda influenciam suas decisões.</p></div>
       <button class="btn" data-continue="valores">Salvar e Continuar</button>`;
   } else if (view === "posicionamento") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Posicionamento</h1>
       <div class="field"><label>Posicionamento e narrativa</label><textarea id="f-pos">${esc(data.posicionamento)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Ajudo empresários e profissionais de alto potencial a sair do consumo de transformação e entrar na construção de legado. Não vendo mais conteúdo. Crio o sistema operacional de identidade e autoridade para quem já decidiu construir de verdade. Meu posicionamento é: clareza de essência gera autoriedade real e sustentável.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Descreva em 2-4 frases quem você ajuda, qual problema resolve e como se diferencia. Evite frases genéricas como "ajudo pessoas a terem sucesso".</p></div>
       <button class="btn" data-continue="posicionamento">Salvar e Continuar</button>`;
   } else if (view === "proposito") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Propósito e direção</h1>
       <div class="field"><label>Propósito e próximos passos</label><textarea id="f-prop">${esc(data.proposito)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Meu propósito é criar um ecossistema onde empresários mapeiam sua essência e constroem legado com estrutura, não com mais esforço. Nos próximos 12 meses quero consolidar a AF Plataforma como sistema operacional de referência e formar um grupo seleto de mentorandos que já estão construindo ativos digitais alinhados à sua identidade.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Defina o propósito maior (por que isso importa) e 1-2 direções concretas para os próximos meses ou anos.</p></div>
       <button class="btn" data-continue="proposito">Salvar e Continuar</button>`;
   } else if (view === "dossie") {
     content.innerHTML = notice + `
