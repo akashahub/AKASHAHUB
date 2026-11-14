@@ -68,22 +68,29 @@ function render() {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 1</div><h1 class="title">Prospecção</h1>
       <div class="field"><label>Como e onde prospectar?</label><textarea id="f-prospeccao">${esc(data.prospeccao)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Conteúdo de autoridade + indicações + eventos seletivos.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Conteúdo de autoridade no LinkedIn e site, indicações de mentorandos atuais, e participação em eventos seletivos. Foco em empresários e profissionais que já sentem a necessidade de sistema, não de mais informação. Evito prospecção fria em massa.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como e onde você prospecta pessoas alinhadas com sua essência?</p></div>
       <button class="btn" data-continue="prospeccao">Salvar e Continuar</button>`;
   } else if (view === "qualificacao") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 2</div><h1 class="title">Qualificação</h1>
       <div class="field"><label>Critérios de qualificação</label><textarea id="f-qualificacao">${esc(data.qualificacao)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Alinhamento com a essência da marca, capacidade de investir tempo e recursos, e desejo real de construir legado (não apenas consumir). Critérios: já tem clareza mínima, está disposto a agir, e valoriza profundidade.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais critérios você usa para qualificar uma pessoa?</p></div>
       <button class="btn" data-continue="qualificacao">Salvar e Continuar</button>`;
   } else if (view === "acompanhamento") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 3</div><h1 class="title">Acompanhamento</h1>
       <div class="field"><label>Como acompanhar o progresso?</label><textarea id="f-acompanhamento">${esc(data.acompanhamento)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Mentor view na plataforma + pontos de contato estratégicos. Foco em progressão real nas fases, não em volume de mensagens. Acompanhamento baseado em dados da plataforma e conversas de qualidade.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Como você acompanha o progresso das pessoas que estão no funil?</p></div>
       <button class="btn" data-continue="acompanhamento">Salvar e Continuar</button>`;
   } else if (view === "scripts") {
     content.innerHTML = notice + `
       <div class="eyebrow">Missão 4</div><h1 class="title">Scripts e playbook</h1>
       <div class="field"><label>Scripts e processos</label><textarea id="f-scripts">${esc(data.scripts)}</textarea></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Abordagem baseada em frequência e clareza, não em pressão. Playbook alinhado à identidade da marca. Scripts que ajudam a entender a realidade da pessoa antes de apresentar qualquer solução. Foco em escuta e alinhamento.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Quais scripts ou processos você usa ou pretende usar?</p></div>
       <button class="btn" data-continue="scripts">Salvar e Finalizar</button>`;
   }
 }
