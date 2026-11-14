@@ -1,4 +1,4 @@
-// v9 - render imediato, esc sem aspas problemáticas
+// v10 - esc com char codes
 const COL = "afEssencia";
 let currentUser = null;
 let data = { historia: "", valores: "", crencas: "", posicionamento: "", proposito: "", observacoes: "" };
@@ -18,12 +18,17 @@ function toast(msg) {
 function esc(s) {
   if (s == null) return "";
   var str = String(s);
-  str = str.split("&").join("&");
-  str = str.split("<").join("<");
-  str = str.split(">").join(">");
-  str = str.split('"').join(""");
-  str = str.split("'").join("&#39;");
-  return str;
+  var out = "";
+  for (var i = 0; i < str.length; i++) {
+    var c = str.charAt(i);
+    if (c === "&") out += "&";
+    else if (c === "<") out += "<";
+    else if (c === ">") out += ">";
+    else if (c === String.fromCharCode(34)) out += """;
+    else if (c === String.fromCharCode(39)) out += "&#39;";
+    else out += c;
+  }
+  return out;
 }
 
 function progress() {
