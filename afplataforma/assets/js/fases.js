@@ -244,7 +244,31 @@ export function renderFase4() {
 }
 
 export function renderFase5() {
-  return pagina("5", "Legado", "LG", "Patrimônio e continuidade.", `${renderPhaseBriefing("fase5")}<h3 class="section-h">Trabalho principal</h3>${lista(FASE5)}${renderPhaseChecklist("fase5")}`);
+  const appsFase5 = `
+    <h3 class="section-h">Apps da Fase 05 — Acesso direto</h3>
+    <p class="notes-hint">Cada app é independente, salva no seu UID no Firestore e tem modal de descoberta com opções clicáveis. Comece pela Comunidade.</p>
+    <p style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+      <a class="tool-btn" href="/afplataforma/comunidade/">Comunidade</a>
+      <a class="tool-btn" href="/afplataforma/transmissao-metodologia/">Transmissão da Metodologia</a>
+      <a class="tool-btn" href="/afplataforma/principios-ecossistema/">Princípios do Ecossistema</a>
+      <a class="tool-btn" href="/afplataforma/continuidade/">Continuidade</a>
+      <a class="tool-btn" href="/afplataforma/relacionamento-longo-prazo/">Relacionamento de Longo Prazo</a>
+      <a class="tool-btn" href="/afplataforma/preservacao/">Preservação e Transmissão</a>
+      <a class="tool-btn" href="/afplataforma/evolucao-comunidade/">Evolução da Comunidade</a>
+      <a class="tool-btn" href="/afplataforma/legado-sem-fundador/">Legado sem o Fundador</a>
+    </p>
+  `;
+  return pagina(
+    "5",
+    "Legado",
+    "LG",
+    "Patrimônio e continuidade.",
+    `${appsFase5}
+    ${renderPhaseBriefing("fase5")}
+    <h3 class="section-h">Trabalho principal da fase</h3>
+    ${lista(FASE5)}
+    ${renderPhaseChecklist("fase5")}`
+  );
 }
 
 // Ferramentas internas restauradas com conteúdo funcional (aditivo)
@@ -292,5 +316,5 @@ export function renderFase4Depende() { return pagina("4", "O que depende do fund
 export function bindFase4Depende() {}
 export function renderFase4Divulga() { return pagina("4", "Divulgação", "", "Planejamento de divulgação.", `<p>Use o app <a href="/afplataforma/divulgacao/">Divulgação e Presença</a> para a versão completa.</p>`); }
 export function bindFase4Divulga() {}
-export function renderFase5Livro() { return pagina("5", "Livro do método", "", "Documentação do método.", `<p>Em evolução.</p>`); }
+export function renderFase5Livro() { return pagina("5", "Livro do método", "", "Documentação do método.", `<p>Use o app <a href="/afplataforma/transmissao-metodologia/">Transmissão da Metodologia</a> para a versão completa.</p>`); }
 export function bindFase5Livro() {}
