@@ -74,7 +74,7 @@ function render() {
       </div>
       <div class="guidance">
         <div class="eyebrow">Como usar</div>
-        <p>Use os exemplos da Akasha Hub como espelho. Idealize a sua versão a partir do que já é verdadeiro em você.</p>
+        <p>Cada etapa tem um exemplo prático do tipo de resposta esperada. Use como referência para encontrar a sua versão.</p>
       </div>`;
   } else if (view === "identidade") {
     content.innerHTML = notice + `
@@ -82,29 +82,32 @@ function render() {
       <h1 class="title">Identidade</h1>
       <p class="sub">Quem você é no núcleo e como se reconhece.</p>
       <div class="field"><label>Identidade central</label><textarea id="f-identidade">${esc(data.identidade)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>A Akasha Hub é a incubadora de essência e legado. Não vendemos transformação — criamos o sistema operacional para quem já decidiu construir.</p></div>
-      <div class="guidance"><div class="eyebrow">Orientação</div><p>Defina quem você é quando tira o cargo, o produto e o status.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Sou a pessoa que cria estrutura onde antes só existia esforço. No núcleo, sou alguém que transforma complexidade em clareza. Quando tiro o título de “consultor” ou “empresário”, o que resta é alguém que observa sistemas (pessoas, negócios, famílias) e ajuda a reorganizar o que está desalinhado. Me reconheço mais como construtor de pontes do que como especialista em um nicho.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Descreva quem você é quando remove o cargo, o produto e o status. O que permanece?</p></div>
       <button class="btn" data-continue="identidade">Salvar e Continuar</button>`;
   } else if (view === "valores") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 2</div>
       <h1 class="title">Valores</h1>
       <div class="field"><label>Valores centrais</label><textarea id="f-valores">${esc(data.valores)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>Essência antes de estratégia. Frequência alinhada. Tecnologia a serviço da alma. Legado sobre hype.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Clareza acima de velocidade. Prefiro ir mais devagar e construir certo do que escalar rápido e ter que desfazer depois. Integridade mesmo quando ninguém está olhando — já recusei projetos lucrativos que não combinavam com o que acredito. Responsabilidade compartilhada: não quero ser o único que carrega o sistema. Legado acima de hype.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Liste 3-5 valores que você realmente não abre mão, mesmo que isso custe dinheiro ou popularidade.</p></div>
       <button class="btn" data-continue="valores">Salvar e Continuar</button>`;
   } else if (view === "narrativa") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 3</div>
       <h1 class="title">Narrativa</h1>
       <div class="field"><label>Narrativa pessoal</label><textarea id="f-narrativa">${esc(data.narrativa)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>De consumidores de transformação a construtores de legado.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Durante anos eu consumia cursos, mentorias e frameworks achando que o próximo método ia resolver. Só quando parei e mapeei quem eu realmente era que as decisões ficaram mais fáceis e os resultados mais consistentes. Hoje minha narrativa é: parei de consumir transformação e comecei a construir legado com estrutura. Ajudo outras pessoas a fazerem o mesmo.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Conte a história que explica por que você faz o que faz. Qual foi a virada de chave?</p></div>
       <button class="btn" data-continue="narrativa">Salvar e Continuar</button>`;
   } else if (view === "diferenciais") {
     content.innerHTML = notice + `
       <div class="eyebrow">Módulo · Missão 4</div>
       <h1 class="title">Diferenciais</h1>
       <div class="field"><label>Diferenciais e unicidade</label><textarea id="f-diferenciais">${esc(data.diferenciais)}</textarea></div>
-      <div class="example"><div class="eyebrow">Exemplo Akasha Hub</div><p>União de constelação familiar, branding de essência e tecnologia de plataforma.</p></div>
+      <div class="example"><div class="eyebrow">Exemplo de como preencher</div><p>Uno três coisas que raramente andam juntas: leitura sistêmica de pessoas e famílias, clareza de identidade e branding, e capacidade de transformar isso em sistemas e plataformas digitais. Não sou só mentor nem só técnico. Crio o espaço onde a pessoa se encontra e já sai com estrutura para construir.</p></div>
+      <div class="guidance"><div class="eyebrow">Orientação</div><p>Qual combinação de experiência + visão + forma de fazer é só sua? O que as pessoas já notam em você sem você precisar explicar?</p></div>
       <button class="btn" data-continue="diferenciais">Salvar e Continuar</button>`;
   } else if (view === "mapa") {
     content.innerHTML = notice + `
