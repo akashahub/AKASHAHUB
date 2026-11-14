@@ -1,4 +1,4 @@
-// v6 - render imediato + esc seguro
+// v7 - render imediato + esc 100% seguro
 const COL = "afEssencia";
 let currentUser = null;
 let data = { historia: "", valores: "", crencas: "", posicionamento: "", proposito: "", observacoes: "" };
