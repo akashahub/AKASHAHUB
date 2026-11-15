@@ -56,7 +56,7 @@ function toast(msg) {
 }
 function esc(s) {
   if (!s) return "";
-  return String(s).replace(/</g, "<").replace(/>/g, ">");
+  return String(s).replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, """);
 }
 function progress() {
   const fields = ["identidade", "valores", "narrativa", "diferenciais"];
@@ -113,6 +113,7 @@ function openDiscovery(field) {
   document.getElementById("modalResult").classList.add("hidden");
   document.getElementById("discoveryForm").classList.remove("hidden");
   document.getElementById("discoveryModal").classList.remove("hidden");
+  if (window.AfApoio) window.AfApoio.quizify();
 }
 
 function closeModal() {
@@ -262,6 +263,12 @@ function render() {
   }
 }
 
+const __afRender = render;
+render = function () {
+  __afRender();
+  window.__AF = { data: data, discovery: (typeof DISCOVERY !== "undefined" ? DISCOVERY : null), user: (typeof currentUser !== "undefined" ? currentUser : null) };
+  if (window.AfApoio) window.AfApoio.mount(window.__AF);
+};
 bind();
 render();
 

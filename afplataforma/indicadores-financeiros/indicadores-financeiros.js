@@ -50,7 +50,7 @@ const DISCOVERY = {
 };
 
 function toast(msg) { const el = document.getElementById("toast"); if (!el) return; el.textContent = msg; el.classList.remove("hidden"); clearTimeout(window._t); window._t = setTimeout(() => el.classList.add("hidden"), 2800); }
-function esc(s) { if (!s) return ""; return String(s).replace(/</g, "<").replace(/>/g, ">"); }
+function esc(s) { if (!s) return ""; return String(s).replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, """); }
 function progress() { const fields = ["principais", "acompanhamento", "alertas", "revisao"]; return Math.round((fields.filter(f => (data[f] || "").trim().length > 15).length / fields.length) * 100); }
 function nextStep(current) { const STEPS = ["principais", "acompanhamento", "alertas", "revisao"]; const i = STEPS.indexOf(current); return i === -1 || i === STEPS.length - 1 ? "dashboard" : STEPS[i + 1]; }
 function setView(v) { view = v; document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v)); const side = document.getElementById("sidebar"); if (side) side.classList.remove("open"); render(); }
@@ -80,6 +80,7 @@ function openDiscovery(field) {
   document.getElementById("modalResult").classList.add("hidden");
   document.getElementById("discoveryForm").classList.remove("hidden");
   document.getElementById("discoveryModal").classList.remove("hidden");
+  if (window.AfApoio) window.AfApoio.quizify();
 }
 function closeModal() { document.getElementById("discoveryModal").classList.add("hidden"); currentTargetField = null; }
 function collectAnswers(cfg) {
@@ -140,6 +141,12 @@ function render() {
     content.innerHTML = notice + `<div class="eyebrow">Missão 4</div><h1 class="title">Revisão</h1><div class="field"><label>Como você revisa a estratégia</label><textarea id="f-revisao">${esc(data.revisao)}</textarea></div>${discoverBtn("revisao")}<button class="btn" data-continue="revisao">Salvar e Finalizar</button>`;
   }
 }
+const __afRender = render;
+render = function () {
+  __afRender();
+  window.__AF = { data: data, discovery: (typeof DISCOVERY !== "undefined" ? DISCOVERY : null), user: (typeof currentUser !== "undefined" ? currentUser : null) };
+  if (window.AfApoio) window.AfApoio.mount(window.__AF);
+};
 bind(); render();
 (async () => {
   try {
