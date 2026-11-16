@@ -60,6 +60,7 @@ A busca no repositório encontrou chamadas `AfApoio.mount` em 20 aplicativos e c
 - Em 20 módulos inspecionados que chamam o helper, o código grava em coleção própria com `setDoc`, mas não foi localizada leitura/hidratação do documento após `onAuthStateChanged`. A tela pode voltar vazia ao reabrir mesmo que o documento exista na nuvem; validar em navegador e corrigir com piloto antes de replicar.
 - A cópia usa `window.__AF` ou o estado entregue ao helper. É necessário validar se cada app entrega o estado completo e atualizado.
 - O painel de mentor montado no frontend não equivale a um painel central que consulta os registros Firestore de vários mentorandos. A própria nota do helper orienta o mentor a ler o que a pessoa enviou pelo WhatsApp.
+- O Dashboard do Mentor atual inclui um painel de administração de acessos; a inspeção de `access-admin.js` mostra gestão de solicitação, plano, módulos, pausa e bloqueio, não um painel de leitura das respostas dos aplicativos.
 - A checagem de Gmail/UID dentro do helper controla a exibição do bloco no navegador; não é autorização de segurança. O backend/Firestore Rules deve continuar sendo a autoridade.
 - O texto gerado no pacote diz “Só eu acesso eles no app”, embora as regras permitam leitura do mentor AF em coleções específicas.
 - O pacote atual lista os rótulos das perguntas e opções, mas serializa uma resposta genérica por campo de formulário. Não garante que todas as alternativas escolhidas em cada pergunta do quiz, textos auxiliares e campos dinâmicos sejam exportados individualmente.
