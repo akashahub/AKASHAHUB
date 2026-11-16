@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=vision-merge-1";
+} from "./navigation.js?v=etapa5-1";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
@@ -76,7 +76,8 @@ import {
   renderHubIntel,
   renderHubAcervo,
   renderHubConfig
-} from "./hub-shell.js?v=etapa4-1";
+} from "./hub-shell.js?v=etapa5-1";
+import { bindHubDossie } from "./hub-dossie.js?v=etapa5-1";
 import { renderVisionStudio, bindVisionStudio } from "./vision-studio.js?v=1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
@@ -838,6 +839,7 @@ onAfterNavigate((view) => {
     bindAgenteIA();
   }
   if (view === "mentorandos") bindMentorandos();
+  if (view === "hub-dossie") bindHubDossie();
   if (view === "catalogo-capacidades") bindCatalogoCapacidades();
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();

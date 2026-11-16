@@ -37,12 +37,12 @@ export function buildNav() {
   const mentor = isMentorSession();
   const items = [
     { id: "dashboard", label: mentor ? "Visão geral" : "Minha jornada", ico: "◇" },
-    { id: "profile", label: mentor ? "Perfil" : "Meu perfil", ico: "○" }
+    { id: "profile", label: mentor ? "Perfil" : "Meu perfil", ico: "○" },
+    { id: "hub-dossie", label: mentor ? "Diagnóstico e dossiê" : "Meu dossiê", ico: "◇" }
   ];
   if (mentor) {
     items.push(
-      { id: "mentorandos", label: "Mentorandos", ico: "★" },
-      { id: "hub-dossie", label: "Diagnóstico e dossiê", ico: "◇" }
+      { id: "mentorandos", label: "Mentorandos", ico: "★" }
     );
   }
   items.push(
