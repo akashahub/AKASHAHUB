@@ -3,6 +3,7 @@
  * Sem import de call.js / teleprompter.js (isso quebrava o login).
  */
 import { session, isMentorSession } from "./auth.js";
+import { paintHubContext } from "./hub-context.js?v=etapa3-1";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { Store } from "./storage.js";
@@ -33,23 +34,37 @@ function fase3Aberta(view) {
 
 export function buildNav() {
   const lang = session.lang || "pt-BR";
+  const mentor = isMentorSession();
   const items = [
-    { id: "dashboard", label: t(lang, "dash"), ico: "◇" }
+    { id: "dashboard", label: mentor ? "Visão geral" : "Minha jornada", ico: "◇" },
+    { id: "profile", label: mentor ? "Perfil" : "Meu perfil", ico: "○" }
   ];
-  if (isMentorSession()) items.push({ id: "mentor", label: t(lang, "mentor"), ico: "★" });
+  if (mentor) {
+    items.push(
+      { id: "mentorandos", label: "Mentorandos", ico: "★" },
+      { id: "hub-dossie", label: "Diagnóstico e dossiê", ico: "◇" }
+    );
+  }
   items.push(
-    { id: "profile", label: t(lang, "profile"), ico: "○" },
     { sep: true, label: "Arquitetura de Legado" },
     { id: "fase1", label: "Fase 1 · Essência", ico: `<img src="assets/img/fases/essencia.svg" alt="">` },
     { id: "fase2", label: "Fase 2 · Império", ico: `<img src="assets/img/fases/imperio.svg" alt="">` },
     { id: "fase3", label: "Fase 3 · AF", ico: `<img src="assets/img/fases/af.svg" alt="">` },
     { id: "fase4", label: "Fase 4 · Expansão", ico: `<img src="assets/img/fases/expansao.svg" alt="">` },
     { id: "fase5", label: "Fase 5 · Legado", ico: `<img src="assets/img/fases/legado.svg" alt="">` },
-    { sep: true, label: "Frente independente" },
+    { id: "hub-prompts", label: mentor ? "Biblioteca de Prompts" : "Prompts liberados", ico: "◇" },
+    { id: "hub-sessoes", label: mentor ? "Sessões e acompanhamento" : "Captura e sessões", ico: "◇" }
+  );
+  if (mentor) items.push({ id: "hub-intel", label: "Inteligência Central", ico: "◇" });
+  items.push(
+    { sep: true, label: "Acervo e frentes" },
+    { id: "hub-acervo", label: "Acervo e frentes", ico: "✧" },
     { id: "corpo", label: "CORPO · Vitalidade e Longevidade", ico: "✧" },
     { sep: true, label: "Práticas pessoais" },
-    { id: "fortalecimento-mental", label: "Fortalecimento mental", ico: "✧" }
+    { id: "fortalecimento-mental", label: "Fortalecimento mental", ico: "✧" },
+    { id: "hub-config", label: "Configurações", ico: "○" }
   );
+  if (mentor) items.push({ id: "mentor", label: t(lang, "mentor") || "Gestão do mentor", ico: "★" });
 
   const nav = document.getElementById("navMain");
   if (!nav) return;
@@ -130,6 +145,13 @@ export async function navigate(view) {
     "criancas-pais": "Orientação dos pais",
     "criancas-sala": "Sala da criança",
     empresas: "Empresas",
+    mentorandos: "Mentorandos",
+    "hub-dossie": "Diagnóstico e dossiê",
+    "hub-prompts": "Biblioteca de Prompts",
+    "hub-sessoes": "Sessões e acompanhamento",
+    "hub-intel": "Inteligência Central",
+    "hub-acervo": "Acervo e frentes",
+    "hub-config": "Configurações",
     fase1: "Fase 1 · Essência",
     "fase1-jogo": "Mesa da Essência",
     "fase1-dossie": "Dossiê vivo",
@@ -252,6 +274,11 @@ export async function navigate(view) {
       // Uma falha ao conectar controles não deve apagar a página já renderizada.
       console.error("[AF navigation] Falha ao conectar controles da view " + view + ":", error);
     }
+  }
+  try {
+    paintHubContext();
+  } catch (error) {
+    console.error("[AF navigation] Falha ao mostrar o contexto:", error);
   }
 }
 

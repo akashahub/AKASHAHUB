@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=render-guard-1";
+} from "./navigation.js?v=etapa3-1";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
@@ -66,6 +66,17 @@ import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-le
 import { renderCatalogoCapacidades, bindCatalogoCapacidades } from "./catalogo-capacidades.js?v=20261110-1";
 import { renderAgenteIA, bindAgenteIA } from "./agente-ia.js?v=20261109-1";
 import { initGlobalSearch } from "./global-search.js?v=20261111-search-1";
+import { ensureHubContext, clearHubContext, paintHubContext } from "./hub-context.js?v=etapa3-1";
+import {
+  renderMentorandos,
+  bindMentorandos,
+  renderHubDossie,
+  renderHubPrompts,
+  renderHubSessoes,
+  renderHubIntel,
+  renderHubAcervo,
+  renderHubConfig
+} from "./hub-shell.js?v=etapa3-1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
 function renderCorpoLazy(renderer, ...args) {
@@ -357,6 +368,8 @@ function showApp() {
   const langSel = document.getElementById("langSel");
   if (langSel) langSel.value = session.lang || "pt-BR";
   buildNav();
+  ensureHubContext();
+  paintHubContext();
   bindPersistentCallUI(navigate);
   startPresence();
   const room = (location.hash || "").replace("#", "");
@@ -734,6 +747,13 @@ function renderEmpresas() {
 
 registerRenderers({
   dashboard: renderLifeOsDashboard,
+  mentorandos: renderMentorandos,
+  "hub-dossie": renderHubDossie,
+  "hub-prompts": renderHubPrompts,
+  "hub-sessoes": renderHubSessoes,
+  "hub-intel": renderHubIntel,
+  "hub-acervo": renderHubAcervo,
+  "hub-config": renderHubConfig,
   "arquitetura-legado": renderArquiteturaLegado,
   "catalogo-capacidades": renderCatalogoCapacidades,
   "mapas-mentais": renderMindMaps,
@@ -810,6 +830,7 @@ onAfterNavigate((view) => {
     bindSessoesAccess();
     bindAgenteIA();
   }
+  if (view === "mentorandos") bindMentorandos();
   if (view === "catalogo-capacidades") bindCatalogoCapacidades();
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();
@@ -976,9 +997,11 @@ function init() {
     forceStopMedia();
     closeTeleprompter();
     await stopPresence();
+    clearHubContext();
     await logout();
   });
   document.getElementById("btnDeniedBack")?.addEventListener("click", async () => {
+    clearHubContext();
     await logout();
     showAuth();
   });
@@ -1004,7 +1027,10 @@ function init() {
   setAuthCallbacks({
     onReady: () => showApp(),
     onDenied: () => showAccessDenied(),
-    onLogout: () => showAuth()
+    onLogout: () => {
+      clearHubContext();
+      showAuth();
+    }
   });
 
   startAuthListener();
