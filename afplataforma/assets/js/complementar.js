@@ -455,12 +455,7 @@ function viewMeditacao() {
     <p class="hero-line">Camada de áudio</p>
     <h2 class="hero-title">Meditação guiada</h2>
     <p class="hero-sub">Players prontos. Quando você enviar os MP3, coloque em assets/audio/meditacao/ com estes nomes.</p>
-    <article class="mat-card" style="margin:18px 0;padding:22px;border:1px solid rgba(201,171,111,.45);background:linear-gradient(135deg,#17131f,#282032)">
-      <p class="hero-line" style="color:#c9ab6f">NOVO AMBIENTE · AKASHA HUB</p>
-      <h3 style="margin:8px 0">VISION STUDIO</h3>
-      <p>Transforme uma visão de vida em um projeto concreto. Organize localização, terreno, ambientes, objetivos e viabilidade em um espaço independente.</p>
-      <a class="tool-btn" href="/vision-studio/">Entrar no Vision Studio ↗</a>
-    </article>
+    <article class="vs-meditation-entry"><div><span>AKASHA HUB · NOVO AMBIENTE</span><h3>VISION STUDIO</h3><p>Transforme suas visões em projetos concretos, com planejamento integrado.</p></div><button class="tool-btn" type="button" data-nav="vision-studio">Entrar aqui na plataforma</button> <a class="tool-btn" href="/vision-studio/">Abrir a casa independente</a></article>
     ${tracks
       .map(
         (f) => `<div class="mat-card" style="margin-bottom:8px"><h4>${esc(f)}</h4>

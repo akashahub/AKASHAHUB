@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=etapa3-1";
+} from "./navigation.js?v=vision-merge-1";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
@@ -33,7 +33,7 @@ import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./t
 import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI, onCallNavigate } from "./call.js?v=ux1";
 import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
-import { renderComplementarHome, renderComplementarApp } from "./complementar.js";
+import { renderComplementarHome, renderComplementarApp } from "./complementar.js?v=vision1";
 import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js?v=rt14";
 import { renderSessoesAccess, bindSessoesAccess } from "./sessoes-access.js?v=1";
 import { renderQuitei, bindQuitei } from "./quitei.js";
@@ -77,6 +77,7 @@ import {
   renderHubAcervo,
   renderHubConfig
 } from "./hub-shell.js?v=etapa3-1";
+import { renderVisionStudio, bindVisionStudio } from "./vision-studio.js?v=1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
 function renderCorpoLazy(renderer, ...args) {
@@ -765,6 +766,7 @@ registerRenderers({
   tools: renderToolsView,
   call: renderCallView,
   mentor: renderMentor,
+  "vision-studio": renderVisionStudio,
   corpo: () => renderCorpoLazy("renderCorpoHome"),
   corpoArea: (id) => renderCorpoLazy("renderCorpoArea", id),
   corpoSpace: (areaId, slug) => renderCorpoLazy("renderCorpoSpace", areaId, slug),
@@ -824,6 +826,7 @@ registerRenderers({
 onAfterNavigate((view) => {
   onCallNavigate(view === "call");
   if (view === "dashboard") bindLifeOsDashboard();
+  if (view === "vision-studio") bindVisionStudio();
   if (view === "profile") bindProfileForm();
   if (view === "mentor") {
     bindAccessAdmin();

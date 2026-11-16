@@ -278,6 +278,10 @@ service cloud.firestore {
         allow delete: if request.auth != null && request.auth.uid == uid;
       }
     }
+    match /visionStudioUsers/{uid}/catalogs/{catalogId} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid;
+    }
     match /visionStudioProjects/{uid}/settings/{settingId} {
       allow read: if request.auth != null && request.auth.uid == uid;
       allow create, update: if request.auth != null && request.auth.uid == uid && request.resource.data.ownerUid == uid;
