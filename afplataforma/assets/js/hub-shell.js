@@ -6,7 +6,8 @@ import { session, isMentorSession } from "./auth.js";
 import { esc } from "./navigation.js?v=etapa4-1";
 import { getAllUsersForAf } from "../../firebase/firestore.js";
 import { activeHubContext, selectHubMentee, setAuthorizedMentees } from "./hub-context.js?v=etapa4-1";
-export { renderHubDossie } from "./hub-dossie.js?v=etapa5-1";
+export { renderHubDossie } from "./hub-dossie.js?v=etapa6-1";
+export { renderHubIntel } from "./hub-intel.js?v=etapa6-1";
 
 function statusLabel(status) {
   if (status === "active") return "Acesso ativo";
@@ -129,25 +130,6 @@ export function renderHubSessoes() {
       ${mentor ? `<a class="tool-btn" href="/afplataforma/ascensao/">Ascensão</a>
       <a class="tool-btn" href="/afplataforma/entregas/">Central de Entregas</a>
       <a class="tool-btn" href="/afplataforma/fechamento/">Fechamento</a>` : ""}
-    </p>
-  </div>`;
-}
-
-export function renderHubIntel() {
-  if (!isMentorSession()) {
-    return `<div class="view active"><p class="empty">A Inteligência Central fica com o mentor e ainda não cruza as fases.</p></div>`;
-  }
-  return `<div class="view active">
-    <p class="hero-line">Ainda sem cruzamento</p>
-    <h2 class="hero-title">Inteligência Central</h2>
-    <p class="hero-sub">Nesta etapa ela não lê as ferramentas, não calcula e não cria hipótese. A etapa 6 faz isso. Abaixo, só a porta de cada fase.</p>
-    <p style="display:flex;flex-wrap:wrap;gap:8px">
-      <button class="tool-btn" type="button" data-nav="fase1">Fase 1</button>
-      <button class="tool-btn" type="button" data-nav="fase2">Fase 2</button>
-      <button class="tool-btn" type="button" data-nav="fase3">Fase 3</button>
-      <button class="tool-btn" type="button" data-nav="fase4">Fase 4</button>
-      <button class="tool-btn" type="button" data-nav="fase5">Fase 5</button>
-      <button class="tool-btn" type="button" data-nav="hub-dossie">Índice do dossiê</button>
     </p>
   </div>`;
 }
