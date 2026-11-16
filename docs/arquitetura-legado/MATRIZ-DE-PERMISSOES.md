@@ -38,6 +38,9 @@
 ### Alto — sessões individuais
 O app `sessoes/mentoria/index.html` usa `encontros/{clienteUID}/sessoes/{num}`; não foi encontrada regra correspondente em `afplataforma/firestore.rules`. Testar a leitura/escrita e decidir a regra correta antes de integrar o histórico.
 
+### Alto — coleções de apps sem regra explícita localizada
+Na amostra dos 20 apps com coleção própria, não há `match` explícito para `afSdrOs`, `afIaStudio`, `afAppBuilder`, `afPrecificacao`, `afFunilBuilder`, `afFluxoDeCaixa`, `afWebsiteStudio`, `afCrmInteligente`, `afProdutosDigitais`, `afCentralAtivos` e `afIndicadoresFinanceiros`. Confirmar as regras realmente publicadas no Console. Se o arquivo versionado for a fonte ativa, as gravações dessas coleções serão negadas por padrão. Não adicionar permissões amplas; usar dono para leitura/escrita e mentor AF autorizado somente para leitura.
+
 ### Médio — leitura ampla de filas/presença
 Revisar `matchQueue`, `presence`, `salas_live/participantes`, `legacyVault` e documentos de perfil para garantir que os dados expostos sejam estritamente necessários.
 
