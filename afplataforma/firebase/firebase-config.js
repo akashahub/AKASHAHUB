@@ -2,22 +2,8 @@
  * Firebase — projeto PRINCIPAL hub-akasha
  * NÃO usar akashahubaf
  */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
-  authDomain: "hub-akasha.firebaseapp.com",
-  projectId: "hub-akasha",
-  storageBucket: "hub-akasha.firebasestorage.app",
-  messagingSenderId: "370851875474",
-  appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b"
-};
-
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+import { app, auth, db } from "/login/firebase.js";
+export { app, auth, db };
 
 /** UID mentor/admin principal AF (Yan) */
 export const MENTOR_UID = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";

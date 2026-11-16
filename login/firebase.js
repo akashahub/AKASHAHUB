@@ -4,7 +4,7 @@ import { getFirestore, doc, getDoc, setDoc, arrayUnion, serverTimestamp, increme
 import { startAkashaTracking, stopAkashaTracking } from "/shared-tools/akasha-telemetry.js";
 
 export const MENTOR = "yanfili.simon@gmail.com";
-const app = initializeApp({
+export const app = initializeApp({
   apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
   authDomain: "hub-akasha.firebaseapp.com",
   projectId: "hub-akasha",
