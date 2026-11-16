@@ -58,9 +58,11 @@ A busca no repositório encontrou chamadas `AfApoio.mount` em 20 aplicativos e c
 ### Limitações observadas
 - O helper declara que não grava dados novos; a persistência continua sendo responsabilidade do app.
 - A cópia usa `window.__AF` ou o estado entregue ao helper. É necessário validar se cada app entrega o estado completo e atualizado.
-- O painel de mentor montado no frontend não equivale a um painel central que consulta os registros Firestore de vários mentorandos.
-- O aviso “Só você tem acesso” contradiz regras que dão leitura ao mentor AF em coleções específicas.
-- O quiz organiza campos existentes em sequência; não é ainda um quiz semântico customizado para todas as perguntas de todos os apps.
+- O painel de mentor montado no frontend não equivale a um painel central que consulta os registros Firestore de vários mentorandos. A própria nota do helper orienta o mentor a ler o que a pessoa enviou pelo WhatsApp.
+- A checagem de Gmail/UID dentro do helper controla a exibição do bloco no navegador; não é autorização de segurança. O backend/Firestore Rules deve continuar sendo a autoridade.
+- O texto gerado no pacote diz “Só eu acesso eles no app”, embora as regras permitam leitura do mentor AF em coleções específicas.
+- O pacote atual lista os rótulos das perguntas e opções, mas serializa uma resposta genérica por campo de formulário. Não garante que todas as alternativas escolhidas em cada pergunta do quiz, textos auxiliares e campos dinâmicos sejam exportados individualmente.
+- O quiz organiza campos existentes em sequência e usa regras de texto para sugerir alternativas; não é ainda um quiz semântico customizado para todas as perguntas de todos os apps.
 
 ## 5. Cadência dos encontros
 
