@@ -28,7 +28,12 @@
 - Verificar regras de `encontros`.
 - Criar testes automatizados de leitura/escrita permitida e negada.
 
-## Lote 2 — Contrato comum de dados
+## Lote 2 — Recuperação de dados e contrato comum
+- Criar piloto de hidratação Firestore em um app existente, começando por Essência OS.
+- Ler `COL/{uid}` após login, mesclar campos conhecidos e manter timestamps fora do formulário.
+- Testar reabertura, atualização, offline, conta A/B e mentor autorizado.
+- Replicar somente após aprovação do piloto nos demais módulos com o mesmo padrão.
+- Definir schema de resposta, decisão, nota privada, projeto e ativo.
 - Definir schema de resposta, decisão, nota privada, projeto e ativo.
 - Mapear cada app para sua coleção atual.
 - Criar adaptadores sem mover dados existentes.
