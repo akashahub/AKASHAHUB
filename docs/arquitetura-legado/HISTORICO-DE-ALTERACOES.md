@@ -10,7 +10,8 @@
 - Confirmado que `af-apoio.js` já oferece orientação, quiz sequencial, cópia de pacote e prompt contextual do mentor em 20 apps que chamam `AfApoio.mount`.
 - Confirmado que a persistência varia entre coleções Firestore por app, `afTools`, `mentoria_respostas`, checklists em `mentorias` e localStorage.
 - Identificados riscos para revisão: regras abertas de `calls`/candidatos WebRTC; Central do Expert sem gate de autenticação identificado no HTML; leitura ampla de `legado_profiles`; aviso de privacidade incompatível com permissões; caminho `encontros` sem regra correspondente localizada.
-- Nenhum arquivo de produção foi alterado nesta etapa.
+- Foi preparado um piloto aditivo em `afplataforma/essencia/essencia.js`: após autenticação, lê `afEssencia/{uid}` com `getDoc` e reidrata somente as chaves já existentes no objeto `data`; não muda coleção nem formato do documento.
+- O piloto ainda não foi testado em navegador/Firebase Emulator e permanece somente na branch de auditoria.
 - Nenhuma regra Firebase foi alterada.
 - Nenhum deploy foi realizado.
 
