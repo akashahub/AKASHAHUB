@@ -1,11 +1,12 @@
 /**
  * Menus novos do hub. Só organiza o que já existe.
- * Não grava coleção, não lê o app do mentorando e não troca o UID de login.
+ * O dossiê de leitura é o único que lê as ferramentas. Ele não grava.
  */
 import { session, isMentorSession } from "./auth.js";
 import { esc } from "./navigation.js?v=etapa4-1";
 import { getAllUsersForAf } from "../../firebase/firestore.js";
 import { activeHubContext, selectHubMentee, setAuthorizedMentees } from "./hub-context.js?v=etapa4-1";
+export { renderHubDossie } from "./hub-dossie.js?v=etapa5-1";
 
 function statusLabel(status) {
   if (status === "active") return "Acesso ativo";
@@ -94,28 +95,6 @@ export async function bindMentorandos() {
 
 function linkRow(href, label, note) {
   return `<a class="tool-btn" href="${href}">${esc(label)}</a>${note ? `<p class="notes-hint">${esc(note)}</p>` : ""}`;
-}
-
-export function renderHubDossie() {
-  if (!isMentorSession()) {
-    return `<div class="view active"><p class="empty">O índice do dossiê, nesta etapa, fica com o mentor.</p></div>`;
-  }
-  const ctx = activeHubContext();
-  return `<div class="view active">
-    <p class="hero-line">Índice · ainda não consolida</p>
-    <h2 class="hero-title">Diagnóstico e dossiê</h2>
-    <p class="hero-sub">Isto não é o Dossiê Vivo. Ele entra na etapa 6. Aqui só estão os caminhos que já guardam informação, sem copiar nada.</p>
-    <p class="notes-hint">Contexto de navegação: ${esc(ctx?.name || "você")} · ${esc(ctx?.uid || "")}. Os botões abaixo não levam o UID na URL.</p>
-    <p style="display:flex;flex-wrap:wrap;gap:8px">
-      <a class="tool-btn" href="/sessoes/">Captura de Essência</a>
-      <button class="tool-btn" type="button" data-nav="fase1-dossie">Dossiê da Fase 1</button>
-      <button class="tool-btn" type="button" data-nav="fase1">Fase 1</button>
-      <button class="tool-btn" type="button" data-nav="fase2">Fase 2</button>
-      <button class="tool-btn" type="button" data-nav="fase3">Fase 3</button>
-      <button class="tool-btn" type="button" data-nav="fase4">Fase 4</button>
-      <button class="tool-btn" type="button" data-nav="fase5">Fase 5</button>
-    </p>
-  </div>`;
 }
 
 export function renderHubPrompts() {
