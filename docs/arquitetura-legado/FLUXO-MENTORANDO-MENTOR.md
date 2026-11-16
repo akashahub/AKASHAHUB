@@ -65,6 +65,8 @@ A busca no repositório encontrou chamadas `AfApoio.mount` em 20 aplicativos e c
 - O texto gerado no pacote diz “Só eu acesso eles no app”, embora as regras permitam leitura do mentor AF em coleções específicas.
 - O pacote atual lista os rótulos das perguntas e opções, mas serializa uma resposta genérica por campo de formulário. Não garante que todas as alternativas escolhidas em cada pergunta do quiz, textos auxiliares e campos dinâmicos sejam exportados individualmente.
 - O quiz organiza campos existentes em sequência e usa regras de texto para sugerir alternativas; não é ainda um quiz semântico customizado para todas as perguntas de todos os apps.
+- Há possível falha de ciclo de vida: `mount()` retorna se `.af-privacy` já existir antes de verificar se o usuário atual é mentor. Como os apps renderizam antes de `onAuthStateChanged` resolver e renderizam novamente depois, o bloco do mentor pode nunca ser adicionado.
+- Há possível falha de reabertura do modal: `quizify()` define `data-af-quiz=1` no contêiner e não remove esse marcador quando o app substitui o conteúdo interno para uma nova descoberta. A segunda abertura pode pular a configuração do quiz.
 
 ## 5. Cadência dos encontros
 
