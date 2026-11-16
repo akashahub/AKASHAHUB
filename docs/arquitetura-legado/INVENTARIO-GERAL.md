@@ -67,7 +67,8 @@ A pasta `al/` contém 64 arquivos. Os números incluem páginas de catálogo/ser
 - Em `firestore.rules`, `calls/{roomId}` e as subcoleções `callerCandidates` e `calleeCandidates` permitem leitura e escrita com `if true`. A regra precisa de revisão urgente e teste de compatibilidade com a chamada WebRTC antes de qualquer alteração.
 - `al/central/index.html` contém `noindex,nofollow`, mas a inspeção não encontrou autenticação Firebase nem gate de mentor nessa página. Noindex não é controle de acesso. Confirmar exposição real no hosting e proteger o conteúdo interno se a rota for restrita.
 - `legado_profiles/{uid}` permite leitura a qualquer usuário autenticado, não apenas ao dono/mentor. Confirmar se os campos armazenados podem ser privados.
-- O texto de privacidade injetado por `af-apoio.js` afirma que somente o usuário acessa os dados, enquanto as regras autorizam mentores AF a ler várias coleções de respostas. O texto deve refletir a permissão real.
+- O texto e o pacote de privacidade injetados por `af-apoio.js` afirmam que somente o usuário acessa os dados, enquanto as regras autorizam mentores AF a ler várias coleções de respostas. O texto deve refletir a permissão real.
+- O pacote de cópia atual inclui rótulos/opções e uma resposta por campo, mas ainda precisa ser testado contra todos os campos dinâmicos e seleções individuais para cumprir o requisito de exportar integralmente perguntas e respostas.
 
 ### P1 — Integridade e persistência
 - Mesa da Essência, Formulário de Marca e Anamnese curta usam armazenamento local conforme o mapa de experiência; não são ainda um histórico portátil/centralizado no Firestore.
