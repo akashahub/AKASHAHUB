@@ -3,9 +3,9 @@
  * Não grava coleção, não lê o app do mentorando e não troca o UID de login.
  */
 import { session, isMentorSession } from "./auth.js";
-import { esc } from "./navigation.js?v=etapa3-1";
+import { esc } from "./navigation.js?v=etapa3-2";
 import { getAllUsersForAf } from "../../firebase/firestore.js";
-import { activeHubContext, selectHubMentee } from "./hub-context.js?v=etapa3-1";
+import { activeHubContext, selectHubMentee, setAuthorizedMentees } from "./hub-context.js?v=etapa3-2";
 
 function statusLabel(status) {
   if (status === "active") return "Acesso ativo";
@@ -44,7 +44,9 @@ export async function bindMentorandos() {
   let rows = [];
   try {
     rows = await getAllUsersForAf();
+    setAuthorizedMentees(rows);
   } catch (error) {
+    setAuthorizedMentees([]);
     root.innerHTML = `<p class="empty">${esc(error?.message || "Não foi possível ler os cadastros.")}</p>`;
     return;
   }
@@ -67,19 +69,22 @@ export async function bindMentorandos() {
         <div class="mod-body">
           <h3>${esc(row.name || row.email || row.uid)}</h3>
           <p class="notes-hint">${esc(row.email || "sem e-mail")} · ${esc(statusLabel(row.status))}<br><code>${esc(row.uid)}</code></p>
-          <button class="tool-btn" type="button" data-hub-uid="${esc(row.uid)}" data-hub-name="${esc(row.name || "")}" data-hub-email="${esc(row.email || "")}">Usar como contexto</button>
+          ${row.status === "active"
+            ? `<button class="tool-btn" type="button" data-hub-uid="${esc(row.uid)}">Usar como contexto</button>`
+            : `<p class="notes-hint">Sem acesso ativo. Este UID não entra no contexto.</p>`}
         </div>
       </div>`).join("")}</div>`;
     root.querySelectorAll("[data-hub-uid]").forEach((btn) => {
       btn.addEventListener("click", () => {
-        selectHubMentee({
-          uid: btn.getAttribute("data-hub-uid"),
-          name: btn.getAttribute("data-hub-name"),
-          email: btn.getAttribute("data-hub-email")
-        });
+        const wanted = btn.getAttribute("data-hub-uid");
+        const ctx = selectHubMentee({ uid: wanted });
         const note = document.getElementById("hubContextNow");
-        const ctx = activeHubContext();
-        if (note && ctx) note.textContent = `Contexto atual: ${ctx.name || ctx.email || "mentorando"} · ${ctx.uid}`;
+        if (!note) return;
+        if (!ctx || ctx.uid !== wanted) {
+          note.textContent = "Este UID não está na lista autorizada. O contexto não mudou.";
+          return;
+        }
+        note.textContent = `Contexto atual: ${ctx.name || ctx.email || "mentorando"} · ${ctx.uid}`;
       });
     });
   };

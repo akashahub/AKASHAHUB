@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=etapa3-1";
+} from "./navigation.js?v=etapa3-2";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
@@ -66,7 +66,7 @@ import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-le
 import { renderCatalogoCapacidades, bindCatalogoCapacidades } from "./catalogo-capacidades.js?v=20261110-1";
 import { renderAgenteIA, bindAgenteIA } from "./agente-ia.js?v=20261109-1";
 import { initGlobalSearch } from "./global-search.js?v=20261111-search-1";
-import { ensureHubContext, clearHubContext, paintHubContext } from "./hub-context.js?v=etapa3-1";
+import { ensureHubContext, clearHubContext, paintHubContext, loadAuthorizedMentees } from "./hub-context.js?v=etapa3-2";
 import {
   renderMentorandos,
   bindMentorandos,
@@ -76,7 +76,7 @@ import {
   renderHubIntel,
   renderHubAcervo,
   renderHubConfig
-} from "./hub-shell.js?v=etapa3-1";
+} from "./hub-shell.js?v=etapa3-2";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
 function renderCorpoLazy(renderer, ...args) {
@@ -370,6 +370,9 @@ function showApp() {
   buildNav();
   ensureHubContext();
   paintHubContext();
+  if (isMentorSession()) {
+    loadAuthorizedMentees().then(() => paintHubContext()).catch(() => paintHubContext());
+  }
   bindPersistentCallUI(navigate);
   startPresence();
   const room = (location.hash || "").replace("#", "");

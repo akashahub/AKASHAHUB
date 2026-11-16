@@ -1,12 +1,15 @@
 /**
  * Contexto de navegação do hub.
- * Guarda qual mentorando o mentor escolheu olhar.
- * Não é permissão e não é lido pelos apps nesta etapa.
+ * A escolha não autoriza leitura e não altera o UID autenticado.
+ * UID fora da lista real é recusado.
  */
 import { session, isMentorSession } from "./auth.js";
-import { resolveContext, selectionAllowed } from "./hub-context-rules.js?v=etapa3-1";
+import { getAllUsersForAf } from "../../firebase/firestore.js";
+import { resolveContext, contextFromSelection } from "./hub-context-rules.js?v=etapa3-2";
 
 const KEY = "akasha.hub.context.v1";
+let authorized = null;
+let directory = new Map();
 
 function actor() {
   return {
@@ -38,8 +41,38 @@ function writeStored(ctx) {
   }
 }
 
+export function setAuthorizedMentees(rows) {
+  const next = new Set();
+  const book = new Map();
+  for (const row of rows || []) {
+    if (!row || typeof row.uid !== "string" || !row.uid) continue;
+    book.set(row.uid, {
+      name: row.name || "",
+      email: row.email || "",
+      status: row.status || ""
+    });
+    if (row.status === "active") next.add(row.uid);
+  }
+  authorized = next;
+  directory = book;
+  return ensureHubContext();
+}
+
+export async function loadAuthorizedMentees() {
+  if (!isMentorSession()) {
+    return setAuthorizedMentees([]);
+  }
+  const rows = await getAllUsersForAf();
+  return setAuthorizedMentees(rows || []);
+}
+
 export function ensureHubContext() {
-  const ctx = resolveContext(actor(), readStored());
+  let ctx = resolveContext(actor(), readStored(), authorized);
+  if (ctx && ctx.source === "mentor-selection") {
+    const row = directory.get(ctx.uid);
+    if (!row || row.status !== "active") ctx = resolveContext(actor(), null, authorized);
+    else ctx = { ...ctx, name: row.name || "", email: row.email || "" };
+  }
   writeStored(ctx);
   publish(ctx);
   return ctx;
@@ -47,21 +80,17 @@ export function ensureHubContext() {
 
 export function selectHubMentee(person) {
   const who = actor();
-  const uid = person && person.uid;
-  if (!selectionAllowed(who, uid)) return ensureHubContext();
-  const ctx = {
-    uid,
-    name: person.name || "",
-    email: person.email || "",
-    source: uid === who.uid ? "self" : "mentor-selection"
-  };
-  writeStored(ctx);
-  publish(ctx);
+  const picked = contextFromSelection(who, person && person.uid, authorized, directory);
+  if (!picked) return ensureHubContext();
+  writeStored(picked);
+  publish(picked);
   paintHubContext();
-  return ctx;
+  return picked;
 }
 
 export function clearHubContext() {
+  authorized = null;
+  directory = new Map();
   writeStored(null);
   publish(null);
   const el = document.getElementById("menteeContextChip");

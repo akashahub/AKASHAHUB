@@ -3,7 +3,7 @@
  * Sem import de call.js / teleprompter.js (isso quebrava o login).
  */
 import { session, isMentorSession } from "./auth.js";
-import { paintHubContext } from "./hub-context.js?v=etapa3-1";
+import { paintHubContext } from "./hub-context.js?v=etapa3-2";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { Store } from "./storage.js";
