@@ -265,10 +265,10 @@ function bind() {
 }
 
 async function saveData() {
-  if (!currentUser || !db) { toast("Faça login para salvar."); return; }
+  if (!currentUser || !db) { toast("Faça login para salvar."); return; } if (window.AkashaSubject && window.AkashaSubject.writingLocked(currentUser)) { toast("Você está vendo as respostas desta pessoa. Só ela pode salvar."); return; } 
   try {
     const { doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    await setDoc(doc(db, COL, currentUser.uid), { ...data, updatedAt: serverTimestamp(), uid: currentUser.uid }, { merge: true });
+    await setDoc(doc(db, COL, (window.AkashaSubject ? window.AkashaSubject.uidFor(currentUser) : currentUser.uid)), { ...data, updatedAt: serverTimestamp(), uid: (window.AkashaSubject ? window.AkashaSubject.uidFor(currentUser) : currentUser.uid) }, { merge: true });
     toast("Salvo com sucesso.");
   } catch {
     toast("Erro ao salvar.");
@@ -375,7 +375,7 @@ render();
         // Mantém o schema existente afEssencia/{uid} e não sobrescreve dados no login.
         try {
           const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-          const snap = await getDoc(doc(db, COL, user.uid));
+          const snap = await getDoc(doc(db, COL, (window.AkashaSubject ? window.AkashaSubject.uidFor(user) : user.uid)));
           if (snap.exists()) {
             const saved = snap.data() || {};
             Object.keys(data).forEach(key => {

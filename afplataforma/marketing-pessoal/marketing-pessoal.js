@@ -189,10 +189,10 @@ function bind() {
 }
 
 async function saveData() {
-  if (!currentUser || !db) { toast("Faça login para salvar."); return; }
+  if (!currentUser || !db) { toast("Faça login para salvar."); return; } if (window.AkashaSubject && window.AkashaSubject.writingLocked(currentUser)) { toast("Você está vendo as respostas desta pessoa. Só ela pode salvar."); return; } 
   try {
     const { doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    await setDoc(doc(db, COL, currentUser.uid), { ...data, updatedAt: serverTimestamp(), uid: currentUser.uid }, { merge: true });
+    await setDoc(doc(db, COL, (window.AkashaSubject ? window.AkashaSubject.uidFor(currentUser) : currentUser.uid)), { ...data, updatedAt: serverTimestamp(), uid: (window.AkashaSubject ? window.AkashaSubject.uidFor(currentUser) : currentUser.uid) }, { merge: true });
     toast("Salvo com sucesso.");
   } catch { toast("Erro ao salvar."); }
   render();
@@ -271,7 +271,7 @@ render();
     db = configMod.db;
     const { onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
     onAuthStateChanged(auth, user => {
-      currentUser = user || null;
+      currentUser = user || null; if (user && db && window.AkashaSubject) window.AkashaSubject.hydrate(db, COL, user, data).then(function () { if (typeof render === "function") render(); }).catch(function (e) { console.warn("[AF contexto]", e); });
       if (user) {
         const pill = document.getElementById("userPill");
         const av = document.getElementById("avatar");
