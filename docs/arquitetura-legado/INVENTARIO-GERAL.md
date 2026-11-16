@@ -72,6 +72,7 @@ A pasta `al/` contém 64 arquivos. Os números incluem páginas de catálogo/ser
 - O pacote de cópia atual inclui rótulos/opções e uma resposta por campo, mas ainda precisa ser testado contra todos os campos dinâmicos e seleções individuais para cumprir o requisito de exportar integralmente perguntas e respostas.
 
 ### P1 — Integridade e persistência
+- Na amostra dos 20 aplicativos com `AfApoio`, 11 gravam em coleções próprias (`afSdrOs`, `afIaStudio`, `afAppBuilder`, `afPrecificacao`, `afFunilBuilder`, `afFluxoDeCaixa`, `afWebsiteStudio`, `afCrmInteligente`, `afProdutosDigitais`, `afCentralAtivos`, `afIndicadoresFinanceiros`) para as quais não foi encontrado `match` explícito no `afplataforma/firestore.rules` do repositório. Como o arquivo só tem regras específicas para 9 das 20 coleções, essas gravações podem ser negadas pelas regras publicadas, salvo se houver regra externa não versionada. Confirmar no Firebase Console/Emulator antes de concluir.
 - Mesa da Essência, Formulário de Marca e Anamnese curta usam armazenamento local conforme o mapa de experiência; não são ainda um histórico portátil/centralizado no Firestore.
 - Dossiê vivo do mentor em `legado-mentor.js` declara explicitamente que não grava no servidor e guarda no aparelho.
 - Zen Negócios informa na própria página que exercícios, checklist, lista de observação e calculadora ficam no navegador; dados de diagnóstico/mapa/continuidade são rascunhos locais.
