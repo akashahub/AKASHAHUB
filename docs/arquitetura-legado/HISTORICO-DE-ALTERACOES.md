@@ -14,8 +14,10 @@
 - Corrigido no helper o texto para condicionar a persistência às permissões efetivamente habilitadas para a ferramenta.
 - Identificados riscos para revisão: regras abertas de `calls`/candidatos WebRTC; Central do Expert sem gate de autenticação identificado no HTML; leitura ampla de `legado_profiles`; aviso de privacidade incompatível com permissões; caminho `encontros` sem regra correspondente localizada.
 - Foi preparado um piloto aditivo em `afplataforma/essencia/essencia.js`: após autenticação, lê `afEssencia/{uid}` com `getDoc` e reidrata somente as chaves já existentes no objeto `data`; não muda coleção nem formato do documento.
+- Em `afplataforma/assets/js/af-apoio.js`, corrigido o ciclo de vida do painel de mentor para reavaliar o usuário depois do Auth, corrigida a mensagem de privacidade e removida a trava que impedia reconfigurar o quiz após reconstruir o modal.
+- A análise sintática estática dos dois arquivos JavaScript alterados passou.
 - O piloto ainda não foi testado em navegador/Firebase Emulator e permanece somente na branch de auditoria.
-- Nenhuma regra Firebase foi alterada.
+- Nenhuma regra Firebase foi alterada; os 11 matches faltantes foram documentados, mas não aplicados ao arquivo de regras nesta etapa.
 - Nenhum deploy foi realizado.
 
 ## Próximo registro
