@@ -1,10 +1,20 @@
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { doc, getDoc, setDoc, arrayUnion, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, arrayUnion, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { startAkashaTracking, stopAkashaTracking } from "/shared-tools/akasha-telemetry.js";
 
 export const MENTOR = "yanfili.simon@gmail.com";
-import { auth, db } from "/afplataforma/firebase/firebase-config.js";
-export { auth, db };
+export const app = initializeApp({
+  apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+  authDomain: "hub-akasha.firebaseapp.com",
+  projectId: "hub-akasha",
+  storageBucket: "hub-akasha.firebasestorage.app",
+  messagingSenderId: "370851875474",
+  appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b",
+});
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
 let trackedUid = null;
 onAuthStateChanged(auth, (user) => {
