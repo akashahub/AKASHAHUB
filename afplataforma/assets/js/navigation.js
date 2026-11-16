@@ -3,6 +3,7 @@
  * Sem import de call.js / teleprompter.js (isso quebrava o login).
  */
 import { session, isMentorSession } from "./auth.js";
+import { paintHubContext } from "./hub-context.js?v=etapa3-1";
 import { MODULES } from "../../data/modules.js";
 import { t } from "../../data/translations.js";
 import { Store } from "./storage.js";
@@ -33,23 +34,37 @@ function fase3Aberta(view) {
 
 export function buildNav() {
   const lang = session.lang || "pt-BR";
+  const mentor = isMentorSession();
   const items = [
-    { id: "dashboard", label: t(lang, "dash"), ico: "◇" }
+    { id: "dashboard", label: mentor ? "Visão geral" : "Minha jornada", ico: "◇" },
+    { id: "profile", label: mentor ? "Perfil" : "Meu perfil", ico: "○" }
   ];
-  if (isMentorSession()) items.push({ id: "mentor", label: t(lang, "mentor"), ico: "★" });
+  if (mentor) {
+    items.push(
+      { id: "mentorandos", label: "Mentorandos", ico: "★" },
+      { id: "hub-dossie", label: "Diagnóstico e dossiê", ico: "◇" }
+    );
+  }
   items.push(
-    { id: "profile", label: t(lang, "profile"), ico: "○" },
     { sep: true, label: "Arquitetura de Legado" },
     { id: "fase1", label: "Fase 1 · Essência", ico: `<img src="assets/img/fases/essencia.svg" alt="">` },
     { id: "fase2", label: "Fase 2 · Império", ico: `<img src="assets/img/fases/imperio.svg" alt="">` },
     { id: "fase3", label: "Fase 3 · AF", ico: `<img src="assets/img/fases/af.svg" alt="">` },
     { id: "fase4", label: "Fase 4 · Expansão", ico: `<img src="assets/img/fases/expansao.svg" alt="">` },
     { id: "fase5", label: "Fase 5 · Legado", ico: `<img src="assets/img/fases/legado.svg" alt="">` },
-    { sep: true, label: "Frente independente" },
+    { id: "hub-prompts", label: mentor ? "Biblioteca de Prompts" : "Prompts liberados", ico: "◇" },
+    { id: "hub-sessoes", label: mentor ? "Sessões e acompanhamento" : "Captura e sessões", ico: "◇" }
+  );
+  if (mentor) items.push({ id: "hub-intel", label: "Inteligência Central", ico: "◇" });
+  items.push(
+    { sep: true, label: "Acervo e frentes" },
+    { id: "hub-acervo", label: "Acervo e frentes", ico: "✧" },
     { id: "corpo", label: "CORPO · Vitalidade e Longevidade", ico: "✧" },
     { sep: true, label: "Práticas pessoais" },
-    { id: "fortalecimento-mental", label: "Fortalecimento mental", ico: "✧" }
+    { id: "fortalecimento-mental", label: "Fortalecimento mental", ico: "✧" },
+    { id: "hub-config", label: "Configurações", ico: "○" }
   );
+  if (mentor) items.push({ id: "mentor", label: t(lang, "mentor") || "Gestão do mentor", ico: "★" });
 
   const nav = document.getElementById("navMain");
   if (!nav) return;
@@ -131,6 +146,13 @@ export async function navigate(view) {
     "criancas-pais": "Orientação dos pais",
     "criancas-sala": "Sala da criança",
     empresas: "Empresas",
+    mentorandos: "Mentorandos",
+    "hub-dossie": "Diagnóstico e dossiê",
+    "hub-prompts": "Biblioteca de Prompts",
+    "hub-sessoes": "Sessões e acompanhamento",
+    "hub-intel": "Inteligência Central",
+    "hub-acervo": "Acervo e frentes",
+    "hub-config": "Configurações",
     fase1: "Fase 1 · Essência",
     "fase1-jogo": "Mesa da Essência",
     "fase1-dossie": "Dossiê vivo",
@@ -172,29 +194,50 @@ export async function navigate(view) {
   if (dock && dock.parentElement !== document.body) document.body.appendChild(dock);
 
   let html = "";
-  if (view.startsWith("module:")) {
-    const id = view.split(":")[1];
-    html = renderers.moduleDetail ? renderers.moduleDetail(id) : "";
-  } else if (view.startsWith("corpo:")) {
-    const parts = view.split(":");
-    const id = parts[1];
-    html = parts[2] && renderers.corpoSpace ? renderers.corpoSpace(id, parts.slice(2).join(":")) : (renderers.corpoArea ? renderers.corpoArea(id) : "");
-  } else if (view.startsWith("comp:")) {
-    const id = view.split(":")[1];
-    html = renderers.compApp ? renderers.compApp(id) : "";
-  } else if (renderers[view]) {
-    html = renderers[view]();
-  } else {
-    html = `<div class="view active"><p class="empty">View não encontrada</p></div>`;
+  try {
+    if (view.startsWith("module:")) {
+      const id = view.split(":")[1];
+      html = renderers.moduleDetail ? renderers.moduleDetail(id) : "";
+    } else if (view.startsWith("corpo:")) {
+      const parts = view.split(":");
+      const id = parts[1];
+      html = parts[2] && renderers.corpoSpace
+        ? renderers.corpoSpace(id, parts.slice(2).join(":"))
+        : (renderers.corpoArea ? renderers.corpoArea(id) : "");
+    } else if (view.startsWith("comp:")) {
+      const id = view.split(":")[1];
+      html = renderers.compApp ? renderers.compApp(id) : "";
+    } else if (renderers[view]) {
+      html = renderers[view]();
+    } else {
+      html = `<div class="view active"><p class="empty">View não encontrada: ${esc(view)}</p></div>`;
+    }
+
+    if (html && typeof html.then === "function") {
+      root.innerHTML = `<div class="view active"><p class="empty">Carregando…</p></div>`;
+      html = await html;
+      if (currentView !== view) return;
+    }
+  } catch (error) {
+    console.error("[AF navigation] Falha ao renderizar a view " + view + ":", error);
+    const detail = esc(error?.message || error?.name || "Erro desconhecido");
+    html = `<div class="view active" role="alert">
+      <section style="max-width:760px;margin:28px auto;padding:22px;border:1px solid rgba(190,120,90,.45);border-radius:16px;background:rgba(190,120,90,.08)">
+        <p class="hero-line">DIAGNÓSTICO DE RENDERIZAÇÃO</p>
+        <h2 class="hero-title">Esta área encontrou um erro ao abrir</h2>
+        <p class="hero-sub">A navegação e as outras áreas continuam disponíveis. O erro foi isolado para evitar que o conteúdo desapareça.</p>
+        <p style="padding:12px;border-radius:9px;background:rgba(0,0,0,.18);overflow-wrap:anywhere"><strong>Área:</strong> ${esc(view)}<br><strong>Detalhe:</strong> ${detail}</p>
+        <button class="tool-btn" type="button" data-nav="dashboard">Voltar ao painel</button>
+      </section>
+    </div>`;
   }
 
-  if (html && typeof html.then === "function") {
-    root.innerHTML = `<div class="view active"><p class="empty">Carregando…</p></div>`;
-    html = await html;
-    if (currentView !== view) return;
+  if (typeof html !== "string" || !html.trim()) {
+    console.error("[AF navigation] A view não retornou conteúdo:", view, html);
+    html = `<div class="view active" role="alert"><section style="max-width:760px;margin:28px auto;padding:22px;border:1px solid rgba(190,120,90,.45);border-radius:16px"><h2 class="hero-title">Conteúdo indisponível</h2><p class="hero-sub">A área "${esc(view)}" foi localizada, mas não retornou conteúdo para exibição.</p><button class="tool-btn" type="button" data-nav="dashboard">Voltar ao painel</button></section></div>`;
   }
 
-  if (typeof html === "string" && fase3Aberta(view)) {
+  if (fase3Aberta(view)) {
     html = html.replace('<div class="view active">', '<div class="view active"><div class="back-link" data-nav="fase3">← Fase 3</div>');
   }
 
@@ -225,7 +268,19 @@ export async function navigate(view) {
   };
 
   setActiveNav(view);
-  if (afterNavigateHook) afterNavigateHook(view);
+  if (afterNavigateHook) {
+    try {
+      afterNavigateHook(view);
+    } catch (error) {
+      // Uma falha ao conectar controles não deve apagar a página já renderizada.
+      console.error("[AF navigation] Falha ao conectar controles da view " + view + ":", error);
+    }
+  }
+  try {
+    paintHubContext();
+  } catch (error) {
+    console.error("[AF navigation] Falha ao mostrar o contexto:", error);
+  }
 }
 
 export function openSide() {

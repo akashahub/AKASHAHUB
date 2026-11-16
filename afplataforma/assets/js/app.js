@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=vision1";
+} from "./navigation.js?v=vision-merge-1";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
@@ -63,8 +63,38 @@ import { renderProducaoAudiosPnl, bindProducaoAudiosPnl } from "./producao-audio
 import { renderVendasCurso } from "./vendas-curso.js?v=1";
 import { renderLifeOsDashboard, bindLifeOsDashboard } from "./lifeos-dashboard.js?v=rt47";
 import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-legado.js?v=rt46";
-import { renderCorpoHome, renderCorpoArea, renderCorpoSpace, renderCorpoMentorGuide } from "./corpo.js?v=2";
+import { renderCatalogoCapacidades, bindCatalogoCapacidades } from "./catalogo-capacidades.js?v=20261110-1";
+import { renderAgenteIA, bindAgenteIA } from "./agente-ia.js?v=20261109-1";
+import { initGlobalSearch } from "./global-search.js?v=20261111-search-1";
+import { ensureHubContext, clearHubContext, paintHubContext } from "./hub-context.js?v=etapa3-1";
+import {
+  renderMentorandos,
+  bindMentorandos,
+  renderHubDossie,
+  renderHubPrompts,
+  renderHubSessoes,
+  renderHubIntel,
+  renderHubAcervo,
+  renderHubConfig
+} from "./hub-shell.js?v=etapa3-1";
 import { renderVisionStudio, bindVisionStudio } from "./vision-studio.js?v=1";
+// CORPO é carregado sob demanda para que uma falha isolada nessa frente
+// nunca impeça a inicialização do login e das cinco fases principais.
+function renderCorpoLazy(renderer, ...args) {
+  return import("./corpo.js?v=20261108-0845")
+    .then((mod) => {
+      const render = mod?.[renderer];
+      if (typeof render !== "function") {
+        throw new Error("O módulo CORPO foi carregado, mas a função " + renderer + " não foi encontrada.");
+      }
+      return render(...args);
+    })
+    .catch((error) => {
+      console.error("[AF CORPO] Falha ao carregar a frente:", error);
+      const detail = esc(error?.message || error?.name || "Falha desconhecida");
+      return '<div class="view active corpo-view"><section class="corpo-area-hero"><span>DIAGNÓSTICO DE CARREGAMENTO</span><h1>Não foi possível abrir o CORPO</h1><p>As demais áreas da plataforma continuam disponíveis. O sistema identificou esta falha:</p><div role="alert" style="margin-top:16px;padding:14px;border:1px solid rgba(180,120,80,.35);border-radius:10px;background:rgba(180,120,80,.08);overflow-wrap:anywhere"><strong>Detalhe técnico</strong><br>' + detail + '</div><p style="margin-top:16px">Envie uma captura desta mensagem para identificar o arquivo ou recurso que precisa de correção.</p></section></div>';
+    });
+}
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -339,6 +369,8 @@ function showApp() {
   const langSel = document.getElementById("langSel");
   if (langSel) langSel.value = session.lang || "pt-BR";
   buildNav();
+  ensureHubContext();
+  paintHubContext();
   bindPersistentCallUI(navigate);
   startPresence();
   const room = (location.hash || "").replace("#", "");
@@ -514,7 +546,13 @@ function renderMentor() {
   return `<div class="view active">
     <p class="hero-line">Controle</p>
     <h2 class="hero-title">Dashboard do mentor</h2>
-    <p class="hero-sub">Liberação no Firestore: <code>afAccess/{uid}</code> com approved, active e modules.</p>
+    <p class="hero-sub">Liberação no Firestore: <code>afAccess/{uid}</code> com approved, active e modules.</p>    
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Planejamento pessoal · uso interno</p>
+      <h3>Projeto Abundância</h3>
+      <p>Centro de comando de objetivos, orçamento, engenharia financeira e execução. Acesso exclusivo à conta autorizada do mentor.</p>
+      ${String(session.email || "").trim().toLowerCase() === "yanfili.simon@gmail.com" ? '<a class="tool-btn" href="/projetoabundancia/">Abrir Projeto Abundância</a>' : ""}
+    </article>
     <div class="mentor-hero">
       <img src="assets/img/mentor/yan.jpg" alt="Mentor">
       <div>
@@ -611,6 +649,13 @@ function renderMentor() {
       <p>Storytelling completo sobre a trajetória do mentor, os mais de 2 mil atendimentos, o livro Códigos de Origem e a evolução até o Arquitetura de Legado. Acesso exclusivo ao mentor.</p>
       <a class="tool-btn" href="${mentorHref("interno/roteiro-boas-vindas.html")}">Abrir roteiro de boas-vindas</a>
     </article>
+    <article class="q-feature livro-entry">
+      <p class="hero-line">Akasha Hub · inventário estratégico</p>
+      <h3>Catálogo de Capacidades</h3>
+      <p>Mapa interno dos dez departamentos, serviços, competências e possibilidades de execução. Do serviço pontual à estruturação de organizações e operações internacionais.</p>
+      <button class="tool-btn" type="button" data-nav="catalogo-capacidades">Abrir catálogo completo</button>
+    </article>
+    ${renderAgenteIA()}
     ${renderSessoesAccess()}
     ${renderAccessAdminPanel()}
   </div>`;
@@ -703,7 +748,15 @@ function renderEmpresas() {
 
 registerRenderers({
   dashboard: renderLifeOsDashboard,
+  mentorandos: renderMentorandos,
+  "hub-dossie": renderHubDossie,
+  "hub-prompts": renderHubPrompts,
+  "hub-sessoes": renderHubSessoes,
+  "hub-intel": renderHubIntel,
+  "hub-acervo": renderHubAcervo,
+  "hub-config": renderHubConfig,
   "arquitetura-legado": renderArquiteturaLegado,
+  "catalogo-capacidades": renderCatalogoCapacidades,
   "mapas-mentais": renderMindMaps,
   "af-dashboard": renderDashboard,
   metas: viewMetas,
@@ -713,11 +766,11 @@ registerRenderers({
   tools: renderToolsView,
   call: renderCallView,
   mentor: renderMentor,
-  corpo: renderCorpoHome,
-  corpoArea: renderCorpoArea,
-  corpoSpace: renderCorpoSpace,
   "vision-studio": renderVisionStudio,
-  "corpo-gestao": renderCorpoMentorGuide,
+  corpo: () => renderCorpoLazy("renderCorpoHome"),
+  corpoArea: (id) => renderCorpoLazy("renderCorpoArea", id),
+  corpoSpace: (areaId, slug) => renderCorpoLazy("renderCorpoSpace", areaId, slug),
+  "corpo-gestao": () => renderCorpoLazy("renderCorpoMentorGuide"),
   ascensao: () => (isMentorSession()
     ? `<div class="view active">
         <div class="back-link" data-nav="mentor">← Gestão</div>
@@ -778,7 +831,10 @@ onAfterNavigate((view) => {
   if (view === "mentor") {
     bindAccessAdmin();
     bindSessoesAccess();
+    bindAgenteIA();
   }
+  if (view === "mentorandos") bindMentorandos();
+  if (view === "catalogo-capacidades") bindCatalogoCapacidades();
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();
   if (["fase1", "fase2", "fase3", "fase4", "fase5"].includes(view)) {
@@ -804,6 +860,21 @@ onAfterNavigate((view) => {
   }
   if (view === "audios-pnl") bindAudiosPnl();
   if (view === "producao-audios-pnl") bindProducaoAudiosPnl();
+  if (view.startsWith("corpo:movimento:")) {
+    import("./corpo-treino.js?v=20261108-0825")
+      .then((mod) => mod.bindCorpoTraining())
+      .catch((error) => console.error("[CORPO treino] Falha ao conectar controles:", error));
+  }
+  if (view === "corpo:nutricao:alimentos-e-propriedades") {
+    import("./corpo-nutricao.js?v=20261108-0937")
+      .then((mod) => mod.bindCorpoNutricao())
+      .catch((error) => console.error("[CORPO nutrição] Falha ao conectar controles:", error));
+  }
+  if (view === "corpo:regeneracao:sono-e-ritmo-circadiano") {
+    import("./corpo-sono.js?v=20261108-0937")
+      .then((mod) => mod.bindCorpoSono())
+      .catch((error) => console.error("[CORPO sono] Falha ao conectar controles:", error));
+  }
 });
 
 function friendlyAuthError(error, fallback = "Não foi possível entrar. Tente novamente.") {
@@ -907,6 +978,11 @@ async function onResetPassword() {
 }
 
 function init() {
+  window.addEventListener("af:phase-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
+  window.addEventListener("af:phase-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
+  initGlobalSearch();
+  window.addEventListener("af:global-search-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
+  window.addEventListener("af:global-search-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
   const demoWrap = document.getElementById("demoButtons");
   if (demoWrap) demoWrap.style.display = isDemoEnabled() ? "block" : "none";
 
@@ -924,9 +1000,11 @@ function init() {
     forceStopMedia();
     closeTeleprompter();
     await stopPresence();
+    clearHubContext();
     await logout();
   });
   document.getElementById("btnDeniedBack")?.addEventListener("click", async () => {
+    clearHubContext();
     await logout();
     showAuth();
   });
@@ -952,7 +1030,10 @@ function init() {
   setAuthCallbacks({
     onReady: () => showApp(),
     onDenied: () => showAccessDenied(),
-    onLogout: () => showAuth()
+    onLogout: () => {
+      clearHubContext();
+      showAuth();
+    }
   });
 
   startAuthListener();

@@ -116,7 +116,7 @@ async function loadProjects() {
       objective: "Desenvolver uma propriedade costeira integrada à natureza, com autonomia e espaços para morar, criar e produzir.",
       spaces: "Casa principal, atelier/oficina, horta, pomar, áreas de cultivo, armazenamento e espaços externos.",
       features: "Proximidade do mar, integração com a natureza, autonomia energética e hídrica, produção de alimentos e planejamento técnico responsável.",
-      isReference: true, ownerId: session.uid, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+      isReference: true, ownerId: session.uid, ownerUid: session.uid, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
     });
     projects.push({ id: demo.id, name: "REFÚGIO 777", slug: "refugio-777", kind: "Residencial", status: "Projeto de referência", country: "Brasil", horizon: "Até 5 anos", objective: "Desenvolver uma propriedade costeira integrada à natureza, com autonomia e espaços para morar, criar e produzir.", isReference: true });
   }
@@ -150,7 +150,7 @@ async function saveProject(event) {
     city: String(data.city || "").trim(), budget: String(data.budget || "").trim(),
     landArea: String(data.landArea || "").trim(), dimensions: String(data.dimensions || "").trim(),
     objective: String(data.objective || "").trim(), spaces: String(data.spaces || "").trim(),
-    features: String(data.features || "").trim(), ownerId: session.uid, updatedAt: serverTimestamp()
+    features: String(data.features || "").trim(), ownerId: session.uid, ownerUid: session.uid, updatedAt: serverTimestamp()
   };
   if (!payload.name) return status("Informe o nome do projeto.", true);
   busy = true;

@@ -286,3 +286,27 @@ Os atalhos abrem os módulos originais. Não foram renomeados IDs de mídia, alt
 A gestão do mentor ganhou uma entrada para o documento mestre e uma página interna de referência. A versão integral deste documento continua disponível em Markdown e no GitHub.
 
 **Limite de validação:** a integração foi gravada no branch `main`. Antes de considerar a publicação validada em produção, executar testes reais de login mentor/mentorado, navegação mobile/desktop, cinco fases, rotas antigas `comp:*`, players e edição de mídia.
+
+## 12. Movimento e Treinamento · primeira implementação funcional
+
+**Status:** primeira camada funcional gravada no branch `main`.
+
+Novos recursos:
+- Biblioteca inicial com 15 exercícios, grupos musculares, dicas de execução e nível de referência.
+- Planejamento semanal com dia, foco e modalidade, incluindo remoção de itens.
+- Diário de treino com data, exercício, séries, repetições, carga, esforço percebido e observações.
+- Painel de evolução com sessões registradas, volume estimado, exercícios acompanhados e melhores cargas registradas.
+- Planejador assistido com objetivo, experiência, disponibilidade semanal e equipamentos; gera uma estrutura editável de dias e focos, sem se apresentar como IA generativa.
+
+Preservação:
+- As coleções originais `maq-01..07` e `halter-01..07`, capas, slots de vídeo e rotas `comp:treino` e `comp:yoga` permanecem intactas.
+- A nova funcionalidade é carregada sob demanda dentro dos espaços do ambiente Movimento.
+- Nenhuma das cinco fases foi alterada em sua arquitetura ou conteúdo.
+
+Persistência e limites:
+- Os registros novos usam armazenamento local já existente na plataforma, com chave separada por UID da sessão.
+- Nesta entrega, os dados ficam neste navegador/dispositivo; sincronização Firestore entre dispositivos ainda não foi implementada.
+- A biblioteca inicial é educativa. A seleção e progressão de exercícios devem considerar experiência, técnica, limitações individuais e orientação profissional quando necessária.
+- O planejador é baseado em regras simples e não substitui avaliação individual nem representa integração com um modelo de IA.
+
+**Validação pendente:** testar login com mentor e mentorado, salvamento e recuperação após recarregar, adição/remoção de dias, registro de sessão, visualização de evolução, responsividade e regressão das cinco fases e dos módulos antigos. A gravação no GitHub não comprova, por si só, a publicação ou validação em produção.
