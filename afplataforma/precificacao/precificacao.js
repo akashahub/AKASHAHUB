@@ -120,8 +120,8 @@ function bind() {
   };
 }
 async function saveData() {
-  if (!currentUser || !db) { toast("Faça login para salvar."); return; }
-  try { const { doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"); await setDoc(doc(db, COL, currentUser.uid), { ...data, updatedAt: serverTimestamp(), uid: currentUser.uid }, { merge: true }); toast("Salvo com sucesso."); } catch { toast("Erro ao salvar."); }
+  if (!currentUser || !db) { toast("Faça login para salvar."); return; } if (window.AkashaSubject && window.AkashaSubject.writingLocked(currentUser)) { toast("Você está vendo as respostas desta pessoa. Só ela pode salvar."); return; } 
+  try { const { doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"); await setDoc(doc(db, COL, (window.AkashaSubject ? window.AkashaSubject.uidFor(currentUser) : currentUser.uid)), { ...data, updatedAt: serverTimestamp(), uid: (window.AkashaSubject ? window.AkashaSubject.uidFor(currentUser) : currentUser.uid) }, { merge: true }); toast("Salvo com sucesso."); } catch { toast("Erro ao salvar."); }
   render();
 }
 function discoverBtn(field) { return `<button class="btn secondary" data-discover="${field}" style="margin-top:8px">Descobrir</button>`; }
@@ -153,6 +153,6 @@ bind(); render();
     const configMod = await import("../firebase/firebase-config.js");
     auth = configMod.auth; db = configMod.db;
     const { onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-    onAuthStateChanged(auth, user => { currentUser = user || null; if (user) { const pill = document.getElementById("userPill"); const av = document.getElementById("avatar"); if (pill) pill.textContent = user.email || "Mentorando"; if (av) av.textContent = (user.email || "P")[0].toUpperCase(); } render(); });
+    onAuthStateChanged(auth, user => { currentUser = user || null; if (user && db && window.AkashaSubject) window.AkashaSubject.hydrate(db, COL, user, data).then(function () { if (typeof render === "function") render(); }).catch(function (e) { console.warn("[AF contexto]", e); }); if (user) { const pill = document.getElementById("userPill"); const av = document.getElementById("avatar"); if (pill) pill.textContent = user.email || "Mentorando"; if (av) av.textContent = (user.email || "P")[0].toUpperCase(); } render(); });
   } catch (e) { console.warn("Firebase opcional falhou:", e); }
 })();
