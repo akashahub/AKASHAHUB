@@ -35,7 +35,13 @@ A AF Plataforma usa Firebase Authentication e Firestore. O código contém vári
 
 LocalStorage pode continuar como cache/rascunho temporário, mas não pode ser a fonte oficial de respostas que o usuário espera recuperar em outro dispositivo.
 
-## 2. Arquitetura-alvo recomendada (aditiva)
+## 2. Achado de hidratação em aplicativos com coleção própria
+
+Foi inspecionada uma amostra de 20 módulos que integram `AfApoio.mount`: Essência, Identity Studio, Branding Pessoal, Marketing Pessoal, Liderança, Comunicação, Constelação Familiar, Registros Akáshicos, Authority Leadership OS, Website Studio, App Builder, IA Studio, CRM Inteligente, Funil Builder, Produtos Digitais, Central de Ativos, Fluxo de Caixa, Precificação, Indicadores Financeiros e SDR OS. Os módulos usam `setDoc(doc(db, COL, currentUser.uid), ...)` para gravar, mas a leitura de seus scripts não revelou `getDoc`/`onSnapshot` nem rotina de hidratação equivalente. O callback de autenticação atribui `currentUser` e chama `render()`; o objeto `data` começa vazio. Tratar como provável falha de retomada entre sessões até teste real confirmar.
+
+**Correção recomendada:** adicionar leitura do mesmo documento por UID após autenticação, mesclar apenas campos conhecidos, lidar com erro/offline e só então renderizar os dados. Fazer primeiro em um app piloto, testar conta própria, conta de outro usuário e mentor autorizado; depois replicar com revisão individual. Não mudar a coleção nem o formato dos documentos existentes.
+
+## 3. Arquitetura-alvo recomendada (aditiva)
 
 Criar um envelope comum de registro, sem obrigar a migração imediata de todos os apps:
 
@@ -60,7 +66,7 @@ Separar conteúdo e permissão:
 
 O envelope comum deve referenciar o registro original e não copiar indiscriminadamente todo o conteúdo sensível para várias coleções.
 
-## 3. Identificadores e rastreabilidade
+## 4. Identificadores e rastreabilidade
 
 Todo registro novo deve conter, quando aplicável:
 - `menteeUid` (UID autenticado, nunca recebido cegamente do cliente);
@@ -76,7 +82,7 @@ Todo registro novo deve conter, quando aplicável:
 
 Não colocar credenciais, senhas, tokens, dados bancários completos ou segredos de infraestrutura em formulários ou documentos de diagnóstico.
 
-## 4. Salvamento e sincronização
+## 5. Salvamento e sincronização
 
 1. Salvar no caminho existente do aplicativo, respeitando seu contrato atual.
 2. Adicionar sincronização com um índice/resumo consolidado somente depois de definir idempotência e origem.
@@ -85,11 +91,11 @@ Não colocar credenciais, senhas, tokens, dados bancários completos ou segredos
 5. Mostrar “Salvo na nuvem”, “Salvando” ou “Não foi possível salvar”; nunca indicar sucesso antes da confirmação do Firestore.
 6. O botão copiar deve exportar a pergunta original, a resposta, as escolhas, observações e resultado; copiar não substitui persistência.
 
-## 5. Arquivos e Google Drive
+## 6. Arquivos e Google Drive
 
 O Firestore deve guardar metadados e permissões, não binários grandes. Arquivos devem usar Firebase Storage ou Google Drive com integração OAuth/backend validada. Não simular upload. Cada ativo precisa de proprietário, visibilidade, versão, projeto, fase e URL/caminho controlado.
 
-## 6. Migração
+## 7. Migração
 
 - Inventariar chaves locais e coleções existentes.
 - Definir transformadores idempotentes por ferramenta.
