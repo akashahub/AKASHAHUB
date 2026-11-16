@@ -206,24 +206,37 @@
   function mount(state) {
     ensureStyle();
     var content = document.getElementById("content");
-    if (!content || content.querySelector(".af-privacy")) return;
+    if (!content) return;
     var g = guide();
-    var privacy = document.createElement("div");
-    privacy.className = "af-privacy";
-    var p = document.createElement("p");
-    p.textContent = "(Só você tem acesso a estes dados. Eles ficam salvos no seu login, no seu banco de dados seguro. O mentor não entra na sua conta: você copia e envia.)";
-    privacy.appendChild(p);
-    var copyBtn = button("Copiar tudo para o WhatsApp do mentor");
-    copyBtn.addEventListener("click", function () {
-      copyText(buildPacket(window.__AF || state || {}), "Copiado. Pode colar no WhatsApp do mentor.");
-    });
-    privacy.appendChild(copyBtn);
-    var title = content.querySelector(".title");
-    if (title) title.insertAdjacentElement("afterend", privacy);
-    else content.insertBefore(privacy, content.firstChild);
+
+    // A camada de privacidade é criada uma vez, mas o gate do mentor é
+    // reavaliado em cada render, pois o primeiro render pode ocorrer antes do Auth.
+    var privacy = content.querySelector(".af-privacy");
+    if (!privacy) {
+      privacy = document.createElement("div");
+      privacy.className = "af-privacy";
+      var p = document.createElement("p");
+      p.textContent = "As respostas que forem salvas ficam vinculadas à sua conta. Você e mentores ou administradores autorizados podem acessá-las conforme as permissões habilitadas para esta ferramenta. Você também pode copiar e enviar uma cópia pelo WhatsApp.";
+      privacy.appendChild(p);
+      var copyBtn = button("Copiar tudo para o WhatsApp do mentor");
+      copyBtn.addEventListener("click", function () {
+        copyText(buildPacket(window.__AF || state || {}), "Copiado. Pode colar no WhatsApp do mentor.");
+      });
+      privacy.appendChild(copyBtn);
+      var title = content.querySelector(".title");
+      if (title) title.insertAdjacentElement("afterend", privacy);
+      else content.insertBefore(privacy, content.firstChild);
+    }
 
     var user = (state && state.user) || (window.__AF && window.__AF.user) || null;
-    if (!isMentor(user)) return;
+    var mentor = isMentor(user);
+    var existingMentorPanel = content.querySelector(".af-mentor");
+    if (!mentor) {
+      if (existingMentorPanel) existingMentorPanel.remove();
+      return;
+    }
+    if (existingMentorPanel) return;
+
     var box = document.createElement("section");
     box.className = "af-mentor";
     var eye = document.createElement("div");
@@ -233,7 +246,7 @@
     h.textContent = "O que fazer com as respostas de " + g.title;
     var noteP = document.createElement("p");
     noteP.className = "af-note";
-    noteP.textContent = "A pessoa preenche, copia e manda no WhatsApp. Você não vê a conta dela por aqui. Leia o que ela enviou e use este roteiro na mesma ferramenta.";
+    noteP.textContent = "Este bloco apresenta orientação e um prompt de apoio. A leitura dos dados de cada mentorando depende de acesso autorizado ao registro dele; esta área ainda não substitui o painel central de respostas.";
     var fazer = document.createElement("p");
     fazer.textContent = g.fazer;
     var ul = document.createElement("ul");
@@ -328,7 +341,11 @@
 
   function quizify() {
     var box = document.getElementById("modalQuestions");
-    if (!box || box.dataset.afQuiz === "1") return;
+    if (!box) return;
+    // Os aplicativos substituem o conteúdo do modal a cada nova descoberta.
+    // Remover a navegação anterior permite configurar novamente a próxima sequência.
+    var previousBar = box.querySelector(".af-quizbar");
+    if (previousBar) previousBar.remove();
     var fields = Array.prototype.slice.call(box.querySelectorAll(":scope > .field"));
     if (!fields.length) return;
     box.dataset.afQuiz = "1";

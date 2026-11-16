@@ -363,13 +363,29 @@ render();
     auth = configMod.auth;
     db = configMod.db;
     const { onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-    onAuthStateChanged(auth, user => {
+    onAuthStateChanged(auth, async user => {
       currentUser = user || null;
       if (user) {
         const pill = document.getElementById("userPill");
         const av = document.getElementById("avatar");
         if (pill) pill.textContent = user.email || "Mentorando";
         if (av) av.textContent = (user.email || "E")[0].toUpperCase();
+
+        // Reidrata somente os campos conhecidos do documento do próprio usuário.
+        // Mantém o schema existente afEssencia/{uid} e não sobrescreve dados no login.
+        try {
+          const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          const snap = await getDoc(doc(db, COL, user.uid));
+          if (snap.exists()) {
+            const saved = snap.data() || {};
+            Object.keys(data).forEach(key => {
+              if (Object.prototype.hasOwnProperty.call(saved, key)) data[key] = saved[key];
+            });
+          }
+        } catch (e) {
+          console.warn("[Essência] Não foi possível reidratar os dados salvos:", e);
+          toast("Não foi possível carregar suas respostas salvas. Tente novamente.");
+        }
       }
       render();
     });
