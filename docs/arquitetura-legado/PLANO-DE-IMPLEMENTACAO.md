@@ -24,6 +24,8 @@
 
 ## Lote 1 — Segurança antes de centralizar
 - Revisar regras abertas de WebRTC e testar com Emulator.
+- Conferir no Console se as regras publicadas correspondem ao arquivo versionado.
+- Resolver as 11 coleções de apps sem `match` explícito antes de considerar os formulários confiáveis para autosave.
 - Proteger Central do Expert se for conteúdo interno.
 - Corrigir leitura ampla de perfis e filas após confirmar necessidade.
 - Alinhar texto de privacidade com regras reais.
