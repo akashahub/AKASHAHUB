@@ -216,7 +216,7 @@
       privacy = document.createElement("div");
       privacy.className = "af-privacy";
       var p = document.createElement("p");
-      p.textContent = "Suas respostas ficam vinculadas à sua conta. Você e mentores ou administradores autorizados podem acessá-las conforme as permissões da plataforma. Você também pode copiar e enviar uma cópia pelo WhatsApp.";
+      p.textContent = "As respostas que forem salvas ficam vinculadas à sua conta. Você e mentores ou administradores autorizados podem acessá-las conforme as permissões habilitadas para esta ferramenta. Você também pode copiar e enviar uma cópia pelo WhatsApp.";
       privacy.appendChild(p);
       var copyBtn = button("Copiar tudo para o WhatsApp do mentor");
       copyBtn.addEventListener("click", function () {
