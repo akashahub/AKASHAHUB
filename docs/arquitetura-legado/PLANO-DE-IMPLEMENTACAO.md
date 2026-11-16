@@ -15,6 +15,8 @@
 - [x] Inspeção dirigida de ferramentas representativas das cinco fases.
 - [x] Revisão inicial das regras Firestore.
 - [ ] Inspecionar todos os HTML/JS restantes e mapear dependências.
+- [x] Preparar piloto de hidratação em Essência OS, sem alterar schema/coleção.
+- [ ] Testar piloto com conta real/Emulator antes de replicar nos outros 19 apps.
 - [ ] Confirmar cobertura do helper AfApoio por aplicativo.
 - [ ] Verificar deploy/hosting e fluxos reais no navegador.
 
