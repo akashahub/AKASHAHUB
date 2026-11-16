@@ -43,7 +43,8 @@ A pasta `al/` contém 64 arquivos. Os números incluem páginas de catálogo/ser
 - `afplataforma/assets/js/phase-checklists.js`: checklists com sincronização Firestore e estado local.
 - `afplataforma/assets/js/af-apoio.js`: camada transversal de linguagem simples, quiz sequencial, cópia de pacote e painel/prompt do mentor em páginas que a carregam e chamam.
 - `afplataforma/assets/js/catalogo-capacidades-data.js` + `catalogo-capacidades.js`: catálogo operacional restrito ao mentor.
-- `al/central/index.html`: Central do Expert, arquivo HTML extenso de conteúdo e navegação de materiais.
+- `al/central/index.html`: Central do Expert, arquivo HTML extenso de conteúdo e navegação de materiais. A inspeção não encontrou autenticação Firebase/gate de mentor nesse arquivo.
+- `afplataforma/assets/js/access-admin.js`: painel administrativo de solicitações e liberação de acesso AF; a função observada é gestão de acesso, não consulta centralizada de respostas diagnósticas.
 - `sessoes/index.html`: roteiro de 26 encontros e respostas.
 - `sessoes/mentoria/index.html`: área de consulta/registro de sessões individuais.
 
@@ -79,6 +80,7 @@ A pasta `al/` contém 64 arquivos. Os números incluem páginas de catálogo/ser
 
 ### P1 — Coerência funcional
 - `fases.js` contém renderizadores legados com conteúdo simplificado/“Em evolução” e binders vazios em várias views. Isso não prova que a ferramenta independente equivalente esteja quebrada; é preciso ligar menu, view e rota independente corretamente.
+- O Dashboard do Mentor em `app.js` apresenta ferramentas internas e inclui `renderAccessAdminPanel()`. O painel `access-admin.js` acompanha tentativas e administra acesso/plano/módulos, mas não foi encontrado ali um seletor de mentorando com leitura dos diagnósticos das ferramentas.
 - A orientação de Fase 4 em `phase-guidance.js` declara SDR OS, Treinamento e Closers OS em construção; há páginas independentes SDR OS e Treinamento, enquanto Closers OS completo não foi confirmado na árvore examinada. Atualizar a documentação após teste funcional, não apenas por existência de arquivo.
 - `/al/central` é uma biblioteca de conteúdo do expert, não foi confirmada como painel operacional conectado a dados de mentorandos.
 
