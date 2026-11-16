@@ -57,6 +57,7 @@ A busca no repositório encontrou chamadas `AfApoio.mount` em 20 aplicativos e c
 
 ### Limitações observadas
 - O helper declara que não grava dados novos; a persistência continua sendo responsabilidade do app.
+- Em 20 módulos inspecionados que chamam o helper, o código grava em coleção própria com `setDoc`, mas não foi localizada leitura/hidratação do documento após `onAuthStateChanged`. A tela pode voltar vazia ao reabrir mesmo que o documento exista na nuvem; validar em navegador e corrigir com piloto antes de replicar.
 - A cópia usa `window.__AF` ou o estado entregue ao helper. É necessário validar se cada app entrega o estado completo e atualizado.
 - O painel de mentor montado no frontend não equivale a um painel central que consulta os registros Firestore de vários mentorandos. A própria nota do helper orienta o mentor a ler o que a pessoa enviou pelo WhatsApp.
 - A checagem de Gmail/UID dentro do helper controla a exibição do bloco no navegador; não é autorização de segurança. O backend/Firestore Rules deve continuar sendo a autoridade.
