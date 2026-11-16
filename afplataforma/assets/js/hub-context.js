@@ -2,10 +2,11 @@
  * Contexto de navegação do hub.
  * A escolha não autoriza leitura e não altera o UID autenticado.
  * UID fora da lista real é recusado.
+ * Trocar o login descarta a seleção da conta anterior.
  */
 import { session, isMentorSession } from "./auth.js";
 import { getAllUsersForAf } from "../../firebase/firestore.js";
-import { resolveContext, contextFromSelection } from "./hub-context-rules.js?v=etapa3-2";
+import { contextFromSelection, nextHubContext } from "./hub-context-rules.js?v=etapa3-3";
 
 const KEY = "akasha.hub.context.v1";
 let authorized = null;
@@ -25,7 +26,7 @@ function readStored() {
     const raw = sessionStorage.getItem(KEY);
     if (!raw) return null;
     const data = JSON.parse(raw);
-    if (!data || typeof data.uid !== "string") return null;
+    if (!data || typeof data !== "object") return null;
     return data;
   } catch {
     return null;
@@ -39,6 +40,22 @@ function writeStored(ctx) {
   } catch {
     /* navegador sem storage: o contexto fica só na memória da função */
   }
+}
+
+function applyState(who) {
+  const next = nextHubContext({
+    actor: who,
+    stored: readStored(),
+    allowedUids: authorized,
+    directory
+  });
+  if (next.resetList) {
+    authorized = null;
+    directory = new Map();
+  }
+  if (!next.preserveStored) writeStored(next.context);
+  publish(next.context);
+  return next.context;
 }
 
 export function setAuthorizedMentees(rows) {
@@ -67,21 +84,18 @@ export async function loadAuthorizedMentees() {
 }
 
 export function ensureHubContext() {
-  let ctx = resolveContext(actor(), readStored(), authorized);
-  if (ctx && ctx.source === "mentor-selection") {
-    const row = directory.get(ctx.uid);
-    if (!row || row.status !== "active") ctx = resolveContext(actor(), null, authorized);
-    else ctx = { ...ctx, name: row.name || "", email: row.email || "" };
+  const who = actor();
+  if (!who.uid) {
+    clearHubContext();
+    return null;
   }
-  writeStored(ctx);
-  publish(ctx);
-  return ctx;
+  return applyState(who);
 }
 
 export function selectHubMentee(person) {
   const who = actor();
   const picked = contextFromSelection(who, person && person.uid, authorized, directory);
-  if (!picked) return ensureHubContext();
+  if (!picked || picked.actorUid !== who.uid) return ensureHubContext();
   writeStored(picked);
   publish(picked);
   paintHubContext();

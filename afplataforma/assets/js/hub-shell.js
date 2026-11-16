@@ -3,9 +3,9 @@
  * Não grava coleção, não lê o app do mentorando e não troca o UID de login.
  */
 import { session, isMentorSession } from "./auth.js";
-import { esc } from "./navigation.js?v=etapa3-2";
+import { esc } from "./navigation.js?v=etapa3-3";
 import { getAllUsersForAf } from "../../firebase/firestore.js";
-import { activeHubContext, selectHubMentee, setAuthorizedMentees } from "./hub-context.js?v=etapa3-2";
+import { activeHubContext, selectHubMentee, setAuthorizedMentees } from "./hub-context.js?v=etapa3-3";
 
 function statusLabel(status) {
   if (status === "active") return "Acesso ativo";
