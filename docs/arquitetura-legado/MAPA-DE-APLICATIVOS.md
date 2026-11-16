@@ -90,6 +90,10 @@ Ferramentas mapeadas:
 
 Não é uma fase adicional. Inclui Cash-Flow, Modo Sono, Metas, Ideias, Mapa de Rede, tarefas, biblioteca de materiais e outros instrumentos que podem apoiar várias fases.
 
+## Camada do mentor existente
+
+O Dashboard do Mentor em `afplataforma/assets/js/app.js` reúne links para materiais internos, roteiros e ferramentas operacionais. Também incorpora `renderAccessAdminPanel()` de `access-admin.js`. Esse painel acompanha tentativas de login e permite liberar, pausar, bloquear e ajustar plano/módulos. Não foi encontrado nele um fluxo para selecionar um mentorando e abrir suas respostas de Essência, Império Digital, AF, Expansão ou Legado. Isso é uma lacuna de operação, não motivo para duplicar os formulários.
+
 ## Ferramentas operacionais transversais
 
 - Central de Ativos.
