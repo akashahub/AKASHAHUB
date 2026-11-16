@@ -50,6 +50,8 @@
 - Preservar respostas e permitir texto livre.
 
 ## Lote 4 — Quiz e orientação
+- Corrigir o ciclo de vida de `AfApoio.mount` para inserir privacidade uma vez e avaliar o gate do mentor a cada render autenticado.
+- Corrigir/resetar o marcador `data-af-quiz` quando o conteúdo do modal for reconstruído; testar abrir e fechar várias descobertas em sequência.
 - Auditar AfApoio e os apps que o chamam.
 - Melhorar perguntas complexas com alternativas simples e exemplos.
 - Preservar a pergunta original.
