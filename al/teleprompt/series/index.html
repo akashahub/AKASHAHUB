@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Séries · Arquitetura de Legado</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; background: #0f0f0f; color: #e5e5e5; }
+    h1 { font-size: 1.8rem; }
+    .serie { border: 1px solid #333; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+    .serie h2 { margin: 0 0 0.5rem; }
+    a { color: #a78bfa; }
+  </style>
+</head>
+<body>
+  <h1>Séries por Fase</h1>
+  <p>Estrutura aditiva. Episódios serão preenchidos depois.</p>
+  <div id="hub"></div>
+  <script>
+    fetch('series.json').then(r => r.json()).then(data => {
+      const hub = document.getElementById('hub');
+      data.series.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'serie';
+        div.innerHTML = `<h2>${s.codigo} · ${s.nome}</h2><p>Fase ${s.fase} · ${s.episodios} episódios · Status: ${s.status}</p><a href="${s.id}.json">Ver JSON</a>`;
+        hub.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
