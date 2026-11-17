@@ -74,7 +74,7 @@ function shell(state, route, inner) {
   const admin = canManagePeople(state);
   return '<div class="app">' +
     '<aside class="rail">' +
-      '<div class="logo"><img src="' + ACADEMY_MARK + '" alt="Marca da academia"/><div><b>Fluir</b><small>Academy</small></div></div>' +
+      '<div class="logo"><img src="' + ACADEMY_MARK + '" alt="Marca da academia"/><div><b>Academia</b><small>Academy</small></div></div>' +
       '<button class="nav-i' + (route === 'capa' ? ' on' : '') + '" data-go="capa">Capa</button>' +
       (state.workspace ? '<button class="nav-i' + (route.indexOf('ws-') === 0 ? ' on' : '') + '" data-go="ws-' + state.workspace + '">' + esc(ws.title) + '</button>' : '') +
       '<button class="nav-i' + (route === 'eventos' ? ' on' : '') + '" data-go="eventos">Eventos</button>' +
