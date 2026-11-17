@@ -6,8 +6,6 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   sendPasswordResetEmail,
   GoogleAuthProvider,
   signOut
@@ -180,22 +178,8 @@ export async function loginEmail(email, password) {
 export async function loginGoogle() {
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: "select_account" });
-  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
-  if (isMobile) {
-    await signInWithRedirect(auth, provider);
-    return true;
-  }
   const cred = await signInWithPopup(auth, provider);
   return resolveUserAccess(cred.user);
-}
-
-export async function completeGoogleRedirect() {
-  try {
-    return await getRedirectResult(auth);
-  } catch (error) {
-    console.error("[AF Google redirect]", error);
-    throw error;
-  }
 }
 
 export async function resetPassword(email) {
