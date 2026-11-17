@@ -22,8 +22,8 @@ export const UNITS = [
 ];
 
 
-const DEMO_FIRST = ['Ana','Bruno','Camila','Daniel','Elisa','Felipe','Gabriela','Henrique','Isabela','Joao','Karina','Lucas','Marina','Nicolas','Olivia','Paulo','Rafaela','Samuel','Tatiana','Vinicius'];
-const DEMO_LAST = ['Almeida','Barbosa','Costa','Dias','Ferreira','Gomes','Lima','Mendes','Nascimento','Oliveira','Pereira','Rocha','Santos','Silva','Souza','Teixeira'];
+const DEMO_FIRST = ['Aluno','Professor','Colaborador','Gestor'];
+const DEMO_LAST = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
 export const DEMO_MEMBERS = [];
 UNITS.forEach(function (unit, unitIndex) {
@@ -83,8 +83,8 @@ export function directoryRoleLabel(role) {
     aluno: 'Aluno',
     professor: 'Professor',
     colaborador: 'Colaborador',
-    franqueado: 'Franqueado',
-    ceo: 'CEO / socio'
+    franqueado: 'Gestor da unidade',
+    ceo: 'Administração'
   };
   return labels[role] || role || 'Membro';
 }
@@ -93,8 +93,8 @@ export const WORKSPACES = [
   { id: 'aluno', title: 'Aluno', tag: 'Eu sou aluno', desc: 'Areas livres com aulas de Pilates, hidro, natacao, infantil, bebe e gestantes.' },
   { id: 'professor', title: 'Professor', tag: 'Eu sou professor', desc: 'Metodologia e as areas que voce ministra.' },
   { id: 'colaborador', title: 'Colaborador', tag: 'Eu sou da equipe', desc: 'Cursos fechados da funcao. Acesso monitorado.' },
-  { id: 'franqueado', title: 'Franqueado', tag: 'Eu sou franqueado', desc: 'Cultura, operacao e venda de franquia. Acesso monitorado.' },
-  { id: 'ceo', title: 'CEO / socio', tag: 'Eu sou da matriz', desc: 'Rede, acessos, eventos e o que cada papel ve.' }
+  { id: 'franqueado', title: 'Gestor da unidade', tag: 'Eu gerencio uma unidade', desc: 'Operacao, equipe e indicadores. Acesso monitorado.' },
+  { id: 'ceo', title: 'Administração', tag: 'Eu administro a academia', desc: 'Unidades, acessos, eventos e permissoes.' }
 ];
 
 export const JOBS = [
@@ -130,8 +130,8 @@ const TRACK_TITLE = {
   vendas: 'Vendas',
   gestor: 'Gestao',
   rh: 'RH',
-  cultura: 'Cultura do franqueado',
-  'vendas-franquia': 'Vender a franquia',
+  cultura: 'Gestao da unidade',
+  'vendas-franquia': 'Apresentar os servicos',
   rede: 'Rede'
 };
 
@@ -185,8 +185,8 @@ export const EVENTS = [
   { id: 'ev-todos', title: 'Encontro da rede', when: 'Todo mes', audience: ['all'], liveRoom: 'academy-demo', place: 'Digital + unidades' },
   { id: 'ev-aluno', title: 'Festival dos alunos', when: 'Sabado', audience: ['aluno', 'professor', 'ceo'], liveRoom: 'academy-alunos', place: 'Unidade 02' },
   { id: 'ev-colab', title: 'Treinamento de equipe', when: 'Segunda 7h', audience: ['colaborador', 'ceo'], liveRoom: 'academy-equipe', place: 'Cada unidade' },
-  { id: 'ev-franq', title: 'Imersao de franqueados', when: 'Trimestral', audience: ['franqueado', 'ceo'], liveRoom: 'academy-franquia', place: 'Matriz' },
-  { id: 'ev-ceo', title: 'Council da matriz', when: 'Sob convite', audience: ['ceo'], liveRoom: 'academy-council', place: 'Fechado' }
+  { id: 'ev-franq', title: 'Encontro de gestores', when: 'Trimestral', audience: ['franqueado', 'ceo'], liveRoom: 'academy-franquia', place: 'Matriz' },
+  { id: 'ev-ceo', title: 'Encontro da administração', when: 'Sob convite', audience: ['ceo'], liveRoom: 'academy-council', place: 'Fechado' }
 ];
 
 export const VAULT = [
