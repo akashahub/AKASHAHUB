@@ -351,7 +351,7 @@ export function viewGestao(state, ctx) {
     (rows.length ? rows.map(function (em) {
       const g = state.grants[em];
       return '<div class="line"><span>' + esc(em) + ' · ' + esc((g.workspaces || []).join(', ')) + '</span><button class="btn ghost slim" data-ungrant="' + esc(em) + '">tirar</button></div>';
-    }).join('') : '<p class="muted">Ninguem alem do CEO local.</p>') +
+    }).join('') : '<p class="muted">Nenhum outro administrador local.</p>') +
     '</article>' +
     '<article class="card"><h3>Acessos recentes</h3>' +
     '<p class="muted">So o ultimo passo de cada pessoa. Sem arquivo de video, sem historico pesado.</p>' +
