@@ -28,7 +28,7 @@ const DEMO_LAST = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 export const DEMO_MEMBERS = [];
 UNITS.forEach(function (unit, unitIndex) {
   const roles = ['aluno','aluno','aluno','professor','professor','colaborador','colaborador','franqueado'];
-  const jobs = ['', '', '', 'Natacao', 'Pilates', 'Recepcao', 'Gestao', 'Franqueado'];
+  const jobs = ['', '', '', 'Natacao', 'Pilates', 'Recepcao', 'Gestao', 'Gestor'];
   roles.forEach(function (role, i) {
     const first = DEMO_FIRST[(unitIndex * 3 + i) % DEMO_FIRST.length];
     const last = DEMO_LAST[(unitIndex * 5 + i * 2) % DEMO_LAST.length];
@@ -185,7 +185,7 @@ export const EVENTS = [
   { id: 'ev-todos', title: 'Encontro da rede', when: 'Todo mes', audience: ['all'], liveRoom: 'academy-demo', place: 'Digital + unidades' },
   { id: 'ev-aluno', title: 'Festival dos alunos', when: 'Sabado', audience: ['aluno', 'professor', 'ceo'], liveRoom: 'academy-alunos', place: 'Unidade 02' },
   { id: 'ev-colab', title: 'Treinamento de equipe', when: 'Segunda 7h', audience: ['colaborador', 'ceo'], liveRoom: 'academy-equipe', place: 'Cada unidade' },
-  { id: 'ev-franq', title: 'Encontro de gestores', when: 'Trimestral', audience: ['franqueado', 'ceo'], liveRoom: 'academy-franquia', place: 'Matriz' },
+  { id: 'ev-franq', title: 'Encontro de gestores', when: 'Trimestral', audience: ['franqueado', 'ceo'], liveRoom: 'academy-franquia', place: 'Administração' },
   { id: 'ev-ceo', title: 'Encontro da administração', when: 'Sob convite', audience: ['ceo'], liveRoom: 'academy-council', place: 'Fechado' }
 ];
 
