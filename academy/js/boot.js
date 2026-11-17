@@ -41,7 +41,7 @@ function askLoc() {
 const ctx = {
   store: store,
   route: 'gate',
-  liveRoom: 'fluir-demo',
+  liveRoom: 'academy-demo',
   openArea: null,
   playId: null,
   cloudLog: [],
