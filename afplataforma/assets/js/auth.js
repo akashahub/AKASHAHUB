@@ -132,11 +132,12 @@ export function resolveUserAccess(user) {
     });
 
     let access = null;
+    let accessTimeout = null;
     try {
       access = await Promise.race([
         getAfAccess(user.uid),
         new Promise((_, reject) => {
-          setTimeout(() => {
+          accessTimeout = setTimeout(() => {
             const error = new Error("Tempo esgotado ao verificar o acesso.");
             error.code = "deadline-exceeded";
             reject(error);
@@ -147,6 +148,8 @@ export function resolveUserAccess(user) {
       console.warn("[AF] getAfAccess:", e?.code || e?.message || e);
       if (onAccessDenied) onAccessDenied("error");
       return false;
+    } finally {
+      if (accessTimeout) clearTimeout(accessTimeout);
     }
 
     const result = buildSessionFromUser(user, access, "firebase");
