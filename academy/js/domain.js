@@ -55,7 +55,7 @@ export function directoryUnitsFor(profile) {
   const role = profileRole(profile);
   if (role === 'ceo') return UNITS.slice();
   if (role === 'franqueado' || role === 'colaborador' || role === 'professor') {
-    return UNITS.filter(function (u) { return u.id === (profile.unitId || 'pituba'); });
+    return UNITS.filter(function (u) { return u.id === (profile.unitId || 'unidade-01'); });
   }
   return [];
 }
@@ -66,10 +66,10 @@ export function canSeeDirectory(profile) {
 
 export function directoryMembersFor(profile, unitId, source) {
   const role = profileRole(profile);
-  const ownUnit = profile && profile.unitId ? profile.unitId : 'pituba';
+  const ownUnit = profile && profile.unitId ? profile.unitId : 'unidade-01';
   if (role !== 'ceo' && unitId !== ownUnit) return [];
   let list = (source && source.length ? source : DEMO_MEMBERS).filter(function (m) {
-    return (m.unitId || 'pituba') === unitId;
+    return (m.unitId || 'unidade-01') === unitId;
   });
   if (role === 'ceo' || role === 'franqueado') return list;
   if (role === 'colaborador' || role === 'professor') {
@@ -194,12 +194,7 @@ export const VAULT = [
   { id: 'marca', title: 'Identidade visual e contratos', ws: ['franqueado', 'ceo'], url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }
 ];
 
-export const CEO_EMAILS = [
-  'yanfili.simon@gmail.com',
-  'plmacramo@gmail.com',
-  'sendatantrica@gmail.com',
-  'opatricksimon@gmail.com'
-];
+export const CEO_EMAILS = [];
 
 export function isCeoEmail(email) {
   return CEO_EMAILS.indexOf(String(email || '').toLowerCase()) >= 0;
