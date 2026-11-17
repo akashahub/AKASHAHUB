@@ -61,7 +61,7 @@ export function viewGate() {
     '<img class="gate-logo" src="' + ACADEMY_MARK + '" alt="Marca da academia"/>' +
     '<p class="eyebrow">' + TENANT.name + '</p>' +
     '<h1>Bem-vindo à Academia.</h1>' +
-    '<p class="lead">Cada pessoa entra no proprio card. Aluno ve as areas livres. Professor, equipe, franqueado e socio entram so onde foram liberados.</p>' +
+    '<p class="lead">Cada pessoa entra no proprio card. Aluno ve as areas livres. Professor, equipe e gestores entram apenas nas areas autorizadas.</p>' +
     '<button class="btn" id="glogin">Entrar com Google</button>' +
     '<button class="btn ghost" id="localin">Entrar sem Google (demo)</button>' +
     '<p class="hint">Video fica no YouTube, sem storage. Area fechada avisa que o acesso e monitorado.</p>' +
@@ -238,7 +238,7 @@ export function viewRede(state, ctx) {
   return shell(state, 'rede',
     '<p class="eyebrow">academia · diretório</p>' +
     '<h1>Pessoas por unidade.</h1>' +
-    '<p class="lead">A visao muda conforme o cadastro. CEO ve a rede inteira. Franqueado ve apenas a propria franquia. Professor e colaborador veem somente colegas de equipe e professores da propria unidade — alunos ficam ocultos.</p>' +
+    '<p class="lead">A visao muda conforme o cadastro. A administração vê as unidades. Gestores veem sua unidade. Professores e equipe veem apenas as informações necessárias ao trabalho — dados dos alunos ficam protegidos.</p>' +
     '<div class="unit-grid">' + units.map(function (u) {
       const real = directoryMembersFor(state, u.id, cloud);
       const simulated = directoryMembersFor(state, u.id, null);
@@ -272,13 +272,13 @@ export function viewMembers(state, unitId, ctx) {
     '<button class="btn ghost slim" data-go="rede">Voltar para unidades</button>' +
     '<p class="eyebrow">unidade · ' + esc(unit.city) + '</p>' +
     '<div class="spread"><div><h1>' + esc(unit.name) + '</h1><p class="lead">' +
-      (isCeo ? 'Visao completa da unidade: alunos, professores, colaboradores e franqueado.' : (state.role === 'franqueado' ? 'Visao da sua franquia: alunos e equipe desta unidade.' : 'Sua equipe: professores e colaboradores desta unidade. Alunos nao aparecem para este perfil.')) +
+      (isCeo ? 'Visao administrativa da unidade: alunos, professores, colaboradores e gestores.' : (state.role === 'franqueado' ? 'Visao da sua unidade: alunos e equipe.' : 'Sua equipe: professores e colaboradores desta unidade. Alunos nao aparecem para este perfil.')) +
     '</p></div><span class="chip' + (demoMode ? ' dim' : ' ok') + '">' + (demoMode ? 'simulacao' : 'cadastros reais') + '</span></div>' +
     '<div class="member-stats">' +
       (isCeo || state.role === 'franqueado' ? '<div><b>' + counts.aluno + '</b><span>alunos</span></div>' : '') +
       '<div><b>' + counts.professor + '</b><span>professores</span></div>' +
       '<div><b>' + counts.colaborador + '</b><span>colaboradores</span></div>' +
-      (isCeo || state.role === 'franqueado' ? '<div><b>' + counts.franqueado + '</b><span>franqueados</span></div>' : '') +
+      (isCeo || state.role === 'franqueado' ? '<div><b>' + counts.franqueado + '</b><span>gestores</span></div>' : '') +
     '</div>' +
     '<article class="card"><div class="spread"><h3>Membros visiveis</h3><span class="chip">' + list.length + '</span></div>' +
       (list.length ? list.map(function (m) {
@@ -293,7 +293,7 @@ export function viewEventos(state) {
   return shell(state, 'eventos',
     '<p class="eyebrow">salas</p>' +
     '<h1>Eventos da academia.</h1>' +
-    '<p class="lead">Sala para todos, sala de aluno, equipe, franqueado e council.</p>' +
+    '<p class="lead">Salas para alunos, equipe, gestores e administração.</p>' +
     list.map(function (e) {
       return '<article class="card"><div class="spread"><div><h3>' + esc(e.title) + '</h3><p class="muted">' + esc(e.when) + ' · ' + esc(e.place) + '</p></div>' +
         '<span class="chip">' + (e.audience[0] === 'all' ? 'todos' : e.audience.join(' · ')) + '</span></div>' +
@@ -334,7 +334,7 @@ export function viewGestao(state, ctx) {
   return shell(state, 'gestao',
     '<p class="eyebrow">gestao de acessos</p>' +
     '<h1>Quem entra, quando e onde.</h1>' +
-    '<p class="lead">Aluno nao e monitorado. Professor, colaborador, franqueado e socio deixam horario, o que abriram e local se a pessoa permitir.</p>' +
+    '<p class="lead">Aluno nao e monitorado. Professores, equipe e gestores deixam registros de acesso e atividade conforme as permissões.</p>' +
     '<article class="card"><h3>Liberar pessoa por e-mail</h3>' +
       '<label>E-mail</label><input id="g-mail" placeholder="pessoa@exemplo.com"/>' +
       '<label>Card principal</label><select id="g-ws">' +
@@ -358,13 +358,13 @@ export function viewGestao(state, ctx) {
     (log.length ? log.map(function (r) {
       const who = r.email || r.name || 'local';
       return '<div class="line"><span>' + esc(whenLabel(r.at)) + ' · ' + esc(who) + '<br><span class="muted">' + esc(r.what || r.ws) + '</span></span><span class="muted">' + esc(r.loc || 'sem local') + '</span></div>';
-    }).join('') : '<p class="muted">Nenhum acesso restrito ainda. Abre Professor, Colaborador ou Franqueado para registrar.</p>') +
+    }).join('') : '<p class="muted">Nenhum acesso restrito ainda. Abra Professor, Colaborador ou Gestor para registrar.</p>') +
     '</article>' +
     '<article class="card"><h3>O que cada card ve</h3>' +
     '<div class="line"><span>Aluno</span><span class="muted">areas livres, sem monitoramento</span></div>' +
     '<div class="line"><span>Professor</span><span class="muted">metodologia + areas do aluno</span></div>' +
     '<div class="line"><span>Colaborador</span><span class="muted">so a funcao + cultura</span></div>' +
-    '<div class="line"><span>Franqueado</span><span class="muted">cultura e vender franquia</span></div>' +
+    '<div class="line"><span>Gestor da unidade</span><span class="muted">gestao e atendimento</span></div>' +
     '<div class="line"><span>Socio</span><span class="muted">rede, grants e acessos</span></div>' +
     '</article>'
   );
