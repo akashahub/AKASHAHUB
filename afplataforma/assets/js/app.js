@@ -986,17 +986,11 @@ async function onResetPassword() {
 }
 
 function init() {
-  window.addEventListener("af:phase-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
-  window.addEventListener("af:phase-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
-  initGlobalSearch();
-  window.addEventListener("af:global-search-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
-  window.addEventListener("af:global-search-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
-  const demoWrap = document.getElementById("demoButtons");
-  if (demoWrap) demoWrap.style.display = isDemoEnabled() ? "block" : "none";
-
-  document.getElementById("btnLogin")?.addEventListener("click", onLoginEmail);
+  // O login é a parte crítica: deve ficar pronto antes de qualquer recurso
+  // opcional da interface. Uma falha na busca, teleprompter ou painel não
+  // pode impedir o usuário de entrar.
   const loginBtn = document.getElementById("btnLogin");
-  if (loginBtn) loginBtn.dataset.ready = "1";
+  loginBtn?.addEventListener("click", onLoginEmail);
   document.getElementById("btnGoogle")?.addEventListener("click", onLoginGoogle);
   document.getElementById("btnResetPassword")?.addEventListener("click", onResetPassword);
   document.getElementById("loginPass")?.addEventListener("keydown", (e) => {
@@ -1004,37 +998,16 @@ function init() {
   });
   document.getElementById("btnDemoMentor")?.addEventListener("click", () => enterDemo("mentor"));
   document.getElementById("btnDemoMentee")?.addEventListener("click", () => enterDemo("mentee"));
-  document.getElementById("btnLogout")?.addEventListener("click", async () => {
-    forceStopMedia();
-    closeTeleprompter();
-    await stopPresence();
-    clearHubContext();
-    await logout();
-  });
-  document.getElementById("btnDeniedBack")?.addEventListener("click", async () => {
-    clearHubContext();
-    await logout();
-    showAuth();
-  });
-  document.getElementById("menuToggle")?.addEventListener("click", openSide);
-  document.getElementById("sideBackdrop")?.addEventListener("click", closeSide);
-  document.getElementById("langSel")?.addEventListener("change", (e) => setLang(e.target.value));
-  document.getElementById("overlay")?.addEventListener("click", closeModals);
-  document.getElementById("modalX")?.addEventListener("click", closeModals);
 
-  bindTeleprompterUI();
-  bindToolPanelUI();
-  bindMaterialViewer();
-  bindMediaUI();
-  bindCoverEditor();
-  bindLifeOsLayer();
-  bindQuitei();
+  if (loginBtn) loginBtn.dataset.ready = "1";
+  const authMsg = document.getElementById("authMsg");
+  if (authMsg && authMsg.textContent === "A entrada não armou. Atualize a página com Ctrl+Shift+R.") {
+    authMsg.textContent = "";
+    authMsg.className = "auth-msg";
+  }
 
-  document.addEventListener("af-covers-changed", () => {
-    const v = getCurrentView();
-    if (v) navigate(v);
-  });
-
+  // O observador de autenticação também é iniciado antes dos módulos
+  // complementares, garantindo que a sessão não dependa deles.
   setAuthCallbacks({
     onReady: () => showApp(),
     onDenied: () => showAccessDenied(),
@@ -1043,8 +1016,67 @@ function init() {
       showAuth();
     }
   });
-
   startAuthListener();
+
+  // Recursos complementares: cada grupo falha isoladamente.
+  const safeInit = (label, callback) => {
+    try {
+      callback();
+    } catch (error) {
+      console.error("[AF inicialização] Falha em " + label + ":", error);
+    }
+  };
+
+  safeInit("eventos das fases", () => {
+    window.addEventListener("af:phase-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
+    window.addEventListener("af:phase-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
+    window.addEventListener("af:global-search-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
+    window.addEventListener("af:global-search-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
+  });
+
+  safeInit("busca global", initGlobalSearch);
+  safeInit("botões de demonstração", () => {
+    const demoWrap = document.getElementById("demoButtons");
+    if (demoWrap) demoWrap.style.display = isDemoEnabled() ? "block" : "none";
+  });
+
+  safeInit("logout e retorno de acesso", () => {
+    document.getElementById("btnLogout")?.addEventListener("click", async () => {
+      forceStopMedia();
+      closeTeleprompter();
+      await stopPresence();
+      clearHubContext();
+      await logout();
+    });
+    document.getElementById("btnDeniedBack")?.addEventListener("click", async () => {
+      clearHubContext();
+      await logout();
+      showAuth();
+    });
+  });
+
+  safeInit("navegação e modais", () => {
+    document.getElementById("menuToggle")?.addEventListener("click", openSide);
+    document.getElementById("sideBackdrop")?.addEventListener("click", closeSide);
+    document.getElementById("langSel")?.addEventListener("change", (e) => setLang(e.target.value));
+    document.getElementById("overlay")?.addEventListener("click", closeModals);
+    document.getElementById("modalX")?.addEventListener("click", closeModals);
+  });
+
+  safeInit("teleprompter", bindTeleprompterUI);
+  safeInit("painel de ferramentas", bindToolPanelUI);
+  safeInit("visualizador de materiais", bindMaterialViewer);
+  safeInit("mídia", bindMediaUI);
+  safeInit("capas", bindCoverEditor);
+  safeInit("camada LifeOS", bindLifeOsLayer);
+  safeInit("Quitei", bindQuitei);
+
+  safeInit("atualização de capas", () => {
+    document.addEventListener("af-covers-changed", () => {
+      const v = getCurrentView();
+      if (v) navigate(v);
+    });
+  });
 }
 
 init();
