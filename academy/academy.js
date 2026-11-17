@@ -11,8 +11,8 @@ const UNITS = [
 ];
 
 const ROLES = [
-  { id: 'matriz', title: 'Matriz / CEO', desc: 'Ve a rede inteira, presenca e o cofre.' },
-  { id: 'franqueado', title: 'Franqueado', desc: 'Unidade, DRE e equipe local.' },
+  { id: 'matriz', title: 'Administração', desc: 'Acesso geral, presenca e biblioteca.' },
+  { id: 'franqueado', title: 'Gestor da unidade', desc: 'Unidade, indicadores e equipe local.' },
   { id: 'staff', title: 'Staff', desc: 'Trilhas, quiz e presenca no evento.' },
   { id: 'aluno', title: 'Aluno', desc: 'Aulas em casa e bonus da mensalidade.' },
   { id: 'parceiro', title: 'Parceiro', desc: 'Conteudo tecnico B2B.' }
@@ -127,7 +127,7 @@ async function persistCloud() {
 function enter(role, unit) {
   state.role = role;
   state.unit = unit || state.unit || 'unidade-01';
-  if (!state.name) state.name = role === 'matriz' ? 'Artur' : first();
+  if (!state.name) state.name = role === 'matriz' ? 'Administrador' : first();
   save();
   persistCloud();
   go('inicio');
@@ -234,7 +234,7 @@ function viewGate() {
   return '<div class="gate">' +
     '<div class="k">Academy OS · tenant Academia</div>' +
     '<h1>O conhecimento da rede fica na nuvem.</h1>' +
-    '<p class="q">Nao e catraca. Nao e EVO. E a plataforma de aprendizagem da academia: trilhas, presenca hibrida e cofre da franquia.</p>' +
+    '<p class="q">Nao e catraca. Nao e EVO. E a plataforma de aprendizagem da academia: trilhas, presenca hibrida e biblioteca de conteúdos.</p>' +
     '<div class="card"><div class="k">Entrar como</div><div class="roles">' +
     ROLES.map(function (r) {
       return '<button data-role="' + r.id + '"><b>' + r.title + '</b><span class="m">' + r.desc + '</span></button>';
@@ -253,13 +253,13 @@ function shell(inner) {
     '<button data-go="inicio" class="' + (route === 'inicio' ? 'on' : '') + '">Inicio</button>' +
     '<button data-go="trilhas" class="' + (route === 'trilhas' || route.indexOf('trilha-') === 0 ? 'on' : '') + '">Trilhas EAD</button>' +
     '<button data-go="eventos" class="' + (route.indexOf('evento') === 0 || route === 'live' ? 'on' : '') + '">Eventos e Lives</button>' +
-    (state.role === 'matriz' || state.role === 'franqueado' ? '<button data-go="franqueados" class="' + (route === 'franqueados' ? 'on' : '') + '">Franqueados</button>' : '') +
+    (state.role === 'matriz' || state.role === 'franqueado' ? '<button data-go="franqueados" class="' + (route === 'franqueados' ? 'on' : '') + '">Gestores</button>' : '') +
     '<button data-go="eu" class="' + (route === 'eu' ? 'on' : '') + '">Eu</button>' +
     '</aside><main>' + inner + '</main></div></div>' +
     '<nav class="nav">' +
     navBtn('inicio', 'Inicio') + navBtn('trilhas', 'Trilhas') + navBtn('eventos', 'Eventos') +
     navBtn('live', 'Ao vivo') +
-    ((state.role === 'matriz' || state.role === 'franqueado') ? navBtn('franqueados', 'Cofre') : navBtn('eu', 'Eu')) +
+    ((state.role === 'matriz' || state.role === 'franqueado') ? navBtn('franqueados', 'Biblioteca') : navBtn('eu', 'Eu')) +
     navBtn('eu', 'Perfil') +
     '</nav>';
 }
@@ -269,7 +269,7 @@ function viewInicio() {
   const att = state.attend[EVENT.id];
   return shell(
     '<div class="k">Destaque da semana</div><h1>Palestra de rapport e comunicacao.</h1>' +
-    '<p class="q">Replay do alinhamento da matriz. Quem nao foi ao presencial assiste aqui.</p>' +
+    '<p class="q">Replay do alinhamento administrativo. Quem nao foi ao presencial assiste aqui.</p>' +
     '<div class="card"><div class="row"><div><h3>Replay · Comunicacao nao-verbal</h3><p class="m">Gravado · URL, sem Storage</p></div><span class="pill">Replay</span></div>' +
     '<div class="player"><iframe src="https://www.youtube.com/embed/jNQXAC9IVRw" allow="autoplay; encrypted-media" allowfullscreen></iframe></div></div>' +
     '<div class="cards">' +
@@ -347,7 +347,7 @@ function viewLive() {
 function viewFranqueados() {
   if (state.role !== 'matriz' && state.role !== 'franqueado') return viewInicio();
   return shell(
-    '<div class="k">Cofre da franquia</div><h1>Manuais, cultura e DRE.</h1>' +
+    '<div class="k">Biblioteca da unidade</div><h1>Manuais, cultura e indicadores.</h1>' +
     '<div class="card"><label>Unidade</label><select id="unit">' +
     UNITS.map(function (u) { return '<option value="' + u.id + '"' + (u.id === state.unit ? ' selected' : '') + '>' + u.name + '</option>'; }).join('') +
     '</select></div>' +
