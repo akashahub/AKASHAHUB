@@ -1,13 +1,13 @@
 const LS = 'academy-os.v01';
-const TENANT = 'fluir';
+const TENANT = 'academy';
 const WORKER = 'https://akasha.yanfili-simon.workers.dev';
 const LIVE_URL = 'wss://akashahub-vlya29kl.livekit.cloud';
-const CEO = ['yanfili.simon@gmail.com', 'plmacramo@gmail.com', 'sendatantrica@gmail.com', 'opatricksimon@gmail.com'];
+const CEO = [];
 
 const UNITS = [
-  { id: 'pituba', name: 'Pituba' },
-  { id: 'rio-vermelho', name: 'Rio Vermelho' },
-  { id: 'lauro', name: 'Lauro de Freitas' }
+  { id: 'unidade-01', name: 'Unidade 01' },
+  { id: 'unidade-02', name: 'Unidade 02' },
+  { id: 'unidade-03', name: 'Unidade 03' }
 ];
 
 const ROLES = [
@@ -24,7 +24,7 @@ const TRACKS = [
     { id: 'p2', title: 'Checklist diario da raia', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 6 }
   ]},
   { id: 'natacao', group: 'Staff', title: 'Metodologia natacao infantil', audience: ['staff', 'franqueado', 'matriz'], lessons: [
-    { id: 'n1', title: 'Metodo Lucas Oliveira - base', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 12 }
+    { id: 'n1', title: 'Fundamentos de ensino e movimento', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 12 }
   ]},
   { id: 'recepcao', group: 'Recepcao', title: 'Onboarding da recepcao', audience: ['staff', 'franqueado', 'matriz'], lessons: [
     { id: 'r1', title: 'Atendimento e EVO no dia a dia', url: 'https://www.youtube.com/embed/jNQXAC9IVRw', min: 9 }
@@ -46,10 +46,10 @@ const VAULT = [
 const EVENT = {
   id: 'pisc-2026',
   title: 'Treinamento Tecnico - Tratamento de Piscinas',
-  place: 'Unidade Pituba',
+  place: 'Unidade 01',
   when: 'Sabado, 10h',
-  qr: 'FLUIR-PISC-2026',
-  liveRoom: 'fluir-demo'
+  qr: 'ACADEMY-EVENT-2026',
+  liveRoom: 'academy-demo'
 };
 
 function esc(s) {
@@ -194,7 +194,7 @@ async function startLive() {
     const res = await fetch(WORKER, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ identity: identity, room: EVENT.liveRoom, name: state.name || 'Fluir', mentor: state.role === 'matriz' })
+      body: JSON.stringify({ identity: identity, room: EVENT.liveRoom, name: state.name || 'Academia', mentor: state.role === 'matriz' })
     });
     const data = await res.json();
     const url = data.url || LIVE_URL;
@@ -232,9 +232,9 @@ function navBtn(id, label) {
 
 function viewGate() {
   return '<div class="gate">' +
-    '<div class="k">Academy OS · tenant Fluir</div>' +
+    '<div class="k">Academy OS · tenant Academia</div>' +
     '<h1>O conhecimento da rede fica na nuvem.</h1>' +
-    '<p class="q">Nao e catraca. Nao e EVO. E a Hotmart privada da Fluir: trilhas, presenca hibrida e cofre da franquia.</p>' +
+    '<p class="q">Nao e catraca. Nao e EVO. E a plataforma de aprendizagem da academia: trilhas, presenca hibrida e cofre da franquia.</p>' +
     '<div class="card"><div class="k">Entrar como</div><div class="roles">' +
     ROLES.map(function (r) {
       return '<button data-role="' + r.id + '"><b>' + r.title + '</b><span class="m">' + r.desc + '</span></button>';
@@ -246,7 +246,7 @@ function viewGate() {
 function shell(inner) {
   const p = progress();
   return '<div class="wrap">' +
-    '<div class="top"><div class="brand"><div class="mark">F</div><div><b>Fluir Academy</b><small>' + esc(state.role) + ' · ' + esc(unitName()) + '</small></div></div>' +
+    '<div class="top"><div class="brand"><div class="mark">F</div><div><b>Academia</b><small>' + esc(state.role) + ' · ' + esc(unitName()) + '</small></div></div>' +
     '<div class="row"><span class="pill">' + p.n + '/' + p.t + ' aulas</span>' +
     '<span class="avatar">' + esc((state.name || 'A').slice(0, 1).toUpperCase()) + '</span></div></div>' +
     '<div class="grid"><aside class="side">' +
@@ -275,7 +275,7 @@ function viewInicio() {
     '<div class="cards">' +
     '<div class="card"><div class="k">Proximo presencial</div><h3>' + esc(EVENT.title) + '</h3><p class="m">' + esc(EVENT.place) + ' · ' + esc(EVENT.when) + '</p>' +
     '<button class="btn" data-go="eventos">Abrir evento</button></div>' +
-    '<div class="card"><div class="k">Live estrategica</div><h3>Alinhamento geral</h3><p class="m">Sala fluir-demo · LiveKit</p>' +
+    '<div class="card"><div class="k">Live estrategica</div><h3>Alinhamento geral</h3><p class="m">Sala academy-demo · LiveKit</p>' +
     '<button class="btn btn3" data-go="live">Entrar na live</button></div>' +
     '</div>' +
     '<div class="card"><div class="row"><h3>Seu progresso</h3><span class="pill">' + p.pct + '%</span></div>' +
@@ -336,7 +336,7 @@ function viewEventos() {
 
 function viewLive() {
   return shell(
-    '<div class="k">Sala fluir-demo</div><h1>Live estrategica</h1>' +
+    '<div class="k">Sala academy-demo</div><h1>Live estrategica</h1>' +
     '<p class="q">Mesmo Worker LiveKit do Hub.</p>' +
     '<div class="card"><div id="livebox" class="player" style="display:grid;place-items:center;color:#9bb7b6">Ainda nao conectado</div>' +
     '<button class="btn" id="golive">Conectar camera e microfone</button>' +
