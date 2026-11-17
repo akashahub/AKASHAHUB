@@ -9,7 +9,6 @@ import {
   startAuthListener,
   loginEmail,
   loginGoogle,
-  completeGoogleRedirect,
   resetPassword,
   enterDemo
 } from "./auth.js";
@@ -150,19 +149,6 @@ setAuthCallbacks({
   }
 });
 startAuthListener();
-
-// Consome o retorno do Google quando o navegador móvel volta do redirecionamento.
-// A sessão é aberta pelo listener de autenticação, evitando processar o usuário duas vezes.
-completeGoogleRedirect().catch((error) => {
-  const messages = {
-    "auth/unauthorized-domain": "Este domínio não está autorizado para o login Google.",
-    "auth/network-request-failed": "A conexão caiu durante o retorno do Google. Tente novamente.",
-    "auth/operation-not-allowed": "O login Google não está habilitado no Firebase."
-  };
-  showMessage(messages[error?.code] || "Não foi possível concluir o retorno do Google. Tente entrar novamente.", "err");
-  const button = byId("btnGoogle");
-  if (button) button.disabled = false;
-});
 
 // Se a sessão já estava autenticada, informa ao app.js que deve abrir o painel.
 if (session.ready) window.__AF_AUTH_READY = true;
