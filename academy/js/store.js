@@ -4,7 +4,7 @@ const LOG_CAP = 40;
 
 function blank() {
   return {
-    tenantId: 'fluir',
+    tenantId: 'academy',
     signed: false,
     role: null,
     workspace: null,
@@ -132,7 +132,7 @@ export async function pushAccess(db, row) {
   if (!db || !row) return;
   try {
     await db.collection('academy_access').add({
-      tenantId: 'fluir',
+      tenantId: 'academy',
       email: row.email || '',
       name: row.name || '',
       ws: row.ws || '',
