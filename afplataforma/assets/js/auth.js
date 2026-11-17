@@ -110,30 +110,62 @@ function applySession(s) {
   if (onSessionReady) onSessionReady(session);
 }
 
-export async function resolveUserAccess(user) {
-  try {
-    await registerAfLoginAttempt(user);
-  } catch (e) {
-    console.warn("[AF] register attempt", e?.code || e?.message || e);
-  }
+let resolvingUid = null;
+let resolvingPromise = null;
 
-  let access = null;
-  try {
-    access = await getAfAccess(user.uid);
-  } catch (e) {
-    console.warn("[AF] getAfAccess:", e?.code || e?.message || e);
-    if (!isMentorIdentity(user.uid, user.email)) {
+export function resolveUserAccess(user) {
+  if (!user?.uid) return Promise.resolve(false);
+  if (session.ready && session.uid === user.uid) return Promise.resolve(true);
+  if (resolvingUid === user.uid && resolvingPromise) return resolvingPromise;
+
+  const task = (async () => {
+    // Mentores já são reconhecidos pela identidade autorizada no próprio projeto.
+    // Não dependem de leitura/gravação no Firestore para abrir a plataforma.
+    if (isMentorIdentity(user.uid, user.email)) {
+      applySession(buildSessionFromUser(user, null, "firebase"));
+      return true;
+    }
+
+    // O registro de tentativa é apenas administrativo; nunca deve bloquear o login.
+    registerAfLoginAttempt(user).catch((e) => {
+      console.warn("[AF] register attempt", e?.code || e?.message || e);
+    });
+
+    let access = null;
+    try {
+      access = await Promise.race([
+        getAfAccess(user.uid),
+        new Promise((_, reject) => {
+          setTimeout(() => {
+            const error = new Error("Tempo esgotado ao verificar o acesso.");
+            error.code = "deadline-exceeded";
+            reject(error);
+          }, 12000);
+        })
+      ]);
+    } catch (e) {
+      console.warn("[AF] getAfAccess:", e?.code || e?.message || e);
       if (onAccessDenied) onAccessDenied("error");
       return false;
     }
-  }
-  const result = buildSessionFromUser(user, access, "firebase");
-  if (result.denied) {
-    if (onAccessDenied) onAccessDenied(result.reason);
-    return false;
-  }
-  applySession(result);
-  return true;
+
+    const result = buildSessionFromUser(user, access, "firebase");
+    if (result.denied) {
+      if (onAccessDenied) onAccessDenied(result.reason);
+      return false;
+    }
+    applySession(result);
+    return true;
+  })();
+
+  resolvingUid = user.uid;
+  resolvingPromise = task;
+  return task.finally(() => {
+    if (resolvingPromise === task) {
+      resolvingUid = null;
+      resolvingPromise = null;
+    }
+  });
 }
 
 export function startAuthListener() {
