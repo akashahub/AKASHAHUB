@@ -12,7 +12,7 @@ export async function joinLive(opts) {
     body: JSON.stringify({
       identity: (opts.uid || opts.role || 'guest') + '-' + Date.now().toString(36),
       room: opts.room,
-      name: opts.name || 'Fluir',
+      name: opts.name || 'Academia',
       mentor: opts.role === 'matriz'
     })
   });
