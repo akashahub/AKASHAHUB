@@ -12,7 +12,7 @@ import {
   logout,
   enterDemo,
   isMentorSession
-} from "./auth.js";
+} from "./auth.js?v=20261117-google-return-2";
 import {
   buildNav,
   navigate,
