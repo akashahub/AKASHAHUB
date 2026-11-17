@@ -11,7 +11,7 @@ import {
   loginGoogle,
   resetPassword,
   enterDemo
-} from "./auth.js";
+} from "./auth.js?v=20261117-google-return-2";
 
 const byId = (id) => document.getElementById(id);
 
