@@ -1,24 +1,24 @@
 /** Domain - Hotmart-like catalog + policy. No DOM. Videos are YouTube ids. Storage off. */
 export const TENANT = {
-  id: 'fluir',
-  name: 'Fluir Academy',
+  id: 'academy',
+  name: 'Academia',
   sector: 'franchise-lms',
   version: '0.6.0'
 };
 
 export const UNITS = [
-  { id: 'pituba', name: 'Pituba', city: 'Salvador' },
-  { id: 'pituba-ville', name: 'Pituba Ville', city: 'Salvador' },
-  { id: 'vilas', name: 'Vilas', city: 'Lauro de Freitas' },
-  { id: 'stella', name: 'Stella', city: 'Salvador' },
-  { id: 'colina', name: 'Colina', city: 'Salvador' },
-  { id: 'busca-vida', name: 'Busca Vida', city: 'Camaçari' },
-  { id: 'caminho-das-arvores', name: 'Caminho das Árvores', city: 'Salvador' },
-  { id: 'aquarios', name: 'Aquários', city: 'Salvador' },
-  { id: 'rio-vermelho', name: 'Rio Vermelho', city: 'Salvador' },
-  { id: 'paralela', name: 'Paralela', city: 'Salvador' },
-  { id: 'patamares', name: 'Patamares', city: 'Salvador' },
-  { id: 'litoral-norte', name: 'Litoral Norte', city: 'Bahia' }
+  { id: 'unidade-01', name: 'Unidade 01', city: '' },
+  { id: 'unidade-02', name: 'Unidade 02', city: '' },
+  { id: 'unidade-03', name: 'Unidade 03', city: '' },
+  { id: 'unidade-04', name: 'Unidade 04', city: '' },
+  { id: 'unidade-05', name: 'Unidade 05', city: '' },
+  { id: 'unidade-06', name: 'Unidade 06', city: '' },
+  { id: 'unidade-07', name: 'Unidade 07', city: '' },
+  { id: 'unidade-08', name: 'Unidade 08', city: '' },
+  { id: 'unidade-09', name: 'Unidade 09', city: '' },
+  { id: 'unidade-10', name: 'Unidade 10', city: '' },
+  { id: 'unidade-11', name: 'Unidade 11', city: '' },
+  { id: 'unidade-12', name: 'Unidade 12', city: '' }
 ];
 
 
@@ -35,7 +35,7 @@ UNITS.forEach(function (unit, unitIndex) {
     DEMO_MEMBERS.push({
       id: 'demo-' + unit.id + '-' + (i + 1),
       name: first + ' ' + last,
-      email: first.toLowerCase() + '.' + last.toLowerCase() + '@demo.fluir',
+      email: first.toLowerCase() + '.' + last.toLowerCase() + '@demo.academia',
       role: role,
       unitId: unit.id,
       job: jobs[i],
@@ -164,9 +164,9 @@ export const COURSES = [
   lesson('a-beb-2', ['aluno', 'professor'], 'bebe', 'Ritmo, contato e seguranca na agua', 8),
   lesson('a-ges-1', ['aluno', 'professor'], 'gestantes', 'Mobilidade segura na gestacao', 10),
   lesson('a-ges-2', ['aluno', 'professor'], 'gestantes', 'Respiracao e exercicios na agua', 9),
-  lesson('p-met-1', ['professor', 'ceo'], 'metodologia', 'Metodo Lucas Oliveira - base', 14),
+  lesson('p-met-1', ['professor', 'ceo'], 'metodologia', 'Fundamentos de ensino e movimento', 14),
   lesson('p-met-2', ['professor', 'ceo'], 'metodologia', 'Como conduzir a turma', 10),
-  lesson('c-all-1', ['colaborador', 'franqueado', 'ceo'], 'todos', 'Cultura Fluir para toda a equipe', 9, 'todos'),
+  lesson('c-all-1', ['colaborador', 'franqueado', 'ceo'], 'todos', 'Cultura e atendimento da academia', 9, 'todos'),
   lesson('c-rec-1', ['colaborador', 'ceo'], 'recepcao', 'Rapport e atendimento', 11, 'recepcao'),
   lesson('c-rec-2', ['colaborador', 'ceo'], 'recepcao', 'Tecnicas de venda no balcao', 10, 'recepcao'),
   lesson('c-pis-1', ['colaborador', 'ceo'], 'piscineiro', 'Quimica da agua', 13, 'piscineiro'),
@@ -177,16 +177,16 @@ export const COURSES = [
   lesson('c-rh-1', ['colaborador', 'ceo'], 'rh', 'Contratacao e cultura', 10, 'rh'),
   lesson('f-cul-1', ['franqueado', 'ceo'], 'cultura', 'Onboarding do franqueado', 16),
   lesson('f-cul-2', ['franqueado', 'ceo'], 'cultura', 'Padrao da unidade', 9),
-  lesson('f-ven-1', ['franqueado', 'ceo'], 'vendas-franquia', 'Como vender a franquia Fluir', 14),
+  lesson('f-ven-1', ['franqueado', 'ceo'], 'vendas-franquia', 'Apresentação do modelo de negócio', 14),
   lesson('e-ges-1', ['ceo'], 'rede', 'Visao da rede e DRE', 12)
 ];
 
 export const EVENTS = [
-  { id: 'ev-todos', title: 'Encontro da rede', when: 'Todo mes', audience: ['all'], liveRoom: 'fluir-demo', place: 'Digital + unidades' },
-  { id: 'ev-aluno', title: 'Festival dos alunos', when: 'Sabado', audience: ['aluno', 'professor', 'ceo'], liveRoom: 'fluir-alunos', place: 'Pituba' },
-  { id: 'ev-colab', title: 'Treinamento de equipe', when: 'Segunda 7h', audience: ['colaborador', 'ceo'], liveRoom: 'fluir-equipe', place: 'Cada unidade' },
-  { id: 'ev-franq', title: 'Imersao de franqueados', when: 'Trimestral', audience: ['franqueado', 'ceo'], liveRoom: 'fluir-franquia', place: 'Matriz' },
-  { id: 'ev-ceo', title: 'Council da matriz', when: 'Sob convite', audience: ['ceo'], liveRoom: 'fluir-council', place: 'Fechado' }
+  { id: 'ev-todos', title: 'Encontro da rede', when: 'Todo mes', audience: ['all'], liveRoom: 'academy-demo', place: 'Digital + unidades' },
+  { id: 'ev-aluno', title: 'Festival dos alunos', when: 'Sabado', audience: ['aluno', 'professor', 'ceo'], liveRoom: 'academy-alunos', place: 'Unidade 02' },
+  { id: 'ev-colab', title: 'Treinamento de equipe', when: 'Segunda 7h', audience: ['colaborador', 'ceo'], liveRoom: 'academy-equipe', place: 'Cada unidade' },
+  { id: 'ev-franq', title: 'Imersao de franqueados', when: 'Trimestral', audience: ['franqueado', 'ceo'], liveRoom: 'academy-franquia', place: 'Matriz' },
+  { id: 'ev-ceo', title: 'Council da matriz', when: 'Sob convite', audience: ['ceo'], liveRoom: 'academy-council', place: 'Fechado' }
 ];
 
 export const VAULT = [
