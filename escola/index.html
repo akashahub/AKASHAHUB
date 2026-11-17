@@ -67,7 +67,7 @@ h2{font-size:clamp(28px,5vw,40px)}
 <script>
 const media={yard:"media/yard.jpg",room:"media/class.jpg",library:"media/library.jpg",gate:"media/gate.jpg"};
 const grades=[["Português","8,5"],["Matemática","7,0"],["Ciências","9,0"],["História","8,0"]];
-const lines={familia:"O dia do Miguel, a nota e o recado. Sem esperar a reunião.",professor:"A chamada da 4B. Quem está, quem falta, o que a família precisa saber.",secretaria:"A casa do colégio. Frequência, mensalidade e a saída com nome."};
+const lines={direcao:"A visão da unidade: matrículas, frequência, equipe e saúde financeira.",familia:"O dia do Miguel, a nota e o recado. Sem esperar a reunião.",professor:"A chamada da 4B. Quem está, quem falta, o que a família precisa saber.",secretaria:"A casa do colégio. Frequência, mensalidade e a saída com nome."};
 const nav={
  familia:[["hoje","Hoje"],["boletim","Boletim"],["recados","Recados"],["mensalidade","Mensalidade"]],
  professor:[["chamada","Chamada"],["turma","Turma"],["recado","Recado"]],
@@ -119,16 +119,16 @@ function secretaria(){
  }
  return `<div class="split"><article class="card"><img class="photo" src="${media.gate}" alt=""><div class="pad"><div class="kicker">Hoje</div><h2>${inside.length} no colégio</h2><p class="leaf">${open.length} mensalidade em aberto.</p></div></article>${card(`<div class="kicker">4B</div><p>${S.students.map((s)=>s.name.split(" ")[0]).join(" · ")}</p>`)}</div>`;
 }
-function render(){
+function direcao(){\n const ativos=S.students.length, presentes=S.students.filter(x=>x.here&&!x.out).length, emAberto=S.students.filter(x=>!x.paid).length;\n if(S.tab==="alunos") return card(`<div class="kicker">Cadastro escolar</div><h2>${ativos} alunos na amostra</h2>`)+S.students.map(x=>card(`<div class="row" style="justify-content:space-between"><div><b>${x.name}</b><div class="leaf">${x.year} · ${x.here?"Presente":"Ausente"}</div></div><span class="chip ${x.paid?"on":""}">${x.paid?"Em dia":"Em aberto"}</span></div>`)).join("");\n if(S.tab==="turmas") return card(`<div class="kicker">Organização pedagógica</div><h2>Turmas e horários</h2><p>4º ano A · 26 alunos · 07h30–11h50</p><p>4º ano B · 24 alunos · 13h–17h20</p><p>5º ano A · 28 alunos · 07h30–11h50</p>`);\n if(S.tab==="financeiro") return secretaria.call(null);\n if(S.tab==="relatorios") return card(`<div class="kicker">Resumo de gestão</div><h2>Indicadores da unidade</h2><p>Presença registrada: ${presentes}/${ativos} na amostra.</p><p>Mensalidades em aberto: ${emAberto}.</p><p>Saídas autorizadas hoje: ${S.students.filter(x=>x.out).length}.</p>`);\n return `<div class="cols cols-2">${card(`<div class="kicker">Alunos ativos</div><h2>${ativos}</h2><p class="leaf">Amostra fictícia de cadastros</p>`)}${card(`<div class="kicker">Presença hoje</div><h2>${presentes}/${ativos}</h2><p class="leaf">Chamada consolidada</p>`)}${card(`<div class="kicker">Mensalidades em aberto</div><h2>${emAberto}</h2><p class="leaf">Acompanhamento da secretaria</p>`)}${card(`<div class="kicker">Saídas registradas</div><h2>${S.students.filter(x=>x.out).length}</h2><p class="leaf">Controle de portaria</p>`)}</div>`;\n}\nfunction render(){
  const list=nav[S.door];
  if(!list.some((t)=>t[0]===S.tab)) S.tab=list[0][0];
- document.getElementById("doors").innerHTML=["familia","Família","professor","Professor","secretaria","Secretaria"].reduce((html,item,i,arr)=>i%2?html:`${html}<button class="chip ${S.door===item?"on":""}" data-act="door" data-id="${item}">${arr[i+1]}</button>`,"");
+ document.getElementById("doors").innerHTML=["familia","Família","professor","Professor","secretaria","Secretaria","direcao","Direção"].reduce((html,item,i,arr)=>i%2?html:`${html}<button class="chip ${S.door===item?"on":""}" data-act="door" data-id="${item}">${arr[i+1]}</button>`,"");
  document.getElementById("side").innerHTML=list.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
  const navEl=document.getElementById("nav");
  navEl.style.gridTemplateColumns=`repeat(${list.length},minmax(0,1fr))`;
  navEl.innerHTML=list.map((t)=>`<button class="${S.tab===t[0]?"on":""}" data-act="tab" data-id="${t[0]}">${t[1]}</button>`).join("");
  document.getElementById("line").textContent=lines[S.door];
- document.getElementById("view").innerHTML=S.door==="familia"?familia():S.door==="professor"?professor():secretaria();
+ document.getElementById("view").innerHTML=S.door==="familia"?familia():S.door==="professor"?professor():S.door==="direcao"?direcao():secretaria();
  document.getElementById("toast").innerHTML=S.shot?`<div class="toast">${S.shot}</div>`:"";
 }
 document.body.addEventListener("click",(e)=>{
