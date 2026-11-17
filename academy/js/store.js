@@ -8,7 +8,7 @@ function blank() {
     signed: false,
     role: null,
     workspace: null,
-    unitId: 'pituba',
+    unitId: 'unidade-01',
     name: '',
     email: '',
     uid: '',
