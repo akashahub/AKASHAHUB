@@ -62,7 +62,7 @@ function load() {
 }
 function save() { localStorage.setItem(LS, JSON.stringify(state)); }
 function seed() {
-  return { tenant: TENANT, role: null, unit: 'pituba', name: '', email: '', uid: '', done: {}, attend: {}, dre: '', cloud: 'local' };
+  return { tenant: TENANT, role: null, unit: 'unidade-01', name: '', email: '', uid: '', done: {}, attend: {}, dre: '', cloud: 'local' };
 }
 
 let state = load();
@@ -104,7 +104,7 @@ function progress() {
 }
 function unitName() {
   const u = UNITS.filter(function (x) { return x.id === state.unit; })[0];
-  return u ? u.name : 'Pituba';
+  return u ? u.name : 'Unidade 01';
 }
 function first() { return (state.name || 'Voce').split(' ')[0]; }
 
@@ -126,7 +126,7 @@ async function persistCloud() {
 
 function enter(role, unit) {
   state.role = role;
-  state.unit = unit || state.unit || 'pituba';
+  state.unit = unit || state.unit || 'unidade-01';
   if (!state.name) state.name = role === 'matriz' ? 'Artur' : first();
   save();
   persistCloud();
