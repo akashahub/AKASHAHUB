@@ -990,14 +990,22 @@ function init() {
   // opcional da interface. Uma falha na busca, teleprompter ou painel não
   // pode impedir o usuário de entrar.
   const loginBtn = document.getElementById("btnLogin");
-  loginBtn?.addEventListener("click", onLoginEmail);
-  document.getElementById("btnGoogle")?.addEventListener("click", onLoginGoogle);
-  document.getElementById("btnResetPassword")?.addEventListener("click", onResetPassword);
-  document.getElementById("loginPass")?.addEventListener("keydown", (e) => {
+  const bindAuthOnce = (id, eventName, handler) => {
+    const element = document.getElementById(id);
+    if (!element || element.dataset.afAuthBound === "1") return;
+    element.addEventListener(eventName, handler);
+    element.dataset.afAuthBound = "1";
+  };
+  // O login pode ter sido armado pelo módulo leve login-bootstrap.js.
+  // Evita registrar dois handlers e enviar duas tentativas para o Firebase.
+  bindAuthOnce("btnLogin", "click", onLoginEmail);
+  bindAuthOnce("btnGoogle", "click", onLoginGoogle);
+  bindAuthOnce("btnResetPassword", "click", onResetPassword);
+  bindAuthOnce("loginPass", "keydown", (e) => {
     if (e.key === "Enter") onLoginEmail();
   });
-  document.getElementById("btnDemoMentor")?.addEventListener("click", () => enterDemo("mentor"));
-  document.getElementById("btnDemoMentee")?.addEventListener("click", () => enterDemo("mentee"));
+  bindAuthOnce("btnDemoMentor", "click", () => enterDemo("mentor"));
+  bindAuthOnce("btnDemoMentee", "click", () => enterDemo("mentee"));
 
   if (loginBtn) loginBtn.dataset.ready = "1";
   const authMsg = document.getElementById("authMsg");
@@ -1017,6 +1025,14 @@ function init() {
     }
   });
   startAuthListener();
+
+  // Se o listener foi iniciado pelo bootstrap leve antes deste módulo,
+  // recupera a sessão já resolvida sem depender de um segundo evento do Firebase.
+  if (session.ready || window.__AF_AUTH_READY === true) {
+    showApp();
+  } else if (window.__AF_AUTH_DENIED) {
+    showAccessDenied();
+  }
 
   // Recursos complementares: cada grupo falha isoladamente.
   const safeInit = (label, callback) => {
