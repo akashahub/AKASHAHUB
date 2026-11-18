@@ -12,7 +12,7 @@ import {
   logout,
   enterDemo,
   isMentorSession
-} from "./auth.js";
+} from "./auth.js?v=20261118-temp-bypass-1";
 import {
   buildNav,
   navigate,
@@ -367,7 +367,13 @@ function showApp() {
   refreshProfileCacheFromCloud();
   hydrateMedia();
   const badge = document.getElementById("modeBadge");
-  if (badge) badge.hidden = true;
+  const temporaryMode = session.mode === "temporary-local";
+  if (badge) {
+    badge.hidden = !temporaryMode;
+    if (temporaryMode) badge.textContent = "MODO TEMPORÁRIO · DADOS PROTEGIDOS";
+  }
+  const logoutButton = document.getElementById("btnLogout");
+  if (logoutButton) logoutButton.hidden = temporaryMode;
   const langSel = document.getElementById("langSel");
   if (langSel) langSel.value = session.lang || "pt-BR";
   buildNav();
