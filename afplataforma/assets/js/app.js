@@ -12,7 +12,7 @@ import {
   logout,
   enterDemo,
   isMentorSession
-} from "./auth.js";
+} from "./auth.js?v=temporary-open-20261118";
 import {
   buildNav,
   navigate,
