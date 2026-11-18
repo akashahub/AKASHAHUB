@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, arrayUnion, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { startAkashaTracking, stopAkashaTracking } from "/shared-tools/akasha-telemetry.js";
 
 export const MENTOR = "yanfili.simon@gmail.com";
 export const app = initializeApp({
@@ -17,12 +16,18 @@ export const db = getFirestore(app);
 
 let trackedUid = null;
 onAuthStateChanged(auth, (user) => {
+  // Telemetria é complementar: não pode impedir a inicialização do Firebase Auth
+  // nem o reconhecimento de uma sessão já existente em páginas como /afplataforma.
   if (user) {
     trackedUid = user.uid;
-    startAkashaTracking(user);
+    import("/shared-tools/akasha-telemetry.js")
+      .then(({ startAkashaTracking }) => startAkashaTracking(user))
+      .catch((error) => console.debug("[Akasha Intelligence] Tracking indisponível:", error?.message || error));
   } else {
-    stopAkashaTracking();
     trackedUid = null;
+    import("/shared-tools/akasha-telemetry.js")
+      .then(({ stopAkashaTracking }) => stopAkashaTracking())
+      .catch((error) => console.debug("[Akasha Intelligence] Tracking indisponível:", error?.message || error));
   }
 });
 
