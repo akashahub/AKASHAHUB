@@ -30,7 +30,7 @@ import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
 import { renderToolsView, openTool, closeToolsModal, bindToolPanelUI } from "./tools.js?v=rt48";
-import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI, onCallNavigate } from "./call.js?v=ux1";
+import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI, onCallNavigate } from "./call.js?v=login-safe-20261118";
 import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
 import { renderComplementarHome, renderComplementarApp } from "./complementar.js?v=vision1";
