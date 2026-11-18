@@ -140,13 +140,16 @@ export function startAuthListener() {
   if (authListening) return;
   authListening = true;
 
+  // Acesso temporário de interface: ?demo=mentor abre o ambiente local
+  // mesmo se houver uma sessão Firebase antiga no navegador.
+  const demoRole = new URLSearchParams(location.search).get("demo");
+  if (demoRole === "mentor" || demoRole === "mentee") {
+    enterDemo(demoRole);
+    return;
+  }
+
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      const q = new URLSearchParams(location.search).get("demo");
-      if (q === "mentor" || q === "mentee") {
-        enterDemo(q);
-        return;
-      }
       Object.assign(session, {
         mode: null,
         uid: null,
