@@ -216,6 +216,13 @@ export function startAuthListener() {
   if (authListening) return;
   authListening = true;
 
+  // Abre a interface imediatamente durante a janela emergencial.
+  // A restauração Firebase continua em segundo plano e, se existir sessão,
+  // ela substitui o modo local sem atrasar a entrada.
+  if (window.__AF_TEMPORARY_LOGIN_BYPASS === true) {
+    enterTemporaryMentorMode();
+  }
+
   ensureSharedAuthPersistence()
     .then(() => {
       // Aguarda o Firebase terminar de restaurar a sessão persistida antes
