@@ -4,8 +4,6 @@
  */
 import {
   onAuthStateChanged,
-  setPersistence,
-  browserLocalPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
   sendPasswordResetEmail,
@@ -43,19 +41,6 @@ let onSessionReady = null;
 let onAccessDenied = null;
 let onLoggedOut = null;
 let authListening = false;
-let persistencePromise = null;
-
-// Padroniza a sessão no armazenamento local do navegador, compartilhado
-// entre /dashboard e /afplataforma no mesmo domínio e projeto Firebase.
-function ensureSharedAuthPersistence() {
-  if (!persistencePromise) {
-    persistencePromise = setPersistence(auth, browserLocalPersistence).catch((error) => {
-      persistencePromise = null;
-      throw error;
-    });
-  }
-  return persistencePromise;
-}
 
 export function setAuthCallbacks({ onReady, onDenied, onLogout }) {
   onSessionReady = onReady;
@@ -125,117 +110,38 @@ function applySession(s) {
   if (onSessionReady) onSessionReady(session);
 }
 
-let resolvingUid = null;
-let resolvingPromise = null;
+export async function resolveUserAccess(user) {
+  try {
+    await registerAfLoginAttempt(user);
+  } catch (e) {
+    console.warn("[AF] register attempt", e?.code || e?.message || e);
+  }
 
-export function resolveUserAccess(user) {
-  if (!user?.uid) return Promise.resolve(false);
-  if (session.ready && session.uid === user.uid) return Promise.resolve(true);
-  if (resolvingUid === user.uid && resolvingPromise) return resolvingPromise;
-
-  const task = (async () => {
-    // Mentores já são reconhecidos pela identidade autorizada no próprio projeto.
-    // Não dependem de leitura/gravação no Firestore para abrir a plataforma.
-    if (isMentorIdentity(user.uid, user.email)) {
-      applySession(buildSessionFromUser(user, null, "firebase"));
-      return true;
-    }
-
-    // O registro de tentativa é apenas administrativo; nunca deve bloquear o login.
-    registerAfLoginAttempt(user).catch((e) => {
-      console.warn("[AF] register attempt", e?.code || e?.message || e);
-    });
-
-    let access = null;
-    let accessTimeout = null;
-    try {
-      access = await Promise.race([
-        getAfAccess(user.uid),
-        new Promise((_, reject) => {
-          accessTimeout = setTimeout(() => {
-            const error = new Error("Tempo esgotado ao verificar o acesso.");
-            error.code = "deadline-exceeded";
-            reject(error);
-          }, 12000);
-        })
-      ]);
-    } catch (e) {
-      console.warn("[AF] getAfAccess:", e?.code || e?.message || e);
+  let access = null;
+  try {
+    access = await getAfAccess(user.uid);
+  } catch (e) {
+    console.warn("[AF] getAfAccess:", e?.code || e?.message || e);
+    if (!isMentorIdentity(user.uid, user.email)) {
       if (onAccessDenied) onAccessDenied("error");
       return false;
-    } finally {
-      if (accessTimeout) clearTimeout(accessTimeout);
     }
-
-    const result = buildSessionFromUser(user, access, "firebase");
-    if (result.denied) {
-      if (onAccessDenied) onAccessDenied(result.reason);
-      return false;
-    }
-    applySession(result);
-    return true;
-  })();
-
-  resolvingUid = user.uid;
-  resolvingPromise = task;
-  return task.finally(() => {
-    if (resolvingPromise === task) {
-      resolvingUid = null;
-      resolvingPromise = null;
-    }
-  });
-}
-
-
-/**
- * Acesso emergencial temporário para manutenção da plataforma.
- * Libera somente a interface; as regras do Firebase/Firestore continuam ativas.
- */
-export function enterTemporaryMentorMode() {
-  applySession({
-    mode: "temporary-local",
-    uid: MENTOR_UID,
-    email: "",
-    name: "Mentor · acesso temporário",
-    role: "mentor",
-    approved: true,
-    active: true,
-    modules: defaultModulesMap(7),
-    plan: "vip",
-    features: {},
-    extraRooms: [],
-    roomsBlocked: [],
-    roomId: "mentoria-principal",
-    lifetime: true,
-    lang: session.lang,
-    ready: true
-  });
+  }
+  const result = buildSessionFromUser(user, access, "firebase");
+  if (result.denied) {
+    if (onAccessDenied) onAccessDenied(result.reason);
+    return false;
+  }
+  applySession(result);
+  return true;
 }
 
 export function startAuthListener() {
   if (authListening) return;
   authListening = true;
 
-  // Abre a interface imediatamente durante a janela emergencial.
-  // A restauração Firebase continua em segundo plano e, se existir sessão,
-  // ela substitui o modo local sem atrasar a entrada.
-  if (window.__AF_TEMPORARY_LOGIN_BYPASS === true) {
-    enterTemporaryMentorMode();
-  }
-
-  ensureSharedAuthPersistence()
-    .then(() => {
-      // Aguarda o Firebase terminar de restaurar a sessão persistida antes
-      // de decidir mostrar a portaria de login.
-      return auth.authStateReady();
-    })
-    .then(() => {
-      onAuthStateChanged(auth, async (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      if (window.__AF_TEMPORARY_LOGIN_BYPASS === true) {
-        enterTemporaryMentorMode();
-        return;
-      }
       const q = new URLSearchParams(location.search).get("demo");
       if (q === "mentor" || q === "mentee") {
         enterDemo(q);
@@ -256,34 +162,22 @@ export function startAuthListener() {
       return;
     }
     try {
-      const resolved = await resolveUserAccess(user);
-      if (!resolved && window.__AF_TEMPORARY_LOGIN_BYPASS === true && !session.ready) {
-        enterTemporaryMentorMode();
-      }
+      await resolveUserAccess(user);
     } catch (e) {
       console.error("[AF auth]", e);
-      if (window.__AF_TEMPORARY_LOGIN_BYPASS === true) enterTemporaryMentorMode();
-      else if (onAccessDenied) onAccessDenied("error");
+      if (onAccessDenied) onAccessDenied("error");
     }
-      });
-    })
-    .catch((error) => {
-      console.error("[AF auth initialization]", error);
-      if (window.__AF_TEMPORARY_LOGIN_BYPASS === true) enterTemporaryMentorMode();
-      else if (onAccessDenied) onAccessDenied("error");
-    });
+  });
 }
 
 export async function loginEmail(email, password) {
-  await ensureSharedAuthPersistence();
   const cred = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
   return resolveUserAccess(cred.user);
 }
 
 export async function loginGoogle() {
-  await ensureSharedAuthPersistence();
   const provider = new GoogleAuthProvider();
-  // Não força a seleção de conta quando já existe uma sessão Google ativa.
+  provider.setCustomParameters({ prompt: "select_account" });
   const cred = await signInWithPopup(auth, provider);
   return resolveUserAccess(cred.user);
 }

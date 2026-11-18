@@ -6,7 +6,7 @@ import { session, isMentorSession } from "./auth.js";
 import { activeHubContext, loadAuthorizedMentees } from "./hub-context.js?v=etapa4-1";
 import { db } from "../../firebase/firebase-config.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { readableFields, subjectOf, copyText } from "./hub-dossie-rules.js?v=etapa6-1";
+import { readableFields, subjectOf, copyText } from "./hub-dossie-rules.js?v=etapa5-1";
 
 export const DOSSIE_TOOLS = [
   ["Fase 1 · Essência", "Essência", "afEssencia", "/afplataforma/essencia/"],
@@ -94,10 +94,6 @@ async function readTool(tool, uid) {
   }
 }
 
-export async function loadDossieBlocks(uid) {
-  return Promise.all(DOSSIE_TOOLS.map((tool) => readTool(tool, uid)));
-}
-
 function card(block) {
   const label = block.status === "cheio"
     ? `${block.fields.length} resposta${block.fields.length === 1 ? "" : "s"}`
@@ -126,7 +122,7 @@ export async function bindHubDossie() {
   const list = document.getElementById("hubDossieList");
   const status = document.getElementById("hubDossieStatus");
   if (!who || !list) return;
-  const blocks = await loadDossieBlocks(who.uid);
+  const blocks = await Promise.all(DOSSIE_TOOLS.map((tool) => readTool(tool, who.uid)));
   const filled = blocks.filter((block) => block.status === "cheio").length;
   if (status) status.textContent = `${filled} de ${blocks.length} ferramentas com resposta.`;
   const phases = [];

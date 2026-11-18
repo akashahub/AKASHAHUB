@@ -38,8 +38,7 @@ export function buildNav() {
   const items = [
     { id: "dashboard", label: mentor ? "Visão geral" : "Minha jornada", ico: "◇" },
     { id: "profile", label: mentor ? "Perfil" : "Meu perfil", ico: "○" },
-    { id: "hub-dossie", label: mentor ? "Diagnóstico e dossiê" : "Meu dossiê", ico: "◇" },
-    { id: "hub-intel", label: mentor ? "Inteligência Central" : "Minhas fases", ico: "◇" }
+    { id: "hub-dossie", label: mentor ? "Diagnóstico e dossiê" : "Meu dossiê", ico: "◇" }
   ];
   if (mentor) {
     items.push(
@@ -56,6 +55,7 @@ export function buildNav() {
     { id: "hub-prompts", label: mentor ? "Biblioteca de Prompts" : "Prompts liberados", ico: "◇" },
     { id: "hub-sessoes", label: mentor ? "Sessões e acompanhamento" : "Captura e sessões", ico: "◇" }
   );
+  if (mentor) items.push({ id: "hub-intel", label: "Inteligência Central", ico: "◇" });
   items.push(
     { sep: true, label: "Acervo e frentes" },
     { id: "hub-acervo", label: "Acervo e frentes", ico: "✧" },

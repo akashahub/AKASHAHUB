@@ -12,7 +12,7 @@ import {
   logout,
   enterDemo,
   isMentorSession
-} from "./auth.js?v=20261118-temp-bypass-1";
+} from "./auth.js";
 import {
   buildNav,
   navigate,
@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=etapa6-1";
+} from "./navigation.js?v=rollback-pre-intel-20261118";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
@@ -76,9 +76,8 @@ import {
   renderHubIntel,
   renderHubAcervo,
   renderHubConfig
-} from "./hub-shell.js?v=etapa6-1";
-import { bindHubDossie } from "./hub-dossie.js?v=etapa6-1";
-import { bindHubIntel } from "./hub-intel.js?v=etapa6-1";
+} from "./hub-shell.js?v=rollback-pre-intel-20261118";
+import { bindHubDossie } from "./hub-dossie.js?v=rollback-pre-intel-20261118";
 import { renderVisionStudio, bindVisionStudio } from "./vision-studio.js?v=1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
@@ -367,13 +366,7 @@ function showApp() {
   refreshProfileCacheFromCloud();
   hydrateMedia();
   const badge = document.getElementById("modeBadge");
-  const temporaryMode = session.mode === "temporary-local";
-  if (badge) {
-    badge.hidden = !temporaryMode;
-    if (temporaryMode) badge.textContent = "MODO TEMPORÁRIO · DADOS PROTEGIDOS";
-  }
-  const logoutButton = document.getElementById("btnLogout");
-  if (logoutButton) logoutButton.hidden = temporaryMode;
+  if (badge) badge.hidden = true;
   const langSel = document.getElementById("langSel");
   if (langSel) langSel.value = session.lang || "pt-BR";
   buildNav();
@@ -847,7 +840,6 @@ onAfterNavigate((view) => {
   }
   if (view === "mentorandos") bindMentorandos();
   if (view === "hub-dossie") bindHubDossie();
-  if (view === "hub-intel") bindHubIntel();
   if (view === "catalogo-capacidades") bindCatalogoCapacidades();
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();
@@ -992,36 +984,55 @@ async function onResetPassword() {
 }
 
 function init() {
-  // O login é a parte crítica: deve ficar pronto antes de qualquer recurso
-  // opcional da interface. Uma falha na busca, teleprompter ou painel não
-  // pode impedir o usuário de entrar.
+  window.addEventListener("af:phase-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
+  window.addEventListener("af:phase-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
+  initGlobalSearch();
+  window.addEventListener("af:global-search-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
+  window.addEventListener("af:global-search-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
+  const demoWrap = document.getElementById("demoButtons");
+  if (demoWrap) demoWrap.style.display = isDemoEnabled() ? "block" : "none";
+
+  document.getElementById("btnLogin")?.addEventListener("click", onLoginEmail);
   const loginBtn = document.getElementById("btnLogin");
-  const bindAuthOnce = (id, eventName, handler) => {
-    const element = document.getElementById(id);
-    if (!element || element.dataset.afAuthBound === "1") return;
-    element.addEventListener(eventName, handler);
-    element.dataset.afAuthBound = "1";
-  };
-  // O login pode ter sido armado pelo módulo leve login-bootstrap.js.
-  // Evita registrar dois handlers e enviar duas tentativas para o Firebase.
-  bindAuthOnce("btnLogin", "click", onLoginEmail);
-  bindAuthOnce("btnGoogle", "click", onLoginGoogle);
-  bindAuthOnce("btnResetPassword", "click", onResetPassword);
-  bindAuthOnce("loginPass", "keydown", (e) => {
+  if (loginBtn) loginBtn.dataset.ready = "1";
+  document.getElementById("btnGoogle")?.addEventListener("click", onLoginGoogle);
+  document.getElementById("btnResetPassword")?.addEventListener("click", onResetPassword);
+  document.getElementById("loginPass")?.addEventListener("keydown", (e) => {
     if (e.key === "Enter") onLoginEmail();
   });
-  bindAuthOnce("btnDemoMentor", "click", () => enterDemo("mentor"));
-  bindAuthOnce("btnDemoMentee", "click", () => enterDemo("mentee"));
+  document.getElementById("btnDemoMentor")?.addEventListener("click", () => enterDemo("mentor"));
+  document.getElementById("btnDemoMentee")?.addEventListener("click", () => enterDemo("mentee"));
+  document.getElementById("btnLogout")?.addEventListener("click", async () => {
+    forceStopMedia();
+    closeTeleprompter();
+    await stopPresence();
+    clearHubContext();
+    await logout();
+  });
+  document.getElementById("btnDeniedBack")?.addEventListener("click", async () => {
+    clearHubContext();
+    await logout();
+    showAuth();
+  });
+  document.getElementById("menuToggle")?.addEventListener("click", openSide);
+  document.getElementById("sideBackdrop")?.addEventListener("click", closeSide);
+  document.getElementById("langSel")?.addEventListener("change", (e) => setLang(e.target.value));
+  document.getElementById("overlay")?.addEventListener("click", closeModals);
+  document.getElementById("modalX")?.addEventListener("click", closeModals);
 
-  if (loginBtn) loginBtn.dataset.ready = "1";
-  const authMsg = document.getElementById("authMsg");
-  if (authMsg && authMsg.textContent === "A entrada não armou. Atualize a página com Ctrl+Shift+R.") {
-    authMsg.textContent = "";
-    authMsg.className = "auth-msg";
-  }
+  bindTeleprompterUI();
+  bindToolPanelUI();
+  bindMaterialViewer();
+  bindMediaUI();
+  bindCoverEditor();
+  bindLifeOsLayer();
+  bindQuitei();
 
-  // O observador de autenticação também é iniciado antes dos módulos
-  // complementares, garantindo que a sessão não dependa deles.
+  document.addEventListener("af-covers-changed", () => {
+    const v = getCurrentView();
+    if (v) navigate(v);
+  });
+
   setAuthCallbacks({
     onReady: () => showApp(),
     onDenied: () => showAccessDenied(),
@@ -1030,75 +1041,8 @@ function init() {
       showAuth();
     }
   });
+
   startAuthListener();
-
-  // Se o listener foi iniciado pelo bootstrap leve antes deste módulo,
-  // recupera a sessão já resolvida sem depender de um segundo evento do Firebase.
-  if (session.ready || window.__AF_AUTH_READY === true) {
-    showApp();
-  } else if (window.__AF_AUTH_DENIED) {
-    showAccessDenied();
-  }
-
-  // Recursos complementares: cada grupo falha isoladamente.
-  const safeInit = (label, callback) => {
-    try {
-      callback();
-    } catch (error) {
-      console.error("[AF inicialização] Falha em " + label + ":", error);
-    }
-  };
-
-  safeInit("eventos das fases", () => {
-    window.addEventListener("af:phase-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
-    window.addEventListener("af:phase-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
-    window.addEventListener("af:global-search-navigate", e => { if (e.detail?.view) navigate(e.detail.view); });
-    window.addEventListener("af:global-search-tool", e => { if (e.detail?.tool) openTool(e.detail.tool); });
-  });
-
-  safeInit("busca global", initGlobalSearch);
-  safeInit("botões de demonstração", () => {
-    const demoWrap = document.getElementById("demoButtons");
-    if (demoWrap) demoWrap.style.display = isDemoEnabled() ? "block" : "none";
-  });
-
-  safeInit("logout e retorno de acesso", () => {
-    document.getElementById("btnLogout")?.addEventListener("click", async () => {
-      forceStopMedia();
-      closeTeleprompter();
-      await stopPresence();
-      clearHubContext();
-      await logout();
-    });
-    document.getElementById("btnDeniedBack")?.addEventListener("click", async () => {
-      clearHubContext();
-      await logout();
-      showAuth();
-    });
-  });
-
-  safeInit("navegação e modais", () => {
-    document.getElementById("menuToggle")?.addEventListener("click", openSide);
-    document.getElementById("sideBackdrop")?.addEventListener("click", closeSide);
-    document.getElementById("langSel")?.addEventListener("change", (e) => setLang(e.target.value));
-    document.getElementById("overlay")?.addEventListener("click", closeModals);
-    document.getElementById("modalX")?.addEventListener("click", closeModals);
-  });
-
-  safeInit("teleprompter", bindTeleprompterUI);
-  safeInit("painel de ferramentas", bindToolPanelUI);
-  safeInit("visualizador de materiais", bindMaterialViewer);
-  safeInit("mídia", bindMediaUI);
-  safeInit("capas", bindCoverEditor);
-  safeInit("camada LifeOS", bindLifeOsLayer);
-  safeInit("Quitei", bindQuitei);
-
-  safeInit("atualização de capas", () => {
-    document.addEventListener("af-covers-changed", () => {
-      const v = getCurrentView();
-      if (v) navigate(v);
-    });
-  });
 }
 
 init();
