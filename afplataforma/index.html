@@ -296,11 +296,20 @@ setTimeout(function () {
   if (!msg) return;
   msg.className = "auth-msg err";
   msg.textContent = "A entrada não armou. Atualize a página com Ctrl+Shift+R.";
-}, 4000);
+}, 12000);
 </script>
 <script type="module" src="/shared-tools/launcher.js?v=1"></script>
 <script type="module" src="assets/js/phase-launcher.js?v=3"></script>
-<script type="module" src="assets/js/app.js?v=login-safe-20261118"></script>
+<script type="module">
+  import("./assets/js/app.js?v=login-safe-20261118").catch((error) => {
+    console.error("[AF] Falha ao carregar app.js:", error);
+    const msg = document.getElementById("authMsg");
+    if (!msg) return;
+    const detail = error?.message || error?.name || String(error);
+    msg.className = "auth-msg err";
+    msg.textContent = "Falha ao carregar a plataforma: " + detail;
+  });
+</script>
 <script type="module" src="assets/js/affirmations-layer.js?v=2"></script>
 </body>
 </html>
