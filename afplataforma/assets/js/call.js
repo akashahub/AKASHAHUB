@@ -27,7 +27,7 @@ import {
 } from "./presence.js";
 import { allowedRoomIds, roomName, canEnterRoom, accessOfSession } from "./plans.js";
 import { LIVEKIT_TOKEN_URL, LIVEKIT_WS_URL } from "../../firebase/firebase-config.js";
-import { Room, RoomEvent, Track, VideoPresets } from "https://esm.sh/livekit-client@2.15.4";
+// LiveKit é carregado sob demanda ao entrar em uma call; não pode bloquear o login.
 
 const ICE = {
   iceServers: [
@@ -50,6 +50,24 @@ let inCall = false;
 const peers = new Map();
 let lkRoom = null;
 let usingLivekit = false;
+let livekitSdk = null;
+let livekitSdkPromise = null;
+
+function getLivekitSdk() {
+  if (livekitSdk) return Promise.resolve(livekitSdk);
+  if (!livekitSdkPromise) {
+    livekitSdkPromise = import("https://esm.sh/livekit-client@2.15.4")
+      .then((sdk) => {
+        livekitSdk = sdk;
+        return sdk;
+      })
+      .catch((error) => {
+        livekitSdkPromise = null;
+        throw error;
+      });
+  }
+  return livekitSdkPromise;
+}
 
 function toast(msg, err = false) {
   const el = document.getElementById("toast");
@@ -156,33 +174,33 @@ async function mintLivekitToken() {
 }
 
 function bindLivekitEvents(room) {
-  room.on(RoomEvent.TrackSubscribed, (track, _pub, participant) => {
-    if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
+  room.on(livekitSdk.RoomEvent.TrackSubscribed, (track, _pub, participant) => {
+    if (track.kind === livekitSdk.Track.Kind.Video || track.kind === livekitSdk.Track.Kind.Audio) {
       const el = attachRemote(participant.identity, null, participant.name || participant.identity);
       track.attach(el);
     }
   });
-  room.on(RoomEvent.TrackUnsubscribed, (track, _pub, participant) => {
+  room.on(livekitSdk.RoomEvent.TrackUnsubscribed, (track, _pub, participant) => {
     track.detach();
     const tile = document.getElementById("tile-" + participant.identity);
     if (tile && !participant.videoTrackPublications.size) tile.querySelector("video")?.removeAttribute("src");
   });
-  room.on(RoomEvent.ParticipantDisconnected, (p) => {
+  room.on(livekitSdk.RoomEvent.ParticipantDisconnected, (p) => {
     document.getElementById("tile-" + p.identity)?.remove();
     layoutGrid();
   });
-  room.on(RoomEvent.Reconnecting, () => toast("Reconectando a call..."));
-  room.on(RoomEvent.Reconnected, () => toast("Call reconectada"));
-  room.on(RoomEvent.Disconnected, () => {
+  room.on(livekitSdk.RoomEvent.Reconnecting, () => toast("Reconectando a call..."));
+  room.on(livekitSdk.RoomEvent.Reconnected, () => toast("Call reconectada"));
+  room.on(livekitSdk.RoomEvent.Disconnected, () => {
     if (inCall && usingLivekit) toast("Sinal da call caiu. Entre de novo.", true);
   });
-  room.on(RoomEvent.LocalTrackPublished, () => attachLocalFromLivekit());
+  room.on(livekitSdk.RoomEvent.LocalTrackPublished, () => attachLocalFromLivekit());
 }
 
 function attachLocalFromLivekit() {
   ensureLocalTile();
   const v = document.getElementById("localVideo");
-  const cam = lkRoom?.localParticipant?.getTrackPublication(Track.Source.Camera);
+  const cam = lkRoom?.localParticipant?.getTrackPublication(livekitSdk.Track.Source.Camera);
   if (v && cam?.track) {
     cam.track.attach(v);
     v.muted = true;
@@ -218,11 +236,12 @@ function attachRemote(uid, stream, label) {
 }
 
 async function connectLivekit() {
+  await getLivekitSdk();
   const minted = await mintLivekitToken();
   if (lkRoom) {
     try { await lkRoom.disconnect(); } catch (e) {}
   }
-  lkRoom = new Room({
+  lkRoom = new livekitSdk.Room({
     adaptiveStream: true,
     dynacast: true,
     disconnectOnPageLeave: false,
@@ -234,7 +253,7 @@ async function connectLivekit() {
       red: true
     },
     videoCaptureDefaults: {
-      resolution: VideoPresets.h720.resolution,
+      resolution: livekitSdk.VideoPresets.h720.resolution,
       facingMode: "user"
     },
     audioCaptureDefaults: {
@@ -742,7 +761,7 @@ async function toggleShare() {
       const sender = state.pc.getSenders().find((s) => s.track && s.track.kind === "video");
       if (sender) sender.replaceTrack(screenTrack);
     }
-    screenTrack.onended = () => {
+    screenlivekitSdk.Track.onended = () => {
       sharing = false;
       const cam = localStream?.getVideoTracks()[0];
       if (cam) {
