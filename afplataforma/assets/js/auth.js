@@ -186,6 +186,32 @@ export function resolveUserAccess(user) {
   });
 }
 
+
+/**
+ * Acesso emergencial temporário para manutenção da plataforma.
+ * Libera somente a interface; as regras do Firebase/Firestore continuam ativas.
+ */
+export function enterTemporaryMentorMode() {
+  applySession({
+    mode: "temporary-local",
+    uid: MENTOR_UID,
+    email: "",
+    name: "Mentor · acesso temporário",
+    role: "mentor",
+    approved: true,
+    active: true,
+    modules: defaultModulesMap(7),
+    plan: "vip",
+    features: {},
+    extraRooms: [],
+    roomsBlocked: [],
+    roomId: "mentoria-principal",
+    lifetime: true,
+    lang: session.lang,
+    ready: true
+  });
+}
+
 export function startAuthListener() {
   if (authListening) return;
   authListening = true;
@@ -199,6 +225,10 @@ export function startAuthListener() {
     .then(() => {
       onAuthStateChanged(auth, async (user) => {
     if (!user) {
+      if (window.__AF_TEMPORARY_LOGIN_BYPASS === true) {
+        enterTemporaryMentorMode();
+        return;
+      }
       const q = new URLSearchParams(location.search).get("demo");
       if (q === "mentor" || q === "mentee") {
         enterDemo(q);
@@ -219,16 +249,21 @@ export function startAuthListener() {
       return;
     }
     try {
-      await resolveUserAccess(user);
+      const resolved = await resolveUserAccess(user);
+      if (!resolved && window.__AF_TEMPORARY_LOGIN_BYPASS === true && !session.ready) {
+        enterTemporaryMentorMode();
+      }
     } catch (e) {
       console.error("[AF auth]", e);
-      if (onAccessDenied) onAccessDenied("error");
+      if (window.__AF_TEMPORARY_LOGIN_BYPASS === true) enterTemporaryMentorMode();
+      else if (onAccessDenied) onAccessDenied("error");
     }
       });
     })
     .catch((error) => {
       console.error("[AF auth initialization]", error);
-      if (onAccessDenied) onAccessDenied("error");
+      if (window.__AF_TEMPORARY_LOGIN_BYPASS === true) enterTemporaryMentorMode();
+      else if (onAccessDenied) onAccessDenied("error");
     });
 }
 
