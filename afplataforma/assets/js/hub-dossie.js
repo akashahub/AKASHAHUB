@@ -54,7 +54,7 @@ export const DOSSIE_TOOLS = [
 
 function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
-    "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;"
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[ch]));
 }
 
