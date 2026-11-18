@@ -4,6 +4,8 @@
  */
 import {
   onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
   sendPasswordResetEmail,
@@ -41,6 +43,19 @@ let onSessionReady = null;
 let onAccessDenied = null;
 let onLoggedOut = null;
 let authListening = false;
+let persistencePromise = null;
+
+// Padroniza a sessão no armazenamento local do navegador, compartilhado
+// entre /dashboard e /afplataforma no mesmo domínio e projeto Firebase.
+function ensureSharedAuthPersistence() {
+  if (!persistencePromise) {
+    persistencePromise = setPersistence(auth, browserLocalPersistence).catch((error) => {
+      persistencePromise = null;
+      throw error;
+    });
+  }
+  return persistencePromise;
+}
 
 export function setAuthCallbacks({ onReady, onDenied, onLogout }) {
   onSessionReady = onReady;
@@ -175,7 +190,14 @@ export function startAuthListener() {
   if (authListening) return;
   authListening = true;
 
-  onAuthStateChanged(auth, async (user) => {
+  ensureSharedAuthPersistence()
+    .then(() => {
+      // Aguarda o Firebase terminar de restaurar a sessão persistida antes
+      // de decidir mostrar a portaria de login.
+      return auth.authStateReady();
+    })
+    .then(() => {
+      onAuthStateChanged(auth, async (user) => {
     if (!user) {
       const q = new URLSearchParams(location.search).get("demo");
       if (q === "mentor" || q === "mentee") {
@@ -202,17 +224,24 @@ export function startAuthListener() {
       console.error("[AF auth]", e);
       if (onAccessDenied) onAccessDenied("error");
     }
-  });
+      });
+    })
+    .catch((error) => {
+      console.error("[AF auth initialization]", error);
+      if (onAccessDenied) onAccessDenied("error");
+    });
 }
 
 export async function loginEmail(email, password) {
+  await ensureSharedAuthPersistence();
   const cred = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
   return resolveUserAccess(cred.user);
 }
 
 export async function loginGoogle() {
+  await ensureSharedAuthPersistence();
   const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: "select_account" });
+  // Não força a seleção de conta quando já existe uma sessão Google ativa.
   const cred = await signInWithPopup(auth, provider);
   return resolveUserAccess(cred.user);
 }
