@@ -11,7 +11,7 @@ import {
   loginGoogle,
   resetPassword,
   enterDemo
-} from "./auth.js";
+} from "./auth.js?v=20261118-temp-bypass-1";
 
 const byId = (id) => document.getElementById(id);
 
