@@ -1,4 +1,7 @@
-import { isMentorSession } from "./auth.js";
+import { session, isMentorSession } from "./auth.js";
+import { activeHubContext } from "./hub-context.js?v=etapa4-1";
+import { db } from "../../firebase/firebase-config.js";
+import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { CATALOG } from "./catalogo-capacidades-data.js?v=20261110-1";
 import { SPECIALIZED_PROMPTS, buildSpecializedPrompt } from "./biblioteca-prompts-especializados.js?v=global-recipes-20261119-1";
 import { readHubDossieSnapshot } from "./hub-dossie.js?v=dossier-prompt-context-20261119-v1";
@@ -121,6 +124,11 @@ const PROMPT_VARIABLES = [["NOME_DO_CLIENTE_OU_EMPRESA","Nome da pessoa, marca o
 
 
 const SHARED_CONTEXT = Object.create(null);
+let sharedContextCloudState = "idle";
+function selectedContextUid() {
+  const context = activeHubContext();
+  return context?.uid || session.uid || "";
+}
 function applySharedContext(prompt) {
   return PROMPT_VARIABLES.reduce((text,[key])=>{
     const value=String(SHARED_CONTEXT[key]||"").trim();
@@ -128,10 +136,10 @@ function applySharedContext(prompt) {
   },String(prompt||""));
 }
 function sharedContextMarkup() {
-  return '<div class="pm-context-panel"><div class="pm-context-head"><div><div class="pm-eyebrow">AKASHA HUB · CONTEXTO DO PROJETO</div><h2>Contexto compartilhado</h2><p>Preencha uma vez e reutilize nos prompts desta sessão. Todos os campos são opcionais; cada tarefa usa apenas o que for relevante.</p></div><button type="button" class="pm-copy-prompt" data-pm-open-context>Revisar e preencher variáveis</button></div><div class="pm-context-summary"><strong>'+PROMPT_VARIABLES.filter(([key])=>String(SHARED_CONTEXT[key]||"").trim()).length+' de '+PROMPT_VARIABLES.length+' variáveis preenchidas</strong><span>Os dados ficam temporariamente na memória desta página. Atualizar ou fechar a plataforma apaga esta ficha.</span></div><div class="pm-context-list">'+PROMPT_VARIABLES.map(([key,desc],i)=>'<article><span>'+String(i+1).padStart(2,"0")+'</span><div><strong>'+esc(key.replaceAll("_"," ").toLowerCase())+'</strong><p>'+esc(desc)+'</p><small>'+(String(SHARED_CONTEXT[key]||"").trim()?"Preenchida":"Ainda não preenchida")+'</small></div></article>').join("")+'</div></div>';
+  return '<div class="pm-context-panel"><div class="pm-context-head"><div><div class="pm-eyebrow">AKASHA HUB · CONTEXTO DO PROJETO</div><h2>Contexto compartilhado</h2><p>Preencha uma vez e reutilize nos prompts desta sessão. Todos os campos são opcionais; cada tarefa usa apenas o que for relevante.</p></div><button type="button" class="pm-copy-prompt" data-pm-open-context>Revisar e preencher variáveis</button></div><div class="pm-context-summary"><strong>'+PROMPT_VARIABLES.filter(([key])=>String(SHARED_CONTEXT[key]||"").trim()).length+' de '+PROMPT_VARIABLES.length+' variáveis preenchidas</strong><span id="pmContextCloudStatus">Os dados compartilhados serão carregados da conta selecionada.</span></div><div class="pm-context-list">'+PROMPT_VARIABLES.map(([key,desc],i)=>'<article><span>'+String(i+1).padStart(2,"0")+'</span><div><strong>'+esc(key.replaceAll("_"," ").toLowerCase())+'</strong><p>'+esc(desc)+'</p><small>'+(String(SHARED_CONTEXT[key]||"").trim()?"Preenchida":"Ainda não preenchida")+'</small></div></article>').join("")+'</div></div>';
 }
 function sharedContextModalMarkup() {
-  return '<div class="pm-context-overlay" data-pm-context-overlay hidden><section class="pm-context-modal" role="dialog" aria-modal="true" aria-labelledby="pmContextTitle"><div class="pm-context-modal-head"><div><div class="pm-eyebrow">FICHA ÚNICA DO PROJETO</div><h2 id="pmContextTitle">Revisar contexto compartilhado</h2><p>Preencha o que já sabe. Não precisa responder tudo agora.</p></div><button type="button" class="pm-context-close" data-pm-close-context aria-label="Fechar">×</button></div><div class="pm-context-fields">'+PROMPT_VARIABLES.map(([key,desc],i)=>'<label class="pm-context-field"><span>'+String(i+1).padStart(2,"0")+' · '+esc(key.replaceAll("_"," ").toLowerCase())+'</span><small>'+esc(desc)+'</small><textarea rows="2" data-pm-context-key="'+esc(key)+'" placeholder="Preencha se esta informação já estiver disponível...">'+esc(SHARED_CONTEXT[key]||"")+'</textarea></label>').join("")+'</div><div class="pm-context-modal-actions"><span id="pmContextStatus">Campos opcionais. O mentor revisa antes de usar.</span><button type="button" class="pm-back" data-pm-close-context>Cancelar</button><button type="button" class="pm-copy-prompt" data-pm-save-context>Salvar nesta sessão</button></div></section></div>';
+  return '<div class="pm-context-overlay" data-pm-context-overlay hidden><section class="pm-context-modal" role="dialog" aria-modal="true" aria-labelledby="pmContextTitle"><div class="pm-context-modal-head"><div><div class="pm-eyebrow">FICHA ÚNICA DO PROJETO</div><h2 id="pmContextTitle">Revisar contexto compartilhado</h2><p>Preencha o que já sabe. Não precisa responder tudo agora.</p></div><button type="button" class="pm-context-close" data-pm-close-context aria-label="Fechar">×</button></div><div class="pm-context-fields">'+PROMPT_VARIABLES.map(([key,desc],i)=>'<label class="pm-context-field"><span>'+String(i+1).padStart(2,"0")+' · '+esc(key.replaceAll("_"," ").toLowerCase())+'</span><small>'+esc(desc)+'</small><textarea rows="2" data-pm-context-key="'+esc(key)+'" placeholder="Preencha se esta informação já estiver disponível...">'+esc(SHARED_CONTEXT[key]||"")+'</textarea></label>').join("")+'</div><div class="pm-context-modal-actions"><span id="pmContextStatus">Campos opcionais. O mentor revisa antes de usar.</span><button type="button" class="pm-back" data-pm-close-context>Cancelar</button><button type="button" class="pm-copy-prompt" data-pm-save-context>Salvar contexto compartilhado</button></div></section></div>';
 }
 function openSharedContext(root) {
   const overlay=root.querySelector("[data-pm-context-overlay]");
@@ -141,17 +149,80 @@ function openSharedContext(root) {
   const first=overlay.querySelector("textarea");
   if(first) first.focus();
 }
-function saveSharedContext(root) {
-  const overlay=root.querySelector("[data-pm-context-overlay]");
-  if(!overlay) return;
-  overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>{SHARED_CONTEXT[field.dataset.pmContextKey]=field.value.trim();});
-  overlay.hidden=true;
+function refreshOpenPrompt(root) {
   const active=root.querySelector("#pmPanel");
-  if(active && root.querySelector('[data-pm-tab="context"]')?.classList.contains("is-active")) active.innerHTML=sharedContextMarkup();
   const generic=active?.querySelector("[data-pm-capability]");
   const specialized=active?.querySelector("[data-pm-specialized-source]");
   if(generic){const c=CAPABILITIES.find(x=>x.id===generic.dataset.pmCapability);if(c)generic.value=applySharedContext(promptForCapability(c));}
   if(specialized){const item=SPECIALIZED_PROMPTS.find(x=>x.id===specialized.dataset.pmSpecializedSource);if(item)specialized.value=applySharedContext(buildSpecializedPrompt(item));}
+}
+async function loadSharedContext(root) {
+  const uid=selectedContextUid();
+  const status=root.querySelector("#pmContextCloudStatus");
+  if(!uid || session.mode!=="firebase") {
+    sharedContextCloudState="unavailable";
+    if(status) status.textContent="Entre com a conta da plataforma para carregar o contexto salvo.";
+    return;
+  }
+  if(status) status.textContent="Carregando contexto salvo...";
+  try {
+    const snap=await getDoc(doc(db,"afProjectContexts",uid,"projects","principal"));
+    PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT[key]="";});
+    if(snap.exists()) {
+      const data=snap.data();
+      const saved=data?.context && typeof data.context==="object" ? data.context : {};
+      PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT[key]=typeof saved[key]==="string"?saved[key]:"";});
+    }
+    sharedContextCloudState="loaded";
+    if(status) status.textContent=snap.exists()
+      ? "Contexto carregado da nuvem para "+(activeHubContext()?.name || session.name || "cliente selecionado")+"."
+      : "Ainda não existe contexto salvo para este cliente. Preencha e salve para compartilhar.";
+    if(root.querySelector('[data-pm-tab="context"]')?.classList.contains("is-active")) {
+      const panel=root.querySelector("#pmPanel");
+      if(panel) panel.innerHTML=sharedContextMarkup();
+    } else refreshOpenPrompt(root);
+  } catch(error) {
+    console.error("[Biblioteca de Prompts] Falha ao carregar contexto:",error);
+    sharedContextCloudState="error";
+    if(status) status.textContent="Não consegui carregar o contexto. Confira o acesso e tente novamente.";
+  }
+}
+async function saveSharedContext(root) {
+  const overlay=root.querySelector("[data-pm-context-overlay]");
+  if(!overlay) return;
+  const uid=selectedContextUid();
+  const status=overlay.querySelector("#pmContextStatus");
+  if(!uid || session.mode!=="firebase") {
+    if(status) status.textContent="Entre com a conta da plataforma antes de salvar.";
+    return;
+  }
+  const next=Object.create(null);
+  overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>{next[field.dataset.pmContextKey]=field.value.trim().slice(0,5000);});
+  const button=overlay.querySelector("[data-pm-save-context]");
+  if(button){button.disabled=true;button.textContent="Salvando...";}
+  if(status) status.textContent="Salvando no contexto do cliente...";
+  try {
+    await setDoc(doc(db,"afProjectContexts",uid,"projects","principal"),{
+      ownerUid:uid,
+      context:next,
+      schemaVersion:1,
+      updatedBy:session.uid,
+      updatedAt:serverTimestamp()
+    });
+    PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT[key]=next[key]||"";});
+    sharedContextCloudState="loaded";
+    overlay.hidden=true;
+    const panel=root.querySelector("#pmPanel");
+    if(panel && root.querySelector('[data-pm-tab="context"]')?.classList.contains("is-active")) panel.innerHTML=sharedContextMarkup();
+    refreshOpenPrompt(root);
+    const cloudStatus=root.querySelector("#pmContextCloudStatus");
+    if(cloudStatus) cloudStatus.textContent="Contexto salvo e compartilhado com o cliente selecionado.";
+  } catch(error) {
+    console.error("[Biblioteca de Prompts] Falha ao salvar contexto:",error);
+    if(status) status.textContent="Não foi possível salvar. Verifique as permissões do Firestore e tente novamente.";
+  } finally {
+    if(button){button.disabled=false;button.textContent="Salvar contexto compartilhado";}
+  }
 }
 
 function phasePills(ids) {
@@ -368,6 +439,7 @@ export function bindMasterPromptMap() {
   if (!root || root.dataset.pmBound === "1" || !isMentorSession()) return;
   root.dataset.pmBound = "1";
   const panel = root.querySelector("#pmPanel");
+  loadSharedContext(root);
   const searchMarkup = () => '<div class="pm-filters"><input id="pmSearch" type="search" placeholder="Buscar capacidade, departamento ou grupo..."><select id="pmPhaseFilter"><option value="">Todas as fases</option>'+PHASES.map(p=>'<option value="'+p.id+'">'+p.id+' · '+esc(p.name)+'</option>').join("")+'</select><select id="pmDeptFilter"><option value="">Todos os departamentos</option>'+CATALOG.map(d=>'<option value="'+d.id+'">'+esc(d.name)+'</option>').join("")+'</select><span id="pmCount"></span></div><div id="pmRows" class="pm-cap-list">'+renderCapabilityRows(CAPABILITIES)+'</div>';
   const rulesMarkup = () => '<div class="pm-rules-grid"><article><h3>O prompt não é o aplicativo</h3><p>O aplicativo registra e executa sua função. O prompt orienta análise, planejamento, criação ou revisão usando dados autorizados, sem duplicar registros ou cálculos.</p></article><article><h3>Vendas são sistêmicas</h3><p>Um resultado comercial pode depender de identidade, valor percebido, comunicação, ativos digitais, preço, margem, aquisição, atendimento, operação, entrega e continuidade. O diagnóstico deve investigar o ecossistema, não presumir que todo problema de venda se resolve com script ou tráfego.</p></article><article><h3>Contexto com autorização</h3><p>Usar somente dados necessários do UID e do projeto selecionado. Nunca misturar dados de mentorandos. O mentor confirma decisões antes de registrar ou executar ações.</p></article><article><h3>Estados operacionais</h3><p>'+STATUS.map(s=>'<span class="pm-state">'+esc(s)+'</span>').join(" ")+'<br><small>O estado pertence à capacidade operacional, não ao prompt. As capacidades começam como “A classificar” até validação do mentor.</small></p></article><article><h3>Governança dos prompts</h3><p>Prompt oficial com versão, autor, revisão e histórico. Mentor pode duplicar e personalizar sem alterar o original. Visibilidade e publicação são explícitas.</p></article><article><h3>Qualidade da resposta</h3><p>Separar fatos, hipóteses e recomendações; citar dados que sustentam inferências; sinalizar lacunas; informar limites e propor próximos passos verificáveis.</p></article><article><h3>Limites profissionais</h3><p>Atividades jurídicas, contábeis, reguladas, investimentos e imigração exigem validação de profissionais habilitados. IA não comprova fatos nem substitui responsabilidade técnica.</p></article></div>';
   function showTab(tab) {
