@@ -144,6 +144,11 @@ function sharedContextModalMarkup() {
 function openSharedContext(root) {
   const overlay=root.querySelector("[data-pm-context-overlay]");
   if(!overlay) return;
+  if(sharedContextCloudState!=="loaded") {
+    const cloudStatus=root.querySelector("#pmContextCloudStatus");
+    if(cloudStatus) cloudStatus.textContent="Aguarde o carregamento do contexto salvo antes de editar. Se houver falha, atualize a página e tente novamente.";
+    return;
+  }
   overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
   overlay.hidden=false;
   const first=overlay.querySelector("textarea");
@@ -164,6 +169,7 @@ async function loadSharedContext(root) {
     if(status) status.textContent="Entre com a conta da plataforma para carregar o contexto salvo.";
     return;
   }
+  sharedContextCloudState="loading";
   if(status) status.textContent="Carregando contexto salvo...";
   try {
     const snap=await getDoc(doc(db,"afProjectContexts",uid,"projects","principal"));
