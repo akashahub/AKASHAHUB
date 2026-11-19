@@ -52,7 +52,7 @@ export function buildNav() {
     { id: "fase3", label: "Fase 3 · AF", ico: `<img src="assets/img/fases/af.svg" alt="">` },
     { id: "fase4", label: "Fase 4 · Expansão", ico: `<img src="assets/img/fases/expansao.svg" alt="">` },
     { id: "fase5", label: "Fase 5 · Legado", ico: `<img src="assets/img/fases/legado.svg" alt="">` },
-    { id: "hub-prompts", label: mentor ? "Biblioteca de Prompts" : "Prompts liberados", ico: "◇" },
+    { id: "hub-prompts", label: mentor ? "Biblioteca de Prompts" : "Meu contexto do projeto", ico: "◇" },
     { id: "hub-sessoes", label: mentor ? "Sessões e acompanhamento" : "Captura e sessões", ico: "◇" }
   );
   if (mentor) items.push({ id: "hub-intel", label: "Inteligência Central", ico: "◇" });
