@@ -66,7 +66,7 @@ import { renderArquiteturaLegado, bindArquiteturaLegado } from "./arquitetura-le
 import { renderCatalogoCapacidades, bindCatalogoCapacidades } from "./catalogo-capacidades.js?v=20261110-1";
 import { renderAgenteIA, bindAgenteIA } from "./agente-ia.js?v=20261109-1";
 import { initGlobalSearch } from "./global-search.js?v=20261111-search-1";
-import { ensureHubContext, clearHubContext, paintHubContext, loadAuthorizedMentees } from "./hub-context.js?v=etapa4-1";
+import { ensureHubContext, clearHubContext, paintHubContext, loadAuthorizedMentees } from "./hub-context.js?v=mentees-singleflight-20261119-v1";
 import {
   renderMentorandos,
   bindMentorandos,
