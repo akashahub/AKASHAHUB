@@ -78,6 +78,7 @@ import {
   renderHubConfig
 } from "./hub-shell.js?v=rollback-pre-intel-20261118";
 import { bindHubDossie } from "./hub-dossie.js?v=dossie-syntaxfix-20261118";
+import { renderMasterPromptMap, bindMasterPromptMap } from "./biblioteca-prompts.js?v=master-map-20261119";
 import { renderVisionStudio, bindVisionStudio } from "./vision-studio.js?v=1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
@@ -755,7 +756,7 @@ registerRenderers({
   dashboard: renderLifeOsDashboard,
   mentorandos: renderMentorandos,
   "hub-dossie": renderHubDossie,
-  "hub-prompts": renderHubPrompts,
+  "hub-prompts": renderMasterPromptMap,
   "hub-sessoes": renderHubSessoes,
   "hub-intel": renderHubIntel,
   "hub-acervo": renderHubAcervo,
@@ -840,6 +841,7 @@ onAfterNavigate((view) => {
   }
   if (view === "mentorandos") bindMentorandos();
   if (view === "hub-dossie") bindHubDossie();
+  if (view === "hub-prompts") bindMasterPromptMap();
   if (view === "catalogo-capacidades") bindCatalogoCapacidades();
   if (view === "call") bindCallControls(navigate);
   if (view === "fase1-jogo") bindFase1Jogo();
