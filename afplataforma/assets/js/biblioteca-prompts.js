@@ -8,8 +8,8 @@ const PHASES = [
     deliverable:"Dossiê de Essência e Direção Estratégica",
     work:["Conduzir perguntas e conversas","Investigar identidade, história familiar e visão de mundo","Organizar o Dossiê de Essência","Identificar capacidades, valores, objetivos e possibilidades","Definir a direção inicial da marca","Estabelecer objetivos pessoais e empresariais","Fazer uma leitura inicial da situação financeira"],
     apps:[
-      ["Essência OS","/afplataforma/essencia/"],["Identity Studio","/afplataforma/identity-studio/"],["Marketing Pessoal OS","/afplataforma/marketing-pessoal/"],
-      ["Branding Pessoal","/afplataforma/branding-pessoal/"],["Constelação Familiar","/afplataforma/constelacao-familiar/"],["Registros Akáshicos","/afplataforma/registros-akashicos/"],
+      ["Essência OS","/afplataforma/essencia/"],["Identity Studio","/afplataforma/identity-studio/"],["Marketing Pessoal OS",""],
+      ["Branding Pessoal","/afplataforma/branding-pessoal/"],["Constelação Familiar",""],["Registros Akáshicos","/afplataforma/registros-akashicos/"],
       ["Liderança",""],["Comunicação",""],["Authority & Leadership OS",""]
     ],
     support:["Sessões e roteiro original","Mesa da Essência","Formulário de Marca / Identidade","Dossiê de Essência","Dossiê vivo","Visão 1 página","Ideação / Insights"],
