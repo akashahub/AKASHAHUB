@@ -450,7 +450,7 @@ export function renderMasterPromptMap() {
 
 export function bindMasterPromptMap() {
   const root = document.querySelector(".pm-view");
-  if (!root || root.dataset.pmBound === "1" || !isMentorSession()) return;
+  if (!root || root.dataset.pmBound === "1") return;
   root.dataset.pmBound = "1";
   const panel = root.querySelector("#pmPanel");
   loadSharedContext(root);
