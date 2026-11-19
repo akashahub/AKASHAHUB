@@ -141,3 +141,9 @@ A navegação existente `hub-prompts` abre o Mapa Mestre na AF Plataforma, restr
 - princípios, estados e regras de governança.
 
 A primeira entrega é estrutural e de consulta. Ainda não cria, executa, publica, versiona ou persiste prompts. Não altera as coleções UID dos aplicativos, as regras Firestore, o login ou os dados existentes. A próxima etapa será validar a matriz e então construir os prompts por prioridade.
+
+## 10. Geração de prompts por capacidade
+
+A matriz agora permite gerar sob demanda um modelo-base operacional para cada capacidade, preservando ID, departamento, grupo, fases e justificativa. Cada modelo inclui variáveis editáveis, protocolo de descoberta, método de diagnóstico e estratégia, construção do entregável, validação, critérios de excelência, privacidade, limites profissionais e confirmação humana.
+
+**Importante:** são modelos-base dinâmicos contextualizados, não 160 metodologias finais validadas individualmente. O refinamento especializado deve ocorrer por capacidade, com revisão do mentor e versionamento antes de qualquer publicação para mentorandos.
