@@ -127,14 +127,32 @@ export async function bindHubDossie() {
   if (status) status.textContent = `${filled} de ${blocks.length} ferramentas com resposta.`;
   const phases = [];
   for (const block of blocks) if (!phases.includes(block.phase)) phases.push(block.phase);
-  list.innerHTML = phases.map((phase) => blocks.filter((block) => block.phase === phase).map(card).join("")).join("");
-  const text = copyText(who.own ? "você" : who.name, blocks);
-  document.getElementById("hubDossieCopy")?.addEventListener("click", async () => {
+  list.innerHTML = phases.map((phase, index) => {
+    const phaseBlocks = blocks.filter((block) => block.phase === phase);
+    return `<section class="dossie-phase" style="margin:18px 0">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px">
+        <h3 style="margin:0">${esc(phase)}</h3>
+        <button class="tool-btn" type="button" data-dossie-phase="${index}">Copiar respostas desta fase</button>
+      </div>
+      ${phaseBlocks.map(card).join("")}
+    </section>`;
+  }).join("");
+  async function copyBlocks(selectedBlocks, successMessage) {
     try {
-      await navigator.clipboard.writeText(text);
-      if (status) status.textContent = "Copiado. Pode colar na conversa.";
+      await navigator.clipboard.writeText(copyText(who.own ? "você" : who.name, selectedBlocks));
+      if (status) status.textContent = successMessage;
     } catch {
       if (status) status.textContent = "Não consegui copiar daqui. Selecione o texto manualmente.";
     }
+  }
+  document.getElementById("hubDossieCopy")?.addEventListener("click", () => {
+    copyBlocks(blocks, "Dossiê completo copiado. Pode colar na conversa.");
+  });
+  list.querySelectorAll("[data-dossie-phase]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const phase = phases[Number(button.dataset.dossiePhase)];
+      const phaseBlocks = blocks.filter((block) => block.phase === phase);
+      copyBlocks(phaseBlocks, `${phase}: respostas copiadas. Pode colar na conversa.`);
+    });
   });
 }
