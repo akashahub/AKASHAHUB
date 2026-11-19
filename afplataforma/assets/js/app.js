@@ -77,7 +77,7 @@ import {
   renderHubAcervo,
   renderHubConfig
 } from "./hub-shell.js?v=rollback-pre-intel-20261118";
-import { bindHubDossie } from "./hub-dossie.js?v=dossie-syntaxfix-20261118";
+import { bindHubDossie } from "./hub-dossie.js?v=phase-copy-20261119-v1";
 import { renderMasterPromptMap, bindMasterPromptMap } from "./biblioteca-prompts.js?v=phase-copy-vars-20261119-v1";
 import { renderVisionStudio, bindVisionStudio } from "./vision-studio.js?v=1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
