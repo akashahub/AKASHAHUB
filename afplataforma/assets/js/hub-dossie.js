@@ -156,3 +156,19 @@ export async function bindHubDossie() {
     });
   });
 }
+
+
+/**
+ * Retorna uma leitura do Dossiê para contextualizar prompts.
+ * Reutiliza a mesma seleção autorizada e as mesmas ferramentas do Dossiê.
+ * Não grava, não altera e não amplia permissões.
+ */
+export async function readHubDossieSnapshot() {
+  if (isMentorSession()) {
+    try { await loadAuthorizedMentees(); } catch { /* a leitura individual ainda pode ser exibida como falha */ }
+  }
+  const who = person();
+  if (!who) return { ok: false, reason: "no-person", blocks: [] };
+  const blocks = await Promise.all(DOSSIE_TOOLS.map((tool) => readTool(tool, who.uid)));
+  return { ok: true, person: who.name, own: who.own, blocks };
+}
