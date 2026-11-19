@@ -182,12 +182,17 @@ async function loadSharedContext(root) {
       PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT[key]=typeof saved[key]==="string"?saved[key]:"";});
     }
     sharedContextCloudState="loaded";
-    if(status) status.textContent=snap.exists()
+    const cloudMessage=snap.exists()
       ? "Contexto carregado da nuvem para "+(activeHubContext()?.name || session.name || "cliente selecionado")+"."
       : "Ainda não existe contexto salvo para este cliente. Preencha e salve para compartilhar.";
+    if(status) status.textContent=cloudMessage;
     if(root.querySelector('[data-pm-tab="context"]')?.classList.contains("is-active")) {
       const panel=root.querySelector("#pmPanel");
-      if(panel) panel.innerHTML=sharedContextMarkup();
+      if(panel) {
+        panel.innerHTML=sharedContextMarkup();
+        const refreshedStatus=panel.querySelector("#pmContextCloudStatus");
+        if(refreshedStatus) refreshedStatus.textContent=cloudMessage;
+      }
     } else refreshOpenPrompt(root);
   } catch(error) {
     console.error("[Biblioteca de Prompts] Falha ao carregar contexto:",error);
