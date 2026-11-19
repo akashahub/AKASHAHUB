@@ -9,7 +9,7 @@
 - **Arquitetura de Legado:** cinco fases AE, ID, AF, EX e LG. Organiza a jornada do cliente e os entregáveis centrais.
 - **Biblioteca de Prompts:** relaciona capacidades e fases e, em uma etapa posterior, oferecerá instruções operacionais para diagnóstico, pesquisa, estratégia, criação, execução assistida, auditoria e documentação.
 
-A mesma capacidade pode atender mais de uma fase. A fase indica o momento de aplicação; o departamento indica a origem da competência. Nenhum dos dois vínculos é exclusivo.
+A mesma capacidade pode atender mais de uma fase. A fase indica o momento de aplicação; o departamento indica a origem da competência. Nenhum dos dois vínculos é exclusivo. Vendas não são tratadas como um silo: um problema comercial pode ter origem na essência, na proposta de valor, na comunicação, nos ativos digitais, no preço, na aquisição, nos processos, na entrega ou na continuidade. A análise deve investigar o sistema antes de recomendar scripts, anúncios ou mudanças isoladas.
 
 ## 2. Departamentos e códigos
 
@@ -38,7 +38,7 @@ A fonte dos nomes e das capacidades é `afplataforma/assets/js/catalogo-capacida
 | 0303 · Império Digital e Tecnologia | ID | Constrói produtos, ativos e infraestrutura digital. |
 | 0404 · Alinhamento Financeiro | AF | Organiza capital, caixa, preço e sustentabilidade. |
 | 0505 · Marketing, Publicidade e Aquisição | ID, EX | Estrutura presença, conteúdo, aquisição e distribuição. |
-| 0606 · Comercial, Vendas e Negócios | ID, AF, EX | Conecta oferta, relacionamento, receita e expansão. |
+| 0606 · Comercial, Vendas e Negócios | AE, ID, AF, EX, LG | Vendas são sistêmicas: identidade, valor percebido, marca, ativos digitais, preço, aquisição, atendimento, operação, entrega e continuidade influenciam o resultado em toda a jornada. |
 | 0707 · Estruturação Empresarial e Internacional | AF, EX, LG | Organiza negócios, mercados, parcerias e governança. |
 | 0808 · Gestão, Automação e IA | ID, EX, LG | Conecta sistemas, processos, produtividade e continuidade. |
 | 0909 · Educação, Conhecimento e PI | ID, LG | Transforma conhecimento em ativos, métodos e transmissão. |
@@ -128,7 +128,7 @@ Tipos sugeridos: investigação, diagnóstico, pesquisa, estratégia, planejamen
 7. A IA separa relato/fato, hipótese e decisão; informa lacunas e não inventa dados.
 8. O mentor confirma decisões antes de gravar ou executar ações.
 9. O prompt orienta; o aplicativo registra e executa sua própria função. Não duplicar ferramentas, dados, cálculos ou fluxos.
-10. Não prometer execução automática. Distinguir orientação, execução técnica realizada e serviço dependente de especialista habilitado.
+10. Não prometer execução automática. Distinguir orientação, execução técnica realizada e serviço dependente de especialista habilitado.\n11. Tratar resultados comerciais de forma sistêmica: investigar causas relacionadas às cinco fases antes de recomendar uma intervenção isolada de vendas ou aquisição.
 
 ## 9. Implementação atual da interface
 
