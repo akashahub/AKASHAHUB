@@ -133,7 +133,7 @@ function renderPhaseCards() {
 }
 function renderCapabilityRows(rows) {
   if (!rows.length) return '<div class="pm-empty">Nenhuma capacidade corresponde aos filtros atuais.</div>';
-  return rows.map(c => '<article class="pm-cap-row"><div class="pm-cap-code">'+esc(c.id)+'</div><div class="pm-cap-main"><strong>'+esc(c.title)+'</strong><small>'+esc(c.department.replace(/^\d+ · /,""))+' · '+esc(c.group)+'</small><p>'+esc(c.reason)+'</p></div><div class="pm-cap-meta">'+phasePills(c.phases)+'<span class="pm-unclassified">Estado a classificar</span></div></article>').join("");
+  return rows.map(c => '<article class="pm-cap-row"><div class="pm-cap-code">'+esc(c.id)+'</div><div class="pm-cap-main"><strong>'+esc(c.title)+'</strong><small>'+esc(c.department.replace(/^\d+ · /,""))+' · '+esc(c.group)+'</small><p>'+esc(c.reason)+'</p><button type="button" class="pm-build-prompt" data-pm-prompt="'+esc(c.id)+'">Construir prompt <span>↗</span></button></div><div class="pm-cap-meta">'+phasePills(c.phases)+'<span class="pm-unclassified">Estado a classificar</span></div></article>').join("");
 }
 function renderMatrixView() {
   const deptCards = CATALOG.map(d => {
@@ -151,10 +151,97 @@ function renderPhaseDetail(id) {
   return '<section class="pm-phase-detail"><button class="pm-back" type="button" data-pm-back>← Mapa mestre</button><div class="pm-phase-heading"><span>FASE '+p.number+' · '+p.id+'</span><h2>'+esc(p.name)+'</h2><p>'+esc(p.objective)+'</p></div><div class="pm-deliverable pm-deliverable-large"><small>ENTREGÁVEL CENTRAL</small><strong>'+esc(p.deliverable)+'</strong></div><div class="pm-detail-grid"><section><h3>Trabalho principal</h3><ol>'+p.work.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol></section><section><h3>Aplicativos da fase</h3><div class="pm-app-list">'+appMarkup(p.apps)+'</div><h3>Ferramentas e apoios relacionados</h3><div class="pm-app-list">'+p.support.map(x=>'<span class="pm-app pm-app-pending">'+esc(x)+'</span>').join("")+'</div></section></div><div class="pm-related"><h3>Departamentos conectados</h3><div class="pm-related-depts">'+depts.map(d=>'<span>'+DEPT_CODES[d.id]+' · '+esc(d.name.replace(/^\d+ · /,""))+'</span>').join("")+'</div><h3>Capacidades relacionadas · '+caps.length+'</h3><div class="pm-related-cap-list">'+caps.map(c=>'<div><code>'+esc(c.id)+'</code>'+esc(c.title)+'</div>').join("")+'</div></div><div class="pm-next"><small>CONEXÃO SEGUINTE</small><p>'+esc(p.next)+'</p></div><p class="pm-note">'+esc(p.notes)+'</p></section>';
 }
 
-export function renderMasterPromptMap() {
+
+function promptForCapability(c) {
+ const phases=c.phases.map(id=>PHASES.find(p=>p.id===id)).filter(Boolean);
+ const phaseContext=phases.length?phases.map(p=>p.id+" · "+p.name+": "+p.objective).join("\\n"):"Fase ainda não classificada; confirmar com o mentor.";
+ const deliverables=phases.map(p=>p.deliverable).join("; ")||"Definir com o mentor";
+ return `# PROMPT OPERACIONAL AKASHA HUB
+## ${c.id} · ${c.title}
+
+### PAPEL E MISSÃO
+Atue como especialista sênior em ${c.department.replace(/^\\d+ · /,"")}, com visão sistêmica, rigor analítico e comunicação clara. Apoie a capacidade "${c.title}" no ecossistema Akasha Hub. Investigue o contexto, identifique o problema real e produza um resultado utilizável, não uma resposta genérica.
+
+### ENQUADRAMENTO
+- Departamento: ${c.department}
+- Grupo: ${c.group}
+- ID estável: ${c.id}
+- Fases: ${c.phases.join(", ")||"A classificar"}
+- Contexto das fases: ${phaseContext}
+- Entregáveis relacionados: ${deliverables}
+- Relação estratégica: ${c.reason}
+
+### VARIÁVEIS DE ENTRADA
+Use os dados disponíveis. Se faltar variável essencial, pergunte antes de concluir. Nunca invente.
+{{NOME_DO_CLIENTE_OU_EMPRESA}}
+{{SEGMENTO_E_MODELO_DE_NEGOCIO}}
+{{PAIS_CIDADE_E_MERCADO}}
+{{ESTAGIO_ATUAL_E_HISTORICO}}
+{{OBJETIVO_PRINCIPAL_E_RESULTADO_ESPERADO}}
+{{PROBLEMA_OU_OPORTUNIDADE}}
+{{PUBLICO_E_CLIENTE_IDEAL}}
+{{OFERTA_PRODUTO_SERVICO}}
+{{DADOS_E_INDICADORES_DISPONIVEIS}}
+{{RECURSOS_ORCAMENTO_E_RESTRICOES}}
+{{PRAZO_E_PRIORIDADE}}
+{{ATIVOS_FERRAMENTAS_E_PROCESSOS_EXISTENTES}}
+{{DECISOES_JA_TOMADAS_E_PREFERENCIAS}}
+{{FONTES_DOCUMENTOS_E_REFERENCIAS_AUTORIZADAS}}
+{{FORMATO_DO_ENTREGAVEL}}
+{{RESPONSAVEL_PELA_VALIDACAO}}
+
+### PROTOCOLO DE DESCOBERTA
+1. Leia o contexto e separe fatos, relatos, hipóteses, estimativas e decisões.
+2. Resuma o cenário em até cinco linhas.
+3. Liste lacunas que alteram materialmente a qualidade. Faça no máximo cinco perguntas por rodada; aceite "não sei".
+4. Se houver dados suficientes, avance sem perguntas redundantes.
+5. Identifique dependências, riscos, conflitos e impactos nas outras áreas.
+6. Não trate correlação como causalidade nem opinião como evidência.
+
+### MÉTODO
+A. Diagnóstico: situação atual, evidências, causas prováveis, gargalos e maturidade.
+B. Direção: objetivo mensurável, escopo, prioridades e critérios de sucesso.
+C. Estratégia: alternativas, trade-offs, recursos, sequência e recomendação justificada.
+D. Construção: entregue material ou plano pronto para uso, com exemplos concretos.
+E. Validação: revise consistência, viabilidade, clareza, riscos e premissas.
+F. Continuidade: defina responsável, próxima ação, prazo, indicador e revisão.
+
+### PADRÃO DE EXCELÊNCIA
+- Adapte ao segmento, mercado, estágio e recursos reais.
+- Seja específico, claro, profundo e prático; elimine conselhos intercambiáveis.
+- Use números apenas quando fornecidos ou calculáveis; mostre fórmulas e premissas.
+- Apresente opções quando houver trade-offs e recomende uma com justificativa.
+- Transforme abstrações em ações, exemplos, modelos e decisões.
+- Não prometa resultados, integrações ou funcionalidades não verificadas.
+- Não duplique dados, cálculos ou funções dos aplicativos existentes.
+
+### FORMATO DA ENTREGA
+1. Síntese executiva e objetivo.
+2. Diagnóstico: fatos, lacunas e hipóteses separados.
+3. Estratégia recomendada e justificativa.
+4. Plano priorizado: ação, responsável, prazo e dependência.
+5. Entregável principal pronto para uso.
+6. Indicadores e critérios de aceite.
+7. Riscos, limites e validação humana.
+8. Próxima decisão mais importante.
+
+### SEGURANÇA E GOVERNANÇA
+Use apenas dados autorizados e necessários deste cliente/projeto; nunca misture clientes. Minimize dados pessoais. Não peça senhas, tokens ou credenciais. Não publique, envie, grave, altere sistemas ou execute transações sem autorização explícita. Não afirme ter consultado fontes que não consultou. Em temas jurídicos, tributários, contábeis, médicos, investimentos, crédito ou imigração, sinalize limites e exija validação profissional habilitada.
+
+### CONTROLE DE QUALIDADE
+Antes de entregar, revise aderência ao contexto, precisão, profundidade, aplicabilidade, clareza e completude. Dê nota de 0 a 10 para cada critério. Se algum ficar abaixo de 9, revise; não infle notas nem esconda limitações.
+
+### INÍCIO
+Identifique as variáveis já fornecidas. Pergunte apenas o indispensável. Execute a missão de "${c.title}" com padrão de consultoria sênior e entregue para validação do mentor.`;
+}
+function renderPromptDetail(id) {
+ const c=CAPABILITIES.find(x=>x.id===id); if(!c)return '<div class="pm-empty">Capacidade não encontrada.</div>';
+ return '<section class="pm-prompt-detail"><button class="pm-back" type="button" data-pm-back>← Voltar à matriz</button><div class="pm-prompt-kicker">PROMPT OPERACIONAL · '+esc(c.id)+'</div><h2>'+esc(c.title)+'</h2><p class="pm-prompt-intro">Modelo-base contextualizado. Preencha as variáveis entre chaves; a IA deve perguntar o que for essencial e não presumir dados.</p><div class="pm-prompt-meta"><span>'+esc(c.department)+'</span><span>'+esc(c.group)+'</span>'+phasePills(c.phases)+'</div><label class="pm-prompt-label" for="pmPromptText">Prompt completo e editável</label><textarea id="pmPromptText" spellcheck="false">'+esc(promptForCapability(c))+'</textarea><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-copy>Copiar prompt completo</button><span id="pmCopyStatus" role="status" aria-live="polite">Personalize as variáveis antes de usar.</span></div><div class="pm-prompt-quality"><strong>Critérios incorporados</strong><ul><li>Diagnóstico com evidências e contexto real.</li><li>Perguntas somente para lacunas relevantes.</li><li>Plano executável, prioridades e indicadores.</li><li>Revisão crítica, riscos e validação humana.</li><li>Privacidade e limites profissionais.</li></ul></div></section>';
+}
+\nexport function renderMasterPromptMap() {
   if (!isMentorSession()) return '<div class="view active"><p class="hero-line">Biblioteca</p><h2 class="hero-title">Prompts liberados</h2><p class="hero-sub">Nenhum prompt foi liberado para o mentorando nesta etapa. Roteiro interno do mentor não aparece aqui.</p></div>';
   const total = CAPABILITIES.length;
-  return '<div class="view active pm-view"><div class="pm-hero"><div class="pm-eyebrow">AKASHA HUB · INTELIGÊNCIA OPERACIONAL</div><h1>Mapa Mestre da Biblioteca de Prompts</h1><p>Uma matriz única para conectar capacidades do ecossistema, cinco fases da Arquitetura de Legado, aplicativos existentes e entregáveis. Esta etapa organiza a estrutura; os prompts serão criados depois, encaixados nesta matriz.</p><div class="pm-stats"><div><strong>10</strong><span>departamentos</span></div><div><strong>'+total+'</strong><span>capacidades catalogadas</span></div><div><strong>5</strong><span>fases conectadas</span></div><div><strong>0</strong><span>prompts inventados</span></div></div></div><div class="pm-principle"><strong>Princípio de construção</strong><p>O Catálogo de Capacidades define o que o ecossistema pode compreender, estruturar, desenvolver e coordenar. As cinco fases organizam a jornada do cliente. A Biblioteca conecta os dois, sem duplicar aplicativos, ferramentas ou processos.</p></div><div class="pm-tabs" role="tablist"><button type="button" class="pm-tab is-active" data-pm-tab="phases">Cinco fases</button><button type="button" class="pm-tab" data-pm-tab="departments">10 departamentos</button><button type="button" class="pm-tab" data-pm-tab="capabilities">Matriz de capacidades</button><button type="button" class="pm-tab" data-pm-tab="rules">Regras da biblioteca</button></div><div id="pmPanel" class="pm-panel"><div class="pm-phase-grid">'+renderPhaseCards()+'</div></div><div class="pm-footer-note">Matriz estrutural inicial · catálogo de origem preservado · sem gravação ou alteração de dados dos aplicativos nesta etapa.</div></div>';
+  return '<div class="view active pm-view"><div class="pm-hero"><div class="pm-eyebrow">AKASHA HUB · INTELIGÊNCIA OPERACIONAL</div><h1>Mapa Mestre da Biblioteca de Prompts</h1><p>Uma matriz única para conectar capacidades do ecossistema, cinco fases da Arquitetura de Legado, aplicativos existentes e entregáveis. Cada capacidade pode gerar um prompt operacional adaptado, com variáveis, método, critérios de qualidade e validação humana.</p><div class="pm-stats"><div><strong>10</strong><span>departamentos</span></div><div><strong>'+total+'</strong><span>capacidades catalogadas</span></div><div><strong>5</strong><span>fases conectadas</span></div><div><strong>160</strong><span>modelos-base geráveis</span></div></div></div><div class="pm-principle"><strong>Princípio de construção</strong><p>O Catálogo de Capacidades define o que o ecossistema pode compreender, estruturar, desenvolver e coordenar. As cinco fases organizam a jornada do cliente. A Biblioteca conecta os dois, sem duplicar aplicativos, ferramentas ou processos.</p></div><div class="pm-tabs" role="tablist"><button type="button" class="pm-tab is-active" data-pm-tab="phases">Cinco fases</button><button type="button" class="pm-tab" data-pm-tab="departments">10 departamentos</button><button type="button" class="pm-tab" data-pm-tab="capabilities">Matriz de capacidades</button><button type="button" class="pm-tab" data-pm-tab="rules">Regras da biblioteca</button></div><div id="pmPanel" class="pm-panel"><div class="pm-phase-grid">'+renderPhaseCards()+'</div></div><div class="pm-footer-note">Matriz estrutural inicial · catálogo de origem preservado · sem gravação ou alteração de dados dos aplicativos nesta etapa.</div></div>';
 }
 
 export function bindMasterPromptMap() {
@@ -189,6 +276,6 @@ export function bindMasterPromptMap() {
     if(tab){showTab(tab.dataset.pmTab);return;}
     const phase=e.target.closest("[data-pm-phase]");
     if(phase){panel.innerHTML=renderPhaseDetail(phase.dataset.pmPhase);return;}
-    if(e.target.closest("[data-pm-back]")){showTab("phases");return;}
+    if(e.target.closest("[data-pm-back]")){showTab("capabilities");return;}\n    const promptBtn=e.target.closest("[data-pm-prompt]");\n    if(promptBtn){panel.innerHTML=renderPromptDetail(promptBtn.dataset.pmPrompt);return;}\n    if(e.target.closest("[data-pm-copy]")){const area=panel.querySelector("#pmPromptText"),status=panel.querySelector("#pmCopyStatus");if(!area)return;area.select();if(navigator.clipboard?.writeText){navigator.clipboard.writeText(area.value).then(()=>status.textContent="Prompt copiado. Revise as variáveis antes de usar.").catch(()=>status.textContent="Selecione o texto e copie com Ctrl+C.");}else{status.textContent="Selecione o texto e copie com Ctrl+C.";}return;}
   });
 }
