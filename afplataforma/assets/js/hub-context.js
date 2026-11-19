@@ -11,6 +11,7 @@ import { contextFromSelection, nextHubContext } from "./hub-context-rules.js?v=e
 const KEY = "akasha.hub.context.v1";
 let authorized = null;
 let directory = new Map();
+let authorizedMenteesPromise = null;
 
 function actor() {
   return {
@@ -79,8 +80,24 @@ export async function loadAuthorizedMentees() {
   if (!isMentorSession()) {
     return setAuthorizedMentees([]);
   }
-  const rows = await getAllUsersForAf();
-  return setAuthorizedMentees(rows || []);
+  if (authorizedMenteesPromise) return authorizedMenteesPromise;
+
+  const requestedUid = session.uid;
+  const pending = (async () => {
+    try {
+      const rows = await getAllUsersForAf();
+      // Não aplicar uma resposta antiga caso o login tenha mudado durante a consulta.
+      if (session.uid !== requestedUid || !isMentorSession()) {
+        return ensureHubContext();
+      }
+      return setAuthorizedMentees(rows || []);
+    } finally {
+      if (authorizedMenteesPromise === pending) authorizedMenteesPromise = null;
+    }
+  })();
+
+  authorizedMenteesPromise = pending;
+  return pending;
 }
 
 export function ensureHubContext() {
