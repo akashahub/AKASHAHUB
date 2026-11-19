@@ -51,6 +51,42 @@ service cloud.firestore {
         && request.auth.token.email != null
         && exists(/databases/$(database)/documents/entitlements/$(request.auth.token.email));
     }
+
+    // CONTEXTO COMPARTILHADO DA BIBLIOTECA DE PROMPTS
+    // Titular AF aprovado e equipe AF podem ler ou editar o contexto.
+    function validProjectContextMap(ctx) {
+      return ctx is map
+        && ctx.keys().hasOnly([
+          "NOME_DO_CLIENTE_OU_EMPRESA", "SEGMENTO_E_MODELO_DE_NEGOCIO",
+          "PAIS_CIDADE_E_MERCADO", "ESTAGIO_ATUAL_E_HISTORICO",
+          "OBJETIVO_PRINCIPAL_E_RESULTADO_ESPERADO", "PROBLEMA_OU_OPORTUNIDADE",
+          "PUBLICO_E_CLIENTE_IDEAL", "OFERTA_PRODUTO_SERVICO",
+          "DADOS_E_INDICADORES_DISPONIVEIS", "RECURSOS_ORCAMENTO_E_RESTRICOES",
+          "PRAZO_E_PRIORIDADE", "ATIVOS_FERRAMENTAS_E_PROCESSOS_EXISTENTES",
+          "DECISOES_JA_TOMADAS_E_PREFERENCIAS", "FONTES_DOCUMENTOS_E_REFERENCIAS_AUTORIZADAS",
+          "FORMATO_DO_ENTREGAVEL", "RESPONSAVEL_PELA_VALIDACAO"
+        ])
+        && (!("NOME_DO_CLIENTE_OU_EMPRESA" in ctx) || (ctx.NOME_DO_CLIENTE_OU_EMPRESA is string && ctx.NOME_DO_CLIENTE_OU_EMPRESA.size() <= 5000))
+        && (!("SEGMENTO_E_MODELO_DE_NEGOCIO" in ctx) || (ctx.SEGMENTO_E_MODELO_DE_NEGOCIO is string && ctx.SEGMENTO_E_MODELO_DE_NEGOCIO.size() <= 5000))
+        && (!("PAIS_CIDADE_E_MERCADO" in ctx) || (ctx.PAIS_CIDADE_E_MERCADO is string && ctx.PAIS_CIDADE_E_MERCADO.size() <= 5000))
+        && (!("ESTAGIO_ATUAL_E_HISTORICO" in ctx) || (ctx.ESTAGIO_ATUAL_E_HISTORICO is string && ctx.ESTAGIO_ATUAL_E_HISTORICO.size() <= 5000))
+        && (!("OBJETIVO_PRINCIPAL_E_RESULTADO_ESPERADO" in ctx) || (ctx.OBJETIVO_PRINCIPAL_E_RESULTADO_ESPERADO is string && ctx.OBJETIVO_PRINCIPAL_E_RESULTADO_ESPERADO.size() <= 5000))
+        && (!("PROBLEMA_OU_OPORTUNIDADE" in ctx) || (ctx.PROBLEMA_OU_OPORTUNIDADE is string && ctx.PROBLEMA_OU_OPORTUNIDADE.size() <= 5000))
+        && (!("PUBLICO_E_CLIENTE_IDEAL" in ctx) || (ctx.PUBLICO_E_CLIENTE_IDEAL is string && ctx.PUBLICO_E_CLIENTE_IDEAL.size() <= 5000))
+        && (!("OFERTA_PRODUTO_SERVICO" in ctx) || (ctx.OFERTA_PRODUTO_SERVICO is string && ctx.OFERTA_PRODUTO_SERVICO.size() <= 5000))
+        && (!("DADOS_E_INDICADORES_DISPONIVEIS" in ctx) || (ctx.DADOS_E_INDICADORES_DISPONIVEIS is string && ctx.DADOS_E_INDICADORES_DISPONIVEIS.size() <= 5000))
+        && (!("RECURSOS_ORCAMENTO_E_RESTRICOES" in ctx) || (ctx.RECURSOS_ORCAMENTO_E_RESTRICOES is string && ctx.RECURSOS_ORCAMENTO_E_RESTRICOES.size() <= 5000))
+        && (!("PRAZO_E_PRIORIDADE" in ctx) || (ctx.PRAZO_E_PRIORIDADE is string && ctx.PRAZO_E_PRIORIDADE.size() <= 5000))
+        && (!("ATIVOS_FERRAMENTAS_E_PROCESSOS_EXISTENTES" in ctx) || (ctx.ATIVOS_FERRAMENTAS_E_PROCESSOS_EXISTENTES is string && ctx.ATIVOS_FERRAMENTAS_E_PROCESSOS_EXISTENTES.size() <= 5000))
+        && (!("DECISOES_JA_TOMADAS_E_PREFERENCIAS" in ctx) || (ctx.DECISOES_JA_TOMADAS_E_PREFERENCIAS is string && ctx.DECISOES_JA_TOMADAS_E_PREFERENCIAS.size() <= 5000))
+        && (!("FONTES_DOCUMENTOS_E_REFERENCIAS_AUTORIZADAS" in ctx) || (ctx.FONTES_DOCUMENTOS_E_REFERENCIAS_AUTORIZADAS is string && ctx.FONTES_DOCUMENTOS_E_REFERENCIAS_AUTORIZADAS.size() <= 5000))
+        && (!("FORMATO_DO_ENTREGAVEL" in ctx) || (ctx.FORMATO_DO_ENTREGAVEL is string && ctx.FORMATO_DO_ENTREGAVEL.size() <= 5000))
+        && (!("RESPONSAVEL_PELA_VALIDACAO" in ctx) || (ctx.RESPONSAVEL_PELA_VALIDACAO is string && ctx.RESPONSAVEL_PELA_VALIDACAO.size() <= 5000));
+    }
+    function canAccessProjectContext(uid) {
+      return request.auth != null && (isAfMentor() || (request.auth.uid == uid && hasAfAccess(uid)));
+    }
+
     // ============================================
     // LEGACY VAULT — COFRE DE LEGADO
     // Links compartilhados das bibliotecas do Drive
@@ -717,6 +753,22 @@ service cloud.firestore {
       allow read: if isAfMentor() || (request.auth != null && request.auth.token.email == email);
       allow create, update, delete: if isAfMentor();
     }
+
+    // CONTEXTO DO PROJETO — Biblioteca de Prompts
+    // Documento principal por UID; estrutura pronta para projetos adicionais.
+    match /afProjectContexts/{uid}/projects/{projectId} {
+      allow read: if canAccessProjectContext(uid);
+      allow create, update: if canAccessProjectContext(uid)
+        && request.resource.data.keys().hasOnly(["ownerUid", "context", "schemaVersion", "updatedBy", "updatedAt"])
+        && request.resource.data.ownerUid == uid
+        && request.resource.data.context is map
+        && validProjectContextMap(request.resource.data.context)
+        && request.resource.data.schemaVersion == 1
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+
     match /scriptHubContent/{scriptId} {
       allow read: if isAfMentor() || isScriptHubMember();
       allow create, update: if canEditScriptHub()
