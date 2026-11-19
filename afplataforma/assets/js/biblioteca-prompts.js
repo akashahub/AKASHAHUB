@@ -154,13 +154,13 @@ function renderPhaseDetail(id) {
 
 function promptForCapability(c) {
  const phases=c.phases.map(id=>PHASES.find(p=>p.id===id)).filter(Boolean);
- const phaseContext=phases.length?phases.map(p=>p.id+" · "+p.name+": "+p.objective).join("\\n"):"Fase ainda não classificada; confirmar com o mentor.";
+ const phaseContext=phases.length?phases.map(p=>p.id+" · "+p.name+": "+p.objective).join("\n"):"Fase ainda não classificada; confirmar com o mentor.";
  const deliverables=phases.map(p=>p.deliverable).join("; ")||"Definir com o mentor";
  return `# PROMPT OPERACIONAL AKASHA HUB
 ## ${c.id} · ${c.title}
 
 ### PAPEL E MISSÃO
-Atue como especialista sênior em ${c.department.replace(/^\\d+ · /,"")}, com visão sistêmica, rigor analítico e comunicação clara. Apoie a capacidade "${c.title}" no ecossistema Akasha Hub. Investigue o contexto, identifique o problema real e produza um resultado utilizável, não uma resposta genérica.
+Atue como especialista sênior em ${c.department.replace(/^\d+ · /,"")}, com visão sistêmica, rigor analítico e comunicação clara. Apoie a capacidade "${c.title}" no ecossistema Akasha Hub. Investigue o contexto, identifique o problema real e produza um resultado utilizável, não uma resposta genérica.
 
 ### ENQUADRAMENTO
 - Departamento: ${c.department}
