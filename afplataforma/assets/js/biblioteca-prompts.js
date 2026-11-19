@@ -1,5 +1,5 @@
 import { session, isMentorSession } from "./auth.js";
-import { activeHubContext } from "./hub-context.js?v=etapa4-1";
+import { activeHubContext, loadAuthorizedMentees } from "./hub-context.js?v=etapa4-1";
 import { db } from "../../firebase/firebase-config.js";
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { CATALOG } from "./catalogo-capacidades-data.js?v=20261110-1";
@@ -453,7 +453,20 @@ export function bindMasterPromptMap() {
   if (!root || root.dataset.pmBound === "1") return;
   root.dataset.pmBound = "1";
   const panel = root.querySelector("#pmPanel");
-  loadSharedContext(root);
+  if (isMentorSession()) {
+    // Confirma a lista de mentorandos antes de resolver o UID do contexto.
+    // Isso evita carregar o contexto do próprio mentor durante a inicialização assíncrona.
+    loadAuthorizedMentees()
+      .then(() => loadSharedContext(root))
+      .catch(error => {
+        console.error("[Biblioteca de Prompts] Falha ao confirmar mentorandos:", error);
+        sharedContextCloudState = "error";
+        const status = root.querySelector("#pmContextCloudStatus");
+        if (status) status.textContent = "Não consegui confirmar a lista de mentorandos. Atualize a página e tente novamente antes de editar.";
+      });
+  } else {
+    loadSharedContext(root);
+  }
   if (!isMentorSession()) {
     root.addEventListener("click",e=>{
       if(e.target.closest("[data-pm-open-context]")){openSharedContext(root);return;}
