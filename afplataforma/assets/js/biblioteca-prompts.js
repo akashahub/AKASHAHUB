@@ -1,6 +1,7 @@
 import { isMentorSession } from "./auth.js";
 import { CATALOG } from "./catalogo-capacidades-data.js?v=20261110-1";
 import { SPECIALIZED_PROMPTS, buildSpecializedPrompt } from "./biblioteca-prompts-especializados.js?v=global-recipes-20261119-1";
+import { readHubDossieSnapshot } from "./hub-dossie.js?v=dossier-prompt-context-20261119-v1";
 
 const PHASES = [
   {
@@ -258,9 +259,54 @@ Identifique as variáveis já fornecidas. Pergunte apenas o indispensável. Exec
 }
 function renderPromptDetail(id) {
  const c=CAPABILITIES.find(x=>x.id===id); if(!c)return '<div class="pm-empty">Capacidade não encontrada.</div>';
- return '<section class="pm-prompt-detail"><button class="pm-back" type="button" data-pm-back>← Voltar à matriz</button><div class="pm-prompt-kicker">PROMPT OPERACIONAL · '+esc(c.id)+'</div><h2>'+esc(c.title)+'</h2><p class="pm-prompt-intro">Modelo-base contextualizado. Consulte as variáveis compartilhadas antes de preencher e copiar. Nesta etapa, a lista é um guia; ainda não salva respostas automaticamente.</p><details class="pm-variable-guide" style="margin:12px 0;padding:12px;border:1px solid var(--line,#39342d);border-radius:10px"><summary style="cursor:pointer">Revisar as 16 variáveis do contexto</summary><p>Lista padrão usada pelos prompts:</p><ol><li><strong>nome do cliente ou empresa</strong> — Nome da pessoa, marca ou empresa atendida.</li><li><strong>segmento e modelo de negocio</strong> — Setor, atividade, como vende e como gera receita.</li><li><strong>pais cidade e mercado</strong> — País, cidade, região e mercado em que atua.</li><li><strong>estagio atual e historico</strong> — Momento atual, trajetória e acontecimentos relevantes.</li><li><strong>objetivo principal e resultado esperado</strong> — O que deseja alcançar e como reconhecer o resultado.</li><li><strong>problema ou oportunidade</strong> — Desafio central ou oportunidade que deseja aproveitar.</li><li><strong>publico e cliente ideal</strong> — Pessoas ou empresas que deseja atender.</li><li><strong>oferta produto servico</strong> — Produtos, serviços, pacotes, preços e diferenciais conhecidos.</li><li><strong>dados e indicadores disponiveis</strong> — Números e indicadores já registrados nas ferramentas.</li><li><strong>recursos orcamento e restricoes</strong> — Equipe, tempo, orçamento, limites e recursos disponíveis.</li><li><strong>prazo e prioridade</strong> — Prazo desejado e nível de prioridade.</li><li><strong>ativos ferramentas e processos existentes</strong> — Sites, sistemas, canais, ferramentas e processos já utilizados.</li><li><strong>decisoes ja tomadas e preferencias</strong> — Decisões confirmadas, preferências e coisas que não devem mudar.</li><li><strong>fontes documentos e referencias autorizadas</strong> — Links e documentos que podem ser consultados.</li><li><strong>formato do entregavel</strong> — Formato esperado: diagnóstico, plano, roteiro, tabela, código etc.</li><li><strong>responsavel pela validacao</strong> — Pessoa que revisa e aprova o resultado.</li></ol><button type="button" class="pm-copy-prompt" data-pm-copy-vars>Copiar lista de variáveis</button><span id="pmVariableCopyStatus" role="status" aria-live="polite"></span></details><div class="pm-prompt-meta"><span>'+esc(c.department)+'</span><span>'+esc(c.group)+'</span>'+phasePills(c.phases)+'</div><label class="pm-prompt-label" for="pmPromptText">Prompt completo e editável</label><textarea id="pmPromptText" spellcheck="false">'+esc(promptForCapability(c))+'</textarea><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-copy>Copiar prompt completo</button><span id="pmCopyStatus" role="status" aria-live="polite">Personalize as variáveis antes de usar.</span></div><div class="pm-prompt-quality"><strong>Critérios incorporados</strong><ul><li>Diagnóstico com evidências e contexto real.</li><li>Perguntas somente para lacunas relevantes.</li><li>Plano executável, prioridades e indicadores.</li><li>Revisão crítica, riscos e validação humana.</li><li>Privacidade e limites profissionais.</li></ul></div></section>';
+ return '<section class="pm-prompt-detail"><button class="pm-back" type="button" data-pm-back>← Voltar à matriz</button><div class="pm-prompt-kicker">PROMPT OPERACIONAL · '+esc(c.id)+'</div><h2>'+esc(c.title)+'</h2><p class="pm-prompt-intro">Modelo-base contextualizado. Consulte as variáveis compartilhadas antes de preencher e copiar. Nesta etapa, a lista é um guia; ainda não salva respostas automaticamente.</p><details class="pm-variable-guide" style="margin:12px 0;padding:12px;border:1px solid var(--line,#39342d);border-radius:10px"><summary style="cursor:pointer">Revisar as 16 variáveis do contexto</summary><p>Lista padrão usada pelos prompts:</p><ol><li><strong>nome do cliente ou empresa</strong> — Nome da pessoa, marca ou empresa atendida.</li><li><strong>segmento e modelo de negocio</strong> — Setor, atividade, como vende e como gera receita.</li><li><strong>pais cidade e mercado</strong> — País, cidade, região e mercado em que atua.</li><li><strong>estagio atual e historico</strong> — Momento atual, trajetória e acontecimentos relevantes.</li><li><strong>objetivo principal e resultado esperado</strong> — O que deseja alcançar e como reconhecer o resultado.</li><li><strong>problema ou oportunidade</strong> — Desafio central ou oportunidade que deseja aproveitar.</li><li><strong>publico e cliente ideal</strong> — Pessoas ou empresas que deseja atender.</li><li><strong>oferta produto servico</strong> — Produtos, serviços, pacotes, preços e diferenciais conhecidos.</li><li><strong>dados e indicadores disponiveis</strong> — Números e indicadores já registrados nas ferramentas.</li><li><strong>recursos orcamento e restricoes</strong> — Equipe, tempo, orçamento, limites e recursos disponíveis.</li><li><strong>prazo e prioridade</strong> — Prazo desejado e nível de prioridade.</li><li><strong>ativos ferramentas e processos existentes</strong> — Sites, sistemas, canais, ferramentas e processos já utilizados.</li><li><strong>decisoes ja tomadas e preferencias</strong> — Decisões confirmadas, preferências e coisas que não devem mudar.</li><li><strong>fontes documentos e referencias autorizadas</strong> — Links e documentos que podem ser consultados.</li><li><strong>formato do entregavel</strong> — Formato esperado: diagnóstico, plano, roteiro, tabela, código etc.</li><li><strong>responsavel pela validacao</strong> — Pessoa que revisa e aprova o resultado.</li></ol><button type="button" class="pm-copy-prompt" data-pm-copy-vars>Copiar lista de variáveis</button><span id="pmVariableCopyStatus" role="status" aria-live="polite"></span></details><div class="pm-prompt-meta"><span>'+esc(c.department)+'</span><span>'+esc(c.group)+'</span>'+phasePills(c.phases)+'</div><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-load-dossier>Carregar contexto do Dossiê</button><span id="pmDossierStatus" role="status" aria-live="polite">Lê as respostas já salvas do cliente selecionado e mostra as fontes.</span></div><label class="pm-prompt-label" for="pmPromptText">Prompt completo e editável</label><textarea id="pmPromptText" spellcheck="false">'+esc(promptForCapability(c))+'</textarea><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-copy>Copiar prompt completo</button><span id="pmCopyStatus" role="status" aria-live="polite">Personalize as variáveis antes de usar.</span></div><div class="pm-prompt-quality"><strong>Critérios incorporados</strong><ul><li>Diagnóstico com evidências e contexto real.</li><li>Perguntas somente para lacunas relevantes.</li><li>Plano executável, prioridades e indicadores.</li><li>Revisão crítica, riscos e validação humana.</li><li>Privacidade e limites profissionais.</li></ul></div></section>';
 }
 
+
+
+function dossierSnapshotText(snapshot) {
+  const blocks = snapshot.blocks || [];
+  const filled = blocks.filter(b=>b.status==="cheio");
+  const empty = blocks.filter(b=>b.status==="vazio");
+  const blocked = blocks.filter(b=>b.status==="bloqueado" || b.status==="erro");
+  const lines = [
+    "### CONTEXTO LIDO DO DOSSIÊ DO AKASHA HUB",
+    "Cliente selecionado: "+(snapshot.person || "não identificado"),
+    "Origem: ferramentas cadastradas nas cinco fases. Leitura somente; nenhum dado foi alterado.",
+    "Resumo: "+filled.length+" fontes com respostas; "+empty.length+" sem respostas; "+blocked.length+" sem leitura disponível.",
+    "Use os campos abaixo como fontes de contexto. Preserve o nome da ferramenta e não trate ausência de resposta como resposta negativa.",
+    ""
+  ];
+  for(const b of blocks){
+    lines.push("FONTE · "+b.phase+" · "+b.title);
+    if(b.status==="vazio") lines.push("Sem respostas registradas nesta ferramenta.");
+    else if(b.status==="bloqueado") lines.push("Leitura bloqueada pelas permissões atuais.");
+    else if(b.status==="erro") lines.push("Falha ao ler esta fonte nesta tentativa.");
+    else for(const field of b.fields) lines.push(field.key+": "+field.text);
+    lines.push("");
+  }
+  lines.push("### LACUNAS DE CONTEXTO IDENTIFICADAS");
+  if(empty.length) lines.push("Ferramentas sem respostas: "+empty.map(b=>b.title).join(", "));
+  if(blocked.length) lines.push("Fontes sem leitura: "+blocked.map(b=>b.title+" ("+b.status+")").join(", "));
+  if(!empty.length && !blocked.length) lines.push("Nenhuma ferramenta sem leitura foi identificada; isso não significa que todos os dados necessários à tarefa estejam preenchidos.");
+  lines.push("Antes de concluir, identifique quais dados específicos da tarefa continuam ausentes e pergunte somente o indispensável.");
+  return lines.join("\n");
+}
+async function attachDossierContext(area, status) {
+  if(!area) return;
+  if(status) status.textContent="Lendo as ferramentas do Dossiê do cliente selecionado…";
+  try {
+    const snapshot=await readHubDossieSnapshot();
+    if(!snapshot.ok){ if(status) status.textContent="Não encontrei um cliente selecionado ou uma sessão válida para ler o Dossiê."; return; }
+    const marker="### CONTEXTO LIDO DO DOSSIÊ DO AKASHA HUB";
+    const clean=area.value.split(marker)[0].trimEnd();
+    area.value=clean+"\n\n"+dossierSnapshotText(snapshot);
+    if(status) status.textContent="Contexto anexado: "+snapshot.blocks.filter(b=>b.status==="cheio").length+" fontes com respostas. Confira as fontes e lacunas antes de copiar.";
+  } catch(error) {
+    console.error("[Biblioteca de Prompts] Falha ao ler o Dossiê:",error);
+    if(status) status.textContent="Não consegui ler o Dossiê. Verifique a seleção do cliente e as permissões das ferramentas.";
+  }
+}
 
 function renderSpecializedRows(items) {
   if (!items.length) return '<div class="pm-empty">Nenhum prompt corresponde aos filtros.</div>';
@@ -273,7 +319,7 @@ function renderSpecializedIndex() {
 function renderSpecializedDetail(id) {
   const item=SPECIALIZED_PROMPTS.find(x=>x.id===id);
   if(!item) return '<div class="pm-empty">Prompt especializado não encontrado.</div>';
-  return '<section class="pm-prompt-detail"><button class="pm-back" type="button" data-pm-back-special>← Voltar aos prompts especializados</button><div class="pm-prompt-kicker">RECEITA ESPECIALIZADA · '+esc(item.id)+'</div><h2>'+esc(item.title)+'</h2><p class="pm-prompt-intro">'+esc(item.mission)+'</p><div class="pm-prompt-meta"><span>'+esc(item.category)+'</span><span>Fase '+esc(item.phase)+'</span><span>'+esc(item.keywords)+'</span></div><label class="pm-prompt-label" for="pmSpecialPromptText">Prompt completo e editável</label><textarea id="pmSpecialPromptText" spellcheck="false">'+esc(buildSpecializedPrompt(item))+'</textarea><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-copy-special>Copiar prompt completo</button><span id="pmSpecialCopyStatus" role="status" aria-live="polite">Revise o contexto e personalize o que estiver entre chaves antes de usar.</span></div><div class="pm-prompt-quality"><strong>Como usar</strong><ul><li>O mentor conduz e valida o projeto.</li><li>O prompt reaproveita as variáveis gerais e pede apenas entradas específicas que faltarem.</li><li>O resultado deve ser revisado antes de virar entregável oficial.</li><li>As ferramentas relacionadas são sugestões de apoio; integração automática não é presumida.</li></ul></div></section>';
+  return '<section class="pm-prompt-detail"><button class="pm-back" type="button" data-pm-back-special>← Voltar aos prompts especializados</button><div class="pm-prompt-kicker">RECEITA ESPECIALIZADA · '+esc(item.id)+'</div><h2>'+esc(item.title)+'</h2><p class="pm-prompt-intro">'+esc(item.mission)+'</p><div class="pm-prompt-meta"><span>'+esc(item.category)+'</span><span>Fase '+esc(item.phase)+'</span><span>'+esc(item.keywords)+'</span></div><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-load-dossier-special>Carregar contexto do Dossiê</button><span id="pmSpecialDossierStatus" role="status" aria-live="polite">Lê as respostas já salvas do cliente selecionado e mostra as fontes.</span></div><label class="pm-prompt-label" for="pmSpecialPromptText">Prompt completo e editável</label><textarea id="pmSpecialPromptText" spellcheck="false">'+esc(buildSpecializedPrompt(item))+'</textarea><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-copy-special>Copiar prompt completo</button><span id="pmSpecialCopyStatus" role="status" aria-live="polite">Revise o contexto e personalize o que estiver entre chaves antes de usar.</span></div><div class="pm-prompt-quality"><strong>Como usar</strong><ul><li>O mentor conduz e valida o projeto.</li><li>O prompt reaproveita as variáveis gerais e pede apenas entradas específicas que faltarem.</li><li>O resultado deve ser revisado antes de virar entregável oficial.</li><li>As ferramentas relacionadas são sugestões de apoio; integração automática não é presumida.</li></ul></div></section>';
 }
 
 export function renderMasterPromptMap() {
@@ -322,6 +368,8 @@ export function bindMasterPromptMap() {
     if(e.target.closest("[data-pm-back-special]")){showTab("specialized");return;}
     const specialized=e.target.closest("[data-pm-specialized]");
     if(specialized){panel.innerHTML=renderSpecializedDetail(specialized.dataset.pmSpecialized);return;}
+    if(e.target.closest("[data-pm-load-dossier-special]")){attachDossierContext(panel.querySelector("#pmSpecialPromptText"),panel.querySelector("#pmSpecialDossierStatus"));return;}
+    if(e.target.closest("[data-pm-load-dossier]")){attachDossierContext(panel.querySelector("#pmPromptText"),panel.querySelector("#pmDossierStatus"));return;}
     if(e.target.closest("[data-pm-copy-special]")){const area=panel.querySelector("#pmSpecialPromptText"),status=panel.querySelector("#pmSpecialCopyStatus");if(area)copyText(area.value,status);return;}
     const phase=e.target.closest("[data-pm-phase]");
     if(phase){panel.innerHTML=renderPhaseDetail(phase.dataset.pmPhase);return;}
