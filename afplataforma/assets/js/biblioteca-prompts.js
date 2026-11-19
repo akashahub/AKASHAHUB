@@ -164,8 +164,10 @@ function refreshOpenPrompt(root) {
 async function loadSharedContext(root) {
   const uid=selectedContextUid();
   const status=root.querySelector("#pmContextCloudStatus");
+  PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT[key]="";});
   if(!uid || session.mode!=="firebase") {
     sharedContextCloudState="unavailable";
+    refreshOpenPrompt(root);
     if(status) status.textContent="Entre com a conta da plataforma para carregar o contexto salvo.";
     return;
   }
@@ -190,6 +192,7 @@ async function loadSharedContext(root) {
   } catch(error) {
     console.error("[Biblioteca de Prompts] Falha ao carregar contexto:",error);
     sharedContextCloudState="error";
+    refreshOpenPrompt(root);
     if(status) status.textContent="Não consegui carregar o contexto. Confira o acesso e tente novamente.";
   }
 }
