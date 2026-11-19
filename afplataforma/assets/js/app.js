@@ -78,7 +78,7 @@ import {
   renderHubConfig
 } from "./hub-shell.js?v=rollback-pre-intel-20261118";
 import { bindHubDossie } from "./hub-dossie.js?v=dossier-prompt-context-20261119-v1";
-import { renderMasterPromptMap, bindMasterPromptMap } from "./biblioteca-prompts.js?v=shared-context-20261119-v1";
+import { renderMasterPromptMap, bindMasterPromptMap } from "./biblioteca-prompts.js?v=cloud-context-20261119-v1";
 import { renderVisionStudio, bindVisionStudio } from "./vision-studio.js?v=1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
