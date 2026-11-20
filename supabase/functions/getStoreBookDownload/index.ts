@@ -39,13 +39,14 @@ Deno.serve(async(req:Request)=>{
   const path="arquitetura-legado/"+sku+".pdf";
   const signed=await fetch(supabaseUrl+"/storage/v1/object/sign/livros/"+path,{
    method:"POST",headers:{apikey:serviceKey,Authorization:"Bearer "+serviceKey,"Content-Type":"application/json"},
-   body:JSON.stringify({expiresIn:300,download:book.filename})
+   body:JSON.stringify({expiresIn:300})
   });
   if(signed.ok){
    const data=await signed.json();
    const raw=String(data.signedURL||data.signedUrl||"");
    if(raw){
-    const url=raw.startsWith("http")?raw:(supabaseUrl+"/storage/v1"+(raw.startsWith("/")?raw:"/"+raw));
+    const baseUrl=raw.startsWith("http")?raw:(supabaseUrl+"/storage/v1"+(raw.startsWith("/")?raw:"/"+raw));
+    const url=baseUrl+(baseUrl.includes("?")?"&":"?")+"download="+encodeURIComponent(book.filename);
     return Response.json({name:book.name,url,filename:book.filename,delivery:"private_signed_url"},{headers:{...cors,"Cache-Control":"no-store"}});
    }
   }else if(signed.status!==400&&signed.status!==404){
