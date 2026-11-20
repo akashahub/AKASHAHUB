@@ -21,6 +21,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { startAkashaTracking } from "/shared-tools/akasha-telemetry.js";
 import { getFirestore,collection,getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",authDomain:"hub-akasha.firebaseapp.com",projectId:"hub-akasha",storageBucket:"hub-akasha.firebasestorage.app",messagingSenderId:"370851875474",appId:"1:370851875474:web:29b1ba3a76b0fed7d9344b"});
 const auth=getAuth(app), db=getFirestore(app), endpoint="https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/ah-user-intelligence-admin";
@@ -63,6 +64,6 @@ async function showUser(uid){
   d.scrollIntoView({behavior:"smooth",block:"start"});
  }catch(e){$("detailSummary").textContent="Erro: "+e.message}
 }
-onAuthStateChanged(auth,user=>{if(!user){location.href="/login/";return}if(user.uid!=="1GO7dRdFUFg2NwYwzOwjvtWfpAS2"){document.body.innerHTML='<main style="padding:15vh 24px;text-align:center"><h1>Acesso restrito</h1><a href="/dashboard/">Voltar</a></main>';return}load()});
+onAuthStateChanged(auth,user=>{if(!user){location.href="/login/";return}if(user.uid!=="1GO7dRdFUFg2NwYwzOwjvtWfpAS2"){document.body.innerHTML='<main style="padding:15vh 24px;text-align:center"><h1>Acesso restrito</h1><a href="/dashboard/">Voltar</a></main>';return}startAkashaTracking(user);load()});
 $("refresh").addEventListener("click",load);$("search").addEventListener("input",render);
 </script></body></html>
