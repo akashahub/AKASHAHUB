@@ -39,6 +39,7 @@
     h1 span{color:var(--gold-light);}
     .sub{font-size:.6rem;letter-spacing:5px;text-transform:uppercase;
       color:var(--gold);opacity:.7;margin-bottom:40px;}
+    .auth-note{max-width:320px;margin:-24px 0 24px;color:var(--muted);font-size:.68rem;line-height:1.6;text-align:center;letter-spacing:.5px;}
 
     .tabs{display:flex;width:100%;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:32px;}
     .tab{flex:1;padding:12px;text-align:center;font-size:.65rem;letter-spacing:4px;
@@ -98,6 +99,7 @@
   </div>
   <h1>AK<span>A</span>SHA <span>HUB</span></h1>
   <p class="sub">Portal da Essência</p>
+  <p class="auth-note">Para vincular compras feitas antes do cadastro, confirme o mesmo e-mail usado no pagamento. O login com Google já utiliza um e-mail verificado.</p>
 
   <div class="tabs">
     <div class="tab active" data-tab="login">Entrar</div>
@@ -256,6 +258,7 @@
       document.getElementById('cadSenha').value);
     await updateProfile(r.user, { displayName: nome });
     await sendEmailVerification(r.user);
+    await setDoc(doc(db, "users", r.user.uid), { nome, email: r.user.email }, { merge: true });
     await ensureUser({ ...r.user, displayName: nome });
   });
 
