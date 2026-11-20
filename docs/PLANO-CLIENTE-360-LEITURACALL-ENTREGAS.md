@@ -139,3 +139,18 @@ Só considerar concluído quando um pagamento de teste gerar registro único no 
 - As regras atuais do Firestore já possuem `isAfMentor()`, `users/{uid}`, `leituras/{uid}` e coleções de gestão do mentor. Para registros oficiais de LeituraCall, adicionar regras específicas e restritivas; não reutilizar coleções de chamadas de vídeo ou regras públicas.
 - O webhook atual já usa o serviço de e-mail Resend para outros produtos, mas a disponibilidade das variáveis de envio deve ser verificada no ambiente da Edge Function sem expor seus valores.
 - O Advisor do Supabase reportou tabelas com RLS habilitado e sem policies (incluindo `purchases`, `store_purchase_events` e `akasha_customers`), além de avisos sobre uma função SECURITY DEFINER pública e proteção contra senhas vazadas desativada. Não abrir policies amplas para resolver isso; revisar a intenção e manter as tabelas financeiras acessíveis somente pelo backend quando esse for o desenho correto.
+
+
+
+## 12. Implementação inicial da Central LeituraCall — 20/11/2026
+
+- Criada a rota `/leituracall/registros/` com acesso restrito ao UID administrador e aos quatro e-mails já reconhecidos por `isAfMentor()`.
+- A tela carrega perfis da coleção existente `users` e permite vincular cada registro ao UID, sem criar cadastro paralelo.
+- Formulário inicial registra tipo, data, status, origem, contexto, objetivos, observações privadas do mentor, síntese, direcionamentos, próximos passos e data de retorno.
+- Registros oficiais são gravados na nova coleção Firestore `leituracallRecords`; a interface não expõe esses registros aos clientes.
+- A Central do Funil é aberta em modal por iframe, reutilizando a rota existente. O Mapa de Alinhamento é aberto pela rota já existente.
+- Adicionado atalho para a Central LeituraCall no cabeçalho de `/admin/perfis/`.
+- Adicionada regra de Firestore para que somente `isAfMentor()` possa ler ou escrever `leituracallRecords`.
+- **Atenção:** a regra foi atualizada no arquivo versionado `afplataforma/firestore.rules`, mas ainda precisa ser publicada no Firebase Console/deploy de regras antes que a nova tela consiga ler e gravar. A publicação não foi executada nesta etapa.
+- **Ainda não implementado:** sincronização automática do histórico no detalhe do perfil, cópia pessoal do cliente, compartilhamento seletivo de materiais e integração dos dados do Mapa de Alinhamento com o registro. A primeira versão apenas oferece link para a ferramenta atual, preservando sua implementação.
+- **Validação pendente:** login de mentor, leitura de perfis, criação/edição de registros e isolamento de acesso precisam ser testados após publicar as regras.
