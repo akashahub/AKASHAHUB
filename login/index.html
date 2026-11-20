@@ -143,7 +143,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, signInWithPopup, signInWithEmailAndPassword,
-    createUserWithEmailAndPassword, GoogleAuthProvider, updateProfile,
+    createUserWithEmailAndPassword, GoogleAuthProvider, updateProfile, sendEmailVerification,
     onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -166,8 +166,34 @@
     return n;
   }
 
-  onAuthStateChanged(auth, user => {
-    if (user) window.location.href = safeNext();
+  async function reconcileStorePurchases(user) {
+    if (!user || !user.emailVerified) return;
+    const token = await user.getIdToken(true);
+    const response = await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/storeAccount", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+      body: JSON.stringify({ action: "claim" })
+    });
+    if (!response.ok) {
+      const detail = await response.json().catch(() => ({}));
+      console.warn("[Akasha Store] Reconciliação pendente:", detail.error || response.status);
+      return;
+    }
+    const result = await response.json();
+    if (result.claimed > 0) console.info("[Akasha Store] Compras vinculadas à conta:", result.claimed);
+  }
+
+  let authRedirecting = false;
+  onAuthStateChanged(auth, async user => {
+    if (!user || authRedirecting) return;
+    authRedirecting = true;
+    try {
+      await ensureUser(user);
+      await reconcileStorePurchases(user);
+    } catch (e) {
+      console.warn("[Akasha Store] Não foi possível concluir a reconciliação agora.", e);
+    }
+    window.location.href = safeNext();
   });
 
   async function ensureUser(user) {
@@ -211,7 +237,7 @@
 
   async function run(fn) {
     hideErr(); setLoad(true);
-    try { await fn(); window.location.href = safeNext(); }
+    try { await fn(); }
     catch(e) { showErr(ERROS[e.code] || 'Ocorreu um erro. Tente novamente.'); }
     finally { setLoad(false); }
   }
@@ -229,6 +255,7 @@
       document.getElementById('cadEmail').value.trim(),
       document.getElementById('cadSenha').value);
     await updateProfile(r.user, { displayName: nome });
+    await sendEmailVerification(r.user);
     await ensureUser({ ...r.user, displayName: nome });
   });
 
