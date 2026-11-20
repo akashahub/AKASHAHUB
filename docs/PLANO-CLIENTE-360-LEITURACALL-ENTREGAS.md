@@ -126,3 +126,16 @@ Se a pessoa não tiver um livro, o card permanece visível como recomendação d
 ## 10. Critério de conclusão
 
 Só considerar concluído quando um pagamento de teste gerar registro único no perfil certo, enviar o PDF para o e-mail do checkout, liberar o livro à conta autenticada correta, mostrar o histórico no painel do mentor e no dashboard do cliente, e impedir que outro cliente acesse esses dados. O sistema deve passar pelos testes de segurança e regressão sem quebrar fluxos existentes.
+
+
+## 11. Complemento da auditoria técnica — 20/11/2026
+
+- O projeto Supabase já possui o bucket `livros`, configurado como **privado**. Ele contém PDFs de produtos anteriores, mas não contém os quatro arquivos novos da coleção Arquitetura de Legado.
+- `store_purchase_events` possui chave primária em `session_id`, adequada como base de idempotência por sessão. A tabela está com RLS ativado e sem políticas; o acesso atual é compatível com operações server-side via service role, não com consulta direta pelo navegador.
+- `purchases` tem campos genéricos e não possui constraint única identificada para `payment_id`; não usar essa tabela como única barreira contra eventos duplicados.
+- `akasha_customers.email` é único, mas não contém UID Firebase na estrutura atual; não assumir que já está sincronizada com `users/{uid}`.
+- A tela `/admin/perfis/` lista apenas a coleção Firestore `users`; ainda não agrega compras nem registros de calls.
+- O dashboard atual é uma página de comunidade/posts e ainda não contém a navegação de biblioteca, leituras, sessão de alinhamento, QuiteI e Cashflow descrita neste plano.
+- As regras atuais do Firestore já possuem `isAfMentor()`, `users/{uid}`, `leituras/{uid}` e coleções de gestão do mentor. Para registros oficiais de LeituraCall, adicionar regras específicas e restritivas; não reutilizar coleções de chamadas de vídeo ou regras públicas.
+- O webhook atual já usa o serviço de e-mail Resend para outros produtos, mas a disponibilidade das variáveis de envio deve ser verificada no ambiente da Edge Function sem expor seus valores.
+- O Advisor do Supabase reportou tabelas com RLS habilitado e sem policies (incluindo `purchases`, `store_purchase_events` e `akasha_customers`), além de avisos sobre uma função SECURITY DEFINER pública e proteção contra senhas vazadas desativada. Não abrir policies amplas para resolver isso; revisar a intenção e manter as tabelas financeiras acessíveis somente pelo backend quando esse for o desenho correto.
