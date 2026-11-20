@@ -21,8 +21,9 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore,collection,getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",authDomain:"hub-akasha.firebaseapp.com",projectId:"hub-akasha",storageBucket:"hub-akasha.firebasestorage.app",messagingSenderId:"370851875474",appId:"1:370851875474:web:29b1ba3a76b0fed7d9344b"});
-const auth=getAuth(app), endpoint="https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/ah-user-intelligence-admin";
+const auth=getAuth(app), db=getFirestore(app), endpoint="https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/ah-user-intelligence-admin";
 const $=id=>document.getElementById(id);let overview=null,users=[];
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const date=v=>v?new Date(v):null, fmt=v=>date(v)?.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})||"—";
@@ -38,19 +39,24 @@ async function load(){
  status("Carregando sessões e atividades…");$("rows").innerHTML='<tr><td colspan="6" class="empty">Atualizando…</td></tr>';
  try{
   overview=await api({action:"overview"});const sessions=overview.sessions||[],activity=overview.activity||[],directory=overview.directory||[];
-  const map=new Map();for(const s of sessions){if(!map.has(s.firebase_uid))map.set(s.firebase_uid,{uid:s.firebase_uid,sessions:0,views:0,last:s.last_seen_at,path:s.current_path,name:"",email:""});const u=map.get(s.firebase_uid);u.sessions++;if(new Date(s.last_seen_at||0)>new Date(u.last||0)){u.last=s.last_seen_at;u.path=s.current_path}}
-  for(const a of activity){const u=map.get(a.firebase_uid)||{uid:a.firebase_uid,sessions:0,views:0,last:a.occurred_at,path:a.page_path};if(a.event_type==="page_view")u.views++;if(new Date(a.occurred_at||0)>new Date(u.last||0)){u.last=a.occurred_at;u.path=a.page_path}map.set(a.firebase_uid,u)}
-  for(const d of directory){const u=map.get(d.firebase_uid);if(u){u.name=d.display_name||"";u.email=d.email||""}}
+  const map=new Map();for(const s of sessions){if(!map.has(s.firebase_uid))map.set(s.firebase_uid,{uid:s.firebase_uid,sessions:0,views:0,last:s.last_seen_at,path:s.current_path,name:"",email:"",profile:{}});const u=map.get(s.firebase_uid);u.sessions++;if(new Date(s.last_seen_at||0)>new Date(u.last||0)){u.last=s.last_seen_at;u.path=s.current_path}}
+  for(const a of activity){const u=map.get(a.firebase_uid)||{uid:a.firebase_uid,sessions:0,views:0,last:a.occurred_at,path:a.page_path,name:"",email:"",profile:{}};if(a.event_type==="page_view")u.views++;if(new Date(a.occurred_at||0)>new Date(u.last||0)){u.last=a.occurred_at;u.path=a.page_path}map.set(a.firebase_uid,u)}
+  for(const d of directory){const u=map.get(d.firebase_uid)||{uid:d.firebase_uid,sessions:0,views:0,last:d.last_sign_in_at,path:"",name:"",email:"",profile:{}};u.name=d.display_name||u.name;u.email=d.email||u.email;u.photo=d.photo_url||"";u.profile={...u.profile,...d};map.set(d.firebase_uid,u)}
+  let firestoreCount=0;
+  try {
+    const profileSnap=await getDocs(collection(db,"users"));firestoreCount=profileSnap.size;
+    for(const docSnap of profileSnap.docs){const profile=docSnap.data()||{},uid=docSnap.id;const u=map.get(uid)||{uid,sessions:0,views:0,last:profile.lastLoginAt?.toDate?.()?.toISOString?.()||null,path:"",name:"",email:"",profile:{}};u.profile={...u.profile,...profile};u.name=profile.nome||profile.displayName||u.name;u.email=profile.email||u.email;u.photo=profile.fotoUrl||u.photo;map.set(uid,u)}
+  } catch(firestoreError) { console.warn("[Akasha Intelligence] Perfis Firestore indisponíveis:",firestoreError?.message||firestoreError); }
   users=[...map.values()];$("users").textContent=users.length;$("sessions").textContent=sessions.length;$("views").textContent=activity.filter(a=>a.event_type==="page_view").length;$("online").textContent=sessions.filter(s=>!s.ended_at&&Date.now()-new Date(s.last_seen_at).getTime()<180000).length;
-  render();status("Atualizado · "+new Date().toLocaleString("pt-BR")+" · "+activity.length+" eventos consultados.");
+  render();status("Atualizado · "+new Date().toLocaleString("pt-BR")+" · "+firestoreCount+" perfis Firestore · "+activity.length+" eventos de atividade.");
  }catch(e){status("Erro ao carregar: "+e.message,true);$("rows").innerHTML='<tr><td colspan="6" class="empty">Não foi possível carregar os dados.</td></tr>'}
 }
 async function showUser(uid){
  const d=$("detail");d.classList.add("open");$("detailTitle").textContent="Atividade do usuário · "+uid;$("detailSummary").innerHTML="Carregando…";$("timeline").innerHTML="";$("purchases").textContent="Carregando…";$("deviceSessions").textContent="Carregando…";
  try{
-  const data=await api({action:"user",uid}),dir=data.directory||{},acts=data.activity||[],sessions=data.sessions||[],purchases=data.purchases||[];
+  const data=await api({action:"user",uid}),dir={...(users.find(u=>u.uid===uid)?.profile||{}),...(data.directory||{})},acts=data.activity||[],sessions=data.sessions||[],purchases=data.purchases||[];
   $("detailTitle").textContent=dir.display_name||dir.email||("Usuário · "+uid);
-  $("detailSummary").innerHTML='<div class="detail-box"><b>UID Firebase</b>'+safe(uid)+'</div><div class="detail-box"><b>E-mail</b>'+safe(dir.email||"Não sincronizado")+'</div><div class="detail-box"><b>Cadastro no diretório</b>'+fmt(dir.created_at)+'</div><div class="detail-box"><b>Último login no diretório</b>'+fmt(dir.last_sign_in_at)+'</div><div class="detail-box"><b>Eventos registrados</b>'+acts.length+'</div><div class="detail-box"><b>Sessões registradas</b>'+sessions.length+'</div>';
+  $("detailSummary").innerHTML='<div class="detail-box"><b>UID Firebase</b>'+safe(uid)+'</div><div class="detail-box"><b>E-mail</b>'+safe(dir.email||users.find(u=>u.uid===uid)?.email||"Não sincronizado")+'</div><div class="detail-box"><b>Cadastro no diretório</b>'+fmt(dir.created_at)+'</div><div class="detail-box"><b>Último login no diretório</b>'+fmt(dir.last_sign_in_at)+'</div><div class="detail-box"><b>Eventos registrados</b>'+acts.length+'</div><div class="detail-box"><b>Sessões registradas</b>'+sessions.length+'</div>';
   $("timeline").innerHTML=acts.length?acts.map(a=>'<div class="event"><strong>'+safe(a.event_type.replaceAll("_"," "))+'</strong> · '+fmt(a.occurred_at)+'<br>'+safe(a.page_path||"")+' <span class="muted">· '+safe(a.department||"")+'</span></div>').join(""):'<div class="muted">Nenhum evento registrado.</div>';
   $("purchases").innerHTML=purchases.length?purchases.map(p=>'<div class="event"><strong>'+safe(p.product_item||p.product_area||"Produto")+'</strong> · '+safe(p.payment_status)+' · '+(Number(p.amount_cents||0)/100).toLocaleString("pt-BR",{style:"currency",currency:String(p.currency||"BRL").toUpperCase()})+'<br>'+fmt(p.created_at)+' · '+safe(p.email_status||"")+'</div>').join(""):'Nenhuma compra vinculada ao UID nesta base.';
   $("deviceSessions").innerHTML=sessions.length?sessions.map(s=>'<div class="event"><strong>'+fmt(s.started_at)+'</strong> · visto '+fmt(s.last_seen_at)+'<br>'+safe(s.current_path||"")+' · '+safe(s.user_agent||"Dispositivo não identificado")+'</div>').join(""):'Nenhuma sessão encontrada.';
