@@ -98,7 +98,13 @@ async function carregarComprasDigitais() {
       return;
     }
     const token = await currentUser.getIdToken(true);
-    const response = await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/storeAccount", {
+    const accountEndpoint = "https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/storeAccount";
+    await fetch(accountEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+      body: JSON.stringify({ action: "claim" })
+    });
+    const response = await fetch(accountEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
       body: JSON.stringify({ action: "my_purchases" })
