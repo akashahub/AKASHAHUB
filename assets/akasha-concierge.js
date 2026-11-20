@@ -223,24 +223,10 @@
     return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   }
 
-  try{
-    if(!sessionStorage.getItem("ahConciergeSeen")){
-      setTimeout(()=>{
-        open();
-        bot("Olá! Que bom ter você aqui.",()=>{
-          bot("Vou fazer algumas perguntas rápidas para conhecer seu negócio e entender como podemos ajudar.",()=>{
-            ask();
-          },3000);
-        },0);
-        sessionStorage.setItem("ahConciergeSeen","1");
-      },2000);
-    }
-  }catch(e){
-    setTimeout(()=>{
-      open();
-      bot("Olá! Que bom ter você aqui.",()=>{
-        bot("Vou fazer algumas perguntas rápidas para conhecer seu negócio e entender como podemos ajudar.",ask,3000);
-      },0);
-    },2000);
-  }
+  setTimeout(()=>{
+    open();
+    bot("Olá! Que bom ter você aqui.",()=>{
+      bot("Vou fazer algumas perguntas rápidas para conhecer seu negócio e entender como podemos ajudar.",ask,3000);
+    },0);
+  },2000);
 })();
