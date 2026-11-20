@@ -154,3 +154,5 @@ Só considerar concluído quando um pagamento de teste gerar registro único no 
 - **Atenção:** a regra foi atualizada no arquivo versionado `afplataforma/firestore.rules`, mas ainda precisa ser publicada no Firebase Console/deploy de regras antes que a nova tela consiga ler e gravar. A publicação não foi executada nesta etapa.
 - **Ainda não implementado:** sincronização automática do histórico no detalhe do perfil, cópia pessoal do cliente, compartilhamento seletivo de materiais e integração dos dados do Mapa de Alinhamento com o registro. A primeira versão apenas oferece link para a ferramenta atual, preservando sua implementação.
 - **Validação pendente:** login de mentor, leitura de perfis, criação/edição de registros e isolamento de acesso precisam ser testados após publicar as regras.
+
+- Integração adicional: o detalhe do perfil em `/admin/perfis/` agora consulta `leituracallRecords` pelo `clientUid` e mostra a linha do tempo dos atendimentos vinculados, mantendo o histórico financeiro já existente.
