@@ -216,6 +216,22 @@ async function recordIndividualPurchase(session: any, meta: Record<string, strin
 }
 
 const STORE_DIGITAL_DELIVERY: Record<string, { name: string; url: string }> = {
+  "legado-o-eixo": {
+    name: "O Eixo — Arquitetura da Essência",
+    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/01_O_Eixo_Arquitetura_da_Essencia_xxwxry.pdf",
+  },
+  "legado-casa-digital": {
+    name: "Casa Digital — Império Digital",
+    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/02_Casa_Digital_Imperio_Digital_kw6gif.pdf",
+  },
+  "legado-dinheiro-com-criterio": {
+    name: "Dinheiro com Critério — Alinhamento Financeiro",
+    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/03_Dinheiro_com_Criterio_Alinhamento_Financeiro_qqtjky.pdf",
+  },
+  "legado-o-que-permanece": {
+    name: "O Que Permanece — Legado",
+    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/05_O_Que_Permanece_Legado_qhjvnv.pdf",
+  },
   "energia-sexual": {
     name: "Mini curso Energia Sexual",
     url: "https://akashahub.com.br/members/livros/energia-sexual.pdf",
