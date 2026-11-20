@@ -169,7 +169,9 @@
   }
 
   async function reconcileStorePurchases(user) {
-    if (!user || !user.emailVerified) return;
+    if (!user) return;
+    await user.reload();
+    if (!user.emailVerified) return;
     const token = await user.getIdToken(true);
     const response = await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/storeAccount", {
       method: "POST",
@@ -186,7 +188,8 @@
   }
 
   let authRedirecting = false;
-  onAuthStateChanged(auth, async user => {
+  let registrationInProgress = false;
+  async function continueAfterAuth(user) {
     if (!user || authRedirecting) return;
     authRedirecting = true;
     try {
@@ -196,6 +199,9 @@
       console.warn("[Akasha Store] Não foi possível concluir a reconciliação agora.", e);
     }
     window.location.href = safeNext();
+  }
+  onAuthStateChanged(auth, user => {
+    if (user && !registrationInProgress) continueAfterAuth(user);
   });
 
   async function ensureUser(user) {
@@ -239,7 +245,10 @@
 
   async function run(fn) {
     hideErr(); setLoad(true);
-    try { await fn(); }
+    try {
+      await fn();
+      if (auth.currentUser) await continueAfterAuth(auth.currentUser);
+    }
     catch(e) { showErr(ERROS[e.code] || 'Ocorreu um erro. Tente novamente.'); }
     finally { setLoad(false); }
   }
@@ -252,14 +261,19 @@
   });
 
   document.getElementById('btnCadastrar').onclick = () => run(async () => {
-    const nome = document.getElementById('cadNome').value.trim();
-    const r = await createUserWithEmailAndPassword(auth,
-      document.getElementById('cadEmail').value.trim(),
-      document.getElementById('cadSenha').value);
-    await updateProfile(r.user, { displayName: nome });
-    await sendEmailVerification(r.user);
-    await setDoc(doc(db, "users", r.user.uid), { nome, email: r.user.email }, { merge: true });
-    await ensureUser({ ...r.user, displayName: nome });
+    registrationInProgress = true;
+    try {
+      const nome = document.getElementById('cadNome').value.trim();
+      const r = await createUserWithEmailAndPassword(auth,
+        document.getElementById('cadEmail').value.trim(),
+        document.getElementById('cadSenha').value);
+      await updateProfile(r.user, { displayName: nome });
+      await sendEmailVerification(r.user);
+      await setDoc(doc(db, "users", r.user.uid), { nome, email: r.user.email }, { merge: true });
+      await ensureUser({ ...r.user, displayName: nome });
+    } finally {
+      registrationInProgress = false;
+    }
   });
 
   const googleLogin = () => run(async () => {
