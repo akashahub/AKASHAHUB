@@ -189,8 +189,47 @@ export function renderFase2() {
 
 export function renderFase3() {
   const appsFase3 = `
-    <h3 class="section-h">Apps da Fase 03 — Acesso direto</h3>
-    <p class="notes-hint">Cada app é independente, salva no seu UID no Firestore e tem modal de descoberta com opções clicáveis. Comece pelo Fluxo de Caixa OS.</p>
+    <h3 class="section-h">Plataforma original · 7 módulos</h3>
+    <p class="notes-hint">O núcleo original do Alinhamento Financeiro permanece aqui: sete módulos, 21 materiais e ferramentas vinculadas. Os roteiros completos de condução ficam privados no teleprompter do mentor; os materiais do mentorando permanecem separados.</p>
+    <div class="module-list">
+      ${[
+        ["01","Fundação de Capital de Segurança","Reserva, cash-flow e proteção financeira","module:module01"],
+        ["02","Capital Criativo e Inovação Lucrativa","Ideação, validação e criação de valor","module:module02"],
+        ["03","Motor de Execução e Determinação","Prioridades, accountability e execução","module:module03"],
+        ["04","Capital Relacional e Reciprocidade","Rede, conexões e entrega de valor","module:module04"],
+        ["05","Comunicação, Negociação e Expressão de Valor","Pitch, negociação e comunicação","module:module05"],
+        ["06","Visão Estratégica e Planejamento de Longo Prazo","Visão, cenários e planejamento","module:module06"],
+        ["07","Governança de Consciência e Opulência Sistêmica","Governança, valores e legado","module:module07"]
+      ].map(([num,title,desc,view]) => `
+        <div class="mod-row" data-nav="${view}" role="button" tabindex="0" style="cursor:pointer">
+          <div class="mod-num">${num}</div>
+          <div class="mod-body"><h3>${title}</h3><p>${desc}</p></div>
+          <div class="mod-lock" aria-hidden="true">↗</div>
+        </div>
+      `).join("")}
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 24px">
+      <button class="tool-btn" type="button" data-nav="modules">Abrir trilha e materiais</button>
+      <button class="tool-btn" type="button" data-nav="call">Abrir call / encontro</button>
+    </div>
+
+    <h3 class="section-h">Ferramentas originais do Alinhamento Financeiro</h3>
+    <p class="notes-hint">Acesso direto às ferramentas operacionais. Cada uma mantém seu próprio fluxo de dados; não substituímos os aplicativos independentes por formulários simplificados.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 24px">
+      <button class="tool-btn" type="button" data-tool="cashflow">Cash-Flow</button>
+      <button class="tool-btn" type="button" data-tool="ideation">Ideias / Ideation</button>
+      <button class="tool-btn" type="button" data-tool="execution">Execução semanal</button>
+      <button class="tool-btn" type="button" data-tool="network">Mapa de Rede</button>
+      <button class="tool-btn" type="button" data-tool="pitch">Pitch</button>
+      <button class="tool-btn" type="button" data-tool="fono">Comunicação / Fono</button>
+      <button class="tool-btn" type="button" data-tool="vision">Visão 1 página</button>
+      <button class="tool-btn" type="button" data-tool="legacy">Declaração de Legado</button>
+      <button class="tool-btn" type="button" data-nav="quitei">QuiteI</button>
+      <button class="tool-btn" type="button" data-nav="tools">Todas as ferramentas</button>
+    </div>
+
+    <h3 class="section-h">Aplicativos financeiros independentes</h3>
+    <p class="notes-hint">Aplicativos desenvolvidos posteriormente e preservados como extensões da Fase 3.</p>
     <p style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
       <a class="tool-btn" href="/afplataforma/fluxo-de-caixa/">Fluxo de Caixa OS</a>
       <a class="tool-btn" href="/afplataforma/precificacao/">Precificação</a>
@@ -201,12 +240,20 @@ export function renderFase3() {
       <a class="tool-btn" href="/afplataforma/decisoes-comerciais/">Decisões Comerciais</a>
       <a class="tool-btn" href="/afplataforma/acompanhamento-resultados/">Acompanhamento de Resultados</a>
     </p>
+
+    <h3 class="section-h">Ambiente complementar original</h3>
+    <p class="notes-hint">Corpo, rotina, hábitos, saúde, materiais e ferramentas complementares continuam em sua área própria, sem serem confundidos com os sete módulos.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 24px">
+      <button class="tool-btn" type="button" data-nav="complementar">Abrir Complementar</button>
+      <button class="tool-btn" type="button" data-nav="quitei">QuiteI · gestão de dívidas</button>
+      <button class="tool-btn" type="button" data-nav="call">Call com teleprompter do mentor</button>
+    </div>
   `;
   return pagina(
     "3",
     "Alinhamento Financeiro",
     "AF",
-    "Organização e capital.",
+    "Organização, capital, execução e sustentabilidade financeira. A plataforma original permanece integrada nesta fase.",
     `${appsFase3}
     ${renderPhaseBriefing("fase3")}
     <h3 class="section-h">Trabalho principal da fase</h3>
