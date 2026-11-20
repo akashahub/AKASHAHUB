@@ -509,6 +509,14 @@ footer{margin-top:52px;text-align:center;padding:18px 0;border-top:1px solid rgb
     <h2>Olá, <span id="userName">…</span></h2>
   </div>
 
+  <a href="/dashboard/inteligencia/" id="adminIntelligenceCard" class="upgrade" style="display:none;border-color:rgba(120,80,200,.28);background:linear-gradient(110deg,rgba(120,80,200,.09),rgba(201,162,39,.04));">
+    <div>
+      <p>Área administrativa</p>
+      <h3>Inteligência de Usuários · Ecossistema</h3>
+    </div>
+    <div class="upgrade-btn">Abrir painel →</div>
+  </a>
+
   <a href="/membros/" class="upgrade d1" id="upgradeBanner">
     <div>
       <p>Próximo Nível</p>
@@ -575,6 +583,7 @@ footer{margin-top:52px;text-align:center;padding:18px 0;border-top:1px solid rgb
 import { initializeApp }     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut }
                              from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { startAkashaTracking } from "/shared-tools/akasha-telemetry.js";
 import { getFirestore, doc, getDoc, collection,
          query, orderBy, onSnapshot,
          addDoc, updateDoc, deleteDoc,
@@ -698,6 +707,8 @@ onAuthStateChanged(auth, async user => {
   if (!user) { window.location.href = '/login/'; return; }
   currentUser = user;
   isAdmin     = user.uid === ADMIN_UID;
+  if (isAdmin) document.getElementById('adminIntelligenceCard').style.display = 'flex';
+  startAkashaTracking(user);
 
   const snap = await getDoc(doc(db, "users", user.uid));
   const ud   = snap.exists() ? snap.data() : { nivel:0, produtos:[] };
