@@ -66,6 +66,14 @@ Deno.serve(async (req: Request) => {
       }
       return json(200, { ok: true, claimed, alreadyOwned, assignedElsewhere, verifiedEmail: email });
     }
+    if (action === "my_purchases") {
+      if (user.emailVerified !== true) return json(403, { error: "verified_email_required" });
+      const rows = await db(
+        "store_purchase_events?select=session_id,product_item,amount_cents,currency,payment_status,created_at,email_status&firebase_uid=eq." + encodeURIComponent(uid) + "&order=created_at.desc&limit=100",
+        "GET"
+      ) || [];
+      return json(200, { ok: true, purchases: rows });
+    }
     if (action === "admin_purchases") {
       if (uid !== ADMIN_UID) return json(403, { error: "admin_only" });
       const targetUid = String(body.uid || "").trim();
