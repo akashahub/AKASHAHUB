@@ -81,6 +81,89 @@ main{max-width:600px;margin:0 auto;padding:96px 20px 100px;position:relative;z-i
   font-size:.62rem;letter-spacing:.4px;color:rgba(245,240,232,.4);line-height:1.7;}
 .pedido-track b{color:rgba(245,240,232,.6);font-weight:400;}
 
+/* ── LIVROS DIGITAIS STRIPE ── */
+const BOOK_NAMES = {
+  "legado-o-eixo": "O Eixo — Arquitetura da Essência",
+  "legado-casa-digital": "Casa Digital — Império Digital",
+  "legado-dinheiro-com-criterio": "Dinheiro com Critério — Alinhamento Financeiro",
+  "legado-pontes": "Pontes — Expansão",
+  "legado-o-que-permanece": "O Que Permanece — Legado"
+};
+async function carregarComprasDigitais() {
+  const container = document.getElementById("digitalPurchases");
+  try {
+    await currentUser.reload();
+    if (!currentUser.emailVerified) {
+      container.innerHTML = '<div class="pedido-empty">Confirme seu e-mail para vincular e consultar suas compras digitais.</div>';
+      return;
+    }
+    const token = await currentUser.getIdToken(true);
+    const response = await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/storeAccount", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+      body: JSON.stringify({ action: "my_purchases" })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Não foi possível consultar suas compras.");
+    const purchases = (result.purchases || []).filter(p => BOOK_NAMES[p.product_item]);
+    if (!purchases.length) {
+      container.innerHTML = '<div class="pedido-empty">Nenhum livro digital vinculado a esta conta.<br><span style="opacity:.5">Use o mesmo e-mail da compra e confirme seu cadastro.</span></div>';
+      return;
+    }
+    container.innerHTML = "";
+    purchases.forEach((purchase, index) => {
+      const card = document.createElement("div");
+      card.className = "pedido-card";
+      card.style.animationDelay = (index * 0.07) + "s";
+      const top = document.createElement("div");
+      top.className = "pedido-top";
+      const info = document.createElement("div");
+      const name = document.createElement("div");
+      name.className = "pedido-nome";
+      name.textContent = BOOK_NAMES[purchase.product_item];
+      const date = document.createElement("div");
+      date.className = "pedido-data";
+      date.textContent = purchase.created_at ? new Date(purchase.created_at).toLocaleDateString("pt-BR") : "Compra registrada";
+      info.append(name, date);
+      const value = document.createElement("div");
+      value.className = "pedido-valor";
+      value.textContent = (Number(purchase.amount_cents || 0) / 100).toLocaleString("pt-BR", { style: "currency", currency: String(purchase.currency || "BRL").toUpperCase() });
+      top.append(info, value);
+      card.append(top);
+      const paid = purchase.payment_status === "paid";
+      const status = document.createElement("span");
+      status.className = "status-badge " + (paid ? "st-entregue" : purchase.payment_status === "refunded" ? "st-cancelado" : "st-pendente");
+      status.textContent = paid ? "Pagamento confirmado" : purchase.payment_status === "refunded" ? "Pagamento estornado" : "Pagamento não confirmado";
+      card.append(status);
+      if (paid) {
+        const button = document.createElement("button");
+        button.className = "btn-salvar";
+        button.style.marginTop = "14px";
+        button.textContent = "Baixar livro";
+        button.addEventListener("click", async () => {
+          button.disabled = true;
+          button.textContent = "Preparando download…";
+          try {
+            const downloadResponse = await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/getStoreBookDownload?session_id=" + encodeURIComponent(purchase.session_id), { cache: "no-store" });
+            const downloadData = await downloadResponse.json();
+            if (!downloadResponse.ok || !downloadData.url) throw new Error(downloadData.error || "Download indisponível.");
+            window.location.href = downloadData.url;
+          } catch (error) {
+            showToast(String(error.message || error), true);
+            button.disabled = false;
+            button.textContent = "Baixar livro";
+          }
+        });
+        card.append(button);
+      }
+      container.append(card);
+    });
+  } catch (error) {
+    console.error("[Minhas Compras] Erro ao carregar livros digitais:", error);
+    container.innerHTML = '<div class="pedido-empty">Não foi possível carregar os livros agora. Atualize a página em instantes.</div>';
+  }
+}
+
 /* ── ENDEREÇO ── */
 .panel{width:100%;background:var(--card);border:1px solid rgba(255,255,255,.05);
   border-radius:2px;padding:22px;margin-bottom:14px;opacity:0;animation:fadeUp .6s ease forwards;}
@@ -152,6 +235,12 @@ main{max-width:600px;margin:0 auto;padding:96px 20px 100px;position:relative;z-i
   <div class="tabs d1">
     <div class="tab active" data-tab="pedidos" onclick="trocarTab('pedidos')">Meus Pedidos</div>
     <div class="tab" data-tab="endereco" onclick="trocarTab('endereco')">Endereço de Entrega</div>
+  </div>
+
+  <!-- LIVROS DIGITAIS COMPRADOS NA AKASHA STORE -->
+  <div class="sec d2"><span>Meus Livros Digitais</span></div>
+  <div id="digitalPurchases" class="d2">
+    <div class="pedido-empty">Carregando seus livros…</div>
   </div>
 
   <!-- PEDIDOS -->
@@ -276,6 +365,7 @@ onAuthStateChanged(auth, async user => {
   const ud   = snap.exists() ? snap.data() : {};
 
   preencherEndereco(ud.endereco || {});
+  await carregarComprasDigitais();
   await carregarPedidos();
 
   const main = document.getElementById('mainContent');
