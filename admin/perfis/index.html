@@ -101,7 +101,7 @@ async function showDetails(u){
   const rows=result.purchases||[];
   $("purchaseHistory").innerHTML=rows.length?rows.map(p=>{
    const amount=(Number(p.amount_cents||0)/100).toLocaleString("pt-BR",{style:"currency",currency:String(p.currency||"BRL").toUpperCase()});
-   return '<div style="padding:10px 0;border-bottom:1px solid var(--line)"><strong>'+safe(names[p.product_item]||p.product_item||"Produto")+'</strong><br><span class="muted">'+safe(p.product_item)+' · '+amount+' · '+safe(p.payment_status)+'</span><br><span class="muted">'+dateText(p.created_at)+' · '+safe(p.email_status||"Entrega pendente")+'</span></div>';
+   return '<div style="padding:10px 0;border-bottom:1px solid var(--line)"><strong>'+safe(names[p.product_item]||p.product_item||"Produto")+'</strong><br><span class="muted">'+safe(p.product_item)+' · '+amount+' · '+safe(p.payment_status)+'</span><br><span class="muted">'+dateText(p.created_at)+' · '+safe(p.email_status==="pdf_not_emailed"?"PDF não enviado por e-mail · download após pagamento":p.email_status||"Entrega pendente")+'</span></div>';
   }).join(""):'<p class="muted">Nenhuma compra Stripe vinculada a este UID.</p>';
  }catch(e){
   const el=$("purchaseHistory");
