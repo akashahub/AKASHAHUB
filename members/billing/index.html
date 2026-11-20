@@ -27,7 +27,8 @@
   <script src="/js/saas-plans.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { startAkashaTracking } from "/shared-tools/akasha-telemetry.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const app = initializeApp({
@@ -43,6 +44,7 @@
 
     onAuthStateChanged(auth, async user => {
       if (!user) { location.href = "/login/?next=/members/billing/"; return; }
+      startAkashaTracking(user);
       const snap = await getDoc(doc(db, "users", user.uid));
       const d = snap.exists() ? snap.data() : {};
       const plan = AKASHA_SAAS.planById(d.planId);
