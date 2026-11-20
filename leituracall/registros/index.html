@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0b0910">
+<title>Registros LeituraCall | Akasha Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0910;--panel:#15121d;--panel2:#1c1825;--line:#30293a;--gold:#c6a76b;--text:#f4efe6;--muted:#a49aaa;--green:#7ca58b;--red:#d58c83}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#30243c 0,transparent 48%),var(--bg);color:var(--text);font:14px 'DM Sans',sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit}button,a{cursor:pointer}.shell{max-width:1440px;margin:auto;padding:22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:8px 0 22px;border-bottom:1px solid var(--line)}
+.brand{color:var(--gold);text-decoration:none;font:italic 22px 'Playfair Display',serif}.brand small{display:block;font:9px 'DM Sans';letter-spacing:.2em;color:var(--muted);margin-top:3px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:10px 14px;text-decoration:none;font-size:12px}.btn.primary{background:var(--gold);color:#17120a;border-color:var(--gold);font-weight:700}.btn:disabled{opacity:.5;cursor:wait}
+.intro{padding:28px 0 18px}.eyebrow{color:var(--gold);font-size:10px;letter-spacing:.2em;text-transform:uppercase}.intro h1{font:400 clamp(32px,5vw,48px) 'Playfair Display',serif;margin:8px 0}.intro p{color:var(--muted);max-width:720px;line-height:1.65;margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat,.panel{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:14px;padding:17px}.stat small{color:var(--muted);font-size:10px;letter-spacing:.1em;text-transform:uppercase}.stat strong{display:block;font:32px 'Playfair Display';margin-top:4px}
+.layout{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(0,1.5fr);gap:14px;align-items:start}.panel h2{font:400 24px 'Playfair Display';margin:0 0 14px}.field{margin:12px 0}.field label{display:block;color:var(--muted);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 6px}.field input,.field select,.field textarea,.search{width:100%;background:#0e0c13;border:1px solid var(--line);border-radius:9px;color:var(--text);padding:11px 12px;outline:none}.field textarea{min-height:80px;resize:vertical;line-height:1.5}.field input:focus,.field select:focus,.field textarea:focus,.search:focus{border-color:var(--gold)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.status{padding:12px;border:1px solid var(--line);border-radius:10px;color:var(--muted);margin:14px 0;font-size:12px}.status.error{border-color:#75453f;color:#e2a69e}.status.ok{border-color:#3c604a;color:#a4c6ae}
+.record{padding:13px;border:1px solid var(--line);border-radius:11px;background:#100e16;margin-top:9px;cursor:pointer}.record:hover,.record.active{border-color:var(--gold)}.record b{display:block;font-size:13px}.record small{display:block;color:var(--muted);margin-top:5px;font-size:11px}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:3px 8px;color:var(--gold);font-size:9px;margin-top:7px}
+.empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:10px;font-size:12px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row .field{flex:1;min-width:180px}.hidden{display:none!important}
+.modal{display:none;position:fixed;inset:0;z-index:50;background:#050408ed;padding:3vh 3vw}.modal.on{display:flex;flex-direction:column}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:0 0 12px}.modal iframe{width:100%;height:100%;border:1px solid var(--line);border-radius:12px;background:#f7f4ed}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}}@media(max-width:560px){.shell{padding:14px}.stats{gap:7px}.stat{padding:12px}.stat strong{font-size:25px}.grid2{grid-template-columns:1fr}header{align-items:flex-start}.actions .btn{padding:8px 10px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><a class="brand" href="/">Akasha Hub<small>CENTRAL PRIVADA DO MENTOR</small></a><div class="actions"><a class="btn" href="/admin/perfis/">Cliente 360</a><a class="btn" href="/central/funil/">Central do Funil</a><a class="btn" href="/mapa-de-alinhamento/">Mapa de Alinhamento</a><button class="btn" id="logout">Sair</button></div></header>
+<section class="intro"><div class="eyebrow">LeituraCall · Gestão de relacionamento</div><h1>Registros de atendimento</h1><p>Centralize sessões, contexto, observações privadas, direcionamentos e próximos passos. Cada registro fica ligado ao perfil do cliente quando existe UID.</p></section>
+<div class="stats"><div class="stat"><small>Registros</small><strong id="total">0</strong></div><div class="stat"><small>Em andamento</small><strong id="open">0</strong></div><div class="stat"><small>Concluídos</small><strong id="done">0</strong></div></div>
+<div class="layout">
+<section class="panel">
+<h2>Histórico</h2><input class="search" id="search" type="search" placeholder="Buscar cliente, e-mail ou tipo de sessão">
+<div class="row" style="margin-top:10px"><button class="btn primary" id="new">＋ Novo registro</button><button class="btn" id="refresh">Atualizar</button></div>
+<div id="records" style="margin-top:12px"><div class="empty">Carregando registros…</div></div>
+</section>
+<section class="panel">
+<div class="row" style="justify-content:space-between"><h2 id="formTitle">Novo atendimento</h2><span class="pill" id="recordState">RASCUNHO</span></div>
+<form id="editor">
+<input type="hidden" id="recordId">
+<div class="field"><label for="client">Cliente cadastrado</label><select id="client"><option value="">Selecionar perfil existente (ou preencher manualmente)</option></select></div>
+<div class="grid2">
+<div class="field"><label for="name">Nome</label><input id="name" maxlength="120" required placeholder="Nome do cliente"></div>
+<div class="field"><label for="email">E-mail</label><input id="email" type="email" maxlength="180" placeholder="email@exemplo.com"></div>
+</div>
+<div class="grid2">
+<div class="field"><label for="type">Tipo de atendimento</label><select id="type"><option>Leitura de Essência</option><option>Sessão de Alinhamento</option><option>LeituraCall gratuita</option><option>LeituraCall paga</option><option>Acompanhamento</option><option>Outro</option></select></div>
+<div class="field"><label for="date">Data e horário</label><input id="date" type="datetime-local"></div>
+</div>
+<div class="grid2">
+<div class="field"><label for="status">Status</label><select id="status"><option value="rascunho">Rascunho</option><option value="agendado">Agendado</option><option value="em_andamento">Em andamento</option><option value="concluido">Concluído</option><option value="cancelado">Cancelado</option><option value="retorno">Retorno necessário</option></select></div>
+<div class="field"><label for="origin">Origem</label><input id="origin" maxlength="160" placeholder="Instagram, indicação, site…"></div>
+</div>
+<div class="field"><label for="context">Contexto e história relatada</label><textarea id="context" maxlength="12000" placeholder="O que a pessoa trouxe para a conversa?"></textarea></div>
+<div class="field"><label for="objectives">Objetivos e necessidades</label><textarea id="objectives" maxlength="12000" placeholder="O que deseja construir, resolver ou compreender?"></textarea></div>
+<div class="field"><label for="notes">Observações privadas do mentor</label><textarea id="notes" maxlength="16000" placeholder="Notas internas. Não são compartilhadas com o cliente."></textarea></div>
+<div class="field"><label for="directions">Síntese e direcionamentos</label><textarea id="directions" maxlength="12000" placeholder="Fatos, hipóteses, prioridades e recomendações."></textarea></div>
+<div class="field"><label for="next">Próximos passos</label><textarea id="next" maxlength="8000" placeholder="Ações, responsáveis e prazos."></textarea></div>
+<div class="field"><label for="followup">Data de retorno (opcional)</label><input id="followup" type="date"></div>
+<div class="actions"><button class="btn primary" id="save" type="submit">Salvar registro</button><button class="btn" id="clear" type="button">Limpar</button><button class="btn" id="openFunil" type="button">Abrir roteiro do funil</button><a class="btn" href="/mapa-de-alinhamento/" target="_blank" rel="noopener">Abrir mapa mental</a></div>
+</form>
+<div id="statusMsg" class="status">Verificando acesso do mentor…</div>
+</section>
+</div>
+</div>
+<div class="modal" id="funilModal"><div class="modal-head"><strong>Roteiro guiado · Central do Funil</strong><button class="btn" id="closeFunil">Fechar</button></div><iframe title="Central do Funil" src="/central/funil/?embed=leituracall"></iframe></div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {getFirestore,collection,doc,getDocs,setDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const ADMIN_UID="1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+const MENTORS=["yanfili.simon@gmail.com","plmacramo@gmail.com","sendatantrica@gmail.com","opatricksimon@gmail.com"];
+const app=initializeApp({apiKey:"AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",authDomain:"hub-akasha.firebaseapp.com",projectId:"hub-akasha",storageBucket:"hub-akasha.firebasestorage.app",messagingSenderId:"370851875474",appId:"1:370851875474:web:29b1ba3a76b0fed7d9344b"});
+const auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+let profiles=[],records=[],activeId=null,ready=false;
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const isMentor=u=>!!u&&(u.uid===ADMIN_UID||MENTORS.includes((u.email||"").toLowerCase()));
+const say=(msg,kind="")=>{$("statusMsg").textContent=msg;$("statusMsg").className="status "+kind};
+const dateText=v=>{if(!v)return "—";const d=v?.toDate?v.toDate():new Date(v);return Number.isNaN(d.getTime())?"—":d.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})};
+const val=id=>$(id).value.trim();
+function clearForm(){activeId=null;$("editor").reset();$("recordId").value="";$("formTitle").textContent="Novo atendimento";$("recordState").textContent="RASCUNHO"}
+function fill(r){activeId=r.id;$("recordId").value=r.id;$("client").value=r.clientUid||"";$("name").value=r.clientName||"";$("email").value=r.clientEmail||"";$("type").value=r.type||"Leitura de Essência";$("date").value=r.sessionAt||"";$("status").value=r.status||"rascunho";$("origin").value=r.origin||"";$("context").value=r.context||"";$("objectives").value=r.objectives||"";$("notes").value=r.mentorNotes||"";$("directions").value=r.directions||"";$("next").value=r.nextSteps||"";$("followup").value=r.followupDate||"";$("formTitle").textContent="Editar atendimento";$("recordState").textContent=String(r.status||"RASCUNHO").toUpperCase()}
+function render(){
+ $("total").textContent=records.length;$("open").textContent=records.filter(r=>!["concluido","cancelado"].includes(r.status)).length;$("done").textContent=records.filter(r=>r.status==="concluido").length;
+ const term=val("search").toLowerCase(),list=records.filter(r=>[r.clientName,r.clientEmail,r.type,r.origin].join(" ").toLowerCase().includes(term)).sort((a,b)=>(b.updatedMs||0)-(a.updatedMs||0));
+ $("records").innerHTML=list.length?list.map(r=>'<div class="record '+(r.id===activeId?"active":"")+'" data-id="'+esc(r.id)+'"><b>'+esc(r.clientName||"Sem nome")+'</b><small>'+esc(r.type||"Atendimento")+' · '+esc(dateText(r.sessionAt||r.createdMs))+'</small><span class="pill">'+esc((r.status||"rascunho").replaceAll("_"," "))+'</span></div>').join(""):'<div class="empty">Nenhum registro encontrado. Crie o primeiro atendimento.</div>';
+ document.querySelectorAll("[data-id]").forEach(el=>el.addEventListener("click",()=>{const r=records.find(x=>x.id===el.dataset.id);if(r)fill(r);render()}));
+}
+async function load(){
+ say("Carregando perfis e atendimentos…");
+ const [uSnap,rSnap]=await Promise.all([getDocs(collection(db,"users")),getDocs(collection(db,"leituracallRecords"))]);
+ profiles=uSnap.docs.map(d=>({uid:d.id,...d.data()})).sort((a,b)=>(a.nome||a.displayName||"").localeCompare(b.nome||b.displayName||""));
+ $("client").innerHTML='<option value="">Selecionar perfil existente (ou preencher manualmente)</option>'+profiles.map(p=>'<option value="'+esc(p.uid)+'">'+esc(p.nome||p.displayName||p.email||p.uid)+' · '+esc(p.email||p.uid)+'</option>').join("");
+ records=rSnap.docs.map(d=>{const x=d.data();return {id:d.id,...x,updatedMs:x.updatedAt?.toMillis?x.updatedAt.toMillis():Number(x.updatedMs||0)}}).sort((a,b)=>b.updatedMs-a.updatedMs);
+ render();say("Central pronta. "+profiles.length+" perfis e "+records.length+" registros carregados.","ok");
+}
+$("client").addEventListener("change",()=>{const p=profiles.find(x=>x.uid===$("client").value);if(p){$("name").value=p.nome||p.displayName||"";$("email").value=p.email||""}});
+$("editor").addEventListener("submit",async e=>{
+ e.preventDefault();if(!ready||!auth.currentUser)return;
+ const button=$("save");button.disabled=true;
+ try{
+  const uid=val("client")||null,id=activeId||crypto.randomUUID(),old=records.find(r=>r.id===id);
+  const p=profiles.find(x=>x.uid===uid);
+  const data={clientUid:uid,clientName:val("name"),clientEmail:val("email"),type:val("type"),sessionAt:val("date"),status:val("status"),origin:val("origin"),context:val("context"),objectives:val("objectives"),mentorNotes:val("notes"),directions:val("directions"),nextSteps:val("next"),followupDate:val("followup"),officialVersion:1,clientVisible:false,createdBy:old?.createdBy||auth.currentUser.uid,updatedBy:auth.currentUser.uid,updatedMs:Date.now(),updatedAt:serverTimestamp()};
+  if(!old)data.createdAt=serverTimestamp();
+  await setDoc(doc(db,"leituracallRecords",id),data,{merge:true});
+  activeId=id;await load();const saved=records.find(r=>r.id===id);if(saved)fill(saved);say("Registro salvo com sucesso.","ok");
+ }catch(err){console.error(err);say("Não foi possível salvar. Confira se as regras do Firestore foram publicadas. ("+(err.code||err.message)+")","error")}
+ finally{button.disabled=false}
+});
+$("new").onclick=()=>clearForm();$("clear").onclick=clearForm;$("refresh").onclick=()=>load().catch(e=>say("Falha ao atualizar: "+(e.code||e.message),"error"));$("search").addEventListener("input",render);
+$("logout").onclick=()=>signOut(auth);
+$("openFunil").onclick=()=>$("funilModal").classList.add("on");$("closeFunil").onclick=()=>$("funilModal").classList.remove("on");
+$("funilModal").addEventListener("click",e=>{if(e.target===$("funilModal"))$("funilModal").classList.remove("on")});
+onAuthStateChanged(auth,async user=>{
+ ready=false;if(!user){location.href="/login/?next="+encodeURIComponent("/leituracall/registros/");return}
+ if(!isMentor(user)){say("Acesso restrito à equipe de mentores.","error");await signOut(auth);location.href="/login/";return}
+ ready=true;try{await load()}catch(e){console.error(e);say("Falha ao carregar. As regras de acesso podem ainda não estar publicadas. ("+(e.code||e.message)+")","error")}
+});
+</script>
+</body></html>
