@@ -210,28 +210,12 @@ async function recordIndividualPurchase(session: any, meta: Record<string, strin
   const url = Deno.env.get("SUPABASE_URL") || "", serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
   if (!url || !serviceKey) throw new Error("supabase_env_missing");
   const paymentId = typeof session.payment_intent === "string" ? session.payment_intent : session.id;
-  const body = { session_id: String(session.id), payment_id: paymentId, firebase_uid: String(meta.firebaseUid || ""), buyer_email: String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase(), product_kind: String(meta.kind || ""), product_area: String(meta.area || ""), product_item: String(meta.item || ""), amount_cents: Number(session.amount_total || 0), currency: String(session.currency || "brl"), payment_status: "paid", granted_at: new Date().toISOString(), email_status: emailStatus };
+  const body = { session_id: String(session.id), payment_id: paymentId, firebase_uid: meta.firebaseUid ? String(meta.firebaseUid) : null, buyer_email: String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase(), product_kind: String(meta.kind || ""), product_area: String(meta.area || ""), product_item: String(meta.item || ""), amount_cents: Number(session.amount_total || 0), currency: String(session.currency || "brl"), payment_status: "paid", granted_at: new Date().toISOString(), email_status: emailStatus };
   const res = await fetch(url + "/rest/v1/store_purchase_events?on_conflict=session_id", { method: "POST", headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(body) });
   if (!res.ok) throw new Error("purchase_record_" + res.status);
 }
 
-const STORE_DIGITAL_DELIVERY: Record<string, { name: string; url: string }> = {
-  "legado-o-eixo": {
-    name: "O Eixo — Arquitetura da Essência",
-    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/01_O_Eixo_Arquitetura_da_Essencia_xxwxry.pdf",
-  },
-  "legado-casa-digital": {
-    name: "Casa Digital — Império Digital",
-    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/02_Casa_Digital_Imperio_Digital_kw6gif.pdf",
-  },
-  "legado-dinheiro-com-criterio": {
-    name: "Dinheiro com Critério — Alinhamento Financeiro",
-    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/03_Dinheiro_com_Criterio_Alinhamento_Financeiro_qqtjky.pdf",
-  },
-  "legado-o-que-permanece": {
-    name: "O Que Permanece — Legado",
-    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/05_O_Que_Permanece_Legado_qhjvnv.pdf",
-  },
+const STORE_DIGITAL_DELIVERY: Record<string, { name: string; url: string; filename?: string }> = {
   "energia-sexual": {
     name: "Mini curso Energia Sexual",
     url: "https://akashahub.com.br/members/livros/energia-sexual.pdf",
@@ -243,6 +227,31 @@ const STORE_DIGITAL_DELIVERY: Record<string, { name: string; url: string }> = {
   "codigos-de-origem": {
     name: "Códigos de Origem",
     url: "https://akashahub.com.br/members/livros/codigos-de-origem.pdf",
+  },
+  "legado-o-eixo": {
+    name: "O Eixo — Arquitetura da Essência",
+    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/01_O_Eixo_Arquitetura_da_Essencia_xxwxry.pdf",
+    filename: "01_O_Eixo_Arquitetura_da_Essencia.pdf",
+  },
+  "legado-casa-digital": {
+    name: "Casa Digital — Império Digital",
+    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/02_Casa_Digital_Imperio_Digital_kw6gif.pdf",
+    filename: "02_Casa_Digital_Imperio_Digital.pdf",
+  },
+  "legado-dinheiro-com-criterio": {
+    name: "Dinheiro com Critério — Alinhamento Financeiro",
+    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/03_Dinheiro_com_Criterio_Alinhamento_Financeiro_qqtjky.pdf",
+    filename: "03_Dinheiro_com_Criterio_Alinhamento_Financeiro.pdf",
+  },
+  "legado-pontes": {
+    name: "Pontes — Expansão",
+    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795166920/04_Pontes_Expansao_uoxtnj.pdf",
+    filename: "04_Pontes_Expansao.pdf",
+  },
+  "legado-o-que-permanece": {
+    name: "O Que Permanece — Legado",
+    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/05_O_Que_Permanece_Legado_qhjvnv.pdf",
+    filename: "05_O_Que_Permanece_Legado.pdf",
   },
 };
 
@@ -257,41 +266,17 @@ async function storeDeliveryAlreadySent(sessionId: string) {
   return Array.isArray(rows) && rows[0]?.email_status === "sent";
 }
 
-async function deliverStoreDigitalProduct(session: any, meta: Record<string, string>, sec: Record<string, string>) {
+async function deliverStoreDigitalProduct(session: any, meta: Record<string, string>, _sec: Record<string, string>) {
   const sku = String(meta.sku || "");
   const product = STORE_DIGITAL_DELIVERY[sku];
   const email = String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase();
   if (!product) throw new Error("store_delivery_unknown_sku");
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("store_delivery_email_invalid");
-  if (!sec.RESEND_API_KEY || !sec.MAIL_FROM) throw new Error("store_email_not_configured");
-  if (await storeDeliveryAlreadySent(String(session.id))) return;
-
-  const storeMeta = { ...meta, kind: "store", area: "akasha-store", item: sku, buyer: email };
-  await recordIndividualPurchase(session, storeMeta, "pending_delivery");
-
-  const text = [
-    "Olá!",
-    "",
-    "Seu pagamento na Akasha Store foi confirmado.",
-    "Produto: " + product.name,
-    "Acesse o arquivo digital neste link: " + product.url,
-    "",
-    "Guarde este e-mail para consultar o acesso novamente.",
-    "Se precisar de ajuda, fale com a equipe pelo WhatsApp: https://wa.me/5571983448621",
-  ].join("\n");
-  const html = "<p>Olá!</p><p>Seu pagamento na <strong>Akasha Store</strong> foi confirmado.</p><p>Produto: <strong>" + product.name + "</strong></p><p><a href=\"" + product.url + "\">Abrir e baixar o produto digital</a></p><p>Guarde este e-mail para consultar o acesso novamente.</p><p>Suporte: <a href=\"https://wa.me/5571983448621\">WhatsApp Akasha</a></p>";
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: "Bearer " + sec.RESEND_API_KEY, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: sec.MAIL_FROM, to: [email], subject: "Seu produto digital · Akasha Store", text, html }),
-  });
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new Error("store_email_send_" + response.status + (detail ? ":" + detail.slice(0, 160) : ""));
-  }
-  await recordIndividualPurchase(session, storeMeta, "sent");
+  const isLegacyBook = sku.startsWith("legado-");
+  const storeMeta = { ...meta, kind: isLegacyBook ? "book" : "store", area: isLegacyBook ? "arquitetura-legado" : "akasha-store", item: sku, buyer: email };
+  // The customer receives the Stripe payment receipt when receipts are enabled in Stripe.
+  // The actual digital file is made available on the verified success page.
+  await recordIndividualPurchase(session, storeMeta, "stripe_receipt");
 }
-
 async function applyEntitlement(uid: string, plan: { id: string; nivel: number } | null, status: string, sub: { id?: string; customer?: string | { id?: string } } | null, sa: string) {
   const nivel = status === "active" || status === "trialing" || status === "past_due" ? (plan?.nivel || 0) : 0;
   const customer = typeof sub?.customer === "string" ? sub.customer : sub?.customer?.id || null;
