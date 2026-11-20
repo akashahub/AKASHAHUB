@@ -149,7 +149,7 @@ async function persistToolData(toolId, data) {
   }
 }
 
-function showToolLoading() {
+function showToolLoading(toolId) {
   openFloat(
     "Preparando ferramenta",
     `<style>
