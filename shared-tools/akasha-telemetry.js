@@ -22,6 +22,17 @@ function sessionId() {
   }
 }
 
+function markSessionStarted(uid, id) {
+  try {
+    const key = `ah_intelligence_started_v1:${uid}:${id}`;
+    if (sessionStorage.getItem(key)) return false;
+    sessionStorage.setItem(key, "1");
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 function pageContext() {
   const path = location.pathname || "/";
   const parts = path.split("/").filter(Boolean);
@@ -100,7 +111,8 @@ export function startAkashaTracking(user) {
   currentSessionId = sessionId();
   lastTrackedPath = null;
 
-  void send("session_start", user);
+  if (markSessionStarted(user.uid, currentSessionId)) void send("session_start", user);
+  else void send("heartbeat", user);
   trackCurrentPage();
 
   heartbeatTimer = setInterval(() => {
