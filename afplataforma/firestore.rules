@@ -776,5 +776,10 @@ service cloud.firestore {
         && request.resource.data.body is string && request.resource.data.body.size() <= 250000;
       allow delete: if isAfMentor();
     }
+    // LEITURACALL — registros oficiais privados do mentor.
+    // Clientes não leem nem alteram esta coleção; a área do cliente será habilitada em etapa própria.
+    match /leituracallRecords/{recordId} {
+      allow read, create, update, delete: if isAfMentor();
+    }
   }
 }
