@@ -26,7 +26,16 @@ Deno.serve(async(req:Request)=>{
  if(!book)return Response.json({error:"book_not_found"},{status:404,headers:cors});
  const supabaseUrl=Deno.env.get("SUPABASE_URL")||"";
  const serviceKey=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"";
- if(supabaseUrl&&serviceKey){
+ if(!supabaseUrl||!serviceKey)return Response.json({error:"purchase_registry_unavailable"},{status:503,headers:cors});
+ const registry=await fetch(supabaseUrl+"/rest/v1/store_purchase_events?select=payment_status&session_id=eq."+encodeURIComponent(sessionId)+"&limit=1",{
+  headers:{apikey:serviceKey,Authorization:"Bearer "+serviceKey,Accept:"application/json"}
+ });
+ if(!registry.ok)return Response.json({error:"purchase_registry_unavailable"},{status:503,headers:cors});
+ const purchaseRows=await registry.json();
+ if(!Array.isArray(purchaseRows)||!purchaseRows.length||purchaseRows[0].payment_status!=="paid"){
+  return Response.json({error:"purchase_not_fully_registered"},{status:402,headers:{...cors,"Cache-Control":"no-store"}});
+ }
+ {
   const path="arquitetura-legado/"+sku+".pdf";
   const signed=await fetch(supabaseUrl+"/storage/v1/object/sign/livros/"+path,{
    method:"POST",headers:{apikey:serviceKey,Authorization:"Bearer "+serviceKey,"Content-Type":"application/json"},
