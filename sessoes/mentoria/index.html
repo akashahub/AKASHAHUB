@@ -224,6 +224,7 @@ const GRUPOS = [
 ];
 
 onAuthStateChanged(auth, async user => {
+  if (user) import("/shared-tools/akasha-telemetry.js").then(({ startAkashaTracking }) => startAkashaTracking(user)).catch(() => {});
   if (!user) { window.location.href='/login/'; return; }
   const snapU = await getDoc(doc(db,"users",user.uid));
   ME = snapU.exists() ? snapU.data() : {};
