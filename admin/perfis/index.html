@@ -49,6 +49,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:16px;pa
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { startAkashaTracking } from "/shared-tools/akasha-telemetry.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const ADMIN_UID = "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
@@ -118,7 +119,7 @@ async function showDetails(u){
  }
 }
 async function load(){setStatus("Buscando perfis no Firestore…");$("rows").innerHTML='<tr><td colspan="7" class="empty">Atualizando…</td></tr>';try{const snap=await getDocs(collection(db,"users"));allUsers=snap.docs.map(x=>({uid:x.id,data:x.data()}));render();setStatus("Dados atualizados · "+new Date().toLocaleString("pt-BR"));}catch(e){console.error(e);setStatus("Não foi possível consultar users. Verifique se as regras do Firestore em produção permitem leitura administrativa. ("+(e.code||"erro")+")",true);$("rows").innerHTML='<tr><td colspan="7" class="empty">A consulta foi bloqueada pelas regras atuais do Firestore.</td></tr>';}}
-onAuthStateChanged(auth,user=>{if(!user){location.href="/login/";return;}if(user.uid!==ADMIN_UID){document.body.innerHTML='<main style="max-width:560px;margin:15vh auto;padding:24px;text-align:center;font:14px Inter;color:#f4efe5"><h1>Acesso restrito</h1><p>Esta central é exclusiva da conta administradora.</p><a href="/" style="color:#d7b45e">Voltar ao Akasha Hub</a></main>';return;}load();});
+onAuthStateChanged(auth,user=>{if(!user){location.href="/login/";return;}if(user.uid!==ADMIN_UID){document.body.innerHTML='<main style="max-width:560px;margin:15vh auto;padding:24px;text-align:center;font:14px Inter;color:#f4efe5"><h1>Acesso restrito</h1><p>Esta central é exclusiva da conta administradora.</p><a href="/" style="color:#d7b45e">Voltar ao Akasha Hub</a></main>';return;}startAkashaTracking(user);load();});
 $("refresh").addEventListener("click",load);
 $("migrateBooks").addEventListener("click",async()=>{
  const button=$("migrateBooks");button.disabled=true;setStatus("Migrando os cinco PDFs para o bucket privado do Supabase…");
