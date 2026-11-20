@@ -621,6 +621,7 @@ window.fecharModalVideo = function() {
 
 /* ── AUTH ── */
 onAuthStateChanged(auth, async user => {
+  if (user) import("/shared-tools/akasha-telemetry.js").then(({ startAkashaTracking }) => startAkashaTracking(user)).catch(() => {});
   if (!user) { window.location.href = LOGIN_REDIRECT; return; }
   currentUser = user;
   isAdmin     = user.uid === ADMIN_UID;
