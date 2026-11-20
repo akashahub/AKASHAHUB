@@ -275,7 +275,7 @@ async function deliverStoreDigitalProduct(session: any, meta: Record<string, str
   const storeMeta = { ...meta, kind: isLegacyBook ? "book" : "store", area: isLegacyBook ? "arquitetura-legado" : "akasha-store", item: sku, buyer: email };
   // The customer receives the Stripe payment receipt when receipts are enabled in Stripe.
   // The actual digital file is made available on the verified success page.
-  await recordIndividualPurchase(session, storeMeta, "stripe_receipt");
+  await recordIndividualPurchase(session, storeMeta, "pdf_not_emailed");
 }
 async function applyEntitlement(uid: string, plan: { id: string; nivel: number } | null, status: string, sub: { id?: string; customer?: string | { id?: string } } | null, sa: string) {
   const nivel = status === "active" || status === "trialing" || status === "past_due" ? (plan?.nivel || 0) : 0;
