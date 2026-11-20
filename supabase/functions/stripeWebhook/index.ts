@@ -358,6 +358,18 @@ Deno.serve(async (req) => {
         }
       }
     } else if (event.type === "charge.refunded" && event.data.object.refunded === true) {
+      const paymentIntentId = typeof event.data.object.payment_intent === "string" ? event.data.object.payment_intent : event.data.object.payment_intent?.id;
+      if (paymentIntentId) {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+        const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+        if (!supabaseUrl || !serviceKey) throw new Error("supabase_env_missing");
+        const refundUpdate = await fetch(supabaseUrl + "/rest/v1/store_purchase_events?payment_id=eq." + encodeURIComponent(paymentIntentId) + "&payment_status=eq.paid", {
+          method: "PATCH",
+          headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, "Content-Type": "application/json", Prefer: "return=minimal" },
+          body: JSON.stringify({ payment_status: "refunded", email_status: "refunded" }),
+        });
+        if (!refundUpdate.ok) throw new Error("purchase_refund_update_" + refundUpdate.status);
+      }
       const customerId = typeof event.data.object.customer === "string"
         ? event.data.object.customer
         : event.data.object.customer?.id;
