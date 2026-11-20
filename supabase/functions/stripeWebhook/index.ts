@@ -346,8 +346,10 @@ async function deliverStoreDigitalProduct(session: any, meta: Record<string, str
   const claimed = await changeStorePurchaseEmailStatus(String(session.id), "pending_email", "sending");
   if (!claimed) {
     const currentStatus = await getStorePurchaseEmailStatus(String(session.id));
-    if (currentStatus === "sent" || currentStatus === "sending") return;
-    throw new Error("store_email_not_claimed:" + (currentStatus || "purchase_missing"));
+    if (currentStatus === "sent") return;
+    if (currentStatus !== "sending") throw new Error("store_email_not_claimed:" + (currentStatus || "purchase_missing"));
+    // A previous webhook may have stopped after claiming. Resend's idempotency key
+    // makes this retry safe and prevents a duplicate message.
   }
   try {
     await sendStorePdfEmail(email, product, String(session.id), sec);
