@@ -63,3 +63,39 @@ Cancel URL: `https://akashahub.com.br/store/`
 - As quatro assinaturas mensais live estão criadas e vinculadas às referências `STRIPE_PRICE_*`: Anúbis US$ 34/mês, Hórus US$ 65/mês, Ísis US$ 517/mês e Amon-Rá US$ 1.032/mês. Os preços avulsos em BRL não foram alterados.
 - **Bloqueio restante para produção:** o valor de `STRIPE_SECRET_KEY` na tabela privada ainda tem prefixo de chave de teste. Configure a chave live correta em Supabase → Project Settings → Edge Functions → Secrets. Configure também `STRIPE_WEBHOOK_SECRET` ali com o segredo do endpoint live, para substituir qualquer valor antigo de ambiente; não coloque esses segredos no GitHub nem em conversas.
 - Antes de considerar o ciclo completo validado, faça um checkout real de baixo valor, confirme o evento no webhook, a atualização do nível de acesso e a entrega por e-mail; depois reembolse a transação de validação.
+
+## Atualização da integração de livros — 20 de novembro de 2026
+
+O fluxo atual da coleção Arquitetura de Legado usa os SKUs:
+- `legado-o-eixo`
+- `legado-casa-digital`
+- `legado-dinheiro-com-criterio`
+- `legado-pontes`
+- `legado-o-que-permanece`
+
+O checkout pode receber um Firebase ID token. O servidor valida o token com Firebase Identity Toolkit e só grava `firebaseUid` nos metadados quando o e-mail Firebase está verificado e coincide com o e-mail informado para a compra. Compras de visitantes permanecem sem UID até a reconciliação.
+
+A Edge Function `storeAccount` permite:
+- `claim`: vincular compras ainda sem UID ao usuário Firebase com e-mail verificado igual ao e-mail do comprador.
+- `admin_purchases`: consultar compras por UID, exclusivamente para o UID administrador configurado no backend.
+
+A página de login tenta reconciliar compras após autenticação. Novos cadastros por e-mail/senha recebem e-mail de verificação; compras só são reivindicadas depois da verificação. Login Google segue o fluxo de e-mail verificado do provedor.
+
+O histórico de compras é mostrado nos detalhes do perfil em `/admin/perfis/`. A consulta é feita por Edge Function com validação do token Firebase e autorização do UID administrador, não por acesso público direto à tabela.
+
+### Armazenamento privado dos cinco livros
+
+O bucket `livros` do Supabase é privado. A migração dos cinco PDFs está disponível por ação autenticada na Central Administrativa:
+1. Entrar em `/admin/perfis/` com a conta administradora.
+2. Clicar em **Migrar PDFs para armazenamento privado**.
+3. Aguardar o resultado dos cinco arquivos e conferir se todos aparecem como `uploaded` ou `already_exists`.
+
+Os arquivos serão armazenados em `livros/arquitetura-legado/{sku}.pdf`. A função de download emite URL assinada de curta duração quando o arquivo privado existe. Enquanto a migração não for concluída, há fallback temporário para as URLs antigas do Cloudinary.
+
+**Atenção:** copiar os arquivos para o bucket privado não torna automaticamente privados os originais do Cloudinary. Os endereços antigos continuam acessíveis enquanto os assets originais permanecerem públicos. Não foram apagados nem alterados.
+
+O recibo Stripe não contém o PDF. O webhook registra a compra; o download é liberado na página de sucesso após validar a sessão e o pagamento. Envio do PDF anexado por e-mail não está implementado nesta versão.
+
+### Limites de validação
+
+Não realizar compra real para testar. A publicação das funções e dos arquivos no GitHub não substitui testes de login, reconciliação, download privado e visualização no admin. A migração do Storage exige a ação autenticada descrita acima.
