@@ -38,7 +38,8 @@
   <script src="/js/saas-plans.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { startAkashaTracking } from "/shared-tools/akasha-telemetry.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const app = initializeApp({
       apiKey: "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
@@ -68,6 +69,7 @@
     render();
 
     onAuthStateChanged(auth, user => {
+      if (user) startAkashaTracking(user);
       if (!user) {
         const next = "/members/checkout/?plan=" + encodeURIComponent(selected);
         location.href = "/login/?next=" + encodeURIComponent(next);
