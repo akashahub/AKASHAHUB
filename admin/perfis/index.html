@@ -39,6 +39,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:16px;pa
 <div class="toolbar">
  <div class="search"><input id="search" type="search" placeholder="Buscar por nome, e-mail, telefone ou UID…"></div>
  <select id="filter"><option value="all">Todos os perfis</option><option value="active">Ativos em 7 dias</option><option value="inactive">Sem login registrado</option><option value="contact">Com telefone</option></select>
+ <button class="btn" id="migrateBooks">Migrar PDFs para armazenamento privado</button>
  <button class="btn" id="export">Exportar CSV</button>
 </div>
 <div id="status" class="status">Verificando autenticação…</div>
@@ -77,10 +78,54 @@ function render(){
  $("contacts").textContent=allUsers.filter(u=>!!u.data.telefone).length;
  $("rows").querySelectorAll("tr[data-index]").forEach(tr=>tr.addEventListener("click",()=>showDetails(filtered[Number(tr.dataset.index)])));
 }
-function showDetails(u){if(!u)return;const d=u.data;$("details").classList.add("open");$("details").innerHTML='<b>Perfil selecionado</b><br>UID: '+safe(u.uid)+'<br>Nome: '+safe(d.nome||d.displayName||"—")+'<br>E-mail: '+safe(d.email||"—")+'<br>Telefone: '+safe(d.telefone||"—")+'<br>Sobre: '+safe(d.bio||"—")+'<br>Cadastro: '+dateText(d.createdAt||d.dataCadastro)+'<br>Último login: '+dateText(d.lastLoginAt)+'<br>Quantidade de logins: '+safe(d.loginCount??0)+'<br>Provedor: '+safe(d.lastLoginProvider||"—")+'<br>Nível: '+safe(d.nivel??"—")+'<br>Produtos: '+safe(Array.isArray(d.produtos)?d.produtos.join(", "):"—");}
+async function showDetails(u){
+ if(!u)return;
+ const d=u.data;
+ $("details").classList.add("open");
+ $("details").innerHTML='<b>Perfil selecionado</b><br>UID: '+safe(u.uid)+'<br>Nome: '+safe(d.nome||d.displayName||"—")+'<br>E-mail: '+safe(d.email||"—")+'<br>Telefone: '+safe(d.telefone||"—")+'<br>Sobre: '+safe(d.bio||"—")+'<br>Cadastro: '+dateText(d.createdAt||d.dataCadastro)+'<br>Último login: '+dateText(d.lastLoginAt)+'<br>Quantidade de logins: '+safe(d.loginCount??0)+'<br>Provedor: '+safe(d.lastLoginProvider||"—")+'<br>Nível: '+safe(d.nivel??"—")+'<br>Produtos: '+safe(Array.isArray(d.produtos)?d.produtos.join(", "):"—")+'<hr style="border:0;border-top:1px solid var(--line);margin:14px 0"><b>Histórico de compras Stripe</b><div id="purchaseHistory" class="muted">Carregando compras vinculadas a este UID…</div>';
+ try{
+  const token=await auth.currentUser.getIdToken();
+  const response=await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/storeAccount",{
+   method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},
+   body:JSON.stringify({action:"admin_purchases",uid:u.uid})
+  });
+  const result=await response.json();
+  if(!response.ok)throw new Error(result.error||"Não foi possível consultar as compras.");
+  const names={
+   "legado-o-eixo":"O Eixo — Arquitetura da Essência",
+   "legado-casa-digital":"Casa Digital — Império Digital",
+   "legado-dinheiro-com-criterio":"Dinheiro com Critério — Alinhamento Financeiro",
+   "legado-pontes":"Pontes — Expansão",
+   "legado-o-que-permanece":"O Que Permanece — Legado"
+  };
+  const rows=result.purchases||[];
+  $("purchaseHistory").innerHTML=rows.length?rows.map(p=>{
+   const amount=(Number(p.amount_cents||0)/100).toLocaleString("pt-BR",{style:"currency",currency:String(p.currency||"BRL").toUpperCase()});
+   return '<div style="padding:10px 0;border-bottom:1px solid var(--line)"><strong>'+safe(names[p.product_item]||p.product_item||"Produto")+'</strong><br><span class="muted">'+safe(p.product_item)+' · '+amount+' · '+safe(p.payment_status)+'</span><br><span class="muted">'+dateText(p.created_at)+' · '+safe(p.email_status||"Entrega pendente")+'</span></div>';
+  }).join(""):'<p class="muted">Nenhuma compra Stripe vinculada a este UID.</p>';
+ }catch(e){
+  const el=$("purchaseHistory");
+  if(el)el.textContent="Não foi possível carregar as compras: "+String(e.message||e);
+ }
+}
 async function load(){setStatus("Buscando perfis no Firestore…");$("rows").innerHTML='<tr><td colspan="7" class="empty">Atualizando…</td></tr>';try{const snap=await getDocs(collection(db,"users"));allUsers=snap.docs.map(x=>({uid:x.id,data:x.data()}));render();setStatus("Dados atualizados · "+new Date().toLocaleString("pt-BR"));}catch(e){console.error(e);setStatus("Não foi possível consultar users. Verifique se as regras do Firestore em produção permitem leitura administrativa. ("+(e.code||"erro")+")",true);$("rows").innerHTML='<tr><td colspan="7" class="empty">A consulta foi bloqueada pelas regras atuais do Firestore.</td></tr>';}}
 onAuthStateChanged(auth,user=>{if(!user){location.href="/login/";return;}if(user.uid!==ADMIN_UID){document.body.innerHTML='<main style="max-width:560px;margin:15vh auto;padding:24px;text-align:center;font:14px Inter;color:#f4efe5"><h1>Acesso restrito</h1><p>Esta central é exclusiva da conta administradora.</p><a href="/" style="color:#d7b45e">Voltar ao Akasha Hub</a></main>';return;}load();});
-$("refresh").addEventListener("click",load);$("search").addEventListener("input",render);$("filter").addEventListener("change",render);
+$("refresh").addEventListener("click",load);
+$("migrateBooks").addEventListener("click",async()=>{
+ const button=$("migrateBooks");button.disabled=true;setStatus("Migrando os cinco PDFs para o bucket privado do Supabase…");
+ try{
+  const token=await auth.currentUser.getIdToken(true);
+  const response=await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/migrateLegacyBooksPrivateStorage",{
+   method:"POST",headers:{"Authorization":"Bearer "+token,"Content-Type":"application/json"},body:"{}"
+  });
+  const result=await response.json();
+  if(!response.ok)throw new Error(result.error||"Falha na migração.");
+  const summary=(result.results||[]).map(x=>x.sku+": "+x.status+(x.bytes?" ("+Math.round(x.bytes/1024)+" KB)":"")+(x.error?" — "+x.error:"")).join(" | ");
+  setStatus((result.ok?"Migração verificada. ":"Migração incompleta. ")+summary,!result.ok);
+ }catch(e){setStatus("Não foi possível migrar os PDFs: "+String(e.message||e),true);}
+ finally{button.disabled=false;}
+});
+$("search").addEventListener("input",render);$("filter").addEventListener("change",render);
 $("logout").addEventListener("click",async()=>{await signOut(auth);location.href="/";});
 $("export").addEventListener("click",()=>{const cols=["uid","nome","email","telefone","createdAt","lastLoginAt","loginCount","lastLoginProvider"];const esc=v=>'"'+String(v??"").replace(/"/g,'""')+'"';const lines=[cols.join(","),...filtered.map(u=>cols.map(k=>esc(k==="uid"?u.uid:k==="createdAt"||k==="lastLoginAt"?dateText(u.data[k]):u.data[k])).join(","))];const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="akasha-perfis.csv";a.click();URL.revokeObjectURL(a.href);});
 </script>
