@@ -2,13 +2,14 @@ import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 
 const CATALOG = {
   "teste-stripe": { name: "Teste Stripe", cents: 500 },
-  "energia-sexual": { name: "Mini curso Energia Sexual", cents: 9700 },
-  "zero-ao-zen": { name: "Zero ao Zen — primeira edição", cents: 4700 },
-  "codigos-de-origem": { name: "Códigos de Origem", cents: 9700 },
   "legado-o-eixo": { name: "O Eixo — Arquitetura da Essência", cents: 990 },
   "legado-casa-digital": { name: "Casa Digital — Império Digital", cents: 990 },
   "legado-dinheiro-com-criterio": { name: "Dinheiro com Critério — Alinhamento Financeiro", cents: 990 },
+  "legado-pontes": { name: "Pontes — Expansão", cents: 990 },
   "legado-o-que-permanece": { name: "O Que Permanece — Legado", cents: 990 },
+  "energia-sexual": { name: "Mini curso Energia Sexual", cents: 9700 },
+  "zero-ao-zen": { name: "Zero ao Zen — primeira edição", cents: 4700 },
+  "codigos-de-origem": { name: "Códigos de Origem", cents: 9700 },
   "camiseta-akasha": { name: "Camiseta Akasha", cents: 1000 },
   "banheira-go-arctic": { name: "Banheira de Imersão em Gelo Go Arctic", cents: 1000 },
   "cafeteira-hyllis": { name: "Cafeteira Portátil Hyllis", cents: 1000 },
@@ -22,6 +23,22 @@ const CATALOG = {
 
 const AREA_CENTS = { anubis: 17717, horus: 33870, isis: 269398, amon: 537755 };
 const ITEM_CENTS = { curso: 2700, livro: 1700, audio: 700 };
+const BOOK_PRICES = {
+  "O Código Secreto do Universo": "members-livro-anubis-codigo-secreto",
+  "Código Quântico": "members-livro-anubis-codigo-quantico",
+  "Revelações Quânticas": "members-livro-anubis-revelacoes",
+  "Código de Conduta": "members-livro-horus-codigo-conduta",
+  "O Que é Tantra?": "members-livro-horus-o-que-e-tantra",
+  "Shiva, Shakti e Shava": "members-livro-horus-shiva-shakti-shava",
+  "Honrar a Deusa": "members-livro-horus-honrar-a-deusa",
+  "Tantra Descomplicado": "members-livro-horus-tantra-descomplicado",
+  "Paladin": "members-livro-isis-paladin",
+  "Autoestima Blindada": "members-livro-isis-autoestima-blindada",
+  "Como Blindar Sua Mente?": "members-livro-isis-como-blindar-sua-mente",
+  "Triplex na Mente": "members-livro-isis-triplex-na-mente",
+  "Coletânea Alinhamento Financeiro": "members-livro-ra-coletanea-alinhamento-financeiro",
+  "Códigos de Origem": "members-livro-ra-codigos-de-origem"
+};
 const ITENS = {
   anubis: {
     curso: ["alinhamento", "7-dias", "casais", "tantra", "fascinacao"],
@@ -80,28 +97,48 @@ Deno.serve(async (req) => {
   const product = member || CATALOG[String(body.sku || "")];
   if (!product) return json({ error: member === null && body.ref ? "unknown_ref" : "unknown_sku" }, 400);
 
-  const success = safeUrl(body.success_url, "https://akashahub.com.br/store/sucesso/");
+  const successBase = safeUrl(body.success_url, "https://akashahub.com.br/store/sucesso/");
+  const success = successBase.includes("session_id=") ? successBase : successBase + (successBase.includes("?") ? "&" : "?") + "session_id={CHECKOUT_SESSION_ID}";
   const cancel = safeUrl(body.cancel_url, "https://akashahub.com.br/store/");
-  const email = String(body.email || "").trim().toLowerCase();
+  let firebaseUser: any = null;
+  if (body.idToken) {
+    firebaseUser = await firebaseUserFromToken(String(body.idToken));
+    if (!firebaseUser) return json({ error: "invalid_firebase_token" }, 401);
+  }
+  const email = String(body.email || firebaseUser?.email || "").trim().toLowerCase();
+  const linkedUid = firebaseUser?.emailVerified === true && String(firebaseUser.email || "").trim().toLowerCase() === email
+    ? String(firebaseUser.localId || "") : "";
   const metadata = member
-    ? { source: "akasha-members", kind: member.kind, area: member.area, item: member.item, buyer: email }
-    : { sku: String(body.sku || ""), source: "akasha-store", name: body.name || "" };
+    ? { source: "akasha-members", kind: member.kind, area: member.area, item: member.item, buyer: email, ...(linkedUid ? { firebaseUid: linkedUid } : {}) }
+    : { sku: String(body.sku || ""), source: "akasha-store", name: body.name || "", buyer: email, ...(linkedUid ? { firebaseUid: linkedUid } : {}) };
 
-  const session = await openCheckout(stripe, {
-    mode: "payment",
-    line_items: [{
+  let lineItem;
+  if (member && member.kind === "livro" && BOOK_PRICES[member.item]) {
+    const found = await stripe.prices.list({ lookup_keys: [BOOK_PRICES[member.item]], active: true, limit: 1 });
+    const exactPrice = found.data?.[0];
+    if (!exactPrice || exactPrice.currency !== "brl" || exactPrice.unit_amount !== product.cents) {
+      return json({ error: "price_mismatch", item: member.item }, 409);
+    }
+    lineItem = { price: exactPrice.id, quantity: 1 };
+  } else {
+    lineItem = {
       quantity: 1,
       price_data: {
         currency: "brl",
         unit_amount: product.cents,
         product_data: { name: product.name },
       },
-    }],
+    };
+  }
+
+  const session = await openCheckout(stripe, {
+    mode: "payment",
+    line_items: [lineItem],
     success_url: success,
     cancel_url: cancel,
     customer_email: email || undefined,
     metadata,
-    payment_intent_data: { metadata },
+    payment_intent_data: { metadata, receipt_email: email || undefined },
     allow_promotion_codes: true,
   });
   return json({ url: session.url, id: session.id });
@@ -119,7 +156,23 @@ function memberProduct(ref) {
   const lista = ITENS[area][kind];
   if (!lista || lista.indexOf(item) < 0) return null;
   const nome = kind === "curso" ? (NOMES[item] || item) : item;
-  const cents = item === "alinhamento" ? 3500 : kind === "livro" && item === "Paladin" ? 3900 : ITEM_CENTS[kind];
+  const centsByBook = {
+    "O Código Secreto do Universo": 2562,
+    "Código Quântico": 4700,
+    "Revelações Quânticas": 1500,
+    "Código de Conduta": 4707,
+    "O Que é Tantra?": 2673,
+    "Shiva, Shakti e Shava": 2679,
+    "Honrar a Deusa": 4798,
+    "Tantra Descomplicado": 4500,
+    "Paladin": 7200,
+    "Autoestima Blindada": 4300,
+    "Como Blindar Sua Mente?": 4300,
+    "Triplex na Mente": 3990,
+    "Coletânea Alinhamento Financeiro": 7000,
+    "Códigos de Origem": 9700,
+  };
+  const cents = kind === "curso" && area === "anubis" && item === "alinhamento" ? 9300 : (kind === "livro" ? (centsByBook[item] || ITEM_CENTS.livro) : ITEM_CENTS[kind]);
   return { name: nome, cents, kind, area, item };
 }
 
@@ -146,6 +199,18 @@ function safeUrl(url, fallback) {
     if (parsed.hostname === "akashahub.com.br") return parsed.toString();
   } catch { /* ignore */ }
   return fallback;
+}
+
+async function firebaseUserFromToken(idToken: string) {
+  const apiKey = "AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4";
+  const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + apiKey, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ idToken }),
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  const user = data.users?.[0];
+  if (!user?.localId || user.disabled === true) return null;
+  return user;
 }
 
 async function emailFromToken(idToken) {
