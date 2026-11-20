@@ -112,6 +112,7 @@ $("logout").onclick=()=>signOut(auth);
 $("openFunil").onclick=()=>$("funilModal").classList.add("on");$("closeFunil").onclick=()=>$("funilModal").classList.remove("on");
 $("funilModal").addEventListener("click",e=>{if(e.target===$("funilModal"))$("funilModal").classList.remove("on")});
 onAuthStateChanged(auth,async user=>{
+  if (user) import("/shared-tools/akasha-telemetry.js").then(({ startAkashaTracking }) => startAkashaTracking(user)).catch(() => {});
  ready=false;if(!user){location.href="/login/?next="+encodeURIComponent("/leituracall/registros/");return}
  if(!isMentor(user)){say("Acesso restrito à equipe de mentores.","error");await signOut(auth);location.href="/login/";return}
  ready=true;try{await load()}catch(e){console.error(e);say("Falha ao carregar. As regras de acesso podem ainda não estar publicadas. ("+(e.code||e.message)+")","error")}
