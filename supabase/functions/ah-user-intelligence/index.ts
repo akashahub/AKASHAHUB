@@ -75,6 +75,31 @@ Deno.serve(async (req: Request) => {
     const userAgent = String(req.headers.get("user-agent") || "").slice(0, 300);
     const now = new Date().toISOString();
 
+    // Mantém o diretório de identidade sincronizado com dados verificados pelo Firebase.
+    const firebaseDate = (value: unknown) => {
+      const millis = Number(value);
+      return Number.isFinite(millis) && millis > 0 ? new Date(millis).toISOString() : null;
+    };
+    const providers = Array.isArray(firebaseUser.providerUserInfo)
+      ? firebaseUser.providerUserInfo.map((item: { providerId?: string }) => item.providerId).filter(Boolean)
+      : [];
+    await supabaseRequest(
+      "ah_auth_directory?on_conflict=firebase_uid",
+      "POST",
+      {
+        firebase_uid: uid,
+        email: firebaseUser.email || null,
+        display_name: firebaseUser.displayName || null,
+        photo_url: firebaseUser.photoUrl || null,
+        created_at: firebaseDate(firebaseUser.createdAt),
+        last_sign_in_at: firebaseDate(firebaseUser.lastLoginAt),
+        disabled: firebaseUser.disabled === true,
+        providers,
+        synced_at: now,
+      },
+      "resolution=merge-duplicates,return=minimal",
+    );
+
     if (eventType === "logout") {
       await supabaseRequest(
         `ah_user_sessions?session_id=eq.${encodeURIComponent(sessionId)}&firebase_uid=eq.${encodeURIComponent(uid)}`,
