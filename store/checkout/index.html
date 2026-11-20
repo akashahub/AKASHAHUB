@@ -50,7 +50,36 @@
       <aside class="card" id="sum"></aside>
     </div>
   </div>
-  <script src="/store/catalog.js?v=5"></script>
+  <script src="/store/catalog.js?v=6"></script>
+  <script type="module">
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    const config = {
+      apiKey:"AIzaSyAQXJDGfsd7RgcYKm9wfuh6nOth7dWo-v4",
+      authDomain:"hub-akasha.firebaseapp.com",
+      projectId:"hub-akasha",
+      storageBucket:"hub-akasha.firebasestorage.app",
+      messagingSenderId:"370851875474",
+      appId:"1:370851875474:web:29b1ba3a76b0fed7d9344b"
+    };
+    const app = getApps().length ? getApp() : initializeApp(config);
+    const auth = getAuth(app);
+    window.AKASHA_STORE_AUTH_READY = new Promise(resolve => {
+      let first = true;
+      onAuthStateChanged(auth, async user => {
+        try {
+          window.AKASHA_STORE_ID_TOKEN = user ? await user.getIdToken() : "";
+          window.AKASHA_STORE_USER_EMAIL = user?.email || "";
+          const emailInput = document.getElementById("email");
+          if (user?.email && emailInput && !emailInput.value) emailInput.value = user.email;
+        } catch (e) {
+          window.AKASHA_STORE_ID_TOKEN = "";
+          window.AKASHA_STORE_USER_EMAIL = "";
+        }
+        if (first) { first = false; resolve(); }
+      });
+    });
+  </script>
   <script>
     const sku = new URLSearchParams(location.search).get("sku") || "";
     const p = AKASHA_STORE.byId(sku);
