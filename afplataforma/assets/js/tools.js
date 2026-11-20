@@ -172,12 +172,12 @@ function showToolLoading() {
       <p class="ah-tool-dots">Carregando ferramenta</p>
     </div>`,
     "",
-    id
+    toolId
   );
 }
 
 export async function openTool(id) {
-  showToolLoading();
+  showToolLoading(id);
   if (id === "cashflow") return openCashflow();
   if (id === "pitch") return openTextTool(id, "Pitch 60 segundos", "Escreva seu pitch PSI / ADP / POC…");
   if (id === "legacy") return openTextTool(id, "Declaração de Legado", "Quem sou · O que construí · Por quê · Para quem · O que quero que reste…");
