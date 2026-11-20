@@ -49,11 +49,10 @@ Deno.serve(async(req:Request)=>{
     const url=baseUrl+(baseUrl.includes("?")?"&":"?")+"download="+encodeURIComponent(book.filename);
     return Response.json({name:book.name,url,filename:book.filename,delivery:"private_signed_url"},{headers:{...cors,"Cache-Control":"no-store"}});
    }
-  }else if(signed.status!==400&&signed.status!==404){
-   console.error("[getStoreBookDownload] storage signing failed",signed.status,await signed.text());
-   return Response.json({error:"private_download_temporarily_unavailable"},{status:503,headers:cors});
+  }else{
+   console.error("[getStoreBookDownload] private signing failed",signed.status,await signed.text());
+   return Response.json({error:"private_download_temporarily_unavailable"},{status:503,headers:{...cors,"Cache-Control":"no-store"}});
   }
  }
- // Temporary fallback while the five source PDFs are being copied into the private bucket.
- return Response.json({name:book.name,url:book.legacyUrl,filename:book.filename,delivery:"legacy_public_fallback"},{headers:{...cors,"Cache-Control":"no-store"}});
+ return Response.json({error:"private_download_temporarily_unavailable"},{status:503,headers:{...cors,"Cache-Control":"no-store"}});
 });
