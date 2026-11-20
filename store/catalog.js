@@ -44,6 +44,9 @@ window.AKASHA_STORE.startStripe = async function (opts) {
   var sku = opts.sku;
   var email = (opts.email || "").trim();
   var name = (opts.name || "").trim();
+  if (window.AKASHA_STORE_AUTH_READY) { try { await window.AKASHA_STORE_AUTH_READY; } catch (e) {} }
+  var idToken = window.AKASHA_STORE_ID_TOKEN || "";
+  var buyerEmail = email || window.AKASHA_STORE_USER_EMAIL || "";
   var product = window.AKASHA_STORE.byId(sku);
   if (!product) throw new Error("Produto não encontrado.");
   if (product.quoteOnly) throw new Error("Este produto é sob encomenda. Consulte o valor pelo WhatsApp.");
@@ -58,8 +61,9 @@ window.AKASHA_STORE.startStripe = async function (opts) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       sku: sku,
-      email: email,
+      email: buyerEmail,
       name: name,
+      idToken: idToken,
       success_url: window.AKASHA_STORE.successUrl + "?sku=" + encodeURIComponent(sku) + "&session_id={CHECKOUT_SESSION_ID}",
       cancel_url: window.AKASHA_STORE.cancelUrl
     })
