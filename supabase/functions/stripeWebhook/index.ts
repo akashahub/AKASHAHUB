@@ -206,16 +206,17 @@ async function grantIndividualProduct(email: string, meta: Record<string, string
     if (!create.ok) throw new Error("firestore_grant_create_" + create.status);
   } else if (!write.ok) throw new Error("firestore_grant_write_" + write.status);
 }
-async function recordIndividualPurchase(session: any, meta: Record<string, string>, emailStatus = "receipt_via_stripe") {
+async function recordIndividualPurchase(session: any, meta: Record<string, string>, emailStatus = "receipt_via_stripe", ignoreDuplicates = false) {
   const url = Deno.env.get("SUPABASE_URL") || "", serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
   if (!url || !serviceKey) throw new Error("supabase_env_missing");
   const paymentId = typeof session.payment_intent === "string" ? session.payment_intent : session.id;
   const body = { session_id: String(session.id), payment_id: paymentId, ...(meta.firebaseUid ? { firebase_uid: String(meta.firebaseUid) } : {}), buyer_email: String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase(), product_kind: String(meta.kind || ""), product_area: String(meta.area || ""), product_item: String(meta.item || ""), amount_cents: Number(session.amount_total || 0), currency: String(session.currency || "brl"), payment_status: "paid", granted_at: new Date().toISOString(), email_status: emailStatus };
-  const res = await fetch(url + "/rest/v1/store_purchase_events?on_conflict=session_id", { method: "POST", headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(body) });
+  const resolution = ignoreDuplicates ? "ignore-duplicates" : "merge-duplicates";
+  const res = await fetch(url + "/rest/v1/store_purchase_events?on_conflict=session_id", { method: "POST", headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, "Content-Type": "application/json", Prefer: `resolution=${resolution},return=minimal` }, body: JSON.stringify(body) });
   if (!res.ok) throw new Error("purchase_record_" + res.status);
 }
 
-const STORE_DIGITAL_DELIVERY: Record<string, { name: string; url: string; filename?: string }> = {
+const STORE_DIGITAL_DELIVERY: Record<string, { name: string; url?: string; storagePath?: string; filename?: string }> = {
   "energia-sexual": {
     name: "Mini curso Energia Sexual",
     url: "https://akashahub.com.br/members/livros/energia-sexual.pdf",
@@ -230,32 +231,32 @@ const STORE_DIGITAL_DELIVERY: Record<string, { name: string; url: string; filena
   },
   "legado-o-eixo": {
     name: "O Eixo — Arquitetura da Essência",
-    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/01_O_Eixo_Arquitetura_da_Essencia_xxwxry.pdf",
+    storagePath: "arquitetura-legado/legado-o-eixo.pdf",
     filename: "01_O_Eixo_Arquitetura_da_Essencia.pdf",
   },
   "legado-casa-digital": {
     name: "Casa Digital — Império Digital",
-    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/02_Casa_Digital_Imperio_Digital_kw6gif.pdf",
+    storagePath: "arquitetura-legado/legado-casa-digital.pdf",
     filename: "02_Casa_Digital_Imperio_Digital.pdf",
   },
   "legado-dinheiro-com-criterio": {
     name: "Dinheiro com Critério — Alinhamento Financeiro",
-    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/03_Dinheiro_com_Criterio_Alinhamento_Financeiro_qqtjky.pdf",
+    storagePath: "arquitetura-legado/legado-dinheiro-com-criterio.pdf",
     filename: "03_Dinheiro_com_Criterio_Alinhamento_Financeiro.pdf",
   },
   "legado-pontes": {
     name: "Pontes — Expansão",
-    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795166920/04_Pontes_Expansao_uoxtnj.pdf",
+    storagePath: "arquitetura-legado/legado-pontes.pdf",
     filename: "04_Pontes_Expansao.pdf",
   },
   "legado-o-que-permanece": {
     name: "O Que Permanece — Legado",
-    url: "https://res.cloudinary.com/dcbarseus/image/upload/v1795165614/05_O_Que_Permanece_Legado_qhjvnv.pdf",
+    storagePath: "arquitetura-legado/legado-o-que-permanece.pdf",
     filename: "05_O_Que_Permanece_Legado.pdf",
   },
 };
 
-async function storeDeliveryAlreadySent(sessionId: string) {
+async function getStorePurchaseEmailStatus(sessionId: string) {
   const url = Deno.env.get("SUPABASE_URL") || "", serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
   if (!url || !serviceKey) throw new Error("supabase_env_missing");
   const res = await fetch(url + "/rest/v1/store_purchase_events?session_id=eq." + encodeURIComponent(sessionId) + "&select=email_status&limit=1", {
@@ -263,19 +264,99 @@ async function storeDeliveryAlreadySent(sessionId: string) {
   });
   if (!res.ok) throw new Error("purchase_status_" + res.status);
   const rows = await res.json();
-  return Array.isArray(rows) && rows[0]?.email_status === "sent";
+  return Array.isArray(rows) && rows[0] ? String(rows[0].email_status || "") : "";
 }
 
-async function deliverStoreDigitalProduct(session: any, meta: Record<string, string>, _sec: Record<string, string>) {
+async function changeStorePurchaseEmailStatus(sessionId: string, from: string, to: string) {
+  const url = Deno.env.get("SUPABASE_URL") || "", serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+  if (!url || !serviceKey) throw new Error("supabase_env_missing");
+  const query = "?session_id=eq." + encodeURIComponent(sessionId) + "&email_status=eq." + encodeURIComponent(from);
+  const res = await fetch(url + "/rest/v1/store_purchase_events" + query, {
+    method: "PATCH",
+    headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey, "Content-Type": "application/json", Prefer: "return=representation" },
+    body: JSON.stringify({ email_status: to }),
+  });
+  if (!res.ok) throw new Error("purchase_email_status_" + res.status);
+  const rows = await res.json();
+  return Array.isArray(rows) && rows.length > 0;
+}
+
+function bytesToBase64(bytes: Uint8Array) {
+  let binary = "";
+  for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(offset, Math.min(offset + 0x8000, bytes.length)));
+  }
+  return btoa(binary);
+}
+
+async function sendStorePdfEmail(email: string, product: { name: string; url?: string; storagePath?: string; filename?: string }, sessionId: string, sec: Record<string, string>) {
+  const resendKey = sec.RESEND_API_KEY || "";
+  if (!resendKey) throw new Error("resend_api_key_missing");
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+  if (!supabaseUrl || !serviceKey) throw new Error("supabase_env_missing");
+  let pdfResponse: Response;
+  if (product.storagePath) {
+    pdfResponse = await fetch(supabaseUrl + "/storage/v1/object/authenticated/livros/" + product.storagePath.split("/").map(encodeURIComponent).join("/"), {
+      headers: { apikey: serviceKey, Authorization: "Bearer " + serviceKey },
+    });
+  } else if (product.url) {
+    pdfResponse = await fetch(product.url);
+  } else {
+    throw new Error("store_pdf_source_missing");
+  }
+  if (!pdfResponse.ok) throw new Error("store_pdf_fetch_" + pdfResponse.status);
+  const pdfBytes = new Uint8Array(await pdfResponse.arrayBuffer());
+  if (pdfBytes.length < 1000 || pdfBytes[0] !== 0x25 || pdfBytes[1] !== 0x50 || pdfBytes[2] !== 0x44 || pdfBytes[3] !== 0x46) {
+    throw new Error("store_pdf_invalid");
+  }
+  const filename = product.filename || (product.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase() + ".pdf");
+  const from = sec.MAIL_FROM || "Akasha Hub <livros@akashahub.com.br>";
+  const html = `<div style="font-family:Arial,sans-serif;color:#171717;line-height:1.6;max-width:620px;margin:0 auto"><h2 style="font-weight:600">Seu livro está pronto.</h2><p>Olá!</p><p>O pagamento foi confirmado e o livro <strong>${product.name}</strong> está anexado a este e-mail em PDF.</p><p>Guarde este e-mail para consultar seu livro quando quiser.</p><p>Você também pode acessar sua biblioteca em <a href="https://akashahub.com.br/compras/">Minhas Compras</a>.</p><p style="color:#777;font-size:12px">Akasha Hub · Arquitetura de Legado</p></div>`;
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + resendKey,
+      "Content-Type": "application/json",
+      "Idempotency-Key": "akasha-store-pdf-" + sessionId,
+    },
+    body: JSON.stringify({
+      from,
+      to: [email],
+      subject: "Seu livro " + product.name + " | Akasha Hub",
+      html,
+      attachments: [{ filename, content: bytesToBase64(pdfBytes) }],
+    }),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error("resend_send_" + response.status + ":" + String(result.message || result.name || "unknown"));
+  return result;
+}
+
+async function deliverStoreDigitalProduct(session: any, meta: Record<string, string>, sec: Record<string, string>) {
   const sku = String(meta.sku || "");
   const product = STORE_DIGITAL_DELIVERY[sku];
   const email = String(meta.buyer || session.customer_details?.email || session.customer_email || "").trim().toLowerCase();
   if (!product) throw new Error("store_delivery_unknown_sku");
+  if (!email || !email.includes("@")) throw new Error("store_delivery_email_missing");
   const isLegacyBook = sku.startsWith("legado-");
   const storeMeta = { ...meta, kind: isLegacyBook ? "book" : "store", area: isLegacyBook ? "arquitetura-legado" : "akasha-store", item: sku, buyer: email };
-  // The customer receives the Stripe payment receipt when receipts are enabled in Stripe.
-  // The actual digital file is made available on the verified success page.
-  await recordIndividualPurchase(session, storeMeta, "pdf_not_emailed");
+  // Insert only once: a Stripe retry must never reset a previously sent email status.
+  await recordIndividualPurchase(session, storeMeta, "pending_email", true);
+  const claimed = await changeStorePurchaseEmailStatus(String(session.id), "pending_email", "sending");
+  if (!claimed) {
+    const currentStatus = await getStorePurchaseEmailStatus(String(session.id));
+    if (currentStatus === "sent" || currentStatus === "sending") return;
+    throw new Error("store_email_not_claimed:" + (currentStatus || "purchase_missing"));
+  }
+  try {
+    await sendStorePdfEmail(email, product, String(session.id), sec);
+    const markedSent = await changeStorePurchaseEmailStatus(String(session.id), "sending", "sent");
+    if (!markedSent) throw new Error("store_email_sent_but_status_not_saved");
+  } catch (error) {
+    await changeStorePurchaseEmailStatus(String(session.id), "sending", "pending_email").catch(() => false);
+    throw error;
+  }
 }
 async function applyEntitlement(uid: string, plan: { id: string; nivel: number } | null, status: string, sub: { id?: string; customer?: string | { id?: string } } | null, sa: string) {
   const nivel = status === "active" || status === "trialing" || status === "past_due" ? (plan?.nivel || 0) : 0;
