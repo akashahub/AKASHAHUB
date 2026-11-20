@@ -54,7 +54,7 @@
       chat.appendChild(row);
       scroll();
       if(done) done();
-    },delay||2300);
+    },delay===undefined?2300:delay);
   }
   function user(value){
     const row=document.createElement("div");
@@ -231,7 +231,7 @@
           bot("Vou fazer algumas perguntas rápidas para conhecer seu negócio e entender como podemos ajudar.",()=>{
             ask();
           },3000);
-        },3000);
+        },0);
         sessionStorage.setItem("ahConciergeSeen","1");
       },2000);
     }
@@ -240,7 +240,7 @@
       open();
       bot("Olá! Que bom ter você aqui.",()=>{
         bot("Vou fazer algumas perguntas rápidas para conhecer seu negócio e entender como podemos ajudar.",ask,3000);
-      },3000);
+      },0);
     },2000);
   }
 })();
