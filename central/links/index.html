@@ -42,6 +42,7 @@
   <section class="toolbar">
     <input class="search" id="search" type="search" placeholder="Pesquisar páginas, ferramentas ou palavras-chave…">
     <button class="btn" id="favorites">☆ Favoritos</button>
+    <button class="btn" id="manageCategories">＋ Categorias</button>
     <button class="btn primary" id="add">＋ Adicionar link</button>
   </section>
   <nav class="categories" id="categories"></nav>
@@ -63,13 +64,24 @@
   </form>
  </div>
 </div>
+<div class="modal" id="categoryModal">
+ <div class="dialog">
+  <div class="dialog-head"><h2>Nova categoria</h2><button class="x" id="categoryClose" aria-label="Fechar">×</button></div>
+  <form id="categoryForm">
+   <div class="field"><label for="categoryName">Nome da categoria</label><input id="categoryName" maxlength="60" required placeholder="Ex.: Projetos e Experimentos"></div>
+   <div class="field"><label for="categoryIcon">Ícone (emoji ou símbolo)</label><input id="categoryIcon" maxlength="8" value="✧" placeholder="✧"></div>
+   <div class="field"><label for="categoryColor">Cor de destaque</label><input id="categoryColor" type="color" value="#aa8bc9"></div>
+   <div class="form-actions"><span></span><div><button class="btn" id="categoryCancel" type="button">Cancelar</button><button class="btn primary" id="categorySave" type="submit">Criar categoria</button></div></div>
+  </form>
+ </div>
+</div>
 <script type="module">
 import { auth, db } from "/login/firebase.js";
 import { isMentorIdentity } from "/afplataforma/firebase/firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { collection, getDocs, doc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const CATEGORIES = [
+let CATEGORIES = [
  {id:"admin",name:"Administração e Backends",icon:"🛡️",color:"#b66c59",bg:"#3a2728"},
  {id:"sales",name:"Vendas e Funis",icon:"↗",color:"#c6a76b",bg:"#3b3020"},
  {id:"platforms",name:"Plataformas e Aplicativos",icon:"▦",color:"#78a0c8",bg:"#243247"},
@@ -2051,14 +2063,43 @@ async function seedIfEmpty(){
   await Promise.all(missing.map(item=>setDoc(doc(db,"centralLinks",item.id),{...item,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),createdBy:currentUser.uid})));
  }
  const seeded=await getDocs(collection(db,"centralLinks"));
- links=seeded.docs.map(d=>({id:d.id,...d.data()}));
+ const records=seeded.docs.map(d=>({id:d.id,...d.data()}));
+ const custom=records.filter(x=>x.type==="category").map(x=>({id:x.categoryId||x.id.replace(/^category-/,""),name:x.name,icon:x.icon||"✧",color:x.color||"#aa8bc9",bg:x.bg||"#352744",custom:true}));
+ CATEGORIES=[...CATEGORIES.filter(c=>!custom.some(x=>x.id===c.id)),...custom];
+ links=records.filter(x=>x.type!=="category");
 }
 async function loadLinks(){
  $("grid").innerHTML='<div class="empty">Carregando biblioteca…</div>';
  // Importa somente IDs ausentes: não sobrescreve, não apaga nem altera links já cadastrados.
  await seedIfEmpty();
 }
-$("category").innerHTML=CATEGORIES.map(c=>'<option value="'+c.id+'">'+c.icon+' '+esc(c.name)+'</option>').join("");
+function refreshCategoryOptions(selected){
+ $("category").innerHTML=CATEGORIES.map(c=>'<option value="'+c.id+'">'+c.icon+' '+esc(c.name)+'</option>').join("");
+ if(selected)$("category").value=selected;
+}
+refreshCategoryOptions();
+$("manageCategories").onclick=()=>{$("categoryForm").reset();$("categoryIcon").value="✧";$("categoryColor").value="#aa8bc9";$("categoryModal").classList.add("on");$("categoryName").focus()};
+function closeCategoryModal(){$("categoryModal").classList.remove("on")}
+$("categoryClose").onclick=closeCategoryModal;$("categoryCancel").onclick=closeCategoryModal;
+$("categoryModal").addEventListener("click",e=>{if(e.target===$("categoryModal"))closeCategoryModal()});
+$("categoryForm").addEventListener("submit",async e=>{
+ e.preventDefault();const btn=$("categorySave");btn.disabled=true;
+ try{
+  const name=$("categoryName").value.trim();
+  const icon=$("categoryIcon").value.trim()||"✧";
+  const color=$("categoryColor").value||"#aa8bc9";
+  if(!name)throw new Error("Informe o nome da categoria.");
+  if(CATEGORIES.some(c=>c.name.toLocaleLowerCase("pt-BR")===name.toLocaleLowerCase("pt-BR")))throw new Error("Já existe uma categoria com esse nome.");
+  const slug=name.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  const id="custom-"+slug;
+  if(CATEGORIES.some(c=>c.id===id))throw new Error("Já existe uma categoria com esse identificador.");
+  const data={type:"category",categoryId:id,name,icon,color,bg:color+"26",createdAt:serverTimestamp(),updatedAt:serverTimestamp(),createdBy:currentUser.uid};
+  await setDoc(doc(db,"centralLinks","category-"+id),data);
+  CATEGORIES.push({id,name,icon,color,bg:color+"26",custom:true});
+  refreshCategoryOptions(id);closeCategoryModal();render();
+ }catch(err){alert(err.message||"Não foi possível criar a categoria. Verifique as regras do Firestore.")}
+ finally{btn.disabled=false}
+});
 $("add").onclick=()=>openEditor();$("close").onclick=closeEditor;$("cancel").onclick=closeEditor;$("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeEditor()});
 $("search").addEventListener("input",render);
 $("favorites").onclick=()=>{onlyFavorites=!onlyFavorites;activeCategory="all";$("favorites").classList.toggle("primary",onlyFavorites);render()};
