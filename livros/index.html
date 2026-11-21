@@ -77,18 +77,19 @@
 <footer>© 2026 Akasha Hub · <a href="/doutrina/">Doutrina</a> · <a href="/membros/">Área de membros</a> · <a href="/compras/">Minhas compras</a></footer>
 <script>
 (function(){
- const buttons=[...document.querySelectorAll(".filter")],search=document.getElementById("search"),cards=[...document.querySelectorAll(".book")],sections=[...document.querySelectorAll(".level")],projects=[...document.querySelectorAll(".project[data-level]")],empty=document.getElementById("empty");
+ const buttons=[...document.querySelectorAll(".filter")],search=document.getElementById("search"),cards=[...document.querySelectorAll(".book")],sections=[...document.querySelectorAll(".level")],projects=[...document.querySelectorAll(".project[data-level]")],volumes=[...document.querySelectorAll(".volume")],otherProjects=[...document.querySelectorAll(".project:not([data-level])")],empty=document.getElementById("empty");
  let filter="all";
  function apply(){
   const q=search.value.trim().toLocaleLowerCase("pt-BR");let count=0;
-  cards.forEach(card=>{const okLevel=filter==="all"||card.dataset.level===filter;const okText=!q||(card.dataset.title||"").toLocaleLowerCase("pt-BR").includes(q);card.hidden=!(okLevel&&okText);if(!card.hidden)count++;});
-  sections.forEach(sec=>{const visible=filter==="all"||sec.dataset.level===filter;sec.hidden=!visible;});
-  projects.forEach(p=>{p.hidden=!(filter==="all"||filter==="legado");});
-  if(filter==="legado"){sections.forEach(s=>s.hidden=true);}
-  empty.style.display=count===0&&filter!=="legado"?"block":"none";
+  cards.forEach(card=>{const okLevel=filter==="all"||card.dataset.level===filter;const okText=!q||(card.dataset.title||card.textContent).toLocaleLowerCase("pt-BR").includes(q);card.hidden=!(okLevel&&okText);if(!card.hidden)count++;});
+  volumes.forEach(volume=>{const okText=!q||volume.textContent.toLocaleLowerCase("pt-BR").includes(q);volume.hidden=!(filter==="all"||filter==="legado")||!okText;if(!volume.hidden)count++;});
+  sections.forEach(sec=>{const visible=(filter==="all"||sec.dataset.level===filter)&&[...sec.querySelectorAll(".book")].some(card=>!card.hidden);sec.hidden=!visible;});
+  projects.forEach(project=>{const okText=!q||project.textContent.toLocaleLowerCase("pt-BR").includes(q);project.hidden=!(filter==="all"||filter==="legado")||!okText;});
+  otherProjects.forEach(project=>{const okText=!q||project.textContent.toLocaleLowerCase("pt-BR").includes(q);project.hidden=filter!=="all"||!okText;});
+  empty.style.display=count===0?"block":"none";
  }
  buttons.forEach(btn=>btn.addEventListener("click",()=>{filter=btn.dataset.filter;buttons.forEach(b=>b.classList.toggle("active",b===btn));apply();}));
- search.addEventListener("input",()=>{filter="all";buttons.forEach(b=>b.classList.toggle("active",b.dataset.filter==="all"));apply();});
+ search.addEventListener("input",apply);
  apply();
 })();
 </script>
