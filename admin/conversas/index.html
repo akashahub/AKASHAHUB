@@ -55,6 +55,7 @@ import { auth } from "/login/firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const ADMIN_UID="1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
 const API="https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akasha-chat-leads";
+const PUBLIC_KEY="sb_publishable_cZOBLAGhZVoJ5w8aZxfHjQ_3zZbr-II";
 const $=id=>document.getElementById(id);
 const LABELS={goal:"O que procura",name:"Nome",business:"Empresa ou projeto",segment:"Área de atuação",instagram:"Instagram",stage:"Momento do negócio",challenge:"Principal dificuldade",outcome:"Resultado desejado",whatsapp:"WhatsApp",availability:"Melhor horário"};
 let all=[],selectedId="",poll=null,loading=false;
@@ -98,7 +99,7 @@ async function load(){
  loading=true;
  try{
   const token=await auth.currentUser.getIdToken();
-  const response=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({action:"list"})});
+  const response=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":PUBLIC_KEY,"Authorization":"Bearer "+token},body:JSON.stringify({action:"list"})});
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(data.error||"Não foi possível consultar as conversas.");
   all=Array.isArray(data.conversations)?data.conversations:[];
