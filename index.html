@@ -243,6 +243,13 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
  .hub-toggle,.hub-toggle:before,.hub-toggle-icon,.catalog,.legacy-library,.legacy-reveal{transition:none!important}
 }
 
+
+/* Esfera granada: expansão sincronizada ao scroll */
+#akasha-scroll-garnet{position:fixed;z-index:2;left:50%;top:50%;width:100vmax;height:100vmax;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%) scale(.055);opacity:.24;mix-blend-mode:multiply;will-change:transform,opacity;background:radial-gradient(circle at 50% 50%,rgba(125,17,48,.34) 0%,rgba(151,27,61,.23) 12%,rgba(177,62,91,.12) 28%,rgba(190,92,116,.055) 43%,transparent 68%);filter:blur(1px);contain:strict}
+#akasha-scroll-garnet:before{content:"";position:absolute;inset:34%;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,220,225,.48),rgba(147,19,53,.26) 32%,rgba(92,9,35,.08) 66%,transparent 72%);filter:blur(10px)}
+@media(max-width:700px){#akasha-scroll-garnet{opacity:.17;background:radial-gradient(circle,rgba(139,22,57,.25) 0%,rgba(166,53,84,.10) 34%,transparent 68%)}}
+@media(prefers-reduced-motion:reduce){#akasha-scroll-garnet{display:none}}
+
 </style>
 <link rel="stylesheet" href="/assets/akasha-concierge.css?v=2">
 </head>
@@ -796,6 +803,30 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
 })();
 </script>
 <script src="/assets/akasha-concierge.js?v=2" defer></script>
+
+
+<div id="akasha-scroll-garnet" aria-hidden="true"></div>
+<script>
+(()=> {
+ const orb=document.getElementById('akasha-scroll-garnet');
+ if(!orb || window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ let queued=false;
+ const update=()=>{
+  const max=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
+  const progress=Math.min(1,Math.max(0,window.scrollY/max));
+  const scale=.055+progress*1.32;
+  const fade=progress<.78?1:Math.max(0,1-(progress-.78)/.22);
+  const opacity=(window.innerWidth<700?.17:.24)*(.38+.62*fade);
+  orb.style.transform='translate(-50%,-50%) scale('+scale.toFixed(3)+')';
+  orb.style.opacity=opacity.toFixed(3);
+  queued=false;
+ };
+ const onScroll=()=>{if(!queued){queued=true;requestAnimationFrame(update)}};
+ window.addEventListener('scroll',onScroll,{passive:true});
+ window.addEventListener('resize',onScroll,{passive:true});
+ update();
+})();
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
