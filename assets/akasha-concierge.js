@@ -4,6 +4,7 @@
   const LOGO="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png";
   const WA="5571983448621";
   const CAPTURE_API="https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akasha-chat-leads";
+  const CAPTURE_PUBLIC_KEY="sb_publishable_cZOBLAGhZVoJ5w8aZxfHjQ_3zZbr-II";
   const root=document.createElement("div");
   root.id="ah-concierge";
   root.innerHTML=`
@@ -32,7 +33,7 @@
       visitorToken=crypto.randomUUID();
       capturePromise=fetch(CAPTURE_API,{
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:{"Content-Type":"application/json","apikey":CAPTURE_PUBLIC_KEY,"Authorization":"Bearer "+CAPTURE_PUBLIC_KEY},
         body:JSON.stringify({action:"start",visitor_token:visitorToken,source_path:location.pathname,referrer:document.referrer||""})
       }).then(async response=>{
         const data=await response.json().catch(()=>({}));
