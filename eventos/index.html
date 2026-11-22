@@ -321,7 +321,8 @@
             uniform float uScroll; // Valor de 0 a 1 vindo do scroll
             varying vec2 vUv;
             varying float vDisplacement;
-            varying vec3 vNormal;
+            varying vec3 vWorldNormal;
+            varying vec3 vWorldPosition;
 
             // Simplex Noise Function
             vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -376,7 +377,7 @@
 
             void main() {
                 vUv = uv;
-                vNormal = normal;
+                vWorldNormal = normalize(mat3(modelMatrix) * normal);
                 
                 // Ruído Base
                 float noise = snoise(position * (2.0 + uScroll * 3.0) + uTime * 0.3);
@@ -387,32 +388,43 @@
                 vDisplacement = noise;
                 vec3 newPos = position + normal * (noise * distortionStrength);
                 
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
+                vec4 worldPosition = modelMatrix * vec4(newPos, 1.0);\n                vWorldPosition = worldPosition.xyz;\n                gl_Position = projectionMatrix * viewMatrix * worldPosition;
             }
         `;
 
         // Fragment Shader: Define a textura cristalina ametista
         const fragmentShader = `
             uniform float uTime;
-            uniform vec3 uColorA; // Cor base (Escura)
-            uniform vec3 uColorB; // Cor brilho (Ouro/Violeta)
+            uniform vec3 uColorA;
+            uniform vec3 uColorB;
             uniform float uScroll;
-            
+
             varying float vDisplacement;
-            varying vec3 vNormal;
+            varying vec3 vWorldNormal;
+            varying vec3 vWorldPosition;
 
             void main() {
-                // Cálculo de luz falsa (Fresnel) para dar aspecto de joia
-                vec3 viewDir = normalize(cameraPosition - vec3(0.0));
-                float fresnel = dot(viewDir, vNormal);
-                fresnel = clamp(1.0 - fresnel, 0.0, 1.0);
-                fresnel = pow(fresnel, 2.0);
+                vec3 normalDir = normalize(vWorldNormal);
+                vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+                vec3 lightDir = normalize(vec3(-0.48, 0.72, 0.62));
+                vec3 halfDir = normalize(lightDir + viewDir);
 
-                // Mix de cores baseado na deformação
-                vec3 color = mix(uColorA, uColorB, vDisplacement * 1.5 + 0.5);
-                
-                // Adiciona brilho nas bordas
-                color += vec3(0.66, 0.48, 1.0) * fresnel * (0.42 + uScroll * 0.55);\n                float facetLight = pow(max(dot(normalize(vNormal), normalize(vec3(0.35, 0.8, 0.6))), 0.0), 5.0);\n                color += vec3(0.42, 0.24, 0.78) * facetLight * 0.32;
+                // Reflexo de borda: assinatura luminosa de uma ametista lapidada.
+                float fresnel = pow(1.0 - max(dot(normalDir, viewDir), 0.0), 2.35);
+
+                // Facetas recebem luz em intensidades diferentes, criando leitura cristalina.
+                float diffuse = 0.34 + 0.66 * max(dot(normalDir, lightDir), 0.0);
+                float specular = pow(max(dot(normalDir, halfDir), 0.0), 42.0);
+                float facet = smoothstep(0.12, 0.92, vDisplacement * 0.5 + 0.5);
+
+                vec3 color = mix(uColorA, uColorB, clamp(facet, 0.0, 1.0));
+                color *= diffuse;
+                color += vec3(0.78, 0.65, 1.0) * specular * 0.82;
+                color += vec3(0.62, 0.40, 1.0) * fresnel * (0.48 + uScroll * 0.34);
+                color += vec3(0.20, 0.09, 0.38) * (1.0 - diffuse) * 0.42;
+
+                // Pequena variação viva, sem transformar o cristal em uma massa líquida.
+                color += vec3(0.12, 0.07, 0.22) * (0.5 + 0.5 * sin(uTime * 0.7 + vWorldPosition.y * 2.0));
 
                 gl_FragColor = vec4(color, 1.0);
             }
@@ -430,7 +442,7 @@
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ReinhardToneMapping;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;\n        renderer.toneMappingExposure = 1.12;
 
         // --- 3. O ARTEFATO ---
         const geometry = new THREE.IcosahedronGeometry(1.5, 3); // Faces facetadas: aparência de cristal
@@ -448,11 +460,35 @@
         const artifact = new THREE.Mesh(geometry, material);
         scene.add(artifact);
 
+        // Estrutura de arestas: revela as facetas como um cristal lapidado.
+        const crystalEdges = new THREE.LineSegments(
+            new THREE.EdgesGeometry(geometry, 10),
+            new THREE.LineBasicMaterial({ color: 0xcbb5ff, transparent: true, opacity: 0.28 })
+        );
+        artifact.add(crystalEdges);
+
+        // Núcleo interno translúcido para dar sensação de profundidade mineral.
+        const innerCrystal = new THREE.Mesh(
+            new THREE.IcosahedronGeometry(0.78, 1),
+            new THREE.MeshPhongMaterial({
+                color: 0x7046a8,
+                emissive: 0x24103d,
+                specular: 0xe4d5ff,
+                shininess: 88,
+                transparent: true,
+                opacity: 0.42,
+                depthWrite: false,
+                side: THREE.DoubleSide
+            })
+        );
+        innerCrystal.rotation.set(0.38, 0.62, 0.18);
+        artifact.add(innerCrystal);
+
         // Partículas de Atmosfera
-        const particlesCount = 500;
+        const particlesCount = 850;
         const posArray = new Float32Array(particlesCount * 3);
         for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 20;
-        const particlesMat = new THREE.PointsMaterial({ size: 0.022, color: 0xb99aff, transparent: true, opacity: 0.58 });
+        const particlesMat = new THREE.PointsMaterial({ size: 0.026, color: 0xc5a8ff, transparent: true, opacity: 0.68, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true });
         const particlesGeo = new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         const particleSystem = new THREE.Points(particlesGeo, particlesMat);
         scene.add(particleSystem);
