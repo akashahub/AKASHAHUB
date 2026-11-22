@@ -70,7 +70,6 @@
 
   function open(){
     root.classList.add("ah-open");
-    ensureCapture();
     root.querySelector(".ah-launcher").setAttribute("aria-expanded","true");
     setTimeout(()=>chat.scrollTop=chat.scrollHeight,30);
   }
