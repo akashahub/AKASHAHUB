@@ -317,8 +317,7 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
    <article class="legacy-book">
     <div class="legacy-cover image-cover"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1795162877/cover_casa_digital_luminosa_npxgif.png" alt="Capa do livro Império Digital" loading="lazy"></div>
     <div class="legacy-book-body"><h3>Império Digital</h3><p>O segundo volume da coleção, dedicado ao Império Digital.</p><div class="legacy-price">R$ 9,90 · pagamento único</div><div class="legacy-actions"><a class="legacy-buy" href="/store/checkout/?sku=legado-casa-digital"><span>Comprar com Stripe</span><span>↗</span></a><a class="legacy-buy legacy-whatsapp" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20quero%20comprar%20Imp%C3%A9rio%20Digital." target="_blank" rel="noopener"><span>Dúvidas pelo WhatsApp</span><span>↗</span></a></div></div>
-   </article>
-   <article class="legacy-book">
+   </article>   <article class="legacy-book">
     <div class="legacy-cover image-cover"><img src="https://res.cloudinary.com/dcbarseus/image/upload/v1795162878/cover_dinheiro_com_criterio_luminosa_bj8fmk.png" alt="Capa do livro Alinhamento Financeiro" loading="lazy"></div>
     <div class="legacy-book-body"><h3>Alinhamento Financeiro</h3><p>O terceiro volume da coleção, dedicado ao Alinhamento Financeiro.</p><div class="legacy-price">R$ 9,90 · pagamento único</div><div class="legacy-actions"><a class="legacy-buy" href="/store/checkout/?sku=legado-dinheiro-com-criterio"><span>Comprar com Stripe</span><span>↗</span></a><a class="legacy-buy legacy-whatsapp" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20quero%20comprar%20Alinhamento%20Financeiro." target="_blank" rel="noopener"><span>Dúvidas pelo WhatsApp</span><span>↗</span></a></div></div>
    </article>
@@ -637,8 +636,7 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
     ["/zie/tela-cadastro.jpg","O cadastro","Aprender, ou também querer produzir."],
     ["/zie/tela-painel.jpg","O painel","Quem entrou e quem quer trabalhar com a marca."]
    ]
-  },
-  skillset:{
+  },  skillset:{
    kicker:"SKILLSET MIND · no lugar da Hotmart",
    href:"https://www.skillsetmind.com/",
    cta:"Abrir a Skillset Mind ↗",
@@ -891,6 +889,23 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
   facetShell.add(facetEdges);
   const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.52,1),new THREE.MeshPhongMaterial({color:0x7954a8,emissive:0x28133f,specular:0xe6d8ff,shininess:100,transparent:true,opacity:.48,depthWrite:false,flatShading:true}));
   core.rotation.set(.3,.7,.15);crystalGroup.add(core);
+  // Simbolo central inspirado na marca AKASHA: aro dourado e ponto de origem.
+  const sigil=new THREE.Group();crystalGroup.add(sigil);
+  const sigilRing=new THREE.Mesh(
+   new THREE.TorusGeometry(.76,.042,16,96),
+   new THREE.MeshStandardMaterial({color:0xc6a14a,metalness:.82,roughness:.2,emissive:0x4b3510,emissiveIntensity:.28})
+  );
+  sigil.add(sigilRing);
+  const innerRing=new THREE.Mesh(
+   new THREE.TorusGeometry(.66,.012,8,96),
+   new THREE.MeshBasicMaterial({color:0xf0d58b,transparent:true,opacity:.58})
+  );
+  sigil.add(innerRing);
+  const originPoint=new THREE.Mesh(
+   new THREE.SphereGeometry(.19,32,24),
+   new THREE.MeshPhysicalMaterial({color:0xd7b45f,metalness:.58,roughness:.12,clearcoat:1,emissive:0x3b2608,emissiveIntensity:.2})
+  );
+  sigil.add(originPoint);
   const count=260,positions=new Float32Array(count*3);
   for(let i=0;i<count;i++){positions[i*3]=(Math.random()-.5)*8;positions[i*3+1]=(Math.random()-.5)*5;positions[i*3+2]=(Math.random()-.5)*4;}
   const pGeo=new THREE.BufferGeometry();pGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));
@@ -918,6 +933,9 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
    glassShell.rotation.y=-t*.72+turn*.12;glassShell.rotation.x=.12+currentY*.45;
    facetShell.rotation.y=t*1.13+turn*.2;facetShell.rotation.x=-.18+currentX*.55;
    core.rotation.y=-t*.7;core.rotation.x=.3+Math.sin(t*.35)*.08;
+   sigil.rotation.y=-t*.58+currentX*.35;sigil.rotation.x=.12+currentY*.35;
+   sigilRing.material.emissiveIntensity=.2+crystallize*.45;
+   originPoint.scale.setScalar(1+crystallize*.1);
    // A cada volta completa, as facetas ganham brilho e definicao por um breve instante.
    material.roughness=.2-crystallize*.075;material.opacity=.78+crystallize*.12;
    facetMaterial.roughness=.16-crystallize*.055;facetMaterial.opacity=.34+crystallize*.12;
