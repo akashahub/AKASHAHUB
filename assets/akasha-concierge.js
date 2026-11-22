@@ -3,6 +3,7 @@
   if(document.getElementById("ah-concierge")) return;
   const LOGO="https://res.cloudinary.com/dcbarseus/image/upload/v1771197016/IMG_20260104_135834_828_etfko2.png";
   const WA="5571983448621";
+  const CAPTURE_API="https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/akasha-chat-leads";
   const root=document.createElement("div");
   root.id="ah-concierge";
   root.innerHTML=`
@@ -14,17 +15,61 @@
       </header>
       <div class="ah-progress"><span></span></div>
       <div class="ah-chat" aria-live="polite" aria-relevant="additions"></div>
-      <div class="ah-foot">Seus dados só serão enviados quando você escolher continuar pelo WhatsApp.</div>
+      <div class="ah-foot">Suas respostas são registradas para organizar seu atendimento. Só entraremos em contato após sua autorização.</div>
     </section>
     <button class="ah-launcher" type="button" aria-label="Abrir conversa com Akasha Hub"><img src="${LOGO}" alt=""></button>`;
   document.body.appendChild(root);
   const chat=root.querySelector(".ah-chat"), progress=root.querySelector(".ah-progress span");
   const answers={goal:"",name:"",business:"",segment:"",instagram:"",stage:"",challenge:"",outcome:"",whatsapp:"",availability:""};
   let step=0;
+  let visitorToken="";
+  let conversationId="";
+  let capturePromise=null;
+  let captureQueue=Promise.resolve();
+
+  function ensureCapture(){
+    if(!capturePromise){
+      visitorToken=crypto.randomUUID();
+      capturePromise=fetch(CAPTURE_API,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({action:"start",visitor_token:visitorToken,source_path:location.pathname,referrer:document.referrer||""})
+      }).then(async response=>{
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok||!data.id) throw new Error(data.error||"capture_start_failed");
+        conversationId=data.id;
+        return true;
+      }).catch(error=>{
+        console.debug("[Akasha Concierge] Captura indisponível:",error?.message||error);
+        capturePromise=null;
+        return false;
+      });
+    }
+    return capturePromise;
+  }
+
+  function captureAnswer(key,value){
+    captureQueue=captureQueue.then(async()=>{
+      if(!await ensureCapture()) return;
+      const response=await fetch(CAPTURE_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"answer",id:conversationId,visitor_token:visitorToken,key,value})});
+      if(!response.ok) throw new Error("answer_capture_"+response.status);
+    }).catch(error=>console.debug("[Akasha Concierge] Resposta não registrada:",error?.message||error));
+    return captureQueue;
+  }
+
+  function completeCapture(){
+    captureQueue=captureQueue.then(async()=>{
+      if(!await ensureCapture()) return;
+      const response=await fetch(CAPTURE_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"complete",id:conversationId,visitor_token:visitorToken,consent:true})});
+      if(!response.ok) throw new Error("conversation_complete_"+response.status);
+    }).catch(error=>console.debug("[Akasha Concierge] Conclusão não registrada:",error?.message||error));
+    return captureQueue;
+  }
   const steps=["goal","name","business","segment","instagram","stage","challenge","outcome","whatsapp","availability"];
 
   function open(){
     root.classList.add("ah-open");
+    ensureCapture();
     root.querySelector(".ah-launcher").setAttribute("aria-expanded","true");
     setTimeout(()=>chat.scrollTop=chat.scrollHeight,30);
   }
@@ -102,6 +147,7 @@
       wrap.remove();
       user(value);
       answers[key]=value;
+      captureAnswer(key,value);
       next();
     }
     send.addEventListener("click",submit);
@@ -126,7 +172,7 @@
             "Um projeto ou produto novo",
             "Organizar melhor minhas finanças",
             "Ainda não sei por onde começar"
-          ],v=>{answers.goal=v;next();});
+          ],v=>{answers.goal=v;captureAnswer("goal",v);next();});
         });
         break;
       case "name":
@@ -139,12 +185,12 @@
         bot("Com o que você trabalha?",()=>choices([
           "Serviços profissionais","Saúde ou bem-estar","Cursos ou educação",
           "Comércio ou indústria","Tecnologia ou internet","Outra área"
-        ],v=>{answers.segment=v;next();}));
+        ],v=>{answers.segment=v;captureAnswer("segment",v);next();}));
         break;
       case "instagram":
         bot("Qual é o seu Instagram? Quero conhecer um pouco do seu trabalho antes da nossa conversa.",()=>{
           choices(["Vou informar","Prefiro não informar"],v=>{
-            if(v==="Prefiro não informar"){answers.instagram="Não informado";next();}
+            if(v==="Prefiro não informar"){answers.instagram="Não informado";captureAnswer("instagram",answers.instagram);next();}
             else input("@seuperfil","instagram",{max:100});
           });
         });
@@ -153,7 +199,7 @@
         bot("Como está seu negócio hoje?",()=>choices([
           "Estou começando","Já tenho clientes","Quero fazer meu negócio crescer",
           "Minha empresa já está estruturada"
-        ],v=>{answers.stage=v;next();}));
+        ],v=>{answers.stage=v;captureAnswer("stage",v);next();}));
         break;
       case "challenge":
         bot("Qual é a maior dificuldade que você quer resolver?",()=>input("Conte um pouco","challenge",{multiline:true,max:700}));
@@ -210,6 +256,7 @@
             "Melhor horário: "+answers.availability,
             "Gostaria de combinar uma sessão de diagnóstico."
           ].join("\n");
+          completeCapture();
           window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg),"_blank","noopener");
         });
         actions.append(send,details);
