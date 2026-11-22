@@ -17,7 +17,9 @@ export const episodes = [
       "lacunas de informação"
     ],
     "questions": [
-      "O que sabemos? O que estamos supondo? Qual dado mudaria a decisão?"
+      "O que sabemos?",
+      "O que estamos supondo?",
+      "Qual dado mudaria a decisão?"
     ],
     "practice": "Inventário de situação atual com evidências, lacunas e três prioridades.",
     "map": [
@@ -45,7 +47,9 @@ export const episodes = [
       "identidade escolhida"
     ],
     "questions": [
-      "Quais experiências formaram seus critérios? O que ainda representa você? O que já não representa?"
+      "Quais experiências formaram seus critérios?",
+      "O que ainda representa você?",
+      "O que já não representa?"
     ],
     "practice": "Linha do tempo com eventos, aprendizados, valores e escolhas conscientes.",
     "map": [
@@ -73,7 +77,8 @@ export const episodes = [
       "experimento comportamental"
     ],
     "questions": [
-      "Que evidência sustenta essa crença? Em que situação ela deixa de ser verdadeira?"
+      "Que evidência sustenta essa crença?",
+      "Em que situação ela deixa de ser verdadeira?"
     ],
     "practice": "Diário de padrão e um experimento pequeno, seguro e mensurável.",
     "map": [
@@ -101,7 +106,8 @@ export const episodes = [
       "redes de apoio"
     ],
     "questions": [
-      "Que conversa está pendente? Qual limite ou acordo precisa ficar explícito?"
+      "Que conversa está pendente?",
+      "Qual limite ou acordo precisa ficar explícito?"
     ],
     "practice": "Mapa de relações e um acordo de comunicação verificável.",
     "map": [
@@ -129,7 +135,8 @@ export const episodes = [
       "alavanca"
     ],
     "questions": [
-      "O que você faz bem e consegue provar? O que depende de você?"
+      "O que você faz bem e consegue provar?",
+      "O que depende de você?"
     ],
     "practice": "Inventário de capacidades com evidências e plano de desenvolvimento.",
     "map": [
@@ -157,7 +164,10 @@ export const episodes = [
       "proposta de valor"
     ],
     "questions": [
-      "Para quem? Qual problema? Por que sua solução é adequada? Que prova sustenta isso?"
+      "Para quem?",
+      "Qual problema?",
+      "Por que sua solução é adequada?",
+      "Que prova sustenta isso?"
     ],
     "practice": "Hipótese de posicionamento e proposta de valor para validar no mercado.",
     "map": [
@@ -185,7 +195,8 @@ export const episodes = [
       "renúncia"
     ],
     "questions": [
-      "Como reconheceremos que chegamos? O que precisará ser diferente na prática?"
+      "Como reconheceremos que chegamos?",
+      "O que precisará ser diferente na prática?"
     ],
     "practice": "Mapa do ponto B com indicadores, horizontes e renúncias.",
     "map": [
@@ -213,7 +224,8 @@ export const episodes = [
       "cadência"
     ],
     "questions": [
-      "Qual é a próxima ação que move o sistema? O que será interrompido?"
+      "Qual é a próxima ação que move o sistema?",
+      "O que será interrompido?"
     ],
     "practice": "Plano de 90 dias com marcos, responsáveis e revisão quinzenal.",
     "map": [
@@ -271,7 +283,9 @@ export const episodes = [
       "validação"
     ],
     "questions": [
-      "Qual resultado é controlável? O que está incluído e excluído? Como validar demanda?"
+      "Qual resultado é controlável?",
+      "O que está incluído e excluído?",
+      "Como validar demanda?"
     ],
     "practice": "Canvas de oferta com hipóteses críticas e teste de validação.",
     "map": [
@@ -301,7 +315,8 @@ export const episodes = [
       "propriedade"
     ],
     "questions": [
-      "Qual ativo é central? Qual caminho leva da descoberta à ação?"
+      "Qual ativo é central?",
+      "Qual caminho leva da descoberta à ação?"
     ],
     "practice": "Mapa de ativos, canais, jornadas e prioridades técnicas.",
     "map": [
@@ -330,7 +345,8 @@ export const episodes = [
       "retenção"
     ],
     "questions": [
-      "Qual hipótese estamos testando? Qual métrica indica sinal real?"
+      "Qual hipótese estamos testando?",
+      "Qual métrica indica sinal real?"
     ],
     "practice": "Plano de aquisição com testes, métricas e limites de investimento.",
     "map": [
@@ -360,7 +376,8 @@ export const episodes = [
       "CRM"
     ],
     "questions": [
-      "Existe compatibilidade? O que precisa ser esclarecido para uma decisão livre?"
+      "Existe compatibilidade?",
+      "O que precisa ser esclarecido para uma decisão livre?"
     ],
     "practice": "Pipeline com etapas, critérios e roteiro de diagnóstico.",
     "map": [
@@ -390,7 +407,8 @@ export const episodes = [
       "supervisão"
     ],
     "questions": [
-      "Que tarefa repetitiva merece automação? Que erro seria inaceitável?"
+      "Que tarefa repetitiva merece automação?",
+      "Que erro seria inaceitável?"
     ],
     "practice": "Mapa de oportunidades priorizadas com responsável e salvaguardas.",
     "map": [
@@ -419,7 +437,9 @@ export const episodes = [
       "cenário"
     ],
     "questions": [
-      "Qual é a posição de caixa? Quais compromissos vencem? Qual cenário é sustentável?"
+      "Qual é a posição de caixa?",
+      "Quais compromissos vencem?",
+      "Qual cenário é sustentável?"
     ],
     "practice": "Painel financeiro básico e plano de organização de caixa.",
     "map": [
@@ -449,7 +469,8 @@ export const episodes = [
       "melhoria"
     ],
     "questions": [
-      "Onde o trabalho trava? Qual etapa não tem dono ou critério?"
+      "Onde o trabalho trava?",
+      "Qual etapa não tem dono ou critério?"
     ],
     "practice": "Mapa de processo prioritário e quadro de execução.",
     "map": [
@@ -478,7 +499,8 @@ export const episodes = [
       "risco"
     ],
     "questions": [
-      "O que precisa ser verdade para expandir? Qual teste reduz incerteza?"
+      "O que precisa ser verdade para expandir?",
+      "Qual teste reduz incerteza?"
     ],
     "practice": "Plano de expansão com hipóteses e critérios de avanço.",
     "map": [
@@ -507,7 +529,9 @@ export const episodes = [
       "governança"
     ],
     "questions": [
-      "Quem decide? Quem executa? Quem precisa ser consultado ou informado?"
+      "Quem decide?",
+      "Quem executa?",
+      "Quem precisa ser consultado ou informado?"
     ],
     "practice": "Matriz de responsabilidades e acordos de decisão.",
     "map": [
@@ -536,7 +560,9 @@ export const episodes = [
       "evidência"
     ],
     "questions": [
-      "Qual é a fonte? Quando foi atualizada? O dado mede o que afirmamos?"
+      "Qual é a fonte?",
+      "Quando foi atualizada?",
+      "O dado mede o que afirmamos?"
     ],
     "practice": "Dossiê com fontes, data, método, limitações e implicações.",
     "map": [
@@ -566,7 +592,8 @@ export const episodes = [
       "assessoria"
     ],
     "questions": [
-      "Onde ocorre a atividade real? Quais obrigações precisam de parecer local?"
+      "Onde ocorre a atividade real?",
+      "Quais obrigações precisam de parecer local?"
     ],
     "practice": "Mapa de jurisdições e questões para validação jurídica, contábil e fiscal.",
     "map": [
@@ -595,7 +622,10 @@ export const episodes = [
       "documentação"
     ],
     "questions": [
-      "O que existe? Quem é titular? Onde está documentado? O que está vulnerável?"
+      "O que existe?",
+      "Quem é titular?",
+      "Onde está documentado?",
+      "O que está vulnerável?"
     ],
     "practice": "Inventário de ativos e plano de regularização documental.",
     "map": [
@@ -623,7 +653,8 @@ export const episodes = [
       "sucessão"
     ],
     "questions": [
-      "O que para se uma pessoa ou sistema ficar indisponível? Qual é o plano B?"
+      "O que para se uma pessoa ou sistema ficar indisponível?",
+      "Qual é o plano B?"
     ],
     "practice": "Mapa de riscos, responsáveis, contingências e testes.",
     "map": [
@@ -651,7 +682,8 @@ export const episodes = [
       "transmissão"
     ],
     "questions": [
-      "O que merece continuar sem depender do fundador? Como medir contribuição?"
+      "O que merece continuar sem depender do fundador?",
+      "Como medir contribuição?"
     ],
     "practice": "Plano de legado com acervo, responsáveis e mecanismos de transmissão.",
     "map": [
@@ -679,7 +711,9 @@ export const episodes = [
       "próximo ciclo"
     ],
     "questions": [
-      "O que mudou e como sabemos? O que não funcionou? Qual é a próxima tese?"
+      "O que mudou e como sabemos?",
+      "O que não funcionou?",
+      "Qual é a próxima tese?"
     ],
     "practice": "Relatório de evolução e plano do próximo ciclo.",
     "map": [
