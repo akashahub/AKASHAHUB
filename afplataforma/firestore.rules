@@ -787,5 +787,16 @@ service cloud.firestore {
     match /centralLinks/{linkId} {
       allow read, create, update, delete: if isAfMentor();
     }
+    // SALA DE MENTORIA AL — roteiros, mapas e materiais privados do mentor.
+    // Somente identidades de mentor podem ler ou gravar; versões antigas ficam em subcoleção.
+    match /alMentoriaScripts/{libraryId} {
+      allow read, create, update: if isAfMentor();
+      allow delete: if false;
+      match /versions/{versionId} {
+        allow read, create: if isAfMentor();
+        allow update, delete: if false;
+      }
+    }
+
   }
 }
