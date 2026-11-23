@@ -4,31 +4,39 @@ export const episodes = [
   {
     "id": "01",
     "cycle": "Despertar",
-    "title": "O ponto A: leitura do estado atual",
-    "objective": "Diagnóstico integral; mapa de contexto; fatos, hipóteses e perguntas abertas.",
-    "deliverable": "Mapa do ponto A e inventário de recursos",
-    "focus": "Separar realidade observável de narrativa; identificar contexto pessoal, profissional, financeiro e operacional sem julgamento.",
+    "title": "Leitura do Ponto A — diagnóstico integral",
+    "objective": "Compreender a realidade atual do participante e do negócio; mapear oferta, cliente, jornada, capacidade, ativos, visibilidade financeira, gargalos, evidências e lacunas.",
+    "deliverable": "Mapa do Ponto A com contexto, oferta, jornada, recursos, até três gargalos, evidências, hipóteses, lacunas e uma prioridade inicial.",
+    "focus": "Observar o negócio como sistema, sem julgamento; separar fatos, percepções, hipóteses e oportunidades antes de recomendar soluções.",
     "concepts": [
-      "Contexto",
-      "linha de base",
-      "recursos",
-      "restrições",
-      "evidências",
-      "lacunas de informação"
+      "Ponto A e Ponto B",
+      "pensamento sistêmico",
+      "jornada do cliente",
+      "capacidade operacional",
+      "ativos e recursos",
+      "fato, percepção e hipótese",
+      "gargalo e priorização"
     ],
     "questions": [
-      "O que sabemos?",
-      "O que estamos supondo?",
-      "Qual dado mudaria a decisão?"
+      "O que você oferece, para quem e como entrega valor?",
+      "Como o cliente chega, contrata, recebe e retorna?",
+      "Onde existe espera, perda, retrabalho ou dependência?",
+      "Que evidência sustenta cada gargalo identificado?",
+      "O que sabemos, o que supomos e o que precisamos descobrir?",
+      "Qual é a primeira prioridade que merece investigação?"
     ],
-    "practice": "Inventário de situação atual com evidências, lacunas e três prioridades.",
+    "practice": "Construir individualmente o Mapa do Ponto A: contexto, oferta, jornada, ativos, operação, visibilidade financeira, gargalos, evidências, hipóteses e primeira prioridade.",
     "map": [
-      "Contexto",
-      "evidências",
-      "recursos",
-      "restrições",
-      "lacunas",
-      "prioridades"
+      "Ponto A",
+      "Arquitetura de Essência",
+      "Império Digital",
+      "Alinhamento Financeiro",
+      "Expansão",
+      "Legado",
+      "Oferta e jornada",
+      "Capacidade e ativos",
+      "Fatos e hipóteses",
+      "Gargalos e prioridade"
     ]
   },
   {
