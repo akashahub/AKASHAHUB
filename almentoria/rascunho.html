@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Rascunho do encontro · Arquitetura de Legado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090810;--panel:#15121f;--ink:#f5f0e8;--muted:#b4aabd;--gold:#d5b56b;--line:rgba(226,211,240,.13)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 12% 0%,#39254a55,transparent 38%),var(--bg);color:var(--ink);font:15px/1.7 "DM Sans",sans-serif}
+.wrap{width:min(1050px,calc(100% - 30px));margin:auto}.top{position:sticky;top:0;background:#090810ed;backdrop-filter:blur(18px);border-bottom:1px solid var(--line);z-index:2}.topin{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0}.brand{font:600 18px "Playfair Display",serif;letter-spacing:.08em}.brand span{color:var(--gold)}.btn{display:inline-flex;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:#211b2d;border-radius:9px;padding:9px 13px}.hero{padding:28px 0 10px}.eyebrow{color:var(--gold);font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}.hero h1{font:600 clamp(30px,5vw,46px)/1.12 "Playfair Display",serif;margin:8px 0}.status{padding:12px 14px;background:#d5b56b12;border-left:3px solid var(--gold);border-radius:0 10px 10px 0;color:#e7dcca;margin:14px 0}.doc{background:linear-gradient(145deg,#1d1929f5,#120f1bf5);border:1px solid var(--line);border-radius:15px;padding:clamp(18px,4vw,38px);margin:16px 0 50px;overflow-wrap:anywhere}.doc h1,.doc h2,.doc h3{font-family:"Playfair Display",serif;line-height:1.2}.doc h1{font-size:32px;color:var(--gold)}.doc h2{font-size:25px;margin-top:32px;border-bottom:1px solid var(--line);padding-bottom:8px}.doc h3{font-size:19px;margin-top:24px;color:#e8d5a8}.doc p,.doc li{color:#e1d8e8}.doc blockquote{border-left:3px solid var(--gold);padding:8px 15px;margin:16px 0;background:#d5b56b10}.doc table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}.doc th,.doc td{border:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}.doc th{color:var(--gold)}.doc code{background:#08070c;padding:2px 5px;border-radius:4px}.doc hr{border:0;border-top:1px solid var(--line);margin:28px 0}.doc strong{color:#fff}.doc a{color:#e7c982}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap topin"><div class="brand">AKASHA <span>HUB</span> / RASCUNHOS</div><a class="btn" href="/almentoria/">← Central AL</a></div></header>
+<main class="wrap"><section class="hero"><div class="eyebrow">Biblioteca editorial · acesso do mentor</div><h1 id="title">Rascunho do encontro</h1><p id="subtitle" style="color:var(--muted)">Material de trabalho, separado do roteiro oficial.</p><div class="status" id="status">Carregando material…</div></section><article class="doc" id="doc"></article></main>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+(async()=>{
+ const params=new URLSearchParams(location.search),id=(params.get("encontro")||"01").padStart(2,"0");
+ const title=document.getElementById("title"),subtitle=document.getElementById("subtitle"),status=document.getElementById("status"),doc=document.getElementById("doc");
+ title.textContent="Encontro "+id+" · Rascunho de trabalho";
+ if(id!=="01"){subtitle.textContent="Este encontro ainda não possui rascunho editorial salvo.";status.textContent="Área reservada. O rascunho será disponibilizado depois da produção e revisão editorial.";doc.innerHTML="<h2>Em desenvolvimento</h2><p>O conteúdo deste encontro ainda não foi elaborado. A matriz dos 24 encontros permanece como referência de planejamento.</p>";return}
+ try{
+  const response=await fetch("/docs/arquitetura-legado/ENCONTRO-01-RASCUNHO-EDITORIAL.md");
+  if(!response.ok)throw new Error("HTTP "+response.status);
+  const md=await response.text();
+  if(!window.marked)throw new Error("O renderizador do documento não carregou.");
+  doc.innerHTML=marked.parse(md);
+  subtitle.textContent="Rascunho 1.0 · conteúdo integral · aguardando revisão e aprovação";
+  status.textContent="Rascunho salvo na biblioteca editorial do Akasha Hub. Não é a versão oficial aprovada.";
+ }catch(e){status.textContent="Não foi possível carregar o rascunho: "+e.message;status.style.borderColor="#e6a0a0"}
+})();
+</script>
+</body></html>
