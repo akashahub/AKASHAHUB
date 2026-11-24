@@ -40,7 +40,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
 </style>
 </head>
 <body>
-<div class="gate" id="accessGate"><div class="gate-card"><div class="eyebrow">AKASHA HUB · ÁREA RESTRITA</div><h2>Acesso do mentor</h2><p id="gateMessage">Verificando sua sessão...</p><a class="btn gold" href="/login/">Entrar na conta</a></div></div><div class="shell">
+<div class="gate" id="accessGate"><div class="gate-card"><div class="eyebrow">AKASHA HUB · ÁREA RESTRITA</div><h2>Acesso do mentor</h2><p id="gateMessage">Verificando sua sessão...</p><a class="btn gold" id="loginLink" href="/login/?next=%2Fal%2Fcentral%2Fgerador-propostas%2F">Entrar na conta</a></div></div><div class="shell">
 <header><div><div class="eyebrow">AKASHA HUB · CENTRAL DO EXPERT</div><div style="font:20px Georgia">Arquitetura de Legado</div></div><a href="../index.html" class="no-print">← Voltar à Central</a></header>
 <section class="intro"><div class="eyebrow">AKASHA SALES OS · FERRAMENTA INTERNA</div><h1>Gerador de propostas.</h1><p>Transforme um diagnóstico em uma proposta clara, com escopo, entregáveis, investimento e próximos passos. A ferramenta calcula cenários a partir dos custos e da margem informados pelo mentor.</p></section>
 <div class="layout">
@@ -161,8 +161,18 @@ async function loadProposal(id){
 onAuthStateChanged(auth,user=>{
  authorizedMentor=!!(user&&isMentorIdentity(user.uid,user.email));
  $("accessGate").hidden=authorizedMentor;
- if(!authorizedMentor){$("gateMessage").textContent=user?"Esta área é exclusiva para identidades de mentor autorizadas.":"Entre com sua conta de mentor para acessar o gerador.";return}
- loadSavedProposals();
+ const loginLink=$("loginLink");
+ if(authorizedMentor){loadSavedProposals();return}
+ if(user){
+  $("gateMessage").textContent="Você já está conectado como "+(user.email||"uma conta Akasha")+". Esta área exige uma identidade de mentor autorizada.";
+  if(loginLink)loginLink.hidden=true;
+  return;
+ }
+ $("gateMessage").textContent="Não encontramos uma sessão ativa. Entre com sua conta de mentor; ao concluir, você retornará diretamente para este gerador.";
+ if(loginLink)loginLink.hidden=false;
+},error=>{
+ console.error("[AL propostas] Falha ao verificar sessão:",error);
+ $("gateMessage").textContent="Não foi possível verificar sua sessão. Atualize a página; se persistir, confira a conexão.";
 });
 
 function renderCosts(){ $('costRows').innerHTML=costs.map((c,i)=>'<tr><td><input aria-label="Nome do custo" data-cost-name="'+i+'" value="'+esc(c.name)+'"></td><td><input aria-label="Valor do custo" data-cost-value="'+i+'" type="number" min="0" step=".01" value="'+c.value+'"></td><td><button class="btn alt" data-remove="'+i+'" type="button">×</button></td></tr>').join('');document.querySelectorAll('[data-cost-name]').forEach(x=>x.oninput=()=>{costs[+x.dataset.costName].name=x.value});document.querySelectorAll('[data-cost-value]').forEach(x=>x.oninput=()=>{costs[+x.dataset.costValue].value=Math.max(0,Number(x.value)||0);calculate()});document.querySelectorAll('[data-remove]').forEach(x=>x.onclick=()=>{costs.splice(+x.dataset.remove,1);renderCosts();calculate()});calculate()}
