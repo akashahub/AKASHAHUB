@@ -151,6 +151,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",
 document.querySelectorAll(".dimension").forEach(b=>b.addEventListener("click",()=>{activeDimension=b.dataset.dimension;activeDepartment=DATA[activeDimension].departments[0].name;activeCategory=null;$("filterInput").value="";render();$("explorar").scrollIntoView({behavior:"smooth",block:"start"})}));
 $("filterInput").addEventListener("input",render);
 $("closeDetail").onclick=()=>{$("categoryDetail").hidden=true;activeCategory=null;renderCategorySelection()};
+window.__MCC={DATA,render};
 render();
 </script>
 
@@ -171,7 +172,23 @@ function draw(){
  grid.innerHTML=rows.map(x=>'<article class="app-card"><div class="app-icon">'+(x.dimension==="Mente"?"◉":x.dimension==="Corpo"?"✳":"⌘")+'</div><h3>'+esc(x.name)+'</h3><p>'+esc(x.description)+'</p><span class="status">'+esc(x.dimension)+' · '+esc(x.department)+'</span><p style="margin-top:9px"><a href="'+esc(x.route||"/")+'" style="color:#d4af6a;text-decoration:none;font-size:11px">Abrir aplicativo ↗</a></p><span class="status">'+(x.access_mode==="entitlement"?"Permissão da AF":x.access_mode==="login"?"Login Akasha":"Acesso da origem")+'</span></article>').join("")||'<div class="empty">Nenhum aplicativo ativo nesta dimensão.</div>';
  section.style.display="block";
 }
-async function load(u){try{const token=await u.getIdToken();const res=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":ANON,"Authorization":"Bearer "+token},body:JSON.stringify({action:"list"})});const data=await res.json();if(!res.ok)throw Error(data.error||"Falha ao carregar catálogo");catalog=data.items||[];draw()}catch(e){section.style.display="block";grid.innerHTML='<div class="empty">Não foi possível carregar os aplicativos conectados: '+esc(e.message)+'</div>'}}
+async function load(u){try{const token=await u.getIdToken();const res=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":ANON,"Authorization":"Bearer "+token},body:JSON.stringify({action:"list"})});const data=await res.json();if(!res.ok)throw Error(data.error||"Falha ao carregar catálogo");catalog=data.items||[];
+const core=window.__MCC;
+if(core){
+ for(const row of catalog.filter(x=>x.item_type==="department"||x.item_type==="category")){
+  const dim=core.DATA[row.dimension];if(!dim)continue;
+  let dep=dim.departments.find(d=>d.name===row.department);
+  if(row.item_type==="department"){
+   if(!dep){dep={name:row.name,desc:row.description||"Departamento em expansão.",cats:[]};dim.departments.push(dep)}
+   else if(row.description)dep.desc=row.description;
+  }else{
+   if(!dep){dep={name:row.department,desc:"Departamento em expansão.",cats:[]};dim.departments.push(dep)}
+   if(!dep.cats.includes(row.name))dep.cats.push(row.name);
+  }
+ }
+ core.render();
+}
+draw()}catch(e){section.style.display="block";grid.innerHTML='<div class="empty">Não foi possível carregar os aplicativos conectados: '+esc(e.message)+'</div>'}}
 authBtn.onclick=async()=>{if(auth.currentUser){await signOut(auth);return}try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){alert(e.message||"Não foi possível entrar.")}};
 onAuthStateChanged(auth,u=>{if(u){authBtn.textContent=(u.email||"Conta")+" · Sair";adminLink.hidden=!admins.includes((u.email||"").toLowerCase());load(u)}else{authBtn.textContent="Entrar";adminLink.hidden=true;section.style.display="none";catalog=[]}});
 </script>
