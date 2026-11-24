@@ -383,7 +383,7 @@ function showApp() {
   const params = new URLSearchParams(location.search);
   const quickTool = params.get("quicktool");
   const requestedView = params.get("view");
-  const directViews = ["dashboard", "vision-studio", "catalogo-capacidades", "corpo", "audios-pnl", "complementar", "hub-intel"];
+  const directViews = ["dashboard", "vision-studio", "catalogo-capacidades", "corpo", "audios-pnl", "complementar", "comp:mindzone", "comp:coach"];
   const quickTools = ["cashflow", "ideation", "network", "vision", "pitch", "legacy", "execution", "fono"];
   if (directViews.includes(requestedView)) {
     navigate(requestedView);
