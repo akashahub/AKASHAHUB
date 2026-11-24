@@ -15,6 +15,10 @@ import { getAfAccess, registerAfLoginAttempt } from "../../firebase/firestore.js
 import { defaultModulesMap } from "../../data/modules.js";
 import { Store } from "./storage.js";
 
+// TEMPORÁRIO: acesso gratuito e completo à AF para qualquer conta autenticada.
+// Reverter para false quando o modelo de permissões for definido.
+const OPEN_ACCESS_MODE = true;
+
 export const session = {
   mode: null,
   uid: null,
@@ -69,6 +73,33 @@ function buildSessionFromUser(user, access, mode = "firebase") {
       extraRooms: [],
       roomsBlocked: [],
       roomId: session.roomId || "mentoria-principal",
+      lifetime: true,
+      lang: session.lang,
+      ready: true
+    };
+  }
+
+  // Modo de abertura temporária solicitado para a central Mente · Corpo · Campo.
+  // Não altera os documentos afAccess existentes nem as regras Firestore:
+  // cada pessoa continua lendo e gravando somente os próprios dados por UID.
+  if (OPEN_ACCESS_MODE) {
+    return {
+      mode,
+      uid: user.uid,
+      email: user.email || "",
+      name: user.displayName || user.email?.split("@")[0] || "Pessoa",
+      role: "mentee",
+      approved: true,
+      active: true,
+      modules: defaultModulesMap(7),
+      plan: "vip",
+      features: {},
+      extraRooms: [],
+      roomsBlocked: [],
+      roomId: session.roomId || "mentoria-principal",
+      mentorshipEndsAt: "",
+      supportEndsAt: "",
+      contentEndsAt: "",
       lifetime: true,
       lang: session.lang,
       ready: true
