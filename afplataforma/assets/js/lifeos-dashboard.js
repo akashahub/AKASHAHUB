@@ -56,7 +56,9 @@ function taskRow(task, i) {
 }
 
 function renderWeeklyPlan(plan) {
-  return `<section class="lifeos-plan" id="lifeosPlan" aria-label="Lista de tarefas">
+  return `<details class="lifeos-disclosure lifeos-plan-disclosure">
+    <summary class="lifeos-disclosure-trigger"><span>Organização e execução</span><span class="lifeos-disclosure-hint">Abrir painel <span aria-hidden="true">＋</span></span></summary>
+    <section class="lifeos-plan" id="lifeosPlan" aria-label="Lista de tarefas">
     <div class="lifeos-plan-head">
       <div>
         <p class="eyebrow">Organização e execução</p>
@@ -80,7 +82,8 @@ function renderWeeklyPlan(plan) {
       <p id="lifeosPlanStatus" role="status" aria-live="polite">Suas tarefas ficam salvas nesta conta quando a sincronização está disponível.</p>
       <button class="tool-btn primary" type="button" id="lifeosPlanSave">Salvar tarefas</button>
     </div>
-  </section>`;
+    </section>
+  </details>`;
 }
 
 function paintWeeklyPlan(root, plan) {
@@ -267,7 +270,23 @@ export function renderLifeOsDashboard() {
       .lifeos-home .lifeos-plan .tool-btn:disabled{opacity:.6;cursor:wait}
       .lifeos-home .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
       @media(max-width:850px){.lifeos-home .lifeos-plan-tasks{grid-template-columns:1fr}}
-      .lifeos-home .lifeos-note{border-left:2px solid var(--gold);padding:12px 15px;color:var(--muted);font-size:12px;line-height:1.7;margin:12px 0 24px}
+      .lifeos-home .lifeos-disclosure{margin:18px 0;border:1px solid var(--line);border-radius:14px;background:var(--bg2);overflow:hidden}
+      .lifeos-home .lifeos-disclosure-trigger{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 18px;cursor:pointer;list-style:none;font-size:13px;font-weight:600;color:var(--text,#29222f)}
+      .lifeos-home .lifeos-disclosure-trigger::-webkit-details-marker{display:none}
+      .lifeos-home .lifeos-disclosure-trigger::marker{content:""}
+      .lifeos-home .lifeos-disclosure-hint{display:inline-flex;align-items:center;gap:8px;color:var(--gold);font-size:11px;font-weight:500;white-space:nowrap}
+      .lifeos-home .lifeos-disclosure[open]>.lifeos-disclosure-trigger{border-bottom:1px solid var(--line)}
+      .lifeos-home .lifeos-disclosure[open]>.lifeos-disclosure-trigger .lifeos-disclosure-hint span{transform:rotate(45deg)}
+      .lifeos-home .lifeos-disclosure-hint span{display:inline-block;font-size:17px;transition:transform .2s ease}
+      .lifeos-home .lifeos-plan-disclosure .lifeos-plan{margin:0;border:0;border-radius:0;box-shadow:none}
+      .lifeos-home .lifeos-start-disclosure{border-color:rgba(185,154,74,.3);background:linear-gradient(135deg,rgba(35,22,51,.97),rgba(17,12,27,.98))}
+      .lifeos-home .lifeos-start-disclosure>.lifeos-disclosure-trigger{color:#fff4d0}
+      .lifeos-home .lifeos-start-disclosure .lifeos-disclosure-hint{color:#e2c777}
+      .lifeos-home .lifeos-start-disclosure[open]>.lifeos-disclosure-trigger{border-color:rgba(226,199,119,.2)}
+      .lifeos-home .lifeos-start-disclosure .lifeos-start{margin:0;border:0;border-radius:0;box-shadow:none}
+      .lifeos-home .lifeos-dimensions{margin-top:22px}
+      .lifeos-home .lifeos-dimensions .lifeos-grid{padding:0 16px 16px;margin:0}
+      @media(max-width:520px){.lifeos-home .lifeos-disclosure-trigger{padding:14px;font-size:12px}}
       .lifeos-home .lifeos-start{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(220px,.8fr);gap:20px;padding:22px;margin:22px 0 28px;border:1px solid rgba(185,154,74,.3);border-radius:18px;background:radial-gradient(ellipse at 100% 0%,rgba(130,83,177,.16),transparent 52%),linear-gradient(135deg,rgba(35,22,51,.97),rgba(17,12,27,.98));color:#f7f0ff;box-shadow:0 18px 48px rgba(31,18,46,.15)}
       .lifeos-home .lifeos-start .eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#e2c777;margin-bottom:8px}
       .lifeos-home .lifeos-start h3{font-size:clamp(1.1rem,2.5vw,1.45rem);line-height:1.3;margin-bottom:8px;color:#fff}
@@ -284,8 +303,10 @@ export function renderLifeOsDashboard() {
       @media(max-width:680px){.lifeos-home .lifeos-start{grid-template-columns:1fr;padding:17px}.lifeos-home .lifeos-access{width:100%}}
     </style>
     <p class="lifeos-kicker">LifeOS · Central de comando</p>
-    <h2 class="hero-title">Organizar a vida. Conduzir o negócio. Executar o que importa.</h2>
+    <h2 class="hero-title">Estratégia. Execução. Evolução.</h2>
     <p class="lifeos-intro">Bem-vindo${nome ? ", " + esc(nome) : ""}. Aqui você encontra seu próximo passo, os acessos liberados e as ferramentas para transformar as decisões da mentoria em execução real.</p>
+    <details class="lifeos-disclosure lifeos-start-disclosure">
+      <summary class="lifeos-disclosure-trigger"><span>Seu ponto de partida</span><span class="lifeos-disclosure-hint">Ver detalhes <span aria-hidden="true">＋</span></span></summary>
     <section class="lifeos-start" aria-label="Comece sua jornada">
       <div>
         <p class="eyebrow">Seu ponto de partida</p>
@@ -305,22 +326,16 @@ export function renderLifeOsDashboard() {
         <small>Este indicador mostra permissões de acesso, não conclusão de atividades ou resultados.</small>
       </div>
     </section>
+    </details>
     ${renderWeeklyPlan(storedWeeklyPlan())}
-    <div class="grid-3">
-      <div class="stat-card"><div class="lbl">Módulos liberados</div><div class="val">${abertos}/${totalModulos}</div><div class="hint">Acesso atual da sua conta</div></div>
-      <div class="stat-card"><div class="lbl">Próxima liberação na trilha</div><div class="val" style="font-size:.98rem;line-height:1.4;padding-top:8px">${proximo ? esc(proximo.num + " · " + proximo.title) : "Trilha liberada"}</div><div class="hint">${proximo ? "Se precisar deste conteúdo, alinhe a liberação com seu mentor." : "Todos os módulos estão liberados para sua conta."}</div></div>
-      <div class="stat-card"><div class="lbl">Seu processo</div><div class="val" style="font-size:1.1rem;padding-top:8px">Mentoria + execução</div><div class="hint">Decisões, ferramentas, prática e revisão</div></div>
-    </div>
-    <h3 class="section-h">As três dimensões do LifeOS</h3>
+    <details class="lifeos-disclosure lifeos-dimensions">
+      <summary class="lifeos-disclosure-trigger"><span>As três dimensões do LifeOS</span><span class="lifeos-disclosure-hint">Explorar dimensões <span aria-hidden="true">＋</span></span></summary>
     <div class="lifeos-grid">
       <article class="lifeos-card"><span class="lifeos-mark">DIMENSÃO 01</span><h3>Corpo</h3><p>Energia, rotina, hábitos, sono e consistência para sustentar o que precisa ser feito.</p><div class="lifeos-actions"><button class="tool-btn" type="button" data-nav="complementar">Explorar ferramentas</button><button class="tool-btn" type="button" data-nav="tools">Abrir ferramentas</button></div></article>
       <article class="lifeos-card"><span class="lifeos-mark">DIMENSÃO 02</span><h3>Mente</h3><p>Clareza, foco, aprendizagem, identidade, escolhas e preparação para agir com intenção.</p><div class="lifeos-actions"><button class="tool-btn" type="button" data-nav="fase1">Essência</button><button class="tool-btn" type="button" data-nav="modules">Módulos e materiais</button></div></article>
       <article class="lifeos-card"><span class="lifeos-mark">DIMENSÃO 03</span><h3>Campo</h3><p>Aplicação no mundo real: negócio, dinheiro, posicionamento, relações, entregas e resultados.</p><div class="lifeos-actions"><button class="tool-btn" type="button" data-nav="fase2">Estratégia</button><button class="tool-btn" type="button" data-nav="af-dashboard">Dashboard AF</button><button class="tool-btn" type="button" data-nav="empresas">Empresas</button></div></article>
     </div>
-    <h3 class="section-h">Mentoria e execução · acompanhamento do processo</h3>
-    <p class="lifeos-intro">A mentoria continua sendo um processo próprio, conduzido em conjunto. Este painel conecta cada etapa às ferramentas e à execução — não transforma a mentoria em uma simples lista automática de tarefas.</p>
-    <div class="lifeos-phases">${fases.map(([id, num, titulo, descricao]) => `<div class="lifeos-phase" data-nav="${id}"><div class="num">FASE ${num}</div><h4>${titulo}</h4><p>${descricao}</p></div>`).join("")}</div>
-    <div class="lifeos-note">O painel mostra os acessos e o progresso de módulos que a plataforma já conhece. Não presume que uma etapa da mentoria foi concluída nem inventa atividades, marcos ou resultados. O registro detalhado de decisões e acompanhamento pode evoluir sem mexer no conteúdo original das fases.</div>
+    </details>
     <h3 class="section-h">Acesso rápido</h3>
     <div class="lifeos-actions" style="margin:0 0 28px"><button class="tool-btn" type="button" data-nav="call">Call / encontro</button><button class="tool-btn" type="button" data-nav="complementar">Ferramentas complementares</button><button class="tool-btn" type="button" data-nav="quitei">Quitei</button><button class="tool-btn" type="button" data-nav="fase3">Fase 3 · Alinhamento Financeiro</button></div>
   </div>`;
