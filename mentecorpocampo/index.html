@@ -169,7 +169,29 @@ function draw(){
  filters.innerHTML=dims.map(d=>'<button class="tag" data-dim="'+d+'" style="cursor:pointer;background:'+(active===d?'#30253c':'transparent')+'">'+d+'</button>').join("");
  filters.querySelectorAll("button").forEach(b=>b.onclick=()=>{active=b.dataset.dim;draw()});
  const rows=catalog.filter(x=>x.item_type==="app"&&(active==="Todos"||x.dimension===active));
- grid.innerHTML=rows.map(x=>'<article class="app-card"><div class="app-icon">'+(x.dimension==="Mente"?"◉":x.dimension==="Corpo"?"✳":"⌘")+'</div><h3>'+esc(x.name)+'</h3><p>'+esc(x.description)+'</p><span class="status">'+esc(x.dimension)+' · '+esc(x.department)+'</span><p style="margin-top:9px"><a href="'+esc(x.route||"/")+'" style="color:#d4af6a;text-decoration:none;font-size:11px">Abrir aplicativo ↗</a></p><span class="status">'+(x.access_mode==="entitlement"?"Permissão da AF":x.access_mode==="login"?"Login Akasha":"Acesso da origem")+'</span></article>').join("")||'<div class="empty">Nenhum aplicativo ativo nesta dimensão.</div>';
+ const directTargets={
+  "app-af-cashflow":"/afplataforma/?quicktool=cashflow",
+  "app-af-ideation":"/afplataforma/?quicktool=ideation",
+  "app-af-execution":"/afplataforma/?quicktool=execution",
+  "app-af-network":"/afplataforma/?quicktool=network",
+  "app-af-pitch":"/afplataforma/?quicktool=pitch",
+  "app-af-vision":"/afplataforma/?quicktool=vision",
+  "app-af-legacy":"/afplataforma/?quicktool=legacy",
+  "app-af-visionstudio":"/afplataforma/?view=vision-studio",
+  "app-af-capabilities":"/afplataforma/?view=catalogo-capacidades",
+  "app-af-corpo":"/afplataforma/?view=corpo",
+  "app-af-lifeos":"/afplataforma/?view=dashboard",
+  "app-af-meditation":"/afplataforma/?view=complementar",
+  "app-af-affirmations":"/afplataforma/?view=audios-pnl",
+  "app-af-constellation":"/afplataforma/?view=complementar",
+  "app-af-coach":"/afplataforma/?view=hub-intel",
+  "app-af-appbuilder":"/afplataforma/app-builder/"
+ };
+ grid.innerHTML=rows.map(x=>{
+  const mapped=directTargets[x.id];
+  const href=mapped||x.route||"/afplataforma/";
+  return '<article class="app-card"><div class="app-icon">'+(x.dimension==="Mente"?"◉":x.dimension==="Corpo"?"✳":"⌘")+'</div><h3>'+esc(x.name)+'</h3><p>'+esc(x.description)+'</p><span class="status">'+esc(x.dimension)+' · '+esc(x.department)+'</span><p style="margin-top:9px"><a href="'+esc(href)+'" target="_blank" rel="noopener noreferrer" style="color:#d4af6a;text-decoration:none;font-size:11px">'+(mapped?"Abrir aplicativo ↗":"Abrir plataforma ↗")+'</a></p><span class="status">Acesso livre · login Akasha</span></article>';
+ }).join("")||'<div class="empty">Nenhum aplicativo ativo nesta dimensão.</div>';
  section.style.display="block";
 }
 async function load(u){try{const token=await u.getIdToken();const res=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":ANON,"Authorization":"Bearer "+token},body:JSON.stringify({action:"list"})});const data=await res.json();if(!res.ok)throw Error(data.error||"Falha ao carregar catálogo");catalog=data.items||[];
