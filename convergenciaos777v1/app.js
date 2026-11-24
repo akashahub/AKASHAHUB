@@ -240,7 +240,14 @@ async function loadAccess() {
   state.people = people.data || [];
   const presenters = await sb.from("os_presenters").select("room_id,email");
   state.presenters = presenters.data || [];
-  await loadCommunityData();
+  try {
+    await loadCommunityData();
+  } catch (err) {
+    console.error("Falha ao carregar dados da comunidade:", err);
+    state.posts = [];
+    state.essence = null;
+    toast("Dados da comunidade indisponíveis no momento. Tente atualizar.");
+  }
 }
 
 async function loadCommunityData() {
