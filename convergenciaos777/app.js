@@ -149,6 +149,7 @@ try {
 const state = { route: "boot", pillar: "business", cat: "", piece: null, playFilter: "all", room: null, reel: 0, q: "", liked: {}, chat: {}, people: [], presenters: [], ticket: null, emailDraft: "", busy: "", loginError: "", more: 6, who: "", inRoom: false };
 const LIVE_URL = "wss://akashahub-vlya29kl.livekit.cloud";
 let session = null;
+let firebaseExchangePromise = null;
 let lk = null;
 
 function esc(s) {
@@ -505,6 +506,12 @@ async function loginGoogle() {
 }
 async function exchangeGoogle(user) {
   if (!user) return;
+  if (firebaseExchangePromise) return firebaseExchangePromise;
+  firebaseExchangePromise = exchangeGoogleOnce(user);
+  try { return await firebaseExchangePromise; }
+  finally { firebaseExchangePromise = null; }
+}
+async function exchangeGoogleOnce(user) {
   const token = await user.getIdToken();
   const res = await fetch(FN_GOOGLE, {
     method: "POST",
@@ -769,12 +776,26 @@ document.getElementById("app").addEventListener("click", async (event) => {
 firebase.auth().getRedirectResult().then((result) => {
   if (result && result.user) exchangeGoogle(result.user).catch((err) => toast(err.message || "Google não concluiu."));
 }).catch(() => {});
+firebase.auth().onAuthStateChanged((user) => {
+  if (user && !session && !firebaseExchangePromise) {
+    exchangeGoogle(user).catch((err) => {
+      state.loginError = err?.message || "Não foi possível abrir a sessão compartilhada.";
+      render();
+    });
+  }
+});
 sb.auth.onAuthStateChange(async (_event, next) => {
   session = next;
   if (!session) { state.route = "boot"; render(); return; }
   await loadAccess();
   await confirmPaid();
-  if (state.route === "boot" || state.route === "ticket") state.route = myTicket() ? "home" : "ticket";
+  const requestedPillar = new URLSearchParams(location.search).get("pillar");
+  if ((state.route === "boot" || state.route === "ticket") && PILLARS.some((p) => p.id === requestedPillar)) {
+    state.pillar = requestedPillar;
+    state.route = "pillar";
+  } else if (state.route === "boot" || state.route === "ticket") {
+    state.route = myTicket() ? "home" : "ticket";
+  }
   render();
 });
 render();
