@@ -798,10 +798,6 @@ document.getElementById("app").addEventListener("click", async (event) => {
   if (act === "more") { state.more = (state.more || 6) + 6; render(); return; }
   if (act === "open-perfil") { state.who = id; state.route = "perfil"; render(); return; }
   if (act === "publish") {
-    const typeEl = document.getElementById("postType");
-    const capEl = document.getElementById("postCap");
-    const type = typeEl ? typeEl.value : "imagem";
-    const caption = (capEl && capEl.value || "").trim();
     if (!email()) return;
     return publishPost();
   }
