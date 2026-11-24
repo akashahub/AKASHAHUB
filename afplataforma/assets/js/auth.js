@@ -149,13 +149,15 @@ export async function resolveUserAccess(user) {
   }
 
   let access = null;
-  try {
-    access = await getAfAccess(user.uid);
-  } catch (e) {
-    console.warn("[AF] getAfAccess:", e?.code || e?.message || e);
-    if (!isMentorIdentity(user.uid, user.email)) {
-      if (onAccessDenied) onAccessDenied("error");
-      return false;
+  if (!OPEN_ACCESS_MODE) {
+    try {
+      access = await getAfAccess(user.uid);
+    } catch (e) {
+      console.warn("[AF] getAfAccess:", e?.code || e?.message || e);
+      if (!isMentorIdentity(user.uid, user.email)) {
+        if (onAccessDenied) onAccessDenied("error");
+        return false;
+      }
     }
   }
   const result = buildSessionFromUser(user, access, "firebase");
