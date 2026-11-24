@@ -237,7 +237,9 @@ async function loadAccess() {
     const { data } = await sb.from("os_tickets").select("ticket").eq("email", email()).maybeSingle();
     state.ticket = data ? data.ticket : null;
   }
-  const people = await sb.from("os_people").select("email,status,role");
+  let peopleQuery = sb.from("os_people").select("email,status,role");
+  if (!isAdmin()) peopleQuery = peopleQuery.eq("email", email());
+  const people = await peopleQuery;
   state.people = people.data || [];
   const presenters = await sb.from("os_presenters").select("room_id,email");
   state.presenters = presenters.data || [];
