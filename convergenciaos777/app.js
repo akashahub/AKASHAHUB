@@ -277,7 +277,7 @@ function shell(html, top) {
     ["reel", svg('<rect x="3" y="3" width="18" height="18" rx="4"/><path d="m10 8 6 4-6 4z"/>')],
     ["eu", '<span class="me">' + esc((email() || "?").slice(0, 1).toUpperCase()) + "</span>"]
   ].map((item) => '<button class="' + (active === item[0] ? "on" : "") + '" data-act="go" data-id="' + item[0] + '" aria-label="' + item[0] + '">' + item[1] + "</button>").join("");
-  const bar = top || '<header class="top"><b>Convergência</b><div class="icons"><button data-act="go" data-id="eu" aria-label="Atividade">' + svg('<path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z"/>') + "</button></div></header>";
+  const bar = top || '<header class="top"><b>Convergência</b><div class="icons"><a class="hub-link" href="/mentecorpocampo/" style="font-size:9px;letter-spacing:.02em;color:var(--gold);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:7px 9px;white-space:nowrap">Mente · Corpo · Campo ↗</a><button data-act="go" data-id="eu" aria-label="Atividade">' + svg('<path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z"/>') + "</button></div></header>";
   return '<div class="wrap">' + bar + html + '<nav class="nav">' + nav + "</nav></div>";
 }
 function stories() {
