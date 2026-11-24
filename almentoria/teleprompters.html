@@ -11,15 +11,39 @@
 <div class="layout"><aside class="side"><h2>Encontros</h2><div class="episode-list" id="episodeList"></div></aside><main class="main"><section class="reader-card"><div class="toolbar"><div class="group"><button class="btn primary" id="toggleScroll">▶ Iniciar rolagem</button><button class="btn" id="resetScroll">↺ Início</button></div><div class="group"><label for="speed">Velocidade</label><input id="speed" type="range" min="5" max="90" step="1" value="26"><span class="speed" id="speedValue">26 px/s</span></div><div class="group"><button class="btn" id="fontDown" aria-label="Diminuir fonte">A−</button><button class="btn" id="fontUp" aria-label="Aumentar fonte">A+</button></div><div class="group"><button class="btn" id="wideMode">Tela ampla</button></div><div class="group" style="margin-left:auto"><span id="progressText" class="speed">0%</span></div></div><div class="progress-wrap"><div class="progress" id="progress"></div></div><div class="reader-scroll" id="readerScroll" tabindex="0"><article class="reader-content" id="readerContent"><h1>Carregando roteiros...</h1></article></div><div class="meta"><span id="docMeta">24 teleprompters · versão editorial 1.0 para revisão do mentor</span><span>Atalho: espaço inicia/pausa a rolagem</span></div></section></main></div><footer class="foot">AKASHA HUB · ARQUITETURA DE LEGADO · MATERIAL DE CONDUÇÃO DO MENTOR</footer></div></div>
 <script src="/almentoria/teleprompter-data-01.js"></script><script src="/almentoria/teleprompter-data-02.js"></script><script src="/almentoria/teleprompter-data-03.js"></script>
 <script type="module">
-import {onAuthStateChanged,signInWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {auth,isMentorIdentity} from "../afplataforma/firebase/firebase-config.js";
 const $=id=>document.getElementById(id),loginScreen=$("loginScreen"),app=$("app"),authMessage=$("authMessage");
 function msg(t,e){authMessage.textContent=t;authMessage.className="status"+(e?" error":"")}
 function deny(){app.classList.add("hidden");loginScreen.classList.remove("hidden");msg("Esta conta não possui identidade de mentor autorizada.",true)}
-onAuthStateChanged(auth,user=>{if(!user){app.classList.add("hidden");loginScreen.classList.remove("hidden");msg("Entre com sua conta de mentor.");return}if(!isMentorIdentity(user.uid,user.email)){deny();return}loginScreen.classList.add("hidden");app.classList.remove("hidden");initReader()});
-$("loginEmail").onclick=async()=>{try{msg("Autenticando...");await signInWithEmailAndPassword(auth,$("email").value.trim().toLowerCase(),$("password").value)}catch(e){msg("Não foi possível entrar: "+(e.code||e.message),true)}};
-$("loginGoogle").onclick=async()=>{try{const p=new GoogleAuthProvider();p.setCustomParameters({prompt:"select_account"});await signInWithPopup(auth,p)}catch(e){msg("Não foi possível entrar: "+(e.code||e.message),true)}};
-$("logout").onclick=()=>signOut(auth);
+let auth=null,signInWithEmailAndPassword=null,GoogleAuthProvider=null,signInWithPopup=null,signOut=null;
+(async()=>{
+  try{
+    msg("Carregando autenticação segura...");
+    const [firebaseAuth, firebaseConfig] = await Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"),
+      import("../afplataforma/firebase/firebase-config.js")
+    ]);
+    ({onAuthStateChanged,signInWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,signOut}=firebaseAuth);
+    auth=firebaseConfig.auth;
+    const allowed=firebaseConfig.isMentorIdentity;
+    let resolved=false;
+    const stopTimeout=setTimeout(()=>{if(!resolved)msg("A autenticação demorou mais que o esperado. Recarregue a página; se persistir, verifique a conexão com Firebase.",true)},12000);
+    onAuthStateChanged(auth,user=>{
+      resolved=true;clearTimeout(stopTimeout);
+      if(!user){app.classList.add("hidden");loginScreen.classList.remove("hidden");msg("Entre com sua conta de mentor.");return}
+      if(!allowed(user.uid,user.email)){deny();return}
+      loginScreen.classList.add("hidden");app.classList.remove("hidden");initReader();
+    },error=>{
+      resolved=true;clearTimeout(stopTimeout);
+      msg("Falha ao verificar a sessão: "+(error?.code||error?.message||"erro desconhecido"),true);
+    });
+    $("loginEmail").onclick=async()=>{try{msg("Autenticando...");await signInWithEmailAndPassword(auth,$("email").value.trim().toLowerCase(),$("password").value)}catch(e){msg("Não foi possível entrar: "+(e.code||e.message),true)}};
+    $("loginGoogle").onclick=async()=>{try{const p=new GoogleAuthProvider();p.setCustomParameters({prompt:"select_account"});await signInWithPopup(auth,p)}catch(e){msg("Não foi possível entrar: "+(e.code||e.message),true)}};
+    $("logout").onclick=()=>signOut(auth);
+  }catch(error){
+    console.error("[Teleprompter] Falha ao inicializar Firebase:",error);
+    msg("Não foi possível carregar o Firebase: "+(error?.message||error),true);
+  }
+})();
 let selected="01",running=false,raf=0,last=0,fontSize=22;
 const reader=$("readerScroll"),content=$("readerContent"),toggle=$("toggleScroll"),speed=$("speed");
 const cycles=n=>n<=8?"Ciclo 1 · Despertar":n<=16?"Ciclo 2 · Construção":"Ciclo 3 · Expansão e Legado";
