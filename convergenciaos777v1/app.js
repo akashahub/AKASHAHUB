@@ -550,7 +550,7 @@ async function verifyCode() {
 }
 async function buy(ticket) {
   try {
-    const data = await api({ action: "checkout", ticket });
+    const data = await api({ action: "checkout", ticket, app_version: "v1" });
     if (data.waived) { state.ticket = "admin"; render(); return; }
     if (!data.url) throw new Error("sem link");
     location.href = data.url;
