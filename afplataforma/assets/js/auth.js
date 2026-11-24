@@ -15,6 +15,10 @@ import { getAfAccess, registerAfLoginAttempt } from "../../firebase/firestore.js
 import { defaultModulesMap } from "../../data/modules.js";
 import { Store } from "./storage.js";
 
+// TEMPORÁRIO: acesso gratuito e completo à AF para qualquer conta autenticada.
+// Reverter para false quando o modelo de permissões for definido.
+const OPEN_ACCESS_MODE = true;
+
 export const session = {
   mode: null,
   uid: null,
@@ -75,6 +79,33 @@ function buildSessionFromUser(user, access, mode = "firebase") {
     };
   }
 
+  // Modo de abertura temporária solicitado para a central Mente · Corpo · Campo.
+  // Não altera os documentos afAccess existentes nem as regras Firestore:
+  // cada pessoa continua lendo e gravando somente os próprios dados por UID.
+  if (OPEN_ACCESS_MODE) {
+    return {
+      mode,
+      uid: user.uid,
+      email: user.email || "",
+      name: user.displayName || user.email?.split("@")[0] || "Pessoa",
+      role: "mentee",
+      approved: true,
+      active: true,
+      modules: defaultModulesMap(7),
+      plan: "vip",
+      features: {},
+      extraRooms: [],
+      roomsBlocked: [],
+      roomId: session.roomId || "mentoria-principal",
+      mentorshipEndsAt: "",
+      supportEndsAt: "",
+      contentEndsAt: "",
+      lifetime: true,
+      lang: session.lang,
+      ready: true
+    };
+  }
+
   if (!access) {
     return { denied: true, reason: "no_af_access" };
   }
@@ -118,13 +149,15 @@ export async function resolveUserAccess(user) {
   }
 
   let access = null;
-  try {
-    access = await getAfAccess(user.uid);
-  } catch (e) {
-    console.warn("[AF] getAfAccess:", e?.code || e?.message || e);
-    if (!isMentorIdentity(user.uid, user.email)) {
-      if (onAccessDenied) onAccessDenied("error");
-      return false;
+  if (!OPEN_ACCESS_MODE) {
+    try {
+      access = await getAfAccess(user.uid);
+    } catch (e) {
+      console.warn("[AF] getAfAccess:", e?.code || e?.message || e);
+      if (!isMentorIdentity(user.uid, user.email)) {
+        if (onAccessDenied) onAccessDenied("error");
+        return false;
+      }
     }
   }
   const result = buildSessionFromUser(user, access, "firebase");
