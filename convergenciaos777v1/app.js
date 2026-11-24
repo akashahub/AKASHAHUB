@@ -125,11 +125,8 @@ function loadJson(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key) || "") || fallback; } catch (e) { return fallback; }
 }
 function saveJson(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
-function loadPosts() { return loadJson("os777-posts", []); }
-function loadEssence(who) {
-  const all = loadJson("os777-essencia", {});
-  return all[(who || email() || "").toLowerCase()] || null;
-}
+function loadPosts() { return state.posts || []; }
+function loadEssence() { return state.essence || null; }
 function seatsOf(roomId) { return Number(loadJson("os777-seats", {})[roomId] || 0); }
 function setSeats(roomId, n) {
   const all = loadJson("os777-seats", {});
@@ -146,7 +143,7 @@ try {
     appId: "1:370851875474:web:29b1ba3a76b0fed7d9344b",
   });
 } catch (e) {}
-const state = { route: "boot", pillar: "business", cat: "", piece: null, playFilter: "all", room: null, reel: 0, q: "", liked: {}, chat: {}, people: [], presenters: [], ticket: null, emailDraft: "", busy: "", loginError: "", more: 6, who: "", inRoom: false };
+const state = { route: "boot", pillar: "business", cat: "", piece: null, playFilter: "all", room: null, reel: 0, q: "", liked: {}, chat: {}, people: [], presenters: [], posts: [], essence: null, ticket: null, emailDraft: "", busy: "", loginError: "", more: 6, who: "", inRoom: false };
 const LIVE_URL = "wss://akashahub-vlya29kl.livekit.cloud";
 let session = null;
 let lk = null;
@@ -243,6 +240,91 @@ async function loadAccess() {
   state.people = people.data || [];
   const presenters = await sb.from("os_presenters").select("room_id,email");
   state.presenters = presenters.data || [];
+  await loadCommunityData();
+}
+
+async function loadCommunityData() {
+  if (!session || !session.user || !session.user.id) return;
+  const uid = session.user.id;
+  const [postsResult, essenceResult] = await Promise.all([
+    sb.from("os_posts").select("id,owner_id,email,post_type,caption,created_at").order("created_at", { ascending: false }).limit(200),
+    sb.from("os_essence").select("owner_id,email,apresenta,posicionamento,idade,profissao,historia,civilizacao,updated_at").eq("owner_id", uid).maybeSingle()
+  ]);
+  if (postsResult.error) throw postsResult.error;
+  if (essenceResult.error) throw essenceResult.error;
+  state.posts = (postsResult.data || []).map((p) => ({ ...p, type: p.post_type }));
+  state.essence = essenceResult.data || null;
+
+  const migrationKey = "os777-cloud-migrated:" + uid;
+  if (localStorage.getItem(migrationKey) === "1") return;
+  let migrationOk = true;
+  const oldPosts = loadJson("os777-posts", []).filter((p) => (p.email || "").toLowerCase() === email());
+  for (const post of oldPosts) {
+    const legacyId = String(post.id || "");
+    if (!legacyId) continue;
+    const { error } = await sb.from("os_posts").upsert({
+      owner_id: uid, email: email(), post_type: ["imagem", "vídeo", "carrossel"].includes(post.type) ? post.type : "imagem",
+      caption: String(post.caption || "").slice(0, 1000), legacy_id: legacyId
+    }, { onConflict: "owner_id,legacy_id", ignoreDuplicates: true });
+    if (error) { migrationOk = false; console.error("Migração de publicação:", error.message); }
+  }
+  if (!state.essence) {
+    const oldEssences = loadJson("os777-essencia", {});
+    const legacyEssence = oldEssences[email()] || null;
+    if (legacyEssence) {
+      const { error } = await sb.from("os_essence").insert({
+        owner_id: uid, email: email(),
+        apresenta: String(legacyEssence.apresenta || "").slice(0, 1000),
+        posicionamento: String(legacyEssence.posicionamento || "").slice(0, 1000),
+        idade: String(legacyEssence.idade || "").slice(0, 30),
+        profissao: String(legacyEssence.profissao || "").slice(0, 160),
+        historia: String(legacyEssence.historia || "").slice(0, 3000),
+        civilizacao: String(legacyEssence.civilizacao || "").slice(0, 160)
+      });
+      if (error) { migrationOk = false; console.error("Migração da essência:", error.message); }
+    }
+  }
+  if (migrationOk) localStorage.setItem(migrationKey, "1");
+  const [freshPosts, freshEssence] = await Promise.all([
+    sb.from("os_posts").select("id,owner_id,email,post_type,caption,created_at").order("created_at", { ascending: false }).limit(200),
+    sb.from("os_essence").select("owner_id,email,apresenta,posicionamento,idade,profissao,historia,civilizacao,updated_at").eq("owner_id", uid).maybeSingle()
+  ]);
+  if (!freshPosts.error) state.posts = (freshPosts.data || []).map((p) => ({ ...p, type: p.post_type }));
+  if (!freshEssence.error) state.essence = freshEssence.data || null;
+}
+
+async function publishPost() {
+  const typeEl = document.getElementById("postType");
+  const capEl = document.getElementById("postCap");
+  const type = typeEl ? typeEl.value : "imagem";
+  const caption = (capEl && capEl.value || "").trim().slice(0, 1000);
+  if (!email() || !session.user || !session.user.id) return;
+  const { error } = await sb.from("os_posts").insert({
+    owner_id: session.user.id, email: email(), post_type: type, caption
+  });
+  if (error) { toast("Não foi possível publicar: " + error.message); return; }
+  await loadCommunityData();
+  toast("Publicado e salvo na nuvem.");
+  render();
+}
+
+async function saveEssence() {
+  if (!session || !session.user || !session.user.id) return;
+  const values = {
+    owner_id: session.user.id, email: email(),
+    apresenta: (document.getElementById("ap").value || "").trim().slice(0, 1000),
+    posicionamento: (document.getElementById("po").value || "").trim().slice(0, 1000),
+    idade: (document.getElementById("id").value || "").trim().slice(0, 30),
+    profissao: (document.getElementById("pr").value || "").trim().slice(0, 160),
+    historia: (document.getElementById("hi").value || "").trim().slice(0, 3000),
+    civilizacao: (document.getElementById("ci").value || "").trim().slice(0, 160),
+    updated_at: new Date().toISOString()
+  };
+  const { error } = await sb.from("os_essence").upsert(values, { onConflict: "owner_id" });
+  if (error) { toast("Não foi possível salvar: " + error.message); return; }
+  await loadCommunityData();
+  toast("Essência salva na nuvem.");
+  render();
 }
 
 async function api(body) {
@@ -714,27 +796,10 @@ document.getElementById("app").addEventListener("click", async (event) => {
     const type = typeEl ? typeEl.value : "imagem";
     const caption = (capEl && capEl.value || "").trim();
     if (!email()) return;
-    const all = loadPosts();
-    all.unshift({ id: Date.now().toString(), email: email(), type: type, caption: caption });
-    saveJson("os777-posts", all.slice(0, 60));
-    toast("Publicado no seu perfil.");
-    render();
-    return;
+    return publishPost();
   }
   if (act === "save-essencia") {
-    const all = loadJson("os777-essencia", {});
-    all[email()] = {
-      apresenta: (document.getElementById("ap").value || "").trim(),
-      posicionamento: (document.getElementById("po").value || "").trim(),
-      idade: (document.getElementById("id").value || "").trim(),
-      profissao: (document.getElementById("pr").value || "").trim(),
-      historia: (document.getElementById("hi").value || "").trim(),
-      civilizacao: (document.getElementById("ci").value || "").trim()
-    };
-    saveJson("os777-essencia", all);
-    toast("Essência salva.");
-    render();
-    return;
+    return saveEssence();
   }
   if (act === "hotel") {
     const all = loadJson("os777-hotel", {});
