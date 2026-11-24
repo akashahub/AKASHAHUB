@@ -482,7 +482,7 @@ function render() {
   else if (session && state.route === "gestao") html = viewGestao();
   else if (session) html = myTicket() ? viewHome() : viewTickets();
   root.innerHTML = html;
-  document.title = "Convergência OS";
+  document.title = "Convergência OS · V1";
   paintChat();
 }
 
