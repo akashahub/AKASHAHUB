@@ -529,7 +529,13 @@ async function exchangeGoogle(user) {
   if (error) throw new Error(error.message);
   state.busy = "";
   await loadAccess();
-  state.route = myTicket() ? "home" : "ticket";
+  const requestedPillar = new URLSearchParams(location.search).get("pillar");
+  if (PILLARS.some((p) => p.id === requestedPillar)) {
+    state.pillar = requestedPillar;
+    state.route = "pillar";
+  } else {
+    state.route = myTicket() ? "home" : "ticket";
+  }
   render();
 }
 async function sendCode() {
