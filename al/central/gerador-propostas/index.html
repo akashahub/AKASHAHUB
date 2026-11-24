@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Gerador de Propostas · AKASHA Hub</title>
+<style>
+:root{--paper:#f4efe6;--ink:#211a24;--violet:#392747;--gold:#a27c43;--line:#ded3c7;--muted:#756b72;--white:#fffdf9}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.shell{max-width:1240px;margin:auto;padding:24px clamp(16px,4vw,48px) 70px}
+header{display:flex;justify-content:space-between;align-items:center;gap:18px;border-bottom:1px solid var(--line);padding-bottom:18px}
+a{color:inherit}.eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:bold}
+h1,h2,h3{font-family:Georgia,serif;font-weight:400;line-height:1.15}h1{font-size:clamp(38px,5vw,64px);margin:14px 0}h2{font-size:32px;margin:0 0 8px}h3{font-size:22px;margin:0 0 10px}
+.intro{padding:34px 0 22px;max-width:850px}.intro p{color:var(--muted)}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px}.steps{position:sticky;top:16px;align-self:start;background:var(--violet);color:#f8f2e9;padding:18px;border-radius:4px}
+.steps button{display:block;width:100%;text-align:left;background:transparent;color:inherit;border:0;border-left:2px solid transparent;padding:12px 10px;margin:3px 0;font-size:13px}
+.steps button.active{border-color:#d8b979;background:#ffffff12}.steps small{display:block;color:#d5c7d9;font-size:10px}
+.panel{background:var(--white);border:1px solid var(--line);padding:clamp(18px,3vw,30px);margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.wide{grid-column:1/-1}
+label{display:block;font-size:12px;font-weight:bold;margin:0 0 6px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #cfc3d4;background:white;color:var(--ink);border-radius:3px}
+textarea{min-height:88px;resize:vertical}.field{min-width:0}
+.hint{font-size:11px;color:var(--muted);margin-top:5px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{border:1px solid var(--violet);background:var(--violet);color:white;padding:11px 16px;border-radius:3px;font-size:12px}
+.btn.alt{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.gold{background:var(--gold);border-color:var(--gold)}
+.tablewrap{overflow:auto;border:1px solid var(--line);margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;background:#eee7ed;padding:10px}td{padding:8px;border-top:1px solid var(--line);vertical-align:middle}td input,td select{padding:8px;min-width:90px}
+.money{font:32px Georgia}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.metric{padding:16px;background:#f0eaf1;border:1px solid var(--line)}.metric small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px}
+.tag{display:inline-block;border:1px solid var(--line);padding:4px 8px;border-radius:20px;font-size:10px;color:var(--muted)}
+.proposal{background:#fff;padding:clamp(20px,4vw,42px);border:1px solid var(--line);max-width:850px}
+.proposal h2{font-size:36px}.proposal .rule{height:1px;background:var(--line);margin:20px 0}
+.notice{background:#f5efe2;border-left:3px solid var(--gold);padding:12px 16px;font-size:12px;margin:18px 0}
+[hidden]{display:none!important}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.steps{position:static;display:grid;grid-template-columns:repeat(2,1fr);gap:2px}.steps button{font-size:11px}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.summary{grid-template-columns:1fr}}
+@media print{body{background:white}.shell{max-width:none;padding:0}.steps,header,.intro,.no-print{display:none!important}.layout{display:block}.panel:not(.print-panel){display:none!important}.proposal{border:0;max-width:none;padding:0}.proposal h2{font-size:30pt}.proposal *{color:#111!important}.proposal .rule{background:#aaa}}
+.cap-search{margin:14px 0}.cap-results{max-height:260px;overflow:auto;border:1px solid var(--line);padding:10px;background:#fff}.cap-result{display:grid;grid-template-columns:1fr auto;gap:10px;padding:9px;border-bottom:1px solid var(--line);font-size:12px}.cap-result small{display:block;color:var(--muted)}.selected-cap{display:grid;grid-template-columns:1fr 190px auto;gap:8px;align-items:center;padding:8px;border-bottom:1px solid var(--line);font-size:12px}.saved-list{display:grid;gap:8px;margin-top:14px}.saved-item{border:1px solid var(--line);padding:12px;display:flex;justify-content:space-between;gap:12px;align-items:center}.saved-item small{display:block;color:var(--muted)}.gate{position:fixed;inset:0;background:#211a24;z-index:99;display:grid;place-items:center;padding:24px;color:#fff}.gate-card{max-width:460px;background:#392747;padding:28px;border:1px solid #a27c43;text-align:center}.gate[hidden]{display:none!important}@media(max-width:620px){.selected-cap{grid-template-columns:1fr}.saved-item{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="gate" id="accessGate"><div class="gate-card"><div class="eyebrow">AKASHA HUB · ÁREA RESTRITA</div><h2>Acesso do mentor</h2><p id="gateMessage">Verificando sua sessão...</p><a class="btn gold" href="/login/">Entrar na conta</a></div></div><div class="shell">
+<header><div><div class="eyebrow">AKASHA HUB · CENTRAL DO EXPERT</div><div style="font:20px Georgia">Arquitetura de Legado</div></div><a href="../index.html" class="no-print">← Voltar à Central</a></header>
+<section class="intro"><div class="eyebrow">AKASHA SALES OS · FERRAMENTA INTERNA</div><h1>Gerador de propostas.</h1><p>Transforme um diagnóstico em uma proposta clara, com escopo, entregáveis, investimento e próximos passos. A ferramenta calcula cenários a partir dos custos e da margem informados pelo mentor.</p></section>
+<div class="layout">
+<nav class="steps no-print" aria-label="Etapas do gerador">
+<button class="active" data-step="0">01 · Cliente <small>Quem está recebendo</small></button>
+<button data-step="1">02 · Diagnóstico <small>Cenário e objetivo</small></button>
+<button data-step="2">03 · Escopo <small>Serviços e entregáveis</small></button>
+<button data-step="3">04 · Precificação <small>Custos e margem</small></button>
+<button data-step="4">05 · Proposta <small>Revisar e imprimir</small></button>
+</nav>
+<main>
+<section class="panel step-panel" data-panel="0">
+<div class="eyebrow">ETAPA 01</div><h2>Dados do cliente</h2><p class="hint">Preencha os dados que devem aparecer na proposta. Não use informações sensíveis desnecessárias.</p>
+<div class="grid">
+<div class="field"><label for="client">Nome do cliente / empresa</label><input id="client" placeholder="Ex.: Clínica Exemplo"></div>
+<div class="field"><label for="contact">Pessoa responsável</label><input id="contact" placeholder="Nome do decisor"></div>
+<div class="field"><label for="segment">Segmento</label><input id="segment" placeholder="Ex.: Saúde e bem-estar"></div>
+<div class="field"><label for="origin">Origem do contato</label><select id="origin"><option>Instagram</option><option>Indicação</option><option>Site</option><option>WhatsApp</option><option>Evento</option><option>Outro</option></select></div>
+<div class="field"><label for="email">E-mail</label><input id="email" type="email" placeholder="contato@empresa.com"></div>
+<div class="field"><label for="date">Data da proposta</label><input id="date" type="date"></div>
+</div><div class="actions"><button class="btn" data-next>Continuar →</button></div>
+</section>
+<section class="panel step-panel" data-panel="1" hidden>
+<div class="eyebrow">ETAPA 02</div><h2>Diagnóstico e objetivo</h2>
+<div class="grid">
+<div class="field wide"><label for="scenario">Cenário atual</label><textarea id="scenario" placeholder="O que foi identificado na conversa? Descreva fatos observados."></textarea></div>
+<div class="field wide"><label for="bottleneck">Principal gargalo</label><textarea id="bottleneck" placeholder="Qual problema prioritário o projeto pretende resolver?"></textarea></div>
+<div class="field wide"><label for="goal">Objetivo do projeto</label><textarea id="goal" placeholder="O que deverá estar construído ou organizado ao final?"></textarea></div>
+<div class="field"><label for="deadline">Prazo estimado</label><input id="deadline" placeholder="Ex.: 30 dias úteis"></div>
+<div class="field"><label for="validity">Validade da proposta</label><input id="validity" value="7 dias"></div>
+</div><div class="actions"><button class="btn alt" data-prev>← Voltar</button><button class="btn" data-next>Continuar →</button></div>
+</section>
+<section class="panel step-panel" data-panel="2" hidden>
+<div class="eyebrow">ETAPA 03</div><h2>Escopo e entregáveis</h2>
+<div class="grid">
+<div class="field"><label for="offer">Oferta / linha de serviço</label><select id="offer"><option>Império Digital · Projeto</option><option>Arquitetura de Essência · Sprint 90 dias</option><option>Alinhamento Financeiro · Sprint 90 dias</option><option>Expansão · Sprint 90 dias</option><option>Arquitetura de Legado · 12 meses</option><option>Projeto sob medida</option></select></div>
+<div class="field"><label for="capacity">Situação da capacidade</label><select id="capacity"><option>Existente · pronto para entregar</option><option>Estruturado · requer configuração</option><option>Em desenvolvimento · depende de validação</option><option>Sob demanda · exige orçamento específico</option></select><div class="hint">Classifique cada capacidade antes de prometer uma entrega.</div></div>
+<div class="field wide"><label for="deliverables">Entregáveis incluídos (um por linha)</label><textarea id="deliverables" placeholder="Diagnóstico e arquitetura&#10;Design de interface&#10;Site institucional&#10;Formulário de captação&#10;Integração com WhatsApp&#10;Treinamento de uso"></textarea></div><div class="field wide"><label for="capSearch">Selecionar capacidades do Catálogo Mestre</label><input id="capSearch" class="cap-search" placeholder="Buscar entre as capacidades oficiais..."><div class="hint">Fonte única: Catálogo de Capacidades do Akasha Hub. Selecione somente o que foi validado para este cliente.</div><div id="capResults" class="cap-results"><p class="hint">Digite para pesquisar capacidades.</p></div><div id="selectedCapabilities"></div></div>
+<div class="field wide"><label for="exclusions">Fora do escopo / dependências</label><textarea id="exclusions" placeholder="Ex.: mídia paga, licenças de terceiros, produção de fotos, hospedagem e funcionalidades não listadas."></textarea></div>
+<div class="field wide"><label for="support">Acompanhamento e suporte</label><textarea id="support" placeholder="Ex.: 2 reuniões de revisão e 15 dias de suporte para correções do escopo entregue."></textarea></div>
+</div><div class="actions"><button class="btn alt" data-prev>← Voltar</button><button class="btn" data-next>Continuar →</button></div>
+</section>
+<section class="panel step-panel" data-panel="3" hidden>
+<div class="eyebrow">ETAPA 04</div><h2>Custos, margem e investimento</h2>
+<p class="hint">Informe custos reais estimados. O preço sugerido é uma referência matemática, não uma decisão automática. Inclua impostos, taxas, terceiros e sua própria remuneração nos custos.</p>
+<div class="tablewrap"><table><thead><tr><th>Item / recurso</th><th>Custo (R$)</th><th></th></tr></thead><tbody id="costRows"></tbody></table></div>
+<div class="actions"><button class="btn alt" id="addCost">+ Adicionar custo</button></div>
+<div class="grid" style="margin-top:18px">
+<div class="field"><label for="margin">Margem desejada (%)</label><input id="margin" type="number" min="0" max="90" step="1" value="35"><div class="hint">Margem sobre o preço de venda. Não é acréscimo sobre custo.</div></div>
+<div class="field"><label for="manualPrice">Investimento final (R$)</label><input id="manualPrice" type="number" min="0" step="0.01" placeholder="Use o sugerido ou defina manualmente"></div>
+<div class="field"><label for="installments">Parcelas</label><select id="installments"><option value="1">À vista</option><option value="2">2x</option><option value="3" selected>3x</option><option value="6">6x</option><option value="12">12x</option></select></div>
+<div class="field"><label for="payment">Condição / observação</label><input id="payment" placeholder="Ex.: entrada na aprovação e saldo por etapa"></div>
+</div>
+<div class="summary"><div class="metric"><small>Custo estimado</small><div class="money" id="totalCost">R$ 0,00</div></div><div class="metric"><small>Preço sugerido</small><div class="money" id="suggested">R$ 0,00</div></div><div class="metric"><small>Margem estimada</small><div class="money" id="marginValue">—</div></div></div>
+<div class="notice">A proposta não deve ser enviada sem conferir horas, capacidade disponível, tributos, taxas, custos externos, prazo e escopo. Não há integração automática com catálogo, CRM ou Inventário Estratégico nesta primeira versão.</div>
+<div class="actions"><button class="btn alt" data-prev>← Voltar</button><button class="btn" data-next>Gerar prévia →</button></div>
+</section>
+<section class="panel step-panel print-panel" data-panel="4" hidden>
+<div class="eyebrow">ETAPA 05</div><h2>Prévia da proposta</h2>
+<div class="actions no-print"><button class="btn gold" id="saveProposal">Salvar no CRM comercial</button><button class="btn alt" id="printProposal">Imprimir / Salvar PDF</button><button class="btn alt" id="copyProposal">Copiar texto</button><button class="btn alt" id="downloadJson">Exportar dados (.json)</button></div><div class="panel no-print" style="margin-top:18px"><h3>Propostas salvas</h3><p class="hint">Histórico privado da equipe de mentoria, sincronizado no Firestore.</p><div id="savedProposals" class="saved-list">Carregando...</div></div>
+<div class="proposal" id="proposal"></div>
+<div class="notice no-print">Esta versão gera uma prévia local para revisão. Não envia e-mail, não cria contrato e não salva no CRM. Após aprovação, registre a proposta no fluxo oficial e valide os termos contratuais.</div>
+<div class="actions no-print"><button class="btn alt" data-prev>← Voltar e editar</button></div>
+</section>
+</main></div></div>
+<script type="module">
+import { auth, db } from "/login/firebase.js";
+import { isMentorIdentity } from "/afplataforma/firebase/firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { CATALOG } from "/afplataforma/assets/js/catalogo-capacidades-data.js";
+const $=id=>document.getElementById(id),money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let step=0,costs=[{name:'Estratégia e planejamento',value:600},{name:'Design e interface',value:650},{name:'Desenvolvimento',value:1100},{name:'Integrações e configuração',value:590}];
+
+const catalogCapabilities=CATALOG.flatMap(dept=>dept.groups.flatMap(group=>group[1].map(name=>({id:dept.id+"::"+name,name,department:dept.name,group:group[0]}))));
+let selectedCapabilities=[];
+let authorizedMentor=false;
+let proposalDocId=null;
+function renderCatalogResults(){
+ const q=($("capSearch").value||"").trim().toLowerCase();
+ const matches=q?catalogCapabilities.filter(c=>(c.name+" "+c.department+" "+c.group).toLowerCase().includes(q)).slice(0,30):[];
+ $("capResults").innerHTML=matches.length?matches.map(c=>'<label class="cap-result"><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.department)+' · '+esc(c.group)+'</small></span><input type="checkbox" data-cap-add="'+esc(c.id)+'" '+(selectedCapabilities.some(x=>x.id===c.id)?"checked":"")+'></label>').join(""):'<p class="hint">'+(q?'Nenhuma capacidade encontrada.':'Digite para pesquisar capacidades do catálogo.')+'</p>';
+ $("capResults").querySelectorAll("[data-cap-add]").forEach(el=>el.onchange=()=>{const c=catalogCapabilities.find(x=>x.id===el.dataset.capAdd);if(el.checked&&c&&!selectedCapabilities.some(x=>x.id===c.id))selectedCapabilities.push({...c,status:"Existente"});if(!el.checked)selectedCapabilities=selectedCapabilities.filter(x=>x.id!==el.dataset.capAdd);renderCatalogResults();renderSelectedCapabilities()});
+}
+function renderSelectedCapabilities(){
+ $("selectedCapabilities").innerHTML=selectedCapabilities.map((c,i)=>'<div class="selected-cap"><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.department)+'</small></span><select data-cap-status="'+i+'"><option '+(c.status==="Existente"?"selected":"")+'>Existente</option><option '+(c.status==="Estruturado"?"selected":"")+'>Estruturado</option><option '+(c.status==="Em desenvolvimento"?"selected":"")+'>Em desenvolvimento</option><option '+(c.status==="Sob demanda"?"selected":"")+'>Sob demanda</option></select><button type="button" class="btn alt" data-cap-remove="'+i+'">Remover</button></div>').join("");
+ $("selectedCapabilities").querySelectorAll("[data-cap-status]").forEach(el=>el.onchange=()=>selectedCapabilities[+el.dataset.capStatus].status=el.value);
+ $("selectedCapabilities").querySelectorAll("[data-cap-remove]").forEach(el=>el.onclick=()=>{selectedCapabilities.splice(+el.dataset.capRemove,1);renderCatalogResults();renderSelectedCapabilities()});
+}
+async function saveProposal(){
+ if(!authorizedMentor){alert("Somente uma conta de mentor pode salvar propostas.");return}
+ const p=proposalText(),c=calculate();
+ const payload={client:val("client"),contact:val("contact"),segment:val("segment"),origin:val("origin"),email:val("email"),date:val("date"),scenario:val("scenario"),bottleneck:val("bottleneck"),goal:val("goal"),deadline:val("deadline"),validity:val("validity"),offer:val("offer"),capacityStatus:val("capacity"),deliverables:val("deliverables"),selectedCapabilities,exclusions:val("exclusions"),support:val("support"),costs,marginTarget:Number(val("margin")||0),pricing:{cost:c.total,suggested:c.suggested,final:c.price,margin:c.margin},installments:val("installments"),payment:val("payment"),proposalText:p.text,status:"draft",updatedAt:serverTimestamp(),updatedBy:auth.currentUser.uid};
+ try{
+  if(proposalDocId){await updateDoc(doc(db,"alCommercialProposals",proposalDocId),payload)}
+  else{payload.createdAt=serverTimestamp();payload.createdBy=auth.currentUser.uid;const ref=await addDoc(collection(db,"alCommercialProposals"),payload);proposalDocId=ref.id}
+  $("saveProposal").textContent="Salvo ✓";await loadSavedProposals();
+ }catch(e){console.error("[AL propostas]",e);alert("Não foi possível salvar. Verifique conexão e regras Firestore: "+(e.code||e.message))}
+}
+async function loadSavedProposals(){
+ if(!authorizedMentor)return;
+ const host=$("savedProposals");host.textContent="Carregando...";
+ try{
+  const q=query(collection(db,"alCommercialProposals"),orderBy("updatedAt","desc"));
+  const snap=await getDocs(q);
+  host.innerHTML=snap.empty?'<p class="hint">Nenhuma proposta salva ainda.</p>':snap.docs.map(d=>{const x=d.data();return '<div class="saved-item"><span><strong>'+esc(x.client||"Cliente sem nome")+'</strong><small>'+esc(x.offer||"Projeto")+' · '+esc(x.status||"rascunho")+' · '+esc(x.updatedAt?.toDate?.().toLocaleDateString("pt-BR")||"")+'</small></span><span class="row"><button class="btn alt" data-load-proposal="'+d.id+'">Abrir</button><button class="btn alt" data-delete-proposal="'+d.id+'">Excluir</button></span></div>'}).join("");
+  host.querySelectorAll("[data-load-proposal]").forEach(b=>b.onclick=()=>loadProposal(b.dataset.loadProposal));
+  host.querySelectorAll("[data-delete-proposal]").forEach(b=>b.onclick=async()=>{if(!confirm("Excluir esta proposta salva?"))return;try{await deleteDoc(doc(db,"alCommercialProposals",b.dataset.deleteProposal));if(proposalDocId===b.dataset.deleteProposal)proposalDocId=null;await loadSavedProposals()}catch(e){alert("Não foi possível excluir: "+(e.code||e.message))}});
+ }catch(e){console.error(e);host.textContent="Não foi possível carregar o histórico: "+(e.code||e.message)}
+}
+async function loadProposal(id){
+ try{const snap=await getDoc(doc(db,"alCommercialProposals",id));if(!snap.exists())throw Error("Proposta não encontrada.");const x=snap.data();proposalDocId=id;
+ const fields={client:x.client,contact:x.contact,segment:x.segment,origin:x.origin,email:x.email,date:x.date,scenario:x.scenario,bottleneck:x.bottleneck,goal:x.goal,deadline:x.deadline,validity:x.validity,offer:x.offer,capacity:x.capacityStatus,deliverables:x.deliverables,exclusions:x.exclusions,support:x.support,margin:x.marginTarget,installments:x.installments,payment:x.payment};
+ Object.entries(fields).forEach(([k,v])=>{if(v!==undefined&&$(k))$(k).value=v});
+ costs=Array.isArray(x.costs)?x.costs:[];selectedCapabilities=Array.isArray(x.selectedCapabilities)?x.selectedCapabilities:[];renderCosts();renderCatalogResults();renderSelectedCapabilities();$("manualPrice").value=x.pricing?.final??"";show(0);
+ }catch(e){alert("Não foi possível abrir a proposta: "+(e.code||e.message))}
+}
+onAuthStateChanged(auth,user=>{
+ authorizedMentor=!!(user&&isMentorIdentity(user.uid,user.email));
+ $("accessGate").hidden=authorizedMentor;
+ if(!authorizedMentor){$("gateMessage").textContent=user?"Esta área é exclusiva para identidades de mentor autorizadas.":"Entre com sua conta de mentor para acessar o gerador.";return}
+ loadSavedProposals();
+});
+
+function renderCosts(){ $('costRows').innerHTML=costs.map((c,i)=>'<tr><td><input aria-label="Nome do custo" data-cost-name="'+i+'" value="'+esc(c.name)+'"></td><td><input aria-label="Valor do custo" data-cost-value="'+i+'" type="number" min="0" step=".01" value="'+c.value+'"></td><td><button class="btn alt" data-remove="'+i+'" type="button">×</button></td></tr>').join('');document.querySelectorAll('[data-cost-name]').forEach(x=>x.oninput=()=>{costs[+x.dataset.costName].name=x.value});document.querySelectorAll('[data-cost-value]').forEach(x=>x.oninput=()=>{costs[+x.dataset.costValue].value=Math.max(0,Number(x.value)||0);calculate()});document.querySelectorAll('[data-remove]').forEach(x=>x.onclick=()=>{costs.splice(+x.dataset.remove,1);renderCosts();calculate()});calculate()}
+function calculate(){let total=costs.reduce((s,c)=>s+Math.max(0,Number(c.value)||0),0),m=Math.min(90,Math.max(0,Number($('margin').value)||0)),suggested=m>=100?0:total/(1-m/100),price=$('manualPrice').value===''?suggested:Math.max(0,Number($('manualPrice').value)||0),margin=price>0?(price-total)/price*100:0;$('totalCost').textContent=money(total);$('suggested').textContent=money(suggested);$('marginValue').textContent=price>0?margin.toFixed(1).replace('.',',')+'%':'—';return{total,suggested,price,margin}}
+function val(id){return $(id).value.trim()}
+function proposalText(){let c=calculate(),n=Math.max(1,Number($('installments').value)||1),lines=val('deliverables').split('\n').map(x=>x.trim()).filter(Boolean),client=val('client')||'Cliente',offer=val('offer');return {text:'AKASHA HUB\nPROPOSTA COMERCIAL\n\nPreparada para: '+client+(val('contact')?' · '+val('contact'):'')+'\nSegmento: '+(val('segment')||'Não informado')+'\nData: '+(val('date')||'A definir')+'\nValidade: '+(val('validity')||'7 dias')+'\n\nPROJETO\n'+offer+'\n\nCENÁRIO E OBJETIVO\n'+(val('scenario')||'A definir em conjunto')+'\n\nPrioridade: '+(val('bottleneck')||'A validar')+'\nObjetivo: '+(val('goal')||'A definir')+'\n\nENTREGÁVEIS\n'+(lines.length?lines.map(x=>'• '+x).join('\n'):'A detalhar')+'\n\nCAPACIDADES DO CATÁLOGO MESTRE\n'+(selectedCapabilities.length?selectedCapabilities.map(x=>'• '+x.name+' ['+x.status+']').join('\n'):'Nenhuma capacidade vinculada')+'\n\nPRAZO\n'+(val('deadline')||'A combinar após validação do escopo'))+'\n\nACOMPANHAMENTO\n'+(val('support')||'Conforme condições acordadas')+'\n\nFORA DO ESCOPO E DEPENDÊNCIAS\n'+(val('exclusions')||'Itens não descritos nos entregáveis serão orçados separadamente.')+'\n\nINVESTIMENTO\n'+money(c.price)+'\n'+(n===1?'À vista':n+' parcelas de '+money(c.price/n))+'\n'+(val('payment')||'Condição final definida na aprovação da proposta')+'\n\nPRÓXIMO PASSO\nAprovar o escopo e as condições para formalização contratual e início do projeto.\n\nEsta proposta descreve entregas e condições de trabalho. Não representa garantia de faturamento, vendas ou resultado financeiro.'};}
+function renderProposal(){let p=proposalText(),c=calculate(),n=Math.max(1,Number($('installments').value)||1),items=val('deliverables').split('\n').map(x=>x.trim()).filter(Boolean);$('proposal').innerHTML='<div class="eyebrow">AKASHA HUB · PROPOSTA COMERCIAL</div><h2>'+esc(val('offer'))+'</h2><p>Preparada para <strong>'+esc(val('client')||'Cliente')+'</strong>'+(val('contact')?' · '+esc(val('contact')):'')+'</p><div class="rule"></div><h3>O cenário</h3><p>'+esc(val('scenario')||'Cenário a validar')+'</p><h3>Objetivo</h3><p>'+esc(val('goal')||'Objetivo a definir')+'</p><h3>Entregáveis</h3><ul>'+items.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><h3>Capacidades do Catálogo Mestre</h3><ul>'+selectedCapabilities.map(x=>'<li>'+esc(x.name)+' <span class="tag">'+esc(x.status)+'</span></li>').join('')+'</ul><h3>Prazo e acompanhamento</h3><p>'+esc(val('deadline')||'A combinar')+'</p><p>'+esc(val('support')||'Conforme condições acordadas')+'</p><h3>Investimento</h3><div class="money">'+money(c.price)+'</div><p>'+(n===1?'À vista':n+' parcelas de '+money(c.price/n))+'</p><p>'+esc(val('payment'))+'</p><h3>Condições e exclusões</h3><p>'+esc(val('exclusions')||'Itens não descritos serão orçados separadamente.')+'</p><p>Validade: '+esc(val('validity')||'7 dias')+'</p><div class="rule"></div><p><strong>Próximo passo:</strong> aprovação do escopo e das condições para formalização contratual e início do projeto.</p><p style="font-size:11px;color:#756b72">A proposta descreve entregas e condições de trabalho. Não representa garantia de faturamento, vendas ou resultado financeiro.</p>';$('proposal').dataset.text=p.text}
+function show(n){step=n;document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=Number(p.dataset.panel)!==n);document.querySelectorAll('[data-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.step)===n));if(n===3)calculate();if(n===4)renderProposal();window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>show(Number(b.dataset.step)));document.querySelectorAll('[data-next]').forEach(b=>b.onclick=()=>show(Math.min(4,step+1)));document.querySelectorAll('[data-prev]').forEach(b=>b.onclick=()=>show(Math.max(0,step-1)));
+$('capSearch').oninput=renderCatalogResults;$('saveProposal').onclick=saveProposal;$('addCost').onclick=()=>{costs.push({name:'Novo item',value:0});renderCosts()};$('margin').oninput=calculate;$('manualPrice').oninput=calculate;$('installments').onchange=calculate;$('printProposal').onclick=()=>window.print();$('copyProposal').onclick=async()=>{try{await navigator.clipboard.writeText(proposalText().text);$('copyProposal').textContent='Texto copiado'}catch(e){alert('Não foi possível copiar automaticamente. Use a opção de imprimir ou selecione o texto da proposta.')}};
+$('downloadJson').onclick=()=>{let data={client:val('client'),contact:val('contact'),segment:val('segment'),origin:val('origin'),email:val('email'),diagnosis:{scenario:val('scenario'),bottleneck:val('bottleneck'),goal:val('goal')},offer:val('offer'),capacity_status:val('capacity'),deliverables:val('deliverables'),exclusions:val('exclusions'),support:val('support'),costs,pricing:calculate(),installments:val('installments'),payment:val('payment'),proposal:proposalText().text};let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=u;a.download='proposta-akasha-'+(val('client')||'rascunho').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.json';a.click();URL.revokeObjectURL(u)};
+$('date').value=new Date().toISOString().slice(0,10);renderCosts();renderCatalogResults();renderSelectedCapabilities();show(0);
+</script></body></html>
