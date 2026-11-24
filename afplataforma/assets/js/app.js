@@ -382,8 +382,13 @@ function showApp() {
   const rooms = ["criancas", "criancas-pais", "criancas-sala", "empresas"];
   const params = new URLSearchParams(location.search);
   const quickTool = params.get("quicktool");
+  const requestedView = params.get("view");
+  const directViews = ["dashboard", "vision-studio", "catalogo-capacidades", "corpo", "audios-pnl", "complementar", "hub-intel"];
   const quickTools = ["cashflow", "ideation", "network", "vision", "pitch", "legacy", "execution", "fono"];
-  if (quickTools.includes(quickTool)) {
+  if (directViews.includes(requestedView)) {
+    navigate(requestedView);
+    requestAnimationFrame(() => requestAnimationFrame(finishQuickToolLoading));
+  } else if (quickTools.includes(quickTool)) {
     navigate("dashboard");
     requestAnimationFrame(async () => {
       try {
