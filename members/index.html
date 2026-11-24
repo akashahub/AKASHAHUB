@@ -184,6 +184,9 @@ input,label{color:var(--text)}
 @media(prefers-reduced-motion:reduce){.members-library .shelf{scroll-behavior:auto}}
 /* Loading premium com o Olho de Hórus */
 body.members-loading{overflow:hidden}
+body:not(.members-authenticated) > :not(#membersLoader){visibility:hidden!important}
+body:not(.members-authenticated) #membersLoader{opacity:1;visibility:visible;pointer-events:all}
+body.members-authenticated #membersLoader{pointer-events:none}
 #membersLoader{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:radial-gradient(ellipse at center,#211a10 0%,#090909 72%);color:#e8c875;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
 #membersLoader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
 #membersLoader .loader-inner{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;padding:24px}
@@ -231,7 +234,7 @@ body.members-loading{overflow:hidden}
     var wait=Math.max(0,3000-(performance.now()-started));
     setTimeout(close,wait);
   };
-  setTimeout(close,6000);
+  // A interface só é liberada depois da confirmação de autenticação Firebase.
 })();
 </script>
 
@@ -2254,6 +2257,11 @@ function captureStripeReturn() {
 
 onAuthStateChanged(auth, async next => {
   const voltouPago = captureStripeReturn();
+  if (!next) {
+    const destination = location.pathname + location.search + location.hash;
+    location.replace("/login/?next=" + encodeURIComponent(destination || "/members/"));
+    return;
+  }
   user = next;
   rights = { areas: [], cursos: [], livros: [], audios: [] };
   catalogVideos = {};
@@ -2326,6 +2334,7 @@ onAuthStateChanged(auth, async next => {
 
   garantirTechub();
   draw();
+  document.body.classList.add("members-authenticated");
   if (window.__membersLoadingReady) window.__membersLoadingReady();
 
   // A verificação de compras Stripe acontece em segundo plano, sem segurar a primeira renderização.
