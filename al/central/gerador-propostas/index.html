@@ -114,7 +114,54 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
   <div class="catalog-modal-foot"><span class="catalog-selected" id="catalogSelectedText">Nenhuma capacidade selecionada</span><button type="button" class="btn gold" id="confirmCatalog">Concluir seleção</button></div>
  </section>
 </div>
-<script>(function(){let s=0;function go(n){s=Math.max(0,Math.min(4,n));document.querySelectorAll("[data-panel]").forEach(x=>x.hidden=Number(x.dataset.panel)!==s);document.querySelectorAll("[data-step]").forEach(x=>x.classList.toggle("active",Number(x.dataset.step)===s));window.scrollTo(0,0)}document.addEventListener("click",function(e){let n=e.target.closest("[data-next]"),p=e.target.closest("[data-prev]"),t=e.target.closest("[data-step]");if(n){e.preventDefault();go(s+1)}else if(p){e.preventDefault();go(s-1)}else if(t){e.preventDefault();go(Number(t.dataset.step))}});go(0)})();</script><script type="module">
+<script>(function(){let s=0;function go(n){s=Math.max(0,Math.min(4,n));document.querySelectorAll("[data-panel]").forEach(x=>x.hidden=Number(x.dataset.panel)!==s);document.querySelectorAll("[data-step]").forEach(x=>x.classList.toggle("active",Number(x.dataset.step)===s));window.scrollTo(0,0)}document.addEventListener("click",function(e){let n=e.target.closest("[data-next]"),p=e.target.closest("[data-prev]"),t=e.target.closest("[data-step]");if(n){e.preventDefault();go(s+1)}else if(p){e.preventDefault();go(s-1)}else if(t){e.preventDefault();go(Number(t.dataset.step))}});go(0)})();</script><script>
+/* Catálogo independente: continua funcional mesmo se o módulo Firebase/CRM falhar. */
+(function(){
+ const $=id=>document.getElementById(id);
+ const backdrop=$("catalogBackdrop"), body=$("catalogBody"), search=$("capSearch"), box=$("deliverables");
+ if(!backdrop||!body||!search||!box)return;
+ let catalog=[], selected=new Set(), inserted=[];
+ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ const load=()=>import("/afplataforma/assets/js/catalogo-capacidades-data.js").then(m=>{catalog=m.CATALOG;render()}).catch(err=>{console.error("[Catálogo independente]",err);body.innerHTML='<p class="hint">Não foi possível carregar o catálogo. Atualize a página e tente novamente.</p>'});
+ function sync(){
+  const manual=box.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).filter(x=>!inserted.includes(x));
+  const names=[...selected].map(id=>{const [deptId,...parts]=id.split("::");return parts.join("::")});
+  box.value=[...manual,...names].join("\n");inserted=names;
+  $("catalogCount").textContent=selected.size+" selecionada"+(selected.size===1?"":"s");
+  $("catalogSelectedText").textContent=selected.size?selected.size+" capacidade(s) selecionada(s) para esta proposta":"Nenhuma capacidade selecionada";
+ }
+ function render(){
+  const q=(search.value||"").trim().toLocaleLowerCase("pt-BR");
+  body.innerHTML=catalog.map(dept=>{
+   const groups=dept.groups.map(group=>{
+    const names=group[1].filter(name=>!q||(name+" "+dept.name+" "+group[0]).toLocaleLowerCase("pt-BR").includes(q));
+    return names.length?'<div class="catalog-group"><h4>'+esc(group[0])+'</h4>'+names.map(name=>{
+     const id=dept.id+"::"+name;
+     return '<label class="catalog-item"><input type="checkbox" data-standalone-cap="'+esc(id)+'" '+(selected.has(id)?"checked":"")+'><span>'+esc(name)+'</span></label>';
+    }).join("")+'</div>':"";
+   }).join("");
+   return groups?'<details class="catalog-dept" open><summary><span>'+esc(dept.name)+'</span><small>'+dept.groups.reduce((n,g)=>n+g[1].length,0)+' capacidades</small></summary>'+groups+'</details>':"";
+  }).join("")||'<p class="hint">Nenhuma capacidade encontrada para esta busca.</p>';
+  sync();
+ }
+ function open(e){e.preventDefault();e.stopImmediatePropagation();backdrop.classList.add("open");backdrop.setAttribute("aria-hidden","false");load().then(()=>search.focus())}
+ function close(e){if(e){e.preventDefault();e.stopImmediatePropagation()}backdrop.classList.remove("open");backdrop.setAttribute("aria-hidden","true")}
+ document.addEventListener("click",e=>{
+  if(e.target.closest("#openCatalog"))return open(e);
+  if(e.target.closest("#closeCatalog")||e.target.closest("#confirmCatalog"))return close(e);
+  if(e.target===backdrop)return close(e);
+ },true);
+ document.addEventListener("input",e=>{if(e.target===search){e.stopImmediatePropagation();render()}},true);
+ document.addEventListener("change",e=>{
+  const el=e.target.closest("[data-standalone-cap]");if(!el)return;
+  e.stopImmediatePropagation();const id=el.dataset.standaloneCap;
+  if(el.checked)selected.add(id);else selected.delete(id);
+  sync();
+ },true);
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&backdrop.classList.contains("open"))close()},true);
+})();
+</script>
+<script type="module">
 import { auth, db } from "/login/firebase.js";
 import { isMentorIdentity } from "/afplataforma/firebase/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
