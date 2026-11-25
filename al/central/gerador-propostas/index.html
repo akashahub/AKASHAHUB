@@ -328,9 +328,17 @@ function updateCatalogCount(){
  $("catalogSelectedText").textContent=n?n+" capacidade"+(n===1?"":"s")+" selecionada"+(n===1?"":"s")+" para esta proposta":"Nenhuma capacidade selecionada";
 }
 function renderSelectedCapabilities(){
- $("selectedCapabilities").innerHTML=selectedCapabilities.map((c,i)=>'<div class="selected-cap"><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.department)+'</small></span><select data-cap-status="'+i+'"><option '+(c.status==="Existente"?"selected":"")+'>Existente</option><option '+(c.status==="Estruturado"?"selected":"")+'>Estruturado</option><option '+(c.status==="Em desenvolvimento"?"selected":"")+'>Em desenvolvimento</option><option '+(c.status==="Sob demanda"?"selected":"")+'>Sob demanda</option></select><button type="button" class="btn alt" data-cap-remove="'+i+'">Remover</button></div>').join("");
+ selectedCapabilities=selectedCapabilities.map(c=>({...c,suggestedPrice:Number(c.suggestedPrice??suggestedCapabilityPrice((c.id||"").split("::")[0],c.group,c.name))||0}));
+ $("selectedCapabilities").innerHTML=selectedCapabilities.map((c,i)=>'<div class="selected-cap"><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.department)+'</small></span><select data-cap-status="'+i+'"><option '+(c.status==="Existente"?"selected":"") +'>Existente</option><option '+(c.status==="Estruturado"?"selected":"") +'>Estruturado</option><option '+(c.status==="Em desenvolvimento"?"selected":"") +'>Em desenvolvimento</option><option '+(c.status==="Sob demanda"?"selected":"") +'>Sob demanda</option></select><label><span class="cap-price-label">Preço sugerido (R$)</span><input type="number" min="0" step="50" data-cap-price="'+i+'" value="'+c.suggestedPrice+'"></label><button type="button" class="btn alt" data-cap-remove="'+i+'">Remover</button></div>').join("");
  $("selectedCapabilities").querySelectorAll("[data-cap-status]").forEach(el=>el.onchange=()=>selectedCapabilities[+el.dataset.capStatus].status=el.value);
- $("selectedCapabilities").querySelectorAll("[data-cap-remove]").forEach(el=>el.onclick=()=>{selectedCapabilities.splice(+el.dataset.capRemove,1);syncCatalogDeliverables();renderCatalog();renderSelectedCapabilities()});
+ $("selectedCapabilities").querySelectorAll("[data-cap-price]").forEach(el=>el.oninput=()=>{selectedCapabilities[+el.dataset.capPrice].suggestedPrice=Math.max(0,Number(el.value)||0);renderCapabilityPricing();calculate()});
+ $("selectedCapabilities").querySelectorAll("[data-cap-remove]").forEach(el=>el.onclick=()=>{selectedCapabilities.splice(+el.dataset.capRemove,1);syncCatalogDeliverables();renderCatalog();renderSelectedCapabilities();renderCapabilityPricing();calculate()});
+ renderCapabilityPricing();
+}
+function renderCapabilityPricing(){
+ const host=$("capabilityPricingRows");if(!host)return;
+ host.innerHTML=selectedCapabilities.map((c,i)=>'<tr><td>'+esc(c.name)+'<div class="hint">'+esc(c.department)+'</div></td><td><input type="number" min="0" step="50" data-pricing-cap="'+i+'" value="'+Math.max(0,Number(c.suggestedPrice)||0)+'" aria-label="Preço de referência de '+esc(c.name)+'"></td></tr>').join("")||'<tr><td colspan="2">Selecione capacidades no catálogo para estimar o valor do escopo.</td></tr>';
+ host.querySelectorAll("[data-pricing-cap]").forEach(el=>el.oninput=()=>{selectedCapabilities[+el.dataset.pricingCap].suggestedPrice=Math.max(0,Number(el.value)||0);calculate()});
 }
 function openCatalog(){ $("catalogBackdrop").classList.add("open");$("catalogBackdrop").setAttribute("aria-hidden","false");renderCatalog();$("capSearch").focus(); }
 function closeCatalog(){ $("catalogBackdrop").classList.remove("open");$("catalogBackdrop").setAttribute("aria-hidden","true");renderSelectedCapabilities(); }
