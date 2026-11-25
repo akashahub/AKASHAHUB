@@ -287,6 +287,8 @@ const $=id=>document.getElementById(id),money=n=>Number(n||0).toLocaleString('pt
 let step=0,costs=[{name:'Estratégia e planejamento',value:600},{name:'Design e interface',value:650},{name:'Desenvolvimento',value:1100},{name:'Integrações e configuração',value:590}];
 
 const catalogCapabilities=CATALOG.flatMap(dept=>dept.groups.flatMap(group=>group[1].map(name=>({id:dept.id+"::"+name,name,department:dept.name,group:group[0]}))));
+const CAPABILITY_BASE={essencia:650,branding:850,tecnologia:1600,financeiro:650,marketing:850,comercial:800,internacional:1200,automacao:1400,educacao:900,legado:1200};
+function suggestedCapabilityPrice(deptId,group,name){let value=CAPABILITY_BASE[deptId]||800;const g=String(group||"").toLocaleLowerCase("pt-BR"),n=String(name||"").toLocaleLowerCase("pt-BR");if(/diagnóstico|investigação|mapeamento|análise|pesquisa|planejamento|estratégia|arquitetura/.test(g+" "+n))value*=1.3;if(/plataforma|aplicativo|sistema|marketplace|saas|integração|automação|agentes de ia|banco de dados|api|back-end|front-end/.test(n))value*=1.85;if(/livro|e-book|curso|treinamento|formação|workshop|palestra|seminário|evento|documentação|manual|relatório|apresentação/.test(n))value*=1.2;if(/fundamentos|crenças|hábitos|rotinas|tarefas|controle|edição|legendagem|tradução/.test(n))value*=.82;if(/holdings|sucessão|valuation|aquisições|governança|segurança|auditoria|internacionalização/.test(n))value*=1.45;return Math.max(250,Math.round(value/50)*50)}
 let selectedCapabilities=[];
 let catalogInsertedNames=[];
 let authorizedMentor=false;
