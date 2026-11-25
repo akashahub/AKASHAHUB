@@ -239,7 +239,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
  function open(nextMode,e){if(e){e.preventDefault();e.stopImmediatePropagation()}mode=nextMode;backdrop.classList.add("open");backdrop.setAttribute("aria-hidden","false");search.value="";load().then(()=>search.focus())}
  function close(e){if(e){e.preventDefault();e.stopImmediatePropagation()}backdrop.classList.remove("open");backdrop.setAttribute("aria-hidden","true")}
  let loading=null;
- function load(){if(catalog.length){render();return Promise.resolve()}if(!loading)loading=import("/afplataforma/assets/js/catalogo-capacidades-data.js").then(m=>{catalog=m.CATALOG;render()}).catch(err=>{console.error("[Catálogo]",err);body.innerHTML='<p class="hint">Não foi possível carregar o catálogo. Atualize a página e tente novamente.</p>'});return loading}
+ function load(){if(catalog.length){render();return Promise.resolve()}if(!loading){const shared=window.AKASHA_CATALOG;if(Array.isArray(shared)&&shared.length){catalog=shared;render();return Promise.resolve()}loading=import("/afplataforma/assets/js/catalogo-capacidades-data.js").then(m=>{if(!Array.isArray(m.CATALOG)||!m.CATALOG.length)throw new Error("O arquivo do catálogo não retornou departamentos.");catalog=m.CATALOG;window.AKASHA_CATALOG=catalog;render()}).catch(err=>{console.error("[Catálogo] Falha ao carregar/renderizar:",err);body.innerHTML='<p class="hint">Não foi possível exibir o catálogo. Recarregue a página e tente novamente. Se persistir, informe ao suporte.</p>';loading=null})}return loading}
  document.addEventListener("click",e=>{
   if(e.target.closest("#openCatalog"))return open("scope",e);
   if(e.target.closest("#openPricingCatalog"))return open("pricing",e);
