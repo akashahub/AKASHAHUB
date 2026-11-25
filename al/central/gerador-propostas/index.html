@@ -321,6 +321,7 @@ import { isMentorIdentity } from "/afplataforma/firebase/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { CATALOG } from "/afplataforma/assets/js/catalogo-capacidades-data.js";
+window.AKASHA_CATALOG = CATALOG;
 const $=id=>document.getElementById(id),money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let step=0,costs=[];
 
@@ -625,16 +626,16 @@ $('date').value=new Date().toISOString().slice(0,10);renderCosts();renderCatalog
   body.innerHTML=catalog.map(dept=>{
    const groups=dept.groups.map(group=>{
     const names=group[1].filter(name=>!q||(name+" "+dept.name+" "+group[0]).toLocaleLowerCase("pt-BR").includes(q));
-    return names.length?'<div class="catalog-group"><h4>'+esc(group[0])+'</h4>'+names.map(name=>{const id=dept.id+"::"+name;return '<label class="catalog-item"><input type="checkbox" data-shared-cap="'+esc(id)+'" '+(ids.has(id)?"checked":"")+'><span>'+esc(name)+'</span></label>'}).join("")+'</div>':"";
+    return names.length?'<div class="catalog-group"><h4>'+esc(group[0])+'</h4>'+names.map(name=>{const id=dept.id+"::"+name;return '<label class="catalog-item"><input type="checkbox" data-shared-cap="'+esc(id)+'" '+(ids.has(id)?"checked":"")+'><span class="cap-icon" aria-hidden="true">'+capabilityIcon(name,dept.id)+'</span><span class="cap-name">'+esc(name)+'</span></label>'}).join("")+'</div>':"";
    }).join("");
-   return groups?'<details class="catalog-dept" open><summary><span>'+esc(dept.name)+'</span><small>'+dept.groups.reduce((n,g)=>n+g[1].length,0)+' capacidades</small></summary>'+groups+'</details>':"";
+   return groups?'<details class="catalog-dept" open><summary><span><span class="dept-icon" aria-hidden="true">'+(deptIcons[dept.id]||"✦")+'</span>'+esc(dept.name)+'</span><small>'+dept.groups.reduce((n,g)=>n+g[1].length,0)+' capacidades</small></summary>'+groups+'</details>':"";
   }).join("")||'<p class="hint">Nenhuma capacidade encontrada para esta busca.</p>';
   updateFoot();
  }
  function open(nextMode,e){if(e){e.preventDefault();e.stopImmediatePropagation()}mode=nextMode;backdrop.classList.add("open");backdrop.setAttribute("aria-hidden","false");search.value="";load().then(()=>search.focus())}
  function close(e){if(e){e.preventDefault();e.stopImmediatePropagation()}backdrop.classList.remove("open");backdrop.setAttribute("aria-hidden","true")}
  let loading=null;
- function load(){if(catalog.length){render();return Promise.resolve()}if(!loading)loading=import("/afplataforma/assets/js/catalogo-capacidades-data.js").then(m=>{catalog=m.CATALOG;render()}).catch(err=>{console.error("[Catálogo]",err);body.innerHTML='<p class="hint">Não foi possível carregar o catálogo. Atualize a página e tente novamente.</p>'});return loading}
+ function load(){if(catalog.length){render();return Promise.resolve()}if(window.AKASHA_CATALOG){catalog=window.AKASHA_CATALOG;render();return Promise.resolve()}if(!loading)loading=import("/afplataforma/assets/js/catalogo-capacidades-data.js").then(m=>{catalog=m.CATALOG;window.AKASHA_CATALOG=catalog;render()}).catch(err=>{console.error("[Catálogo] Falha ao obter o catálogo mestre:",err);body.innerHTML='<p class="hint">Não foi possível carregar o catálogo mestre. Recarregue a página e tente novamente. Se persistir, avise o suporte.</p>'});return loading}
  document.addEventListener("click",e=>{
   if(e.target.closest("#openCatalog"))return open("scope",e);
   if(e.target.closest("#openPricingCatalog"))return open("pricing",e);
