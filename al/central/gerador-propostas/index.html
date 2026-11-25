@@ -245,6 +245,38 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&backdrop.classList.contains("open"))close()},true);
 })();
 </script>
+<script>
+/* Custos: interação independente do módulo Firebase/CRM. */
+(function(){
+ const button=document.getElementById("addCost"),body=document.getElementById("costRows");
+ if(!button||!body)return;
+ let rows=[{name:"Estratégia e planejamento",value:600},{name:"Design e interface",value:650},{name:"Desenvolvimento",value:1100},{name:"Integrações e configuração",value:590}];
+ const money=n=>Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+ function emit(){window.dispatchEvent(new CustomEvent("akasha-costs-changed",{detail:rows.map(x=>({...x}))}));}
+ function calc(){
+  const total=rows.reduce((s,x)=>s+Math.max(0,Number(x.value)||0),0);
+  const margin=Math.min(90,Math.max(0,Number(document.getElementById("margin")?.value)||0));
+  const suggested=total/(1-margin/100),manual=document.getElementById("manualPrice")?.value;
+  const price=manual===""||manual==null?suggested:Math.max(0,Number(manual)||0);
+  const marginValue=price>0?(price-total)/price*100:0;
+  const a=document.getElementById("totalCost"),b=document.getElementById("suggested"),c=document.getElementById("marginValue");
+  if(a)a.textContent=money(total);if(b)b.textContent=money(suggested);if(c)c.textContent=price>0?marginValue.toFixed(1).replace(".",",")+"%":"—";
+ }
+ function render(){
+  body.innerHTML=rows.map((x,i)=>'<tr><td><input aria-label="Nome do custo" data-cost-name="'+i+'" value="'+String(x.name).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")+'"></td><td><input aria-label="Valor do custo" data-cost-value="'+i+'" type="number" min="0" step=".01" value="'+(Number(x.value)||0)+'"></td><td><button class="btn alt" data-cost-remove="'+i+'" type="button" aria-label="Remover custo">×</button></td></tr>').join("");
+  body.querySelectorAll("[data-cost-name]").forEach(el=>el.addEventListener("input",()=>{rows[+el.dataset.costName].name=el.value;emit()}));
+  body.querySelectorAll("[data-cost-value]").forEach(el=>el.addEventListener("input",()=>{rows[+el.dataset.costValue].value=Math.max(0,Number(el.value)||0);emit();calc()}));
+  body.querySelectorAll("[data-cost-remove]").forEach(el=>el.addEventListener("click",()=>{rows.splice(+el.dataset.costRemove,1);render();emit();calc()}));
+  calc();emit();
+ }
+ button.type="button";
+ button.addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation();rows=rows.map(x=>({...x}));rows.push({name:"Novo item",value:0});render();const inputs=body.querySelectorAll("[data-cost-name]");const last=inputs[inputs.length-1];if(last){last.focus();last.select()}});
+ document.getElementById("margin")?.addEventListener("input",calc);
+ document.getElementById("manualPrice")?.addEventListener("input",calc);
+ window.addEventListener("akasha-costs-changed",e=>{if(Array.isArray(e.detail))rows=e.detail.map(x=>({...x}));});
+ render();
+})();
+</script>
 <script type="module">
 import { auth, db } from "/login/firebase.js";
 import { isMentorIdentity } from "/afplataforma/firebase/firebase-config.js";
@@ -344,7 +376,7 @@ function proposalText(){let c=calculate(),n=Math.max(1,Number($('installments').
 function renderProposal(){let p=proposalText(),c=calculate(),n=Math.max(1,Number($('installments').value)||1),items=val('deliverables').split('\n').map(x=>x.trim()).filter(Boolean);$('proposal').innerHTML='<div class="eyebrow">AKASHA HUB · PROPOSTA COMERCIAL</div><h2>'+esc(val('offer'))+'</h2><p>Preparada para <strong>'+esc(val('client')||'Cliente')+'</strong>'+(val('contact')?' · '+esc(val('contact')):'')+'</p><div class="rule"></div><h3>O cenário</h3><p>'+esc(val('scenario')||'Cenário a validar')+'</p><h3>Objetivo</h3><p>'+esc(val('goal')||'Objetivo a definir')+'</p><h3>Entregáveis</h3><ul>'+items.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><h3>Capacidades do Catálogo Mestre</h3><ul>'+selectedCapabilities.map(x=>'<li>'+esc(x.name)+' <span class="tag">'+esc(x.status)+'</span></li>').join('')+'</ul><h3>Prazo e acompanhamento</h3><p>'+esc(val('deadline')||'A combinar')+'</p><p>'+esc(val('support')||'Conforme condições acordadas')+'</p><h3>Investimento</h3><div class="money">'+money(c.price)+'</div><p>'+(n===1?'À vista':n+' parcelas de '+money(c.price/n))+'</p><p>'+esc(val('payment'))+'</p><h3>Condições e exclusões</h3><p>'+esc(val('exclusions')||'Itens não descritos serão orçados separadamente.')+'</p><p>Validade: '+esc(val('validity')||'7 dias')+'</p><div class="rule"></div><p><strong>Próximo passo:</strong> aprovação do escopo e das condições para formalização contratual e início do projeto.</p><p style="font-size:11px;color:#756b72">A proposta descreve entregas e condições de trabalho. Não representa garantia de faturamento, vendas ou resultado financeiro.</p>';$('proposal').dataset.text=p.text}
 function show(n){step=n;document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=Number(p.dataset.panel)!==n);document.querySelectorAll('[data-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.step)===n));if(n===3)calculate();if(n===4)renderProposal();window.scrollTo({top:0,behavior:'smooth'})}
 document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>show(Number(b.dataset.step)));document.querySelectorAll('[data-next]').forEach(b=>b.onclick=()=>show(Math.min(4,step+1)));document.querySelectorAll('[data-prev]').forEach(b=>b.onclick=()=>show(Math.max(0,step-1)));
-$('capSearch').oninput=renderCatalog;$('openCatalog').onclick=openCatalog;$('closeCatalog').onclick=closeCatalog;$('confirmCatalog').onclick=closeCatalog;$('catalogBackdrop').onclick=e=>{if(e.target===$('catalogBackdrop'))closeCatalog()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCatalog()});$('saveProposal').onclick=saveProposal;function addCostRow(){const current=[...document.querySelectorAll('[data-cost-name]')].map((el,i)=>({name:el.value,value:Number(document.querySelector('[data-cost-value="'+i+'"]')?.value)||0}));costs=current;costs.push({name:'Novo item',value:0});renderCosts();const last=$('costRows').querySelector('[data-cost-name]:last-of-type');if(last){last.focus();last.select()}}$('addCost').type='button';$('addCost').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();addCostRow()});$('margin').oninput=calculate;$('manualPrice').oninput=calculate;$('installments').onchange=calculate;$('printProposal').onclick=()=>window.print();$('copyProposal').onclick=async()=>{try{await navigator.clipboard.writeText(proposalText().text);$('copyProposal').textContent='Texto copiado'}catch(e){alert('Não foi possível copiar automaticamente. Use a opção de imprimir ou selecione o texto da proposta.')}};
+$('capSearch').oninput=renderCatalog;$('openCatalog').onclick=openCatalog;$('closeCatalog').onclick=closeCatalog;$('confirmCatalog').onclick=closeCatalog;$('catalogBackdrop').onclick=e=>{if(e.target===$('catalogBackdrop'))closeCatalog()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCatalog()});$('saveProposal').onclick=saveProposal;window.addEventListener('akasha-costs-changed',e=>{if(Array.isArray(e.detail)){costs=e.detail.map(x=>({...x}));calculate()}});$('margin').oninput=calculate;$('manualPrice').oninput=calculate;$('installments').onchange=calculate;$('printProposal').onclick=()=>window.print();$('copyProposal').onclick=async()=>{try{await navigator.clipboard.writeText(proposalText().text);$('copyProposal').textContent='Texto copiado'}catch(e){alert('Não foi possível copiar automaticamente. Use a opção de imprimir ou selecione o texto da proposta.')}};
 $('downloadJson').onclick=()=>{let data={client:val('client'),contact:val('contact'),segment:val('segment'),origin:val('origin'),email:val('email'),diagnosis:{scenario:val('scenario'),bottleneck:val('bottleneck'),goal:val('goal')},offer:val('offer'),capacity_status:val('capacity'),deliverables:val('deliverables'),exclusions:val('exclusions'),support:val('support'),costs,pricing:calculate(),installments:val('installments'),payment:val('payment'),proposal:proposalText().text};let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=u;a.download='proposta-akasha-'+(val('client')||'rascunho').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.json';a.click();URL.revokeObjectURL(u)};
 $('date').value=new Date().toISOString().slice(0,10);renderCosts();renderCatalog();renderSelectedCapabilities();show(0);
 </script></body></html>
