@@ -39,6 +39,11 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
 .deliverable-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.catalog-open{padding:7px 11px;font-size:11px;white-space:nowrap}.catalog-modal-backdrop{position:fixed;inset:0;z-index:1000;background:rgba(18,12,22,.72);display:none;align-items:center;justify-content:center;padding:18px}.catalog-modal-backdrop.open{display:flex}.catalog-modal{width:min(1100px,100%);height:min(88vh,850px);background:var(--white);border:1px solid var(--gold);box-shadow:0 24px 80px #0006;display:flex;flex-direction:column}.catalog-modal-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.catalog-modal-head h3{margin:3px 0}.catalog-modal-head p{margin:0;color:var(--muted);font-size:12px}.catalog-modal-tools{padding:12px 22px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}.catalog-modal-tools input{max-width:460px}.catalog-count{margin-left:auto;font-size:11px;color:var(--muted);white-space:nowrap}.catalog-modal-body{padding:16px 22px;overflow:auto;flex:1}.catalog-dept{border:1px solid var(--line);margin-bottom:12px;background:#fff}.catalog-dept summary{cursor:pointer;padding:14px 16px;background:#f0eaf1;display:flex;justify-content:space-between;gap:12px;align-items:center;font-weight:bold;font-size:13px}.catalog-dept summary small{font-weight:normal;color:var(--muted)}.catalog-group{padding:12px 16px;border-top:1px solid #eee}.catalog-group h4{font:600 12px Arial;margin:0 0 8px;color:var(--gold)}.catalog-item{display:flex;align-items:flex-start;gap:9px;padding:7px 4px;border-bottom:1px solid #f1edf0;font-size:12px;cursor:pointer}.catalog-item:last-child{border-bottom:0}.catalog-item input{width:auto;margin:2px 0 0;accent-color:var(--violet)}.catalog-modal-foot{padding:13px 22px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.catalog-selected{font-size:12px;color:var(--muted)}.selected-cap{display:grid;grid-template-columns:1fr 190px auto;gap:8px;align-items:center;padding:8px;border-bottom:1px solid var(--line);font-size:12px}.selected-cap small{display:block;color:var(--muted)}.saved-list{display:grid;gap:8px;margin-top:14px}.saved-item{border:1px solid var(--line);padding:12px;display:flex;justify-content:space-between;gap:12px;align-items:center}.saved-item small{display:block;color:var(--muted)}@media(max-width:620px){.selected-cap{grid-template-columns:1fr}.saved-item{align-items:flex-start;flex-direction:column}.catalog-modal-backdrop{padding:7px}.catalog-modal{height:94vh}.catalog-modal-head,.catalog-modal-tools,.catalog-modal-body,.catalog-modal-foot{padding-left:13px;padding-right:13px}.catalog-modal-tools{flex-wrap:wrap}.catalog-count{margin-left:0}}
 
 .support-suggestions{margin-top:12px;padding:13px;background:#f7f3f7;border:1px solid var(--line)}.support-suggestions-head{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin-bottom:10px}.support-suggestions-head strong{font-size:12px}.support-suggestions-head span{font-size:11px;color:var(--muted)}.support-suggestion-list{display:flex;gap:8px;flex-wrap:wrap}.support-suggestion{border:1px solid #cfc3d4;background:#fff;color:var(--ink);padding:8px 10px;border-radius:3px;font-size:11px;text-align:left;max-width:100%}.support-suggestion:hover{border-color:var(--gold)}.support-suggestion[aria-pressed="true"]{background:var(--violet);border-color:var(--violet);color:#fff}.support-suggestion small{display:block;font-size:9px;opacity:.75;margin-top:3px}
+
+.cap-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 27px;width:27px;height:27px;border:1px solid #e3d8c8;border-radius:7px;background:#f7f2eb;font-size:15px;line-height:1;vertical-align:middle}
+.catalog-item{align-items:center;gap:10px;min-height:42px}.catalog-item input{flex:0 0 auto}.catalog-item .cap-name{line-height:1.4}.catalog-item:hover .cap-icon{border-color:var(--gold);background:#f3eadb}
+.catalog-dept summary>span{display:flex;align-items:center;gap:9px}.dept-icon{display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:7px;background:#fff;border:1px solid var(--line);font-size:15px}
+.pricing-cap-icon{margin-right:8px;vertical-align:middle}.selected-cap .cap-icon{margin-right:8px}
 </style>
 </head>
 <body>
@@ -225,9 +230,9 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
   body.innerHTML=catalog.map(dept=>{
    const groups=dept.groups.map(group=>{
     const names=group[1].filter(name=>!q||(name+" "+dept.name+" "+group[0]).toLocaleLowerCase("pt-BR").includes(q));
-    return names.length?'<div class="catalog-group"><h4>'+esc(group[0])+'</h4>'+names.map(name=>{const id=dept.id+"::"+name;return '<label class="catalog-item"><input type="checkbox" data-shared-cap="'+esc(id)+'" '+(ids.has(id)?"checked":"")+'><span>'+esc(name)+'</span></label>'}).join("")+'</div>':"";
+    return names.length?'<div class="catalog-group"><h4>'+esc(group[0])+'</h4>'+names.map(name=>{const id=dept.id+"::"+name;return '<label class="catalog-item"><input type="checkbox" data-shared-cap="'+esc(id)+'" '+(ids.has(id)?"checked":"")+'><span class="cap-icon" aria-hidden="true" title="'+esc(name)+'">'+capabilityIcon(name,dept.id)+'</span><span class="cap-name">'+esc(name)+'</span></label>'}).join("")+'</div>':"";
    }).join("");
-   return groups?'<details class="catalog-dept" open><summary><span>'+esc(dept.name)+'</span><small>'+dept.groups.reduce((n,g)=>n+g[1].length,0)+' capacidades</small></summary>'+groups+'</details>':"";
+   return groups?'<details class="catalog-dept" open><summary><span><span class="dept-icon" aria-hidden="true">'+(deptIcons[dept.id]||"✦")+'</span>'+esc(dept.name)+'</span><small>'+dept.groups.reduce((n,g)=>n+g[1].length,0)+' capacidades</small></summary>'+groups+'</details>':"";
   }).join("")||'<p class="hint">Nenhuma capacidade encontrada para esta busca.</p>';
   updateFoot();
  }
@@ -446,7 +451,7 @@ $('date').value=new Date().toISOString().slice(0,10);renderCosts();renderCatalog
   if($("totalCost"))$("totalCost").textContent=money(total);if($("suggested"))$("suggested").textContent=money(suggested);if($("marginValue"))$("marginValue").textContent=price>0?mv.toFixed(1).replace(".",",")+"%":"—";
  }
  function render(){
-  body.innerHTML=rows.map((x,i)=>'<tr><td><input aria-label="Nome da capacidade ou custo" data-cost-name="'+i+'" value="'+esc(x.name)+'"><div class="hint">'+(x.capabilityId?'Capacidade do Catálogo · '+esc(x.department||""):'Custo adicional manual')+'</div></td><td><input aria-label="Valor de referência em reais" data-cost-value="'+i+'" type="number" min="0" step=".01" value="'+(Number(x.value)||0)+'"></td><td><button class="btn alt" data-cost-remove="'+i+'" type="button" aria-label="Remover somente da precificação">×</button></td></tr>').join("")||'<tr><td colspan="3" class="hint">Nenhuma capacidade selecionada. Escolha entregáveis na etapa anterior ou abra o catálogo nesta etapa.</td></tr>';
+  body.innerHTML=rows.map((x,i)=>'<tr><td>'+(x.capabilityId?'<span class="cap-icon pricing-cap-icon" aria-hidden="true">'+(window.akashaCapabilityIcon?window.akashaCapabilityIcon(x.name,String(x.capabilityId).split("::")[0]):"✦")+'</span>':'')+'<input aria-label="Nome da capacidade ou custo" data-cost-name="'+i+'" value="'+esc(x.name)+'"><div class="hint">'+(x.capabilityId?'Capacidade do Catálogo · '+esc(x.department||""):'Custo adicional manual')+'</div></td><td><input aria-label="Valor de referência em reais" data-cost-value="'+i+'" type="number" min="0" step=".01" value="'+(Number(x.value)||0)+'"></td><td><button class="btn alt" data-cost-remove="'+i+'" type="button" aria-label="Remover somente da precificação">×</button></td></tr>').join("")||'<tr><td colspan="3" class="hint">Nenhuma capacidade selecionada. Escolha entregáveis na etapa anterior ou abra o catálogo nesta etapa.</td></tr>';
   body.querySelectorAll("[data-cost-name]").forEach(el=>el.addEventListener("input",()=>{rows[+el.dataset.costName].name=el.value;emit()}));
   body.querySelectorAll("[data-cost-value]").forEach(el=>el.addEventListener("input",()=>{rows[+el.dataset.costValue].value=Math.max(0,Number(el.value)||0);emit();calc()}));
   body.querySelectorAll("[data-cost-remove]").forEach(el=>el.addEventListener("click",()=>{const removed=rows[+el.dataset.costRemove];if(removed?.capabilityId)excludedIds.add(removed.capabilityId);rows.splice(+el.dataset.costRemove,1);render();emit()}));
@@ -562,6 +567,44 @@ $('date').value=new Date().toISOString().slice(0,10);renderCosts();renderCatalog
  if(!backdrop||!body||!search||!box)return;
  let catalog=[],mode="scope",scopeSelected=new Set(),pricingSelected=new Set(),inserted=[];
  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+ const iconRules=[
+  [/diagn[oó]stic|investiga|pesquisa|auditoria|an[aá]lise|leitura|mapeamento/i,"🔎"],
+  [/identidade|branding|logotipo|marca|s[ií]mbolo|visual|paleta|tipografia|design/i,"🎨"],
+  [/hist[oó]ria|trajet[oó]ria|biografia|curr[ií]culo|portf[oó]lio|perfil|talento|compet[eê]ncia/i,"🧭"],
+  [/objetivo|vis[aã]o|planejamento|estrat[eé]gia|plano|dire[cç][aã]o|prioridade/i,"🎯"],
+  [/cren[cç]a|comportamento|h[aá]bito|presen[cç]a|medita[cç][aã]o|visualiza[cç][aã]o|disciplina|lideran[cç]a/i,"🧠"],
+  [/fam[ií]lia|familiar|dinheiro|riqueza|consumo|or[cç]amento|d[ií]vida|reserva|juros|infla[cç][aã]o/i,"💰"],
+  [/fluxo de caixa|caixa|contas a pagar|contas a receber|capital de giro|receitas|despesas|custos|margem|precifica[cç][aã]o|rentabilidade|lucro/i,"📊"],
+  [/economia|c[aâ]mbio|mercado|investimento|renda fixa|tesouro|cdb|fundos|a[cç][oõ]es|etf|dividendos|cripto|bolsa|valuation|balan[cç]o|ebitda/i,"📈"],
+  [/patrim[oô]nio|ativos|passivos|holding|sucess[aã]o|governan[cç]a|aquisi[cç][aã]o|preserva[cç][aã]o de capital/i,"🏛️"],
+  [/fotografia|retrato|imagem|avatar|ensaio|edi[cç][aã]o|restaura[cç][aã]o/i,"📷"],
+  [/comunica[cç][aã]o|narrativa|storytelling|manifesto|pitch|texto|copy|roteiro|locu[cç][aã]o|tradu[cç][aã]o/i,"✍️"],
+  [/v[ií]deo|audiovisual|reels|shorts|anima[cç][aã]o|motion|document[aá]rio|podcast/i,"🎬"],
+  [/apresenta[cç][oõ]es|e-book|cat[aá]logo|relat[oó]rio|infogr[aá]fico|livro|manual|guia|apostila/i,"📚"],
+  [/site|landing page|p[aá]gina|blog|portal|diret[oó]rio|dom[ií]nio|seo/i,"🌐"],
+  [/aplicativo|app|plataforma|sistema|saas|marketplace|loja virtual|checkout|assinatura/i,"💻"],
+  [/api|banco de dados|autentica[cç][aã]o|back-end|front-end|firebase|supabase|github|deploy|hospedagem|dns|ssl|backup|seguran[cç]a|infraestrutura|integra[cç][aã]o/i,"⚙️"],
+  [/produto|pedido|pagamento|fidelidade|fornecedor|distribui[cç][aã]o/i,"🛒"],
+  [/marketing|p[uú]blico|segmenta[cç][aã]o|jornada|conte[uú]do|instagram|tiktok|youtube|linkedin|calend[aá]rio editorial/i,"📣"],
+  [/an[uú]ncio|ads|campanha|remarketing|teste a\/b|tr[aá]fego|aquisi[cç][aã]o|lead|funil|capta[cç][aã]o/i,"📢"],
+  [/comercial|venda|oferta|cliente ideal|proposta de valor|negocia[cç][aã]o|fechamento|p[oó]s-venda|reten[cç][aã]o/i,"🤝"],
+  [/sdr|prospec[cç][aã]o|pipeline|crm|follow-up|agendamento|closer|obje[cç][aã]o/i,"📞"],
+  [/equipe|departamento|fun[cç][oõ]es|responsabilidades|processo|opera[cç][aã]o|procedimento|tarefas|projeto/i,"🗂️"],
+  [/internacional|estrangeiro|pa[ií]s|localiza[cç][aã]o|cultural|parceiro|investidor|alian[cç]a/i,"🌍"],
+  [/automa[cç][aã]o|sincroniza[cç][aã]o|notifica[cç][aã]o|agente|assistente|intelig[eê]ncia artificial|\bia\b|rag|base de conhecimento|documental/i,"🤖"],
+  [/produtividade|ideias|prioridades|reuni[oõ]es|mapa de rede|teleprompter/i,"⚡"],
+  [/curso|aula|m[oó]dulo|trilha|pedag[oó]g|exerc[ií]cio|question[aá]rio|avalia[cç][aã]o|certificado|treinamento|capacita[cç][aã]o/i,"🎓"],
+  [/m[eé]todo|metodologia|framework|propriedade intelectual|direitos|marca|prote[cç][aã]o/i,"🧩"],
+  [/comunidade|mentoria|workshop|semin[aá]rio|palestra|evento|movimento|encontro/i,"👥"],
+  [/expans[aã]o|crescimento|unidade|novos mercados|continuidade|delegar|cultura|institucional/i,"🚀"]
+ ];
+ const deptIcons={essencia:"🧭",branding:"🎨",tecnologia:"💻",financeiro:"💰",marketing:"📣",comercial:"🤝",internacional:"🌍",automacao:"🤖",educacao:"🎓",legado:"🏛️"};
+ function capabilityIcon(name,deptId){
+  const rule=iconRules.find(([re])=>re.test(name||""));
+  return rule?rule[1]:(deptIcons[deptId]||"✦");
+ }
+ window.akashaCapabilityIcon=capabilityIcon;
  const getCaps=ids=>[...ids].map(id=>{const [deptId,...parts]=id.split("::"),name=parts.join("::"),dept=catalog.find(d=>d.id===deptId),group=dept?.groups.find(g=>g[1].includes(name));return {id,name,department:dept?.name||"",group:group?.[0]||"",status:"Existente"}});
  function syncScope(){
   const manual=box.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).filter(x=>!inserted.includes(x));
