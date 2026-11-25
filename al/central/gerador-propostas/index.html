@@ -125,15 +125,16 @@ let step=0,costs=[{name:'Estratégia e planejamento',value:600},{name:'Design e 
 
 const catalogCapabilities=CATALOG.flatMap(dept=>dept.groups.flatMap(group=>group[1].map(name=>({id:dept.id+"::"+name,name,department:dept.name,group:group[0]}))));
 let selectedCapabilities=[];
+let catalogInsertedNames=[];
 let authorizedMentor=false;
 let proposalDocId=null;
 function syncCatalogDeliverables(){
  const box=$("deliverables");
  const current=box.value.split("\\n").map(x=>x.trim()).filter(Boolean);
- const previous=selectedCapabilities.map(x=>x.name);
- const manuallyKept=current.filter(line=>!previous.includes(line));
+ const manuallyKept=current.filter(line=>!catalogInsertedNames.includes(line));
  const selectedNames=selectedCapabilities.map(x=>x.name);
  box.value=[...manuallyKept,...selectedNames].join("\\n");
+ catalogInsertedNames=[...selectedNames];
 }
 function renderCatalog(){
  const q=($("capSearch").value||"").trim().toLocaleLowerCase("pt-BR");
@@ -195,7 +196,7 @@ async function loadProposal(id){
  try{const snap=await getDoc(doc(db,"alCommercialProposals",id));if(!snap.exists())throw Error("Proposta não encontrada.");const x=snap.data();proposalDocId=id;
  const fields={client:x.client,contact:x.contact,segment:x.segment,origin:x.origin,email:x.email,date:x.date,scenario:x.scenario,bottleneck:x.bottleneck,goal:x.goal,deadline:x.deadline,validity:x.validity,offer:x.offer,capacity:x.capacityStatus,deliverables:x.deliverables,exclusions:x.exclusions,support:x.support,margin:x.marginTarget,installments:x.installments,payment:x.payment,proposalStatus:x.status||"draft"};
  Object.entries(fields).forEach(([k,v])=>{if(v!==undefined&&$(k))$(k).value=v});
- costs=Array.isArray(x.costs)?x.costs:[];selectedCapabilities=Array.isArray(x.selectedCapabilities)?x.selectedCapabilities:[];renderCosts();renderCatalog();renderSelectedCapabilities();$("manualPrice").value=x.pricing?.final??"";syncCatalogDeliverables();show(0);
+ costs=Array.isArray(x.costs)?x.costs:[];selectedCapabilities=Array.isArray(x.selectedCapabilities)?x.selectedCapabilities:[];catalogInsertedNames=selectedCapabilities.map(c=>c.name);renderCosts();renderCatalog();renderSelectedCapabilities();$("manualPrice").value=x.pricing?.final??"";syncCatalogDeliverables();show(0);
  }catch(e){alert("Não foi possível abrir a proposta: "+(e.code||e.message))}
 }
 // A ferramenta fica acessível sem bloqueio de tela. A sessão é consultada apenas
