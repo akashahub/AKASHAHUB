@@ -307,7 +307,7 @@ function syncCatalogDeliverables(){
  box.value=[...manuallyKept,...selectedNames].join("\n");
  catalogInsertedNames=[...selectedNames];
 }
-function normalizeText(value){return String(value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLocaleLowerCase("pt-BR")}
+function normalizeText(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("pt-BR")}
 function renderProblemMap(){
  const q=normalizeText($("problemSearch").value.trim());
  const html=PROBLEM_MAP.map(category=>{
@@ -445,7 +445,7 @@ async function loadProposal(id){
  try{const snap=await getDoc(doc(db,"alCommercialProposals",id));if(!snap.exists())throw Error("Proposta não encontrada.");const x=snap.data();proposalDocId=id;
  const fields={client:x.client,contact:x.contact,segment:x.segment,origin:x.origin,email:x.email,date:x.date,scenario:x.scenario,bottleneck:x.bottleneck,goal:x.goal,deadline:x.deadline,validity:x.validity,offer:x.offer,capacity:x.capacityStatus,deliverables:x.deliverables,exclusions:x.exclusions,support:x.support,margin:x.marginTarget,installments:x.installments,payment:x.payment,proposalStatus:x.status||"draft"};
  Object.entries(fields).forEach(([k,v])=>{if(v!==undefined&&$(k))$(k).value=v});
- costs=Array.isArray(x.costs)?x.costs:[];selectedProblems=Array.isArray(x.selectedProblems)?x.selectedProblems:[];renderSelectedProblems();renderProblemSuggestions();selectedCapabilities=Array.isArray(x.selectedCapabilities)?x.selectedCapabilities:[];catalogInsertedNames=selectedCapabilities.map(c=>c.name);renderCosts();renderCatalog();renderSelectedCapabilities();$("manualPrice").value=x.pricing?.final??"";syncCatalogDeliverables();show(0);
+ costs=Array.isArray(x.costs)?x.costs:[];selectedProblems=Array.isArray(x.selectedProblems)?x.selectedProblems:[];selectedCapabilities=Array.isArray(x.selectedCapabilities)?x.selectedCapabilities:[];renderSelectedProblems();renderProblemSuggestions();catalogInsertedNames=selectedCapabilities.map(c=>c.name);renderCosts();renderCatalog();renderSelectedCapabilities();$("manualPrice").value=x.pricing?.final??"";syncCatalogDeliverables();show(0);
  }catch(e){alert("Não foi possível abrir a proposta: "+(e.code||e.message))}
 }
 // A ferramenta fica acessível sem bloqueio de tela. A sessão é consultada apenas
