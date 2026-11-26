@@ -2,7 +2,7 @@ import { session, isMentorSession } from "./auth.js";
 import { activeHubContext, loadAuthorizedMentees } from "./hub-context.js?v=etapa4-1";
 import { db } from "../../firebase/firebase-config.js";
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { CATALOG } from "./catalogo-capacidades-data.js?v=20261110-1";
+import { CATALOG, CAPABILITY_PHASES, DEPT_CODES, DEPT_PHASES } from "./catalogo-capacidades-data.js?v=20261110-1";
 import { SPECIALIZED_PROMPTS, buildSpecializedPrompt } from "./biblioteca-prompts-especializados.js?v=global-recipes-20261119-1";
 import { readHubDossieSnapshot } from "./hub-dossie.js?v=dossier-prompt-context-20261119-v1";
 
@@ -80,15 +80,6 @@ const PHASES = [
   }
 ];
 
-const DEPT_PHASES = {
-  essencia:["AE"], branding:["AE","ID"], tecnologia:["ID"], financeiro:["AF"],
-  marketing:["ID","EX"], comercial:["AE","ID","AF","EX","LG"], internacional:["AF","EX","LG"],
-  automacao:["ID","EX","LG"], educacao:["ID","LG"], legado:["LG"]
-};
-const DEPT_CODES = {
-  essencia:"0101", branding:"0202", tecnologia:"0303", financeiro:"0404", marketing:"0505",
-  comercial:"0606", internacional:"0707", automacao:"0808", educacao:"0909", legado:"1010"
-};
 const DEPT_PHASE_REASON = {
   essencia:"A investigação de identidade e direção inicia a jornada.",
   branding:"A identidade começa na essência e se materializa em marca e comunicação no Império Digital.",
@@ -110,10 +101,12 @@ function flattenCatalog() {
     let n = 0;
     return dept.groups.flatMap(([group, items]) => items.map(title => {
       n++;
+      const id = DEPT_CODES[dept.id] + "-C" + String(n).padStart(2,"0");
+      const phases = CAPABILITY_PHASES[id] || DEPT_PHASES[dept.id] || [];
       return {
-        id: DEPT_CODES[dept.id] + "-C" + String(n).padStart(2,"0"),
+        id,
         departmentId:dept.id, departmentCode:DEPT_CODES[dept.id], department:dept.name,
-        group, title, phases:DEPT_PHASES[dept.id] || [], phase: (DEPT_PHASES[dept.id] || [])[0] || "",
+        group, title, phases, phase: phases[0] || "",
         reason:DEPT_PHASE_REASON[dept.id] || ""
       };
     }));
@@ -460,7 +453,11 @@ async function attachDossierContext(area, status) {
 
 function renderSpecializedRows(items) {
   if (!items.length) return '<div class="pm-empty">Nenhum prompt corresponde aos filtros.</div>';
-  return items.map(item => '<article class="pm-cap-row"><div class="pm-cap-code">'+esc(item.id)+'</div><div class="pm-cap-main"><strong>'+esc(item.title)+'</strong><small>'+esc(item.category)+' · Fase '+esc(item.phase)+'</small><p>'+esc(item.mission)+'</p><button type="button" class="pm-build-prompt" data-pm-specialized="'+esc(item.id)+'">Abrir prompt completo <span>↗</span></button></div><div class="pm-cap-meta"><span class="pm-phase-pill">'+esc(item.phase)+'</span></div></article>').join('');
+  return items.map(item => {
+    const linked = (item.capabilityIds || []).map(id => CAPABILITIES.find(c => c.id === id)).filter(Boolean);
+    const linkedText = linked.length ? linked.map(c => c.id + " · " + c.title).join("; ") : "Vínculo pendente de revisão";
+    return '<article class="pm-cap-row"><div class="pm-cap-code">'+esc(item.id)+'</div><div class="pm-cap-main"><strong>'+esc(item.title)+'</strong><small>'+esc(item.category)+' · Fase '+esc(item.phase)+'</small><p>'+esc(item.mission)+'</p><small class="pm-linked-capabilities">Capacidades do catálogo: '+esc(linkedText)+'</small><button type="button" class="pm-build-prompt" data-pm-specialized="'+esc(item.id)+'">Abrir prompt completo <span>↗</span></button></div><div class="pm-cap-meta"><span class="pm-phase-pill">'+esc(item.phase)+'</span></div></article>';
+  }).join('');
 }
 function renderSpecializedIndex() {
   const cats = [...new Set(SPECIALIZED_PROMPTS.map(x=>x.category))];
@@ -589,8 +586,10 @@ export function renderPhasePromptAccess(phaseId) {
     ).join("") + '</div>' +
     (specialized.length ? '<h4 class="section-h" style="margin-top:24px">Receitas especializadas desta fase</h4><div class="pm-phase-prompt-list">' + specialized.map(item => {
       const key = "specialized-" + item.id;
+      const linked = (item.capabilityIds || []).map(id => CAPABILITIES.find(c => c.id === id)).filter(Boolean);
+      const linkedText = linked.length ? linked.map(c => c.id + " · " + c.title).join("; ") : "Vínculo pendente de revisão";
       return '<details style="margin:10px 0;padding:12px;border:1px solid var(--line,#39342d);border-radius:10px">' +
-        '<summary style="cursor:pointer"><strong>' + esc(item.id) + ' · ' + esc(item.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + esc(item.category) + '</small></summary>' +
+        '<summary style="cursor:pointer"><strong>' + esc(item.id) + ' · ' + esc(item.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + esc(item.category) + ' · Capacidades: ' + esc(linkedText) + '</small></summary>' +
         '<p class="notes-hint">' + esc(item.mission) + '</p>' +
         '<textarea data-journey-prompt="' + esc(key) + '" spellcheck="false" style="width:100%;min-height:260px;margin:10px 0;padding:12px;box-sizing:border-box">' + esc(applySharedContext(buildSpecializedPrompt(item))) + '</textarea>' +
         '<button class="tool-btn" type="button" data-copy-journey-prompt="' + esc(key) + '">Copiar prompt especializado</button>' +
