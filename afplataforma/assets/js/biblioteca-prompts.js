@@ -2,8 +2,8 @@ import { session, isMentorSession } from "./auth.js";
 import { activeHubContext, loadAuthorizedMentees } from "./hub-context.js?v=etapa4-1";
 import { db } from "../../firebase/firebase-config.js";
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { CATALOG, CAPABILITY_PHASES, DEPT_CODES, DEPT_PHASES } from "./catalogo-capacidades-data.js?v=20261110-1";
-import { SPECIALIZED_PROMPTS, buildSpecializedPrompt } from "./biblioteca-prompts-especializados.js?v=global-recipes-20261119-1";
+import { CATALOG, CAPABILITY_PHASES, DEPT_CODES, DEPT_PHASES } from "./catalogo-capacidades-data.js?v=20261126-unificacao-1";
+import { SPECIALIZED_PROMPTS, buildSpecializedPrompt } from "./biblioteca-prompts-especializados.js?v=unificacao-fases-20261126-1";
 import { readHubDossieSnapshot } from "./hub-dossie.js?v=dossier-prompt-context-20261119-v1";
 
 const PHASES = [
