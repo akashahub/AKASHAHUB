@@ -270,7 +270,9 @@ function paintList() {
     const phaseAction = session.canManageLegacyAccess
       ? `<button type="button" class="tool-btn" data-af="phases" data-uid="${esc(u.uid)}">Fases ${phaseCount}/5</button>`
       : `<span class="af-mods">Fases ${phaseCount}/5</span>`;
-    if (st === "active") {
+    if (!session.canManageLegacyAccess) {
+      actions = '<span class="af-mods">Consulta · sem delegação de gestão</span>';
+    } else if (st === "active") {
       actions = phaseAction + `<button type="button" class="tool-btn" data-af="mods" data-uid="${esc(u.uid)}">Gerenciar AF</button>
         <button type="button" class="tool-btn" data-af="pause" data-uid="${esc(u.uid)}">Pausar</button>
         <button type="button" class="tool-btn af-btn-warn" data-af="block" data-uid="${esc(u.uid)}">Bloquear</button>`;
