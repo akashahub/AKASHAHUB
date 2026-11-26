@@ -6,6 +6,8 @@ import { session } from "./auth.js";
 import { MENTOR_UID, isMentorIdentity } from "../../firebase/firebase-config.js";
 import {
   listenAfAccessBoard,
+  getAccessManagerGrants,
+  updateAccessManagerGrant,
   grantFullAfAccess,
   pauseAfAccess,
   reactivateAfAccess,
@@ -176,6 +178,7 @@ export function renderAccessAdminPanel() {
     <div class="af-search-row">
       <a class="tool-btn" href="/admin/perfis/" target="_blank" rel="noopener">Abrir Central de Perfis ↗</a>
       <span class="notes-hint">Identidade e cadastro ficam em /admin/perfis. As permissões são administradas aqui.</span>
+      ${session.uid === MENTOR_UID ? '<button class="tool-btn" type="button" id="accessManagersBtn">Gerenciar mentores gestores</button>' : ""}
     </div>
     <div class="af-search-row">
       <input id="afUserSearch" type="search" placeholder="Buscar por nome ou e-mail" autocomplete="off">
@@ -195,6 +198,7 @@ export function bindAccessAdmin() {
     search.addEventListener("input", () => { q = search.value || ""; paintList(); });
   }
   document.getElementById("afUserList")?.addEventListener("click", onListClick);
+  document.getElementById("accessManagersBtn")?.addEventListener("click", openAccessManagers);
   if (session.mode === "local") {
     const hint = document.getElementById("afAdminHint");
     if (hint) hint.textContent = "Entre com o login Firebase do mentor para ver as tentativas reais.";
@@ -263,7 +267,9 @@ function paintList() {
     const st = u.status || "none";
     let actions = "";
     const phaseCount = Object.values(effectiveLegacyPhases(u)).filter(Boolean).length;
-    const phaseAction = `<button type="button" class="tool-btn" data-af="phases" data-uid="${esc(u.uid)}">Fases ${phaseCount}/5</button>`;
+    const phaseAction = session.canManageLegacyAccess
+      ? `<button type="button" class="tool-btn" data-af="phases" data-uid="${esc(u.uid)}">Fases ${phaseCount}/5</button>`
+      : `<span class="af-mods">Fases ${phaseCount}/5</span>`;
     if (st === "active") {
       actions = phaseAction + `<button type="button" class="tool-btn" data-af="mods" data-uid="${esc(u.uid)}">Gerenciar AF</button>
         <button type="button" class="tool-btn" data-af="pause" data-uid="${esc(u.uid)}">Pausar</button>
@@ -306,7 +312,35 @@ function paintList() {
   }).join("");
 }
 
+async function openAccessManagers() {
+  if (session.uid !== MENTOR_UID) return toast("Somente o administrador principal pode delegar gestores.", true);
+  try {
+    const grants = await getAccessManagerGrants();
+    const active = new Set(grants.filter((g) => g.active === true).map((g) => g.uid));
+    const candidates = cache.filter((u) => u.uid !== MENTOR_UID && isMentorIdentity(u.uid, u.email));
+    if (!candidates.length) return toast("Nenhum perfil de mentor foi encontrado na lista de usuários.", true);
+    openModal("Gestores de acesso · delegação",
+      `<p class="hero-sub">Escolha quais mentores podem liberar ou revogar as cinco fases da Arquitetura de Legado. A delegação não altera a gestão antiga de módulos e planos do AF.</p>
+       <div class="af-mod-list">${candidates.map((u) => `
+         <label class="af-mod-row"><span><strong>${esc(u.name || u.email || u.uid)}</strong><br><small class="af-mods">${esc(u.email || u.uid)}</small></span>
+           <input type="checkbox" data-access-manager="${esc(u.uid)}" ${active.has(u.uid) ? "checked" : ""}></label>`).join("")}</div>
+       <p class="notes-hint">A revogação impede novas alterações de fases. O mentor precisará atualizar a sessão para refletir uma delegação nova.</p>`,
+      `<button class="tool-btn" type="button" id="accessManagersCancel">Cancelar</button>
+       <button class="tool-btn" type="button" id="accessManagersSave">Salvar delegações</button>`);
+    const body = document.getElementById("modalBody");
+    document.getElementById("accessManagersCancel").onclick = closeModal;
+    document.getElementById("accessManagersSave").onclick = () => runAction(document.getElementById("accessManagersSave"), async () => {
+      const selected = new Set(Array.from(body.querySelectorAll("[data-access-manager]:checked")).map((el) => el.dataset.accessManager));
+      await Promise.all(candidates.map((u) => updateAccessManagerGrant(u.uid, selected.has(u.uid))));
+      closeModal();
+    }, "Delegações de gestores atualizadas.");
+  } catch (error) {
+    toast(error?.message || "Não foi possível carregar os gestores.", true);
+  }
+}
+
 function openLegacyPhases(u) {
+  if (!session.canManageLegacyAccess) return toast("Você não possui delegação para alterar fases.", true);
   const phases = effectiveLegacyPhases(u);
   const items = [
     ["phase01", "Fase 1 · Arquitetura de Essência", "Identidade, posicionamento, liderança e autoridade"],
