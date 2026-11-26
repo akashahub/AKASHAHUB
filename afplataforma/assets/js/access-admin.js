@@ -19,7 +19,8 @@ import {
   markAfRequestPending,
   fullAfModules,
   countAfModules,
-  afAccessStatus
+  afAccessStatus,
+  updateLegacyPhases
 } from "../../firebase/firestore.js";
 import { MODULES } from "../../data/modules.js";
 import { esc } from "./navigation.js";
@@ -170,8 +171,12 @@ export function renderAccessAdminPanel() {
       <p><a class="tool-btn" href="interno/precificacao-af.pdf" target="_blank" rel="noopener">PDF interno (mentor)</a>
       <a class="tool-btn" href="interno/precificacao-publica.pdf" target="_blank" rel="noopener">PDF para o cliente</a></p>
     </div>
-    <h3 class="section-h">Gestão de acessos AF</h3>
-    <p class="hero-sub">Quem tenta entrar aparece aqui sozinho. Você libera, escolhe o plano, pausa ou bloqueia.</p>
+    <h3 class="section-h">Gestão de acessos · Arquitetura de Legado</h3>
+    <p class="hero-sub">Centralize a liberação das cinco fases da Arquitetura de Legado e mantenha, nesta mesma área, o controle específico de acesso ao AF Plataforma.</p>
+    <div class="af-search-row">
+      <a class="tool-btn" href="/admin/perfis/" target="_blank" rel="noopener">Abrir Central de Perfis ↗</a>
+      <span class="notes-hint">Identidade e cadastro ficam em /admin/perfis. As permissões são administradas aqui.</span>
+    </div>
     <div class="af-search-row">
       <input id="afUserSearch" type="search" placeholder="Buscar por nome ou e-mail" autocomplete="off">
       <span class="af-badge-new" id="afNewBadge"></span>
@@ -241,22 +246,24 @@ function paintList() {
   list.innerHTML = rows.map((u) => {
     const st = u.status || "none";
     let actions = "";
+    const phaseCount = ["phase01","phase02","phase03","phase04","phase05"].filter((key) => u.legacyAccess?.phases?.[key] === true).length;
+    const phaseAction = `<button type="button" class="tool-btn" data-af="phases" data-uid="${esc(u.uid)}">Fases ${phaseCount}/5</button>`;
     if (st === "active") {
-      actions = `<button type="button" class="tool-btn" data-af="mods" data-uid="${esc(u.uid)}">Gerenciar</button>
+      actions = phaseAction + `<button type="button" class="tool-btn" data-af="mods" data-uid="${esc(u.uid)}">Gerenciar AF</button>
         <button type="button" class="tool-btn" data-af="pause" data-uid="${esc(u.uid)}">Pausar</button>
         <button type="button" class="tool-btn af-btn-warn" data-af="block" data-uid="${esc(u.uid)}">Bloquear</button>`;
     } else if (st === "paused") {
-      actions = `<button type="button" class="tool-btn" data-af="reactivate" data-uid="${esc(u.uid)}">Reativar</button>
+      actions = phaseAction + `<button type="button" class="tool-btn" data-af="reactivate" data-uid="${esc(u.uid)}">Reativar</button>
         <button type="button" class="tool-btn" data-af="mods" data-uid="${esc(u.uid)}">Gerenciar</button>
         <button type="button" class="tool-btn af-btn-warn" data-af="block" data-uid="${esc(u.uid)}">Bloquear</button>`;
     } else if (st === "blocked") {
-      actions = `<button type="button" class="tool-btn" data-af="pending" data-uid="${esc(u.uid)}">Deixar pendente</button>`;
+      actions = phaseAction + `<button type="button" class="tool-btn" data-af="pending" data-uid="${esc(u.uid)}">Deixar pendente</button>`;
     } else if (st === "denied") {
-      actions = `<button type="button" class="tool-btn" data-af="grant" data-uid="${esc(u.uid)}">Liberar acesso</button>
+      actions = phaseAction + `<button type="button" class="tool-btn" data-af="grant" data-uid="${esc(u.uid)}">Liberar acesso</button>
         <button type="button" class="tool-btn" data-af="pending" data-uid="${esc(u.uid)}">Deixar pendente</button>
         <button type="button" class="tool-btn af-btn-warn" data-af="block" data-uid="${esc(u.uid)}">Bloquear</button>`;
     } else {
-      actions = `<button type="button" class="tool-btn" data-af="grant" data-uid="${esc(u.uid)}">Liberar acesso</button>
+      actions = phaseAction + `<button type="button" class="tool-btn" data-af="grant" data-uid="${esc(u.uid)}">Liberar acesso</button>
         <button type="button" class="tool-btn" data-af="deny" data-uid="${esc(u.uid)}">Negar</button>
         <button type="button" class="tool-btn" data-af="pending" data-uid="${esc(u.uid)}">Pendente</button>
         <button type="button" class="tool-btn af-btn-warn" data-af="block" data-uid="${esc(u.uid)}">Bloquear</button>`;
@@ -275,12 +282,45 @@ function paintList() {
         <div class="af-user-meta" style="margin-bottom:8px">
           <span class="af-pill af-pill-${st}">${STATUS_LABEL[st] || st}</span>
           <span class="af-pill af-pill-plan">${esc(planLabel(u.access?.plan))}</span>
-          <span class="af-mods">${st === "active" || st === "paused" ? u.modulesOn + "/7 módulos" : "—"}</span>
+          <span class="af-mods">${phaseCount}/5 fases liberadas · ${st === "active" || st === "paused" ? u.modulesOn + "/7 módulos AF" : "AF sem acesso ativo"}</span>
         </div>
         <div class="af-user-actions">${actions}</div>
       </div>
     </article>`;
   }).join("");
+}
+
+function openLegacyPhases(u) {
+  const phases = u.legacyAccess?.phases || {};
+  const items = [
+    ["phase01", "Fase 1 · Arquitetura de Essência", "Identidade, posicionamento, liderança e autoridade"],
+    ["phase02", "Fase 2 · Império Digital", "Sites, aplicações, plataformas e ativos digitais"],
+    ["phase03", "Fase 3 · Alinhamento Financeiro", "Organização, inteligência e estrutura financeira"],
+    ["phase04", "Fase 4 · Expansão", "Mercado, oportunidades, crescimento e conexões"],
+    ["phase05", "Fase 5 · Legado", "Patrimônio, sucessão, holdings e continuidade"]
+  ];
+  openModal("Permissões · " + (u.name || u.uid),
+    `<p class="notes-hint">${esc(u.email || u.uid)}</p>
+     <p class="hero-sub">Marque somente as fases contratadas ou autorizadas. A Fase 3 também exige a autorização específica do AF Plataforma.</p>
+     <div class="af-mod-list" id="legacyPhaseList">${items.map(([key, label, desc]) => `
+       <label class="af-mod-row"><span><strong>${esc(label)}</strong><br><small class="af-mods">${esc(desc)}</small></span>
+         <input type="checkbox" data-legacy-phase="${key}" ${phases[key] === true ? "checked" : ""}></label>`).join("")}</div>
+     <p class="notes-hint">Acesso às fases 1, 2, 4 e 5 é independente do AF. A Fase 3 permanece vinculada ao controle de módulos e plano do AF.</p>`,
+    `<button class="tool-btn" type="button" id="legacyAllOn">Liberar todas</button>
+     <button class="tool-btn" type="button" id="legacyAllOff">Bloquear todas</button>
+     <button class="tool-btn" type="button" id="legacyCancel">Cancelar</button>
+     <button class="tool-btn" type="button" id="legacySave">Salvar permissões</button>`);
+  const body = document.getElementById("modalBody");
+  document.getElementById("legacyAllOn").onclick = () => body.querySelectorAll("[data-legacy-phase]").forEach((el) => { el.checked = true; });
+  document.getElementById("legacyAllOff").onclick = () => body.querySelectorAll("[data-legacy-phase]").forEach((el) => { el.checked = false; });
+  document.getElementById("legacyCancel").onclick = closeModal;
+  document.getElementById("legacySave").onclick = () => runAction(document.getElementById("legacySave"), async () => {
+    if (session.mode === "local") throw new Error("Prévia local: entre com a conta Firebase do mentor para gravar permissões.");
+    const next = {};
+    body.querySelectorAll("[data-legacy-phase]").forEach((el) => { next[el.dataset.legacyPhase] = el.checked; });
+    await updateLegacyPhases(u.uid, next);
+    closeModal();
+  }, "Permissões das fases atualizadas.");
 }
 
 function findUser(uid) { return cache.find((u) => u.uid === uid); }
@@ -314,6 +354,7 @@ function onListClick(e) {
   else if (act === "pause") confirmAct(u, "Pausar acesso", `Pausar AF de ${esc(u.name)}? Módulos permanecem.`, "Confirmar pausa", () => pauseAfAccess(u.uid), "Acesso pausado.");
   else if (act === "reactivate") confirmAct(u, "Reativar acesso", `Reativar AF de ${esc(u.name)}?`, "Confirmar reativação", () => reactivateAfAccess(u.uid), "Acesso reativado.");
   else if (act === "mods") openModules(u);
+  else if (act === "phases") openLegacyPhases(u);
 }
 
 function confirmAct(u, title, html, okLabel, fn, okMsg) {
