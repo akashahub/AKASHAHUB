@@ -572,7 +572,7 @@ export function renderPhasePromptAccess(phaseId) {
   const phase = PHASES.find(p => p.id === String(phaseId || "").toUpperCase());
   if (!phase) return "";
   const capabilities = CAPABILITIES.filter(c => c.phases.includes(phase.id));
-  const specialized = SPECIALIZED_PROMPTS.filter(item => String(item.phase) === phase.number);
+  const specialized = SPECIALIZED_PROMPTS.filter(item => String(item.phase).toUpperCase() === phase.id);
   return '<section class="pm-journey-prompts" style="margin:26px 0;padding:18px;border:1px solid var(--line,rgba(205,174,94,.35));border-radius:14px;background:var(--surface,rgba(255,255,255,.02))">' +
     '<div class="pm-eyebrow">AKASHA HUB · BIBLIOTECA OPERACIONAL</div>' +
     '<h3 class="section-h">Prompts desta fase</h3>' +
@@ -588,7 +588,7 @@ export function renderPhasePromptAccess(phaseId) {
       '</details>'
     ).join("") + '</div>' +
     '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line,#39342d)">' +
-    '<a class="tool-btn" href="/afplataforma/?view=hub-prompts">Abrir Mapa Mestre da Biblioteca ↗</a>' +
+    '<button class="tool-btn" type="button" data-nav="hub-prompts">Abrir Mapa Mestre da Biblioteca ↗</button>' +
     '</div></section>';
 }
 
