@@ -70,3 +70,44 @@ Revisar `matchQueue`, `presence`, `salas_live/participantes`, `legacyVault` e do
 | Usuário deslogado consulta qualquer dado privado | negar |
 | Admin altera configuração administrativa | permitir somente com papel admin |
 | Participante não autorizado lê sinal WebRTC | negar após correção das regras |
+
+
+## 6. Camada de liberação por fase (implementação em branch)
+
+A Gestão de Acessos da AF Plataforma passa a administrar duas dimensões distintas:
+
+- `afAccess/{uid}`: autorização específica do Alinhamento Financeiro (aprovação, status, plano, módulos, extras e datas). A estrutura existente é preservada.
+- `legacyAccess/{uid}`: mapa de permissões das cinco fases da Arquitetura de Legado.
+
+Formato de `legacyAccess/{uid}`:
+
+```json
+{
+  "phases": {
+    "phase01": true,
+    "phase02": false,
+    "phase03": true,
+    "phase04": false,
+    "phase05": false
+  },
+  "schemaVersion": 1,
+  "updatedBy": "firebase-auth-uid"
+}
+```
+
+A Fase 3 exige simultaneamente `legacyAccess.phases.phase03 == true` e `afAccess.approved == true` + `afAccess.active == true`. Plano, módulos, extras, salas e datas continuam sendo controlados por `afAccess`.
+
+### Compatibilidade
+
+- Se ainda não existir documento `legacyAccess/{uid}`, um usuário AF aprovado e ativo mantém temporariamente o acesso herdado às cinco fases.
+- Quando o mentor salva a primeira matriz explícita, ela passa a ser a fonte de verdade das fases.
+- Usuários sem AF podem autenticar quando tiverem ao menos uma fase independente (1, 2, 4 ou 5) liberada.
+- A leitura da nova coleção tem fallback para o acesso AF legado durante a implantação gradual das regras.
+
+### Auditoria
+
+Cada alteração de permissões cria um registro append-only em `accessAudit/{eventId}`, com ator, UID-alvo, mapa de fases e timestamp. A interface de Gestão do Mentor mantém também as ações existentes do AF.
+
+### Escopo de segurança desta etapa
+
+As regras novas protegem a leitura/escrita dos documentos `legacyAccess` e a criação/leitura da auditoria. A navegação da plataforma bloqueia a abertura das fases não autorizadas. A revisão de autorização em nível de documento para cada coleção de dados das ferramentas deve ser feita após o inventário dos caminhos efetivamente usados por fase; não presumir que o bloqueio visual substitui regras de dados. Não publicar regras ou alterações automaticamente.
