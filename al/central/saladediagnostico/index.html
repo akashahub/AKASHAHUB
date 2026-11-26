@@ -10,8 +10,8 @@
 
 /* Janelas flutuantes ajustáveis: Gerador e Teleprompter */
 .modal{display:none;align-items:flex-start;justify-content:flex-start;padding:0;overflow:hidden}
-.modal.open{display:block}
-.modal-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1180px,calc(100vw - 32px));height:min(88vh,900px);min-width:min(340px,calc(100vw - 12px));min-height:220px;max-width:calc(100vw - 12px);max-height:calc(100vh - 12px);resize:none;overflow:hidden}
+.modal.open{display:block;background:transparent;pointer-events:none}
+.modal-box{pointer-events:auto;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1180px,calc(100vw - 32px));height:min(88vh,900px);min-width:min(340px,calc(100vw - 12px));min-height:220px;max-width:calc(100vw - 12px);max-height:calc(100vh - 12px);resize:none;overflow:hidden}
 .generator-modal .modal-box{width:min(1440px,calc(100vw - 32px));height:min(94vh,1000px)}
 .modal-head{cursor:move;user-select:none;touch-action:none;flex-shrink:0}
 .modal-head h2{font-size:clamp(18px,2vw,25px)}
@@ -123,8 +123,10 @@ function clampWindow(box,left,top,width,height){
  left=Math.max(margin,Math.min(left,window.innerWidth-width-margin));top=Math.max(margin,Math.min(top,window.innerHeight-height-margin));
  box.style.left=left+'px';box.style.top=top+'px';box.style.width=width+'px';box.style.height=height+'px';box.style.transform='none';
 }
+let topWindowZ=1000;
+function bringWindowToFront(id){$(id).style.zIndex=String(++topWindowZ)}
 function openModal(id){
- const modal=$(id),box=windowBox(id);modal.classList.add('open');document.body.style.overflow='hidden';
+ const modal=$(id),box=windowBox(id);modal.classList.add('open');bringWindowToFront(id);
  if(!box.dataset.positioned){
   const key='akasha-diagnostic-window-'+id;let saved=null;try{saved=JSON.parse(localStorage.getItem(key)||'null')}catch(e){}
   const w=Math.min(id==='generatorModal'?1440:1180,window.innerWidth-32),h=Math.min(id==='generatorModal'?window.innerHeight*.94:window.innerHeight*.88,id==='generatorModal'?1000:900);
@@ -134,10 +136,11 @@ function openModal(id){
  }
 }
 function saveWindow(id){const box=windowBox(id);if(box.classList.contains('is-maximized'))return;const r=box.getBoundingClientRect();try{localStorage.setItem('akasha-diagnostic-window-'+id,JSON.stringify({left:r.left,top:r.top,width:r.width,height:r.height}))}catch(e){}}
-function closeModal(id){$(id).classList.remove('open');if(!document.querySelector('.modal.open'))document.body.style.overflow='';saveWindow(id)}
+function closeModal(id){$(id).classList.remove('open');saveWindow(id)}
 document.querySelectorAll('.modal').forEach(modal=>{
  const id=modal.id,box=windowBox(id),head=box.querySelector('.modal-head'),grip=box.querySelector('[data-window-resize]'),maxBtn=box.querySelector('[data-window-max]');
  let drag=null,resize=null,restore=null;
+ box.addEventListener('pointerdown',()=>bringWindowToFront(id));
  head.addEventListener('pointerdown',e=>{if(e.target.closest('button,a,input,select'))return;if(box.classList.contains('is-maximized'))return;const r=box.getBoundingClientRect();drag={x:e.clientX-r.left,y:e.clientY-r.top};head.setPointerCapture(e.pointerId)});
  head.addEventListener('pointermove',e=>{if(!drag)return;const r=box.getBoundingClientRect();clampWindow(box,e.clientX-drag.x,e.clientY-drag.y,r.width,r.height)});
  head.addEventListener('pointerup',()=>{if(drag){drag=null;saveWindow(id)}});
