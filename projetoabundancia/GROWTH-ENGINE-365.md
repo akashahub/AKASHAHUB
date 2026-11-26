@@ -4,7 +4,7 @@
 
 Transformar o Catálogo de Capacidades da Akasha Hub, já aprovado e mantido na Gestão do Mentor, em um sistema de aquisição, conteúdo, vendas e aprendizagem dentro do Projeto Abundância.
 
-**Fonte única:** `afplataforma/assets/js/catalogo-capacidades.js`. O catálogo contém 10 departamentos, 39 grupos e 160 capacidades/serviços. O Growth Engine importa esse catálogo; não mantém uma lista paralela.
+**Fonte única:** `afplataforma/assets/js/catalogo-capacidades.js`. O catálogo contém 10 departamentos, 39 grupos e 167 capacidades/serviços. O Growth Engine importa esse catálogo; não mantém uma lista paralela.
 
 ## Os 10 departamentos conectados
 
