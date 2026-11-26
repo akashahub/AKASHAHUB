@@ -99,6 +99,34 @@ service cloud.firestore {
       allow read, write: if request.auth.uid == uid;
       allow read: if isAfMentor();
     }
+
+    // Permissões individuais das cinco fases da Arquitetura de Legado.
+    // O registro é separado de afAccess para preservar os contratos antigos do AF.
+    match /legacyAccess/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isAfMentor());
+      allow create, update: if isAfMentor()
+        && request.resource.data.phases is map
+        && request.resource.data.phases.keys().hasAll(["phase01", "phase02", "phase03", "phase04", "phase05"])
+        && request.resource.data.phases.keys().hasOnly(["phase01", "phase02", "phase03", "phase04", "phase05"])
+        && request.resource.data.phases.phase01 is bool
+        && request.resource.data.phases.phase02 is bool
+        && request.resource.data.phases.phase03 is bool
+        && request.resource.data.phases.phase04 is bool
+        && request.resource.data.phases.phase05 is bool
+        && request.resource.data.updatedBy == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // Auditoria append-only das alterações de permissões por fase.
+    match /accessAudit/{eventId} {
+      allow read: if isAfMentor();
+      allow create: if isAfMentor()
+        && request.resource.data.action == "legacy_phases_updated"
+        && request.resource.data.actorUid == request.auth.uid
+        && request.resource.data.targetUid is string
+        && request.resource.data.phases is map;
+      allow update, delete: if false;
+    }
     match /posts/{postId} {
       allow read: if request.auth != null;
       allow write: if request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
