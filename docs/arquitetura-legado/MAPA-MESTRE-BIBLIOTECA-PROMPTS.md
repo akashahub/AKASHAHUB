@@ -5,7 +5,7 @@
 
 ## 1. Duas dimensões que se conectam
 
-- **Catálogo de Capacidades:** 10 departamentos e 160 capacidades do Akasha Hub. Define o que o ecossistema pode compreender, estruturar, desenvolver e coordenar.
+- **Catálogo de Capacidades:** 10 departamentos e 167 capacidades do Akasha Hub. Define o que o ecossistema pode compreender, estruturar, desenvolver e coordenar.
 - **Arquitetura de Legado:** cinco fases AE, ID, AF, EX e LG. Organiza a jornada do cliente e os entregáveis centrais.
 - **Biblioteca de Prompts:** relaciona capacidades e fases e, em uma etapa posterior, oferecerá instruções operacionais para diagnóstico, pesquisa, estratégia, criação, execução assistida, auditoria e documentação.
 
@@ -18,14 +18,14 @@ A mesma capacidade pode atender mais de uma fase. A fase indica o momento de apl
 | 0101 | Arquitetura de Essência | 16 |
 | 0202 | Branding, Imagem e Comunicação | 16 |
 | 0303 | Império Digital e Tecnologia | 18 |
-| 0404 | Alinhamento Financeiro | 31 |
-| 0505 | Marketing, Publicidade e Aquisição | 15 |
+| 0404 | Alinhamento Financeiro | 36 |
+| 0505 | Marketing, Publicidade e Aquisição | 16 |
 | 0606 | Comercial, Vendas e Negócios | 14 |
-| 0707 | Estruturação Empresarial e Internacional | 12 |
+| 0707 | Estruturação Empresarial e Internacional | 13 |
 | 0808 | Gestão, Automação e Inteligência Artificial | 13 |
 | 0909 | Educação, Conhecimento e Propriedade Intelectual | 11 |
 | 1010 | Expansão Patrimonial e Legado | 14 |
-| | **Total** | **160** |
+| | **Total** | **167** |
 
 A fonte dos nomes e das capacidades é `afplataforma/assets/js/catalogo-capacidades-data.js`. A Biblioteca importa esse catálogo, evitando duplicar ou manter uma segunda lista divergente.
 
