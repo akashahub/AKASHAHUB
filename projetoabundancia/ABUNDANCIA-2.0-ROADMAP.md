@@ -138,7 +138,7 @@ Funil inicial sugerido, editável: 100 contatos qualificados/mês, 20 conversas,
 
 ## Akasha Growth Engine — integração do inventário de serviços
 
-- Exportado o catálogo mestre da Gestão do Mentor como fonte compartilhada, sem duplicar os 10 departamentos, 39 grupos e 160 capacidades.
+- Exportado o catálogo mestre da Gestão do Mentor como fonte compartilhada, sem duplicar os 10 departamentos, 39 grupos e 167 capacidades.
 - Criado `projetoabundancia/abundancia-growth.js` com aba Growth Engine, calendário de 365 dias, rotação por serviço, cinco ângulos editoriais, funil por serviço, checklist de prontidão e prompts para programação de agentes.
 - Integrado o estado do Growth Engine ao snapshot sincronizado do Projeto Abundância.
 - Adicionados cinco rascunhos-base por serviço selecionado: problema, educação, processo, prova e oferta; precisam de revisão e personalização antes da publicação.
