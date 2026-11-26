@@ -121,3 +121,8 @@ As regras novas protegem a leitura/escrita dos documentos `legacyAccess` e a cri
 - A autorização de escrita em `legacyAccess` e `accessAudit` exige administrador principal ou gestor ativo.
 - A lista está limitada nesta versão às identidades de mentor já reconhecidas pela configuração do AF; adicionar uma nova identidade de mentor continua sendo uma alteração administrativa separada.
 - Revogar a delegação bloqueia novas gravações imediatamente pelas regras; a interface do mentor reflete o novo estado após atualizar a sessão.
+
+
+### Gestão do acesso AF e delegação
+
+As operações de escrita de `afAccess/{uid}` e de gestão de `afAccessRequests/{uid}` passam a exigir o administrador principal ou um gestor ativo em `accessManagerGrants/{uid}`. A criação/atualização da própria solicitação pelo usuário continua permitida pelas regras específicas já existentes. Mentores AF sem delegação mantêm as leituras e demais funções de mentor previstas, mas a Gestão de Acessos fica em modo de consulta.
