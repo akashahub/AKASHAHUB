@@ -80,7 +80,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
 <div class="grid">
 <div class="field"><label for="offer">Oferta / linha de serviço</label><select id="offer"><option>Império Digital · Projeto</option><option>Arquitetura de Essência · Sprint 90 dias</option><option>Alinhamento Financeiro · Sprint 90 dias</option><option>Expansão · Sprint 90 dias</option><option>Arquitetura de Legado · 12 meses</option><option>Projeto sob medida</option></select></div>
 <div class="field"><label for="capacity">Situação da capacidade</label><select id="capacity"><option>Existente · pronto para entregar</option><option>Estruturado · requer configuração</option><option>Em desenvolvimento · depende de validação</option><option>Sob demanda · exige orçamento específico</option></select><div class="hint">Classifique cada capacidade antes de prometer uma entrega.</div></div>
-<div class="field wide"><div class="deliverable-head"><label for="deliverables">Entregáveis incluídos (um por linha)</label><button type="button" class="btn alt catalog-open" id="openCatalog">＋ Abrir Catálogo de Capacidades</button></div><textarea id="deliverables" placeholder="Diagnóstico e arquitetura&#10;Design de interface&#10;Site institucional&#10;Formulário de captação&#10;Integração com WhatsApp&#10;Treinamento de uso"></textarea><div class="hint">Você pode escrever manualmente ou selecionar entregáveis no catálogo. As escolhas entram automaticamente nesta lista.</div><div id="selectedCapabilities" hidden></div></div>
+<div class="field wide"><div class="deliverable-head"><label for="deliverables">Entregáveis incluídos (um por linha)</label><button type="button" class="btn alt catalog-open" id="openCatalog">＋ Abrir Catálogo de Capacidades</button></div><textarea id="deliverables" placeholder="Diagnóstico e arquitetura&#10;Design de interface&#10;Site institucional&#10;Formulário de captação&#10;Integração com WhatsApp&#10;Treinamento de uso"></textarea><div class="hint">Você pode escrever manualmente ou selecionar entregáveis no catálogo. As escolhas entram automaticamente nesta lista.</div><div id="selectedCapabilities" class="selected-capabilities-panel" hidden></div></div>
 <div class="field wide"><label for="exclusions">Fora do escopo / dependências</label><textarea id="exclusions" placeholder="Ex.: mídia paga, licenças de terceiros, produção de fotos, hospedagem e funcionalidades não listadas."></textarea></div>
 <div class="field wide"><label for="support">Acompanhamento e suporte</label><textarea id="support" placeholder="Escreva livremente as condições de acompanhamento, reuniões, suporte e revisões."></textarea><div class="support-suggestions"><div class="support-suggestions-head"><strong>Sugestões para esta oferta</strong><span>Selecione uma ou mais e personalize o texto quando quiser.</span></div><div id="supportSuggestionList" class="support-suggestion-list"></div></div><div class="hint">As sugestões são apenas um ponto de partida. Você pode editar, complementar ou apagar qualquer texto no campo acima.</div></div>
 </div><div class="actions"><button class="btn alt" data-prev>← Voltar</button><button class="btn" data-next>Continuar →</button></div>
@@ -113,7 +113,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
   <div class="catalog-modal-head"><div><div class="eyebrow">AKASHA HUB · INVENTÁRIO E CAPACIDADES</div><h3 id="catalogTitle">Catálogo de Capacidades</h3><p>Selecione os recursos que farão parte do escopo desta proposta. As escolhas serão inseridas no campo de entregáveis.</p></div><button type="button" class="btn alt" id="closeCatalog" aria-label="Fechar catálogo">✕</button></div>
   <div class="catalog-modal-tools"><input id="capSearch" placeholder="Buscar capacidade, departamento ou grupo..." aria-label="Buscar no catálogo"><span class="catalog-count" id="catalogCount">0 selecionadas</span></div>
   <div class="catalog-modal-body" id="catalogBody"></div>
-  <div class="catalog-modal-foot"><span class="catalog-selected" id="catalogSelectedText">Nenhuma capacidade selecionada</span><button type="button" class="btn gold" id="confirmCatalog">Concluir seleção</button></div>
+  <div class="catalog-modal-foot"><div><span class="catalog-selected" id="catalogSelectedText">Nenhuma capacidade selecionada</span><strong id="catalogSelectedTotal" style="display:block;margin-top:4px;color:var(--gold);font-size:13px">Referência do escopo: R$ 0,00</strong></div><button type="button" class="btn gold" id="confirmCatalog">Concluir seleção</button></div>
  </section>
 </div>
 <script>(function(){let s=0;function go(n){s=Math.max(0,Math.min(4,n));document.querySelectorAll("[data-panel]").forEach(x=>x.hidden=Number(x.dataset.panel)!==s);document.querySelectorAll("[data-step]").forEach(x=>x.classList.toggle("active",Number(x.dataset.step)===s));window.scrollTo(0,0)}document.addEventListener("click",function(e){let n=e.target.closest("[data-next]"),p=e.target.closest("[data-prev]"),t=e.target.closest("[data-step]");if(n){e.preventDefault();go(s+1)}else if(p){e.preventDefault();go(s-1)}else if(t){e.preventDefault();go(Number(t.dataset.step))}});go(0)})();</script><script>
@@ -198,53 +198,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
  render();
 })();
 </script>
-<script>
-/* Catálogo independente: continua funcional mesmo se o módulo Firebase/CRM falhar. */
-(function(){
- const $=id=>document.getElementById(id);
- const backdrop=$("catalogBackdrop"), body=$("catalogBody"), search=$("capSearch"), box=$("deliverables");
- if(!backdrop||!body||!search||!box)return;
- let catalog=[], selected=new Set(), inserted=[];
- const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- const load=()=>import("/afplataforma/assets/js/catalogo-capacidades-data.js").then(m=>{catalog=m.CATALOG;render()}).catch(err=>{console.error("[Catálogo independente]",err);body.innerHTML='<p class="hint">Não foi possível carregar o catálogo. Atualize a página e tente novamente.</p>'});
- function sync(){
-  const manual=box.value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).filter(x=>!inserted.includes(x));
-  const names=[...selected].map(id=>{const [deptId,...parts]=id.split("::");return parts.join("::")});
-  box.value=[...manual,...names].join("\n");inserted=names;
-  $("catalogCount").textContent=selected.size+" selecionada"+(selected.size===1?"":"s");
-  $("catalogSelectedText").textContent=selected.size?selected.size+" capacidade(s) selecionada(s) para esta proposta":"Nenhuma capacidade selecionada";
- }
- function render(){
-  const q=(search.value||"").trim().toLocaleLowerCase("pt-BR");
-  body.innerHTML=catalog.map(dept=>{
-   const groups=dept.groups.map(group=>{
-    const names=group[1].filter(name=>!q||(name+" "+dept.name+" "+group[0]).toLocaleLowerCase("pt-BR").includes(q));
-    return names.length?'<div class="catalog-group"><h4>'+esc(group[0])+'</h4>'+names.map(name=>{
-     const id=dept.id+"::"+name;
-     return '<label class="catalog-item"><input type="checkbox" data-standalone-cap="'+esc(id)+'" '+(selected.has(id)?"checked":"")+'><span>'+esc(name)+'</span></label>';
-    }).join("")+'</div>':"";
-   }).join("");
-   return groups?'<details class="catalog-dept" open><summary><span>'+esc(dept.name)+'</span><small>'+dept.groups.reduce((n,g)=>n+g[1].length,0)+' capacidades</small></summary>'+groups+'</details>':"";
-  }).join("")||'<p class="hint">Nenhuma capacidade encontrada para esta busca.</p>';
-  sync();
- }
- function open(e){e.preventDefault();e.stopImmediatePropagation();backdrop.classList.add("open");backdrop.setAttribute("aria-hidden","false");load().then(()=>search.focus())}
- function close(e){if(e){e.preventDefault();e.stopImmediatePropagation()}backdrop.classList.remove("open");backdrop.setAttribute("aria-hidden","true")}
- document.addEventListener("click",e=>{
-  if(e.target.closest("#openCatalog"))return open(e);
-  if(e.target.closest("#closeCatalog")||e.target.closest("#confirmCatalog"))return close(e);
-  if(e.target===backdrop)return close(e);
- },true);
- document.addEventListener("input",e=>{if(e.target===search){e.stopImmediatePropagation();render()}},true);
- document.addEventListener("change",e=>{
-  const el=e.target.closest("[data-standalone-cap]");if(!el)return;
-  e.stopImmediatePropagation();const id=el.dataset.standaloneCap;
-  if(el.checked)selected.add(id);else selected.delete(id);
-  sync();
- },true);
- document.addEventListener("keydown",e=>{if(e.key==="Escape"&&backdrop.classList.contains("open"))close()},true);
-})();
-</script>
+
 <script>
 /* Custos: interação independente do módulo Firebase/CRM. */
 (function(){
@@ -327,15 +281,19 @@ function renderCatalog(){
 }
 function updateCatalogCount(){
  const n=selectedCapabilities.length;
+ const total=selectedCapabilities.reduce((sum,c)=>sum+Math.max(0,Number(c.suggestedPrice??suggestedCapabilityPrice((c.id||"").split("::")[0],c.group,c.name))||0),0);
  $("catalogCount").textContent=n+" selecionada"+(n===1?"":"s");
  $("catalogSelectedText").textContent=n?n+" capacidade"+(n===1?"":"s")+" selecionada"+(n===1?"":"s")+" para esta proposta":"Nenhuma capacidade selecionada";
+ const totalEl=$("catalogSelectedTotal");if(totalEl)totalEl.textContent="Referência do escopo: "+money(total);
 }
 function renderSelectedCapabilities(){
  selectedCapabilities=selectedCapabilities.map(c=>({...c,suggestedPrice:Number(c.suggestedPrice??suggestedCapabilityPrice((c.id||"").split("::")[0],c.group,c.name))||0}));
- $("selectedCapabilities").innerHTML=selectedCapabilities.map((c,i)=>'<div class="selected-cap"><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.department)+'</small></span><select data-cap-status="'+i+'"><option '+(c.status==="Existente"?"selected":"") +'>Existente</option><option '+(c.status==="Estruturado"?"selected":"") +'>Estruturado</option><option '+(c.status==="Em desenvolvimento"?"selected":"") +'>Em desenvolvimento</option><option '+(c.status==="Sob demanda"?"selected":"") +'>Sob demanda</option></select><label><span class="cap-price-label">Preço sugerido (R$)</span><input type="number" min="0" step="50" data-cap-price="'+i+'" value="'+c.suggestedPrice+'"></label><button type="button" class="btn alt" data-cap-remove="'+i+'">Remover</button></div>').join("");
+ const host=$("selectedCapabilities");
+ host.hidden=!selectedCapabilities.length;
+ host.innerHTML=selectedCapabilities.length?'<h4 style="margin:14px 0 8px;font:600 12px Arial;color:var(--gold)">CAPACIDADES SELECIONADAS · PREÇOS DE REFERÊNCIA</h4>'+selectedCapabilities.map((c,i)=>'<div class="selected-cap"><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.department)+'</small></span><select data-cap-status="'+i+'"><option '+(c.status==="Existente"?"selected":"") +'>Existente</option><option '+(c.status==="Estruturado"?"selected":"") +'>Estruturado</option><option '+(c.status==="Em desenvolvimento"?"selected":"") +'>Em desenvolvimento</option><option '+(c.status==="Sob demanda"?"selected":"") +'>Sob demanda</option></select><label><span class="cap-price-label">Preço sugerido (R$)</span><input type="number" min="0" step="50" data-cap-price="'+i+'" value="'+c.suggestedPrice+'"></label><button type="button" class="btn alt" data-cap-remove="'+i+'">Remover</button></div>').join(""):'';
  $("selectedCapabilities").querySelectorAll("[data-cap-status]").forEach(el=>el.onchange=()=>selectedCapabilities[+el.dataset.capStatus].status=el.value);
- $("selectedCapabilities").querySelectorAll("[data-cap-price]").forEach(el=>el.oninput=()=>{selectedCapabilities[+el.dataset.capPrice].suggestedPrice=Math.max(0,Number(el.value)||0);renderCapabilityPricing();calculate()});
- $("selectedCapabilities").querySelectorAll("[data-cap-remove]").forEach(el=>el.onclick=()=>{selectedCapabilities.splice(+el.dataset.capRemove,1);syncCatalogDeliverables();renderCatalog();renderSelectedCapabilities();renderCapabilityPricing();calculate()});
+ $("selectedCapabilities").querySelectorAll("[data-cap-price]").forEach(el=>el.oninput=()=>{selectedCapabilities[+el.dataset.capPrice].suggestedPrice=Math.max(0,Number(el.value)||0);renderCapabilityPricing();updateCatalogCount();calculate()});
+ $("selectedCapabilities").querySelectorAll("[data-cap-remove]").forEach(el=>el.onclick=()=>{selectedCapabilities.splice(+el.dataset.capRemove,1);syncCatalogDeliverables();renderCatalog();renderSelectedCapabilities();renderCapabilityPricing();updateCatalogCount();calculate()});
  renderCapabilityPricing();
 }
 function renderCapabilityPricing(){
