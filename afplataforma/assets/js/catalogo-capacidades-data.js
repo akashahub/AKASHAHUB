@@ -22,10 +22,10 @@ export const CATALOG = [
 ["Precificação, receita e rentabilidade",["Formação de preços, custos e margem de contribuição","Margem de lucro, ponto de equilíbrio e rentabilidade","Precificação de produtos, serviços, pacotes e recorrência","Negociação, cobrança e desenvolvimento de fontes de receita"]],
 ["Economia, mercados e investimentos",["Economia brasileira e internacional, política monetária e fiscal","Câmbio, geopolítica econômica e ciclos de mercado","Renda fixa, Tesouro Direto, CDB, fundos e fundos imobiliários","Ações, ETFs, dividendos e fundamentos de bolsa","Criptoativos, volatilidade, liquidez, diversificação e risco","Perfil de risco, horizonte e educação sobre investimentos"]],
 ["Inteligência empresarial e patrimônio",["Leitura de balanços, EBITDA, endividamento e geração de caixa","Valuation introdutório, modelos de negócio e viabilidade","Análise de oportunidades, aquisições e cenários","Mapeamento de ativos e passivos e planejamento de longo prazo","Educação sobre holdings, governança e sucessão"]],
-["Ferramentas e laboratórios",["Cashflow e controle de despesas","Simuladores de juros compostos, metas e investimentos","Calculadora de precificação e planejador financeiro","Diário financeiro, mapa patrimonial e painéis de indicadores"]]
+["Ferramentas e laboratórios",["Cashflow e controle de despesas","Simuladores de juros compostos, metas e investimentos","Calculadora de precificação e planejador financeiro","Diário financeiro, mapa patrimonial e painéis de indicadores","Análise técnica de gráficos, tendências e indicadores de mercado","Pesquisa de mercados criptoativos e análise de dados públicos de exchanges","Gestão de risco por operação, exposição e dimensionamento de posição em trading","Backtesting de estratégias de trading, custos e métricas históricas","Análise de diário de operações, disciplina e desempenho em trading"]]
 ]},
 { id:"marketing", name:"05 · Marketing, Publicidade e Aquisição", summary:"Posicionamento, conteúdo, campanhas, distribuição e captação.", groups:[
-["Estratégia de marketing",["Diagnóstico, pesquisa de público e segmentação","Análise de mercado, concorrentes e jornada do cliente","Proposta de valor, calendário editorial e estratégia de lançamento"]],
+["Estratégia de marketing",["Diagnóstico, pesquisa de público e segmentação","Análise de mercado, concorrentes e jornada do cliente","Proposta de valor, calendário editorial e estratégia de lançamento","Monitoramento de tendências, sinais emergentes e oportunidades de mercado"]],
 ["Redes sociais e conteúdo",["Criação e estruturação de perfis e biografias","Instagram, TikTok, YouTube e LinkedIn","Calendários, Reels, carrosséis, Stories e Shorts","Conteúdo institucional, educativo, comercial e comunidades"]],
 ["Publicidade e anúncios",["Criação de peças, imagens, vídeos e copy de anúncios","Meta Ads, Google Ads, YouTube Ads e TikTok Ads","Estrutura de campanhas, públicos, testes A/B e remarketing","Análise de desempenho, otimização e relatórios"]],
 ["Aquisição e presença digital",["Landing pages, formulários, iscas digitais e funis","Captação, nutrição, automação e reativação de leads","SEO técnico, local, palavras-chave e otimização de páginas","Google Business Profile, autoridade e monitoramento de tráfego"]]
@@ -38,7 +38,7 @@ export const CATALOG = [
 ]},
 { id:"internacional", name:"07 · Estruturação Empresarial e Internacional", summary:"Organizar negócios, organizações e operações em diferentes mercados.", groups:[
 ["Estruturação de negócios e organizações",["Modelos de negócio, planejamento e estudos de viabilidade","Departamentos, funções, responsabilidades e processos","Planejamento de implantação, operação e expansão","Governança, documentação e gestão organizacional"]],
-["Internacionalização",["Pesquisa de mercados estrangeiros e oportunidades","Posicionamento, sites multilíngues e comunicação internacional","Localização de conteúdo e adaptação cultural","Pesquisa de fornecedores, parceiros e canais de distribuição","Plano de entrada em novos países e atendimento internacional"]],
+["Internacionalização",["Pesquisa de mercados estrangeiros e oportunidades","Posicionamento, sites multilíngues e comunicação internacional","Localização de conteúdo e adaptação cultural","Pesquisa de fornecedores, parceiros e canais de distribuição","Plano de entrada em novos países e atendimento internacional","Pesquisa comparativa de requisitos jurídicos, tributários, trabalhistas e regulatórios internacionais para validação por especialistas locais"]],
 ["Parcerias e desenvolvimento",["Mapeamento de parceiros, investidores e oportunidades","Apresentações institucionais e propostas de colaboração","Alianças estratégicas, programas de parceiros e reuniões"]]
 ]},
 { id:"automacao", name:"08 · Gestão, Automação e Inteligência Artificial", summary:"Conectar sistemas, automatizar rotinas e ampliar inteligência operacional.", groups:[
@@ -59,3 +59,28 @@ export const CATALOG = [
 ["Movimento e comunidade",["Manifestos, princípios, causas e movimentos","Comunidades, redes de colaboração e participação","Eventos, encontros e formação de lideranças"]]
 ]}
 ];
+
+
+// Taxonomia compartilhada: códigos e fases pertencem à fonte única do catálogo.
+// As fases padrão preservam a matriz histórica por departamento; exceções são
+// definidas por capacidade, sem duplicar o registro nem alterar IDs existentes.
+export const DEPT_CODES = {
+  essencia:"0101", branding:"0202", tecnologia:"0303", financeiro:"0404", marketing:"0505",
+  comercial:"0606", internacional:"0707", automacao:"0808", educacao:"0909", legado:"1010"
+};
+
+export const DEPT_PHASES = {
+  essencia:["AE"], branding:["AE","ID"], tecnologia:["ID"], financeiro:["AF"],
+  marketing:["ID","EX"], comercial:["AE","ID","AF","EX","LG"], internacional:["AF","EX","LG"],
+  automacao:["ID","EX","LG"], educacao:["ID","LG"], legado:["LG"]
+};
+
+export const CAPABILITY_PHASES = {
+  "0404-C32":["AF"],
+  "0404-C33":["AF"],
+  "0404-C34":["AF"],
+  "0404-C35":["AF"],
+  "0404-C36":["AF"],
+  "0505-C16":["ID","EX"],
+  "0707-C13":["LG"]
+};
