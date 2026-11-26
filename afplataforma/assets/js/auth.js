@@ -11,7 +11,7 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { auth, MENTOR_UID, DEV_MODE, isDemoEnabled, isMentorIdentity } from "../../firebase/firebase-config.js";
-import { getAfAccess, registerAfLoginAttempt } from "../../firebase/firestore.js";
+import { getAfAccess, getLegacyAccess, registerAfLoginAttempt } from "../../firebase/firestore.js";
 import { defaultModulesMap } from "../../data/modules.js";
 import { Store } from "./storage.js";
 
@@ -24,6 +24,7 @@ export const session = {
   approved: false,
   active: false,
   modules: {},
+  legacyPhases: {},
   plan: "essential",
   features: {},
   extraRooms: [],
@@ -52,7 +53,26 @@ export function isMentorSession() {
   return session.role === "mentor" || isMentorIdentity(session.uid, session.email);
 }
 
-function buildSessionFromUser(user, access, mode = "firebase") {
+const ALL_LEGACY_PHASES = {
+  phase01: true, phase02: true, phase03: true, phase04: true, phase05: true
+};
+
+function resolveLegacyPhases(legacyAccess, afAccess) {
+  if (legacyAccess && legacyAccess.phases && typeof legacyAccess.phases === "object") {
+    const phases = {};
+    Object.keys(ALL_LEGACY_PHASES).forEach((key) => {
+      phases[key] = legacyAccess.phases[key] === true;
+    });
+    // A fase 3 continua dependendo também da autorização específica do AF.
+    phases.phase03 = phases.phase03 && afAccess?.approved === true && afAccess?.active === true;
+    return phases;
+  }
+  // Compatibilidade: clientes AF ativos antes da nova camada mantêm a jornada completa.
+  if (afAccess?.approved === true && afAccess?.active === true) return { ...ALL_LEGACY_PHASES };
+  return { phase01: false, phase02: false, phase03: false, phase04: false, phase05: false };
+}
+
+function buildSessionFromUser(user, access, legacyAccess, mode = "firebase") {
   const isMentor = isMentorIdentity(user.uid, user.email);
   if (isMentor) {
     return {
@@ -64,6 +84,7 @@ function buildSessionFromUser(user, access, mode = "firebase") {
       approved: true,
       active: true,
       modules: access?.modules || defaultModulesMap(7),
+      legacyPhases: { ...ALL_LEGACY_PHASES },
       plan: "vip",
       features: {},
       extraRooms: [],
@@ -75,11 +96,11 @@ function buildSessionFromUser(user, access, mode = "firebase") {
     };
   }
 
-  if (!access) {
-    return { denied: true, reason: "no_af_access" };
-  }
-  if (access.approved !== true || access.active !== true) {
-    return { denied: true, reason: "not_active" };
+  const legacyPhases = resolveLegacyPhases(legacyAccess, access);
+  const hasAnyPhase = Object.values(legacyPhases).some(Boolean);
+  const afActive = access?.approved === true && access?.active === true;
+  if (!hasAnyPhase) {
+    return { denied: true, reason: access ? "not_active" : "no_af_access" };
   }
 
   return {
@@ -90,16 +111,17 @@ function buildSessionFromUser(user, access, mode = "firebase") {
     role: "mentee",
     approved: true,
     active: true,
-    modules: access.modules || defaultModulesMap(0),
-    plan: access.plan || "essential",
-    features: access.features || {},
-    extraRooms: access.extraRooms || [],
-    roomsBlocked: access.roomsBlocked || [],
+    modules: afActive ? (access.modules || defaultModulesMap(0)) : defaultModulesMap(0),
+    legacyPhases,
+    plan: access?.plan || "essential",
+    features: afActive ? (access.features || {}) : {},
+    extraRooms: afActive ? (access.extraRooms || []) : [],
+    roomsBlocked: afActive ? (access.roomsBlocked || []) : [],
     roomId: session.roomId || "mentoria-principal",
-    mentorshipEndsAt: access.mentorshipEndsAt || "",
-    supportEndsAt: access.supportEndsAt || "",
-    contentEndsAt: access.contentEndsAt || "",
-    lifetime: access.lifetime === true,
+    mentorshipEndsAt: access?.mentorshipEndsAt || "",
+    supportEndsAt: access?.supportEndsAt || "",
+    contentEndsAt: access?.contentEndsAt || "",
+    lifetime: afActive && access?.lifetime === true,
     lang: session.lang,
     ready: true
   };
@@ -127,7 +149,17 @@ export async function resolveUserAccess(user) {
       return false;
     }
   }
-  const result = buildSessionFromUser(user, access, "firebase");
+  let legacyAccess = null;
+  try {
+    legacyAccess = await getLegacyAccess(user.uid);
+  } catch (e) {
+    console.warn("[AF] getLegacyAccess:", e?.code || e?.message || e);
+    if (!isMentorIdentity(user.uid, user.email)) {
+      if (onAccessDenied) onAccessDenied("error");
+      return false;
+    }
+  }
+  const result = buildSessionFromUser(user, access, legacyAccess, "firebase");
   if (result.denied) {
     if (onAccessDenied) onAccessDenied(result.reason);
     return false;
@@ -156,6 +188,7 @@ export function startAuthListener() {
         approved: false,
         active: false,
         modules: {},
+        legacyPhases: {},
         ready: false
       });
       if (onLoggedOut) onLoggedOut();
@@ -214,6 +247,7 @@ export function enterDemo(role) {
       approved: true,
       active: true,
       modules: defaultModulesMap(7),
+      legacyPhases: { ...ALL_LEGACY_PHASES },
       plan: "vip",
       features: {},
       extraRooms: [],
@@ -233,6 +267,7 @@ export function enterDemo(role) {
       approved: true,
       active: true,
       modules: defaultModulesMap(2),
+      legacyPhases: { ...ALL_LEGACY_PHASES },
       plan: "essential",
       features: {},
       extraRooms: [],
