@@ -177,7 +177,7 @@ function applySharedState(state){
  if(!state||state.version!==1)return;
  sharedProblems=Array.isArray(state.selectedProblems)?state.selectedProblems:[];
  sharedCapabilities=Array.isArray(state.selectedCapabilities)?state.selectedCapabilities:[];
- const fields={clientName:state.client,contactName:state.contact,businessArea:state.segment,currentScenario:state.scenario,painPoints:state.bottleneck,desiredOutcome:state.goal};
+ const fields={clientName:state.client,contactName:state.contact,businessArea:state.segment,currentScenario:state.scenario,painPoints:state.bottleneck||(sharedProblems.length?sharedProblems.join("\\n"):""),desiredOutcome:state.goal,solutionIdeas:sharedCapabilities.map(x=>x.name).join("\\n")};
  Object.entries(fields).forEach(([id,value])=>{const el=$(id);if(el&&typeof value==="string"&&value&&document.activeElement!==el)el.value=value});
  renderSharedTools();
 }
