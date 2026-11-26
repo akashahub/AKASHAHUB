@@ -114,17 +114,17 @@
   }
   const style = document.createElement("style");
   style.textContent = `
-    #appShell .af-ui-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 17px;width:17px;height:17px;margin-right:7px;vertical-align:middle;opacity:.88;pointer-events:none}
-    #appShell .af-ui-icon svg{display:block;width:17px;height:17px}
-    #appShell .ah-phase-item .ico{display:grid;place-items:center}
-    #appShell .ah-phase-item .ico svg{width:21px;height:21px}
-    #appShell button:has(> .af-ui-icon),#appShell a:has(> .af-ui-icon){align-items:center}
-    @media(prefers-reduced-motion:reduce){#appShell .af-ui-icon{transition:none}}
+    body .af-ui-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 17px;width:17px;height:17px;margin-right:7px;vertical-align:middle;opacity:.88;pointer-events:none}
+    body .af-ui-icon svg{display:block;width:17px;height:17px}
+    body .ah-phase-item .ico{display:grid;place-items:center}
+    body .ah-phase-item .ico svg{width:21px;height:21px}
+    body button:has(> .af-ui-icon),body a:has(> .af-ui-icon){align-items:center}
+    @media(prefers-reduced-motion:reduce){body .af-ui-icon{transition:none}}
   `;
   document.head.appendChild(style);
 
   const start = () => {
-    const app = document.getElementById("appShell");
+    const app = document.body;
     if (!app) return;
     decorate(app);
     const observer = new MutationObserver(records => {
