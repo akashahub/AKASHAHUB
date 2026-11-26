@@ -12,6 +12,17 @@ service cloud.firestore {
         ]
       );
     }
+    function isAccessAdmin() {
+      return request.auth != null
+        && request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+    }
+    function isAccessManager() {
+      return isAccessAdmin() || (
+        request.auth != null
+        && exists(/databases/$(database)/documents/accessManagerGrants/$(request.auth.uid))
+        && get(/databases/$(database)/documents/accessManagerGrants/$(request.auth.uid)).data.active == true
+      );
+    }
     function isSignedIn() {
       return request.auth != null;
     }
@@ -104,7 +115,7 @@ service cloud.firestore {
     // O registro é separado de afAccess para preservar os contratos antigos do AF.
     match /legacyAccess/{uid} {
       allow read: if request.auth != null && (request.auth.uid == uid || isAfMentor());
-      allow create, update: if isAfMentor()
+      allow create, update: if isAccessManager()
         && request.resource.data.phases is map
         && request.resource.data.phases.keys().hasAll(["phase01", "phase02", "phase03", "phase04", "phase05"])
         && request.resource.data.phases.keys().hasOnly(["phase01", "phase02", "phase03", "phase04", "phase05"])
@@ -119,13 +130,24 @@ service cloud.firestore {
 
     // Auditoria append-only das alterações de permissões por fase.
     match /accessAudit/{eventId} {
-      allow read: if isAfMentor();
-      allow create: if isAfMentor()
-        && request.resource.data.action == "legacy_phases_updated"
+      allow read: if isAccessManager();
+      allow create: if isAccessManager()
         && request.resource.data.actorUid == request.auth.uid
         && request.resource.data.targetUid is string
-        && request.resource.data.phases is map;
+        && (
+          (request.resource.data.action == "legacy_phases_updated" && request.resource.data.phases is map)
+          || (request.resource.data.action == "access_manager_grant_updated" && request.resource.data.active is bool)
+        );
       allow update, delete: if false;
+    }
+
+    // Apenas o administrador principal delega ou revoga gestores de acesso.
+    match /accessManagerGrants/{uid} {
+      allow read: if request.auth != null && (isAccessAdmin() || request.auth.uid == uid);
+      allow create, update: if isAccessAdmin()
+        && request.resource.data.active is bool
+        && request.resource.data.updatedBy == request.auth.uid;
+      allow delete: if false;
     }
     match /posts/{postId} {
       allow read: if request.auth != null;
