@@ -46,7 +46,7 @@ export function normalizeSalesText(value) {
   return String(value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLocaleLowerCase("pt-BR");
 }
 
-const PROBLEM_MAP=[
+export const PROBLEM_MAP=[
  {category:"Clientes e vendas",items:[
   ["Poucas pessoas conhecem a empresa ou seus serviços","marketing comercial branding","público segmentação aquisição presença digital"],
   ["As pessoas demonstram interesse, mas não viram clientes","comercial marketing automacao","jornada atendimento prospecção negociação funis"],
