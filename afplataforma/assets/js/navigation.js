@@ -189,6 +189,17 @@ export async function navigate(view) {
   const root = document.getElementById("content");
   if (!root) return;
 
+  const requiredPhase = view.startsWith("fase1") ? "phase01"
+    : view.startsWith("fase2") ? "phase02"
+    : (view.startsWith("fase3") || fase3Aberta(view)) ? "phase03"
+    : view.startsWith("fase4") ? "phase04"
+    : view.startsWith("fase5") ? "phase05"
+    : null;
+  if (!isMentorSession() && requiredPhase && session.legacyPhases?.[requiredPhase] !== true) {
+    root.innerHTML = `<div class="view active"><section style="max-width:720px;margin:30px auto;padding:24px;border:1px solid var(--line);border-radius:16px;background:var(--panel)"><p class="hero-line">ARQUITETURA DE LEGADO · ACESSO CONTROLADO</p><h2 class="hero-title">Esta fase ainda não está liberada</h2><p class="hero-sub">Seu perfil está ativo, mas esta fase não faz parte das permissões atuais. Entre em contato com seu mentor para solicitar a liberação.</p><button class="tool-btn" type="button" data-nav="dashboard">Voltar à visão geral</button></section></div>`;
+    return;
+  }
+
   const dock = document.getElementById("callDock");
   if (dock && dock.parentElement !== document.body) document.body.appendChild(dock);
 
