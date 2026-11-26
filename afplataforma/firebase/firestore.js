@@ -17,7 +17,8 @@ import {
   onSnapshot,
   query,
   where,
-  serverTimestamp
+  serverTimestamp,
+  writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { db, auth, MENTOR_UID } from "./firebase-config.js";
 
@@ -143,6 +144,50 @@ export async function getAfAccess(uid) {
   try {
     const snap = await getDoc(doc(db, "afAccess", uid));
     return snap.exists() ? snap.data() : null;
+  } catch (e) {
+    mapAfError(e);
+  }
+}
+
+const LEGACY_PHASE_KEYS = ["phase01", "phase02", "phase03", "phase04", "phase05"];
+
+export async function getLegacyAccess(uid) {
+  if (!uid) return null;
+  try {
+    const snap = await getDoc(doc(db, "legacyAccess", uid));
+    return snap.exists() ? snap.data() : null;
+  } catch (e) {
+    mapAfError(e);
+  }
+}
+
+export async function updateLegacyPhases(uid, phases) {
+  if (!uid) throw new Error("Usuário não encontrado.");
+  const clean = {};
+  LEGACY_PHASE_KEYS.forEach((key) => { clean[key] = phases?.[key] === true; });
+  try {
+    const ref = doc(db, "legacyAccess", uid);
+    const current = await getDoc(ref);
+    const auditRef = doc(collection(db, "accessAudit"));
+    const actor = actorUid();
+    const batch = writeBatch(db);
+    const payload = {
+      phases: clean,
+      schemaVersion: 1,
+      updatedAt: serverTimestamp(),
+      updatedBy: actor
+    };
+    if (!current.exists()) payload.createdAt = serverTimestamp();
+    batch.set(ref, payload, { merge: true });
+    batch.set(auditRef, {
+      action: "legacy_phases_updated",
+      actorUid: actor,
+      targetUid: uid,
+      phases: clean,
+      createdAt: serverTimestamp()
+    });
+    await batch.commit();
+    return { uid, phases: clean };
   } catch (e) {
     mapAfError(e);
   }
@@ -466,6 +511,7 @@ export function listenAfAccessBoard(onRows, onErr) {
   let reqs = [];
   let accessMap = {};
   let usersMap = {};
+  let legacyMap = {};
 
   function emit() {
     const byUid = {};
@@ -479,6 +525,7 @@ export function listenAfAccessBoard(onRows, onErr) {
         lastAttemptMs: r.lastAttemptMs || 0,
         request: r,
         access: accessMap[r.uid] || null,
+        legacyAccess: legacyMap[r.uid] || null,
         modulesOn: countAfModules(accessMap[r.uid]?.modules)
       };
     });
@@ -504,6 +551,7 @@ export function listenAfAccessBoard(onRows, onErr) {
           lastAttemptMs: 0,
           request: null,
           access: acc,
+          legacyAccess: legacyMap[uid] || null,
           modulesOn: countAfModules(acc?.modules)
         };
       }
@@ -540,11 +588,17 @@ export function listenAfAccessBoard(onRows, onErr) {
     snap.forEach((d) => { usersMap[d.id] = d.data() || {}; });
     emit();
   }, () => {});
+  const u4 = onSnapshot(collection(db, "legacyAccess"), (snap) => {
+    legacyMap = {};
+    snap.forEach((d) => { legacyMap[d.id] = d.data() || {}; });
+    emit();
+  }, onErr);
 
   return () => {
     try { u1(); } catch (e) {}
     try { u2(); } catch (e) {}
     try { u3(); } catch (e) {}
+    try { u4(); } catch (e) {}
   };
 }
 
