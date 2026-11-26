@@ -11,7 +11,7 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { auth, MENTOR_UID, DEV_MODE, isDemoEnabled, isMentorIdentity } from "../../firebase/firebase-config.js";
-import { getAfAccess, getLegacyAccess, registerAfLoginAttempt } from "../../firebase/firestore.js";
+import { getAfAccess, getLegacyAccess, getAccessManagerGrant, registerAfLoginAttempt } from "../../firebase/firestore.js";
 import { defaultModulesMap } from "../../data/modules.js";
 import { Store } from "./storage.js";
 
@@ -25,6 +25,7 @@ export const session = {
   active: false,
   modules: {},
   legacyPhases: {},
+  canManageLegacyAccess: false,
   plan: "essential",
   features: {},
   extraRooms: [],
@@ -85,6 +86,7 @@ function buildSessionFromUser(user, access, legacyAccess, mode = "firebase") {
       active: true,
       modules: access?.modules || defaultModulesMap(7),
       legacyPhases: { ...ALL_LEGACY_PHASES },
+      canManageLegacyAccess: user.uid === MENTOR_UID,
       plan: "vip",
       features: {},
       extraRooms: [],
@@ -158,7 +160,16 @@ export async function resolveUserAccess(user) {
     console.warn("[AF] getLegacyAccess (fallback compatível):", e?.code || e?.message || e);
     legacyAccess = null;
   }
+  let managerGrant = null;
+  try {
+    managerGrant = await getAccessManagerGrant(user.uid);
+  } catch (e) {
+    console.warn("[AF] getAccessManagerGrant:", e?.code || e?.message || e);
+  }
   const result = buildSessionFromUser(user, access, legacyAccess, "firebase");
+  if (!result.denied) {
+    result.canManageLegacyAccess = user.uid === MENTOR_UID || managerGrant?.active === true;
+  }
   if (result.denied) {
     if (onAccessDenied) onAccessDenied(result.reason);
     return false;
@@ -188,6 +199,7 @@ export function startAuthListener() {
         active: false,
         modules: {},
         legacyPhases: {},
+        canManageLegacyAccess: false,
         ready: false
       });
       if (onLoggedOut) onLoggedOut();
@@ -229,6 +241,7 @@ export async function logout() {
     uid: null,
     role: null,
     legacyPhases: {},
+    canManageLegacyAccess: false,
     ready: false
   });
   if (onLoggedOut) onLoggedOut();
@@ -268,6 +281,7 @@ export function enterDemo(role) {
       active: true,
       modules: defaultModulesMap(2),
       legacyPhases: { ...ALL_LEGACY_PHASES },
+      canManageLegacyAccess: false,
       plan: "essential",
       features: {},
       extraRooms: [],
