@@ -153,11 +153,10 @@ export async function resolveUserAccess(user) {
   try {
     legacyAccess = await getLegacyAccess(user.uid);
   } catch (e) {
-    console.warn("[AF] getLegacyAccess:", e?.code || e?.message || e);
-    if (!isMentorIdentity(user.uid, user.email)) {
-      if (onAccessDenied) onAccessDenied("error");
-      return false;
-    }
+    // Compatibilidade durante a implantação: se as regras novas ainda não estiverem
+    // publicadas, clientes AF ativos continuam entrando com o acesso legado.
+    console.warn("[AF] getLegacyAccess (fallback compatível):", e?.code || e?.message || e);
+    legacyAccess = null;
   }
   const result = buildSessionFromUser(user, access, legacyAccess, "firebase");
   if (result.denied) {
@@ -229,6 +228,7 @@ export async function logout() {
     mode: null,
     uid: null,
     role: null,
+    legacyPhases: {},
     ready: false
   });
   if (onLoggedOut) onLoggedOut();
