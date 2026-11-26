@@ -1,5 +1,5 @@
 import { isMentorSession } from "./auth.js";
-import { CATALOG } from "./catalogo-capacidades-data.js?v=20261110-1";
+import { CATALOG, DEPT_CODES, DEPT_PHASES, CAPABILITY_PHASES } from "./catalogo-capacidades-data.js?v=20261110-1";
 
 
 
@@ -8,13 +8,24 @@ const statusOptions = ["Existente","Estruturado","Em desenvolvimento","Sob deman
 
 export function renderCatalogoCapacidades() {
   if (!isMentorSession()) return '<div class="view active"><p class="empty">Acesso restrito ao mentor.</p></div>';
+  let totalCapabilities = 0;
+  const phaseNames = {AE:"Arquitetura de Essência",ID:"Império Digital",AF:"Alinhamento Financeiro",EX:"Expansão",LG:"Legado"};
   const cards = CATALOG.map((dept) => {
-    const groups = dept.groups.map(([heading, items]) =>
-      '<section class="cap-group"><h4>'+esc(heading)+'</h4><ul>'+items.map((item) => '<li>'+esc(item)+'</li>').join("")+'</ul></section>'
-    ).join("");
-    return '<details class="cap-dept" data-search="'+esc((dept.name+" "+dept.summary+" "+dept.groups.flat().join(" ")).toLowerCase())+'"><summary><span class="cap-num">'+esc(dept.name.slice(0,2))+'</span><span class="cap-title"><strong>'+esc(dept.name)+'</strong><small>'+esc(dept.summary)+'</small></span><span class="cap-count">'+dept.groups.reduce((n,g)=>n+g[1].length,0)+' capacidades</span></summary><div class="cap-content">'+groups+'</div></details>';
+    let n = 0;
+    const groups = dept.groups.map(([heading, items]) => {
+      const rows = items.map(item => {
+        n++;
+        totalCapabilities++;
+        const id = DEPT_CODES[dept.id] + "-C" + String(n).padStart(2,"0");
+        const phases = CAPABILITY_PHASES[id] || DEPT_PHASES[dept.id] || [];
+        const phaseTags = phases.map(phase => '<span class="cap-phase-tag">'+esc(phase)+' · '+esc(phaseNames[phase] || phase)+'</span>').join(" ");
+        return '<li><strong class="cap-id">'+esc(id)+'</strong> '+esc(item)+'<small class="cap-phase-tags">'+phaseTags+'</small></li>';
+      }).join("");
+      return '<section class="cap-group"><h4>'+esc(heading)+'</h4><ul>'+rows+'</ul></section>';
+    }).join("");
+    return '<details class="cap-dept" data-search="'+esc((dept.name+" "+dept.summary+" "+dept.groups.flat().join(" ")).toLowerCase())+'"><summary><span class="cap-num">'+esc(dept.name.slice(0,2))+'</span><span class="cap-title"><strong>'+esc(dept.name)+'</strong><small>'+esc(dept.summary)+'</small></span><span class="cap-count">'+n+' capacidades</span></summary><div class="cap-content">'+groups+'</div></details>';
   }).join("");
-  return '<div class="view active cap-view"><div class="back-link" data-nav="mentor">← Gestão do mentor</div><p class="hero-line">Akasha Hub · uso interno</p><h2 class="hero-title">Catálogo de Capacidades</h2><p class="hero-sub">Inventário mestre do que o ecossistema pode compreender, estruturar, desenvolver e coordenar. Não representa promessa de execução automática nem itens incluídos em todo contrato.</p><div class="cap-toolbar"><input id="capSearch" type="search" placeholder="Buscar serviço, competência ou entrega..." aria-label="Buscar no catálogo"><span id="capResultCount">'+CATALOG.length+' departamentos</span></div><div class="cap-status-note"><strong>Classificação operacional</strong><p>Use os estados para distinguir o que já existe, o que está estruturado, o que exige desenvolvimento e o que depende de parceiros ou especialistas.</p><div class="cap-statuses">'+statusOptions.map((s)=>'<span>'+esc(s)+'</span>').join("")+'</div></div><div class="cap-list">'+cards+'</div><div class="cap-footnote">Serviços jurídicos, contábeis, regulados, imigração, consultoria de investimentos e atividades técnicas especializadas exigem profissionais habilitados e validação na jurisdição aplicável. Escopo, prazos, preço e responsabilidades são definidos por projeto.</div></div>';
+  return '<div class="view active cap-view"><div class="back-link" data-nav="mentor">← Gestão do mentor</div><p class="hero-line">Akasha Hub · uso interno</p><h2 class="hero-title">Catálogo de Capacidades</h2><p class="hero-sub">Inventário mestre do que o ecossistema pode compreender, estruturar, desenvolver e coordenar. Não representa promessa de execução automática nem itens incluídos em todo contrato.</p><div class="cap-toolbar"><input id="capSearch" type="search" placeholder="Buscar serviço, competência ou entrega..." aria-label="Buscar no catálogo"><span id="capResultCount">'+totalCapabilities+' capacidades · '+CATALOG.length+' departamentos</span></div><div class="cap-status-note"><strong>Classificação operacional</strong><p>Use os estados para distinguir o que já existe, o que está estruturado, o que exige desenvolvimento e o que depende de parceiros ou especialistas.</p><div class="cap-statuses">'+statusOptions.map((s)=>'<span>'+esc(s)+'</span>').join("")+'</div></div><div class="cap-list">'+cards+'</div><div class="cap-footnote"><strong>'+totalCapabilities+' capacidades catalogadas.</strong> Cada item possui ID estável e fase(s) de aplicação; a mesma capacidade pode aparecer em mais de uma fase sem ser duplicada. Serviços jurídicos, contábeis, regulados, imigração, consultoria de investimentos e atividades técnicas especializadas exigem profissionais habilitados e validação na jurisdição aplicável. Escopo, prazos, preço e responsabilidades são definidos por projeto.</div></div>';
 }
 
 export function bindCatalogoCapacidades() {
