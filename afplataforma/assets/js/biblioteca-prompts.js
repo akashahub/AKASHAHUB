@@ -563,3 +563,45 @@ export function bindMasterPromptMap() {
     if(e.target.closest("[data-pm-copy]")){const area=panel.querySelector("#pmPromptText"),status=panel.querySelector("#pmCopyStatus");if(!area)return;copyText(area.value,status);return;}
   });
 }
+
+
+// Acesso contextual aos prompts dentro da jornada das cinco fases.
+// Os prompts são gerados a partir do Catálogo de Capacidades existente;
+// nenhum aplicativo, registro de negócio ou coleção Firestore é duplicado.
+export function renderPhasePromptAccess(phaseId) {
+  const phase = PHASES.find(p => p.id === String(phaseId || "").toUpperCase());
+  if (!phase) return "";
+  const capabilities = CAPABILITIES.filter(c => c.phases.includes(phase.id));
+  const specialized = SPECIALIZED_PROMPTS.filter(item => String(item.phase) === phase.number);
+  return '<section class="pm-journey-prompts" style="margin:26px 0;padding:18px;border:1px solid var(--line,rgba(205,174,94,.35));border-radius:14px;background:var(--surface,rgba(255,255,255,.02))">' +
+    '<div class="pm-eyebrow">AKASHA HUB · BIBLIOTECA OPERACIONAL</div>' +
+    '<h3 class="section-h">Prompts desta fase</h3>' +
+    '<p class="notes-hint">Acesse os prompts no próprio percurso. Cada modelo é construído a partir da capacidade original; revise o contexto, personalize e só então envie à IA. Os aplicativos existentes continuam sendo a fonte oficial dos registros e operações.</p>' +
+    '<p class="notes-hint"><strong>' + capabilities.length + '</strong> capacidades relacionadas · <strong>' + specialized.length + '</strong> receitas especializadas cadastradas nesta fase.</p>' +
+    '<div class="pm-phase-prompt-list">' + capabilities.map(c =>
+      '<details style="margin:10px 0;padding:12px;border:1px solid var(--line,#39342d);border-radius:10px">' +
+      '<summary style="cursor:pointer"><strong>' + esc(c.id) + ' · ' + esc(c.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + esc(c.department.replace(/^\\d+ · /,"")) + ' · ' + esc(c.group) + '</small></summary>' +
+      '<p class="notes-hint">' + esc(c.reason) + '</p>' +
+      '<textarea data-journey-prompt="' + esc(c.id) + '" spellcheck="false" style="width:100%;min-height:260px;margin:10px 0;padding:12px;box-sizing:border-box">' + esc(applySharedContext(promptForCapability(c))) + '</textarea>' +
+      '<button class="tool-btn" type="button" data-copy-journey-prompt="' + esc(c.id) + '">Copiar prompt</button>' +
+      '<span data-journey-prompt-status="' + esc(c.id) + '" role="status" aria-live="polite" style="margin-left:10px"></span>' +
+      '</details>'
+    ).join("") + '</div>' +
+    '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line,#39342d)">' +
+    '<a class="tool-btn" href="/afplataforma/?view=hub-prompts">Abrir Mapa Mestre da Biblioteca ↗</a>' +
+    '</div></section>';
+}
+
+export function bindPhasePromptAccess() {
+  const root = document.getElementById("content");
+  if (!root || root.dataset.phasePromptAccessBound === "1") return;
+  root.dataset.phasePromptAccessBound = "1";
+  root.addEventListener("click", event => {
+    const button = event.target.closest("[data-copy-journey-prompt]");
+    if (!button) return;
+    const id = button.dataset.copyJourneyPrompt;
+    const area = [...root.querySelectorAll("[data-journey-prompt]")].find(el => el.dataset.journeyPrompt === id);
+    const status = [...root.querySelectorAll("[data-journey-prompt-status]")].find(el => el.dataset.journeyPromptStatus === id);
+    if (area) copyText(area.value, status);
+  });
+}
