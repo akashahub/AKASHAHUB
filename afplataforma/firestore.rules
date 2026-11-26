@@ -12,6 +12,17 @@ service cloud.firestore {
         ]
       );
     }
+    function isAccessAdmin() {
+      return request.auth != null
+        && request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
+    }
+    function isAccessManager() {
+      return isAccessAdmin() || (
+        request.auth != null
+        && exists(/databases/$(database)/documents/accessManagerGrants/$(request.auth.uid))
+        && get(/databases/$(database)/documents/accessManagerGrants/$(request.auth.uid)).data.active == true
+      );
+    }
     function isSignedIn() {
       return request.auth != null;
     }
@@ -22,6 +33,24 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/afAccess/$(uid)).data.approved == true
         && get(/databases/$(database)/documents/afAccess/$(uid)).data.active == true;
     }
+    // Permissão individual por fase. Sem registro explícito, clientes AF antigos
+    // preservam a jornada completa. Após uma matriz explícita, ela passa a prevalecer.
+    // A fase 3 continua exigindo também o acesso ativo do AF tradicional.
+    function hasLegacyPhaseAccess(uid, phaseKey) {
+      let accessPath = /databases/$(database)/documents/legacyAccess/$(uid);
+      return request.auth != null
+        && request.auth.uid == uid
+        && (
+          (!exists(accessPath) && hasAfAccess(uid))
+          || (
+            exists(accessPath)
+            && get(accessPath).data.phases is map
+            && get(accessPath).data.phases[phaseKey] == true
+            && (phaseKey != "phase03" || hasAfAccess(uid))
+          )
+        );
+    }
+
     function isMembersAdmin() {
       return request.auth != null && (
         request.auth.token.email == "yanfili.simon@gmail.com"
@@ -133,8 +162,48 @@ service cloud.firestore {
     }
     match /users/{uid} {
       allow read, write: if request.auth.uid == uid;
-      allow read: if isAfMentor();
+      allow read: if isAfMentor() || isAccessManager();
     }
+    // Permissões individuais das cinco fases da Arquitetura de Legado.
+    // Separadas de afAccess para preservar os contratos antigos do AF.
+    match /legacyAccess/{uid} {
+      allow read: if request.auth != null
+        && (request.auth.uid == uid || isAfMentor() || isAccessManager());
+      allow create, update: if isAccessManager()
+        && request.resource.data.phases is map
+        && request.resource.data.phases.keys().hasAll(["phase01", "phase02", "phase03", "phase04", "phase05"])
+        && request.resource.data.phases.keys().hasOnly(["phase01", "phase02", "phase03", "phase04", "phase05"])
+        && request.resource.data.phases.phase01 is bool
+        && request.resource.data.phases.phase02 is bool
+        && request.resource.data.phases.phase03 is bool
+        && request.resource.data.phases.phase04 is bool
+        && request.resource.data.phases.phase05 is bool
+        && request.resource.data.updatedBy == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // Auditoria append-only das alterações de permissões e delegações.
+    match /accessAudit/{eventId} {
+      allow read: if isAccessManager();
+      allow create: if isAccessManager()
+        && request.resource.data.actorUid == request.auth.uid
+        && request.resource.data.targetUid is string
+        && (
+          (request.resource.data.action == "legacy_phases_updated" && request.resource.data.phases is map)
+          || (request.resource.data.action == "access_manager_grant_updated" && request.resource.data.active is bool)
+        );
+      allow update, delete: if false;
+    }
+
+    // Somente o administrador principal pode delegar ou revogar gestores.
+    match /accessManagerGrants/{uid} {
+      allow read: if request.auth != null && (isAccessAdmin() || request.auth.uid == uid);
+      allow create, update: if isAccessAdmin()
+        && request.resource.data.active is bool
+        && request.resource.data.updatedBy == request.auth.uid;
+      allow delete: if false;
+    }
+
     match /posts/{postId} {
       allow read: if request.auth != null;
       allow write: if request.auth.uid == "1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
@@ -230,23 +299,23 @@ service cloud.firestore {
       allow delete: if request.auth != null && (request.auth.uid == resource.data.para || request.auth.uid == resource.data.de);
     }
     match /afAccess/{uid} {
-      allow read: if isSignedIn() && (request.auth.uid == uid || isAfMentor());
-      allow create, update: if isAfMentor();
+      allow read: if isSignedIn() && (request.auth.uid == uid || isAfMentor() || isAccessManager());
+      allow create, update: if isAfMentor() || isAccessManager();
       allow delete: if false;
     }
     match /afAccessRequests/{uid} {
-      allow read: if isSignedIn() && (request.auth.uid == uid || isAfMentor());
+      allow read: if isSignedIn() && (request.auth.uid == uid || isAfMentor() || isAccessManager());
       allow create: if isSignedIn() && request.auth.uid == uid && request.resource.data.status == "pending" && request.resource.data.uid == request.auth.uid;
       allow update: if isSignedIn() && request.auth.uid == uid && resource.data.status != "blocked" && request.resource.data.status == resource.data.status;
-      allow create, update: if isAfMentor();
+      allow create, update: if isAfMentor() || isAccessManager();
       allow delete: if false;
     }
     match /afTools/{uid}/{document=**} {
-      allow read, write: if hasAfAccess(uid);
+      allow read, write: if hasLegacyPhaseAccess(uid, "phase03");
       allow read, write: if isAfMentor();
     }
     match /afMenteeNotes/{uid}/{document=**} {
-      allow read, write: if hasAfAccess(uid);
+      allow read, write: if hasLegacyPhaseAccess(uid, "phase03");
       allow read: if isAfMentor();
     }
     match /afMentorNotes/{document=**} {
@@ -277,12 +346,12 @@ service cloud.firestore {
       }
     }
     match /afPresence/{uid} {
-      allow read: if isSignedIn() && (isAfMentor() || hasAfAccess(request.auth.uid));
-      allow create, update: if isSignedIn() && request.auth.uid == uid && (isAfMentor() || hasAfAccess(request.auth.uid));
+      allow read: if isSignedIn() && (isAfMentor() || hasLegacyPhaseAccess(request.auth.uid, "phase03"));
+      allow create, update: if isSignedIn() && request.auth.uid == uid && (isAfMentor() || hasLegacyPhaseAccess(request.auth.uid, "phase03"));
       allow delete: if isSignedIn() && (request.auth.uid == uid || isAfMentor());
     }
     match /afRooms/{roomId} {
-      allow read: if isSignedIn() && (isAfMentor() || hasAfAccess(request.auth.uid));
+      allow read: if isSignedIn() && (isAfMentor() || hasLegacyPhaseAccess(request.auth.uid, "phase03"));
       allow create, update, delete: if isAfMentor();
     }
     match /taAccess/{uid} {
@@ -385,75 +454,75 @@ service cloud.firestore {
     // Apps independentes. Isolamento por UID.
     // ============================================
     match /afEssencia/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       }
     }
     match /afMarketingPessoal/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       }
     }
     match /afBrandingPessoal/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       }
     }
     match /afLideranca/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       }
     }
     match /afComunicacao/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       }
     }
     match /afIdentityStudio/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       }
     }
     match /afConstelacaoFamiliar/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       }
     }
     match /afRegistrosAkashicos/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       }
     }
     match /afAuthorityLeadership/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase01");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase01");
       }
     }
     // ============================================
@@ -461,91 +530,91 @@ service cloud.firestore {
     // Proprietário lê/escreve; mentor AF autorizado somente lê.
     // ============================================
     match /afSdrOs/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       }
     }
     match /afIaStudio/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       }
     }
     match /afAppBuilder/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       }
     }
     match /afPrecificacao/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       }
     }
     match /afFunilBuilder/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       }
     }
     match /afFluxoDeCaixa/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       }
     }
     match /afWebsiteStudio/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       }
     }
     match /afCrmInteligente/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       }
     }
     match /afProdutosDigitais/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       }
     }
     match /afCentralAtivos/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase02");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase02");
       }
     }
     match /afIndicadoresFinanceiros/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       }
     }
     // CENTRAL DE ROTEIROS — equipe autorizada, sem Firebase Storage.
@@ -561,191 +630,191 @@ service cloud.firestore {
     // FASE 3 / 4 / 5 — EXPANSÃO, ESTRUTURA E CONTINUIDADE
     // Mesmo controle de acesso AF; proprietário aprovado opera os próprios dados.
     match /afMetasFinanceiras/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       }
     }
 
     match /afPlanejamentoFinanceiro/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       }
     }
 
     match /afDecisoesComerciais/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       }
     }
 
     match /afSustentabilidadeOfertas/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase03");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase03");
       }
     }
 
     match /afAcompanhamentoResultados/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       }
     }
 
     match /afResponsabilidades/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       }
     }
 
     match /afPadronizacao/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       }
     }
 
     match /afDocumentacao/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       }
     }
 
     match /afDivulgacao/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       }
     }
 
     match /afProcessosOperacionais/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       }
     }
 
     match /afFluxosTrabalho/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       }
     }
 
     match /afDependenciasFundador/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       }
     }
 
     match /afAcompanhamentoOperacao/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase04");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase04");
       }
     }
 
     match /afComunidade/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       }
     }
 
     match /afContinuidade/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       }
     }
 
     match /afPreservacao/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       }
     }
 
     match /afPrincipiosEcossistema/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       }
     }
 
     match /afEvolucaoComunidade/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       }
     }
 
     match /afRelacionamentoLongoPrazo/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       }
     }
 
     match /afTransmissaoMetodologia/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       }
     }
 
     match /afLegadoSemFundador/{uid} {
-      allow read: if isAfMentor() || hasAfAccess(uid);
-      allow create, update, delete: if hasAfAccess(uid);
+      allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+      allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       match /{document=**} {
-        allow read: if isAfMentor() || hasAfAccess(uid);
-        allow create, update, delete: if hasAfAccess(uid);
+        allow read: if isAfMentor() || hasLegacyPhaseAccess(uid, "phase05");
+        allow create, update, delete: if hasLegacyPhaseAccess(uid, "phase05");
       }
     }
 
