@@ -178,7 +178,7 @@ export function renderAccessAdminPanel() {
     <div class="af-search-row">
       <a class="tool-btn" href="/admin/perfis/" target="_blank" rel="noopener">Abrir Central de Perfis ↗</a>
       <span class="notes-hint">Identidade e cadastro ficam em /admin/perfis. As permissões são administradas aqui.</span>
-      ${session.uid === MENTOR_UID ? '<button class="tool-btn" type="button" id="accessManagersBtn">Gerenciar mentores gestores</button>' : ""}
+      ${session.mode === "firebase" && session.uid === MENTOR_UID ? '<button class="tool-btn" type="button" id="accessManagersBtn">Gerenciar mentores gestores</button>' : ""}
     </div>
     <div class="af-search-row">
       <input id="afUserSearch" type="search" placeholder="Buscar por nome ou e-mail" autocomplete="off">
@@ -313,7 +313,7 @@ function paintList() {
 }
 
 async function openAccessManagers() {
-  if (session.uid !== MENTOR_UID) return toast("Somente o administrador principal pode delegar gestores.", true);
+  if (session.mode !== "firebase" || session.uid !== MENTOR_UID) return toast("Somente o administrador principal autenticado pode delegar gestores.", true);
   try {
     const grants = await getAccessManagerGrants();
     const active = new Set(grants.filter((g) => g.active === true).map((g) => g.uid));
