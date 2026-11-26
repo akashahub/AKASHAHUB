@@ -325,13 +325,13 @@ service cloud.firestore {
       allow read, write: if isAfMentor();
     }
     match /afCalls/{callId} {
-      allow read: if isSignedIn() && (isAfMentor() || resource.data.mentorId == request.auth.uid || resource.data.menteeId == request.auth.uid);
+      allow read: if isSignedIn() && (isAfMentor() || resource.data.mentorId == request.auth.uid || (resource.data.menteeId == request.auth.uid && hasLegacyPhaseAccess(request.auth.uid, "phase03")));
       allow create: if isAfMentor();
       allow update, delete: if isAfMentor();
       match /signals/{signalId} {
         function isCallParticipant() {
           let call = get(/databases/$(database)/documents/afCalls/$(callId));
-          return request.auth != null && (isAfMentor() || call.data.mentorId == request.auth.uid || call.data.menteeId == request.auth.uid);
+          return request.auth != null && (isAfMentor() || call.data.mentorId == request.auth.uid || (call.data.menteeId == request.auth.uid && hasLegacyPhaseAccess(request.auth.uid, "phase03")));
         }
         allow read, create, delete: if isCallParticipant();
         allow update: if false;
@@ -339,7 +339,7 @@ service cloud.firestore {
       match /participants/{uid} {
         function isCallParticipant() {
           let call = get(/databases/$(database)/documents/afCalls/$(callId));
-          return request.auth != null && (isAfMentor() || call.data.mentorId == request.auth.uid || call.data.menteeId == request.auth.uid);
+          return request.auth != null && (isAfMentor() || call.data.mentorId == request.auth.uid || (call.data.menteeId == request.auth.uid && hasLegacyPhaseAccess(request.auth.uid, "phase03")));
         }
         allow read: if isCallParticipant();
         allow create, update, delete: if isCallParticipant() && request.auth.uid == uid;
