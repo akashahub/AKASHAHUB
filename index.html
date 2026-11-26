@@ -935,24 +935,26 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
   facetShell.add(facetEdges);
   const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.52,1),new THREE.MeshPhongMaterial({color:0x7954a8,emissive:0x28133f,specular:0xe6d8ff,shininess:100,transparent:true,opacity:.48,depthWrite:false,flatShading:true}));
   core.rotation.set(.3,.7,.15);crystalGroup.add(core);
-  // Simbolo central inspirado na marca AKASHA: aro dourado e ponto de origem.
+  // Emblema 3D inspirado diretamente na assinatura circular da marca AKASHA HUB.
   const sigil=new THREE.Group();crystalGroup.add(sigil);
-  const sigilRing=new THREE.Mesh(
-   new THREE.TorusGeometry(.76,.042,16,96),
-   new THREE.MeshStandardMaterial({color:0xc6a14a,metalness:.82,roughness:.2,emissive:0x4b3510,emissiveIntensity:.28})
-  );
+  const goldMetal=new THREE.MeshStandardMaterial({color:0xc6a14a,metalness:.88,roughness:.17,emissive:0x4b3510,emissiveIntensity:.34});
+  const goldLight=new THREE.MeshBasicMaterial({color:0xf0d58b,transparent:true,opacity:.72});
+  const sigilRing=new THREE.Mesh(new THREE.TorusGeometry(.78,.038,18,128),goldMetal);
   sigil.add(sigilRing);
-  const innerRing=new THREE.Mesh(
-   new THREE.TorusGeometry(.66,.012,8,96),
-   new THREE.MeshBasicMaterial({color:0xf0d58b,transparent:true,opacity:.58})
-  );
+  const innerRing=new THREE.Mesh(new THREE.TorusGeometry(.65,.012,10,128),goldLight);
   sigil.add(innerRing);
-  const originPoint=new THREE.Mesh(
-   new THREE.SphereGeometry(.19,32,24),
-   new THREE.MeshPhysicalMaterial({color:0xd7b45f,metalness:.58,roughness:.12,clearcoat:1,emissive:0x3b2608,emissiveIntensity:.2})
-  );
+  // Dois orbitais inclinados reproduzem o desenho do símbolo sem virar um simples planeta.
+  const orbitA=new THREE.Mesh(new THREE.TorusGeometry(.9,.012,8,128),new THREE.MeshBasicMaterial({color:0xd9c08a,transparent:true,opacity:.58}));
+  orbitA.rotation.set(.62,.18,.28);sigil.add(orbitA);
+  const orbitB=new THREE.Mesh(new THREE.TorusGeometry(.9,.009,8,128),new THREE.MeshBasicMaterial({color:0xb99add,transparent:true,opacity:.52}));
+  orbitB.rotation.set(-.58,.42,-.24);sigil.add(orbitB);
+  const axis=new THREE.Mesh(new THREE.CylinderGeometry(.009,.009,1.95,12),new THREE.MeshBasicMaterial({color:0xe8d39a,transparent:true,opacity:.62}));
+  axis.rotation.z=Math.PI/2;sigil.add(axis);
+  const originPoint=new THREE.Mesh(new THREE.SphereGeometry(.17,40,32),new THREE.MeshPhysicalMaterial({color:0xe4c477,metalness:.72,roughness:.1,clearcoat:1,emissive:0x5b3b0b,emissiveIntensity:.32}));
   sigil.add(originPoint);
-  const count=260,positions=new Float32Array(count*3);
+  const originHalo=new THREE.Mesh(new THREE.SphereGeometry(.29,32,24),new THREE.MeshBasicMaterial({color:0xc6a14a,transparent:true,opacity:.075,side:THREE.BackSide,depthWrite:false}));
+  sigil.add(originHalo);
+  const count=520,positions=new Float32Array(count*3);
   for(let i=0;i<count;i++){positions[i*3]=(Math.random()-.5)*8;positions[i*3+1]=(Math.random()-.5)*5;positions[i*3+2]=(Math.random()-.5)*4;}
   const pGeo=new THREE.BufferGeometry();pGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));
   const points=new THREE.Points(pGeo,new THREE.PointsMaterial({color:0xb99add,size:.018,transparent:true,opacity:.48,depthWrite:false}));
@@ -980,8 +982,10 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
    facetShell.rotation.y=t*1.13+turn*.2;facetShell.rotation.x=-.18+currentX*.55;
    core.rotation.y=-t*.7;core.rotation.x=.3+Math.sin(t*.35)*.08;
    sigil.rotation.y=-t*.58+currentX*.35;sigil.rotation.x=.12+currentY*.35;
-   sigilRing.material.emissiveIntensity=.2+crystallize*.45;
-   originPoint.scale.setScalar(1+crystallize*.1);
+   orbitA.rotation.y=t*.22;orbitB.rotation.x=-.58+Math.sin(t*.28)*.08;orbitB.rotation.z=-.24+t*.12;
+   sigilRing.material.emissiveIntensity=.24+crystallize*.5;
+   originPoint.scale.setScalar(1+crystallize*.12);
+   originHalo.scale.setScalar(1+crystallize*.22);
    // A cada volta completa, as facetas ganham brilho e definicao por um breve instante.
    material.roughness=.2-crystallize*.075;material.opacity=.78+crystallize*.12;
    facetMaterial.roughness=.16-crystallize*.055;facetMaterial.opacity=.34+crystallize*.12;
