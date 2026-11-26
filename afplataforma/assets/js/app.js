@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=etapa3-2";
+} from "./navigation.js?v=legacy-access-1";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
@@ -34,7 +34,7 @@ import { renderCallView, bindCallControls, forceStopMedia, bindPersistentCallUI,
 import { startPresence, stopPresence } from "./presence.js";
 import { bindTeleprompterUI, closeTeleprompter } from "./teleprompter.js";
 import { renderComplementarHome, renderComplementarApp } from "./complementar.js";
-import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js?v=rt14";
+import { renderAccessAdminPanel, bindAccessAdmin } from "./access-admin.js?v=legacy-access-1";
 import { renderSessoesAccess, bindSessoesAccess } from "./sessoes-access.js?v=1";
 import { renderQuitei, bindQuitei } from "./quitei.js";
 import { bindMaterialViewer } from "./materials.js";
@@ -548,7 +548,7 @@ function renderMentor() {
   return `<div class="view active">
     <p class="hero-line">Controle</p>
     <h2 class="hero-title">Dashboard do mentor</h2>
-    <p class="hero-sub">Liberação no Firestore: <code>afAccess/{uid}</code> com approved, active e modules.</p>    
+    <p class="hero-sub">Permissões separadas: <code>legacyAccess/{uid}</code> controla as cinco fases; <code>afAccess/{uid}</code> mantém plano, módulos e ferramentas do Alinhamento Financeiro.</p>    
     <article class="q-feature livro-entry">
       <p class="hero-line">Planejamento pessoal · uso interno</p>
       <h3>Projeto Abundância</h3>
