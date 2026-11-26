@@ -18,6 +18,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:16px;pa
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:24px 0}.stat{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:18px}.stat label{display:block;color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase}.stat strong{display:block;font:500 34px 'Cormorant Garamond',serif;margin-top:7px}.stat small{color:var(--muted);font-size:10px}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}.search{flex:1;min-width:220px}.search input,.toolbar select{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:10px;outline:none}.toolbar select{width:auto;min-width:150px}
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px;background:rgba(18,16,26,.88)}table{border-collapse:collapse;width:100%;min-width:820px}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.055)}th{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:600}td{font-size:12px}tbody tr:hover{background:rgba(215,180,94,.045)}tbody tr:last-child td{border-bottom:0}.person{display:flex;align-items:center;gap:10px}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#292038;border:1px solid var(--line);color:var(--gold2);font:600 15px 'Cormorant Garamond',serif;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.name{font-weight:600}.sub{color:var(--muted);font-size:10px;margin-top:4px;max-width:230px;overflow:hidden;text-overflow:ellipsis}.pill{display:inline-flex;padding:5px 8px;border-radius:99px;border:1px solid var(--line);color:var(--gold2);font-size:9px;white-space:nowrap}.muted{color:var(--muted)}.empty{padding:42px;text-align:center;color:var(--muted);line-height:1.7}.status{padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--muted);font-size:11px;margin:18px 0}.status.error{color:var(--red);border-color:rgba(237,150,150,.25)}.foot{margin-top:18px;color:var(--muted);font-size:10px;line-height:1.7}.details{display:none;background:#0d0b13;border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px;line-height:1.9;font-size:11px;overflow-wrap:anywhere}.details.open{display:block}.details b{color:var(--gold2)}
+.inquiries{margin-top:30px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,var(--panel2),var(--panel));overflow:hidden}.inquiries-head{padding:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line)}.inquiries-head h2{font:500 27px 'Cormorant Garamond',serif;margin:0}.inquiries-head p{font-size:11px;color:var(--muted);margin:5px 0 0}.inquiries table{min-width:900px}.inquiry-detail{padding:16px 18px;border-top:1px solid var(--line);font-size:11px;line-height:1.8;color:var(--muted);white-space:pre-wrap}.inquiry-detail b{color:var(--gold2)}
 @media(max-width:800px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.shell{padding-top:16px}header{align-items:flex-start}.heading{align-items:flex-start}}
 @media(max-width:420px){.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:28px}.brand strong{font-size:17px}}
 </style>
@@ -45,6 +46,12 @@ header{display:flex;justify-content:space-between;align-items:center;gap:16px;pa
 <div id="status" class="status">Verificando autenticação…</div>
 <div class="table-wrap"><table><thead><tr><th>Perfil</th><th>Contato</th><th>Cadastro</th><th>Último login</th><th>Logins</th><th>Origem</th><th>Status</th></tr></thead><tbody id="rows"><tr><td colspan="7" class="empty">Carregando perfis…</td></tr></tbody></table></div>
 <div class="details" id="details"></div>
+<section class="inquiries">
+ <div class="inquiries-head"><div><h2>Solicitações de palestras e eventos</h2><p>Formulários recebidos em Yan Filipe Simon · atualize para consultar novas solicitações.</p></div><span class="pill" id="speakingCount">Carregando…</span></div>
+ <div id="speakingStatus" class="status">Verificando solicitações…</div>
+ <div class="table-wrap" style="border:0;border-radius:0"><table><thead><tr><th>Solicitante</th><th>Instituição</th><th>Tema</th><th>Formato</th><th>Data de envio</th></tr></thead><tbody id="speakingRows"><tr><td colspan="5" class="empty">Carregando solicitações…</td></tr></tbody></table></div>
+ <div class="inquiry-detail" id="speakingDetail">Selecione uma solicitação para ver todos os dados do evento.</div>
+</section>
 <p class="foot">Privacidade e segurança: esta página é restrita ao UID administrador. O painel consulta somente os documentos autorizados pela regra existente de users. A listagem não consulta diretamente o diretório interno do Firebase Authentication.</p>
 </div>
 <script type="module">
@@ -118,9 +125,29 @@ async function showDetails(u){
   if(callEl)callEl.textContent="Não foi possível carregar os atendimentos: "+String(e.message||e);
  }
 }
+let speakingRows=[];
+async function loadSpeaking(){
+ const status=$("speakingStatus"),body=$("speakingRows");
+ status.textContent="Consultando solicitações…";
+ try{
+  const token=await auth.currentUser.getIdToken();
+  const response=await fetch("https://jsonmxbuzagmwuucruem.supabase.co/functions/v1/speaking-inquiries",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({action:"list"})});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||!result.ok)throw new Error(result.error||"Falha ao consultar");
+  speakingRows=Array.isArray(result.inquiries)?result.inquiries:[];
+  $("speakingCount").textContent=speakingRows.length+" solicitações";
+  body.innerHTML=speakingRows.length?speakingRows.map((r,i)=>'<tr data-speaking-index="'+i+'" style="cursor:pointer"><td><strong>'+safe(r.name)+'</strong><div class="sub">'+safe(r.email)+' · '+safe(r.phone)+'</div></td><td>'+safe(r.organization)+'</td><td><span class="pill">'+safe(r.topic)+'</span></td><td>'+safe(r.format)+'</td><td>'+dateText(r.created_at)+'</td></tr>').join(""):'<tr><td colspan="5" class="empty">Nenhuma solicitação recebida até agora.</td></tr>';
+  body.querySelectorAll("[data-speaking-index]").forEach(tr=>tr.addEventListener("click",()=>showSpeaking(speakingRows[Number(tr.dataset.speakingIndex)])));
+  status.textContent="Solicitações atualizadas · "+new Date().toLocaleString("pt-BR");
+ }catch(e){status.textContent="Não foi possível carregar as solicitações: "+String(e.message||e);status.className="status error";}
+}
+function showSpeaking(r){
+ if(!r)return;
+ $("speakingDetail").innerHTML="<b>"+safe(r.name)+"</b> · "+safe(r.organization)+"\\nE-mail: "+safe(r.email)+"\\nWhatsApp: "+safe(r.phone)+"\\nFormato: "+safe(r.format)+"\\nData e local: "+safe(r.date_place)+"\\nTema: "+safe(r.topic)+"\\nPúblico e contexto: "+safe(r.audience)+"\\nRecebido em: "+safe(dateText(r.created_at))+"\\nOrigem: "+safe(r.source_path||"—");
+}
 async function load(){setStatus("Buscando perfis no Firestore…");$("rows").innerHTML='<tr><td colspan="7" class="empty">Atualizando…</td></tr>';try{const snap=await getDocs(collection(db,"users"));allUsers=snap.docs.map(x=>({uid:x.id,data:x.data()}));render();setStatus("Dados atualizados · "+new Date().toLocaleString("pt-BR"));}catch(e){console.error(e);setStatus("Não foi possível consultar users. Verifique se as regras do Firestore em produção permitem leitura administrativa. ("+(e.code||"erro")+")",true);$("rows").innerHTML='<tr><td colspan="7" class="empty">A consulta foi bloqueada pelas regras atuais do Firestore.</td></tr>';}}
-onAuthStateChanged(auth,user=>{if(!user){location.href="/login/";return;}if(user.uid!==ADMIN_UID){document.body.innerHTML='<main style="max-width:560px;margin:15vh auto;padding:24px;text-align:center;font:14px Inter;color:#f4efe5"><h1>Acesso restrito</h1><p>Esta central é exclusiva da conta administradora.</p><a href="/" style="color:#d7b45e">Voltar ao Akasha Hub</a></main>';return;}startAkashaTracking(user);load();});
-$("refresh").addEventListener("click",load);
+onAuthStateChanged(auth,user=>{if(!user){location.href="/login/";return;}if(user.uid!==ADMIN_UID){document.body.innerHTML='<main style="max-width:560px;margin:15vh auto;padding:24px;text-align:center;font:14px Inter;color:#f4efe5"><h1>Acesso restrito</h1><p>Esta central é exclusiva da conta administradora.</p><a href="/" style="color:#d7b45e">Voltar ao Akasha Hub</a></main>';return;}startAkashaTracking(user);load();loadSpeaking();});
+$("refresh").addEventListener("click",()=>{load();loadSpeaking();});
 $("migrateBooks").addEventListener("click",async()=>{
  const button=$("migrateBooks");button.disabled=true;setStatus("Migrando os cinco PDFs para o bucket privado do Supabase…");
  try{
