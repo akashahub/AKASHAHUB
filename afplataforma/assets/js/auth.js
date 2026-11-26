@@ -261,6 +261,7 @@ export function enterDemo(role) {
       active: true,
       modules: defaultModulesMap(7),
       legacyPhases: { ...ALL_LEGACY_PHASES },
+      canManageLegacyAccess: false,
       plan: "vip",
       features: {},
       extraRooms: [],
