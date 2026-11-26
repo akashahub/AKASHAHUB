@@ -1,6 +1,6 @@
 // Receitas especializadas da Biblioteca de Prompts Akasha Hub.
 // Camada estática: não grava dados, não chama APIs e não altera aplicativos existentes.
-export const SPECIALIZED_PROMPTS = [
+const SPECIALIZED_PROMPT_ROWS = [
 ["IMG-01","Imagem e Fotografia","Photo Enhancement Pro","Melhorar luz, nitidez, contraste, cores e resolução sem criar detalhes falsos.","ID","foto, imagem, nitidez, resolução"],
 ["IMG-02","Imagem e Fotografia","Restauração Fotográfica Realista","Recuperar fotografias antigas, riscadas, desbotadas ou danificadas preservando sua aparência documental.","ID","foto antiga, restauração, danos"],
 ["IMG-03","Imagem e Fotografia","Preservação de Identidade Facial","Editar uma fotografia sem alterar identidade, formato do rosto, idade aparente ou traços individuais.","ID","rosto, identidade, retrato"],
@@ -72,6 +72,325 @@ export const SPECIALIZED_PROMPTS = [
 ["GLO-09","Internacionalização e Expansão Global","International Partnership Builder","Mapear e qualificar parceiros, distribuidores, canais, clientes-âncora e potenciais investidores por país.","EX","parcerias, distribuidores, investidores"],
 ["GLO-10","Internacionalização e Expansão Global","Global Valuation Strategist","Analisar fatores que podem influenciar valuation: receita recorrente, margem, crescimento, governança, ativos e dependência do fundador.","LG","valuation, valor de empresa, escala"]
 ];
+ 
+// Vínculo explícito entre cada receita especializada e capacidades oficiais.
+// A receita continua sendo um prompt; não cria uma capacidade duplicada.
+const SPECIALIZED_CAPABILITY_LINKS = {
+  "IMG-01": [
+    "0202-C08"
+  ],
+  "IMG-02": [
+    "0202-C08"
+  ],
+  "IMG-03": [
+    "0202-C05",
+    "0202-C08"
+  ],
+  "IMG-04": [
+    "0202-C05",
+    "0101-C07"
+  ],
+  "IMG-05": [
+    "0202-C09"
+  ],
+  "IMG-06": [
+    "0202-C09"
+  ],
+  "IMG-07": [
+    "0202-C09"
+  ],
+  "IMG-08": [
+    "0202-C06"
+  ],
+  "IMG-09": [
+    "0202-C03",
+    "0505-C08"
+  ],
+  "IMG-10": [
+    "0202-C01"
+  ],
+  "IMG-11": [
+    "0202-C02"
+  ],
+  "IMG-12": [
+    "0202-C07",
+    "0505-C06"
+  ],
+  "VID-01": [
+    "0202-C13",
+    "0202-C14",
+    "0505-C06"
+  ],
+  "VID-02": [
+    "0101-C09",
+    "0202-C11",
+    "0202-C13"
+  ],
+  "VID-03": [
+    "0202-C13"
+  ],
+  "VID-04": [
+    "0101-C09",
+    "0202-C11"
+  ],
+  "VID-05": [
+    "0505-C06",
+    "0505-C07",
+    "0202-C16"
+  ],
+  "VID-06": [
+    "0202-C13",
+    "0202-C14",
+    "0505-C05"
+  ],
+  "VID-07": [
+    "0101-C08",
+    "0101-C09",
+    "0101-C10",
+    "0202-C11"
+  ],
+  "VID-08": [
+    "0505-C03",
+    "0505-C06"
+  ],
+  "VID-09": [
+    "0202-C13",
+    "0202-C14"
+  ],
+  "NEG-01": [
+    "0707-C01",
+    "0707-C03",
+    "0606-C01"
+  ],
+  "NEG-02": [
+    "0707-C01",
+    "0404-C24",
+    "0606-C01"
+  ],
+  "NEG-03": [
+    "0505-C01",
+    "0505-C02",
+    "0707-C05"
+  ],
+  "NEG-04": [
+    "0505-C02",
+    "0606-C05"
+  ],
+  "NEG-05": [
+    "0505-C01",
+    "0606-C04"
+  ],
+  "NEG-06": [
+    "0606-C01",
+    "0606-C02",
+    "0202-C12",
+    "0404-C15"
+  ],
+  "NEG-07": [
+    "0303-C01",
+    "0303-C10"
+  ],
+  "NEG-08": [
+    "0303-C02",
+    "0505-C12"
+  ],
+  "NEG-09": [
+    "0303-C05",
+    "0303-C09",
+    "0303-C10"
+  ],
+  "NEG-10": [
+    "0303-C04",
+    "0303-C16"
+  ],
+  "PES-01": [
+    "0808-C10",
+    "0909-C05",
+    "0505-C02",
+    "0707-C05"
+  ],
+  "PES-02": [
+    "0505-C16"
+  ],
+  "PES-03": [
+    "0707-C01",
+    "0404-C24"
+  ],
+  "PES-04": [
+    "0101-C12",
+    "0404-C22",
+    "0808-C12"
+  ],
+  "PES-05": [
+    "0606-C01",
+    "0707-C01",
+    "0808-C01"
+  ],
+  "FIN-01": [
+    "0404-C09",
+    "0404-C11",
+    "0404-C12",
+    "0404-C23",
+    "0404-C28",
+    "0404-C31"
+  ],
+  "FIN-02": [
+    "0404-C33",
+    "0404-C21"
+  ],
+  "FIN-03": [
+    "0404-C32"
+  ],
+  "FIN-04": [
+    "0404-C32"
+  ],
+  "FIN-05": [
+    "0404-C34",
+    "0404-C22"
+  ],
+  "FIN-06": [
+    "0404-C35"
+  ],
+  "FIN-07": [
+    "0404-C36"
+  ],
+  "FIN-08": [
+    "0404-C33"
+  ],
+  "FIN-09": [
+    "0404-C17",
+    "0404-C18",
+    "0404-C21",
+    "0404-C33"
+  ],
+  "EST-01": [
+    "0101-C04",
+    "0101-C06",
+    "0707-C01",
+    "0808-C01"
+  ],
+  "EST-02": [
+    "0808-C10",
+    "0505-C02",
+    "0707-C05"
+  ],
+  "EST-03": [
+    "0808-C10",
+    "0707-C04",
+    "0303-C15"
+  ],
+  "EST-04": [
+    "0101-C12",
+    "0404-C22",
+    "0808-C12"
+  ],
+  "EST-05": [
+    "0909-C05",
+    "0909-C04",
+    "0808-C10"
+  ],
+  "EST-06": [
+    "0606-C01",
+    "0707-C01",
+    "0808-C01"
+  ],
+  "EST-07": [
+    "1010-C05",
+    "1010-C06",
+    "0707-C03"
+  ],
+  "EST-08": [
+    "0404-C23",
+    "0404-C24",
+    "0404-C25"
+  ],
+  "EST-09": [
+    "0606-C01",
+    "0606-C02",
+    "0909-C08"
+  ],
+  "EST-10": [
+    "0505-C01",
+    "0505-C03",
+    "0505-C09",
+    "0505-C10",
+    "0505-C12"
+  ],
+  "EST-11": [
+    "0303-C10",
+    "0303-C14",
+    "0303-C15"
+  ],
+  "EST-12": [
+    "0808-C06",
+    "0808-C07",
+    "0808-C08"
+  ],
+  "EST-13": [
+    "0505-C06",
+    "0505-C07",
+    "0202-C16"
+  ],
+  "EST-14": [
+    "0606-C08",
+    "0606-C09",
+    "0606-C11"
+  ],
+  "EST-15": [
+    "0808-C02",
+    "0808-C03",
+    "0707-C02"
+  ],
+  "GLO-01": [
+    "0707-C03",
+    "0707-C05",
+    "1010-C05"
+  ],
+  "GLO-02": [
+    "0707-C05",
+    "0707-C09"
+  ],
+  "GLO-03": [
+    "0707-C01",
+    "0707-C05",
+    "0505-C01"
+  ],
+  "GLO-04": [
+    "0707-C03",
+    "0707-C09"
+  ],
+  "GLO-05": [
+    "0707-C06",
+    "0707-C07",
+    "0202-C11"
+  ],
+  "GLO-06": [
+    "0404-C15",
+    "0404-C16",
+    "0707-C01"
+  ],
+  "GLO-07": [
+    "0707-C03",
+    "0707-C08",
+    "0707-C09"
+  ],
+  "GLO-08": [
+    "0707-C13"
+  ],
+  "GLO-09": [
+    "0707-C10",
+    "0707-C12"
+  ],
+  "GLO-10": [
+    "0404-C24",
+    "1010-C07"
+  ]
+};
+
+export const SPECIALIZED_PROMPTS = SPECIALIZED_PROMPT_ROWS.map(([id, category, title, mission, phase, keywords]) => ({
+  id, category, title, mission, phase, keywords,
+  capabilityIds: SPECIALIZED_CAPABILITY_LINKS[id] || []
+}));
 
 const CATEGORY_METHODS = {
   "Imagem e Fotografia": {
