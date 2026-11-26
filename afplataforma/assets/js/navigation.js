@@ -45,13 +45,18 @@ export function buildNav() {
       { id: "hub-dossie", label: "Diagnóstico e dossiê", ico: "◇" }
     );
   }
+  const phaseItem = (id, number, label, icon) => ({
+    id,
+    label: !mentor && session.legacyPhases?.["phase0" + number] !== true ? label + " · 🔒" : label,
+    ico: icon
+  });
   items.push(
     { sep: true, label: "Arquitetura de Legado" },
-    { id: "fase1", label: "Fase 1 · Essência", ico: `<img src="assets/img/fases/essencia.svg" alt="">` },
-    { id: "fase2", label: "Fase 2 · Império", ico: `<img src="assets/img/fases/imperio.svg" alt="">` },
-    { id: "fase3", label: "Fase 3 · AF", ico: `<img src="assets/img/fases/af.svg" alt="">` },
-    { id: "fase4", label: "Fase 4 · Expansão", ico: `<img src="assets/img/fases/expansao.svg" alt="">` },
-    { id: "fase5", label: "Fase 5 · Legado", ico: `<img src="assets/img/fases/legado.svg" alt="">` },
+    phaseItem("fase1", 1, "Fase 1 · Essência", `<img src="assets/img/fases/essencia.svg" alt="">`),
+    phaseItem("fase2", 2, "Fase 2 · Império", `<img src="assets/img/fases/imperio.svg" alt="">`),
+    phaseItem("fase3", 3, "Fase 3 · AF", `<img src="assets/img/fases/af.svg" alt="">`),
+    phaseItem("fase4", 4, "Fase 4 · Expansão", `<img src="assets/img/fases/expansao.svg" alt="">`),
+    phaseItem("fase5", 5, "Fase 5 · Legado", `<img src="assets/img/fases/legado.svg" alt="">`),
     { id: "hub-prompts", label: mentor ? "Biblioteca de Prompts" : "Prompts liberados", ico: "◇" },
     { id: "hub-sessoes", label: mentor ? "Sessões e acompanhamento" : "Captura e sessões", ico: "◇" }
   );
