@@ -176,7 +176,7 @@ export function renderAccessAdminPanel() {
     <h3 class="section-h">Gestão de acessos · Arquitetura de Legado</h3>
     <p class="hero-sub">Centralize a liberação das cinco fases da Arquitetura de Legado e mantenha, nesta mesma área, o controle específico de acesso ao AF Plataforma.</p>
     <div class="af-search-row">
-      <a class="tool-btn" href="/admin/perfis/" target="_blank" rel="noopener">Abrir Central de Perfis ↗</a>
+      ${session.uid === MENTOR_UID ? '<a class="tool-btn" href="/admin/perfis/" target="_blank" rel="noopener">Abrir Central de Perfis ↗</a>' : ""}
       <span class="notes-hint">Identidade e cadastro ficam em /admin/perfis. As permissões são administradas aqui.</span>
       ${session.mode === "firebase" && session.uid === MENTOR_UID ? '<button class="tool-btn" type="button" id="accessManagersBtn">Gerenciar mentores gestores</button>' : ""}
     </div>
