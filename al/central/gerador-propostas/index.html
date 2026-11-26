@@ -110,7 +110,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
 </main></div></div>
 <div class="catalog-modal-backdrop" id="catalogBackdrop" aria-hidden="true">
  <section class="catalog-modal" role="dialog" aria-modal="true" aria-labelledby="catalogTitle">
-  <div class="catalog-modal-head"><div><div class="eyebrow">AKASHA HUB · INVENTÁRIO E CAPACIDADES</div><h3 id="catalogTitle">Catálogo de Capacidades</h3><p>Selecione os recursos que farão parte do escopo desta proposta. As escolhas serão inseridas no campo de entregáveis.</p></div><button type="button" class="btn alt" id="closeCatalog" aria-label="Fechar catálogo">✕</button></div>
+  <div class="catalog-modal-head"><div><div class="eyebrow">AKASHA HUB · INVENTÁRIO E CAPACIDADES</div><h3 id="catalogTitle">Catálogo de Capacidades</h3><p>10 departamentos · 160 capacidades. Todas exibem uma referência comercial individual, que você pode ajustar para esta proposta. As escolhas entram no escopo e seguem para a precificação.</p></div><button type="button" class="btn alt" id="closeCatalog" aria-label="Fechar catálogo">✕</button></div>
   <div class="catalog-modal-tools"><input id="capSearch" placeholder="Buscar capacidade, departamento ou grupo..." aria-label="Buscar no catálogo"><span class="catalog-count" id="catalogCount">0 selecionadas</span></div>
   <div class="catalog-modal-body" id="catalogBody"></div>
   <div class="catalog-modal-foot"><div><span class="catalog-selected" id="catalogSelectedText">Nenhuma capacidade selecionada</span><strong id="catalogSelectedTotal" style="display:block;margin-top:4px;color:var(--gold);font-size:13px">Referência do escopo: R$ 0,00</strong></div><button type="button" class="btn gold" id="confirmCatalog">Concluir seleção</button></div>
@@ -299,7 +299,7 @@ function renderSelectedCapabilities(){
 function renderCapabilityPricing(){
  const host=$("capabilityPricingRows");if(!host)return;
  host.innerHTML=selectedCapabilities.map((c,i)=>'<tr><td>'+esc(c.name)+'<div class="hint">'+esc(c.department)+'</div></td><td><input type="number" min="0" step="50" data-pricing-cap="'+i+'" value="'+Math.max(0,Number(c.suggestedPrice??suggestedCapabilityPrice((c.id||"").split("::")[0],c.group,c.name))||0)+'" aria-label="Preço sugerido para '+esc(c.name)+'"></td></tr>').join("")||'<tr><td colspan="2">Selecione capacidades no catálogo para estimar o valor do escopo.</td></tr>';
- host.querySelectorAll("[data-pricing-cap]").forEach(el=>el.oninput=()=>{selectedCapabilities[+el.dataset.pricingCap].suggestedPrice=Math.max(0,Number(el.value)||0);calculate()});
+ host.querySelectorAll("[data-pricing-cap]").forEach(el=>el.oninput=()=>{selectedCapabilities[+el.dataset.pricingCap].suggestedPrice=Math.max(0,Number(el.value)||0);updateCatalogCount();calculate()});
 }
 function openCatalog(){ $("catalogBackdrop").classList.add("open");$("catalogBackdrop").setAttribute("aria-hidden","false");renderCatalog();$("capSearch").focus(); }
 function closeCatalog(){ $("catalogBackdrop").classList.remove("open");$("catalogBackdrop").setAttribute("aria-hidden","true");renderSelectedCapabilities();renderCapabilityPricing();calculate(); }
