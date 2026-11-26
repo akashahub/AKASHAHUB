@@ -18,8 +18,8 @@ export function renderCatalogoCapacidades() {
         totalCapabilities++;
         const id = DEPT_CODES[dept.id] + "-C" + String(n).padStart(2,"0");
         const phases = CAPABILITY_PHASES[id] || DEPT_PHASES[dept.id] || [];
-        const phaseTags = phases.map(phase => '<span class="cap-phase-tag">'+esc(phase)+' · '+esc(phaseNames[phase] || phase)+'</span>').join(" ");
-        return '<li><strong class="cap-id">'+esc(id)+'</strong> '+esc(item)+'<small class="cap-phase-tags">'+phaseTags+'</small></li>';
+        const phaseTags = phases.map(phase => '<span class="cap-phase-tag" style="display:inline-block;margin:3px 4px 0 0;padding:2px 7px;border:1px solid rgba(205,174,94,.35);border-radius:999px;font-size:10px;color:var(--gold)">'+esc(phase)+' · '+esc(phaseNames[phase] || phase)+'</span>').join(" ");
+        return '<li><strong class="cap-id" style="font-size:10px;color:var(--muted);margin-right:5px">'+esc(id)+'</strong> '+esc(item)+'<small class="cap-phase-tags" style="display:block;margin:3px 0 8px 0">'+phaseTags+'</small></li>';
       }).join("");
       return '<section class="cap-group"><h4>'+esc(heading)+'</h4><ul>'+rows+'</ul></section>';
     }).join("");
