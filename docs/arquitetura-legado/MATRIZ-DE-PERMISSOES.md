@@ -111,3 +111,13 @@ Cada alteração de permissões cria um registro append-only em `accessAudit/{ev
 ### Escopo de segurança desta etapa
 
 As regras novas protegem a leitura/escrita dos documentos `legacyAccess` e a criação/leitura da auditoria. A navegação da plataforma bloqueia a abertura das fases não autorizadas. A revisão de autorização em nível de documento para cada coleção de dados das ferramentas deve ser feita após o inventário dos caminhos efetivamente usados por fase; não presumir que o bloqueio visual substitui regras de dados. Não publicar regras ou alterações automaticamente.
+
+
+### Delegação de gestores
+
+- `accessManagerGrants/{uid}` define se um mentor pode administrar as permissões das fases.
+- Somente o UID administrador principal pode listar, conceder ou revogar delegações.
+- O próprio mentor pode ler seu documento de delegação para compor a sessão.
+- A autorização de escrita em `legacyAccess` e `accessAudit` exige administrador principal ou gestor ativo.
+- A lista está limitada nesta versão às identidades de mentor já reconhecidas pela configuração do AF; adicionar uma nova identidade de mentor continua sendo uma alteração administrativa separada.
+- Revogar a delegação bloqueia novas gravações imediatamente pelas regras; a interface do mentor reflete o novo estado após atualizar a sessão.
