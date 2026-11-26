@@ -94,8 +94,7 @@
     nodes.push(...(root.querySelectorAll?.("button,a[role=button],.btn,[data-tool],.tool-card,.ah-phase-item") || []));
     for (const el of nodes) {
       if (!el.isConnected || el.closest("#authShell") || el.closest("#quickToolLoader")) continue;
-      const name = pick(labelOf(el));
-      if (!name) continue;
+      const name = pick(labelOf(el)) || (el.tagName === "A" ? "arrow" : "settings");
       if (el.classList.contains("ah-phase-item")) {
         const slot = el.querySelector(".ico");
         if (slot && slot.dataset.afIcon !== name) {
