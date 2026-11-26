@@ -225,6 +225,22 @@ function pendingCount() {
   return cache.filter((u) => u.status === "pending").length;
 }
 
+function effectiveLegacyPhases(u) {
+  const saved = u?.legacyAccess?.phases;
+  if (saved && typeof saved === "object") {
+    return {
+      phase01: saved.phase01 === true,
+      phase02: saved.phase02 === true,
+      phase03: saved.phase03 === true && u.access?.approved === true && u.access?.active === true,
+      phase04: saved.phase04 === true,
+      phase05: saved.phase05 === true
+    };
+  }
+  // Registros AF antigos continuam com as cinco fases até uma escolha explícita do mentor.
+  const afActive = u?.access?.approved === true && u?.access?.active === true;
+  return { phase01: afActive, phase02: afActive, phase03: afActive, phase04: afActive, phase05: afActive };
+}
+
 function paintList() {
   const hint = document.getElementById("afAdminHint");
   const list = document.getElementById("afUserList");
@@ -246,7 +262,7 @@ function paintList() {
   list.innerHTML = rows.map((u) => {
     const st = u.status || "none";
     let actions = "";
-    const phaseCount = ["phase01","phase02","phase03","phase04","phase05"].filter((key) => u.legacyAccess?.phases?.[key] === true).length;
+    const phaseCount = Object.values(effectiveLegacyPhases(u)).filter(Boolean).length;
     const phaseAction = `<button type="button" class="tool-btn" data-af="phases" data-uid="${esc(u.uid)}">Fases ${phaseCount}/5</button>`;
     if (st === "active") {
       actions = phaseAction + `<button type="button" class="tool-btn" data-af="mods" data-uid="${esc(u.uid)}">Gerenciar AF</button>
@@ -291,7 +307,7 @@ function paintList() {
 }
 
 function openLegacyPhases(u) {
-  const phases = u.legacyAccess?.phases || {};
+  const phases = effectiveLegacyPhases(u);
   const items = [
     ["phase01", "Fase 1 · Arquitetura de Essência", "Identidade, posicionamento, liderança e autoridade"],
     ["phase02", "Fase 2 · Império Digital", "Sites, aplicações, plataformas e ativos digitais"],
