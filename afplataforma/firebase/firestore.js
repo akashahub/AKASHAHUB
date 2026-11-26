@@ -193,6 +193,55 @@ export async function updateLegacyPhases(uid, phases) {
   }
 }
 
+export async function getAccessManagerGrant(uid) {
+  if (!uid) return null;
+  try {
+    const snap = await getDoc(doc(db, "accessManagerGrants", uid));
+    return snap.exists() ? snap.data() : null;
+  } catch (e) {
+    mapAfError(e);
+  }
+}
+
+export async function getAccessManagerGrants() {
+  try {
+    const snap = await getDocs(collection(db, "accessManagerGrants"));
+    return snap.docs.map((d) => ({ uid: d.id, ...(d.data() || {}) }));
+  } catch (e) {
+    mapAfError(e);
+  }
+}
+
+export async function updateAccessManagerGrant(uid, active) {
+  if (!uid) throw new Error("Mentor não encontrado.");
+  if (typeof active !== "boolean") throw new Error("Estado de permissão inválido.");
+  try {
+    const actor = actorUid();
+    const ref = doc(db, "accessManagerGrants", uid);
+    const auditRef = doc(collection(db, "accessAudit"));
+    const batch = writeBatch(db);
+    const payload = {
+      active,
+      updatedAt: serverTimestamp(),
+      updatedBy: actor
+    };
+    if (active) payload.grantedAt = serverTimestamp();
+    else payload.revokedAt = serverTimestamp();
+    batch.set(ref, payload, { merge: true });
+    batch.set(auditRef, {
+      action: "access_manager_grant_updated",
+      actorUid: actor,
+      targetUid: uid,
+      active,
+      createdAt: serverTimestamp()
+    });
+    await batch.commit();
+    return { uid, active };
+  } catch (e) {
+    mapAfError(e);
+  }
+}
+
 /**
  * Lista users/{uid} + cruza com afAccess/{uid}.
  * Não altera a collection users.
