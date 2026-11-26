@@ -130,13 +130,13 @@ Uma receita especializada é um método/instrução operacional, não uma capaci
 - `biblioteca-prompts.js`: importa a taxonomia única; gera IDs estáveis; aplica fases por capacidade quando houver exceção; exibe capacidades relacionadas às receitas especializadas.
 - `biblioteca-prompts-especializados.js`: transforma as 70 linhas em objetos com propriedades nomeadas e adiciona `capabilityIds`. Isso corrige a incompatibilidade existente entre o formato de exportação (arrays) e o formato esperado pela interface (objetos).
 - `catalogo-capacidades.js`: exibe ID estável e fase(s) em cada item na Gestão do Mentor.
-- Cache-busting atualizado para os módulos alterados.
+- Cache-busting atualizado na Biblioteca, no Catálogo do Mentor, no carregador principal e no Gerador de Propostas, para garantir que todos leiam a versão atual do catálogo.
 
 ## 7. Preservação e não-escopo
 
 - Não remover, renomear ou reordenar capacidades antigas.
 - Não duplicar prompts, ferramentas, apps, coleções Firestore ou dados por UID.
 - Não alterar autenticação, permissões, regras Firestore, contratos ou registros de mentorandos.
-- Não alterar o Gerador de Propostas nem sua precificação já integrada no PR #111.
+- Preservar a lógica e a precificação do Gerador de Propostas integrada no PR #111; nesta branch, somente a chave de cache da importação do catálogo foi atualizada para disponibilizar as sete novas capacidades.
 - A associação por departamento permanece como padrão histórico; as sete novas capacidades têm classificação explícita por ID.
 - A validação estática de IDs e referências foi executada. Ainda faltam revisão de sintaxe/imports, teste de interface autenticada, filtros por fase, cópia/geração de prompts e regressão das demais telas antes de integrar à main.
