@@ -557,12 +557,42 @@ export function listenAfAccessBoard(onRows, onErr) {
       }
     });
     Object.keys(usersMap).forEach((uid) => {
-      if (byUid[uid]) {
-        const u = usersMap[uid];
+      const u = usersMap[uid] || {};
+      if (!byUid[uid]) {
+        const acc = accessMap[uid] || null;
+        byUid[uid] = {
+          uid,
+          name: pickUserName(u, uid),
+          email: pickUserEmail(u),
+          photo: u.photo || u.photoURL || "",
+          status: afAccessStatus(acc),
+          lastAttemptMs: 0,
+          request: null,
+          access: acc,
+          legacyAccess: legacyMap[uid] || null,
+          modulesOn: countAfModules(acc?.modules)
+        };
+      } else {
         if (!byUid[uid].email) byUid[uid].email = pickUserEmail(u);
         if (!byUid[uid].photo) byUid[uid].photo = u.photo || u.photoURL || "";
         if (byUid[uid].name === uid) byUid[uid].name = pickUserName(u, uid);
+        byUid[uid].legacyAccess = legacyMap[uid] || byUid[uid].legacyAccess || null;
       }
+    });
+    Object.keys(legacyMap).forEach((uid) => {
+      if (byUid[uid]) return;
+      byUid[uid] = {
+        uid,
+        name: uid,
+        email: "",
+        photo: "",
+        status: "none",
+        lastAttemptMs: 0,
+        request: null,
+        access: null,
+        legacyAccess: legacyMap[uid] || null,
+        modulesOn: 0
+      };
     });
     const rows = Object.values(byUid).sort((a, b) => {
       const order = { pending: 0, active: 1, paused: 2, denied: 3, blocked: 4, none: 5 };
