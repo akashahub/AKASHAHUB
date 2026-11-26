@@ -28,6 +28,22 @@
 .modal-box.is-maximized .window-resize{display:none}
 @media(max-width:600px){.modal-box,.generator-modal .modal-box{min-width:0;width:calc(100vw - 12px);height:calc(100vh - 12px);max-width:none;max-height:none}.modal-head{padding:10px 12px;gap:8px}.window-tool{width:30px;height:30px}.window-resize{width:28px;height:28px}}
 
+
+/* Janelas multidimensionais: a página continua interativa atrás das janelas. */
+.modal{position:fixed;inset:0;display:none;background:transparent;padding:0;align-items:initial;justify-content:initial;pointer-events:none;z-index:1000}
+.modal.open{display:block;pointer-events:none}
+.modal .modal-box{position:absolute;left:24px;top:90px;margin:0;pointer-events:auto;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);min-width:300px;min-height:220px;resize:none;overflow:hidden}
+.modal .modal-head{cursor:move;user-select:none;touch-action:none}
+.modal .modal-head button{cursor:pointer}
+.modal .modal-body{min-height:0}
+.modal .window-resize{position:absolute;right:0;bottom:0;width:24px;height:24px;cursor:nwse-resize;touch-action:none;background:linear-gradient(135deg,transparent 50%,var(--gold) 51%,var(--gold) 58%,transparent 59%,transparent 68%,var(--gold) 69%,var(--gold) 76%,transparent 77%)}
+.modal.is-active-window .modal-box{box-shadow:0 24px 70px #0005,0 0 0 2px #c7a66a55}
+.modal .modal-box.is-maximized{left:8px!important;top:8px!important;width:calc(100vw - 16px)!important;height:calc(100vh - 16px)!important;max-width:none;max-height:none}
+@media(max-width:760px){
+ .modal .modal-box{min-width:0;left:12px;top:76px;width:calc(100vw - 24px);height:78vh;max-width:calc(100vw - 24px)}
+ .modal .modal-head{padding:10px 12px}
+ .modal .modal-body{padding:12px}
+}
 </style>
 </head>
 <body>
@@ -95,7 +111,7 @@
 </aside>
 </div>
 </div>
-<div class="modal" id="scriptModal" role="dialog" aria-modal="true" aria-labelledby="scriptTitle">
+<div class="modal" id="scriptModal" role="dialog" aria-modal="false" aria-labelledby="scriptTitle">
  <div class="modal-box"><div class="modal-head"><div><div class="eyebrow">TELEPROMPTER · GUIA DO FUNCIONÁRIO</div><h2 id="scriptTitle">Roteiro completo da call</h2></div><div class="window-tools"><button class="window-tool" type="button" data-window-max title="Maximizar/restaurar" aria-label="Maximizar ou restaurar">□</button><button class="window-tool close" type="button" data-close="scriptModal" aria-label="Fechar">×</button></div></div>
  <div class="modal-body">
   <p class="muted">Use como apoio. Não precisa ler tudo literalmente. Faça uma pergunta, escute a resposta e registre. Tempo sugerido: 25 a 35 minutos, ajustável ao caso.</p>
@@ -111,7 +127,7 @@
   <section class="script-section"><details><summary>10 · Encerramento — deixar combinado (2 min)</summary><div class="script-content"><div class="say">"Então nosso próximo passo é [ação], até [data], com [responsável]. Vou deixar isso registrado para que fique claro para os dois lados. Obrigado pela conversa."</div><div class="coach">Antes de encerrar, confirme quem faz o quê e quando. Não diga que a proposta foi aceita sem confirmação explícita.</div></div></details></section>
  </div><div class="window-resize" data-window-resize title="Arraste para redimensionar" aria-label="Redimensionar janela"></div></div></div>
 </div>
-<div class="modal generator-modal" id="generatorModal" role="dialog" aria-modal="true" aria-label="Gerador de Propostas">
+<div class="modal generator-modal" id="generatorModal" role="dialog" aria-modal="false" aria-label="Gerador de Propostas">
  <div class="modal-box"><div class="modal-head"><div><div class="eyebrow">GERADOR CONECTADO</div><h2>Gerador de Propostas</h2></div><div class="window-tools"><button class="window-tool" type="button" data-window-max title="Maximizar/restaurar" aria-label="Maximizar ou restaurar">□</button><button class="window-tool close" type="button" data-close="generatorModal" aria-label="Fechar">×</button></div></div><div class="modal-body"><iframe class="generator-frame" id="generatorFrame" title="Gerador de Propostas" src="../gerador-propostas/index.html"></iframe></div><div class="window-resize" data-window-resize title="Arraste para redimensionar" aria-label="Redimensionar janela"></div></div></div>
 </div>
 <script>
@@ -123,22 +139,34 @@ function clampWindow(box,left,top,width,height){
  left=Math.max(margin,Math.min(left,window.innerWidth-width-margin));top=Math.max(margin,Math.min(top,window.innerHeight-height-margin));
  box.style.left=left+'px';box.style.top=top+'px';box.style.width=width+'px';box.style.height=height+'px';box.style.transform='none';
 }
+let topWindowZ=1100;
+function bringWindowToFront(id){
+ document.querySelectorAll('.modal').forEach(m=>m.classList.toggle('is-active-window',m.id===id));
+ $(id).style.zIndex=String(++topWindowZ);
+}
 function openModal(id){
- const modal=$(id),box=windowBox(id);modal.classList.add('open');document.body.style.overflow='hidden';
+ const modal=$(id),box=windowBox(id);
+ modal.setAttribute('aria-modal','false');
+ modal.classList.add('open');
  if(!box.dataset.positioned){
   const key='akasha-diagnostic-window-'+id;let saved=null;try{saved=JSON.parse(localStorage.getItem(key)||'null')}catch(e){}
-  const w=Math.min(id==='generatorModal'?1440:1180,window.innerWidth-32),h=Math.min(id==='generatorModal'?window.innerHeight*.94:window.innerHeight*.88,id==='generatorModal'?1000:900);
+  const mobile=window.innerWidth<=760;
+  const w=Math.min(id==='generatorModal'?(mobile?window.innerWidth-24:900):(mobile?window.innerWidth-24:590),window.innerWidth-(mobile?24:32));
+  const h=Math.min(id==='generatorModal'?window.innerHeight*.82:window.innerHeight*.74,window.innerHeight-100);
+  const left=mobile?12:(id==='generatorModal'?Math.max(12,window.innerWidth-w-620):Math.max(12,window.innerWidth-w-16));
+  const top=mobile?(id==='generatorModal'?84:104):(id==='generatorModal'?96:78);
   if(saved&&Number.isFinite(saved.left)&&Number.isFinite(saved.top))clampWindow(box,saved.left,saved.top,saved.width||w,saved.height||h);
-  else clampWindow(box,(window.innerWidth-w)/2,(window.innerHeight-h)/2,w,h);
+  else clampWindow(box,left,top,w,h);
   box.dataset.positioned='1';
  }
+ bringWindowToFront(id);
 }
 function saveWindow(id){const box=windowBox(id);if(box.classList.contains('is-maximized'))return;const r=box.getBoundingClientRect();try{localStorage.setItem('akasha-diagnostic-window-'+id,JSON.stringify({left:r.left,top:r.top,width:r.width,height:r.height}))}catch(e){}}
 function closeModal(id){$(id).classList.remove('open');if(!document.querySelector('.modal.open'))document.body.style.overflow='';saveWindow(id)}
 document.querySelectorAll('.modal').forEach(modal=>{
  const id=modal.id,box=windowBox(id),head=box.querySelector('.modal-head'),grip=box.querySelector('[data-window-resize]'),maxBtn=box.querySelector('[data-window-max]');
  let drag=null,resize=null,restore=null;
- head.addEventListener('pointerdown',e=>{if(e.target.closest('button,a,input,select'))return;if(box.classList.contains('is-maximized'))return;const r=box.getBoundingClientRect();drag={x:e.clientX-r.left,y:e.clientY-r.top};head.setPointerCapture(e.pointerId)});
+ head.addEventListener('pointerdown',e=>{if(e.target.closest('button,a,input,select'))return;bringWindowToFront(id);if(box.classList.contains('is-maximized'))return;const r=box.getBoundingClientRect();drag={x:e.clientX-r.left,y:e.clientY-r.top};head.setPointerCapture(e.pointerId)});
  head.addEventListener('pointermove',e=>{if(!drag)return;const r=box.getBoundingClientRect();clampWindow(box,e.clientX-drag.x,e.clientY-drag.y,r.width,r.height)});
  head.addEventListener('pointerup',()=>{if(drag){drag=null;saveWindow(id)}});
  head.addEventListener('pointercancel',()=>{drag=null});
