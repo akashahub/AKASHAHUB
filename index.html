@@ -28,6 +28,7 @@ header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.92);backdro
 .nav-right{display:flex;align-items:center;gap:22px;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#444}
 .nav-right a:hover{color:var(--violet)}
 .nav-cta{padding:12px 17px;border:1px solid #111;background:#111;color:#fff;border-radius:3px}
+.nav-account{display:inline-flex;align-items:center;justify-content:center;padding:11px 15px;border:1px solid var(--line);color:#111;border-radius:3px;font-weight:700;white-space:nowrap}.nav-account:hover{border-color:var(--gold);color:var(--violet)}
 .hero{padding:92px 0 72px;position:relative;overflow:hidden}
 .hero:after{content:"";position:absolute;width:520px;height:520px;right:-190px;top:-230px;border-radius:50%;background:radial-gradient(circle,rgba(178,139,53,.12),transparent 68%);pointer-events:none}
 .crumb{font:10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#777;margin-bottom:32px}
@@ -303,7 +304,7 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
   <div class="wrap nav">
     <a class="brand" href="/" aria-label="AKASHA Hub - página inicial"><img class="brand-mark" src="/img/akasha-hub-logo.png" alt="AKASHA Hub"><span>AKASHA <em>HUB</em></span></a>
     <nav class="nav-right" aria-label="Navegação principal">
-      <a href="/">Início</a><a href="/al/">Arquitetura de Legado</a><a class="nav-cta" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20quero%20conversar%20sobre%20uma%20solu%C3%A7%C3%A3o%20digital%20para%20meu%20neg%C3%B3cio." target="_blank" rel="noopener">Conversar sobre meu projeto ↗</a>
+      <a href="/">Início</a><a href="/al/">Arquitetura de Legado</a><a class="nav-account" id="navAccount" href="/login/?next=%2F">Entrar</a><a class="nav-cta" href="https://wa.me/5571983448621?text=Ol%C3%A1%2C%20quero%20conversar%20sobre%20uma%20solu%C3%A7%C3%A3o%20digital%20para%20meu%20neg%C3%B3cio." target="_blank" rel="noopener">Conversar sobre meu projeto ↗</a>
     </nav>
   </div>
 </header>
@@ -1018,5 +1019,16 @@ footer{background:#f4f4f4;border-top:1px solid #e5e5e5;padding:30px 0 42px}
 })();
 </script>
 
+<script type="module">
+import { auth } from "/login/firebase.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const accountLink = document.getElementById("navAccount");
+onAuthStateChanged(auth, user => {
+  if (!accountLink) return;
+  accountLink.textContent = user ? "Área de usuário" : "Entrar";
+  accountLink.href = user ? "/dashboard/" : "/login/?next=%2F";
+  accountLink.setAttribute("aria-label", user ? "Acessar área de usuário" : "Entrar na conta");
+});
+</script>
 </body>
 </html>

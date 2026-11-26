@@ -38,6 +38,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
   border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;
   font-size:.8rem;color:var(--gold);cursor:pointer;text-decoration:none;transition:background .3s;}
 .nav-avatar:hover{background:rgba(201,162,39,.2);}
+.nav-home{font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--gold-border);padding:8px 12px;border-radius:20px;white-space:nowrap}.nav-home:hover{color:var(--gold-light);border-color:var(--gold)}
+.user-menu{position:relative}.user-menu summary{list-style:none}.user-menu summary::-webkit-details-marker{display:none}.user-menu-panel{position:absolute;right:0;top:calc(100% + 12px);width:220px;padding:8px;background:#fffdf8;border:1px solid var(--gold-border);box-shadow:0 14px 36px rgba(22,18,15,.14);z-index:120;display:grid;gap:2px}.user-menu-panel a{padding:11px 12px;color:#332a20;text-decoration:none;font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;border-radius:2px}.user-menu-panel a:hover{background:rgba(201,162,39,.09);color:var(--gold-light)}
 
 /* ── LAYOUT ── */
 main{max-width:660px;margin:0 auto;padding:96px 20px 120px;position:relative;z-index:1;}
@@ -387,8 +389,19 @@ footer{margin-top:52px;text-align:center;padding:18px 0;border-top:1px solid rgb
     <span>AK<b>A</b>SHA <b>HUB</b></span>
   </a>
   <div class="nav-right">
+    <a href="/" class="nav-home">Início</a>
     <div class="nav-level" id="navLevel">…</div>
-    <a href="/perfil/" class="nav-avatar" id="navAvatar">?</a>
+    <details class="user-menu">
+      <summary class="nav-avatar" id="navAvatar" aria-label="Abrir menu do usuário">?</summary>
+      <div class="user-menu-panel">
+        <a href="/dashboard/">Visão geral</a>
+        <a href="/perfil/">Meu perfil</a>
+        <a href="/compras/">Minhas compras</a>
+        <a href="/members/">Biblioteca de membros</a>
+        <a href="/eventos/">Eventos</a>
+        <a href="/">Página inicial do Akasha</a>
+      </div>
+    </details>
   </div>
 </nav>
 
@@ -704,7 +717,7 @@ window.fecharModalVideo = function() {
 
 /* ── AUTH ── */
 onAuthStateChanged(auth, async user => {
-  if (!user) { window.location.href = '/login/'; return; }
+  if (!user) { window.location.href = '/login/?next=%2Fdashboard%2F'; return; }
   currentUser = user;
   isAdmin     = user.uid === ADMIN_UID;
   if (isAdmin) document.getElementById('adminIntelligenceCard').style.display = 'flex';
