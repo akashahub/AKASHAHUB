@@ -87,10 +87,52 @@ async function readTool(tool, uid) {
     const snap = await getDoc(doc(db, tool.col, uid));
     if (!snap.exists()) return { ...tool, status: "vazio", fields: [] };
     const fields = readableFields(snap.data());
-    return { ...tool, status: fields.length ? "cheio" : "vazio", fields };
+    const sourceScope = tool.phase.startsWith("Fase 1") ? "personal" : tool.phase.startsWith("Fase 3") || tool.phase.startsWith("Fase 5") ? "hybrid" : "business";
+    return { ...tool, sourceScope, status: fields.length ? "cheio" : "vazio", fields };
   } catch (error) {
     const denied = error && (error.code === "permission-denied" || String(error.message || "").includes("permission"));
     return { ...tool, status: denied ? "bloqueado" : "erro", fields: [] };
+  }
+}
+
+
+function dossierTextFields(value, prefix="", depth=0) {
+  const fields=[];
+  if(!value||typeof value!=="object"||depth>2)return fields;
+  for(const [key,item] of Object.entries(value)){
+    if(["id","ownerUid","schemaVersion","updatedAt","archivedAt","status"].includes(key))continue;
+    const label=(prefix?prefix+" · ":"")+key.replace(/([A-Z])/g," $1").replaceAll("_"," ");
+    if(typeof item==="string"&&item.trim())fields.push({key:label,text:item.trim()});
+    else if(Array.isArray(item)){
+      const text=item.filter(x=>typeof x==="string"&&x.trim()).join(", ");
+      if(text)fields.push({key:label,text});
+    } else if(item&&typeof item==="object")fields.push(...dossierTextFields(item,label,depth+1));
+  }
+  return fields;
+}
+
+async function readParticipantDossier(uid) {
+  try {
+    const snap=await getDoc(doc(db,"users",uid));
+    const data=snap.exists()?snap.data()?.afDossier:null;
+    if(!data)return [];
+    const blocks=[];
+    const personalFields=dossierTextFields(data.personal,"Perfil pessoal");
+    if(personalFields.length)blocks.push({phase:"Perfil 360° · Pessoal",title:"Identidade do empreendedor",sourceScope:"personal",href:"/afplataforma/?view=cadastro-inteligente",status:"cheio",fields:personalFields});
+    for(const business of Array.isArray(data.businesses)?data.businesses:[]){
+      if(business.archivedAt)continue;
+      const fields=dossierTextFields(business,"Empresa · "+(business.name||"Negócio sem nome"));
+      if(fields.length)blocks.push({phase:"Perfil 360° · Empresarial",title:business.name||"Negócio sem nome",sourceScope:"business",href:"/afplataforma/?view=cadastro-inteligente",status:"cheio",fields});
+    }
+    for(const project of Array.isArray(data.projects)?data.projects:[]){
+      if(project.archivedAt)continue;
+      const fields=dossierTextFields(project,"Projeto · "+(project.name||"Projeto sem nome"));
+      if(fields.length)blocks.push({phase:"Perfil 360° · Projeto",title:project.name||"Projeto sem nome",sourceScope:"project",href:"/afplataforma/?view=cadastro-inteligente",status:"cheio",fields});
+    }
+    return blocks;
+  } catch(error) {
+    const denied=error&&(error.code==="permission-denied"||String(error.message||"").includes("permission"));
+    return [{phase:"Perfil 360°",title:"Cadastro Inteligente",sourceScope:"hybrid",href:"/afplataforma/?view=cadastro-inteligente",status:denied?"bloqueado":"erro",fields:[]}];
   }
 }
 
