@@ -68,7 +68,7 @@
  let channel=null;try{channel=new BroadcastChannel("akasha-sales-os-v2");channel.onmessage=e=>{if(e.data?.type==="state"&&e.data.sessionId===sessionId){state=e.data.state;try{localStorage.setItem(PREFIX+sessionId,JSON.stringify(state))}catch(err){}paint();status("Sincronizado em tempo real")}}}catch(e){}
  window.AkashaSalesSync={
   getState:()=>structuredClone(state),publish,
-  setSession(next){sessionId=next||id();localStorage.setItem(ACTIVE,sessionId);state={version:2,sessionId,fields:{},selectedProblems:[],selectedCapabilities:[],updatedAt:null};persist(true);paint()},
+  setSession(next){sessionId=next||id();localStorage.setItem(ACTIVE,sessionId);state={version:2,sessionId,fields:{},selectedProblems:[],selectedCapabilities:[],updatedAt:null,...read()};state.fields=state.fields||{};paint();persist(true)},
   newSession(){this.setSession(id())}
  };
  paint();
