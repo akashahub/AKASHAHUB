@@ -19,8 +19,12 @@
   manualPrice:["manualPrice"],installments:["installments"],payment:["payment"],proposalStatus:["proposalStatus"]
  };
  const read=()=>{try{return JSON.parse(localStorage.getItem(PREFIX+sessionId)||"{}")}catch(e){return {}}};
- let state={version:2,sessionId,fields:{},selectedProblems:[],selectedCapabilities:[],updatedAt:null,...read()};
+ const stored=read();
+ let state={version:2,sessionId,fields:{},selectedProblems:[],selectedCapabilities:[],updatedAt:null,...stored};
  state.fields=state.fields||{};
+ if(!stored.fields){
+  try{const old=JSON.parse(localStorage.getItem(legacy)||"null");if(old){state.selectedProblems=Array.isArray(old.selectedProblems)?old.selectedProblems:[];state.selectedCapabilities=Array.isArray(old.selectedCapabilities)?old.selectedCapabilities:[];Object.assign(state.fields,{client:old.client||"",contact:old.contact||"",segment:old.segment||"",scenario:old.scenario||"",bottleneck:old.bottleneck||"",goal:old.goal||""})}}catch(e){}
+ }
  function status(msg){document.querySelectorAll("[data-akasha-sync-status]").forEach(el=>el.textContent=msg)}
  function paint(){
   Object.entries(fields).forEach(([key,ids])=>{
