@@ -7,7 +7,7 @@ const COLLECTION = "users";
 const ROOT_FIELD = "afDossier";
 let dossier = emptyDossier();
 let activeBusinessId = null;
-let welcomeShown = false;
+let welcomeShownForUid = "";
 
 const PERSONAL_FIELDS = [
   ["fullName","Nome completo"],["preferredName","Como prefere ser chamado"],
@@ -223,7 +223,7 @@ export async function bindCadastroInteligente() {
     if(action==="reload"){root.dataset.bound="";bindCadastroInteligente();return;}
     if(action==="add-business"){
       collectForm(root);
-      if(dossier.businesses.filter(x=>!x.archivedAt).length>=10){const st=root.querySelector("#ciStatus");if(st)st.textContent="Limite inicial de 10 negócios ativos. Arquive um negócio antes de adicionar outro.";return;}
+      if(dossier.businesses.filter(x=>!x.archivedAt).length>=10||dossier.businesses.length>=20){const st=root.querySelector("#ciStatus");if(st)st.textContent="Limite inicial: até 10 negócios ativos e 20 registros no total, preservando os arquivados.";return;}
       const item={id:newId("biz"),name:"",identity:{},brand:{},operations:{},finance:{},digital:{},commercial:{},expansion:{},legacy:{}};
       dossier.businesses.push(item);activeBusinessId=item.id;root.innerHTML=styles()+renderForm();return;
     }
@@ -234,7 +234,7 @@ export async function bindCadastroInteligente() {
     }
     if(action==="add-project"){
       collectForm(root);
-      if(dossier.projects.filter(x=>!x.archivedAt).length>=25){const st=root.querySelector("#ciStatus");if(st)st.textContent="Limite inicial de 25 projetos ativos.";return;}
+      if(dossier.projects.filter(x=>!x.archivedAt).length>=25||dossier.projects.length>=50){const st=root.querySelector("#ciStatus");if(st)st.textContent="Limite inicial: até 25 projetos ativos e 50 registros no total.";return;}
       dossier.projects.push({id:newId("proj"),name:"",businessId:activeBusinessId||"",type:"",objective:"",phase:"",status:"Em diagnóstico",deadline:"",notes:""});
       root.innerHTML=styles()+renderForm();return;
     }
@@ -263,8 +263,8 @@ async function updateOnboardingStatus(status) {
 }
 
 export async function maybePromptCadastroInteligente(navigate) {
-  if(welcomeShown||isMentorSession()||!session.uid||session.mode!=="firebase")return;
-  welcomeShown=true;
+  if(welcomeShownForUid===session.uid||isMentorSession()||!session.uid||session.mode!=="firebase")return;
+  welcomeShownForUid=session.uid;
   try{
     const snap=await getDoc(doc(db,COLLECTION,session.uid));
     const current=normalizeDossier(snap.exists()?snap.data()?.[ROOT_FIELD]:null);
@@ -285,5 +285,5 @@ export async function maybePromptCadastroInteligente(navigate) {
       try{await updateOnboardingStatus("skipped");overlay.remove();}
       catch(error){const el=overlay.querySelector("#ciWelcomeStatus");if(el)el.textContent="Não consegui registrar sua escolha. Tente novamente.";btn.disabled=false;}
     });
-  }catch(error){console.warn("[Cadastro Inteligente] Não foi possível verificar o primeiro acesso:",error?.code||error?.message||error);}
+  }catch(error){welcomeShownForUid="";console.warn("[Cadastro Inteligente] Não foi possível verificar o primeiro acesso:",error?.code||error?.message||error);}
 }
