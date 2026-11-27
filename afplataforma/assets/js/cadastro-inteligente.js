@@ -99,7 +99,7 @@ function field(label, scope, key, value="", multiline=false, group="", hint="") 
   const control=multiline
     ? '<textarea '+attrs+' rows="3" placeholder="Preencha se já souber...">'+esc(value)+'</textarea>'
     : '<input '+attrs+' type="text" value="'+esc(value)+'" placeholder="Preencha se já souber...">';
-  return '<label class="ci-field"><span>'+esc(label)+'</span>'+control+(hint?'<small>'+esc(hint)+'</small>':'')+'</label>';
+  return '<label class="ci-field"><span>'+esc(label)+'</span>'+control+(hint&&scope!=="project"?'<small>'+esc(hint)+'</small>':'')+'</label>';
 }
 
 function renderFields(fields, values, scope, group="") {
