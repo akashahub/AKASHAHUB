@@ -105,7 +105,7 @@ O inventário estratégico de serviços/capacidades continua na Gestão do Mento
 | Aplicativo | Situação identificada |
 |---|---|
 | Client Intelligence | Parcial: perfil, diagnóstico, Sessões e Dossiê existem em partes; falta um histórico único do cliente |
-| Strategic Inventory | Existente: Catálogo de Capacidades na Gestão do Mentor; catálogo mestre com 10 departamentos, 39 grupos e 160 capacidades, segundo o roadmap do Growth Engine |
+| Strategic Inventory | Existente: Catálogo de Capacidades na Gestão do Mentor; catálogo mestre com 10 departamentos, 39 grupos e 167 capacidades, segundo o roadmap do Growth Engine |
 | Research Lab | Planejado; pesquisa e fontes aparecem como necessidade, mas não foi confirmado um app integrado completo |
 | Architecture Studio | Planejado; precisa transformar diagnóstico em blueprint e plano de solução |
 | Asset Factory | Parcial: biblioteca/portfólio de soluções e páginas de serviços do Império Digital; falta fluxo unificado de produção e aprovação |
