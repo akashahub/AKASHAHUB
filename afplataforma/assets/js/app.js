@@ -76,10 +76,10 @@ import {
   renderHubIntel,
   renderHubAcervo,
   renderHubConfig
-} from "./hub-shell.js?v=rollback-pre-intel-20261118";
-import { bindHubDossie } from "./hub-dossie.js?v=dossier-prompt-context-20261119-v1";
-import { renderMasterPromptMap, bindMasterPromptMap } from "./biblioteca-prompts.js?v=context-scope-20261127-1";
-import { bindPhasePromptAccess } from "./biblioteca-prompts.js?v=context-scope-20261127-1";
+} from "./hub-shell.js?v=20261127-cadastro-v1";
+import { bindHubDossie } from "./hub-dossie.js?v=dossier-cadastro-20261127-v1";
+import { renderMasterPromptMap, bindMasterPromptMap } from "./biblioteca-prompts.js?v=20261127-cadastro-v1";
+import { bindPhasePromptAccess } from "./biblioteca-prompts.js?v=20261127-cadastro-v1";
 import { renderVisionStudio, bindVisionStudio } from "./vision-studio.js?v=1";
 import { renderCadastroInteligente, bindCadastroInteligente, maybePromptCadastroInteligente } from "./cadastro-inteligente.js?v=20261127-cadastro-v1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
