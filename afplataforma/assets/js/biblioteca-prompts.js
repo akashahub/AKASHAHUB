@@ -571,6 +571,21 @@ async function attachDossierContext(area,status,scope="hybrid") {
   }
 }
 function handleContextScopeChange(root,event) {
+  if(event.target.id==="pmDossierProject"){
+    const option=event.target.selectedOptions?.[0],projectId=event.target.value||"";
+    activeProjectId=projectId;
+    const businessSelect=root.querySelector("#pmDossierBusiness");
+    if(option?.dataset.businessId&&businessSelect)businessSelect.value=option.dataset.businessId;
+    const uid=selectedContextUid();
+    if(uid)projectContextLoadPromise=loadScopedContexts(uid,projectId).then(()=>{
+      SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
+      const overlay=root.querySelector("[data-pm-context-overlay]");
+      overlay?.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
+      const status=overlay?.querySelector("#pmContextStatus");
+      if(status)status.textContent=projectId?"Ficha específica do projeto carregada.":"Ficha principal carregada.";
+    }).catch(error=>console.warn("[Biblioteca] Falha ao carregar ficha do projeto:",error));
+    return;
+  }
   if(!event.target.matches("[data-pm-context-scope]"))return;
   activeSharedContextScope=event.target.value;
   SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope]||SHARED_CONTEXT_BY_SCOPE.hybrid;
