@@ -139,6 +139,8 @@ const AKASHA_HUB_EXAMPLE = {
 
 const SHARED_CONTEXT_BY_SCOPE = { personal:Object.create(null), business:Object.create(null), hybrid:Object.create(null) };
 let activeSharedContextScope = "hybrid";
+let activeProjectId = "";
+let projectContextLoadPromise = Promise.resolve();
 let SHARED_CONTEXT = SHARED_CONTEXT_BY_SCOPE.hybrid;
 let sharedContextCloudState = "idle";
 function selectedContextUid() {
@@ -186,9 +188,12 @@ async function populateDossierSelectors(root) {
     const projects=Array.isArray(d.projects)?d.projects.filter(x=>!x.archivedAt):[];
     const oldBusiness=businessSelect.value,oldProject=projectSelect.value;
     businessSelect.innerHTML='<option value="">Selecione um negócio</option>'+businesses.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name||"Negócio sem nome")+'</option>').join("");
-    projectSelect.innerHTML='<option value="">Sem projeto específico</option>'+projects.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name||"Projeto sem nome")+'</option>').join("");
+    projectSelect.innerHTML='<option value="">Projeto principal / sem projeto específico</option>'+projects.map(x=>'<option value="'+esc(x.id)+'" data-business-id="'+esc(x.businessId||"")+'">'+esc(x.name||"Projeto sem nome")+'</option>').join("");
     if(businesses.some(x=>x.id===oldBusiness))businessSelect.value=oldBusiness;
     if(projects.some(x=>x.id===oldProject))projectSelect.value=oldProject;
+    activeProjectId=projectSelect.value||"";
+    const selectedProject=projects.find(x=>x.id===activeProjectId);
+    if(selectedProject?.businessId&&businesses.some(x=>x.id===selectedProject.businessId))businessSelect.value=selectedProject.businessId;
   }catch(error){console.warn("[Biblioteca] Não consegui carregar as opções do Dossiê:",error?.code||error?.message||error);}
 }
 async function openSharedContext(root) {
@@ -273,7 +278,7 @@ async function saveSharedContext(root) {
   if(button){button.disabled=true;button.textContent="Salvando...";}
   if(status)status.textContent="Salvando ficha "+getContextScopeMeta(activeSharedContextScope).label.toLowerCase()+"...";
   try{
-    await setDoc(doc(db,"afProjectContexts",uid,"projects","principal-"+activeSharedContextScope),{
+    await setDoc(doc(db,"afProjectContexts",uid,"projects",activeProjectId?"project-"+activeProjectId+"-"+activeSharedContextScope:"principal-"+activeSharedContextScope),{
       ownerUid:uid,context:next,schemaVersion:1,updatedBy:session.uid,updatedAt:serverTimestamp()
     });
     PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope][key]=next[key]||"";});
