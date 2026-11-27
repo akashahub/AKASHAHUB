@@ -1,6 +1,7 @@
 // Receitas especializadas da Biblioteca de Prompts Akasha Hub.
+import { getSpecializedContextScope, contextScopeInstruction } from "./biblioteca-contexto-data.js?v=context-scope-20261127-1";
 // Camada estática: não grava dados, não chama APIs e não altera aplicativos existentes.
-export const SPECIALIZED_PROMPTS = [
+const SPECIALIZED_PROMPT_ROWS = [
 ["IMG-01","Imagem e Fotografia","Photo Enhancement Pro","Melhorar luz, nitidez, contraste, cores e resolução sem criar detalhes falsos.","ID","foto, imagem, nitidez, resolução"],
 ["IMG-02","Imagem e Fotografia","Restauração Fotográfica Realista","Recuperar fotografias antigas, riscadas, desbotadas ou danificadas preservando sua aparência documental.","ID","foto antiga, restauração, danos"],
 ["IMG-03","Imagem e Fotografia","Preservação de Identidade Facial","Editar uma fotografia sem alterar identidade, formato do rosto, idade aparente ou traços individuais.","ID","rosto, identidade, retrato"],
@@ -73,6 +74,13 @@ export const SPECIALIZED_PROMPTS = [
 ["GLO-10","Internacionalização e Expansão Global","Global Valuation Strategist","Analisar fatores que podem influenciar valuation: receita recorrente, margem, crescimento, governança, ativos e dependência do fundador.","LG","valuation, valor de empresa, escala"]
 ];
 
+// Compatibiliza o formato tabular legado com a interface baseada em objetos.
+// Os IDs, nomes, missões, fases e palavras-chave permanecem preservados.
+export const SPECIALIZED_PROMPTS = SPECIALIZED_PROMPT_ROWS.map(([id, category, title, mission, phase, keywords]) => ({
+  id, category, title, mission, phase, keywords,
+  contextScope: getSpecializedContextScope(id)
+}));
+
 const CATEGORY_METHODS = {
   "Imagem e Fotografia": {
     inputs:["Imagem original ou referência autorizada","O que deve melhorar e o que precisa permanecer intacto","Uso final, formato, proporção e nível de realismo"],
@@ -128,6 +136,9 @@ export function buildSpecializedPrompt(item) {
 
 ### MISSÃO
 ${item.mission}
+
+### ESCOPO DE CONTEXTO
+Classificação: ${item.contextScope || getSpecializedContextScope(item.id)}. ${contextScopeInstruction(item.contextScope || getSpecializedContextScope(item.id))}
 
 Atue como especialista sênior nesta tarefa. O mentor é o protagonista do projeto: conduz a relação com o cliente, valida decisões e aprova entregáveis. Você é copiloto de pesquisa, análise, criação e planejamento. Seja didático, objetivo e prático: explique termos difíceis em linguagem simples e transforme cada recomendação em uma próxima ação.
 
