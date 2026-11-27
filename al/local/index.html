@@ -14,7 +14,7 @@
 </style>
 </head>
 <body>
-<div id="authScreen" class="auth hidden"><div class="authcard"><div class="eyebrow">Akasha Hub · Área restrita</div><h1>Local Intelligence</h1><p class="muted small">Entre com sua conta autorizada de mentor Akasha.</p><label class="small">E-mail</label><input id="loginEmail" type="email" autocomplete="username" placeholder="seu@email.com"><label class="small">Senha</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Sua senha"><button class="btn" id="loginBtn">Entrar</button> <button class="btn ghost" id="googleBtn">Google</button><div class="authmsg" id="authMsg"></div></div></div>
+<div id="sharedScreen" class="auth hidden"><div class="authcard" style="width:min(1100px,100%)"><div class="eyebrow">Akasha Hub · Prévia compartilhada</div><h1 id="sharedTitle">Demonstração</h1><p class="muted small">Prévia conceitual para avaliação. Não representa um site oficial publicado.</p><iframe id="sharedFrame" class="demo-frame" sandbox="allow-forms allow-popups" title="Prévia compartilhada"></iframe><p id="sharedNotice" class="muted small"></p></div></div><div id="authScreen" class="auth hidden"><div class="authcard"><div class="eyebrow">Akasha Hub · Área restrita</div><h1>Local Intelligence</h1><p class="muted small">Entre com sua conta autorizada de mentor Akasha.</p><label class="small">E-mail</label><input id="loginEmail" type="email" autocomplete="username" placeholder="seu@email.com"><label class="small">Senha</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Sua senha"><button class="btn" id="loginBtn">Entrar</button> <button class="btn ghost" id="googleBtn">Google</button><div class="authmsg" id="authMsg"></div></div></div>
 <div id="deniedScreen" class="auth hidden"><div class="authcard"><div class="eyebrow">Acesso restrito</div><h1>Conta sem permissão</h1><p class="muted small">Esta central está disponível somente para identidades de mentor autorizadas nas regras do Akasha Hub.</p><button class="btn ghost" id="logoutDenied">Sair</button></div></div>
 <div class="app hidden" id="app">
 <aside class="side"><div class="brand"><div class="mark">A</div><div><strong>AKASHA HUB</strong><small>LOCAL INTELLIGENCE</small></div></div><div class="navlabel">Operação comercial</div><nav class="nav" id="nav">
@@ -71,7 +71,7 @@
 <script type="module">
 import { auth, db } from "/login/firebase.js";
 import { onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { collection, doc, addDoc, updateDoc, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, doc, addDoc, updateDoc, onSnapshot, serverTimestamp, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const MENTOR_UID="1GO7dRdFUFg2NwYwzOwjvtWfpAS2";
 const MENTOR_EMAILS=["yanfili.simon@gmail.com","plmacramo@gmail.com","sendatantrica@gmail.com","opatricksimon@gmail.com"];
 const $=id=>document.getElementById(id), money=n=>(Number(n)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}), esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -85,7 +85,7 @@ const cityAreas=[
 {city:"Prado",areas:["Centro","Cumuruxatiba","Guaratiba"]},
 {city:"Porto Seguro",areas:["Centro","Arraial d’Ajuda","Trancoso","Caraíva"]}
 ];
-let user=null,businesses=[],batches=[],demos=[],proposals=[],finance=[],unsubs=[],map=null,activeDemo=null;
+let user=null,businesses=[],batches=[],demos=[],proposals=[],finance=[],demoVersions=[],unsubs=[],map=null,activeDemo=null,shareUrl="";
 function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2600)}
 function authorized(u){return !!u&&(u.uid===MENTOR_UID||MENTOR_EMAILS.includes((u.email||"").toLowerCase()))}
 function showAuth(msg=""){ $("authScreen").classList.remove("hidden");$("app").classList.add("hidden");$("deniedScreen").classList.add("hidden");$("authMsg").textContent=msg}
@@ -94,10 +94,12 @@ function showApp(){ $("app").classList.remove("hidden");$("authScreen").classLis
 $("loginBtn").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginPassword").value)}catch(e){$("authMsg").textContent="Não foi possível entrar: "+(e.code||e.message)}};
 $("googleBtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("authMsg").textContent="Não foi possível entrar: "+(e.code||e.message)}};
 $("logoutBtn").onclick=$("logoutDenied").onclick=()=>signOut(auth);
-onAuthStateChanged(auth,u=>{user=u;if(!u){showAuth();return}if(!authorized(u)){showDenied();return}showApp();startData()});
+const shareToken=new URLSearchParams(location.search).get("share");
+onAuthStateChanged(auth,u=>{user=u;if(shareToken){showSharedPreview(shareToken);return}if(!u){showAuth();return}if(!authorized(u)){showDenied();return}showApp();startData()});
+async function showSharedPreview(token){$("sharedScreen").classList.remove("hidden");$("authScreen").classList.add("hidden");$("deniedScreen").classList.add("hidden");$("app").classList.add("hidden");try{const snap=await getDoc(doc(db,"alLocalDemoShares",token));if(!snap.exists()||snap.data().active!==true){$("sharedTitle").textContent="Link indisponível";$("sharedNotice").textContent="Esta prévia foi revogada ou não existe mais.";return}const data=snap.data();$("sharedTitle").textContent=data.businessName||"Demonstração";$("sharedFrame").srcdoc=data.html||"";$("sharedNotice").textContent="Prévia conceitual · Akasha Hub · Não é um site oficial publicado."}catch(e){$("sharedTitle").textContent="Não foi possível abrir a prévia";$("sharedNotice").textContent="Verifique sua conexão e tente novamente.";console.error(e)}}
 function startData(){unsubs.forEach(f=>f());unsubs=[];$("connectionStatus").textContent="Conectando ao Firestore…";
 const watch=(name,cb)=>unsubs.push(onSnapshot(collection(db,name),snap=>{cb(snap.docs.map(d=>({id:d.id,...d.data()})));renderAll();$("connectionStatus").textContent="● Firestore conectado" },e=>{$("connectionStatus").textContent="Erro Firestore: "+(e.code||e.message);console.error(name,e)}));
-watch("alLocalBusinesses",v=>businesses=v);watch("alLocalBatches",v=>batches=v);watch("alLocalDemos",v=>demos=v);watch("alLocalProposals",v=>proposals=v);watch("alLocalFinance",v=>finance=v);
+watch("alLocalBusinesses",v=>businesses=v);watch("alLocalBatches",v=>batches=v);watch("alLocalDemos",v=>demos=v);watch("alLocalProposals",v=>proposals=v);watch("alLocalFinance",v=>finance=v);watch("alLocalDemoVersions",v=>demoVersions=v);
 }
 async function addRecord(col,data){return addDoc(collection(db,col),{...data,createdAt:serverTimestamp(),createdBy:user.uid,updatedAt:serverTimestamp()})}
 async function updateRecord(col,id,data){return updateDoc(doc(db,col,id),{...data,updatedAt:serverTimestamp(),updatedBy:user.uid})}
@@ -171,7 +173,7 @@ for(let i=0;i<chosen.length;i++){
 const b=chosen[i];title.textContent="Produzindo: "+b.name;
 try{
 const html=makeDemo(b,template);
-const ref=await addRecord("alLocalDemos",{batchId:batch.id,businessId:b.id,businessName:b.name,segment:b.segment||"",city:b.city,neighborhood:b.neighborhood,address:b.address||"",phone:b.phone||"",html,status:"Conceito privado",template});
+const ref=await addRecord("alLocalDemos",{batchId:batch.id,businessId:b.id,businessName:b.name,segment:b.segment||"",city:b.city,neighborhood:b.neighborhood,address:b.address||"",phone:b.phone||"",html,status:"Conceito privado",workflowStatus:"Pronto para apresentar",template,version:1});
 created++;
 await updateRecord("alLocalBusinesses",b.id,{status:"Protótipo pronto",demoId:ref.id});
 }catch(err){failed.push(b.name+": "+(err.code||err.message));console.error("Falha ao produzir demonstração",b.id,err)}
