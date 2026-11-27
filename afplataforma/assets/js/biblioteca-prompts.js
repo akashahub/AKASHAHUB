@@ -304,11 +304,13 @@ async function importDossierIntoContext(root) {
     const biz=(d.businesses||[]).find(x=>x.id===businessId&&!x.archivedAt)||null;
     const project=(d.projects||[]).find(x=>x.id===projectId&&!x.archivedAt)||null;
     if(scope!=="personal"&&!biz){if(status)status.textContent="O negócio selecionado não foi encontrado. Atualize a lista.";return;}
+    if(project?.businessId&&biz?.id&&project.businessId!==biz.id){if(status)status.textContent="Este projeto está vinculado a outro negócio. Selecione a empresa correspondente para não misturar contextos.";return;}
     const allowed=new Set(getContextKeysForScope(scope)),mapped={};
     const source=(name,value)=>String(value||"").trim()?{source:name,text:String(value).trim()}:null;
+    const includePersonal=scope!=="business",includeBusiness=scope!=="personal";
     const combine=(key,parts)=>{
       if(!allowed.has(key))return;
-      const valid=parts.filter(Boolean);
+      const valid=parts.filter(Boolean).filter(x=>(!x.source.startsWith("Perfil pessoal")||includePersonal)&&(!x.source.startsWith("Empresa")||includeBusiness));
       if(valid.length)mapped[key]=valid.map(x=>"Fonte: Cadastro Inteligente · "+x.source+"\n"+x.text).join("\n\n");
     };
     const pName=source("Perfil pessoal · Identidade do empreendedor",[personal.fullName,personal.preferredName].filter(Boolean).join(" · "));
