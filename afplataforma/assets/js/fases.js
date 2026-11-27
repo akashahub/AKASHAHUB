@@ -2,7 +2,7 @@
 import { session, isMentorSession } from "./auth.js";
 import { renderPhaseBriefing } from "./phase-guidance.js?v=rt46";
 import { renderPhaseChecklist, bindPhaseChecklist } from "./phase-checklists.js?v=rt46";
-import { renderPhasePromptAccess } from "./biblioteca-prompts.js?v=journey-prompts-20261126-v1";
+import { renderPhasePromptAccess } from "./biblioteca-prompts.js?v=context-scope-20261127-1";
 
 function lista(itens) {
   return `<div class="module-list">${itens.map((texto, i) =>
