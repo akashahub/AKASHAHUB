@@ -25,7 +25,7 @@ import {
   onAfterNavigate,
   getCurrentView,
   esc
-} from "./navigation.js?v=cloud-context-20261119-v1";
+} from "./navigation.js?v=20261127-cadastro-v1";
 import { MODULES } from "../../data/modules.js";
 import { getUserProfile, saveUserProfile } from "../../firebase/firestore.js";
 import { t } from "../../data/translations.js";
@@ -76,11 +76,12 @@ import {
   renderHubIntel,
   renderHubAcervo,
   renderHubConfig
-} from "./hub-shell.js?v=rollback-pre-intel-20261118";
-import { bindHubDossie } from "./hub-dossie.js?v=dossier-prompt-context-20261119-v1";
-import { renderMasterPromptMap, bindMasterPromptMap } from "./biblioteca-prompts.js?v=context-scope-20261127-1";
-import { bindPhasePromptAccess } from "./biblioteca-prompts.js?v=context-scope-20261127-1";
+} from "./hub-shell.js?v=20261127-cadastro-v1";
+import { bindHubDossie } from "./hub-dossie.js?v=dossier-cadastro-20261127-v1";
+import { renderMasterPromptMap, bindMasterPromptMap } from "./biblioteca-prompts.js?v=20261127-cadastro-v1";
+import { bindPhasePromptAccess } from "./biblioteca-prompts.js?v=20261127-cadastro-v1";
 import { renderVisionStudio, bindVisionStudio } from "./vision-studio.js?v=1";
+import { renderCadastroInteligente, bindCadastroInteligente, maybePromptCadastroInteligente } from "./cadastro-inteligente.js?v=20261127-cadastro-v1";
 // CORPO é carregado sob demanda para que uma falha isolada nessa frente
 // nunca impeça a inicialização do login e das cinco fases principais.
 function renderCorpoLazy(renderer, ...args) {
@@ -384,7 +385,7 @@ function showApp() {
   const params = new URLSearchParams(location.search);
   const quickTool = params.get("quicktool");
   const requestedView = params.get("view");
-  const directViews = ["dashboard", "vision-studio", "catalogo-capacidades", "corpo", "audios-pnl", "complementar", "comp:mindzone", "comp:coach"];
+  const directViews = ["dashboard", "cadastro-inteligente", "vision-studio", "catalogo-capacidades", "corpo", "audios-pnl", "complementar", "comp:mindzone", "comp:coach"];
   const quickTools = ["cashflow", "ideation", "network", "vision", "pitch", "legacy", "execution", "fono"];
   if (directViews.includes(requestedView)) {
     navigate(requestedView);
@@ -407,6 +408,9 @@ function showApp() {
     navigate(quickTool === "tasks" ? "dashboard" : (rooms.includes(room) ? room : "dashboard"));
     if (quickTool === "tasks") window.setTimeout(() => document.getElementById("lifeosNewTask")?.focus(), 550);
     if (quickTool) requestAnimationFrame(() => requestAnimationFrame(finishQuickToolLoading));
+  }
+  if (!requestedView && !quickTool && !rooms.includes(room) && !isMentorSession()) {
+    requestAnimationFrame(() => maybePromptCadastroInteligente(navigate));
   }
 }
 
@@ -793,6 +797,7 @@ registerRenderers({
       </div>`
     : `<div class="view active"><p class="empty">Acesso restrito ao mentor.</p></div>`),
   profile: renderProfile,
+  "cadastro-inteligente": renderCadastroInteligente,
   complementar: renderComplementarHome,
   compApp: renderComplementarApp,
   quitei: renderQuitei,
@@ -840,6 +845,7 @@ onAfterNavigate((view) => {
   if (view === "dashboard") bindLifeOsDashboard();
   if (view === "vision-studio") bindVisionStudio();
   if (view === "profile") bindProfileForm();
+  if (view === "cadastro-inteligente") bindCadastroInteligente();
   if (view === "mentor") {
     bindAccessAdmin();
     bindSessoesAccess();

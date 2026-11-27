@@ -38,6 +38,7 @@ export function buildNav() {
   const items = [
     { id: "dashboard", label: mentor ? "Visão geral" : "Minha jornada", ico: "◇" },
     { id: "profile", label: mentor ? "Perfil" : "Meu perfil", ico: "○" },
+    { id: "cadastro-inteligente", label: mentor ? "Cadastro inteligente" : "Meu cadastro", ico: "◎" },
     { id: "hub-dossie", label: mentor ? "Diagnóstico e dossiê" : "Meu dossiê", ico: "◇" }
   ];
   if (mentor) {
@@ -138,6 +139,7 @@ export async function navigate(view) {
     tools: t(lang, "tools"),
     call: t(lang, "call"),
     profile: t(lang, "profile"),
+    "cadastro-inteligente": "Cadastro Inteligente",
     mentor: t(lang, "mentor"),
     ascensao: "Ascensão",
     complementar: "Complementar",

@@ -5,7 +5,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/fi
 import { CATALOG, DEPT_CODES, DEPT_PHASES, CAPABILITY_PHASES } from "./catalogo-capacidades-data.js?v=20261127-catalogo-167-1";
 import { getCapabilityContextScope, getContextKeysForScope, getContextScopeMeta, contextScopeInstruction } from "./biblioteca-contexto-data.js?v=context-scope-20261127-1";
 import { SPECIALIZED_PROMPTS, buildSpecializedPrompt } from "./biblioteca-prompts-especializados.js?v=context-scope-20261127-1";
-import { readHubDossieSnapshot } from "./hub-dossie.js?v=dossier-prompt-context-20261119-v1";
+import { readHubDossieSnapshot } from "./hub-dossie.js?v=dossier-cadastro-20261127-v1";
 
 const PHASES = [
   {
@@ -137,7 +137,9 @@ const AKASHA_HUB_EXAMPLE = {
   RESPONSAVEL_PELA_VALIDACAO: "Fundador e direção estratégica do Akasha Hub."
 };
 
-const SHARED_CONTEXT = Object.create(null);
+const SHARED_CONTEXT_BY_SCOPE = { personal:Object.create(null), business:Object.create(null), hybrid:Object.create(null) };
+let activeSharedContextScope = "hybrid";
+let SHARED_CONTEXT = SHARED_CONTEXT_BY_SCOPE.hybrid;
 let sharedContextCloudState = "idle";
 function selectedContextUid() {
   const context = activeHubContext();
@@ -145,18 +147,23 @@ function selectedContextUid() {
 }
 function applySharedContext(prompt, scope="hybrid") {
   const allowed = new Set(getContextKeysForScope(scope));
+  const source = SHARED_CONTEXT_BY_SCOPE[scope] || {};
   return PROMPT_VARIABLES.reduce((text,[key])=>{
-    const value=allowed.has(key) ? String(SHARED_CONTEXT[key]||"").trim() : "";
+    const value=allowed.has(key) ? String(source[key]||"").trim() : "";
     const replacement = value || (allowed.has(key) ? "{{"+key+"}}" : "[Não aplicável ao escopo "+getContextScopeMeta(scope).label.toLowerCase()+"]");
     return text.replaceAll("{{"+key+"}}",replacement);
   },String(prompt||""));
 }
+
 function sharedContextMarkup() {
-  return '<div class="pm-context-panel"><div class="pm-context-head"><div><div class="pm-eyebrow">AKASHA HUB · CONTEXTO DO PROJETO</div><h2>Contexto compartilhado</h2><p>Preencha uma vez e reutilize nos prompts desta sessão. Todos os campos são opcionais; cada tarefa usa apenas o que for relevante.</p></div><button type="button" class="pm-copy-prompt" data-pm-open-context>Revisar e preencher variáveis</button></div><div class="pm-context-summary"><strong>'+PROMPT_VARIABLES.filter(([key])=>String(SHARED_CONTEXT[key]||"").trim()).length+' de '+PROMPT_VARIABLES.length+' variáveis preenchidas</strong><span id="pmContextCloudStatus">Os dados compartilhados serão carregados da conta selecionada.</span></div><div class="pm-context-list">'+PROMPT_VARIABLES.map(([key,desc],i)=>'<article><span>'+String(i+1).padStart(2,"0")+'</span><div><strong>'+esc(key.replaceAll("_"," ").toLowerCase())+'</strong><p>'+esc(desc)+'</p><small>'+(String(SHARED_CONTEXT[key]||"").trim()?"Preenchida":"Ainda não preenchida")+'</small></div></article>').join("")+'</div></div>';
+  const count=PROMPT_VARIABLES.filter(([key])=>String(SHARED_CONTEXT[key]||"").trim()).length;
+  return '<div class="pm-context-panel"><div class="pm-context-head"><div><div class="pm-eyebrow">AKASHA HUB · CONTEXTO DO PROJETO</div><h2>Ficha Única do Projeto</h2><p>Contextos pessoal, empresarial e híbrido ficam separados. Cada prompt usa somente o escopo correspondente.</p></div><button type="button" class="pm-copy-prompt" data-pm-open-context>Revisar e preencher variáveis</button></div><div class="pm-context-summary"><strong>'+count+' de '+PROMPT_VARIABLES.length+' variáveis preenchidas · '+esc(getContextScopeMeta(activeSharedContextScope).label)+'</strong><span id="pmContextCloudStatus">Os dados compartilhados serão carregados da conta selecionada.</span></div><div class="pm-context-list">'+PROMPT_VARIABLES.map(([key,desc],i)=>'<article><span>'+String(i+1).padStart(2,"0")+'</span><div><strong>'+esc(key.replaceAll("_"," ").toLowerCase())+'</strong><p>'+esc(desc)+'</p><small>'+(String(SHARED_CONTEXT[key]||"").trim()?"Preenchida":"Ainda não preenchida")+'</small></div></article>').join("")+'</div></div>';
 }
+
 function sharedContextModalMarkup() {
-  return '<div class="pm-context-overlay" data-pm-context-overlay hidden><section class="pm-context-modal" role="dialog" aria-modal="true" aria-labelledby="pmContextTitle"><div class="pm-context-modal-head"><div><div class="pm-eyebrow">FICHA ÚNICA DO PROJETO</div><h2 id="pmContextTitle">Revisar contexto compartilhado</h2><p>Use os dados do seu projeto. Para visualizar uma ficha completa, carregue o exemplo preenchido do Akasha Hub.</p><button type="button" class="pm-back" data-pm-load-akasha-example>Preencher todos os campos com o exemplo do Akasha Hub</button></div><button type="button" class="pm-context-close" data-pm-close-context aria-label="Fechar">×</button></div><div class="pm-context-fields">'+PROMPT_VARIABLES.map(([key,desc],i)=>'<label class="pm-context-field"><span>'+String(i+1).padStart(2,"0")+' · '+esc(key.replaceAll("_"," ").toLowerCase())+'</span><small>'+esc(desc)+'</small><textarea rows="2" data-pm-context-key="'+esc(key)+'" placeholder="">'+esc(SHARED_CONTEXT[key]||"")+'</textarea></label>').join("")+'</div><div class="pm-context-modal-actions"><span id="pmContextStatus">Campos opcionais. O mentor revisa antes de usar.</span><button type="button" class="pm-back" data-pm-close-context>Cancelar</button><button type="button" class="pm-copy-prompt" data-pm-save-context>Salvar contexto compartilhado</button></div></section></div>';
+  return '<div class="pm-context-overlay" data-pm-context-overlay hidden><section class="pm-context-modal" role="dialog" aria-modal="true" aria-labelledby="pmContextTitle"><div class="pm-context-modal-head"><div><div class="pm-eyebrow">FICHA ÚNICA DO PROJETO</div><h2 id="pmContextTitle">Revisar contexto compartilhado</h2><p>Escolha o escopo e a fonte. A importação preenche apenas campos vazios e preserva a origem de cada informação.</p><button type="button" class="pm-back" data-pm-load-akasha-example>Preencher com exemplo do Akasha Hub</button></div><button type="button" class="pm-context-close" data-pm-close-context aria-label="Fechar">×</button></div><div class="pm-context-fields"><label class="pm-context-field"><span>Escopo desta ficha</span><select id="pmContextScopeSelect" data-pm-context-scope><option value="personal">Pessoal</option><option value="business">Empresarial</option><option value="hybrid" selected>Híbrido · pessoal + empresa</option></select></label><div class="pm-context-field"><span>Importar do Cadastro Inteligente</span><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px"><select id="pmDossierBusiness"><option value="">Selecione um negócio</option></select><select id="pmDossierProject"><option value="">Sem projeto específico</option></select></div><button type="button" class="pm-back" data-pm-import-dossier style="margin-top:8px">Importar dados selecionados</button><small>Os dados importados ficam como rascunho nesta ficha até você salvar. Valores já preenchidos são preservados.</small></div>'+PROMPT_VARIABLES.map(([key,desc],i)=>'<label class="pm-context-field"><span>'+String(i+1).padStart(2,"0")+' · '+esc(key.replaceAll("_"," ").toLowerCase())+'</span><small>'+esc(desc)+'</small><textarea rows="2" data-pm-context-key="'+esc(key)+'" placeholder="">'+esc(SHARED_CONTEXT[key]||"")+'</textarea></label>').join("")+'</div><div class="pm-context-modal-actions"><span id="pmContextStatus">Campos opcionais. Revise a origem e confirme antes de salvar.</span><button type="button" class="pm-back" data-pm-close-context>Cancelar</button><button type="button" class="pm-copy-prompt" data-pm-save-context>Salvar contexto compartilhado</button></div></section></div>';
 }
+
 function loadAkashaHubExample(root) {
   const overlay=root.querySelector("[data-pm-context-overlay]");
   if(!overlay) return;
@@ -168,19 +175,40 @@ function loadAkashaHubExample(root) {
   const button=overlay.querySelector("[data-pm-save-context]");
   if(button) button.textContent="Salvar contexto compartilhado";
 }
-function openSharedContext(root) {
+async function populateDossierSelectors(root) {
+  const uid=selectedContextUid(), overlay=root.querySelector("[data-pm-context-overlay]");
+  const businessSelect=overlay?.querySelector("#pmDossierBusiness"), projectSelect=overlay?.querySelector("#pmDossierProject");
+  if(!uid||!businessSelect||!projectSelect)return;
+  try{
+    const snap=await getDoc(doc(db,"users",uid));
+    const d=snap.exists()?snap.data()?.afDossier||{}:{};
+    const businesses=Array.isArray(d.businesses)?d.businesses.filter(x=>!x.archivedAt):[];
+    const projects=Array.isArray(d.projects)?d.projects.filter(x=>!x.archivedAt):[];
+    const oldBusiness=businessSelect.value,oldProject=projectSelect.value;
+    businessSelect.innerHTML='<option value="">Selecione um negócio</option>'+businesses.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name||"Negócio sem nome")+'</option>').join("");
+    projectSelect.innerHTML='<option value="">Sem projeto específico</option>'+projects.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name||"Projeto sem nome")+'</option>').join("");
+    if(businesses.some(x=>x.id===oldBusiness))businessSelect.value=oldBusiness;
+    if(projects.some(x=>x.id===oldProject))projectSelect.value=oldProject;
+  }catch(error){console.warn("[Biblioteca] Não consegui carregar as opções do Dossiê:",error?.code||error?.message||error);}
+}
+async function openSharedContext(root) {
   const overlay=root.querySelector("[data-pm-context-overlay]");
   if(!overlay) return;
   if(sharedContextCloudState!=="loaded") {
     const cloudStatus=root.querySelector("#pmContextCloudStatus");
-    if(cloudStatus) cloudStatus.textContent="Aguarde o carregamento do contexto salvo antes de editar. Se houver falha, atualize a página e tente novamente.";
+    if(cloudStatus) cloudStatus.textContent="Aguarde o carregamento do contexto salvo antes de editar.";
     return;
   }
+  const selector=overlay.querySelector("#pmContextScopeSelect");
+  activeSharedContextScope=selector?.value||activeSharedContextScope;
+  SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
   overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
   overlay.hidden=false;
+  await populateDossierSelectors(root);
   const first=overlay.querySelector("textarea");
   if(first) first.focus();
 }
+
 function refreshOpenPrompt(root) {
   const active=root.querySelector("#pmPanel");
   const generic=active?.querySelector("[data-pm-capability]");
@@ -189,80 +217,145 @@ function refreshOpenPrompt(root) {
   if(specialized){const item=SPECIALIZED_PROMPTS.find(x=>x.id===specialized.dataset.pmSpecializedSource);if(item)specialized.value=applySharedContext(buildSpecializedPrompt(item),item.contextScope);}
 }
 async function loadSharedContext(root) {
-  const uid=selectedContextUid();
-  const status=root.querySelector("#pmContextCloudStatus");
-  PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT[key]="";});
-  if(!uid || session.mode!=="firebase") {
+  const uid=selectedContextUid(), status=root.querySelector("#pmContextCloudStatus");
+  for(const scope of ["personal","business","hybrid"])PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT_BY_SCOPE[scope][key]="";});
+  if(!uid||session.mode!=="firebase"){
     sharedContextCloudState="unavailable";
     refreshOpenPrompt(root);
-    if(status) status.textContent="Entre com a conta da plataforma para carregar o contexto salvo.";
+    if(status)status.textContent="Entre com a conta da plataforma para carregar o contexto salvo.";
     return;
   }
   sharedContextCloudState="loading";
-  if(status) status.textContent="Carregando contexto salvo...";
-  try {
-    const snap=await getDoc(doc(db,"afProjectContexts",uid,"projects","principal"));
-    PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT[key]="";});
-    if(snap.exists()) {
-      const data=snap.data();
-      const saved=data?.context && typeof data.context==="object" ? data.context : {};
-      PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT[key]=typeof saved[key]==="string"?saved[key]:"";});
-    }
-    sharedContextCloudState="loaded";
-    const cloudMessage=snap.exists()
-      ? "Contexto carregado da nuvem para "+(activeHubContext()?.name || session.name || "cliente selecionado")+"."
-      : "Ainda não existe contexto salvo para este cliente. Preencha e salve para compartilhar.";
-    if(status) status.textContent=cloudMessage;
-    if(root.querySelector('[data-pm-tab="context"]')?.classList.contains("is-active")) {
-      const panel=root.querySelector("#pmPanel");
-      if(panel) {
-        panel.innerHTML=sharedContextMarkup();
-        const refreshedStatus=panel.querySelector("#pmContextCloudStatus");
-        if(refreshedStatus) refreshedStatus.textContent=cloudMessage;
+  if(status)status.textContent="Carregando contextos pessoal, empresarial e híbrido...";
+  try{
+    const [personalSnap,businessSnap,hybridSnap,legacySnap]=await Promise.all([
+      getDoc(doc(db,"afProjectContexts",uid,"projects","principal-personal")),
+      getDoc(doc(db,"afProjectContexts",uid,"projects","principal-business")),
+      getDoc(doc(db,"afProjectContexts",uid,"projects","principal-hybrid")),
+      getDoc(doc(db,"afProjectContexts",uid,"projects","principal"))
+    ]);
+    const snaps={personal:personalSnap,business:businessSnap,hybrid:hybridSnap};
+    for(const scope of ["personal","business","hybrid"]){
+      let snap=snaps[scope];
+      if(scope==="hybrid"&&!snap.exists()&&legacySnap.exists())snap=legacySnap;
+      if(snap.exists()){
+        const saved=snap.data()?.context&&typeof snap.data().context==="object"?snap.data().context:{};
+        PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT_BY_SCOPE[scope][key]=typeof saved[key]==="string"?saved[key]:"";});
       }
-    } else refreshOpenPrompt(root);
-  } catch(error) {
+    }
+    activeSharedContextScope="hybrid";
+    SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE.hybrid;
+    sharedContextCloudState="loaded";
+    const any=personalSnap.exists()||businessSnap.exists()||hybridSnap.exists()||legacySnap.exists();
+    const cloudMessage=any?"Contextos carregados da conta de "+(activeHubContext()?.name||session.name||"cliente selecionado")+".":"Ainda não existem fichas salvas. Você pode importar o Cadastro Inteligente ou preencher manualmente.";
+    if(status)status.textContent=cloudMessage;
+    if(root.querySelector('[data-pm-tab="context"]')?.classList.contains("is-active")){
+      const panel=root.querySelector("#pmPanel");
+      if(panel){panel.innerHTML=sharedContextMarkup();const refreshed=panel.querySelector("#pmContextCloudStatus");if(refreshed)refreshed.textContent=cloudMessage;}
+    }else refreshOpenPrompt(root);
+  }catch(error){
     console.error("[Biblioteca de Prompts] Falha ao carregar contexto:",error);
-    sharedContextCloudState="error";
-    refreshOpenPrompt(root);
-    if(status) status.textContent="Não consegui carregar o contexto. Confira o acesso e tente novamente.";
+    sharedContextCloudState="error";refreshOpenPrompt(root);
+    if(status)status.textContent="Não consegui carregar os contextos. Confira o acesso e tente novamente.";
   }
 }
+
 async function saveSharedContext(root) {
   const overlay=root.querySelector("[data-pm-context-overlay]");
-  if(!overlay) return;
-  const uid=selectedContextUid();
-  const status=overlay.querySelector("#pmContextStatus");
-  if(!uid || session.mode!=="firebase") {
-    if(status) status.textContent="Entre com a conta da plataforma antes de salvar.";
-    return;
-  }
+  if(!overlay)return;
+  const uid=selectedContextUid(),status=overlay.querySelector("#pmContextStatus");
+  if(!uid||session.mode!=="firebase"){if(status)status.textContent="Entre com a conta da plataforma antes de salvar.";return;}
+  activeSharedContextScope=overlay.querySelector("#pmContextScopeSelect")?.value||activeSharedContextScope;
+  SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
   const next=Object.create(null);
   overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>{next[field.dataset.pmContextKey]=field.value.trim().slice(0,5000);});
   const button=overlay.querySelector("[data-pm-save-context]");
   if(button){button.disabled=true;button.textContent="Salvando...";}
-  if(status) status.textContent="Salvando no contexto do cliente...";
-  try {
-    await setDoc(doc(db,"afProjectContexts",uid,"projects","principal"),{
-      ownerUid:uid,
-      context:next,
-      schemaVersion:1,
-      updatedBy:session.uid,
-      updatedAt:serverTimestamp()
+  if(status)status.textContent="Salvando ficha "+getContextScopeMeta(activeSharedContextScope).label.toLowerCase()+"...";
+  try{
+    await setDoc(doc(db,"afProjectContexts",uid,"projects","principal-"+activeSharedContextScope),{
+      ownerUid:uid,context:next,schemaVersion:1,updatedBy:session.uid,updatedAt:serverTimestamp()
     });
-    PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT[key]=next[key]||"";});
-    sharedContextCloudState="loaded";
-    overlay.hidden=true;
+    PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope][key]=next[key]||"";});
+    SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
+    sharedContextCloudState="loaded";overlay.hidden=true;
     const panel=root.querySelector("#pmPanel");
-    if(panel && root.querySelector('[data-pm-tab="context"]')?.classList.contains("is-active")) panel.innerHTML=sharedContextMarkup();
+    if(panel&&root.querySelector('[data-pm-tab="context"]')?.classList.contains("is-active"))panel.innerHTML=sharedContextMarkup();
     refreshOpenPrompt(root);
     const cloudStatus=root.querySelector("#pmContextCloudStatus");
-    if(cloudStatus) cloudStatus.textContent="Contexto salvo e compartilhado com o cliente selecionado.";
-  } catch(error) {
+    if(cloudStatus)cloudStatus.textContent="Ficha "+getContextScopeMeta(activeSharedContextScope).label.toLowerCase()+" salva para o cliente selecionado.";
+  }catch(error){
     console.error("[Biblioteca de Prompts] Falha ao salvar contexto:",error);
-    if(status) status.textContent="Não foi possível salvar. Verifique as permissões do Firestore e tente novamente.";
-  } finally {
-    if(button){button.disabled=false;button.textContent="Salvar contexto compartilhado";}
+    if(status)status.textContent="Não foi possível salvar. Verifique as permissões do Firestore e tente novamente.";
+  }finally{if(button){button.disabled=false;button.textContent="Salvar contexto compartilhado";}}
+}
+
+async function importDossierIntoContext(root) {
+  const uid=selectedContextUid(),overlay=root.querySelector("[data-pm-context-overlay]"),status=overlay?.querySelector("#pmContextStatus");
+  if(!uid||session.mode!=="firebase"){if(status)status.textContent="Entre com a conta da plataforma antes de importar.";return;}
+  const scope=overlay.querySelector("#pmContextScopeSelect")?.value||"hybrid";
+  const businessId=overlay.querySelector("#pmDossierBusiness")?.value||"";
+  const projectId=overlay.querySelector("#pmDossierProject")?.value||"";
+  if(scope!=="personal"&&!businessId){if(status)status.textContent="Selecione um negócio para importar contexto empresarial ou híbrido.";return;}
+  if(status)status.textContent="Lendo o Cadastro Inteligente...";
+  try{
+    const snap=await getDoc(doc(db,"users",uid)),d=snap.exists()?snap.data()?.afDossier||{}:{};
+    const personal=d.personal||{};
+    const biz=(d.businesses||[]).find(x=>x.id===businessId&&!x.archivedAt)||null;
+    const project=(d.projects||[]).find(x=>x.id===projectId&&!x.archivedAt)||null;
+    if(scope!=="personal"&&!biz){if(status)status.textContent="O negócio selecionado não foi encontrado. Atualize a lista.";return;}
+    if(project?.businessId&&biz?.id&&project.businessId!==biz.id){if(status)status.textContent="Este projeto está vinculado a outro negócio. Selecione a empresa correspondente para não misturar contextos.";return;}
+    const allowed=new Set(getContextKeysForScope(scope)),mapped={};
+    const source=(name,value)=>String(value||"").trim()?{source:name,text:String(value).trim()}:null;
+    const includePersonal=scope!=="business",includeBusiness=scope!=="personal";
+    const combine=(key,parts)=>{
+      if(!allowed.has(key))return;
+      const valid=parts.filter(Boolean).filter(x=>(!x.source.startsWith("Perfil pessoal")||includePersonal)&&(!x.source.startsWith("Empresa")||includeBusiness));
+      if(valid.length)mapped[key]=valid.map(x=>"Fonte: Cadastro Inteligente · "+x.source+"\n"+x.text).join("\n\n");
+    };
+    const pName=source("Perfil pessoal · Identidade do empreendedor",[personal.fullName,personal.preferredName].filter(Boolean).join(" · "));
+    const bName=source("Dossiê empresarial · "+(biz?.name||"Empresa"),biz?.name);
+    combine("NOME_DO_CLIENTE_OU_EMPRESA",[pName,bName]);
+    combine("SEGMENTO_E_MODELO_DE_NEGOCIO",[source("Empresa · Identidade",biz?[biz.sector,biz.businessModel].filter(Boolean).join(" · "):"")]);
+    combine("PAIS_CIDADE_E_MERCADO",[
+      source("Perfil pessoal · Localização",[personal.city,personal.country].filter(Boolean).join(" · ")),
+      source("Empresa · Localização",[biz?.city,biz?.country,biz?.expansion?.targetMarkets].filter(Boolean).join(" · "))
+    ]);
+    combine("ESTAGIO_ATUAL_E_HISTORICO",[
+      source("Perfil pessoal · Trajetória",[personal.trajectory,personal.education].filter(Boolean).join("\n")),
+      source("Empresa · Estágio e descrição",[biz?.stage,biz?.description].filter(Boolean).join("\n"))
+    ]);
+    combine("OBJETIVO_PRINCIPAL_E_RESULTADO_ESPERADO",[
+      source("Perfil pessoal · Objetivos",personal.goals),
+      source("Projeto · Objetivo",project?.objective)
+    ]);
+    combine("PROBLEMA_OU_OPORTUNIDADE",[
+      source("Projeto · Contexto",project?.notes),
+      source("Empresa · Expansão",[biz?.expansion?.opportunities,biz?.expansion?.constraints].filter(Boolean).join("\n"))
+    ]);
+    combine("PUBLICO_E_CLIENTE_IDEAL",[source("Empresa · Posicionamento",biz?.brand?.audience)]);
+    combine("OFERTA_PRODUTO_SERVICO",[source("Empresa · Comercial",[biz?.commercial?.productsServices,biz?.commercial?.pricing].filter(Boolean).join("\n"))]);
+    combine("DADOS_E_INDICADORES_DISPONIVEIS",[source("Empresa · Financeiro",[biz?.finance?.revenueBand,biz?.finance?.costsBand,biz?.finance?.cashflowStatus,biz?.commercial?.averageTicket].filter(Boolean).join("\n"))]);
+    combine("RECURSOS_ORCAMENTO_E_RESTRICOES",[source("Empresa · Operação e financeiro",[biz?.operations?.teamSize,biz?.operations?.roles,biz?.operations?.processes,biz?.finance?.capitalBand].filter(Boolean).join("\n"))]);
+    combine("PRAZO_E_PRIORIDADE",[source("Projeto · Prazo e status",[project?.deadline,project?.status].filter(Boolean).join(" · "))]);
+    combine("ATIVOS_FERRAMENTAS_E_PROCESSOS_EXISTENTES",[source("Empresa · Ativos digitais",[biz?.digital?.website,biz?.digital?.socialProfiles,biz?.digital?.crm,biz?.digital?.channels,biz?.digital?.tools,biz?.operations?.systems].filter(Boolean).join("\n"))]);
+    combine("DECISOES_JA_TOMADAS_E_PREFERENCIAS",[
+      source("Perfil pessoal · Competências",personal.competencies),
+      source("Empresa · Marca",[biz?.brand?.positioning,biz?.brand?.valueProposition,biz?.brand?.differentiators].filter(Boolean).join("\n"))
+    ]);
+    combine("FONTES_DOCUMENTOS_E_REFERENCIAS_AUTORIZADAS",[source("Empresa · Referências",[biz?.website,biz?.digital?.website,biz?.digital?.socialProfiles].filter(Boolean).join("\n"))]);
+    combine("RESPONSAVEL_PELA_VALIDACAO",[source("Sessão",session.name||session.email||"Mentor e participante")]);
+    activeSharedContextScope=scope;SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[scope];
+    let added=0;
+    for(const [key,value] of Object.entries(mapped)){
+      if(!String(SHARED_CONTEXT[key]||"").trim()){SHARED_CONTEXT[key]=value;added++;}
+    }
+    overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
+    if(status)status.textContent=added+" variáveis importadas. Campos já preenchidos foram preservados. Revise as origens e salve a ficha.";
+    const selector=overlay.querySelector("#pmContextScopeSelect");if(selector)selector.value=scope;
+  }catch(error){
+    console.error("[Biblioteca] Falha ao importar Cadastro Inteligente:",error);
+    if(status)status.textContent="Não foi possível importar. Verifique as permissões do perfil selecionado.";
   }
 }
 
@@ -418,48 +511,58 @@ function renderPromptDetail(id) {
 
 
 
-function dossierSnapshotText(snapshot) {
-  const blocks = snapshot.blocks || [];
-  const filled = blocks.filter(b=>b.status==="cheio");
-  const empty = blocks.filter(b=>b.status==="vazio");
-  const blocked = blocks.filter(b=>b.status==="bloqueado" || b.status==="erro");
-  const lines = [
+function dossierSnapshotText(snapshot, scope="hybrid") {
+  const all=snapshot.blocks||[];
+  const blocks=all.filter(b=>b.sourceScope==="project"||b.sourceScope==="hybrid"||scope==="hybrid"||b.sourceScope===scope||!b.sourceScope);
+  const filled=blocks.filter(b=>b.status==="cheio"),empty=blocks.filter(b=>b.status==="vazio"),blocked=blocks.filter(b=>b.status==="bloqueado"||b.status==="erro");
+  const lines=[
     "### CONTEXTO LIDO DO DOSSIÊ DO AKASHA HUB",
-    "Cliente selecionado: "+(snapshot.person || "não identificado"),
-    "Origem: ferramentas cadastradas nas cinco fases. Leitura somente; nenhum dado foi alterado.",
+    "Cliente selecionado: "+(snapshot.person||"não identificado"),
+    "Escopo aplicado: "+getContextScopeMeta(scope).label+". Fontes pessoais e empresariais foram filtradas por classificação; projetos vinculados permanecem como contexto específico.",
+    "Origem: Cadastro Inteligente e ferramentas autorizadas das cinco fases. Leitura somente; nenhum dado foi alterado.",
     "Resumo: "+filled.length+" fontes com respostas; "+empty.length+" sem respostas; "+blocked.length+" sem leitura disponível.",
-    "Use os campos abaixo como fontes de contexto. Preserve o nome da ferramenta e não trate ausência de resposta como resposta negativa.",
-    ""
+    "Preserve a origem de cada campo e não trate ausência de resposta como resposta negativa.",""
   ];
   for(const b of blocks){
-    lines.push("FONTE · "+b.phase+" · "+b.title);
-    if(b.status==="vazio") lines.push("Sem respostas registradas nesta ferramenta.");
-    else if(b.status==="bloqueado") lines.push("Leitura bloqueada pelas permissões atuais.");
-    else if(b.status==="erro") lines.push("Falha ao ler esta fonte nesta tentativa.");
-    else for(const field of b.fields) lines.push(field.key+": "+field.text);
+    lines.push("FONTE · "+b.phase+" · "+b.title+" · escopo "+(b.sourceScope||"não classificado"));
+    if(b.status==="vazio")lines.push("Sem respostas registradas nesta ferramenta.");
+    else if(b.status==="bloqueado")lines.push("Leitura bloqueada pelas permissões atuais.");
+    else if(b.status==="erro")lines.push("Falha ao ler esta fonte nesta tentativa.");
+    else for(const field of b.fields||[])lines.push(field.key+": "+field.text);
     lines.push("");
   }
   lines.push("### LACUNAS DE CONTEXTO IDENTIFICADAS");
-  if(empty.length) lines.push("Ferramentas sem respostas: "+empty.map(b=>b.title).join(", "));
-  if(blocked.length) lines.push("Fontes sem leitura: "+blocked.map(b=>b.title+" ("+b.status+")").join(", "));
-  if(!empty.length && !blocked.length) lines.push("Nenhuma ferramenta sem leitura foi identificada; isso não significa que todos os dados necessários à tarefa estejam preenchidos.");
-  lines.push("Antes de concluir, identifique quais dados específicos da tarefa continuam ausentes e pergunte somente o indispensável.");
+  if(empty.length)lines.push("Ferramentas sem respostas: "+empty.map(b=>b.title).join(", "));
+  if(blocked.length)lines.push("Fontes sem leitura: "+blocked.map(b=>b.title+" ("+b.status+")").join(", "));
+  if(!empty.length&&!blocked.length)lines.push("Nenhuma ferramenta sem leitura foi identificada; isso não significa que todos os dados necessários estejam preenchidos.");
+  lines.push("Antes de concluir, identifique os dados específicos ainda ausentes e pergunte somente o indispensável.");
   return lines.join("\n");
 }
-async function attachDossierContext(area, status) {
-  if(!area) return;
-  if(status) status.textContent="Lendo as ferramentas do Dossiê do cliente selecionado…";
-  try {
+async function attachDossierContext(area,status,scope="hybrid") {
+  if(!area)return;
+  if(status)status.textContent="Lendo as fontes do Dossiê para o escopo "+getContextScopeMeta(scope).label.toLowerCase()+"...";
+  try{
     const snapshot=await readHubDossieSnapshot();
-    if(!snapshot.ok){ if(status) status.textContent="Não encontrei um cliente selecionado ou uma sessão válida para ler o Dossiê."; return; }
+    if(!snapshot.ok){if(status)status.textContent="Não encontrei um cliente selecionado ou uma sessão válida para ler o Dossiê.";return;}
     const marker="### CONTEXTO LIDO DO DOSSIÊ DO AKASHA HUB";
     const clean=area.value.split(marker)[0].trimEnd();
-    area.value=clean+"\n\n"+dossierSnapshotText(snapshot);
-    if(status) status.textContent="Contexto anexado: "+snapshot.blocks.filter(b=>b.status==="cheio").length+" fontes com respostas. Confira as fontes e lacunas antes de copiar.";
-  } catch(error) {
+    const relevant=(snapshot.blocks||[]).filter(b=>b.sourceScope==="project"||b.sourceScope==="hybrid"||scope==="hybrid"||b.sourceScope===scope||!b.sourceScope);
+    const filtered={...snapshot,blocks:relevant};
+    area.value=clean+"\n\n"+dossierSnapshotText(filtered,scope);
+    if(status)status.textContent="Contexto anexado: "+relevant.filter(b=>b.status==="cheio").length+" fontes relevantes. Confira as origens e lacunas.";
+  }catch(error){
     console.error("[Biblioteca de Prompts] Falha ao ler o Dossiê:",error);
-    if(status) status.textContent="Não consegui ler o Dossiê. Verifique a seleção do cliente e as permissões das ferramentas.";
+    if(status)status.textContent="Não consegui ler o Dossiê. Verifique a seleção do cliente e as permissões.";
   }
+}
+function handleContextScopeChange(root,event) {
+  if(!event.target.matches("[data-pm-context-scope]"))return;
+  activeSharedContextScope=event.target.value;
+  SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope]||SHARED_CONTEXT_BY_SCOPE.hybrid;
+  const overlay=root.querySelector("[data-pm-context-overlay]");
+  overlay?.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
+  const status=overlay?.querySelector("#pmContextStatus");
+  if(status)status.textContent="Escopo "+getContextScopeMeta(activeSharedContextScope).label.toLowerCase()+" selecionado. Os outros contextos permanecem separados.";
 }
 
 function renderSpecializedRows(items) {
@@ -512,8 +615,11 @@ export function bindMasterPromptMap() {
       
       if(e.target.closest("[data-pm-close-context]")){const overlay=root.querySelector("[data-pm-context-overlay]");if(overlay)overlay.hidden=true;return;}
       if(e.target.closest("[data-pm-save-context]")){saveSharedContext(root);return;}
+    if(e.target.closest("[data-pm-import-dossier]")){importDossierIntoContext(root);return;}
+      if(e.target.closest("[data-pm-import-dossier]")){importDossierIntoContext(root);return;}
       if(e.target.matches("[data-pm-context-overlay]")){e.target.hidden=true;return;}
     });
+    root.addEventListener("change",e=>handleContextScopeChange(root,e));
     return;
   }
   const searchMarkup = () => '<div class="pm-filters"><input id="pmSearch" type="search" placeholder="Buscar capacidade, departamento ou grupo..."><select id="pmPhaseFilter"><option value="">Todas as fases</option>'+PHASES.map(p=>'<option value="'+p.id+'">'+p.id+' · '+esc(p.name)+'</option>').join("")+'</select><select id="pmDeptFilter"><option value="">Todos os departamentos</option>'+CATALOG.map(d=>'<option value="'+d.id+'">'+esc(d.name)+'</option>').join("")+'</select><select id="pmContextFilter"><option value="">Todos os contextos</option><option value="personal">Pessoal</option><option value="business">Empresarial</option><option value="hybrid">Híbrido</option></select><span id="pmCount"></span></div><div id="pmRows" class="pm-cap-list">'+renderCapabilityRows(CAPABILITIES)+'</div>';
@@ -557,8 +663,8 @@ export function bindMasterPromptMap() {
     if(e.target.closest("[data-pm-back-special]")){showTab("specialized");return;}
     const specialized=e.target.closest("[data-pm-specialized]");
     if(specialized){panel.innerHTML=renderSpecializedDetail(specialized.dataset.pmSpecialized);return;}
-    if(e.target.closest("[data-pm-load-dossier-special]")){attachDossierContext(panel.querySelector("#pmSpecialPromptText"),panel.querySelector("#pmSpecialDossierStatus"));return;}
-    if(e.target.closest("[data-pm-load-dossier]")){attachDossierContext(panel.querySelector("#pmPromptText"),panel.querySelector("#pmDossierStatus"));return;}
+    if(e.target.closest("[data-pm-load-dossier-special]")){const item=SPECIALIZED_PROMPTS.find(x=>x.id===panel.querySelector("#pmSpecialPromptText")?.dataset.pmSpecializedSource);attachDossierContext(panel.querySelector("#pmSpecialPromptText"),panel.querySelector("#pmSpecialDossierStatus"),item?.contextScope||"hybrid");return;}
+    if(e.target.closest("[data-pm-load-dossier]")){const c=CAPABILITIES.find(x=>x.id===panel.querySelector("#pmPromptText")?.dataset.pmCapability);attachDossierContext(panel.querySelector("#pmPromptText"),panel.querySelector("#pmDossierStatus"),c?.contextScope||"hybrid");return;}
     if(e.target.closest("[data-pm-copy-special]")){const area=panel.querySelector("#pmSpecialPromptText"),status=panel.querySelector("#pmSpecialCopyStatus");if(area)copyText(area.value,status);return;}
     const phase=e.target.closest("[data-pm-phase]");
     if(phase){panel.innerHTML=renderPhaseDetail(phase.dataset.pmPhase);return;}
@@ -570,6 +676,7 @@ export function bindMasterPromptMap() {
     const ca=e.target.closest("[data-pm-copy-apps]"); if(ca){const p=PHASES.find(x=>x.id===ca.dataset.pmCopyApps);if(p){const text=["MAPA DE APLICATIVOS · "+p.id+" · "+p.name,...p.apps.map(([name,url])=>"- "+name+(url?" · https://akashahub.com.br"+url:" · rota a confirmar")),"","APOIOS (integração não presumida)",...p.support.map(x=>"- "+x)].join("\n");copyText(text,panel.querySelector("#pmPhaseCopyStatus"));}return;}
     if(e.target.closest("[data-pm-copy]")){const area=panel.querySelector("#pmPromptText"),status=panel.querySelector("#pmCopyStatus");if(!area)return;copyText(area.value,status);return;}
   });
+  root.addEventListener("change",e=>handleContextScopeChange(root,e));
 }
 
 
