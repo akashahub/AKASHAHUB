@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#17151b">
+<title>Akasha Hub · Site</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font:14px/1.5 Inter,Arial,sans-serif;background:#17151b;color:#f5f0e8}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;background:#17151b;color:#c5a36b;font-size:11px;letter-spacing:.08em}.bar a{color:#e1c48e;text-decoration:none}.frame{display:block;width:100%;height:calc(100vh - 42px);min-height:620px;border:0;background:#fff}.state{max-width:640px;margin:12vh auto;padding:30px;text-align:center}.state h1{font:32px Georgia}.state p{color:#aaa1ad}.hidden{display:none}
+</style>
+</head>
+<body>
+<header class="bar"><span>AKASHA HUB · EXPERIÊNCIA DIGITAL</span><a href="https://akashahub.com.br/">Akasha Hub</a></header>
+<main id="loading" class="state"><h1>Carregando experiência…</h1><p>Preparando o site publicado.</p></main>
+<main id="error" class="state hidden"><h1 id="errorTitle">Página indisponível</h1><p id="errorText">Este endereço não está publicado ou foi desativado.</p></main>
+<iframe id="siteFrame" class="frame hidden" title="Site publicado" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
+<script type="module">
+import { db } from "/login/firebase.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const slug=decodeURIComponent(location.pathname.split("/").filter(Boolean).pop()||"");
+const loading=document.getElementById("loading"),error=document.getElementById("error"),frame=document.getElementById("siteFrame");
+try{
+  if(!slug||slug==="demo")throw new Error("Endereço inválido.");
+  const snap=await getDoc(doc(db,"alLocalPublishedSites",slug));
+  if(!snap.exists()||snap.data().published!==true)throw new Error("Este site não está publicado ou foi desativado.");
+  const data=snap.data();
+  document.title=(data.businessName||"Site")+" · Akasha Hub";
+  frame.srcdoc=data.html||"";
+  frame.classList.remove("hidden");
+  loading.classList.add("hidden");
+}catch(e){
+  loading.classList.add("hidden");
+  error.classList.remove("hidden");
+  document.getElementById("errorText").textContent=e.message||"Não foi possível carregar esta página.";
+}
+</script>
+</body>
+</html>
