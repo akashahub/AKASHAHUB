@@ -6,7 +6,7 @@ import { session, isMentorSession } from "./auth.js";
 import { esc } from "./navigation.js?v=etapa4-1";
 import { getAllUsersForAf } from "../../firebase/firestore.js";
 import { activeHubContext, selectHubMentee, setAuthorizedMentees } from "./hub-context.js?v=etapa4-1";
-export { renderHubDossie } from "./hub-dossie.js?v=rollback-pre-intel-20261118";
+export { renderHubDossie } from "./hub-dossie.js?v=dossier-cadastro-20261127-v1";
 
 function statusLabel(status) {
   if (status === "active") return "Acesso ativo";
