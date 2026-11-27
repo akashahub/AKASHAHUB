@@ -877,6 +877,26 @@ service cloud.firestore {
     }
 
 
+    // AKASHA LOCAL — atividades e links de prévia.
+    match /alLocalActivities/{activityId} {
+      allow read, create, update: if isAfMentor();
+      allow delete: if false;
+    }
+    match /alLocalDemoShares/{shareId} {
+      allow get: if isAfMentor() || resource.data.active == true;
+      allow list: if isAfMentor();
+      allow create, update: if isAfMentor();
+      allow delete: if false;
+    }
+    // SITES PUBLICADOS: leitura pública apenas quando published == true.
+    // Listagem pública permanece bloqueada; o viewer busca pelo ID/slug exato.
+    match /alLocalPublishedSites/{slug} {
+      allow get: if isAfMentor() || resource.data.published == true;
+      allow list: if isAfMentor();
+      allow create, update: if isAfMentor();
+      allow delete: if false;
+    }
+
     // AKASHA LOCAL INTELLIGENCE — CRM, territórios, lotes, demonstrações e financeiro.
     // Acesso restrito à equipe mentor autorizada; nenhuma coleção é pública.
     match /alLocalBusinesses/{businessId} {
