@@ -689,6 +689,7 @@ export function bindMasterPromptMap() {
     if(e.target.closest("[data-pm-load-akasha-example]")){loadAkashaHubExample(root);return;}
     if(e.target.closest("[data-pm-close-context]")){const ov=root.querySelector("[data-pm-context-overlay]");if(ov)ov.hidden=true;return;}
     if(e.target.closest("[data-pm-save-context]")){saveSharedContext(root);return;}
+    if(e.target.closest("[data-pm-import-dossier]")){importDossierIntoContext(root);return;}
     if(e.target.matches("[data-pm-context-overlay]")){e.target.hidden=true;return;}
     if(e.target.closest("[data-pm-back-special]")){showTab("specialized");return;}
     const specialized=e.target.closest("[data-pm-specialized]");
