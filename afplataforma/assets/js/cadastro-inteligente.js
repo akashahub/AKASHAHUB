@@ -97,8 +97,8 @@ function activeBusiness() {
 function field(label, scope, key, value="", multiline=false, group="", hint="") {
   const attrs='data-scope="'+scope+'" data-key="'+key+'"'+(group?' data-group="'+group+'"':'')+(scope==="project"&&hint?' data-id="'+hint+'"':'');
   const control=multiline
-    ? '<textarea '+attrs+' rows="3" placeholder="Preencha se já souber...">'+esc(value)+'</textarea>'
-    : '<input '+attrs+' type="text" value="'+esc(value)+'" placeholder="Preencha se já souber...">';
+    ? '<textarea '+attrs+' rows="3" maxlength="1500" placeholder="Preencha se já souber...">'+esc(value)+'</textarea>'
+    : '<input '+attrs+' type="text" maxlength="250" value="'+esc(value)+'" placeholder="Preencha se já souber...">';
   return '<label class="ci-field"><span>'+esc(label)+'</span>'+control+(hint&&scope!=="project"?'<small>'+esc(hint)+'</small>':'')+'</label>';
 }
 
@@ -167,7 +167,7 @@ function styles() {
 function collectForm(root) {
   root.querySelectorAll("[data-scope]").forEach(el=>{
     const scope=el.dataset.scope,key=el.dataset.key;
-    const value=el.type==="checkbox"?el.checked:el.value;
+    const value=el.type==="checkbox"?el.checked:String(el.value||"").slice(0,el.tagName==="TEXTAREA"?1500:250);
     if(scope==="personal") dossier.personal[key]=value;
     if(scope==="sharing") dossier.sharing[key]=value;
     if(scope==="business"){
@@ -219,7 +219,9 @@ export async function bindCadastroInteligente() {
     const action=btn.dataset.action;
     if(action==="reload"){root.dataset.bound="";bindCadastroInteligente();return;}
     if(action==="add-business"){
-      collectForm(root);const item={id:newId("biz"),name:"",identity:{},brand:{},operations:{},finance:{},digital:{},commercial:{},expansion:{},legacy:{}};
+      collectForm(root);
+      if(dossier.businesses.filter(x=>!x.archivedAt).length>=10){const st=root.querySelector("#ciStatus");if(st)st.textContent="Limite inicial de 10 negócios ativos. Arquive um negócio antes de adicionar outro.";return;}
+      const item={id:newId("biz"),name:"",identity:{},brand:{},operations:{},finance:{},digital:{},commercial:{},expansion:{},legacy:{}};
       dossier.businesses.push(item);activeBusinessId=item.id;root.innerHTML=styles()+renderForm();return;
     }
     if(action==="archive-business"){
@@ -228,7 +230,9 @@ export async function bindCadastroInteligente() {
       biz.archivedAt=new Date().toISOString();activeBusinessId=dossier.businesses.find(x=>!x.archivedAt)?.id||null;root.innerHTML=styles()+renderForm();return;
     }
     if(action==="add-project"){
-      collectForm(root);dossier.projects.push({id:newId("proj"),name:"",businessId:activeBusinessId||"",type:"",objective:"",phase:"",status:"Em diagnóstico",deadline:"",notes:""});
+      collectForm(root);
+      if(dossier.projects.filter(x=>!x.archivedAt).length>=25){const st=root.querySelector("#ciStatus");if(st)st.textContent="Limite inicial de 25 projetos ativos.";return;}
+      dossier.projects.push({id:newId("proj"),name:"",businessId:activeBusinessId||"",type:"",objective:"",phase:"",status:"Em diagnóstico",deadline:"",notes:""});
       root.innerHTML=styles()+renderForm();return;
     }
     if(action==="archive-project"){
