@@ -142,6 +142,7 @@ let activeSharedContextScope = "hybrid";
 let activeProjectId = "";
 let activeBusinessId = "";
 let projectContextLoadPromise = Promise.resolve();
+let projectContextLoadError = null;
 let SHARED_CONTEXT = SHARED_CONTEXT_BY_SCOPE.hybrid;
 let sharedContextCloudState = "idle";
 function selectedContextUid() {
@@ -283,15 +284,17 @@ async function saveSharedContext(root) {
   const uid=selectedContextUid(),status=overlay.querySelector("#pmContextStatus");
   if(!uid||session.mode!=="firebase"){if(status)status.textContent="Entre com a conta da plataforma antes de salvar.";return;}
   activeSharedContextScope=overlay.querySelector("#pmContextScopeSelect")?.value||activeSharedContextScope;
-  await projectContextLoadPromise;
-  SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
-  const next=Object.create(null);
-  overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>{next[field.dataset.pmContextKey]=field.value.trim().slice(0,5000);});
   const button=overlay.querySelector("[data-pm-save-context]");
   if(button){button.disabled=true;button.textContent="Salvando...";}
   if(status)status.textContent="Salvando ficha "+getContextScopeMeta(activeSharedContextScope).label.toLowerCase()+"...";
   try{
-    await setDoc(doc(db,"afProjectContexts",uid,"projects",activeProjectId?"project-"+activeProjectId+"-"+activeSharedContextScope:activeBusinessId?"business-"+activeBusinessId+"-"+activeSharedContextScope:"principal-"+activeSharedContextScope),{
+    await projectContextLoadPromise;
+    if(projectContextLoadError)throw projectContextLoadError;
+    SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
+    const next=Object.create(null);
+    overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>{next[field.dataset.pmContextKey]=field.value.trim().slice(0,5000);});
+    const documentId=activeProjectId?"project-"+activeProjectId+"-"+activeSharedContextScope:activeBusinessId?"business-"+activeBusinessId+"-"+activeSharedContextScope:"principal-"+activeSharedContextScope;
+    await setDoc(doc(db,"afProjectContexts",uid,"projects",documentId),{
       ownerUid:uid,context:next,schemaVersion:1,updatedBy:session.uid,updatedAt:serverTimestamp()
     });
     PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope][key]=next[key]||"";});
@@ -304,7 +307,7 @@ async function saveSharedContext(root) {
     if(cloudStatus)cloudStatus.textContent="Ficha "+getContextScopeMeta(activeSharedContextScope).label.toLowerCase()+" salva para o cliente selecionado.";
   }catch(error){
     console.error("[Biblioteca de Prompts] Falha ao salvar contexto:",error);
-    if(status)status.textContent="Não foi possível salvar. Verifique as permissões do Firestore e tente novamente.";
+    if(status)status.textContent="Não foi possível salvar ou carregar o contexto selecionado. Verifique as permissões e tente novamente.";
   }finally{if(button){button.disabled=false;button.textContent="Salvar contexto compartilhado";}}
 }
 
@@ -326,6 +329,7 @@ async function importDossierIntoContext(root) {
       projectContextLoadPromise=loadScopedContexts(uid,projectId,businessId);
     }
     await projectContextLoadPromise;
+    if(projectContextLoadError)throw projectContextLoadError;
     if(scope!=="personal"&&!biz){if(status)status.textContent="O negócio selecionado não foi encontrado. Atualize a lista.";return;}
     if(project?.businessId&&biz?.id&&project.businessId!==biz.id){if(status)status.textContent="Este projeto está vinculado a outro negócio. Selecione a empresa correspondente para não misturar contextos.";return;}
     const allowed=new Set(getContextKeysForScope(scope)),mapped={};
@@ -586,25 +590,29 @@ function handleContextScopeChange(root,event) {
     if(option?.dataset.businessId&&businessSelect)businessSelect.value=option.dataset.businessId;
     activeBusinessId=businessSelect?.value||"";
     const uid=selectedContextUid();
+    projectContextLoadError=null;
     if(uid)projectContextLoadPromise=loadScopedContexts(uid,projectId,activeBusinessId).then(()=>{
+      projectContextLoadError=null;
       SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
       const overlay=root.querySelector("[data-pm-context-overlay]");
       overlay?.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
       const status=overlay?.querySelector("#pmContextStatus");
       if(status)status.textContent=projectId?"Ficha específica do projeto carregada.":"Ficha principal carregada.";
-    }).catch(error=>console.warn("[Biblioteca] Falha ao carregar ficha do projeto:",error));
+    }).catch(error=>{projectContextLoadError=error;const status=root.querySelector("#pmContextStatus");if(status)status.textContent="Falha ao carregar a ficha deste projeto. Não salve até resolver o acesso.";console.warn("[Biblioteca] Falha ao carregar ficha do projeto:",error);});
     return;
   }
   if(event.target.id==="pmDossierBusiness"){
     activeBusinessId=event.target.value||"";
     if(!activeProjectId){
       const uid=selectedContextUid();
+      projectContextLoadError=null;
       if(uid)projectContextLoadPromise=loadScopedContexts(uid,"",activeBusinessId).then(()=>{
+        projectContextLoadError=null;
         SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
         const overlay=root.querySelector("[data-pm-context-overlay]");
         overlay?.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
         const status=overlay?.querySelector("#pmContextStatus");if(status)status.textContent="Ficha do negócio selecionado carregada.";
-      }).catch(error=>console.warn("[Biblioteca] Falha ao carregar ficha do negócio:",error));
+      }).catch(error=>{projectContextLoadError=error;const status=root.querySelector("#pmContextStatus");if(status)status.textContent="Falha ao carregar a ficha deste negócio. Não salve até resolver o acesso.";console.warn("[Biblioteca] Falha ao carregar ficha do negócio:",error);});
     }
     return;
   }
