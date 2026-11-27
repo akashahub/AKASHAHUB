@@ -26,6 +26,13 @@
   try{const old=JSON.parse(localStorage.getItem(legacy)||"null");if(old){state.selectedProblems=Array.isArray(old.selectedProblems)?old.selectedProblems:[];state.selectedCapabilities=Array.isArray(old.selectedCapabilities)?old.selectedCapabilities:[];Object.assign(state.fields,{client:old.client||"",contact:old.contact||"",segment:old.segment||"",scenario:old.scenario||"",bottleneck:old.bottleneck||"",goal:old.goal||""})}}catch(e){}
  }
  function status(msg){document.querySelectorAll("[data-akasha-sync-status]").forEach(el=>el.textContent=msg)}
+ function listSessions(){
+  const rows=[];for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(!key||!key.startsWith(PREFIX))continue;try{const x=JSON.parse(localStorage.getItem(key)||"{}");rows.push({id:x.sessionId||key.slice(PREFIX.length),client:x.fields?.client||"Cadastro sem nome",updatedAt:x.updatedAt||""})}catch(e){}}
+  return rows.sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt)));
+ }
+ function renderSessionList(){
+  const rows=listSessions();document.querySelectorAll("[data-akasha-saved-sessions]").forEach(el=>{const current=el.value;el.innerHTML='<option value="">Abrir cadastro salvo…</option>'+rows.map(x=>'<option value="'+x.id.replace(/&/g,"&amp;").replace(/"/g,"&quot;")+'">'+String(x.client).replace(/&/g,"&amp;").replace(/</g,"&lt;")+' · '+(x.updatedAt?new Date(x.updatedAt).toLocaleString("pt-BR"):"sem data")+'</option>').join("");if(rows.some(x=>x.id===current))el.value=current});
+ }
  function paint(){
   Object.entries(fields).forEach(([key,ids])=>{
    if(!Object.prototype.hasOwnProperty.call(state.fields,key))return;
@@ -33,7 +40,7 @@
     const v=state.fields[key];if(el.type==="checkbox")el.checked=!!v;else if(v!==undefined&&v!==null)el.value=String(v);
    });
   });
-  document.querySelectorAll("[data-akasha-session-id]").forEach(el=>el.textContent=sessionId);
+  document.querySelectorAll("[data-akasha-session-id]").forEach(el=>el.textContent=sessionId);renderSessionList();
   window.dispatchEvent(new CustomEvent("akasha-sales-sync:remote",{detail:structuredClone(state)}));
  }
  function persist(broadcast=true){
@@ -42,7 +49,7 @@
    const old={version:1,sessionId,updatedAt:Date.now(),client:state.fields.client||"",contact:state.fields.contact||"",segment:state.fields.segment||"",scenario:state.fields.scenario||state.fields.declaredNeed||"",bottleneck:state.fields.bottleneck||"",goal:state.fields.goal||"",selectedProblems:state.selectedProblems||[],selectedCapabilities:state.selectedCapabilities||[]};
    localStorage.setItem(legacy,JSON.stringify(old));
    if(broadcast&&channel)channel.postMessage({type:"state",sessionId,state});
-   status("Salvo automaticamente · "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}));
+   renderSessionList();status("Salvo automaticamente · "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}));
   }catch(e){status("Não foi possível salvar neste navegador.")}
  }
  function publish(patch){
@@ -70,8 +77,9 @@
   }catch(err){}}
  });
  let channel=null;try{channel=new BroadcastChannel("akasha-sales-os-v2");channel.onmessage=e=>{if(e.data?.type==="state"&&e.data.sessionId===sessionId){state=e.data.state;try{localStorage.setItem(PREFIX+sessionId,JSON.stringify(state))}catch(err){}paint();status("Sincronizado em tempo real")}}}catch(e){}
+ document.addEventListener("change",e=>{if(e.target.matches("[data-akasha-saved-sessions]")&&e.target.value){sessionId=e.target.value;localStorage.setItem(ACTIVE,sessionId);state={version:2,sessionId,fields:{},selectedProblems:[],selectedCapabilities:[],updatedAt:null,...read()};state.fields=state.fields||{};paint();status("Cadastro aberto · "+sessionId)}});
  window.AkashaSalesSync={
-  getState:()=>structuredClone(state),publish,
+  getState:()=>structuredClone(state),publish,listSessions,openSession(next){if(!next)return;sessionId=next;localStorage.setItem(ACTIVE,sessionId);state={version:2,sessionId,fields:{},selectedProblems:[],selectedCapabilities:[],updatedAt:null,...read()};state.fields=state.fields||{};paint();status("Cadastro aberto · "+sessionId)},
   setSession(next){sessionId=next||id();localStorage.setItem(ACTIVE,sessionId);state={version:2,sessionId,fields:{},selectedProblems:[],selectedCapabilities:[],updatedAt:null,...read()};state.fields=state.fields||{};paint();persist(true)},
   newSession(){this.setSession(id())}
  };
