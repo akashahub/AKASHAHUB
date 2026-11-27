@@ -8,12 +8,12 @@
  const fields={
   client:["clientName","client"],contact:["contactName","contact"],segment:["businessArea","segment"],
   contactChannel:["contactChannel","salesContactChannel"],email:["email"],declaredNeed:["declaredNeed"],
-  openingReason:["openingReason"],desiredClarification:["desiredClarification"],requestedSolution:["requestedSolution"],
+  openingReason:["openingReason"],desiredClarification:["desiredClarification"],openingAgreement:["openingAgreement"],proposalFeedback:["proposalFeedback"],requestedSolution:["requestedSolution"],
   scenario:["currentScenario","scenario"],bottleneck:["painPoints","bottleneck"],impact:["impact"],
   goal:["desiredOutcome","goal"],priority:["priority"],timing:["timing"],evidence:["evidence"],
   diagnosisSummary:["diagnosisSummary"],needStatus:["needStatus"],decisionMakers:["decisionMakers"],
   solutionIdeas:["solutionIdeas"],openQuestions:["openQuestions"],diagnosisConfirmed:["diagnosisConfirmed"],
-  decision:["decision"],followDate:["followDate"],nextStep:["nextStep"],callNotes:["callNotes"],
+  decision:["decision"],followDate:["followDate"],nextStep:["nextStep"],nextOwner:["nextOwner"],callNotes:["callNotes"],
   deadline:["deadline"],validity:["validity"],offer:["offer"],capacityStatus:["capacity"],
   deliverables:["deliverables"],exclusions:["exclusions"],support:["support"],margin:["margin"],
   manualPrice:["manualPrice"],installments:["installments"],payment:["payment"],proposalStatus:["proposalStatus"]
