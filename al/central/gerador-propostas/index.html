@@ -40,12 +40,13 @@ table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;back
 
 .selected-problems-panel,.problem-capability-suggestions{margin-top:12px;padding:13px;background:#f7f3f7;border:1px solid var(--line)}.selected-problems-panel h4,.problem-capability-suggestions h4{font:600 12px Arial;margin:0 0 8px;color:var(--gold)}.problem-chip{display:inline-flex;align-items:center;gap:6px;margin:3px;padding:6px 9px;background:#fff;border:1px solid var(--line);font-size:11px}.problem-chip button{border:0;background:transparent;color:var(--muted);font-weight:bold}.problem-category{border:1px solid var(--line);margin-bottom:10px;background:#fff}.problem-category summary{cursor:pointer;padding:12px 14px;background:#f0eaf1;font-weight:bold;font-size:12px}.problem-item{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border-top:1px solid #eee;font-size:12px}.problem-item input{width:auto;margin:3px 0 0;accent-color:var(--violet)}.problem-item small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.problem-capability-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:12px}.problem-capability-row:last-child{border-bottom:0}.problem-capability-row small{display:block;color:var(--muted);font-size:10px}.problem-capability-row button{white-space:nowrap}.problem-empty{font-size:11px;color:var(--muted)}.problem-modal{max-width:900px}
 .support-suggestions{margin-top:12px;padding:13px;background:#f7f3f7;border:1px solid var(--line)}.support-suggestions-head{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin-bottom:10px}.support-suggestions-head strong{font-size:12px}.support-suggestions-head span{font-size:11px;color:var(--muted)}.support-suggestion-list{display:flex;gap:8px;flex-wrap:wrap}.support-suggestion{border:1px solid #cfc3d4;background:#fff;color:var(--ink);padding:8px 10px;border-radius:3px;font-size:11px;text-align:left;max-width:100%}.support-suggestion:hover{border-color:var(--gold)}.support-suggestion[aria-pressed="true"]{background:var(--violet);border-color:var(--violet);color:#fff}.support-suggestion small{display:block;font-size:9px;opacity:.75;margin-top:3px}
-</style>
+.sales-workflow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:16px 0 22px}.sales-workflow span{border:1px solid var(--line);padding:10px;background:#fffdf9;font-size:11px}.sales-workflow b{display:block;color:var(--gold);font-size:10px;margin-bottom:4px}@media(max-width:760px){.sales-workflow{grid-template-columns:1fr 1fr}}</style>
 </head>
 <body>
 <div class="shell">
 <header><div><div class="eyebrow">AKASHA HUB · CENTRAL DO EXPERT</div><div style="font:20px Georgia">Arquitetura de Legado</div></div><a href="../index.html" class="no-print">← Voltar à Central</a> <a href="../saladediagnostico/index.html" class="no-print" style="display:inline-flex;align-items:center;gap:7px;padding:9px 13px;border:1px solid var(--gold);text-decoration:none;font-size:12px">◎ Abrir Sala de Diagnóstico →</a></header>
 <section class="intro"><div class="eyebrow">AKASHA SALES OS · FERRAMENTA INTERNA</div><h1>Gerador de propostas.</h1><p>Monte uma proposta passo a passo. Primeiro conte quem é o cliente e o que ele precisa. Depois escolha o que vamos entregar, calcule o preço e revise a proposta. A ferramenta ajuda a fazer as contas, mas a decisão final é da equipe.</p></section>
+<div class="sales-workflow" id="salesWorkflowShared"></div>
 <div class="layout">
 <nav class="steps no-print" aria-label="Etapas do gerador">
 <button class="active" data-step="0">01 · Cliente <small>Quem é o cliente</small></button>
@@ -245,58 +246,15 @@ import { auth, db } from "/login/firebase.js";
 import { isMentorIdentity } from "/afplataforma/firebase/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { CATALOG } from "/afplataforma/assets/js/catalogo-capacidades-data.js";
+import { CATALOG, catalogCapabilities, PROBLEM_MAP, suggestedCapabilityPrice, getProblemCapabilitySuggestions, SALES_WORKFLOW } from "/al/central/shared/akasha-sales-core.js";
+function renderSalesWorkflow(){const el=document.getElementById("salesWorkflowShared");if(el)el.innerHTML=SALES_WORKFLOW.map(x=>'<span><b>'+x.number+'</b><strong>'+x.title+'</strong></span>').join("")}
 const $=id=>document.getElementById(id),money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let step=0,costs=[{name:'Estratégia e planejamento',value:600},{name:'Design e interface',value:650},{name:'Desenvolvimento',value:1100},{name:'Integrações e configuração',value:590}];
 
-const catalogCapabilities=CATALOG.flatMap(dept=>dept.groups.flatMap(group=>group[1].map(name=>({id:dept.id+"::"+name,name,department:dept.name,group:group[0]}))));
-// Referências comerciais internas iniciais (R$), ajustáveis por proposta. Não são cotações de mercado.
-const CAPABILITY_BASE={essencia:1200,branding:1500,tecnologia:2400,financeiro:1600,marketing:1500,comercial:1600,internacional:2000,automacao:2300,educacao:1400,legado:2400};
-function suggestedCapabilityPrice(deptId,group,name){let value=CAPABILITY_BASE[deptId]||1500;const g=String(group||"").toLocaleLowerCase("pt-BR"),n=String(name||"").toLocaleLowerCase("pt-BR"),all=g+" "+n;if(/diagnóstico|investigação|mapeamento|análise|pesquisa|planejamento|estratégia|arquitetura/.test(all))value*=1.25;if(/plataforma|aplicativo|sistema|marketplace|saas|integração|automação|agentes de ia|banco de dados|api|back-end|front-end/.test(n))value*=1.8;if(/livro|e-book|curso|treinamento|formação|workshop|palestra|seminário|evento|documentação|manual|relatório|apresentação/.test(n))value*=1.2;if(/fundamentos|crenças|hábitos|rotinas|tarefas|controle|edição|legendagem|tradução/.test(n))value*=.85;if(/holdings|sucessão|valuation|aquisições|governança|segurança|auditoria|internacionalização/.test(n))value*=1.4;return Math.max(400,Math.round(value/100)*100)}
 let selectedCapabilities=[];
 let selectedProblems=[];
 let catalogInsertedNames=[];
-const PROBLEM_MAP=[
- {category:"Clientes e vendas",items:[
-  ["Poucas pessoas conhecem a empresa ou seus serviços","marketing comercial branding","público segmentação aquisição presença digital"],
-  ["As pessoas demonstram interesse, mas não viram clientes","comercial marketing automacao","jornada atendimento prospecção negociação funis"],
-  ["A empresa depende demais de indicação ou de poucos clientes","marketing comercial","aquisição prospecção canais distribuição"],
-  ["A equipe não sabe explicar o valor do que vende","branding comercial","proposta de valor narrativa comunicação ofertas"],
-  ["As propostas demoram para ser feitas ou não convencem","comercial automacao branding","propostas escopos negociação documentos"],
-  ["Não existe um processo claro para acompanhar contatos e oportunidades","comercial automacao","crm pipeline prospecção atendimento"]
- ]},
- {category:"Marca, imagem e comunicação",items:[
-  ["A marca parece amadora, antiga ou não combina com a qualidade da empresa","branding","identidade visual imagem fotografia direção de arte"],
-  ["A empresa não consegue explicar claramente o que a torna diferente","branding marketing comercial","proposta de valor posicionamento narrativa segmentação"],
-  ["O conteúdo é feito sem plano e sem consistência","marketing branding","calendário editorial redes sociais conteúdo"],
-  ["A empresa precisa melhorar sua presença digital e ser encontrada","marketing tecnologia","seo presença digital sites landing pages"]
- ]},
- {category:"Organização e operação",items:[
-  ["Muitas tarefas dependem de uma única pessoa","automacao internacional","processos procedimentos documentação responsabilidades"],
-  ["A equipe perde tempo com tarefas repetidas e trabalho manual","automacao tecnologia","automação integração formulários relatórios"],
-  ["Informações ficam espalhadas e são difíceis de encontrar","automacao tecnologia","bases de conhecimento gestão conhecimento documentação"],
-  ["A empresa não tem processos, responsabilidades ou indicadores claros","internacional automacao","processos fluxogramas indicadores gestão equipes"]
- ]},
- {category:"Tecnologia e estrutura digital",items:[
-  ["A empresa não tem site, ou o site não gera contatos","tecnologia marketing","sites landing pages formulários captura"],
-  ["Os sistemas não conversam entre si e os dados ficam duplicados","tecnologia automacao","api integração bancos de dados sincronização"],
-  ["A empresa precisa de uma área do cliente, plataforma ou aplicativo","tecnologia","aplicativos plataformas portais sistemas gestão"],
-  ["Pagamentos, pedidos ou agendamentos dão trabalho e geram erros","tecnologia automacao","checkout pagamentos agendamentos comércio digital"]
- ]},
- {category:"Dinheiro e gestão financeira",items:[
-  ["A empresa vende, mas não sabe exatamente quanto sobra","financeiro","fluxo caixa custos margem rentabilidade"],
-  ["Os preços podem estar errados ou a margem está muito baixa","financeiro comercial","precificação formação preços margem negociação"],
-  ["Falta controle de contas, dívidas, orçamento ou capital de giro","financeiro","orçamento contas dívidas capital giro"],
-  ["A empresa quer crescer, mas não sabe quanto pode investir","financeiro legado","projeção caixa viabilidade capital risco patrimônio"]
- ]},
- {category:"Crescimento e futuro",items:[
-  ["A empresa quer entrar em novos mercados ou países","internacional marketing","internacionalização mercados estrangeiros localização"],
-  ["O conhecimento da empresa está na cabeça das pessoas e não documentado","educacao automacao","conhecimento tácito documentação métodos processos"],
-  ["A empresa precisa transformar seu conhecimento em cursos, produtos ou treinamentos","educacao tecnologia","cursos trilhas treinamentos produtos conhecimento"],
-  ["O negócio depende demais do fundador e precisa preparar a continuidade","legado internacional essencia","governança sucessão delegação liderança processos"],
-  ["A empresa quer organizar patrimônio, expansão ou sucessão","legado financeiro","patrimônio ativos passivos governança sucessão"]
- ]}
-];
+
 let authorizedMentor=false;
 let proposalDocId=null;
 function syncCatalogDeliverables(){
@@ -345,16 +303,7 @@ function renderProblemSuggestions(){
  const host=$("problemCapabilitySuggestions");
  if(!host)return;
  if(!selectedProblems.length){host.hidden=true;host.innerHTML="";return}
- const chosen=PROBLEM_MAP.flatMap(category=>category.items).filter(item=>selectedProblems.includes(item[0]));
- const deptIds=[...new Set(chosen.flatMap(item=>item[1].split(" ")))];
- const terms=chosen.flatMap(item=>item[2].split(" "));
- const matches=catalogCapabilities.filter(cap=>{
-  if(!deptIds.includes(cap.id.split("::")[0]))return false;
-  const hay=normalizeText(cap.department+" "+cap.group+" "+cap.name);
-  return terms.some(term=>hay.includes(normalizeText(term)));
- });
- const fallback=catalogCapabilities.filter(cap=>deptIds.includes(cap.id.split("::")[0]));
- const suggestions=[...new Map((matches.length?matches:fallback).map(cap=>[cap.id,cap])).values()].slice(0,18);
+ const suggestions=getProblemCapabilitySuggestions(selectedProblems);
  host.hidden=false;
  host.innerHTML='<h4>CAPACIDADES QUE PODEM AJUDAR A RESOLVER ESSES PROBLEMAS</h4><p class="hint">Sugestões ligadas às áreas do Catálogo Mestre. Confirme com o cliente e escolha apenas o que faz sentido para o escopo.</p>'+(suggestions.length?suggestions.map(cap=>{
   const added=selectedCapabilities.some(x=>x.id===cap.id);
@@ -445,7 +394,7 @@ async function loadProposal(id){
  try{const snap=await getDoc(doc(db,"alCommercialProposals",id));if(!snap.exists())throw Error("Proposta não encontrada.");const x=snap.data();proposalDocId=id;
  const fields={client:x.client,contact:x.contact,segment:x.segment,origin:x.origin,email:x.email,date:x.date,scenario:x.scenario,bottleneck:x.bottleneck,goal:x.goal,deadline:x.deadline,validity:x.validity,offer:x.offer,capacity:x.capacityStatus,deliverables:x.deliverables,exclusions:x.exclusions,support:x.support,margin:x.marginTarget,installments:x.installments,payment:x.payment,proposalStatus:x.status||"draft"};
  Object.entries(fields).forEach(([k,v])=>{if(v!==undefined&&$(k))$(k).value=v});
- costs=Array.isArray(x.costs)?x.costs:[];selectedProblems=Array.isArray(x.selectedProblems)?x.selectedProblems:[];selectedCapabilities=Array.isArray(x.selectedCapabilities)?x.selectedCapabilities:[];renderSelectedProblems();renderProblemSuggestions();catalogInsertedNames=selectedCapabilities.map(c=>c.name);renderCosts();renderCatalog();renderSelectedCapabilities();$("manualPrice").value=x.pricing?.final??"";syncCatalogDeliverables();show(0);
+ costs=Array.isArray(x.costs)?x.costs:[];selectedProblems=Array.isArray(x.selectedProblems)?x.selectedProblems:[];selectedCapabilities=Array.isArray(x.selectedCapabilities)?x.selectedCapabilities:[];renderSelectedProblems();renderProblemSuggestions();catalogInsertedNames=selectedCapabilities.map(c=>c.name);renderCosts();publishSalesSession();renderCatalog();renderSelectedCapabilities();$("manualPrice").value=x.pricing?.final??"";syncCatalogDeliverables();show(0);
  }catch(e){alert("Não foi possível abrir a proposta: "+(e.code||e.message))}
 }
 // A ferramenta fica acessível sem bloqueio de tela. A sessão é consultada apenas
@@ -457,6 +406,27 @@ onAuthStateChanged(auth,user=>{
 
 function renderCosts(){ $('costRows').innerHTML=costs.map((c,i)=>'<tr><td><input aria-label="Nome do custo" data-cost-name="'+i+'" value="'+esc(c.name)+'"></td><td><input aria-label="Valor do custo" data-cost-value="'+i+'" type="number" min="0" step=".01" value="'+c.value+'"></td><td><button class="btn alt" data-remove="'+i+'" type="button">×</button></td></tr>').join('');document.querySelectorAll('[data-cost-name]').forEach(x=>x.oninput=()=>{costs[+x.dataset.costName].name=x.value});document.querySelectorAll('[data-cost-value]').forEach(x=>x.oninput=()=>{costs[+x.dataset.costValue].value=Math.max(0,Number(x.value)||0);calculate()});document.querySelectorAll('[data-remove]').forEach(x=>x.onclick=()=>{costs.splice(+x.dataset.remove,1);renderCosts();calculate()});calculate()}
 function calculate(){let total=costs.reduce((sum,c)=>sum+Math.max(0,Number(c.value)||0),0),capabilityTotal=selectedCapabilities.reduce((sum,c)=>sum+Math.max(0,Number(c.suggestedPrice??suggestedCapabilityPrice((c.id||"").split("::")[0],c.group,c.name))||0),0),m=Math.min(90,Math.max(0,Number($('margin').value)||0)),costSuggested=total/(1-m/100),suggested=Math.max(costSuggested,capabilityTotal),price=$('manualPrice').value===''?suggested:Math.max(0,Number($('manualPrice').value)||0),margin=price>0?(price-total)/price*100:0;$('totalCost').textContent=money(total);$('capabilityReferenceTotal').textContent=money(capabilityTotal);$('suggested').textContent=money(suggested);$('marginValue').textContent=price>0?margin.toFixed(1).replace('.',',')+'%':'—';return{total,capabilityTotal,costSuggested,suggested,price,margin}}
+
+const SALES_SESSION_KEY="akasha-sales-session-v1";
+function publishSalesSession(){
+ const state={version:1,updatedAt:Date.now(),client:val("client"),contact:val("contact"),segment:val("segment"),scenario:val("scenario"),bottleneck:val("bottleneck"),goal:val("goal"),selectedProblems,selectedCapabilities};
+ try{localStorage.setItem(SALES_SESSION_KEY,JSON.stringify(state))}catch(e){}
+}
+function applySalesSession(state){
+ if(!state||state.version!==1)return;
+ selectedProblems=Array.isArray(state.selectedProblems)?state.selectedProblems:[];
+ selectedCapabilities=Array.isArray(state.selectedCapabilities)?state.selectedCapabilities:[];
+ const fields={client:state.client,contact:state.contact,segment:state.segment,scenario:state.scenario,bottleneck:state.bottleneck,goal:state.goal};
+ Object.entries(fields).forEach(([id,value])=>{const el=$(id);if(el&&typeof value==="string"&&document.activeElement!==el&&value)el.value=value});
+ renderSelectedProblems();renderProblemSuggestions();renderSelectedCapabilities();renderCatalog();calculate();
+}
+try{const saved=JSON.parse(localStorage.getItem(SALES_SESSION_KEY)||"null");if(saved){selectedProblems=Array.isArray(saved.selectedProblems)?saved.selectedProblems:[];selectedCapabilities=Array.isArray(saved.selectedCapabilities)?saved.selectedCapabilities:[];}}
+catch(e){}
+window.addEventListener("storage",e=>{if(e.key===SALES_SESSION_KEY&&e.newValue){try{applySalesSession(JSON.parse(e.newValue))}catch(err){console.warn("[Akasha Sales OS] Estado compartilhado inválido",err)}}});
+document.addEventListener("change",e=>{if(e.target.matches("[data-problem],[data-catalog-id],[data-cap-status]"))setTimeout(publishSalesSession,0)});
+document.addEventListener("input",e=>{if(e.target.matches("[data-cap-price],[data-pricing-cap],#client,#contact,#segment,#scenario,#bottleneck,#goal,#manualPrice,#margin"))setTimeout(publishSalesSession,0)});
+document.addEventListener("click",e=>{if(e.target.closest("[data-add-suggested],[data-cap-remove],[data-remove-problem]"))setTimeout(publishSalesSession,0)});
+
 function val(id){return $(id).value.trim()}
 function proposalText(){let c=calculate(),n=Math.max(1,Number($('installments').value)||1),lines=val('deliverables').split('\n').map(x=>x.trim()).filter(Boolean),client=val('client')||'Cliente',offer=val('offer');return {text:'AKASHA HUB\nPROPOSTA COMERCIAL\n\nPreparada para: '+client+(val('contact')?' · '+val('contact'):'')+'\nSegmento: '+(val('segment')||'Não informado')+'\nData: '+(val('date')||'A definir')+'\nValidade: '+(val('validity')||'7 dias')+'\n\nPROJETO\n'+offer+'\n\nCENÁRIO E OBJETIVO\n'+(val('scenario')||'A definir em conjunto')+'\n\nPrioridade: '+(val('bottleneck')||'A validar')+'\nObjetivo: '+(val('goal')||'A definir')+'\n\nPROBLEMAS RECONHECIDOS\n'+(selectedProblems.length?selectedProblems.map(x=>'• '+x).join('\n'):'Nenhum problema mapeado')+'\n\nENTREGÁVEIS\n'+(lines.length?lines.map(x=>'• '+x).join('\n'):'A detalhar')+'\n\nCAPACIDADES DO CATÁLOGO MESTRE\n'+(selectedCapabilities.length?selectedCapabilities.map(x=>'• '+x.name+' ['+x.status+'] — '+money(x.suggestedPrice||0)).join('\n'):'Nenhuma capacidade vinculada')+'\n\nSUBTOTAL DE REFERÊNCIA DOS SERVIÇOS\n'+(selectedCapabilities.length?money(c.capabilityTotal):'Nenhum serviço selecionado')+'\n\nPRAZO\n'+(val('deadline')||'A combinar após validação do escopo')+'\n\nACOMPANHAMENTO\n'+(val('support')||'Conforme condições acordadas')+'\n\nFORA DO ESCOPO E DEPENDÊNCIAS\n'+(val('exclusions')||'Itens não descritos nos entregáveis serão orçados separadamente.')+'\n\nINVESTIMENTO\n'+money(c.price)+'\n'+(n===1?'À vista':n+' parcelas de '+money(c.price/n))+'\n'+(val('payment')||'Condição final definida na aprovação da proposta')+'\n\nPRÓXIMO PASSO\nAprovar o escopo e as condições para formalização contratual e início do projeto.\n\nEsta proposta descreve entregas e condições de trabalho. Não representa garantia de faturamento, vendas ou resultado financeiro.'};}
 function renderProposal(){let p=proposalText(),c=calculate(),n=Math.max(1,Number($('installments').value)||1),items=val('deliverables').split('\n').map(x=>x.trim()).filter(Boolean);$('proposal').innerHTML='<div class="eyebrow">AKASHA HUB · PROPOSTA COMERCIAL</div><h2>'+esc(val('offer'))+'</h2><p>Preparada para <strong>'+esc(val('client')||'Cliente')+'</strong>'+(val('contact')?' · '+esc(val('contact')):'')+'</p><div class="rule"></div><h3>O cenário</h3><p>'+esc(val('scenario')||'Cenário a validar')+'</p><h3>Problemas identificados</h3><ul>'+((selectedProblems.length?selectedProblems:['Nenhum problema mapeado']).map(x=>'<li>'+esc(x)+'</li>').join(''))+'</ul><h3>Objetivo</h3><p>'+esc(val('goal')||'Objetivo a definir')+'</p><h3>Entregáveis</h3><ul>'+items.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><h3>Capacidades do Catálogo Mestre</h3><ul>'+selectedCapabilities.map(x=>'<li>'+esc(x.name)+' <span class="tag">'+esc(x.status)+'</span> — '+money(x.suggestedPrice||0)+'</li>').join('')+'</ul><p><strong>Subtotal de referência dos serviços:</strong> '+(selectedCapabilities.length?money(c.capabilityTotal):'Nenhum serviço selecionado')+'</p><h3>Prazo e acompanhamento</h3><p>'+esc(val('deadline')||'A combinar')+'</p><p>'+esc(val('support')||'Conforme condições acordadas')+'</p><h3>Investimento</h3><div class="money">'+money(c.price)+'</div><p>'+(n===1?'À vista':n+' parcelas de '+money(c.price/n))+'</p><p>'+esc(val('payment'))+'</p><h3>Condições e exclusões</h3><p>'+esc(val('exclusions')||'Itens não descritos serão orçados separadamente.')+'</p><p>Validade: '+esc(val('validity')||'7 dias')+'</p><div class="rule"></div><p><strong>Próximo passo:</strong> aprovação do escopo e das condições para formalização contratual e início do projeto.</p><p style="font-size:11px;color:#756b72">A proposta descreve entregas e condições de trabalho. Não representa garantia de faturamento, vendas ou resultado financeiro.</p>';$('proposal').dataset.text=p.text}
@@ -464,5 +434,6 @@ function show(n){step=n;document.querySelectorAll('[data-panel]').forEach(p=>p.h
 document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>show(Number(b.dataset.step)));document.querySelectorAll('[data-next]').forEach(b=>b.onclick=()=>show(Math.min(4,step+1)));document.querySelectorAll('[data-prev]').forEach(b=>b.onclick=()=>show(Math.max(0,step-1)));
 $('capSearch').oninput=renderCatalog;$("openProblemMap").onclick=openProblemMap;$("closeProblemMap").onclick=closeProblemMap;$("confirmProblems").onclick=closeProblemMap;$("problemSearch").oninput=renderProblemMap;$("problemBackdrop").onclick=e=>{if(e.target===$("problemBackdrop"))closeProblemMap()};document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProblemMap()});$('openCatalog').onclick=openCatalog;$('closeCatalog').onclick=closeCatalog;$('confirmCatalog').onclick=closeCatalog;$('catalogBackdrop').onclick=e=>{if(e.target===$('catalogBackdrop'))closeCatalog()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCatalog()});$('saveProposal').onclick=saveProposal;window.addEventListener('akasha-costs-changed',e=>{if(Array.isArray(e.detail)){costs=e.detail.map(x=>({...x}));calculate()}});$('margin').oninput=calculate;$('manualPrice').oninput=calculate;$('installments').onchange=calculate;$('printProposal').onclick=()=>window.print();$('copyProposal').onclick=async()=>{try{await navigator.clipboard.writeText(proposalText().text);$('copyProposal').textContent='Texto copiado'}catch(e){alert('Não foi possível copiar automaticamente. Use a opção de imprimir ou selecione o texto da proposta.')}};
 $('downloadJson').onclick=()=>{let data={client:val('client'),contact:val('contact'),segment:val('segment'),origin:val('origin'),email:val('email'),diagnosis:{scenario:val('scenario'),bottleneck:val('bottleneck'),goal:val('goal'),selectedProblems},offer:val('offer'),capacity_status:val('capacity'),deliverables:val('deliverables'),exclusions:val('exclusions'),support:val('support'),costs,selectedCapabilities,pricing:calculate(),installments:val('installments'),payment:val('payment'),proposal:proposalText().text};let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=u;a.download='proposta-akasha-'+(val('client')||'rascunho').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.json';a.click();URL.revokeObjectURL(u)};
-$('date').value=new Date().toISOString().slice(0,10);renderCosts();renderCatalog();renderSelectedCapabilities();renderSelectedProblems();show(0);
+try{const saved=JSON.parse(localStorage.getItem(SALES_SESSION_KEY)||"null");if(saved)applySalesSession(saved)}catch(e){}
+renderSalesWorkflow();$('date').value=new Date().toISOString().slice(0,10);renderCosts();renderCatalog();renderSelectedCapabilities();renderSelectedProblems();show(0);
 </script></body></html>

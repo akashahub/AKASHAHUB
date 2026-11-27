@@ -44,6 +44,17 @@
  .modal .modal-head{padding:10px 12px}
  .modal .modal-body{padding:12px}
 }
+
+.sales-workflow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:12px 0 18px}
+.sales-workflow span{border:1px solid var(--line);padding:9px;font-size:11px;background:#fbf8f1}
+.sales-workflow b{display:block;color:var(--gold);font-size:10px;margin-bottom:3px}
+.sales-tool-list{display:grid;gap:7px;margin:8px 0 14px}
+.sales-tool-item{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line);padding:9px;background:#fffdf9;font-size:12px}
+.sales-tool-item input{width:auto;margin-top:3px}
+.sales-tool-item small{display:block;color:var(--muted);font-size:10px}
+.sales-tool-item .price{margin-left:auto;white-space:nowrap;color:var(--gold);font-weight:bold}
+.sales-tool-item input[type=number]{max-width:125px;padding:6px}
+@media(max-width:760px){.sales-workflow{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -78,6 +89,18 @@
   <div class="field"><label for="timing">Quando gostaria de começar?</label><select id="timing"><option value="">Escolher</option><option>Assim que possível</option><option>Nos próximos 30 dias</option><option>Em 1 a 3 meses</option><option>Ainda está avaliando</option></select></div>
   <div class="field wide"><label for="evidence">Exemplos ou evidências mencionadas</label><textarea id="evidence" placeholder="Números, situações, exemplos ou materiais que o cliente apresentou. Não estimar sem confirmação."></textarea></div>
  </div>
+</section>
+
+<section class="panel" id="sharedCommercialTools">
+ <div class="panel-head"><div><div class="eyebrow">INTELIGÊNCIA COMERCIAL COMPARTILHADA</div><h2>Problemas, capacidades e investimento</h2><p class="hint">A mesma base do Gerador de Propostas. Marque somente problemas reconhecidos pelo cliente; depois conecte capacidades e referências de preço.</p></div><span class="pill">Fonte única Akasha Sales OS</span></div>
+ <div id="salesWorkflow" class="sales-workflow"></div>
+ <div class="grid">
+  <div class="field wide"><label for="salesProblemSearch">Pesquisar problemas possíveis</label><input id="salesProblemSearch" placeholder="Ex.: vendas, equipe, tecnologia, financeiro..."><div id="salesProblemList" class="sales-tool-list"></div></div>
+  <div class="field wide"><label>Capacidades sugeridas pelos problemas selecionados</label><div id="salesSuggestionList" class="sales-tool-list"></div></div>
+  <div class="field wide"><label for="salesCatalogSearch">Pesquisar no Catálogo Mestre</label><input id="salesCatalogSearch" placeholder="Buscar uma capacidade ou serviço..."><div id="salesCatalogList" class="sales-tool-list"></div></div>
+  <div class="field wide"><label>Escopo selecionado e preços de referência</label><div id="salesCapabilitySelected" class="sales-tool-list"></div></div>
+ </div>
+ <p class="hint">As referências são pontos de partida internos, não preços obrigatórios nem cotações. O valor final depende de escopo, custos, margem e validação comercial.</p>
 </section>
 <section class="panel">
  <div class="panel-head"><div><div class="eyebrow">CONFIRMAR ANTES DE OFERECER</div><h2>Resumo do diagnóstico</h2><p class="hint">Leia este resumo para o cliente e corrija qualquer parte que não represente o que ele disse.</p></div></div>
@@ -114,7 +137,15 @@
 <div class="modal" id="scriptModal" role="dialog" aria-modal="false" aria-labelledby="scriptTitle">
  <div class="modal-box"><div class="modal-head"><div><div class="eyebrow">TELEPROMPTER · GUIA DO FUNCIONÁRIO</div><h2 id="scriptTitle">Roteiro completo da call</h2></div><div class="window-tools"><button class="window-tool" type="button" data-window-max title="Maximizar/restaurar" aria-label="Maximizar ou restaurar">□</button><button class="window-tool close" type="button" data-close="scriptModal" aria-label="Fechar">×</button></div></div>
  <div class="modal-body">
-  <p class="muted">Use como apoio. Não precisa ler tudo literalmente. Faça uma pergunta, escute a resposta e registre. Tempo sugerido: 25 a 35 minutos, ajustável ao caso.</p>
+  <div id="telepromptWorkflow" class="sales-workflow"></div><p class="muted">Use como apoio. Não precisa ler tudo literalmente. Faça uma pergunta, escute a resposta e registre. Tempo sugerido: 25 a 35 minutos, ajustável ao caso.</p>
+  
+  <section class="script-section" id="telepromptSharedTools"><details open><summary>FERRAMENTAS COMPARTILHADAS · problemas, capacidades e preços</summary><div class="script-content">
+   <p class="coach">Esta seleção é a mesma usada na Sala e no Gerador. Selecione problemas reconhecidos, veja capacidades relacionadas e confira os preços de referência.</p>
+   <label for="telepromptProblemSearch">Pesquisar problemas</label><input id="telepromptProblemSearch" placeholder="Buscar situação do cliente..."><div id="telepromptProblemList" class="sales-tool-list"></div>
+   <h4>Capacidades sugeridas</h4><div id="telepromptSuggestionList" class="sales-tool-list"></div>
+   <label for="telepromptCatalogSearch">Pesquisar no Catálogo Mestre</label><input id="telepromptCatalogSearch" placeholder="Buscar capacidade..."><div id="telepromptCatalogList" class="sales-tool-list"></div>
+   <h4>Escopo e preços selecionados</h4><div id="telepromptCapabilitySelected" class="sales-tool-list"></div>
+  </div></details></section>
   <section class="script-section"><details open><summary>01 · Abertura — alinhar a conversa (2 min)</summary><div class="script-content"><div class="coach">Objetivo: explicar a dinâmica e pedir concordância.</div><div class="say">"Quero entender como as coisas estão hoje, o que você gostaria de melhorar e o que faria sentido construir. Vou registrar os pontos principais e, no final, se encontrarmos uma solução adequada, apresento uma proposta com escopo, investimento e próximos passos. Tudo bem para você?"</div><b>Pergunta de entrada</b><ul><li>O que fez você marcar esta conversa?</li><li>O que seria importante sair daqui tendo esclarecido?</li></ul></div></details></section>
   <section class="script-section"><details><summary>02 · Pedido inicial — o que a pessoa imagina (3 min)</summary><div class="script-content"><div class="coach">Objetivo: registrar o pedido sem assumir que ele já é o diagnóstico.</div><div class="say">"O que você está procurando neste momento?"</div><ul><li>Você já sabe qual solução gostaria de contratar?</li><li>O que espera que essa solução faça?</li><li>O que fez isso virar prioridade agora?</li></ul><div class="coach">Anote a solução desejada como necessidade declarada. Ainda não recomende serviços.</div></div></details></section>
   <section class="script-section"><details><summary>03 · Cenário atual — como funciona hoje (5 min)</summary><div class="script-content"><div class="coach">Objetivo: entender o processo atual com exemplos concretos.</div><div class="say">"Me conta como isso funciona hoje, desde o começo até o final."</div><ul><li>Como vocês fazem isso atualmente?</li><li>Quem participa?</li><li>O que costuma funcionar bem?</li><li>Em que parte começa a ficar difícil?</li><li>Você consegue me dar um exemplo recente?</li></ul><div class="coach">Se a pessoa não souber responder, apresente situações do Mapa de Problemas como hipóteses, nunca como afirmações.</div></div></details></section>
@@ -130,8 +161,64 @@
 <div class="modal generator-modal" id="generatorModal" role="dialog" aria-modal="false" aria-label="Gerador de Propostas">
  <div class="modal-box"><div class="modal-head"><div><div class="eyebrow">GERADOR CONECTADO</div><h2>Gerador de Propostas</h2></div><div class="window-tools"><button class="window-tool" type="button" data-window-max title="Maximizar/restaurar" aria-label="Maximizar ou restaurar">□</button><button class="window-tool close" type="button" data-close="generatorModal" aria-label="Fechar">×</button></div></div><div class="modal-body"><iframe class="generator-frame" id="generatorFrame" title="Gerador de Propostas" src="../gerador-propostas/index.html"></iframe></div><div class="window-resize" data-window-resize title="Arraste para redimensionar" aria-label="Redimensionar janela"></div></div></div>
 </div>
-<script>
+<script type="module">
+import { SALES_WORKFLOW, PROBLEM_MAP, catalogCapabilities, getProblemCapabilitySuggestions, suggestedCapabilityPrice } from "/al/central/shared/akasha-sales-core.js";
 const $=id=>document.getElementById(id);
+
+const SALES_SESSION_KEY="akasha-sales-session-v1";
+let sharedProblems=[],sharedCapabilities=[];
+const escSales=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const moneySales=n=>Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+function workflowMarkup(){return SALES_WORKFLOW.map(x=>'<span><b>'+x.number+'</b><strong>'+x.title+'</strong></span>').join("")}
+function renderWorkflow(){["salesWorkflow","telepromptWorkflow"].forEach(id=>{const el=$(id);if(el)el.innerHTML=workflowMarkup()})}
+function sharedState(){return {version:1,updatedAt:Date.now(),client:$("clientName").value.trim(),contact:$("contactName").value.trim(),segment:$("businessArea").value.trim(),scenario:$("currentScenario").value.trim()||$("declaredNeed").value.trim(),bottleneck:$("painPoints").value.trim(),goal:$("desiredOutcome").value.trim(),selectedProblems:sharedProblems,selectedCapabilities:sharedCapabilities}}
+function publishSharedState(){try{localStorage.setItem(SALES_SESSION_KEY,JSON.stringify(sharedState()))}catch(e){}}
+function applySharedState(state){
+ if(!state||state.version!==1)return;
+ sharedProblems=Array.isArray(state.selectedProblems)?state.selectedProblems:[];
+ sharedCapabilities=Array.isArray(state.selectedCapabilities)?state.selectedCapabilities:[];
+ const fields={clientName:state.client,contactName:state.contact,businessArea:state.segment,currentScenario:state.scenario,painPoints:state.bottleneck||(sharedProblems.length?sharedProblems.join("\\n"):""),desiredOutcome:state.goal,solutionIdeas:sharedCapabilities.map(x=>x.name).join("\\n")};
+ Object.entries(fields).forEach(([id,value])=>{const el=$(id);if(el&&typeof value==="string"&&value&&document.activeElement!==el)el.value=value});
+ renderSharedTools();
+}
+function renderSharedTools(){
+ const q=id=>($(id)?.value||"").trim().toLocaleLowerCase("pt-BR");
+ const problemHtml=searchId=>PROBLEM_MAP.map(cat=>{
+  const items=cat.items.filter(item=>!q(searchId)||(item[0]+" "+cat.category).toLocaleLowerCase("pt-BR").includes(q(searchId)));
+  if(!items.length)return "";
+  return '<div class="sales-tool-item"><strong>'+escSales(cat.category)+'</strong></div>'+items.map(item=>'<label class="sales-tool-item"><input type="checkbox" data-shared-problem="'+escSales(item[0])+'" '+(sharedProblems.includes(item[0])?"checked":"")+'><span>'+escSales(item[0])+'<small>Áreas relacionadas: '+escSales(item[1].split(" ").join(", "))+'</small></span></label>').join("");
+ }).join("");
+ const suggestions=getProblemCapabilitySuggestions(sharedProblems);
+ const suggestionHtml=suggestions.map(cap=>'<div class="sales-tool-item"><span>'+escSales(cap.name)+'<small>'+escSales(cap.department)+' · '+escSales(cap.group)+'</small></span><span class="price">'+moneySales(cap.suggestedPrice)+'</span><button type="button" class="btn alt" data-shared-add="'+escSales(cap.id)+'" '+(sharedCapabilities.some(x=>x.id===cap.id)?"disabled":"")+'>'+(sharedCapabilities.some(x=>x.id===cap.id)?"Adicionado":"＋")+'</button></div>').join("")||'<p class="hint">Marque problemas reconhecidos para ver sugestões de capacidades.</p>';
+ const catalogHtml=searchId=>{
+  const term=q(searchId);
+  return catalogCapabilities.filter(cap=>!term||(cap.name+" "+cap.department+" "+cap.group).toLocaleLowerCase("pt-BR").includes(term)).slice(0,80).map(cap=>{
+   const selected=sharedCapabilities.some(x=>x.id===cap.id),price=suggestedCapabilityPrice(cap.id.split("::")[0],cap.group,cap.name);
+   return '<label class="sales-tool-item"><input type="checkbox" data-shared-cap="'+escSales(cap.id)+'" '+(selected?"checked":"")+'><span>'+escSales(cap.name)+'<small>'+escSales(cap.department)+' · '+escSales(cap.group)+'</small></span><span class="price">'+moneySales(selected?(sharedCapabilities.find(x=>x.id===cap.id)?.suggestedPrice??price):price)+'</span></label>';
+  }).join("")||'<p class="hint">Nenhuma capacidade encontrada.</p>';
+ };
+ const selectedHtml=sharedCapabilities.map((cap,i)=>'<div class="sales-tool-item"><span>'+escSales(cap.name)+'<small>'+escSales(cap.department)+' · '+escSales(cap.status||"Existente")+'</small></span><label class="price">R$ <input type="number" min="0" step="50" data-shared-price="'+i+'" value="'+Number(cap.suggestedPrice??suggestedCapabilityPrice(cap.id.split("::")[0],cap.group,cap.name))+'"></label><button type="button" class="btn alt" data-shared-remove="'+i+'">×</button></div>').join("")||'<p class="hint">Nenhuma capacidade selecionada.</p>';
+ [["salesProblemList",problemHtml("salesProblemSearch")],["telepromptProblemList",problemHtml("telepromptProblemSearch")],["salesSuggestionList",suggestionHtml],["telepromptSuggestionList",suggestionHtml],["salesCatalogList",catalogHtml("salesCatalogSearch")],["telepromptCatalogList",catalogHtml("telepromptCatalogSearch")],["salesCapabilitySelected",selectedHtml],["telepromptCapabilitySelected",selectedHtml]].forEach(([id,html])=>{const el=$(id);if(el)el.innerHTML=html});
+}
+function sharedToolsEvents(){
+ ["salesProblemSearch","telepromptProblemSearch","salesCatalogSearch","telepromptCatalogSearch"].forEach(id=>$(id)?.addEventListener("input",renderSharedTools));
+ document.addEventListener("change",e=>{
+  if(e.target.matches("[data-shared-problem]")){const v=e.target.dataset.sharedProblem;if(e.target.checked&&!sharedProblems.includes(v))sharedProblems.push(v);if(!e.target.checked)sharedProblems=sharedProblems.filter(x=>x!==v)}
+  if(e.target.matches("[data-shared-cap]")){const id=e.target.dataset.sharedCap,cap=catalogCapabilities.find(x=>x.id===id);if(e.target.checked&&cap&&!sharedCapabilities.some(x=>x.id===id))sharedCapabilities.push({...cap,status:"Existente",suggestedPrice:suggestedCapabilityPrice(id.split("::")[0],cap.group,cap.name)});if(!e.target.checked)sharedCapabilities=sharedCapabilities.filter(x=>x.id!==id)}
+  if(e.target.matches("[data-shared-price]"))sharedCapabilities[Number(e.target.dataset.sharedPrice)].suggestedPrice=Math.max(0,Number(e.target.value)||0);
+  if(e.target.matches("[data-shared-problem],[data-shared-cap],[data-shared-price]")){renderSharedTools();$("painPoints").value=sharedProblems.join("\n");$("solutionIdeas").value=sharedCapabilities.map(x=>x.name).join("\n");publishSharedState()}
+ });
+ document.addEventListener("click",e=>{
+  const add=e.target.closest("[data-shared-add]"),remove=e.target.closest("[data-shared-remove]");
+  if(add){const id=add.dataset.sharedAdd,cap=catalogCapabilities.find(x=>x.id===id);if(cap&&!sharedCapabilities.some(x=>x.id===id))sharedCapabilities.push({...cap,status:"Existente",suggestedPrice:suggestedCapabilityPrice(id.split("::")[0],cap.group,cap.name)});renderSharedTools();$("solutionIdeas").value=sharedCapabilities.map(x=>x.name).join("\n");publishSharedState()}
+  if(remove){sharedCapabilities.splice(Number(remove.dataset.sharedRemove),1);renderSharedTools();$("solutionIdeas").value=sharedCapabilities.map(x=>x.name).join("\n");publishSharedState()}
+ });
+ ["clientName","contactName","businessArea","declaredNeed","currentScenario","painPoints","desiredOutcome"].forEach(id=>$(id)?.addEventListener("change",publishSharedState));
+}
+try{const saved=JSON.parse(localStorage.getItem(SALES_SESSION_KEY)||"null");if(saved){sharedProblems=Array.isArray(saved.selectedProblems)?saved.selectedProblems:[];sharedCapabilities=Array.isArray(saved.selectedCapabilities)?saved.selectedCapabilities:[]}}catch(e){}
+
+renderWorkflow();renderSharedTools();sharedToolsEvents();
+window.addEventListener("storage",e=>{if(e.key===SALES_SESSION_KEY&&e.newValue){try{applySharedState(JSON.parse(e.newValue))}catch(err){console.warn("[Akasha Sales OS] Estado compartilhado inválido",err)}}});
 function windowBox(id){return $(id).querySelector('.modal-box')}
 function clampWindow(box,left,top,width,height){
  const margin=8, maxW=window.innerWidth-margin*2,maxH=window.innerHeight-margin*2;
@@ -180,12 +267,13 @@ document.querySelectorAll('.modal').forEach(modal=>{
  });
 });
 window.addEventListener('resize',()=>document.querySelectorAll('.modal.open .modal-box:not(.is-maximized)').forEach(box=>{const r=box.getBoundingClientRect();clampWindow(box,r.left,r.top,r.width,r.height)}));
-$('openScript').onclick=()=>openModal('scriptModal');$('railScript').onclick=()=>openModal('scriptModal');$('openGenerator').onclick=()=>openModal('generatorModal');
+$('openScript').onclick=()=>openModal('scriptModal');$('railScript').onclick=()=>openModal('scriptModal');$('openGenerator').onclick=()=>{publishSharedState();openModal('generatorModal')};
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
 // O clique no fundo mantém a janela aberta; fechamento somente pelo botão X.
 // A tecla Escape não fecha as janelas; use o botão X de cada modal.
 function summary(){const fields=[['Cliente',$('clientName').value],['Contato',$('contactName').value],['Área',$('businessArea').value],['Pedido inicial',$('declaredNeed').value],['Cenário atual',$('currentScenario').value],['Problemas reconhecidos',$('painPoints').value],['Impacto relatado',$('impact').value],['Resultado desejado',$('desiredOutcome').value],['Prioridade',$('priority').value],['Início',$('timing').value],['Evidências',$('evidence').value],['Diagnóstico',$('diagnosisSummary').value],['Classificação',$('needStatus').value],['Capacidades a avaliar',$('solutionIdeas').value],['Pendências',$('openQuestions').value],['Decisão',$('decision').value],['Retorno',$('followDate').value],['Próxima ação',$('nextStep').value],['Observações',$('callNotes').value]];return 'AKASHA HUB · REGISTRO DA SESSÃO\n\n'+fields.filter(x=>x[1]).map(x=>x[0]+':\n'+x[1]).join('\n\n')+'\n\nDiagnóstico confirmado pelo cliente: '+($('diagnosisConfirmed').checked?'Sim':'Ainda não');}
 $('copySummary').onclick=async()=>{try{await navigator.clipboard.writeText(summary());$('status').textContent='Resumo copiado.'}catch(e){$('status').textContent='Não foi possível copiar automaticamente. Selecione os campos e copie manualmente.'}};
 $('printNotes').onclick=()=>window.print();
+window.addEventListener('beforeunload',publishSharedState);
 </script>
 </body></html>
