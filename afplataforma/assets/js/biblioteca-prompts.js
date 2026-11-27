@@ -283,6 +283,7 @@ async function saveSharedContext(root) {
   const uid=selectedContextUid(),status=overlay.querySelector("#pmContextStatus");
   if(!uid||session.mode!=="firebase"){if(status)status.textContent="Entre com a conta da plataforma antes de salvar.";return;}
   activeSharedContextScope=overlay.querySelector("#pmContextScopeSelect")?.value||activeSharedContextScope;
+  await projectContextLoadPromise;
   SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
   const next=Object.create(null);
   overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>{next[field.dataset.pmContextKey]=field.value.trim().slice(0,5000);});
