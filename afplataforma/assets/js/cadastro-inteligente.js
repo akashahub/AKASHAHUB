@@ -7,7 +7,7 @@ const COLLECTION = "users";
 const ROOT_FIELD = "afDossier";
 let dossier = emptyDossier();
 let activeBusinessId = null;
-let welcomeShown = false;
+let welcomeShownForUid = "";
 
 const PERSONAL_FIELDS = [
   ["fullName","Nome completo"],["preferredName","Como prefere ser chamado"],
@@ -97,8 +97,8 @@ function activeBusiness() {
 function field(label, scope, key, value="", multiline=false, group="", hint="") {
   const attrs='data-scope="'+scope+'" data-key="'+key+'"'+(group?' data-group="'+group+'"':'')+(scope==="project"&&hint?' data-id="'+hint+'"':'');
   const control=multiline
-    ? '<textarea '+attrs+' rows="3" placeholder="Preencha se já souber...">'+esc(value)+'</textarea>'
-    : '<input '+attrs+' type="text" value="'+esc(value)+'" placeholder="Preencha se já souber...">';
+    ? '<textarea '+attrs+' rows="3" maxlength="1500" placeholder="Preencha se já souber...">'+esc(value)+'</textarea>'
+    : '<input '+attrs+' type="text" maxlength="250" value="'+esc(value)+'" placeholder="Preencha se já souber...">';
   return '<label class="ci-field"><span>'+esc(label)+'</span>'+control+(hint&&scope!=="project"?'<small>'+esc(hint)+'</small>':'')+'</label>';
 }
 
@@ -124,18 +124,21 @@ function businessMarkup() {
 
 function projectsMarkup() {
   const projects=dossier.projects.filter(x=>!x.archivedAt);
-  const options=dossier.businesses.filter(x=>!x.archivedAt).map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name||"Negócio sem nome")+'</option>').join("");
-  return '<section class="ci-panel"><div class="ci-panel-head"><div><span class="ci-kicker">CONTEXTO DE PROJETO</span><h3>Projetos vinculados</h3><p>Um projeto pode pertencer a um negócio ou ficar independente.</p></div><button type="button" class="ci-btn" data-action="add-project">＋ Adicionar projeto</button></div>'+
-    (projects.length?projects.map(p=>'<article class="ci-project"><div class="ci-project-head"><strong>'+esc(p.name||"Projeto sem nome")+'</strong><button type="button" class="ci-text-btn" data-action="archive-project" data-id="'+esc(p.id)+'">Arquivar</button></div><div class="ci-fields">'+
-      field("Nome do projeto","project","name",p.name||"",false,"",p.id)+
-      '<label class="ci-field"><span>Negócio relacionado</span><select data-scope="project" data-key="businessId" data-id="'+esc(p.id)+'"><option value="">Independente</option>'+options.replace('value="'+esc(p.businessId||"__none")+'"','value="'+esc(p.businessId||"__none")+'" selected')+'</select></label>'+
-      field("Tipo / área","project","type",p.type||"",false,"",p.id)+
-      field("Objetivo principal","project","objective",p.objective||"",true,"",p.id)+
-      '<label class="ci-field"><span>Fase da Arquitetura de Legado</span><select data-scope="project" data-key="phase" data-id="'+esc(p.id)+'"><option value="">A definir</option>'+["AE","ID","AF","EX","LG"].map(v=>'<option '+(p.phase===v?'selected':'')+'>'+v+'</option>').join("")+'</select></label>'+
-      '<label class="ci-field"><span>Status</span><select data-scope="project" data-key="status" data-id="'+esc(p.id)+'">'+["Em diagnóstico","Planejado","Em andamento","Pausado","Concluído"].map(v=>'<option '+((p.status||"Em diagnóstico")===v?'selected':'')+'>'+v+'</option>').join("")+'</select></label>'+
-      field("Prazo desejado","project","deadline",p.deadline||"",false,"",p.id)+
-      field("Notas e contexto específico","project","notes",p.notes||"",true,"",p.id)+
-      '</div></article>').join(""):'<p class="ci-empty">Nenhum projeto cadastrado. Você pode criar projetos depois.</p>')+'</section>';
+  const allBusinesses=dossier.businesses;
+  return '<section class="ci-panel"><div class="ci-panel-head"><div><span class="ci-kicker">CONTEXTO DE PROJETO</span><h3>Projetos vinculados</h3><p>Um projeto pode pertencer a um negócio ou ficar independente. Cada projeto terá sua própria Ficha Única.</p></div><button type="button" class="ci-btn" data-action="add-project">＋ Adicionar projeto</button></div>'+
+    (projects.length?projects.map(p=>{
+      const options=allBusinesses.map(x=>'<option value="'+esc(x.id)+'" '+(p.businessId===x.id?'selected':'')+'>'+esc(x.name||"Negócio sem nome")+(x.archivedAt?' · Arquivado':'')+'</option>').join("");
+      return '<article class="ci-project"><div class="ci-project-head"><strong>'+esc(p.name||"Projeto sem nome")+'</strong><button type="button" class="ci-text-btn" data-action="archive-project" data-id="'+esc(p.id)+'">Arquivar</button></div><div class="ci-fields">'+
+        field("Nome do projeto","project","name",p.name||"",false,"",p.id)+
+        '<label class="ci-field"><span>Negócio relacionado</span><select data-scope="project" data-key="businessId" data-id="'+esc(p.id)+'"><option value="" '+(!p.businessId?'selected':'')+'>Independente</option>'+options+'</select></label>'+
+        field("Tipo / área","project","type",p.type||"",false,"",p.id)+
+        field("Objetivo principal","project","objective",p.objective||"",true,"",p.id)+
+        '<label class="ci-field"><span>Fase da Arquitetura de Legado</span><select data-scope="project" data-key="phase" data-id="'+esc(p.id)+'"><option value="">A definir</option>'+["AE","ID","AF","EX","LG"].map(v=>'<option value="'+v+'" '+(p.phase===v?'selected':'')+'>'+v+'</option>').join("")+'</select></label>'+
+        '<label class="ci-field"><span>Status</span><select data-scope="project" data-key="status" data-id="'+esc(p.id)+'">'+["Em diagnóstico","Planejado","Em andamento","Pausado","Concluído"].map(v=>'<option value="'+v+'" '+((p.status||"Em diagnóstico")===v?'selected':'')+'>'+v+'</option>').join("")+'</select></label>'+
+        field("Prazo desejado","project","deadline",p.deadline||"",false,"",p.id)+
+        field("Notas e contexto específico","project","notes",p.notes||"",true,"",p.id)+
+        '</div></article>';
+    }).join(""):'<p class="ci-empty">Nenhum projeto cadastrado. Você pode criar projetos depois.</p>')+'</section>';
 }
 
 function sharingMarkup() {
@@ -167,7 +170,7 @@ function styles() {
 function collectForm(root) {
   root.querySelectorAll("[data-scope]").forEach(el=>{
     const scope=el.dataset.scope,key=el.dataset.key;
-    const value=el.type==="checkbox"?el.checked:el.value;
+    const value=el.type==="checkbox"?el.checked:String(el.value||"").slice(0,el.tagName==="TEXTAREA"?1500:250);
     if(scope==="personal") dossier.personal[key]=value;
     if(scope==="sharing") dossier.sharing[key]=value;
     if(scope==="business"){
@@ -188,7 +191,7 @@ async function persist(status) {
   dossier.schemaVersion=1;
   dossier.ownerUid=session.uid;
   dossier.onboarding={...(dossier.onboarding||{}),status,currentStep:"profile",updatedAt:new Date().toISOString()};
-  await setDoc(doc(db,COLLECTION,session.uid),{[ROOT_FIELD]:dossier,updatedAt:serverTimestamp()},{merge:true});
+  await setDoc(doc(db,COLLECTION,session.uid),{[ROOT_FIELD]:dossier,afDossierUpdatedAt:serverTimestamp()},{merge:true});
 }
 
 export function renderCadastroInteligente() {
@@ -219,7 +222,9 @@ export async function bindCadastroInteligente() {
     const action=btn.dataset.action;
     if(action==="reload"){root.dataset.bound="";bindCadastroInteligente();return;}
     if(action==="add-business"){
-      collectForm(root);const item={id:newId("biz"),name:"",identity:{},brand:{},operations:{},finance:{},digital:{},commercial:{},expansion:{},legacy:{}};
+      collectForm(root);
+      if(dossier.businesses.filter(x=>!x.archivedAt).length>=10||dossier.businesses.length>=20){const st=root.querySelector("#ciStatus");if(st)st.textContent="Limite inicial: até 10 negócios ativos e 20 registros no total, preservando os arquivados.";return;}
+      const item={id:newId("biz"),name:"",identity:{},brand:{},operations:{},finance:{},digital:{},commercial:{},expansion:{},legacy:{}};
       dossier.businesses.push(item);activeBusinessId=item.id;root.innerHTML=styles()+renderForm();return;
     }
     if(action==="archive-business"){
@@ -228,7 +233,9 @@ export async function bindCadastroInteligente() {
       biz.archivedAt=new Date().toISOString();activeBusinessId=dossier.businesses.find(x=>!x.archivedAt)?.id||null;root.innerHTML=styles()+renderForm();return;
     }
     if(action==="add-project"){
-      collectForm(root);dossier.projects.push({id:newId("proj"),name:"",businessId:activeBusinessId||"",type:"",objective:"",phase:"",status:"Em diagnóstico",deadline:"",notes:""});
+      collectForm(root);
+      if(dossier.projects.filter(x=>!x.archivedAt).length>=25||dossier.projects.length>=50){const st=root.querySelector("#ciStatus");if(st)st.textContent="Limite inicial: até 25 projetos ativos e 50 registros no total.";return;}
+      dossier.projects.push({id:newId("proj"),name:"",businessId:activeBusinessId||"",type:"",objective:"",phase:"",status:"Em diagnóstico",deadline:"",notes:""});
       root.innerHTML=styles()+renderForm();return;
     }
     if(action==="archive-project"){
@@ -252,12 +259,12 @@ async function updateOnboardingStatus(status) {
   const ref=doc(db,COLLECTION,session.uid),snap=await getDoc(ref);
   const current=normalizeDossier(snap.exists()?snap.data()?.[ROOT_FIELD]:null);
   current.onboarding={...current.onboarding,status,updatedAt:new Date().toISOString()};
-  await setDoc(ref,{[ROOT_FIELD]:current,updatedAt:serverTimestamp()},{merge:true});
+  await setDoc(ref,{[ROOT_FIELD]:current,afDossierUpdatedAt:serverTimestamp()},{merge:true});
 }
 
 export async function maybePromptCadastroInteligente(navigate) {
-  if(welcomeShown||isMentorSession()||!session.uid||session.mode!=="firebase")return;
-  welcomeShown=true;
+  if(welcomeShownForUid===session.uid||isMentorSession()||!session.uid||session.mode!=="firebase")return;
+  welcomeShownForUid=session.uid;
   try{
     const snap=await getDoc(doc(db,COLLECTION,session.uid));
     const current=normalizeDossier(snap.exists()?snap.data()?.[ROOT_FIELD]:null);
@@ -278,5 +285,5 @@ export async function maybePromptCadastroInteligente(navigate) {
       try{await updateOnboardingStatus("skipped");overlay.remove();}
       catch(error){const el=overlay.querySelector("#ciWelcomeStatus");if(el)el.textContent="Não consegui registrar sua escolha. Tente novamente.";btn.disabled=false;}
     });
-  }catch(error){console.warn("[Cadastro Inteligente] Não foi possível verificar o primeiro acesso:",error?.code||error?.message||error);}
+  }catch(error){welcomeShownForUid="";console.warn("[Cadastro Inteligente] Não foi possível verificar o primeiro acesso:",error?.code||error?.message||error);}
 }

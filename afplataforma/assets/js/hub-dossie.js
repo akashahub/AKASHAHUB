@@ -100,7 +100,7 @@ function dossierTextFields(value, prefix="", depth=0) {
   const fields=[];
   if(!value||typeof value!=="object"||depth>2)return fields;
   for(const [key,item] of Object.entries(value)){
-    if(["id","ownerUid","schemaVersion","updatedAt","archivedAt","status"].includes(key))continue;
+    if(["id","businessId","ownerUid","schemaVersion","updatedAt","archivedAt","status"].includes(key))continue;
     const label=(prefix?prefix+" · ":"")+key.replace(/([A-Z])/g," $1").replaceAll("_"," ");
     if(typeof item==="string"&&item.trim())fields.push({key:label,text:item.trim()});
     else if(Array.isArray(item)){
@@ -165,6 +165,7 @@ export async function bindHubDossie() {
   const status = document.getElementById("hubDossieStatus");
   if (!who || !list) return;
   const blocks = await Promise.all(DOSSIE_TOOLS.map((tool) => readTool(tool, who.uid)));
+  blocks.unshift(...await readParticipantDossier(who.uid));
   const filled = blocks.filter((block) => block.status === "cheio").length;
   if (status) status.textContent = `${filled} de ${blocks.length} ferramentas com resposta.`;
   const phases = [];
@@ -212,5 +213,6 @@ export async function readHubDossieSnapshot() {
   const who = person();
   if (!who) return { ok: false, reason: "no-person", blocks: [] };
   const blocks = await Promise.all(DOSSIE_TOOLS.map((tool) => readTool(tool, who.uid)));
+  blocks.unshift(...await readParticipantDossier(who.uid));
   return { ok: true, person: who.name, own: who.own, blocks };
 }
