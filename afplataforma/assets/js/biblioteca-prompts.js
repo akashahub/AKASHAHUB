@@ -140,6 +140,7 @@ const AKASHA_HUB_EXAMPLE = {
 const SHARED_CONTEXT_BY_SCOPE = { personal:Object.create(null), business:Object.create(null), hybrid:Object.create(null) };
 let activeSharedContextScope = "hybrid";
 let activeProjectId = "";
+let activeBusinessId = "";
 let projectContextLoadPromise = Promise.resolve();
 let SHARED_CONTEXT = SHARED_CONTEXT_BY_SCOPE.hybrid;
 let sharedContextCloudState = "idle";
@@ -192,6 +193,7 @@ async function populateDossierSelectors(root) {
     if(businesses.some(x=>x.id===oldBusiness))businessSelect.value=oldBusiness;
     if(projects.some(x=>x.id===oldProject))projectSelect.value=oldProject;
     activeProjectId=projectSelect.value||"";
+    activeBusinessId=businessSelect.value||"";
     const selectedProject=projects.find(x=>x.id===activeProjectId);
     if(selectedProject?.businessId&&businesses.some(x=>x.id===selectedProject.businessId))businessSelect.value=selectedProject.businessId;
   }catch(error){console.warn("[Biblioteca] Não consegui carregar as opções do Dossiê:",error?.code||error?.message||error);}
@@ -211,7 +213,7 @@ async function openSharedContext(root) {
   overlay.hidden=false;
   await populateDossierSelectors(root);
   if(activeProjectId){
-    await loadScopedContexts(selectedContextUid(),activeProjectId);
+    await loadScopedContexts(selectedContextUid(),activeProjectId,activeBusinessId);
     SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
     overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
   }
@@ -226,13 +228,13 @@ function refreshOpenPrompt(root) {
   if(generic){const c=CAPABILITIES.find(x=>x.id===generic.dataset.pmCapability);if(c)generic.value=applySharedContext(promptForCapability(c),c.contextScope);}
   if(specialized){const item=SPECIALIZED_PROMPTS.find(x=>x.id===specialized.dataset.pmSpecializedSource);if(item)specialized.value=applySharedContext(buildSpecializedPrompt(item),item.contextScope);}
 }
-async function loadScopedContexts(uid,projectId="") {
-  const docId=scope=>projectId?"project-"+projectId+"-"+scope:"principal-"+scope;
+async function loadScopedContexts(uid,projectId="",businessId="") {
+  const docId=scope=>projectId?"project-"+projectId+"-"+scope:businessId?"business-"+businessId+"-"+scope:"principal-"+scope;
   const [personalSnap,businessSnap,hybridSnap,legacySnap]=await Promise.all([
     getDoc(doc(db,"afProjectContexts",uid,"projects",docId("personal"))),
     getDoc(doc(db,"afProjectContexts",uid,"projects",docId("business"))),
     getDoc(doc(db,"afProjectContexts",uid,"projects",docId("hybrid"))),
-    projectId?Promise.resolve(null):getDoc(doc(db,"afProjectContexts",uid,"projects","principal"))
+    projectId||businessId?Promise.resolve(null):getDoc(doc(db,"afProjectContexts",uid,"projects","principal"))
   ]);
   const snaps={personal:personalSnap,business:businessSnap,hybrid:hybridSnap};
   for(const scope of ["personal","business","hybrid"]){
@@ -245,7 +247,9 @@ async function loadScopedContexts(uid,projectId="") {
     }
   }
   activeProjectId=projectId||"";
+  activeBusinessId=businessId||"";
 }
+
 async function loadSharedContext(root) {
   const uid=selectedContextUid(),status=root.querySelector("#pmContextCloudStatus");
   if(!uid||session.mode!=="firebase"){
@@ -256,7 +260,7 @@ async function loadSharedContext(root) {
   sharedContextCloudState="loading";
   if(status)status.textContent="Carregando contextos pessoal, empresarial e híbrido...";
   try{
-    await loadScopedContexts(uid,"");
+    await loadScopedContexts(uid,"","");
     activeSharedContextScope="hybrid";SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE.hybrid;
     sharedContextCloudState="loaded";
     const hasAny=["personal","business","hybrid"].some(scope=>Object.values(SHARED_CONTEXT_BY_SCOPE[scope]).some(v=>String(v||"").trim()));
@@ -286,7 +290,7 @@ async function saveSharedContext(root) {
   if(button){button.disabled=true;button.textContent="Salvando...";}
   if(status)status.textContent="Salvando ficha "+getContextScopeMeta(activeSharedContextScope).label.toLowerCase()+"...";
   try{
-    await setDoc(doc(db,"afProjectContexts",uid,"projects",activeProjectId?"project-"+activeProjectId+"-"+activeSharedContextScope:"principal-"+activeSharedContextScope),{
+    await setDoc(doc(db,"afProjectContexts",uid,"projects",activeProjectId?"project-"+activeProjectId+"-"+activeSharedContextScope:activeBusinessId?"business-"+activeBusinessId+"-"+activeSharedContextScope:"principal-"+activeSharedContextScope),{
       ownerUid:uid,context:next,schemaVersion:1,updatedBy:session.uid,updatedAt:serverTimestamp()
     });
     PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope][key]=next[key]||"";});
@@ -316,7 +320,10 @@ async function importDossierIntoContext(root) {
     const personal=d.personal||{};
     const biz=(d.businesses||[]).find(x=>x.id===businessId&&!x.archivedAt)||null;
     const project=(d.projects||[]).find(x=>x.id===projectId&&!x.archivedAt)||null;
-    if(activeProjectId!==projectId){activeProjectId=projectId;projectContextLoadPromise=loadScopedContexts(uid,projectId);}
+    if(activeProjectId!==projectId||(!projectId&&activeBusinessId!==businessId)){
+      activeProjectId=projectId;activeBusinessId=businessId;
+      projectContextLoadPromise=loadScopedContexts(uid,projectId,businessId);
+    }
     await projectContextLoadPromise;
     if(scope!=="personal"&&!biz){if(status)status.textContent="O negócio selecionado não foi encontrado. Atualize a lista.";return;}
     if(project?.businessId&&biz?.id&&project.businessId!==biz.id){if(status)status.textContent="Este projeto está vinculado a outro negócio. Selecione a empresa correspondente para não misturar contextos.";return;}
@@ -576,14 +583,28 @@ function handleContextScopeChange(root,event) {
     activeProjectId=projectId;
     const businessSelect=root.querySelector("#pmDossierBusiness");
     if(option?.dataset.businessId&&businessSelect)businessSelect.value=option.dataset.businessId;
+    activeBusinessId=businessSelect?.value||"";
     const uid=selectedContextUid();
-    if(uid)projectContextLoadPromise=loadScopedContexts(uid,projectId).then(()=>{
+    if(uid)projectContextLoadPromise=loadScopedContexts(uid,projectId,activeBusinessId).then(()=>{
       SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
       const overlay=root.querySelector("[data-pm-context-overlay]");
       overlay?.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
       const status=overlay?.querySelector("#pmContextStatus");
       if(status)status.textContent=projectId?"Ficha específica do projeto carregada.":"Ficha principal carregada.";
     }).catch(error=>console.warn("[Biblioteca] Falha ao carregar ficha do projeto:",error));
+    return;
+  }
+  if(event.target.id==="pmDossierBusiness"){
+    activeBusinessId=event.target.value||"";
+    if(!activeProjectId){
+      const uid=selectedContextUid();
+      if(uid)projectContextLoadPromise=loadScopedContexts(uid,"",activeBusinessId).then(()=>{
+        SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
+        const overlay=root.querySelector("[data-pm-context-overlay]");
+        overlay?.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
+        const status=overlay?.querySelector("#pmContextStatus");if(status)status.textContent="Ficha do negócio selecionado carregada.";
+      }).catch(error=>console.warn("[Biblioteca] Falha ao carregar ficha do negócio:",error));
+    }
     return;
   }
   if(!event.target.matches("[data-pm-context-scope]"))return;
