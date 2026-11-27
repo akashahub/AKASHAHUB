@@ -3,7 +3,8 @@ import { activeHubContext, loadAuthorizedMentees } from "./hub-context.js?v=etap
 import { db } from "../../firebase/firebase-config.js";
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { CATALOG } from "./catalogo-capacidades-data.js?v=20261110-1";
-import { SPECIALIZED_PROMPTS, buildSpecializedPrompt } from "./biblioteca-prompts-especializados.js?v=global-recipes-20261119-1";
+import { getCapabilityContextScope, getContextKeysForScope, getContextScopeMeta, contextScopeInstruction } from "./biblioteca-contexto-data.js?v=context-scope-20261127-1";
+import { SPECIALIZED_PROMPTS, buildSpecializedPrompt } from "./biblioteca-prompts-especializados.js?v=context-scope-20261127-1";
 import { readHubDossieSnapshot } from "./hub-dossie.js?v=dossier-prompt-context-20261119-v1";
 
 const PHASES = [
@@ -114,6 +115,7 @@ function flattenCatalog() {
         id: DEPT_CODES[dept.id] + "-C" + String(n).padStart(2,"0"),
         departmentId:dept.id, departmentCode:DEPT_CODES[dept.id], department:dept.name,
         group, title, phases:DEPT_PHASES[dept.id] || [], phase: (DEPT_PHASES[dept.id] || [])[0] || "",
+        contextScope:getCapabilityContextScope(DEPT_CODES[dept.id] + "-C" + String(n).padStart(2,"0"), dept.id),
         reason:DEPT_PHASE_REASON[dept.id] || ""
       };
     }));
@@ -148,10 +150,12 @@ function selectedContextUid() {
   const context = activeHubContext();
   return context?.uid || session.uid || "";
 }
-function applySharedContext(prompt) {
+function applySharedContext(prompt, scope="hybrid") {
+  const allowed = new Set(getContextKeysForScope(scope));
   return PROMPT_VARIABLES.reduce((text,[key])=>{
-    const value=String(SHARED_CONTEXT[key]||"").trim();
-    return value ? text.replaceAll("{{"+key+"}}",value) : text;
+    const value=allowed.has(key) ? String(SHARED_CONTEXT[key]||"").trim() : "";
+    const replacement = value || (allowed.has(key) ? "{{"+key+"}}" : "[Não aplicável ao escopo "+getContextScopeMeta(scope).label.toLowerCase()+"]");
+    return text.replaceAll("{{"+key+"}}",replacement);
   },String(prompt||""));
 }
 function sharedContextMarkup() {
@@ -188,8 +192,8 @@ function refreshOpenPrompt(root) {
   const active=root.querySelector("#pmPanel");
   const generic=active?.querySelector("[data-pm-capability]");
   const specialized=active?.querySelector("[data-pm-specialized-source]");
-  if(generic){const c=CAPABILITIES.find(x=>x.id===generic.dataset.pmCapability);if(c)generic.value=applySharedContext(promptForCapability(c));}
-  if(specialized){const item=SPECIALIZED_PROMPTS.find(x=>x.id===specialized.dataset.pmSpecializedSource);if(item)specialized.value=applySharedContext(buildSpecializedPrompt(item));}
+  if(generic){const c=CAPABILITIES.find(x=>x.id===generic.dataset.pmCapability);if(c)generic.value=applySharedContext(promptForCapability(c),c.contextScope);}
+  if(specialized){const item=SPECIALIZED_PROMPTS.find(x=>x.id===specialized.dataset.pmSpecializedSource);if(item)specialized.value=applySharedContext(buildSpecializedPrompt(item),item.contextScope);}
 }
 async function loadSharedContext(root) {
   const uid=selectedContextUid();
@@ -269,6 +273,10 @@ async function saveSharedContext(root) {
   }
 }
 
+function contextPill(scope) {
+  const meta=getContextScopeMeta(scope);
+  return '<span class="pm-phase-pill pm-context-pill" title="Fonte de contexto: '+esc(meta.sourceLabel)+'">'+esc(meta.shortLabel)+'</span>';
+}
 function phasePills(ids) {
   return ids.map(id => {
     const p = PHASES.find(x => x.id === id);
@@ -286,13 +294,13 @@ function renderPhaseCards() {
 }
 function renderCapabilityRows(rows) {
   if (!rows.length) return '<div class="pm-empty">Nenhuma capacidade corresponde aos filtros atuais.</div>';
-  return rows.map(c => '<article class="pm-cap-row"><div class="pm-cap-code">'+esc(c.id)+'</div><div class="pm-cap-main"><strong>'+esc(c.title)+'</strong><small>'+esc(c.department.replace(/^\d+ · /,""))+' · '+esc(c.group)+'</small><p>'+esc(c.reason)+'</p><button type="button" class="pm-build-prompt" data-pm-prompt="'+esc(c.id)+'">Construir prompt <span>↗</span></button></div><div class="pm-cap-meta">'+phasePills(c.phases)+'<span class="pm-unclassified">Estado a classificar</span></div></article>').join("");
+  return rows.map(c => '<article class="pm-cap-row"><div class="pm-cap-code">'+esc(c.id)+'</div><div class="pm-cap-main"><strong>'+esc(c.title)+'</strong><small>'+esc(c.department.replace(/^\d+ · /,""))+' · '+esc(c.group)+'</small><p>'+esc(c.reason)+'</p><button type="button" class="pm-build-prompt" data-pm-prompt="'+esc(c.id)+'">Construir prompt <span>↗</span></button></div><div class="pm-cap-meta">'+contextPill(c.contextScope)+phasePills(c.phases)+'<span class="pm-unclassified">Estado a classificar</span></div></article>').join("");
 }
 function renderMatrixView() {
   const deptCards = CATALOG.map(d => {
     const caps = CAPABILITIES.filter(c => c.departmentId === d.id);
     const phases = [...new Set(caps.flatMap(c => c.phases))];
-    return '<article class="pm-dept-card"><div class="pm-dept-head"><span>'+DEPT_CODES[d.id]+'</span><div><h3>'+esc(d.name.replace(/^\d+ · /,""))+'</h3><p>'+esc(d.summary)+'</p></div><b>'+caps.length+'</b></div><div class="pm-dept-phases">'+phasePills(phases)+'</div><details><summary>Ver '+caps.length+' capacidades</summary><div class="pm-dept-cap-list">'+caps.map(c => '<div><code>'+esc(c.id)+'</code>'+esc(c.title)+'</div>').join("")+'</div></details></article>';
+    return '<article class="pm-dept-card"><div class="pm-dept-head"><span>'+DEPT_CODES[d.id]+'</span><div><h3>'+esc(d.name.replace(/^\d+ · /,""))+'</h3><p>'+esc(d.summary)+'</p></div><b>'+caps.length+'</b></div><div class="pm-dept-phases">'+phasePills(phases)+'</div><details><summary>Ver '+caps.length+' capacidades</summary><div class="pm-dept-cap-list">'+caps.map(c => '<div><code>'+esc(c.id)+'</code>'+contextPill(c.contextScope)+' '+esc(c.title)+'</div>').join("")+'</div></details></article>';
   }).join("");
   return '<div class="pm-dept-grid">'+deptCards+'</div>';
 }
@@ -343,6 +351,9 @@ Atue como especialista sênior em ${c.department.replace(/^\d+ · /,"")}, com vi
 - Contexto das fases: ${phaseContext}
 - Entregáveis relacionados: ${deliverables}
 - Relação estratégica: ${c.reason}
+- Escopo de contexto: ${getContextScopeMeta(c.contextScope).label}
+- Fonte recomendada: ${getContextScopeMeta(c.contextScope).sourceLabel}
+- Regra de contexto: ${contextScopeInstruction(c.contextScope)}
 
 ### VARIÁVEIS DE ENTRADA
 Use os dados disponíveis. Se faltar variável essencial, pergunte antes de concluir. Nunca invente.
@@ -409,7 +420,7 @@ Identifique as variáveis já fornecidas. Pergunte apenas o indispensável. Exec
 }
 function renderPromptDetail(id) {
  const c=CAPABILITIES.find(x=>x.id===id); if(!c)return '<div class="pm-empty">Capacidade não encontrada.</div>';
- return '<section class="pm-prompt-detail"><button class="pm-back" type="button" data-pm-back>← Voltar à matriz</button><div class="pm-prompt-kicker">PROMPT OPERACIONAL · '+esc(c.id)+'</div><h2>'+esc(c.title)+'</h2><p class="pm-prompt-intro">Modelo-base contextualizado. Consulte as variáveis compartilhadas antes de preencher e copiar. Nesta etapa, a lista é um guia; ainda não salva respostas automaticamente.</p><details class="pm-variable-guide" style="margin:12px 0;padding:12px;border:1px solid var(--line,#39342d);border-radius:10px"><summary style="cursor:pointer">Revisar as 16 variáveis do contexto</summary><p>Lista padrão usada pelos prompts:</p><ol><li><strong>nome do cliente ou empresa</strong> — Nome da pessoa, marca ou empresa atendida.</li><li><strong>segmento e modelo de negocio</strong> — Setor, atividade, como vende e como gera receita.</li><li><strong>pais cidade e mercado</strong> — País, cidade, região e mercado em que atua.</li><li><strong>estagio atual e historico</strong> — Momento atual, trajetória e acontecimentos relevantes.</li><li><strong>objetivo principal e resultado esperado</strong> — O que deseja alcançar e como reconhecer o resultado.</li><li><strong>problema ou oportunidade</strong> — Desafio central ou oportunidade que deseja aproveitar.</li><li><strong>publico e cliente ideal</strong> — Pessoas ou empresas que deseja atender.</li><li><strong>oferta produto servico</strong> — Produtos, serviços, pacotes, preços e diferenciais conhecidos.</li><li><strong>dados e indicadores disponiveis</strong> — Números e indicadores já registrados nas ferramentas.</li><li><strong>recursos orcamento e restricoes</strong> — Equipe, tempo, orçamento, limites e recursos disponíveis.</li><li><strong>prazo e prioridade</strong> — Prazo desejado e nível de prioridade.</li><li><strong>ativos ferramentas e processos existentes</strong> — Sites, sistemas, canais, ferramentas e processos já utilizados.</li><li><strong>decisoes ja tomadas e preferencias</strong> — Decisões confirmadas, preferências e coisas que não devem mudar.</li><li><strong>fontes documentos e referencias autorizadas</strong> — Links e documentos que podem ser consultados.</li><li><strong>formato do entregavel</strong> — Formato esperado: diagnóstico, plano, roteiro, tabela, código etc.</li><li><strong>responsavel pela validacao</strong> — Pessoa que revisa e aprova o resultado.</li></ol><button type="button" class="pm-copy-prompt" data-pm-copy-vars>Copiar lista de variáveis</button><span id="pmVariableCopyStatus" role="status" aria-live="polite"></span></details><div class="pm-prompt-meta"><span>'+esc(c.department)+'</span><span>'+esc(c.group)+'</span>'+phasePills(c.phases)+'</div><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-open-context>Revisar contexto compartilhado</button><button type="button" class="pm-copy-prompt" data-pm-load-dossier>Carregar contexto do Dossiê</button><span id="pmDossierStatus" role="status" aria-live="polite">Lê as respostas já salvas do cliente selecionado e mostra as fontes.</span></div><label class="pm-prompt-label" for="pmPromptText">Prompt completo e editável</label><textarea id="pmPromptText" data-pm-capability="'+esc(c.id)+'" spellcheck="false">'+esc(applySharedContext(promptForCapability(c)))+'</textarea><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-copy>Copiar prompt completo</button><span id="pmCopyStatus" role="status" aria-live="polite">Personalize as variáveis antes de usar.</span></div><div class="pm-prompt-quality"><strong>Critérios incorporados</strong><ul><li>Diagnóstico com evidências e contexto real.</li><li>Perguntas somente para lacunas relevantes.</li><li>Plano executável, prioridades e indicadores.</li><li>Revisão crítica, riscos e validação humana.</li><li>Privacidade e limites profissionais.</li></ul></div></section>';
+ return '<section class="pm-prompt-detail"><button class="pm-back" type="button" data-pm-back>← Voltar à matriz</button><div class="pm-prompt-kicker">PROMPT OPERACIONAL · '+esc(c.id)+'</div><h2>'+esc(c.title)+'</h2><p class="pm-prompt-intro">Modelo-base contextualizado. Consulte as variáveis compartilhadas antes de preencher e copiar. Nesta etapa, a lista é um guia; ainda não salva respostas automaticamente.</p><details class="pm-variable-guide" style="margin:12px 0;padding:12px;border:1px solid var(--line,#39342d);border-radius:10px"><summary style="cursor:pointer">Revisar as 16 variáveis do contexto</summary><p>Lista padrão usada pelos prompts:</p><ol><li><strong>nome do cliente ou empresa</strong> — Nome da pessoa, marca ou empresa atendida.</li><li><strong>segmento e modelo de negocio</strong> — Setor, atividade, como vende e como gera receita.</li><li><strong>pais cidade e mercado</strong> — País, cidade, região e mercado em que atua.</li><li><strong>estagio atual e historico</strong> — Momento atual, trajetória e acontecimentos relevantes.</li><li><strong>objetivo principal e resultado esperado</strong> — O que deseja alcançar e como reconhecer o resultado.</li><li><strong>problema ou oportunidade</strong> — Desafio central ou oportunidade que deseja aproveitar.</li><li><strong>publico e cliente ideal</strong> — Pessoas ou empresas que deseja atender.</li><li><strong>oferta produto servico</strong> — Produtos, serviços, pacotes, preços e diferenciais conhecidos.</li><li><strong>dados e indicadores disponiveis</strong> — Números e indicadores já registrados nas ferramentas.</li><li><strong>recursos orcamento e restricoes</strong> — Equipe, tempo, orçamento, limites e recursos disponíveis.</li><li><strong>prazo e prioridade</strong> — Prazo desejado e nível de prioridade.</li><li><strong>ativos ferramentas e processos existentes</strong> — Sites, sistemas, canais, ferramentas e processos já utilizados.</li><li><strong>decisoes ja tomadas e preferencias</strong> — Decisões confirmadas, preferências e coisas que não devem mudar.</li><li><strong>fontes documentos e referencias autorizadas</strong> — Links e documentos que podem ser consultados.</li><li><strong>formato do entregavel</strong> — Formato esperado: diagnóstico, plano, roteiro, tabela, código etc.</li><li><strong>responsavel pela validacao</strong> — Pessoa que revisa e aprova o resultado.</li></ol><button type="button" class="pm-copy-prompt" data-pm-copy-vars>Copiar lista de variáveis</button><span id="pmVariableCopyStatus" role="status" aria-live="polite"></span></details><div class="pm-prompt-meta"><span>'+esc(c.department)+'</span><span>'+esc(c.group)+'</span>'+contextPill(c.contextScope)+phasePills(c.phases)+'</div><p class="pm-prompt-intro">Contexto '+esc(getContextScopeMeta(c.contextScope).label.toLowerCase())+': '+esc(contextScopeInstruction(c.contextScope))+'</p><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-open-context>Revisar contexto compartilhado</button><button type="button" class="pm-copy-prompt" data-pm-load-dossier>Carregar contexto do Dossiê</button><span id="pmDossierStatus" role="status" aria-live="polite">Lê as respostas já salvas do cliente selecionado e mostra as fontes.</span></div><label class="pm-prompt-label" for="pmPromptText">Prompt completo e editável</label><textarea id="pmPromptText" data-pm-capability="'+esc(c.id)+'" spellcheck="false">'+esc(applySharedContext(promptForCapability(c),c.contextScope))+'</textarea><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-copy>Copiar prompt completo</button><span id="pmCopyStatus" role="status" aria-live="polite">Personalize as variáveis antes de usar.</span></div><div class="pm-prompt-quality"><strong>Critérios incorporados</strong><ul><li>Diagnóstico com evidências e contexto real.</li><li>Perguntas somente para lacunas relevantes.</li><li>Plano executável, prioridades e indicadores.</li><li>Revisão crítica, riscos e validação humana.</li><li>Privacidade e limites profissionais.</li></ul></div></section>';
 }
 
 
@@ -460,16 +471,16 @@ async function attachDossierContext(area, status) {
 
 function renderSpecializedRows(items) {
   if (!items.length) return '<div class="pm-empty">Nenhum prompt corresponde aos filtros.</div>';
-  return items.map(item => '<article class="pm-cap-row"><div class="pm-cap-code">'+esc(item.id)+'</div><div class="pm-cap-main"><strong>'+esc(item.title)+'</strong><small>'+esc(item.category)+' · Fase '+esc(item.phase)+'</small><p>'+esc(item.mission)+'</p><button type="button" class="pm-build-prompt" data-pm-specialized="'+esc(item.id)+'">Abrir prompt completo <span>↗</span></button></div><div class="pm-cap-meta"><span class="pm-phase-pill">'+esc(item.phase)+'</span></div></article>').join('');
+  return items.map(item => '<article class="pm-cap-row"><div class="pm-cap-code">'+esc(item.id)+'</div><div class="pm-cap-main"><strong>'+esc(item.title)+'</strong><small>'+esc(item.category)+' · Fase '+esc(item.phase)+'</small><p>'+esc(item.mission)+'</p><button type="button" class="pm-build-prompt" data-pm-specialized="'+esc(item.id)+'">Abrir prompt completo <span>↗</span></button></div><div class="pm-cap-meta">'+contextPill(item.contextScope)+'<span class="pm-phase-pill">'+esc(item.phase)+'</span></div></article>').join('');
 }
 function renderSpecializedIndex() {
   const cats = [...new Set(SPECIALIZED_PROMPTS.map(x=>x.category))];
-  return '<div class="pm-specialized-intro"><h2>Receitas práticas e especializadas</h2><p>Prompts prontos para tarefas concretas. Cada receita tem missão, entradas específicas, método, entregáveis e limites. O contexto geral é reaproveitado sem pedir os mesmos dados novamente.</p><div class="pm-stats"><div><strong>'+SPECIALIZED_PROMPTS.length+'</strong><span>prompts especializados</span></div><div><strong>'+cats.length+'</strong><span>categorias práticas</span></div><div><strong>5</strong><span>fases conectadas</span></div></div></div><div class="pm-filters"><input id="pmSpecialSearch" type="search" placeholder="Buscar por nome, tarefa ou palavra-chave..."><select id="pmSpecialCategory"><option value="">Todas as categorias</option>'+cats.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join('')+'</select><select id="pmSpecialPhase"><option value="">Todas as fases</option>'+PHASES.map(p=>'<option value="'+p.id+'">'+p.id+' · '+esc(p.name)+'</option>').join('')+'</select><span id="pmSpecialCount"></span></div><div id="pmSpecialRows" class="pm-cap-list">'+renderSpecializedRows(SPECIALIZED_PROMPTS)+'</div>';
+  return '<div class="pm-specialized-intro"><h2>Receitas práticas e especializadas</h2><p>Prompts prontos para tarefas concretas. Cada receita tem missão, entradas específicas, método, entregáveis e limites. O contexto geral é reaproveitado sem pedir os mesmos dados novamente.</p><div class="pm-stats"><div><strong>'+SPECIALIZED_PROMPTS.length+'</strong><span>prompts especializados</span></div><div><strong>'+cats.length+'</strong><span>categorias práticas</span></div><div><strong>5</strong><span>fases conectadas</span></div></div></div><div class="pm-filters"><input id="pmSpecialSearch" type="search" placeholder="Buscar por nome, tarefa ou palavra-chave..."><select id="pmSpecialCategory"><option value="">Todas as categorias</option>'+cats.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join('')+'</select><select id="pmSpecialPhase"><option value="">Todas as fases</option>'+PHASES.map(p=>'<option value="'+p.id+'">'+p.id+' · '+esc(p.name)+'</option>').join('')+'</select><select id="pmSpecialContext"><option value="">Todos os contextos</option><option value="personal">Pessoal</option><option value="business">Empresarial</option><option value="hybrid">Híbrido</option></select><span id="pmSpecialCount"></span></div><div id="pmSpecialRows" class="pm-cap-list">'+renderSpecializedRows(SPECIALIZED_PROMPTS)+'</div>';
 }
 function renderSpecializedDetail(id) {
   const item=SPECIALIZED_PROMPTS.find(x=>x.id===id);
   if(!item) return '<div class="pm-empty">Prompt especializado não encontrado.</div>';
-  return '<section class="pm-prompt-detail"><button class="pm-back" type="button" data-pm-back-special>← Voltar aos prompts especializados</button><div class="pm-prompt-kicker">RECEITA ESPECIALIZADA · '+esc(item.id)+'</div><h2>'+esc(item.title)+'</h2><p class="pm-prompt-intro">'+esc(item.mission)+'</p><div class="pm-prompt-meta"><span>'+esc(item.category)+'</span><span>Fase '+esc(item.phase)+'</span><span>'+esc(item.keywords)+'</span></div><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-open-context>Revisar contexto compartilhado</button><button type="button" class="pm-copy-prompt" data-pm-load-dossier-special>Carregar contexto do Dossiê</button><span id="pmSpecialDossierStatus" role="status" aria-live="polite">Lê as respostas já salvas do cliente selecionado e mostra as fontes.</span></div><label class="pm-prompt-label" for="pmSpecialPromptText">Prompt completo e editável</label><textarea id="pmSpecialPromptText" data-pm-specialized-source="'+esc(item.id)+'" spellcheck="false">'+esc(applySharedContext(buildSpecializedPrompt(item)))+'</textarea><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-copy-special>Copiar prompt completo</button><span id="pmSpecialCopyStatus" role="status" aria-live="polite">Revise o contexto e personalize o que estiver entre chaves antes de usar.</span></div><div class="pm-prompt-quality"><strong>Como usar</strong><ul><li>O mentor conduz e valida o projeto.</li><li>O prompt reaproveita as variáveis gerais e pede apenas entradas específicas que faltarem.</li><li>O resultado deve ser revisado antes de virar entregável oficial.</li><li>As ferramentas relacionadas são sugestões de apoio; integração automática não é presumida.</li></ul></div></section>';
+  return '<section class="pm-prompt-detail"><button class="pm-back" type="button" data-pm-back-special>← Voltar aos prompts especializados</button><div class="pm-prompt-kicker">RECEITA ESPECIALIZADA · '+esc(item.id)+'</div><h2>'+esc(item.title)+'</h2><p class="pm-prompt-intro">'+esc(item.mission)+'</p><div class="pm-prompt-meta"><span>'+esc(item.category)+'</span><span>Fase '+esc(item.phase)+'</span>'+contextPill(item.contextScope)+'<span>'+esc(item.keywords)+'</span></div><p class="pm-prompt-intro">Contexto '+esc(getContextScopeMeta(item.contextScope).label.toLowerCase())+': '+esc(contextScopeInstruction(item.contextScope))+'</p><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-open-context>Revisar contexto compartilhado</button><button type="button" class="pm-copy-prompt" data-pm-load-dossier-special>Carregar contexto do Dossiê</button><span id="pmSpecialDossierStatus" role="status" aria-live="polite">Lê as respostas já salvas do cliente selecionado e mostra as fontes.</span></div><label class="pm-prompt-label" for="pmSpecialPromptText">Prompt completo e editável</label><textarea id="pmSpecialPromptText" data-pm-specialized-source="'+esc(item.id)+'" spellcheck="false">'+esc(applySharedContext(buildSpecializedPrompt(item),item.contextScope))+'</textarea><div class="pm-prompt-actions"><button type="button" class="pm-copy-prompt" data-pm-copy-special>Copiar prompt completo</button><span id="pmSpecialCopyStatus" role="status" aria-live="polite">Revise o contexto e personalize o que estiver entre chaves antes de usar.</span></div><div class="pm-prompt-quality"><strong>Como usar</strong><ul><li>O mentor conduz e valida o projeto.</li><li>O prompt reaproveita as variáveis gerais e pede apenas entradas específicas que faltarem.</li><li>O resultado deve ser revisado antes de virar entregável oficial.</li><li>As ferramentas relacionadas são sugestões de apoio; integração automática não é presumida.</li></ul></div></section>';
 }
 
 export function renderMasterPromptMap() {
@@ -508,7 +519,7 @@ export function bindMasterPromptMap() {
     });
     return;
   }
-  const searchMarkup = () => '<div class="pm-filters"><input id="pmSearch" type="search" placeholder="Buscar capacidade, departamento ou grupo..."><select id="pmPhaseFilter"><option value="">Todas as fases</option>'+PHASES.map(p=>'<option value="'+p.id+'">'+p.id+' · '+esc(p.name)+'</option>').join("")+'</select><select id="pmDeptFilter"><option value="">Todos os departamentos</option>'+CATALOG.map(d=>'<option value="'+d.id+'">'+esc(d.name)+'</option>').join("")+'</select><span id="pmCount"></span></div><div id="pmRows" class="pm-cap-list">'+renderCapabilityRows(CAPABILITIES)+'</div>';
+  const searchMarkup = () => '<div class="pm-filters"><input id="pmSearch" type="search" placeholder="Buscar capacidade, departamento ou grupo..."><select id="pmPhaseFilter"><option value="">Todas as fases</option>'+PHASES.map(p=>'<option value="'+p.id+'">'+p.id+' · '+esc(p.name)+'</option>').join("")+'</select><select id="pmDeptFilter"><option value="">Todos os departamentos</option>'+CATALOG.map(d=>'<option value="'+d.id+'">'+esc(d.name)+'</option>').join("")+'</select><select id="pmContextFilter"><option value="">Todos os contextos</option><option value="personal">Pessoal</option><option value="business">Empresarial</option><option value="hybrid">Híbrido</option></select><span id="pmCount"></span></div><div id="pmRows" class="pm-cap-list">'+renderCapabilityRows(CAPABILITIES)+'</div>';
   const rulesMarkup = () => '<div class="pm-rules-grid"><article><h3>O prompt não é o aplicativo</h3><p>O aplicativo registra e executa sua função. O prompt orienta análise, planejamento, criação ou revisão usando dados autorizados, sem duplicar registros ou cálculos.</p></article><article><h3>Vendas são sistêmicas</h3><p>Um resultado comercial pode depender de identidade, valor percebido, comunicação, ativos digitais, preço, margem, aquisição, atendimento, operação, entrega e continuidade. O diagnóstico deve investigar o ecossistema, não presumir que todo problema de venda se resolve com script ou tráfego.</p></article><article><h3>Contexto com autorização</h3><p>Usar somente dados necessários do UID e do projeto selecionado. Nunca misturar dados de mentorandos. O mentor confirma decisões antes de registrar ou executar ações.</p></article><article><h3>Estados operacionais</h3><p>'+STATUS.map(s=>'<span class="pm-state">'+esc(s)+'</span>').join(" ")+'<br><small>O estado pertence à capacidade operacional, não ao prompt. As capacidades começam como “A classificar” até validação do mentor.</small></p></article><article><h3>Governança dos prompts</h3><p>Prompt oficial com versão, autor, revisão e histórico. Mentor pode duplicar e personalizar sem alterar o original. Visibilidade e publicação são explícitas.</p></article><article><h3>Qualidade da resposta</h3><p>Separar fatos, hipóteses e recomendações; citar dados que sustentam inferências; sinalizar lacunas; informar limites e propor próximos passos verificáveis.</p></article><article><h3>Limites profissionais</h3><p>Atividades jurídicas, contábeis, reguladas, investimentos e imigração exigem validação de profissionais habilitados. IA não comprova fatos nem substitui responsabilidade técnica.</p></article></div>';
   function showTab(tab) {
     root.querySelectorAll("[data-pm-tab]").forEach(b=>b.classList.toggle("is-active",b.dataset.pmTab===tab));
@@ -521,21 +532,21 @@ export function bindMasterPromptMap() {
     if (tab==="capabilities") bindFilters();
   }
   function bindSpecializedFilters() {
-    const search=panel.querySelector("#pmSpecialSearch"), category=panel.querySelector("#pmSpecialCategory"), phase=panel.querySelector("#pmSpecialPhase");
+    const search=panel.querySelector("#pmSpecialSearch"), category=panel.querySelector("#pmSpecialCategory"), phase=panel.querySelector("#pmSpecialPhase"), context=panel.querySelector("#pmSpecialContext");
     const rows=panel.querySelector("#pmSpecialRows"), count=panel.querySelector("#pmSpecialCount");
-    const draw=()=>{ const q=norm(search?.value), c=category?.value||"", p=phase?.value||""; const filtered=SPECIALIZED_PROMPTS.filter(x=>(!q||norm([x.id,x.title,x.category,x.mission,x.keywords].join(" ")).includes(q))&&(!c||x.category===c)&&(!p||x.phase===p)); rows.innerHTML=renderSpecializedRows(filtered); count.textContent=filtered.length+" de "+SPECIALIZED_PROMPTS.length+" prompts"; };
-    [search,category,phase].forEach(el=>el?.addEventListener("input",draw)); draw();
+    const draw=()=>{ const q=norm(search?.value), c=category?.value||"", p=phase?.value||"", s=context?.value||""; const filtered=SPECIALIZED_PROMPTS.filter(x=>(!q||norm([x.id,x.title,x.category,x.mission,x.keywords].join(" ")).includes(q))&&(!c||x.category===c)&&(!p||x.phase===p)&&(!s||x.contextScope===s)); rows.innerHTML=renderSpecializedRows(filtered); count.textContent=filtered.length+" de "+SPECIALIZED_PROMPTS.length+" prompts"; };
+    [search,category,phase,context].forEach(el=>el?.addEventListener("input",draw)); draw();
   }
   function bindFilters() {
-    const search=panel.querySelector("#pmSearch"), phase=panel.querySelector("#pmPhaseFilter"), dept=panel.querySelector("#pmDeptFilter");
+    const search=panel.querySelector("#pmSearch"), phase=panel.querySelector("#pmPhaseFilter"), dept=panel.querySelector("#pmDeptFilter"), context=panel.querySelector("#pmContextFilter");
     const rows=panel.querySelector("#pmRows"), count=panel.querySelector("#pmCount");
     const draw=()=>{
-      const q=norm(search?.value), p=phase?.value||"", d=dept?.value||"";
-      const filtered=CAPABILITIES.filter(c=>(!q||norm([c.title,c.department,c.group,c.id].join(" ")).includes(q))&&(!p||c.phases.includes(p))&&(!d||c.departmentId===d));
+      const q=norm(search?.value), p=phase?.value||"", d=dept?.value||"", s=context?.value||"";
+      const filtered=CAPABILITIES.filter(c=>(!q||norm([c.title,c.department,c.group,c.id].join(" ")).includes(q))&&(!p||c.phases.includes(p))&&(!d||c.departmentId===d)&&(!s||c.contextScope===s));
       rows.innerHTML=renderCapabilityRows(filtered);
       count.textContent=filtered.length+" de "+CAPABILITIES.length+" capacidades";
     };
-    [search,phase,dept].forEach(el=>el?.addEventListener("input",draw));
+    [search,phase,dept,context].forEach(el=>el?.addEventListener("input",draw));
     draw();
   }
   root.addEventListener("click",e=>{
@@ -580,9 +591,9 @@ export function renderPhasePromptAccess(phaseId) {
     '<p class="notes-hint"><strong>' + capabilities.length + '</strong> capacidades relacionadas · <strong>' + specialized.length + '</strong> receitas especializadas cadastradas nesta fase.</p>' +
     '<div class="pm-phase-prompt-list">' + capabilities.map(c =>
       '<details style="margin:10px 0;padding:12px;border:1px solid var(--line,#39342d);border-radius:10px">' +
-      '<summary style="cursor:pointer"><strong>' + esc(c.id) + ' · ' + esc(c.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + esc(c.department.replace(/^[0-9]+ · /,"")) + ' · ' + esc(c.group) + '</small></summary>' +
+      '<summary style="cursor:pointer"><strong>' + esc(c.id) + ' · ' + esc(c.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + contextPill(c.contextScope) + ' · ' + esc(c.department.replace(/^[0-9]+ · /,"")) + ' · ' + esc(c.group) + '</small></summary>' +
       '<p class="notes-hint">' + esc(c.reason) + '</p>' +
-      '<textarea data-journey-prompt="' + esc(c.id) + '" spellcheck="false" style="width:100%;min-height:260px;margin:10px 0;padding:12px;box-sizing:border-box">' + esc(applySharedContext(promptForCapability(c))) + '</textarea>' +
+      '<textarea data-journey-prompt="' + esc(c.id) + '" spellcheck="false" style="width:100%;min-height:260px;margin:10px 0;padding:12px;box-sizing:border-box">' + esc(applySharedContext(promptForCapability(c),c.contextScope)) + '</textarea>' +
       '<button class="tool-btn" type="button" data-copy-journey-prompt="' + esc(c.id) + '">Copiar prompt</button>' +
       '<span data-journey-prompt-status="' + esc(c.id) + '" role="status" aria-live="polite" style="margin-left:10px"></span>' +
       '</details>'
@@ -590,9 +601,9 @@ export function renderPhasePromptAccess(phaseId) {
     (specialized.length ? '<h4 class="section-h" style="margin-top:24px">Receitas especializadas desta fase</h4><div class="pm-phase-prompt-list">' + specialized.map(item => {
       const key = "specialized-" + item.id;
       return '<details style="margin:10px 0;padding:12px;border:1px solid var(--line,#39342d);border-radius:10px">' +
-        '<summary style="cursor:pointer"><strong>' + esc(item.id) + ' · ' + esc(item.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + esc(item.category) + '</small></summary>' +
+        '<summary style="cursor:pointer"><strong>' + esc(item.id) + ' · ' + esc(item.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + contextPill(item.contextScope) + ' · ' + esc(item.category) + '</small></summary>' +
         '<p class="notes-hint">' + esc(item.mission) + '</p>' +
-        '<textarea data-journey-prompt="' + esc(key) + '" spellcheck="false" style="width:100%;min-height:260px;margin:10px 0;padding:12px;box-sizing:border-box">' + esc(applySharedContext(buildSpecializedPrompt(item))) + '</textarea>' +
+        '<textarea data-journey-prompt="' + esc(key) + '" spellcheck="false" style="width:100%;min-height:260px;margin:10px 0;padding:12px;box-sizing:border-box">' + esc(applySharedContext(buildSpecializedPrompt(item),item.contextScope)) + '</textarea>' +
         '<button class="tool-btn" type="button" data-copy-journey-prompt="' + esc(key) + '">Copiar prompt especializado</button>' +
         '<span data-journey-prompt-status="' + esc(key) + '" role="status" aria-live="polite" style="margin-left:10px"></span>' +
         '</details>';
