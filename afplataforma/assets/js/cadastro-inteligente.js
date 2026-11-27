@@ -124,10 +124,10 @@ function businessMarkup() {
 
 function projectsMarkup() {
   const projects=dossier.projects.filter(x=>!x.archivedAt);
-  const activeBusinesses=dossier.businesses.filter(x=>!x.archivedAt);
+  const allBusinesses=dossier.businesses;
   return '<section class="ci-panel"><div class="ci-panel-head"><div><span class="ci-kicker">CONTEXTO DE PROJETO</span><h3>Projetos vinculados</h3><p>Um projeto pode pertencer a um negócio ou ficar independente. Cada projeto terá sua própria Ficha Única.</p></div><button type="button" class="ci-btn" data-action="add-project">＋ Adicionar projeto</button></div>'+
     (projects.length?projects.map(p=>{
-      const options=activeBusinesses.map(x=>'<option value="'+esc(x.id)+'" '+(p.businessId===x.id?'selected':'')+'>'+esc(x.name||"Negócio sem nome")+'</option>').join("");
+      const options=allBusinesses.map(x=>'<option value="'+esc(x.id)+'" '+(p.businessId===x.id?'selected':'')+'>'+esc(x.name||"Negócio sem nome")+(x.archivedAt?' · Arquivado':'')+'</option>').join("");
       return '<article class="ci-project"><div class="ci-project-head"><strong>'+esc(p.name||"Projeto sem nome")+'</strong><button type="button" class="ci-text-btn" data-action="archive-project" data-id="'+esc(p.id)+'">Arquivar</button></div><div class="ci-fields">'+
         field("Nome do projeto","project","name",p.name||"",false,"",p.id)+
         '<label class="ci-field"><span>Negócio relacionado</span><select data-scope="project" data-key="businessId" data-id="'+esc(p.id)+'"><option value="" '+(!p.businessId?'selected':'')+'>Independente</option>'+options+'</select></label>'+
@@ -191,7 +191,7 @@ async function persist(status) {
   dossier.schemaVersion=1;
   dossier.ownerUid=session.uid;
   dossier.onboarding={...(dossier.onboarding||{}),status,currentStep:"profile",updatedAt:new Date().toISOString()};
-  await setDoc(doc(db,COLLECTION,session.uid),{[ROOT_FIELD]:dossier,updatedAt:serverTimestamp()},{merge:true});
+  await setDoc(doc(db,COLLECTION,session.uid),{[ROOT_FIELD]:dossier,afDossierUpdatedAt:serverTimestamp()},{merge:true});
 }
 
 export function renderCadastroInteligente() {
@@ -259,7 +259,7 @@ async function updateOnboardingStatus(status) {
   const ref=doc(db,COLLECTION,session.uid),snap=await getDoc(ref);
   const current=normalizeDossier(snap.exists()?snap.data()?.[ROOT_FIELD]:null);
   current.onboarding={...current.onboarding,status,updatedAt:new Date().toISOString()};
-  await setDoc(ref,{[ROOT_FIELD]:current,updatedAt:serverTimestamp()},{merge:true});
+  await setDoc(ref,{[ROOT_FIELD]:current,afDossierUpdatedAt:serverTimestamp()},{merge:true});
 }
 
 export async function maybePromptCadastroInteligente(navigate) {
