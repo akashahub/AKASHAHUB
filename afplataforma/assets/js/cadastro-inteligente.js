@@ -95,7 +95,7 @@ function activeBusiness() {
 }
 
 function field(label, scope, key, value="", multiline=false, group="", hint="") {
-  const attrs='data-scope="'+scope+'" data-key="'+key+'"'+(group?' data-group="'+group+'"':'');
+  const attrs='data-scope="'+scope+'" data-key="'+key+'"'+(group?' data-group="'+group+'"':'')+(scope==="project"&&hint?' data-id="'+hint+'"':'');
   const control=multiline
     ? '<textarea '+attrs+' rows="3" placeholder="Preencha se já souber...">'+esc(value)+'</textarea>'
     : '<input '+attrs+' type="text" value="'+esc(value)+'" placeholder="Preencha se já souber...">';
@@ -128,13 +128,13 @@ function projectsMarkup() {
   return '<section class="ci-panel"><div class="ci-panel-head"><div><span class="ci-kicker">CONTEXTO DE PROJETO</span><h3>Projetos vinculados</h3><p>Um projeto pode pertencer a um negócio ou ficar independente.</p></div><button type="button" class="ci-btn" data-action="add-project">＋ Adicionar projeto</button></div>'+
     (projects.length?projects.map(p=>'<article class="ci-project"><div class="ci-project-head"><strong>'+esc(p.name||"Projeto sem nome")+'</strong><button type="button" class="ci-text-btn" data-action="archive-project" data-id="'+esc(p.id)+'">Arquivar</button></div><div class="ci-fields">'+
       field("Nome do projeto","project","name",p.name||"",false,"",p.id)+
-      '<label class="ci-field"><span>Negócio relacionado</span><select data-scope="project" data-key="businessId" data-id="'+esc(p.id)+'"><option value="">Independente</option>'+options.replace('value="'+esc(p.businessId||"__none")+'"','value="'+esc(p.businessId||"__none")+'"')+'</select></label>'+
+      '<label class="ci-field"><span>Negócio relacionado</span><select data-scope="project" data-key="businessId" data-id="'+esc(p.id)+'"><option value="">Independente</option>'+options.replace('value="'+esc(p.businessId||"__none")+'"','value="'+esc(p.businessId||"__none")+'" selected')+'</select></label>'+
       field("Tipo / área","project","type",p.type||"",false,"",p.id)+
       field("Objetivo principal","project","objective",p.objective||"",true,"",p.id)+
       '<label class="ci-field"><span>Fase da Arquitetura de Legado</span><select data-scope="project" data-key="phase" data-id="'+esc(p.id)+'"><option value="">A definir</option>'+["AE","ID","AF","EX","LG"].map(v=>'<option '+(p.phase===v?'selected':'')+'>'+v+'</option>').join("")+'</select></label>'+
       '<label class="ci-field"><span>Status</span><select data-scope="project" data-key="status" data-id="'+esc(p.id)+'">'+["Em diagnóstico","Planejado","Em andamento","Pausado","Concluído"].map(v=>'<option '+((p.status||"Em diagnóstico")===v?'selected':'')+'>'+v+'</option>').join("")+'</select></label>'+
-      field("Prazo desejado","project","deadline",p.deadline||"")+
-      field("Notas e contexto específico","project","notes",p.notes||"",true)+
+      field("Prazo desejado","project","deadline",p.deadline||"",false,"",p.id)+
+      field("Notas e contexto específico","project","notes",p.notes||"",true,"",p.id)+
       '</div></article>').join(""):'<p class="ci-empty">Nenhum projeto cadastrado. Você pode criar projetos depois.</p>')+'</section>';
 }
 
