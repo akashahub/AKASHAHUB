@@ -1,5 +1,5 @@
 /* Akasha Sales OS · fonte única de dados comerciais compartilhados. */
-import { CATALOG } from "/afplataforma/assets/js/catalogo-capacidades-data.js";
+import { CATALOG } from "/afplataforma/assets/js/catalogo-capacidades-data.js?v=20261127-catalogo-167-1";
 
 export { CATALOG };
 export const catalogCapabilities = CATALOG.flatMap(dept =>
