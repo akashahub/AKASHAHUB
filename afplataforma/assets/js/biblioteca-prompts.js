@@ -509,48 +509,58 @@ function renderPromptDetail(id) {
 
 
 
-function dossierSnapshotText(snapshot) {
-  const blocks = snapshot.blocks || [];
-  const filled = blocks.filter(b=>b.status==="cheio");
-  const empty = blocks.filter(b=>b.status==="vazio");
-  const blocked = blocks.filter(b=>b.status==="bloqueado" || b.status==="erro");
-  const lines = [
+function dossierSnapshotText(snapshot, scope="hybrid") {
+  const all=snapshot.blocks||[];
+  const blocks=all.filter(b=>b.sourceScope==="project"||b.sourceScope==="hybrid"||scope==="hybrid"||b.sourceScope===scope||!b.sourceScope);
+  const filled=blocks.filter(b=>b.status==="cheio"),empty=blocks.filter(b=>b.status==="vazio"),blocked=blocks.filter(b=>b.status==="bloqueado"||b.status==="erro");
+  const lines=[
     "### CONTEXTO LIDO DO DOSSIÊ DO AKASHA HUB",
-    "Cliente selecionado: "+(snapshot.person || "não identificado"),
-    "Origem: ferramentas cadastradas nas cinco fases. Leitura somente; nenhum dado foi alterado.",
+    "Cliente selecionado: "+(snapshot.person||"não identificado"),
+    "Escopo aplicado: "+getContextScopeMeta(scope).label+". Fontes pessoais e empresariais foram filtradas por classificação; projetos vinculados permanecem como contexto específico.",
+    "Origem: Cadastro Inteligente e ferramentas autorizadas das cinco fases. Leitura somente; nenhum dado foi alterado.",
     "Resumo: "+filled.length+" fontes com respostas; "+empty.length+" sem respostas; "+blocked.length+" sem leitura disponível.",
-    "Use os campos abaixo como fontes de contexto. Preserve o nome da ferramenta e não trate ausência de resposta como resposta negativa.",
-    ""
+    "Preserve a origem de cada campo e não trate ausência de resposta como resposta negativa.",""
   ];
   for(const b of blocks){
-    lines.push("FONTE · "+b.phase+" · "+b.title);
-    if(b.status==="vazio") lines.push("Sem respostas registradas nesta ferramenta.");
-    else if(b.status==="bloqueado") lines.push("Leitura bloqueada pelas permissões atuais.");
-    else if(b.status==="erro") lines.push("Falha ao ler esta fonte nesta tentativa.");
-    else for(const field of b.fields) lines.push(field.key+": "+field.text);
+    lines.push("FONTE · "+b.phase+" · "+b.title+" · escopo "+(b.sourceScope||"não classificado"));
+    if(b.status==="vazio")lines.push("Sem respostas registradas nesta ferramenta.");
+    else if(b.status==="bloqueado")lines.push("Leitura bloqueada pelas permissões atuais.");
+    else if(b.status==="erro")lines.push("Falha ao ler esta fonte nesta tentativa.");
+    else for(const field of b.fields||[])lines.push(field.key+": "+field.text);
     lines.push("");
   }
   lines.push("### LACUNAS DE CONTEXTO IDENTIFICADAS");
-  if(empty.length) lines.push("Ferramentas sem respostas: "+empty.map(b=>b.title).join(", "));
-  if(blocked.length) lines.push("Fontes sem leitura: "+blocked.map(b=>b.title+" ("+b.status+")").join(", "));
-  if(!empty.length && !blocked.length) lines.push("Nenhuma ferramenta sem leitura foi identificada; isso não significa que todos os dados necessários à tarefa estejam preenchidos.");
-  lines.push("Antes de concluir, identifique quais dados específicos da tarefa continuam ausentes e pergunte somente o indispensável.");
+  if(empty.length)lines.push("Ferramentas sem respostas: "+empty.map(b=>b.title).join(", "));
+  if(blocked.length)lines.push("Fontes sem leitura: "+blocked.map(b=>b.title+" ("+b.status+")").join(", "));
+  if(!empty.length&&!blocked.length)lines.push("Nenhuma ferramenta sem leitura foi identificada; isso não significa que todos os dados necessários estejam preenchidos.");
+  lines.push("Antes de concluir, identifique os dados específicos ainda ausentes e pergunte somente o indispensável.");
   return lines.join("\n");
 }
-async function attachDossierContext(area, status) {
-  if(!area) return;
-  if(status) status.textContent="Lendo as ferramentas do Dossiê do cliente selecionado…";
-  try {
+async function attachDossierContext(area,status,scope="hybrid") {
+  if(!area)return;
+  if(status)status.textContent="Lendo as fontes do Dossiê para o escopo "+getContextScopeMeta(scope).label.toLowerCase()+"...";
+  try{
     const snapshot=await readHubDossieSnapshot();
-    if(!snapshot.ok){ if(status) status.textContent="Não encontrei um cliente selecionado ou uma sessão válida para ler o Dossiê."; return; }
+    if(!snapshot.ok){if(status)status.textContent="Não encontrei um cliente selecionado ou uma sessão válida para ler o Dossiê.";return;}
     const marker="### CONTEXTO LIDO DO DOSSIÊ DO AKASHA HUB";
     const clean=area.value.split(marker)[0].trimEnd();
-    area.value=clean+"\n\n"+dossierSnapshotText(snapshot);
-    if(status) status.textContent="Contexto anexado: "+snapshot.blocks.filter(b=>b.status==="cheio").length+" fontes com respostas. Confira as fontes e lacunas antes de copiar.";
-  } catch(error) {
+    const relevant=(snapshot.blocks||[]).filter(b=>b.sourceScope==="project"||b.sourceScope==="hybrid"||scope==="hybrid"||b.sourceScope===scope||!b.sourceScope);
+    const filtered={...snapshot,blocks:relevant};
+    area.value=clean+"\n\n"+dossierSnapshotText(filtered,scope);
+    if(status)status.textContent="Contexto anexado: "+relevant.filter(b=>b.status==="cheio").length+" fontes relevantes. Confira as origens e lacunas.";
+  }catch(error){
     console.error("[Biblioteca de Prompts] Falha ao ler o Dossiê:",error);
-    if(status) status.textContent="Não consegui ler o Dossiê. Verifique a seleção do cliente e as permissões das ferramentas.";
+    if(status)status.textContent="Não consegui ler o Dossiê. Verifique a seleção do cliente e as permissões.";
   }
+}
+function handleContextScopeChange(root,event) {
+  if(!event.target.matches("[data-pm-context-scope]"))return;
+  activeSharedContextScope=event.target.value;
+  SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope]||SHARED_CONTEXT_BY_SCOPE.hybrid;
+  const overlay=root.querySelector("[data-pm-context-overlay]");
+  overlay?.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
+  const status=overlay?.querySelector("#pmContextStatus");
+  if(status)status.textContent="Escopo "+getContextScopeMeta(activeSharedContextScope).label.toLowerCase()+" selecionado. Os outros contextos permanecem separados.";
 }
 
 function renderSpecializedRows(items) {
@@ -603,8 +613,11 @@ export function bindMasterPromptMap() {
       
       if(e.target.closest("[data-pm-close-context]")){const overlay=root.querySelector("[data-pm-context-overlay]");if(overlay)overlay.hidden=true;return;}
       if(e.target.closest("[data-pm-save-context]")){saveSharedContext(root);return;}
+    if(e.target.closest("[data-pm-import-dossier]")){importDossierIntoContext(root);return;}
+      if(e.target.closest("[data-pm-import-dossier]")){importDossierIntoContext(root);return;}
       if(e.target.matches("[data-pm-context-overlay]")){e.target.hidden=true;return;}
     });
+    root.addEventListener("change",e=>handleContextScopeChange(root,e));
     return;
   }
   const searchMarkup = () => '<div class="pm-filters"><input id="pmSearch" type="search" placeholder="Buscar capacidade, departamento ou grupo..."><select id="pmPhaseFilter"><option value="">Todas as fases</option>'+PHASES.map(p=>'<option value="'+p.id+'">'+p.id+' · '+esc(p.name)+'</option>').join("")+'</select><select id="pmDeptFilter"><option value="">Todos os departamentos</option>'+CATALOG.map(d=>'<option value="'+d.id+'">'+esc(d.name)+'</option>').join("")+'</select><select id="pmContextFilter"><option value="">Todos os contextos</option><option value="personal">Pessoal</option><option value="business">Empresarial</option><option value="hybrid">Híbrido</option></select><span id="pmCount"></span></div><div id="pmRows" class="pm-cap-list">'+renderCapabilityRows(CAPABILITIES)+'</div>';
@@ -648,8 +661,8 @@ export function bindMasterPromptMap() {
     if(e.target.closest("[data-pm-back-special]")){showTab("specialized");return;}
     const specialized=e.target.closest("[data-pm-specialized]");
     if(specialized){panel.innerHTML=renderSpecializedDetail(specialized.dataset.pmSpecialized);return;}
-    if(e.target.closest("[data-pm-load-dossier-special]")){attachDossierContext(panel.querySelector("#pmSpecialPromptText"),panel.querySelector("#pmSpecialDossierStatus"));return;}
-    if(e.target.closest("[data-pm-load-dossier]")){attachDossierContext(panel.querySelector("#pmPromptText"),panel.querySelector("#pmDossierStatus"));return;}
+    if(e.target.closest("[data-pm-load-dossier-special]")){const item=SPECIALIZED_PROMPTS.find(x=>x.id===panel.querySelector("#pmSpecialPromptText")?.dataset.pmSpecializedSource);attachDossierContext(panel.querySelector("#pmSpecialPromptText"),panel.querySelector("#pmSpecialDossierStatus"),item?.contextScope||"hybrid");return;}
+    if(e.target.closest("[data-pm-load-dossier]")){const c=CAPABILITIES.find(x=>x.id===panel.querySelector("#pmPromptText")?.dataset.pmCapability);attachDossierContext(panel.querySelector("#pmPromptText"),panel.querySelector("#pmDossierStatus"),c?.contextScope||"hybrid");return;}
     if(e.target.closest("[data-pm-copy-special]")){const area=panel.querySelector("#pmSpecialPromptText"),status=panel.querySelector("#pmSpecialCopyStatus");if(area)copyText(area.value,status);return;}
     const phase=e.target.closest("[data-pm-phase]");
     if(phase){panel.innerHTML=renderPhaseDetail(phase.dataset.pmPhase);return;}
@@ -661,6 +674,7 @@ export function bindMasterPromptMap() {
     const ca=e.target.closest("[data-pm-copy-apps]"); if(ca){const p=PHASES.find(x=>x.id===ca.dataset.pmCopyApps);if(p){const text=["MAPA DE APLICATIVOS · "+p.id+" · "+p.name,...p.apps.map(([name,url])=>"- "+name+(url?" · https://akashahub.com.br"+url:" · rota a confirmar")),"","APOIOS (integração não presumida)",...p.support.map(x=>"- "+x)].join("\n");copyText(text,panel.querySelector("#pmPhaseCopyStatus"));}return;}
     if(e.target.closest("[data-pm-copy]")){const area=panel.querySelector("#pmPromptText"),status=panel.querySelector("#pmCopyStatus");if(!area)return;copyText(area.value,status);return;}
   });
+  root.addEventListener("change",e=>handleContextScopeChange(root,e));
 }
 
 
