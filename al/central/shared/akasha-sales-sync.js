@@ -66,7 +66,7 @@
    state.selectedProblems=Array.isArray(old.selectedProblems)?old.selectedProblems:state.selectedProblems;
    state.selectedCapabilities=Array.isArray(old.selectedCapabilities)?old.selectedCapabilities:state.selectedCapabilities;
    Object.assign(state.fields,{client:old.client,contact:old.contact,segment:old.segment,scenario:old.scenario,bottleneck:old.bottleneck,goal:old.goal});
-   persist(false);paint();
+   state.updatedAt=new Date().toISOString();try{localStorage.setItem(PREFIX+sessionId,JSON.stringify(state))}catch(err){}paint();
   }catch(err){}}
  });
  let channel=null;try{channel=new BroadcastChannel("akasha-sales-os-v2");channel.onmessage=e=>{if(e.data?.type==="state"&&e.data.sessionId===sessionId){state=e.data.state;try{localStorage.setItem(PREFIX+sessionId,JSON.stringify(state))}catch(err){}paint();status("Sincronizado em tempo real")}}}catch(e){}
