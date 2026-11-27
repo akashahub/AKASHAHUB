@@ -591,7 +591,7 @@ export function renderPhasePromptAccess(phaseId) {
     '<p class="notes-hint"><strong>' + capabilities.length + '</strong> capacidades relacionadas · <strong>' + specialized.length + '</strong> receitas especializadas cadastradas nesta fase.</p>' +
     '<div class="pm-phase-prompt-list">' + capabilities.map(c =>
       '<details style="margin:10px 0;padding:12px;border:1px solid var(--line,#39342d);border-radius:10px">' +
-      '<summary style="cursor:pointer"><strong>' + esc(c.id) + ' · ' + esc(c.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + esc(c.department.replace(/^[0-9]+ · /,"")) + ' · ' + esc(c.group) + '</small></summary>' +
+      '<summary style="cursor:pointer"><strong>' + esc(c.id) + ' · ' + esc(c.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + contextPill(c.contextScope) + ' · ' + esc(c.department.replace(/^[0-9]+ · /,"")) + ' · ' + esc(c.group) + '</small></summary>' +
       '<p class="notes-hint">' + esc(c.reason) + '</p>' +
       '<textarea data-journey-prompt="' + esc(c.id) + '" spellcheck="false" style="width:100%;min-height:260px;margin:10px 0;padding:12px;box-sizing:border-box">' + esc(applySharedContext(promptForCapability(c),c.contextScope)) + '</textarea>' +
       '<button class="tool-btn" type="button" data-copy-journey-prompt="' + esc(c.id) + '">Copiar prompt</button>' +
@@ -601,7 +601,7 @@ export function renderPhasePromptAccess(phaseId) {
     (specialized.length ? '<h4 class="section-h" style="margin-top:24px">Receitas especializadas desta fase</h4><div class="pm-phase-prompt-list">' + specialized.map(item => {
       const key = "specialized-" + item.id;
       return '<details style="margin:10px 0;padding:12px;border:1px solid var(--line,#39342d);border-radius:10px">' +
-        '<summary style="cursor:pointer"><strong>' + esc(item.id) + ' · ' + esc(item.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + esc(item.category) + '</small></summary>' +
+        '<summary style="cursor:pointer"><strong>' + esc(item.id) + ' · ' + esc(item.title) + '</strong><small style="display:block;color:var(--muted);margin-top:4px">' + contextPill(item.contextScope) + ' · ' + esc(item.category) + '</small></summary>' +
         '<p class="notes-hint">' + esc(item.mission) + '</p>' +
         '<textarea data-journey-prompt="' + esc(key) + '" spellcheck="false" style="width:100%;min-height:260px;margin:10px 0;padding:12px;box-sizing:border-box">' + esc(applySharedContext(buildSpecializedPrompt(item),item.contextScope)) + '</textarea>' +
         '<button class="tool-btn" type="button" data-copy-journey-prompt="' + esc(key) + '">Copiar prompt especializado</button>' +
