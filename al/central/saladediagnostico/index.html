@@ -64,7 +64,7 @@
  <div class="sticky-actions"><a class="btn alt" href="../index.html">← Central</a><a class="btn alt" href="../gerador-propostas/index.html">Abrir Gerador em página própria ↗</a></div>
 </header>
 <section class="intro"><div class="eyebrow">AKASHA SALES OS · CONDUÇÃO DA SESSÃO</div><h1>Sala de Diagnóstico.</h1><p>Conduza a conversa, registre o que o cliente conta e construa a proposta durante a call. Perguntas simples, escuta atenta e uma decisão clara no final. Você não precisa decorar o roteiro: abra o teleprompter quando quiser.</p>
-<div class="actions"><button class="btn gold" id="openScript">▤ Abrir teleprompter completo</button><button class="btn" id="openGenerator">＋ Abrir Gerador nesta página</button></div>
+<div class="actions"><button class="btn gold" id="openScript">▤ Abrir teleprompter completo</button><button class="btn" id="openGenerator">＋ Abrir Gerador nesta página</button><button class="btn alt" id="salesNewSession" type="button">＋ Novo cadastro</button><span class="pill">Cadastro <strong data-akasha-session-id></strong></span><span class="status" data-akasha-sync-status>Preparando salvamento...</span></div>
 </section>
 <div class="layout">
 <main>
@@ -75,7 +75,7 @@
   <div class="field"><label for="contactName">Pessoa que participa</label><input id="contactName" placeholder="Nome do contato"></div>
   <div class="field"><label for="businessArea">Área de atuação</label><input id="businessArea" placeholder="Ex.: saúde, comércio, serviços"></div>
   <div class="field"><label for="contactChannel">Contato</label><input id="contactChannel" placeholder="WhatsApp ou e-mail"></div>
-  <div class="field wide"><label for="declaredNeed">O que a pessoa diz que precisa?</label><textarea id="declaredNeed" placeholder="Registre o pedido inicial com as palavras do cliente."></textarea></div>
+  <div class="field wide"><label for="declaredNeed">O que a pessoa diz que precisa?</label><textarea id="declaredNeed" placeholder="Registre o pedido inicial com as palavras do cliente."></textarea></div><div class="field wide"><label for="openingReason">O que fez a pessoa entrar nesta conversa?</label><textarea id="openingReason" placeholder="Resposta à pergunta de entrada do Teleprompt."></textarea></div><div class="field wide"><label for="desiredClarification">O que seria mais importante sair daqui esclarecido?</label><textarea id="desiredClarification" placeholder="Registre o que a pessoa espera esclarecer."></textarea></div>
  </div>
 </section>
 <section class="panel">
@@ -121,7 +121,7 @@
   <div class="field wide"><label for="nextStep">Próxima ação combinada</label><textarea id="nextStep" placeholder="Ex.: enviar proposta, reunião com sócio, validar escopo ou retomar na data combinada."></textarea></div>
   <div class="field wide"><label for="callNotes">Observações internas</label><textarea id="callNotes" placeholder="Anotações relevantes para a equipe."></textarea></div>
  </div>
- <div class="actions"><button class="btn" id="copySummary">Copiar resumo do diagnóstico</button><button class="btn alt" id="printNotes">Imprimir registro</button></div><p class="status" id="status" aria-live="polite">Os campos ficam nesta página enquanto ela estiver aberta. Ainda não há gravação automática ou envio para CRM.</p>
+ <div class="actions"><button class="btn" id="copySummary">Copiar resumo do diagnóstico</button><button class="btn alt" id="printNotes">Imprimir registro</button></div><p class="status" id="status" aria-live="polite">O cadastro é salvo automaticamente neste navegador e sincronizado com as outras interfaces abertas.</p>
 </section>
 </main>
 <aside class="rail">
@@ -161,6 +161,7 @@
 <div class="modal generator-modal" id="generatorModal" role="dialog" aria-modal="false" aria-label="Gerador de Propostas">
  <div class="modal-box"><div class="modal-head"><div><div class="eyebrow">GERADOR CONECTADO</div><h2>Gerador de Propostas</h2></div><div class="window-tools"><button class="window-tool" type="button" data-window-max title="Maximizar/restaurar" aria-label="Maximizar ou restaurar">□</button><button class="window-tool close" type="button" data-close="generatorModal" aria-label="Fechar">×</button></div></div><div class="modal-body"><iframe class="generator-frame" id="generatorFrame" title="Gerador de Propostas" src="../gerador-propostas/index.html"></iframe></div><div class="window-resize" data-window-resize title="Arraste para redimensionar" aria-label="Redimensionar janela"></div></div></div>
 </div>
+<script src="/al/central/shared/akasha-sales-sync.js"></script>
 <script type="module">
 import { SALES_WORKFLOW, PROBLEM_MAP, catalogCapabilities, getProblemCapabilitySuggestions, suggestedCapabilityPrice } from "/al/central/shared/akasha-sales-core.js";
 const $=id=>document.getElementById(id);
@@ -172,7 +173,7 @@ const moneySales=n=>Number(n||0).toLocaleString("pt-BR",{style:"currency",curren
 function workflowMarkup(){return SALES_WORKFLOW.map(x=>'<span><b>'+x.number+'</b><strong>'+x.title+'</strong></span>').join("")}
 function renderWorkflow(){["salesWorkflow","telepromptWorkflow"].forEach(id=>{const el=$(id);if(el)el.innerHTML=workflowMarkup()})}
 function sharedState(){return {version:1,updatedAt:Date.now(),client:$("clientName").value.trim(),contact:$("contactName").value.trim(),segment:$("businessArea").value.trim(),scenario:$("currentScenario").value.trim()||$("declaredNeed").value.trim(),bottleneck:$("painPoints").value.trim(),goal:$("desiredOutcome").value.trim(),selectedProblems:sharedProblems,selectedCapabilities:sharedCapabilities}}
-function publishSharedState(){try{localStorage.setItem(SALES_SESSION_KEY,JSON.stringify(sharedState()))}catch(e){}}
+function publishSharedState(){try{localStorage.setItem(SALES_SESSION_KEY,JSON.stringify(sharedState()));window.AkashaSalesSync?.publish({fields:{client: $("clientName").value,contact: $("contactName").value,segment: $("businessArea").value,contactChannel: $("contactChannel").value,declaredNeed: $("declaredNeed").value,openingReason: $("openingReason").value,desiredClarification: $("desiredClarification").value,scenario: $("currentScenario").value,bottleneck: $("painPoints").value,impact: $("impact").value,goal: $("desiredOutcome").value,priority: $("priority").value,timing: $("timing").value,evidence: $("evidence").value,diagnosisSummary: $("diagnosisSummary").value,needStatus: $("needStatus").value,decisionMakers: $("decisionMakers").value,solutionIdeas: $("solutionIdeas").value,openQuestions: $("openQuestions").value,diagnosisConfirmed: $("diagnosisConfirmed").checked,decision: $("decision").value,followDate: $("followDate").value,nextStep: $("nextStep").value,callNotes: $("callNotes").value},selectedProblems:sharedProblems,selectedCapabilities:sharedCapabilities})}catch(e){}}
 function applySharedState(state){
  if(!state||state.version!==1)return;
  sharedProblems=Array.isArray(state.selectedProblems)?state.selectedProblems:[];
@@ -217,7 +218,7 @@ function sharedToolsEvents(){
 }
 try{const saved=JSON.parse(localStorage.getItem(SALES_SESSION_KEY)||"null");if(saved){sharedProblems=Array.isArray(saved.selectedProblems)?saved.selectedProblems:[];sharedCapabilities=Array.isArray(saved.selectedCapabilities)?saved.selectedCapabilities:[]}}catch(e){}
 
-renderWorkflow();renderSharedTools();sharedToolsEvents();
+window.addEventListener("akasha-sales-sync:remote",e=>{const st=e.detail;if(!st)return;sharedProblems=Array.isArray(st.selectedProblems)?st.selectedProblems:sharedProblems;sharedCapabilities=Array.isArray(st.selectedCapabilities)?st.selectedCapabilities:sharedCapabilities;renderSharedTools()});const initialSales=window.AkashaSalesSync?.getState();if(initialSales){sharedProblems=initialSales.selectedProblems||sharedProblems;sharedCapabilities=initialSales.selectedCapabilities||sharedCapabilities}renderWorkflow();renderSharedTools();sharedToolsEvents();
 window.addEventListener("storage",e=>{if(e.key===SALES_SESSION_KEY&&e.newValue){try{applySharedState(JSON.parse(e.newValue))}catch(err){console.warn("[Akasha Sales OS] Estado compartilhado inválido",err)}}});
 function windowBox(id){return $(id).querySelector('.modal-box')}
 function clampWindow(box,left,top,width,height){
@@ -267,7 +268,7 @@ document.querySelectorAll('.modal').forEach(modal=>{
  });
 });
 window.addEventListener('resize',()=>document.querySelectorAll('.modal.open .modal-box:not(.is-maximized)').forEach(box=>{const r=box.getBoundingClientRect();clampWindow(box,r.left,r.top,r.width,r.height)}));
-$('openScript').onclick=()=>openModal('scriptModal');$('railScript').onclick=()=>openModal('scriptModal');$('openGenerator').onclick=()=>{publishSharedState();openModal('generatorModal')};
+$("salesNewSession").onclick=()=>{if(confirm("Iniciar um novo cadastro? O registro atual continuará salvo.")){window.AkashaSalesSync?.newSession();location.reload()}};$("openScript").onclick=()=>openModal("scriptModal");$('railScript').onclick=()=>openModal('scriptModal');$('openGenerator').onclick=()=>{publishSharedState();openModal('generatorModal')};
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>closeModal(b.dataset.close)));
 // O clique no fundo mantém a janela aberta; fechamento somente pelo botão X.
 // A tecla Escape não fecha as janelas; use o botão X de cada modal.
