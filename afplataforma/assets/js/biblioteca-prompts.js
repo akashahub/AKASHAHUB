@@ -210,6 +210,11 @@ async function openSharedContext(root) {
   overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
   overlay.hidden=false;
   await populateDossierSelectors(root);
+  if(activeProjectId){
+    await loadScopedContexts(selectedContextUid(),activeProjectId);
+    SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE[activeSharedContextScope];
+    overlay.querySelectorAll("[data-pm-context-key]").forEach(field=>field.value=SHARED_CONTEXT[field.dataset.pmContextKey]||"");
+  }
   const first=overlay.querySelector("textarea");
   if(first) first.focus();
 }
@@ -221,38 +226,41 @@ function refreshOpenPrompt(root) {
   if(generic){const c=CAPABILITIES.find(x=>x.id===generic.dataset.pmCapability);if(c)generic.value=applySharedContext(promptForCapability(c),c.contextScope);}
   if(specialized){const item=SPECIALIZED_PROMPTS.find(x=>x.id===specialized.dataset.pmSpecializedSource);if(item)specialized.value=applySharedContext(buildSpecializedPrompt(item),item.contextScope);}
 }
+async function loadScopedContexts(uid,projectId="") {
+  const docId=scope=>projectId?"project-"+projectId+"-"+scope:"principal-"+scope;
+  const [personalSnap,businessSnap,hybridSnap,legacySnap]=await Promise.all([
+    getDoc(doc(db,"afProjectContexts",uid,"projects",docId("personal"))),
+    getDoc(doc(db,"afProjectContexts",uid,"projects",docId("business"))),
+    getDoc(doc(db,"afProjectContexts",uid,"projects",docId("hybrid"))),
+    projectId?Promise.resolve(null):getDoc(doc(db,"afProjectContexts",uid,"projects","principal"))
+  ]);
+  const snaps={personal:personalSnap,business:businessSnap,hybrid:hybridSnap};
+  for(const scope of ["personal","business","hybrid"]){
+    let snap=snaps[scope];
+    if(scope==="hybrid"&&!snap.exists()&&legacySnap?.exists())snap=legacySnap;
+    PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT_BY_SCOPE[scope][key]="";});
+    if(snap.exists()){
+      const saved=snap.data()?.context&&typeof snap.data().context==="object"?snap.data().context:{};
+      PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT_BY_SCOPE[scope][key]=typeof saved[key]==="string"?saved[key]:"";});
+    }
+  }
+  activeProjectId=projectId||"";
+}
 async function loadSharedContext(root) {
-  const uid=selectedContextUid(), status=root.querySelector("#pmContextCloudStatus");
-  for(const scope of ["personal","business","hybrid"])PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT_BY_SCOPE[scope][key]="";});
+  const uid=selectedContextUid(),status=root.querySelector("#pmContextCloudStatus");
   if(!uid||session.mode!=="firebase"){
-    sharedContextCloudState="unavailable";
-    refreshOpenPrompt(root);
+    sharedContextCloudState="unavailable";refreshOpenPrompt(root);
     if(status)status.textContent="Entre com a conta da plataforma para carregar o contexto salvo.";
     return;
   }
   sharedContextCloudState="loading";
   if(status)status.textContent="Carregando contextos pessoal, empresarial e híbrido...";
   try{
-    const [personalSnap,businessSnap,hybridSnap,legacySnap]=await Promise.all([
-      getDoc(doc(db,"afProjectContexts",uid,"projects","principal-personal")),
-      getDoc(doc(db,"afProjectContexts",uid,"projects","principal-business")),
-      getDoc(doc(db,"afProjectContexts",uid,"projects","principal-hybrid")),
-      getDoc(doc(db,"afProjectContexts",uid,"projects","principal"))
-    ]);
-    const snaps={personal:personalSnap,business:businessSnap,hybrid:hybridSnap};
-    for(const scope of ["personal","business","hybrid"]){
-      let snap=snaps[scope];
-      if(scope==="hybrid"&&!snap.exists()&&legacySnap.exists())snap=legacySnap;
-      if(snap.exists()){
-        const saved=snap.data()?.context&&typeof snap.data().context==="object"?snap.data().context:{};
-        PROMPT_VARIABLES.forEach(([key])=>{SHARED_CONTEXT_BY_SCOPE[scope][key]=typeof saved[key]==="string"?saved[key]:"";});
-      }
-    }
-    activeSharedContextScope="hybrid";
-    SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE.hybrid;
+    await loadScopedContexts(uid,"");
+    activeSharedContextScope="hybrid";SHARED_CONTEXT=SHARED_CONTEXT_BY_SCOPE.hybrid;
     sharedContextCloudState="loaded";
-    const any=personalSnap.exists()||businessSnap.exists()||hybridSnap.exists()||legacySnap.exists();
-    const cloudMessage=any?"Contextos carregados da conta de "+(activeHubContext()?.name||session.name||"cliente selecionado")+".":"Ainda não existem fichas salvas. Você pode importar o Cadastro Inteligente ou preencher manualmente.";
+    const hasAny=["personal","business","hybrid"].some(scope=>Object.values(SHARED_CONTEXT_BY_SCOPE[scope]).some(v=>String(v||"").trim()));
+    const cloudMessage=hasAny?"Contextos carregados para "+(activeHubContext()?.name||session.name||"cliente selecionado")+".":"Ainda não existem fichas salvas. Importe o Cadastro Inteligente ou preencha manualmente.";
     if(status)status.textContent=cloudMessage;
     if(root.querySelector('[data-pm-tab="context"]')?.classList.contains("is-active")){
       const panel=root.querySelector("#pmPanel");
@@ -308,6 +316,8 @@ async function importDossierIntoContext(root) {
     const personal=d.personal||{};
     const biz=(d.businesses||[]).find(x=>x.id===businessId&&!x.archivedAt)||null;
     const project=(d.projects||[]).find(x=>x.id===projectId&&!x.archivedAt)||null;
+    if(activeProjectId!==projectId){activeProjectId=projectId;projectContextLoadPromise=loadScopedContexts(uid,projectId);}
+    await projectContextLoadPromise;
     if(scope!=="personal"&&!biz){if(status)status.textContent="O negócio selecionado não foi encontrado. Atualize a lista.";return;}
     if(project?.businessId&&biz?.id&&project.businessId!==biz.id){if(status)status.textContent="Este projeto está vinculado a outro negócio. Selecione a empresa correspondente para não misturar contextos.";return;}
     const allowed=new Set(getContextKeysForScope(scope)),mapped={};
